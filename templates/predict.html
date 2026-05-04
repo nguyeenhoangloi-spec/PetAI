@@ -1,0 +1,907 @@
+<!doctype html>
+<html
+  class="{{ 'dark' if ui_theme == 'dark' else 'light' }}"
+  lang="{{ ui_language or 'vi' }}"
+  data-theme="{{ ui_theme or 'light' }}"
+>
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <script>
+      (function () {
+        const root = document.documentElement;
+        const storedTheme = (function () {
+          try {
+            return localStorage.getItem("theme");
+          } catch (e) {
+            return null;
+          }
+        })();
+        const preferredTheme = storedTheme || "{{ ui_theme or 'light' }}";
+
+        function resolveTheme(theme) {
+          if (theme !== "auto") return theme;
+          try {
+            return window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+          } catch (e) {
+            return "light";
+          }
+        }
+
+        function applyTheme(theme) {
+          const resolved = resolveTheme(theme);
+          root.classList.toggle("dark", resolved === "dark");
+          root.classList.toggle("light", resolved !== "dark");
+          root.setAttribute("data-theme", resolved);
+        }
+
+        applyTheme(preferredTheme);
+
+        if (preferredTheme === "auto") {
+          try {
+            const mql = window.matchMedia("(prefers-color-scheme: dark)");
+            const handler = function () {
+              applyTheme("auto");
+            };
+            if (mql.addEventListener) {
+              mql.addEventListener("change", handler);
+            } else if (mql.addListener) {
+              mql.addListener(handler);
+            }
+          } catch (e) {}
+        }
+      })();
+    </script>
+    <title>{{ tx('Kết quả dự đoán', 'Prediction result') }} | PetAI</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/theme-dark.css') }}"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "secondary-fixed": "#ffddb8",
+              "on-primary-container": "#eeefff",
+              "error-container": "#ffdad6",
+              "on-surface": "#0b1c30",
+              "primary-container": "#2563eb",
+              "surface-container-low": "#eff4ff",
+              error: "#ba1a1a",
+              "on-secondary-fixed": "#2a1700",
+              "secondary-fixed-dim": "#ffb95f",
+              "surface-tint": "#0053db",
+              "surface-dim": "#cbdbf5",
+              "on-error-container": "#93000a",
+              "surface-container": "#e5eeff",
+              "inverse-on-surface": "#eaf1ff",
+              "on-secondary": "#ffffff",
+              "secondary-container": "#fea619",
+              "surface-container-highest": "#d3e4fe",
+              "surface-container-high": "#dce9ff",
+              outline: "#737686",
+              secondary: "#855300",
+              "primary-fixed": "#dbe1ff",
+              "tertiary-container": "#bc4800",
+              "surface-container-lowest": "#ffffff",
+              "inverse-primary": "#b4c5ff",
+              surface: "#f8f9ff",
+              "on-tertiary": "#ffffff",
+              "on-surface-variant": "#434655",
+              "tertiary-fixed": "#ffdbcd",
+              "on-error": "#ffffff",
+              background: "#f8f9ff",
+              "on-tertiary-fixed-variant": "#7d2d00",
+              "surface-bright": "#f8f9ff",
+              "on-tertiary-fixed": "#360f00",
+              tertiary: "#943700",
+              "outline-variant": "#c3c6d7",
+              "primary-fixed-dim": "#b4c5ff",
+              "on-tertiary-container": "#ffede6",
+              "on-secondary-fixed-variant": "#653e00",
+              "on-primary-fixed": "#00174b",
+              "on-secondary-container": "#684000",
+              "on-primary-fixed-variant": "#003ea8",
+              primary: "#004ac6",
+              "tertiary-fixed-dim": "#ffb596",
+              "surface-variant": "#d3e4fe",
+              "on-background": "#0b1c30",
+              "on-primary": "#ffffff",
+              "inverse-surface": "#213145",
+            },
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px",
+            },
+            spacing: {
+              gutter: "24px",
+              xs: "4px",
+              lg: "48px",
+              sm: "12px",
+              md: "24px",
+              margin: "32px",
+              xl: "80px",
+              base: "8px",
+            },
+            fontFamily: {
+              "headline-md": ["Inter"],
+              "display-xl": ["Inter"],
+              "headline-lg": ["Inter"],
+              "body-md": ["Inter"],
+              "label-sm": ["Inter"],
+              "body-lg": ["Inter"],
+            },
+            fontSize: {
+              "headline-md": [
+                "24px",
+                { lineHeight: "32px", fontWeight: "600" },
+              ],
+              "display-xl": [
+                "60px",
+                {
+                  lineHeight: "72px",
+                  letterSpacing: "-0.02em",
+                  fontWeight: "700",
+                },
+              ],
+              "headline-lg": [
+                "36px",
+                {
+                  lineHeight: "44px",
+                  letterSpacing: "-0.01em",
+                  fontWeight: "600",
+                },
+              ],
+              "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+              "label-sm": ["14px", { lineHeight: "20px", fontWeight: "500" }],
+              "body-lg": ["18px", { lineHeight: "28px", fontWeight: "400" }],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+
+      .material-symbols-outlined {
+        font-variation-settings:
+          "FILL" 0,
+          "wght" 400,
+          "GRAD" 0,
+          "opsz" 24;
+      }
+
+      .glass-card {
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(226, 232, 240, 0.8);
+      }
+
+      .ai-overlay-label {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+      }
+    </style>
+  </head>
+  <body
+    class="bg-background text-on-background font-body-md text-body-md antialiased min-h-screen flex flex-col"
+  >
+    {% set has_conf = result.breed_conf is defined and result.breed_conf is not
+    none %} {% set conf_percent = (result.breed_conf * 100) if has_conf else 0
+    %} {% set conf_percent_clamped = 0 if conf_percent < 0 else (100 if
+    conf_percent > 100 else conf_percent) %} {% set breed_name = result.breed if
+    result.breed else tx('Chưa xác định', 'Unknown') %} {% set primary_label =
+    tx('Giống dự đoán', 'Predicted breed') %} {% if result.parts_info and
+    result.parts_info.decision and
+    result.parts_info.decision.is_hybrid_candidate %} {% set primary_label =
+    tx('Nghi lai', 'Suspected hybrid') %} {% elif result.parts_info and
+    result.parts_info.acceptance and result.parts_info.acceptance.level ==
+    'reference' %} {% set primary_label = tx('Giống tham khảo', 'Reference
+    breed') %} {% endif %} {% set decision_label = tx('Ứng viên thuần chủng',
+    'Purebred candidate') %} {% set decision_class = 'pure' %} {% if
+    result.parts_info and result.parts_info.decision and
+    result.parts_info.decision.is_hybrid_candidate %} {% set decision_label =
+    tx('Ứng viên nghi lai', 'Suspected hybrid candidate') %} {% set
+    decision_class = 'hybrid' %} {% elif result.parts_info and
+    result.parts_info.acceptance and not result.parts_info.acceptance.accepted
+    %} {% set decision_label = tx('Chưa đủ tin cậy', 'Insufficient confidence')
+    %} {% set decision_class = 'uncertain' %} {% endif %} {% set decision_reason
+    = result.parts_info.decision.reason if result.parts_info and
+    result.parts_info.decision and result.parts_info.decision.reason else
+    tx('Chưa có diễn giải chi tiết cho lần dự đoán này.', 'No detailed
+    explanation is available for this prediction yet.') %} {% set top3_mode =
+    'softmax' %} {% if result.parts_info and result.parts_info.display and
+    result.parts_info.display.top3_mode %} {% set top3_mode =
+    result.parts_info.display.top3_mode %} {% endif %} {% set gradcam_items = []
+    %} {% set gradcam_mode = '' %} {% if result.parts_info and
+    result.parts_info.gradcam_dynamic and
+    result.parts_info.gradcam_dynamic['items'] %} {% set gradcam_items =
+    result.parts_info.gradcam_dynamic['items'] %} {% set gradcam_mode =
+    'dynamic' %} {% elif result.parts_info and result.parts_info.gradcam and
+    result.parts_info.gradcam['items'] %} {% set gradcam_items =
+    result.parts_info.gradcam['items'] %} {% set gradcam_mode = 'reference' %}
+    {% endif %} {% set display_role = session.get('role') or 'user' %} {% set
+    display_plan = current_plan or 'free' %} {% set heatmap_overlays =
+    ['bg-red-500/40', 'bg-orange-500/40', 'bg-yellow-500/40', 'bg-blue-500/40']
+    %} {% set heatmap_rings = ['ring-red-500/20', 'ring-orange-500/20',
+    'ring-yellow-500/20', 'ring-blue-500/20'] %}
+
+    <nav
+      class="bg-white/80 dark:bg-slate-950/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-200 dark:border-slate-800 shadow-sm font-['Inter'] antialiased"
+    >
+      <div class="flex items-center justify-between px-6 h-16 w-full">
+        <div class="flex items-center gap-gutter">
+          <span class="text-lg font-semibold text-primary tracking-tight"
+            >PetAI</span
+          >
+        </div>
+        <div class="hidden md:flex items-center gap-margin">
+          <a
+            class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-3 py-2 border-b-2 border-transparent pb-1 font-semibold"
+            href="{{ url_for('dashboard.dashboard') }}"
+            >Bảng điều khiển</a
+          >
+          <a
+            class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-3 py-2 border-b-2 border-transparent pb-1 font-semibold"
+            href="{{ url_for('history.history') }}"
+            >Lịch sử</a
+          >
+          <a
+            class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-3 py-2 border-b-2 border-transparent pb-1 font-semibold"
+            href="{{ url_for('statistics.statistics') }}"
+            >Thống kê</a
+          >
+          <a
+            class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-3 py-2 border-b-2 border-transparent pb-1 font-semibold"
+            href="{{ url_for('predict.upgrade') }}"
+            >Nâng cấp</a
+          >
+          {% if session.get('role') == 'user' %}
+          <a
+            class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-3 py-2 border-b-2 border-transparent pb-1 font-semibold"
+            href="{{ url_for('predict.my_payments') }}"
+            >{{ tx('Lịch sử thanh toán', 'Payment history') }}</a
+          >
+          {% endif %} {% if session.get('role') == 'admin' %}
+          <a
+            class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-3 py-2 border-b-2 border-transparent pb-1 font-semibold"
+            href="{{ url_for('users.list_users') }}"
+            >Quản lý người dùng</a
+          >
+          <a
+            class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-3 py-2 border-b-2 border-transparent pb-1 font-semibold"
+            href="{{ url_for('users.confirmations_list') }}"
+            >Duyệt đơn</a
+          >
+          {% endif %}
+        </div>
+        <div class="flex items-center gap-md">
+          <a
+            class="hidden md:inline-flex bg-primary text-on-primary px-4 py-2 rounded-lg font-label-sm hover:opacity-90 active:scale-95 duration-150 transition-all"
+            href="{{ url_for('predict.upload_page') }}"
+            >Nhận diện</a
+          >
+          <div class="flex items-center gap-base">
+            <a
+              aria-label="Cai dat"
+              class="p-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all"
+              href="{{ url_for('settings.settings') }}"
+            >
+              <span class="material-symbols-outlined" data-icon="settings"
+                >settings</span
+              >
+            </a>
+            <div class="relative group cursor-pointer">
+              <img
+                alt="Ảnh đại diện"
+                class="w-9 h-9 rounded-full border-2 border-primary/20 p-0.5"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDaAwfxOW9LtSPQ4CMpHh_MZj4C-a3XURpy47OidOmmzbKzNRwNeR_tNSBeoFDP9dSnziLwQG4nPJKCuKtkxq4tUiBuLpCheGH7nOKArEmnFQ4h-srxtCzJuuXVbqDrPzi3eC_u0b61szh9krSLnTZdWzIxOFW1KnH4UW0EOXfAcgwarik1GLH8h-BWePFrcuV4Rqrw4n-qitWuQZHLsuPlLkOkFrM2-JiKkgwvYbvQPfe-B0eq8WGpcNe8IDhIHexuKSNYw8k4GOw"
+              />
+              <div
+                class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white dark:border-slate-900 rounded-full"
+              ></div>
+              <div
+                class="absolute right-0 top-full w-52 bg-white dark:bg-slate-900 rounded-lg shadow-xl border border-slate-200 dark:border-slate-800 py-2 hidden group-hover:block z-50"
+              >
+                <div class="px-4 pb-2">
+                  <div class="text-xs text-slate-500 dark:text-slate-400">
+                    Vai trò:
+                    <span
+                      class="font-semibold text-slate-800 dark:text-slate-200"
+                      >{{ display_role|upper }}</span
+                    >
+                  </div>
+                  <div class="text-xs text-slate-500 dark:text-slate-400">
+                    Gói:
+                    <span
+                      class="font-semibold text-slate-800 dark:text-slate-200"
+                      >{{ display_plan|upper }}</span
+                    >
+                  </div>
+                </div>
+                <div class="h-px bg-slate-200 dark:bg-slate-800 my-1"></div>
+                <a
+                  class="flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors font-semibold"
+                  href="{{ url_for('logout.logout') }}"
+                >
+                  <span class="material-symbols-outlined text-[18px]"
+                    >logout</span
+                  >
+                  Đăng xuất
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <main
+      class="flex-grow w-full px-6 py-margin grid grid-cols-1 md:grid-cols-[290px_minmax(0,1fr)] gap-gutter"
+    >
+      <aside class="col-span-1">
+        <div
+          class="bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] p-md flex flex-col gap-sm sticky top-24 border border-surface-container-highest/50"
+        >
+          <h3
+            class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-xs px-sm"
+          >
+            Truy cập nhanh
+          </h3>
+          <a
+            class="flex items-center gap-sm p-sm rounded-lg text-primary bg-primary-fixed/50 transition-colors group"
+            href="{{ url_for('predict.upload_page') }}"
+          >
+            <span
+              class="material-symbols-outlined text-primary group-hover:scale-105 transition-transform"
+              data-icon="upload_file"
+              data-weight="fill"
+              style="font-variation-settings: &quot;FILL&quot; 1"
+              >upload_file</span
+            >
+            <span class="font-label-sm text-label-sm font-semibold"
+              >Tải ảnh &amp; Nhận diện</span
+            >
+          </a>
+          <a
+            class="flex items-center gap-sm p-sm rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
+            href="{{ url_for('history.history') }}"
+          >
+            <span
+              class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
+              data-icon="history"
+              >history</span
+            >
+            <span class="font-label-sm text-label-sm">Lịch sử dự đoán</span>
+          </a>
+          <a
+            class="flex items-center gap-sm p-sm rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
+            href="{{ url_for('statistics.statistics') }}"
+          >
+            <span
+              class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
+              data-icon="bar_chart"
+              >bar_chart</span
+            >
+            <span class="font-label-sm text-label-sm">Thống kê cá nhân</span>
+          </a>
+          <a
+            class="flex items-center gap-sm p-sm rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
+            href="{{ url_for('predict.upgrade') }}"
+          >
+            <span
+              class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
+              data-icon="upgrade"
+              >upgrade</span
+            >
+            <span class="font-label-sm text-label-sm">Nâng cấp gói</span>
+          </a>
+          {% if session.get('role') == 'admin' %}
+          <a
+            class="flex items-center gap-sm p-sm rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
+            href="{{ url_for('users.list_users') }}"
+          >
+            <span
+              class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
+              data-icon="groups"
+              >groups</span
+            >
+            <span class="font-label-sm text-label-sm">Quản lý người dùng</span>
+          </a>
+          <a
+            class="flex items-center gap-sm p-sm rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
+            href="{{ url_for('users.confirmations_list') }}"
+          >
+            <span
+              class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
+              data-icon="receipt_long"
+              >receipt_long</span
+            >
+            <span class="font-label-sm text-label-sm">Duyệt đơn</span>
+          </a>
+          {% endif %}
+          <hr class="border-outline-variant/30 my-xs" />
+          <a
+            class="flex items-center gap-sm p-sm rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
+            href="{{ url_for('settings.settings') }}"
+          >
+            <span
+              class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
+              data-icon="settings"
+              >settings</span
+            >
+            <span class="font-label-sm text-label-sm">Cài đặt tài khoản</span>
+          </a>
+        </div>
+      </aside>
+
+      <div class="col-span-1 flex flex-col gap-gutter">
+        <div class="w-full space-y-md">
+          <div
+            class="flex flex-col md:flex-row md:items-end justify-between gap-md mb-2"
+          >
+            <div class="space-y-1">
+              <h1 class="font-headline-lg text-headline-lg text-on-surface">
+                {{ tx('Kết quả nhận diện giống chó', 'Dog breed prediction
+                result') }}
+              </h1>
+              <p class="font-body-lg text-body-lg text-outline">
+                {{ tx('Hệ thống AI đã hoàn tất phân tích hình ảnh với độ chính
+                xác cao.', 'The AI system has completed the image analysis with
+                high accuracy.') }}
+              </p>
+            </div>
+            <div class="flex gap-3">
+              <a
+                class="px-6 py-2.5 rounded-xl border border-primary text-primary font-semibold hover:bg-primary-container/10 transition-colors flex items-center gap-2"
+                href="{{ url_for('dashboard.dashboard') }}"
+              >
+                <span class="material-symbols-outlined">dashboard</span>
+                {{ tx('Về bảng điều khiển', 'Back to dashboard') }}
+              </a>
+              <a
+                class="px-6 py-2.5 rounded-xl bg-primary text-on-primary font-semibold hover:shadow-lg hover:shadow-primary/20 transition-all flex items-center gap-2"
+                href="{{ url_for('predict.upload_page') }}"
+              >
+                <span class="material-symbols-outlined">photo_camera</span>
+                {{ tx('Phân tích ảnh khác', 'Analyze another image') }}
+              </a>
+            </div>
+          </div>
+
+          <section class="space-y-gutter">
+            <div
+              class="flex items-center gap-3 border-b border-outline-variant/30 pb-4"
+            >
+              <div
+                class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary"
+              >
+                <span class="material-symbols-outlined">visibility</span>
+              </div>
+              <h2 class="font-headline-md text-headline-md text-on-surface">
+                {{ tx('Visual AI Insights', 'Visual AI Insights') }}
+              </h2>
+            </div>
+
+            <div
+              class="grid grid-cols-1 xl:grid-cols-12 gap-gutter items-start"
+            >
+              <div class="xl:col-span-8">
+                <div class="glass-card rounded-2xl p-4 shadow-md bg-white">
+                  <div class="flex items-center justify-between mb-4 px-2">
+                    <div class="flex items-center gap-3">
+                      <span class="material-symbols-outlined text-primary"
+                        >analytics</span
+                      >
+                      <h3 class="font-semibold text-lg">
+                        {{ tx('Phân tích vùng đối tượng chính', 'Primary object
+                        analysis') }}
+                      </h3>
+                    </div>
+                    <span
+                      class="px-3 py-1 bg-primary/10 text-primary text-xs font-bold rounded-full uppercase tracking-widest"
+                    >
+                      {{ tx('Đang phân tích', 'Active analysis') }}
+                    </span>
+                  </div>
+                  <div
+                    class="relative rounded-xl overflow-hidden shadow-inner border border-slate-100 bg-slate-50"
+                  >
+                    <img
+                      class="w-full h-auto max-h-[700px] object-contain mx-auto"
+                      src="/{{ image_path }}"
+                      alt="{{ tx('Ảnh đã tải lên', 'Uploaded image') }}"
+                    />
+                    <div
+                      class="absolute inset-0 flex items-center justify-center"
+                    >
+                      <div
+                        class="w-[45%] h-[65%] border-2 border-primary ring-[12px] ring-primary/20 rounded-lg relative ai-overlay-label"
+                      >
+                        <div
+                          class="absolute -top-10 left-0 bg-primary text-white text-xs px-3 py-1.5 font-bold uppercase tracking-widest rounded-t-lg shadow-lg flex items-center gap-2"
+                        >
+                          <span class="material-symbols-outlined text-sm"
+                            >check_circle</span
+                          >
+                          {{ breed_name }}{% if has_conf %}: {{
+                          '%.1f'|format(conf_percent_clamped) }}%{% endif %}
+                        </div>
+                        <div
+                          class="absolute inset-0 border border-white/30 rounded-lg pointer-events-none"
+                        ></div>
+                      </div>
+                    </div>
+                    <div class="absolute bottom-4 right-4 flex flex-col gap-2">
+                      <div
+                        class="glass-card px-4 py-2 rounded-lg flex items-center gap-2 text-xs font-medium text-slate-700"
+                      >
+                        <div class="w-3 h-3 rounded-full bg-primary"></div>
+                        {{ tx('Nhận diện đối tượng chính', 'Primary object
+                        recognition') }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="xl:col-span-4 space-y-gutter">
+                <div
+                  class="glass-card rounded-2xl p-md shadow-md border-t-4 border-t-primary"
+                >
+                  <div class="flex justify-between items-start mb-4">
+                    <div>
+                      <span
+                        class="text-label-sm font-label-sm text-outline uppercase tracking-widest"
+                      >
+                        {{ tx('Dự đoán tốt nhất', 'Best prediction') }}
+                      </span>
+                      <h2
+                        class="font-headline-lg text-headline-lg text-on-surface mt-1 leading-tight"
+                      >
+                        {{ breed_name }} {% if primary_label %}
+                        <span class="text-primary-container"
+                          >({{ primary_label }})</span
+                        >
+                        {% endif %}
+                      </h2>
+                    </div>
+                    <div class="flex flex-col items-end">
+                      <div
+                        class="text-[40px] font-black text-primary leading-none"
+                      >
+                        {% if has_conf %} {{ '%.1f'|format(conf_percent_clamped)
+                        }}%{% else %} -- {% endif %}
+                      </div>
+                      <div
+                        class="text-label-sm font-label-sm text-outline mt-1 font-bold"
+                      >
+                        {{ tx('Độ tin cậy', 'ACCURACY') }}
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="w-full bg-surface-container-highest h-3 rounded-full overflow-hidden mb-6"
+                  >
+                    <div
+                      class="bg-primary h-full rounded-full shadow-[0_0_12px_rgba(37,99,235,0.4)] confidence-fill"
+                      data-width="{{ conf_percent_clamped|int }}"
+                    ></div>
+                  </div>
+                  {% if result.note %}
+                  <div
+                    class="p-3 bg-error-container/40 rounded-lg border border-error-container/60 mb-4"
+                  >
+                    <p
+                      class="text-body-md font-body-md text-on-error-container"
+                    >
+                      {{ result.note }}
+                    </p>
+                  </div>
+                  {% endif %}
+                  <div
+                    class="p-4 bg-primary/5 rounded-xl border border-primary/10"
+                  >
+                    <p
+                      class="text-body-md font-body-md text-on-surface-variant leading-relaxed"
+                    >
+                      {{ decision_reason }}
+                    </p>
+                    {% if result.parts_info and result.parts_info.decision and
+                    result.parts_info.decision.is_hybrid_candidate %}
+                    <p
+                      class="text-label-sm font-label-sm text-on-surface-variant mt-3"
+                    >
+                      {{ tx('Đây là gợi ý ứng viên lai dựa trên tương đồng hình
+                      thái, không phải kết luận di truyền.', 'This is a
+                      morphology-based hybrid candidate suggestion, not a
+                      genetic conclusion.') }}
+                    </p>
+                    {% endif %}
+                  </div>
+                </div>
+
+                {% if result.parts_info and (result.parts_info.top5 or
+                result.parts_info.similarity_top3) %}
+                <div class="glass-card rounded-2xl p-md shadow-md">
+                  <h3
+                    class="font-semibold text-on-surface mb-6 flex items-center gap-2"
+                  >
+                    <span
+                      class="material-symbols-outlined text-secondary-container"
+                      >schema</span
+                    >
+                    {% if top3_mode == 'similarity' %} {{ tx('Tương đồng hình
+                    thái (Top 3)', 'Morphological similarity (Top 3)') }} {%
+                    else %} {{ tx('Top 3 xác suất softmax', 'Top 3 softmax
+                    probabilities') }} {% endif %}
+                  </h3>
+                  <div class="space-y-6">
+                    {% if top3_mode == 'similarity' %} {% for item in
+                    result.parts_info.similarity_top3[:3] %} {% set sim_score =
+                    item.score or 0 %} {% set sim_score_clamped = 0 if sim_score
+                    < 0 else (1 if sim_score > 1 else sim_score) %}
+                    <div class="space-y-2">
+                      <div
+                        class="flex justify-between text-label-sm font-label-sm"
+                      >
+                        <span class="text-on-surface font-semibold"
+                          >{{ item.breed }}</span
+                        >
+                        <span class="text-outline font-bold"
+                          >{{ '%.1f'|format(sim_score_clamped * 100) }}%</span
+                        >
+                      </div>
+                      <div
+                        class="w-full bg-slate-100 h-2 rounded-full overflow-hidden"
+                      >
+                        <div
+                          class="bg-slate-400 h-full rounded-full top5-fill"
+                          data-width="{{ (sim_score_clamped * 100)|int }}"
+                        ></div>
+                      </div>
+                    </div>
+                    {% endfor %} {% else %} {% for item in
+                    result.parts_info.top5[:3] %} {% set score = item.score or 0
+                    %}
+                    <div class="space-y-2">
+                      <div
+                        class="flex justify-between text-label-sm font-label-sm"
+                      >
+                        <span class="text-on-surface font-semibold"
+                          >{{ item.breed }}</span
+                        >
+                        <span class="text-outline font-bold"
+                          >{{ '%.1f'|format(score * 100) }}%</span
+                        >
+                      </div>
+                      <div
+                        class="w-full bg-slate-100 h-2 rounded-full overflow-hidden"
+                      >
+                        <div
+                          class="bg-slate-400 h-full rounded-full top5-fill"
+                          data-width="{{ ((score * 100)|int) }}"
+                        ></div>
+                      </div>
+                    </div>
+                    {% endfor %} {% endif %}
+                  </div>
+                  {% if result.parts_info.display and
+                  result.parts_info.display.top3_note %}
+                  <p
+                    class="text-label-sm font-label-sm text-on-surface-variant mt-4"
+                  >
+                    {{ result.parts_info.display.top3_note }}
+                  </p>
+                  {% endif %}
+                </div>
+                {% endif %}
+              </div>
+            </div>
+
+            {% if gradcam_items %}
+            <div class="glass-card rounded-2xl p-6 shadow-md">
+              <div class="flex items-center justify-between mb-8">
+                <div>
+                  <h3
+                    class="font-headline-md text-headline-md text-on-surface flex items-center gap-2"
+                  >
+                    <span class="material-symbols-outlined text-tertiary"
+                      >grid_view</span
+                    >
+                    {% if gradcam_mode == 'dynamic' %} {{ tx('Grad-CAM động
+                    (Visual Proof)', 'Dynamic Grad-CAM (Visual Proof)') }} {%
+                    else %} {{ tx('Grad-CAM tham khảo (Visual Proof)',
+                    'Reference Grad-CAM (Visual Proof)') }} {% endif %}
+                  </h3>
+                  <p class="text-sm text-outline mt-1">
+                    {% if gradcam_mode == 'dynamic' %} {{ tx('Bản đồ nhiệt theo
+                    đúng ảnh bạn vừa tải lên.', 'Heatmaps for the exact uploaded
+                    image.') }} {% else %} {{ tx('Bản đồ nhiệt theo giống tham
+                    khảo.', 'Heatmaps for the reference breed.') }} {% endif %}
+                  </p>
+                </div>
+              </div>
+              <div
+                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter"
+              >
+                {% for item in gradcam_items[:4] %} {% set overlay_class =
+                heatmap_overlays[loop.index0 % (heatmap_overlays|length)] %} {%
+                set ring_class = heatmap_rings[loop.index0 %
+                (heatmap_rings|length)] %}
+                <div class="space-y-3 group">
+                  <div
+                    class="relative rounded-xl overflow-hidden aspect-square border border-slate-200"
+                  >
+                    <img
+                      class="w-full h-full object-cover"
+                      src="{% if gradcam_mode == 'dynamic' %}{{ item.image_data }}{% else %}{{ url_for('artifacts_gradcam', filename=item.filename) }}{% endif %}"
+                      alt="Grad-CAM {{ item.breed }}"
+                      loading="lazy"
+                    />
+                    <div
+                      class="absolute inset-0 {{ overlay_class }} mix-blend-overlay"
+                    ></div>
+                    <div
+                      class="absolute inset-0 ring-4 ring-inset {{ ring_class }} opacity-0 group-hover:opacity-100 transition-opacity"
+                    ></div>
+                    <div
+                      class="absolute top-2 left-2 px-2 py-1 bg-black/70 text-white text-[10px] rounded font-bold uppercase"
+                    >
+                      {{ item.label or item.breed }}
+                    </div>
+                  </div>
+                  <div class="px-1">
+                    <h4 class="font-bold text-on-surface text-sm">
+                      {{ item.label or item.breed }}
+                    </h4>
+                    <p class="text-xs text-outline">
+                      {{ tx('Vùng nổi bật AI tập trung', 'AI focus area') }}
+                    </p>
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+            {% endif %}
+
+            <div
+              class="glass-card rounded-2xl p-md shadow-sm border border-slate-200"
+            >
+              <div class="flex items-center gap-3 mb-4">
+                <span
+                  class="material-symbols-outlined text-primary p-2 bg-primary/10 rounded-lg"
+                >
+                  psychology
+                </span>
+                <h4 class="font-headline-md text-headline-md text-on-surface">
+                  {{ tx('Phân tích Logic từ Model', 'Model reasoning') }}
+                </h4>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+                <div class="md:col-span-2">
+                  <p
+                    class="text-body-md text-on-surface-variant leading-relaxed"
+                  >
+                    {{ decision_reason }}
+                  </p>
+                  {% if result.parts_info and result.parts_info.acceptance %}
+                  <p
+                    class="text-label-sm font-label-sm text-on-surface-variant mt-3"
+                  >
+                    {% if result.parts_info.decision and
+                    result.parts_info.decision.is_hybrid_candidate %} {{ tx('Mức
+                    tin cậy đủ cho gợi ý ứng viên lai.', 'Confidence is
+                    sufficient for a hybrid candidate suggestion.') }} {% elif
+                    result.parts_info.acceptance.accepted %} {{ tx('Mức tin cậy
+                    đủ để kết luận giống.', 'Confidence is sufficient to
+                    conclude breed.') }} {% elif
+                    result.parts_info.acceptance.level == 'reference' %} {{
+                    tx('Mức tin cậy tham khảo, chưa đủ để kết luận giống.',
+                    'Reference confidence, not enough for a final breed
+                    conclusion.') }} {% endif %}
+                  </p>
+                  {% endif %}
+                </div>
+                <div
+                  class="flex flex-col justify-center items-center p-4 bg-slate-50 rounded-xl border border-slate-200/50"
+                >
+                  <span
+                    class="text-[10px] text-outline font-bold uppercase mb-2"
+                  >
+                    {{ tx('Kiến trúc mô hình', 'Model architecture') }}
+                  </span>
+                  <div class="font-mono text-sm text-primary font-bold">
+                    ResNet-101 Deep ConvNet
+                  </div>
+                  <div class="mt-2 flex items-center gap-2">
+                    <div
+                      class="w-2 h-2 rounded-full bg-green-500 animate-pulse"
+                    ></div>
+                    <span class="text-[10px] text-green-600 font-bold">
+                      {{ tx('Tối ưu suy luận', 'Inference optimized') }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+
+    <footer
+      class="bg-slate-50 dark:bg-slate-900 w-full border-t border-slate-200 dark:border-slate-800 mt-auto"
+    >
+      <div
+        class="flex flex-col md:flex-row justify-between items-center py-10 px-6 w-full"
+      >
+        <div class="mb-4 md:mb-0 text-center md:text-left">
+          <div
+            class="text-lg font-bold text-slate-700 dark:text-slate-300 mb-2"
+          >
+            PetAI
+          </div>
+          <div
+            class="text-sm font-['Inter'] text-slate-500 dark:text-slate-400"
+          >
+            2026
+            <a
+              class="text-xl font-bold tracking-tight text-blue-600 active:scale-95 transition-transform hover:opacity-80"
+              href="{{ url_for('home.index') }}"
+            >PetAI</a>. Chăm sóc thông minh cho thú cưng của bạn
+          </div>
+        </div>
+        <div class="flex flex-wrap justify-center gap-6">
+          <a
+            class="text-sm font-['Inter'] text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:underline decoration-2 underline-offset-4 transition-opacity duration-200"
+            href="#"
+            >Chính sách riêng tư</a
+          >
+          <a
+            class="text-sm font-['Inter'] text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:underline decoration-2 underline-offset-4 transition-opacity duration-200"
+            href="#"
+            >Điều khoản dịch vụ</a
+          >
+          <a
+            class="text-sm font-['Inter'] text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:underline decoration-2 underline-offset-4 transition-opacity duration-200"
+            href="#"
+            >Hỗ trợ</a
+          >
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        document
+          .querySelectorAll(
+            ".confidence-fill[data-width], .top5-fill[data-width]",
+          )
+          .forEach(function (el) {
+            var w = Number(el.getAttribute("data-width") || "0");
+            if (!Number.isFinite(w)) w = 0;
+            if (w < 0) w = 0;
+            if (w > 100) w = 100;
+            el.style.width = w + "%";
+          });
+      });
+    </script>
+  </body>
+</html>

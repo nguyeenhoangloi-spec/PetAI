@@ -1,0 +1,744 @@
+<!doctype html>
+
+<html
+  class="{{ 'dark' if ui_theme == 'dark' else 'light' }}"
+  lang="vi"
+  data-theme="{{ ui_theme or 'light' }}"
+>
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <script>
+      (function () {
+        const root = document.documentElement;
+        const storedTheme = (function () {
+          try {
+            return localStorage.getItem("theme");
+          } catch (e) {
+            return null;
+          }
+        })();
+        const preferredTheme = storedTheme || "{{ ui_theme or 'light' }}";
+
+        function resolveTheme(theme) {
+          if (theme !== "auto") return theme;
+          try {
+            return window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+          } catch (e) {
+            return "light";
+          }
+        }
+
+        function applyTheme(theme) {
+          const resolved = resolveTheme(theme);
+          root.classList.toggle("dark", resolved === "dark");
+          root.classList.toggle("light", resolved !== "dark");
+          root.setAttribute("data-theme", resolved);
+        }
+
+        applyTheme(preferredTheme);
+
+        if (preferredTheme === "auto") {
+          try {
+            const mql = window.matchMedia("(prefers-color-scheme: dark)");
+            const handler = function () {
+              applyTheme("auto");
+            };
+            if (mql.addEventListener) {
+              mql.addEventListener("change", handler);
+            } else if (mql.addListener) {
+              mql.addListener(handler);
+            }
+          } catch (e) {}
+        }
+      })();
+    </script>
+    <title>{{ tx('Thanh toán', 'Checkout') }} - PetAI</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/theme-dark.css') }}"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-tertiary-fixed": "#360f00",
+              "secondary-fixed-dim": "#ffb95f",
+              "surface-container": "#e5eeff",
+              "on-primary-fixed": "#00174b",
+              error: "#ba1a1a",
+              "secondary-container": "#fea619",
+              primary: "#004ac6",
+              "tertiary-container": "#bc4800",
+              "surface-tint": "#0053db",
+              "on-secondary": "#ffffff",
+              "surface-variant": "#d3e4fe",
+              "on-secondary-container": "#684000",
+              "tertiary-fixed-dim": "#ffb596",
+              "surface-dim": "#cbdbf5",
+              outline: "#737686",
+              "inverse-on-surface": "#eaf1ff",
+              "on-error": "#ffffff",
+              "secondary-fixed": "#ffddb8",
+              "on-primary": "#ffffff",
+              "on-primary-container": "#eeefff",
+              "surface-container-highest": "#d3e4fe",
+              "on-surface": "#0b1c30",
+              "surface-container-lowest": "#ffffff",
+              "on-primary-fixed-variant": "#003ea8",
+              "outline-variant": "#c3c6d7",
+              "primary-fixed": "#dbe1ff",
+              "inverse-primary": "#b4c5ff",
+              "on-error-container": "#93000a",
+              "on-tertiary": "#ffffff",
+              surface: "#f8f9ff",
+              "primary-fixed-dim": "#b4c5ff",
+              "on-background": "#0b1c30",
+              "surface-bright": "#f8f9ff",
+              "inverse-surface": "#213145",
+              "on-tertiary-fixed-variant": "#7d2d00",
+              "on-surface-variant": "#434655",
+              "tertiary-fixed": "#ffdbcd",
+              "surface-container-high": "#dce9ff",
+              "on-secondary-fixed": "#2a1700",
+              "on-tertiary-container": "#ffede6",
+              secondary: "#855300",
+              tertiary: "#943700",
+              background: "#f8f9ff",
+              "primary-container": "#2563eb",
+              "surface-container-low": "#eff4ff",
+              "on-secondary-fixed-variant": "#653e00",
+              "error-container": "#ffdad6",
+            },
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px",
+            },
+            spacing: {
+              md: "24px",
+              base: "8px",
+              sm: "12px",
+              margin: "32px",
+              lg: "48px",
+              xl: "80px",
+              gutter: "24px",
+              xs: "4px",
+            },
+            fontFamily: {
+              "headline-md": ["Inter"],
+              "headline-lg": ["Inter"],
+              "display-xl": ["Inter"],
+              "body-md": ["Inter"],
+              "label-sm": ["Inter"],
+              "body-lg": ["Inter"],
+            },
+            fontSize: {
+              "headline-md": [
+                "24px",
+                { lineHeight: "32px", fontWeight: "600" },
+              ],
+              "headline-lg": [
+                "36px",
+                {
+                  lineHeight: "44px",
+                  letterSpacing: "-0.01em",
+                  fontWeight: "600",
+                },
+              ],
+              "display-xl": [
+                "60px",
+                {
+                  lineHeight: "72px",
+                  letterSpacing: "-0.02em",
+                  fontWeight: "700",
+                },
+              ],
+              "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+              "label-sm": ["14px", { lineHeight: "20px", fontWeight: "500" }],
+              "body-lg": ["18px", { lineHeight: "28px", fontWeight: "400" }],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      .material-symbols-outlined {
+        font-variation-settings:
+          "FILL" 0,
+          "wght" 400,
+          "GRAD" 0,
+          "opsz" 24;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-background text-on-background font-body-md text-body-md antialiased min-h-screen flex flex-col"
+  >
+    {% set display_role = session.get('role') or 'user' %} {% set display_plan =
+    current_plan or 'free' %}
+
+    <nav
+      class="bg-white/80 dark:bg-slate-950/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-200 dark:border-slate-800 shadow-sm font-['Inter'] antialiased"
+    >
+      <div class="flex items-center justify-between px-6 h-16 w-full">
+        <div class="flex items-center gap-gutter">
+          <span class="text-lg font-semibold text-primary tracking-tight"
+            >PetAI</span
+          >
+        </div>
+        <div class="hidden md:flex items-center gap-margin">
+          <a
+            class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-3 py-2 border-b-2 border-transparent pb-1 font-semibold"
+            href="{{ url_for('dashboard.dashboard') }}"
+            >Bảng điều khiển</a
+          >
+          <a
+            class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-3 py-2 border-b-2 border-transparent pb-1 font-semibold"
+            href="{{ url_for('history.history') }}"
+            >Lịch sử</a
+          >
+          <a
+            class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-3 py-2 border-b-2 border-transparent pb-1 font-semibold"
+            href="{{ url_for('statistics.statistics') }}"
+            >Thống kê</a
+          >
+          <a
+            class="text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400 px-3 py-2 pb-1 font-semibold rounded-lg transition-all"
+            href="{{ url_for('predict.upgrade') }}"
+            >Nâng cấp</a
+          >
+          {% if session.get('role') == 'user' %}
+          <a
+            class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-3 py-2 border-b-2 border-transparent pb-1 font-semibold"
+            href="{{ url_for('predict.my_payments') }}"
+            >{{ tx('Lịch sử thanh toán', 'Payment history') }}</a
+          >
+          {% endif %} {% if session.get('role') == 'admin' %}
+          <a
+            class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-3 py-2 border-b-2 border-transparent pb-1 font-semibold"
+            href="{{ url_for('users.list_users') }}"
+            >Quản lý người dùng</a
+          >
+          <a
+            class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-3 py-2 border-b-2 border-transparent pb-1 font-semibold"
+            href="{{ url_for('users.confirmations_list') }}"
+            >Duyệt đơn</a
+          >
+          {% endif %}
+        </div>
+        <div class="flex items-center gap-md">
+          <a
+            class="hidden md:inline-flex bg-primary text-on-primary px-4 py-2 rounded-lg font-label-sm hover:opacity-90 active:scale-95 duration-150 transition-all"
+            href="{{ url_for('predict.upload_page') }}"
+            >Nhận diện</a
+          >
+          <div class="flex items-center gap-base">
+            <a
+              aria-label="Cai dat"
+              class="p-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all"
+              href="{{ url_for('settings.settings') }}"
+            >
+              <span class="material-symbols-outlined" data-icon="settings"
+                >settings</span
+              >
+            </a>
+            <div class="relative group cursor-pointer">
+              <img
+                alt="Anh dai dien"
+                class="w-9 h-9 rounded-full border-2 border-primary/20 p-0.5"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuABdf7zKSVKEqdGUUjqEkF9ftdFTrLW87Tb24r2IiZiv_JP0LrItrCxl23SH-gYj2Mqtkma0ak9DZbUtKM5nW747pmivDYGVbYhNr1PZbxbFuOrZdGJvnbhdSurFLfL3BcmhN2p1h9wv_6geT-x8eoTG1TDoLL40P8wDiaymvRT--SA4jYjU9A77WIji5FmOi99mPDXw7xS6dUyUNJYU2gHLk4-smzFrCuBbQbgtpATDvNo6hq3YR-cfSaNblImtCnDXIb8np7J4HA"
+              />
+              <div
+                class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white dark:border-slate-900 rounded-full"
+              ></div>
+              <div
+                class="absolute right-0 top-full w-52 bg-white dark:bg-slate-900 rounded-lg shadow-xl border border-slate-200 dark:border-slate-800 py-2 hidden group-hover:block z-50"
+              >
+                <div class="px-4 pb-2">
+                  <div class="text-xs text-slate-500 dark:text-slate-400">
+                    Vai trò:
+                    <span
+                      class="font-semibold text-slate-800 dark:text-slate-200"
+                      >{{ display_role|upper }}</span
+                    >
+                  </div>
+                  <div class="text-xs text-slate-500 dark:text-slate-400">
+                    Gói:
+                    <span
+                      class="font-semibold text-slate-800 dark:text-slate-200"
+                      >{{ display_plan|upper }}</span
+                    >
+                  </div>
+                </div>
+                <div class="h-px bg-slate-200 dark:bg-slate-800 my-1"></div>
+                <a
+                  class="flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors font-semibold"
+                  href="{{ url_for('logout.logout') }}"
+                >
+                  <span class="material-symbols-outlined text-[18px]"
+                    >logout</span
+                  >
+                  Đăng xuất
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <main
+      class="flex-grow w-full px-6 py-margin grid grid-cols-1 md:grid-cols-[290px_minmax(0,1fr)] gap-gutter"
+    >
+      <aside class="col-span-1">
+        <div
+          class="bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] p-md flex flex-col gap-sm sticky top-24 border border-surface-container-highest/50"
+        >
+          <h3
+            class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-xs px-sm"
+          >
+            Truy cập nhanh
+          </h3>
+          <a
+            class="flex items-center gap-sm p-sm rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
+            href="{{ url_for('predict.upload_page') }}"
+          >
+            <span
+              class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
+              data-icon="upload_file"
+              data-weight="fill"
+              style="font-variation-settings: &quot;FILL&quot; 1"
+              >upload_file</span
+            >
+            <span class="font-label-sm text-label-sm"
+              >Tải ảnh &amp; Nhận diện</span
+            >
+          </a>
+          <a
+            class="flex items-center gap-sm p-sm rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
+            href="{{ url_for('history.history') }}"
+          >
+            <span
+              class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
+              data-icon="history"
+              >history</span
+            >
+            <span class="font-label-sm text-label-sm">Lịch sử dự đoán</span>
+          </a>
+          {% if session.get('role') == 'user' %}
+          <a
+            class="flex items-center gap-sm p-sm rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
+            href="{{ url_for('predict.my_payments') }}"
+          >
+            <span
+              class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
+              data-icon="payments"
+              >payments</span
+            >
+            <span class="font-label-sm text-label-sm">Lịch sử thanh toán</span>
+          </a>
+          {% endif %}
+          <a
+            class="flex items-center gap-sm p-sm rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
+            href="{{ url_for('statistics.statistics') }}"
+          >
+            <span
+              class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
+              data-icon="bar_chart"
+              >bar_chart</span
+            >
+            <span class="font-label-sm text-label-sm">Thống kê cá nhân</span>
+          </a>
+          <a
+            class="flex items-center gap-sm p-sm rounded-lg text-primary bg-primary-fixed/50 transition-colors group"
+            href="{{ url_for('predict.upgrade') }}"
+          >
+            <span
+              class="material-symbols-outlined text-primary group-hover:scale-105 transition-transform"
+              data-icon="rocket_launch"
+              >rocket_launch</span
+            >
+            <span class="font-label-sm text-label-sm font-semibold"
+              >Nâng cấp gói</span
+            >
+          </a>
+          {% if session.get('role') == 'admin' %}
+          <a
+            class="flex items-center gap-sm p-sm rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
+            href="{{ url_for('users.list_users') }}"
+          >
+            <span
+              class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
+              data-icon="groups"
+              >groups</span
+            >
+            <span class="font-label-sm text-label-sm">Quản lý người dùng</span>
+          </a>
+          <a
+            class="flex items-center gap-sm p-sm rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
+            href="{{ url_for('users.confirmations_list') }}"
+          >
+            <span
+              class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
+              data-icon="receipt_long"
+              >receipt_long</span
+            >
+            <span class="font-label-sm text-label-sm">Duyệt đơn</span>
+          </a>
+          {% endif %}
+          <hr class="border-outline-variant/30 my-xs" />
+          <a
+            class="flex items-center gap-sm p-sm rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
+            href="{{ url_for('settings.settings') }}"
+          >
+            <span
+              class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
+              data-icon="settings"
+              >settings</span
+            >
+            <span class="font-label-sm text-label-sm">Cài đặt tài khoản</span>
+          </a>
+        </div>
+      </aside>
+
+      <div class="col-span-1 flex flex-col gap-gutter">
+        <section
+          class="flex flex-col md:flex-row justify-between items-start md:items-center bg-surface-container-low p-margin rounded-xl border border-surface-container-highest/50 relative overflow-hidden"
+        >
+          <div
+            class="absolute inset-0 bg-gradient-to-r from-transparent to-primary-fixed/20 pointer-events-none"
+          ></div>
+          <div class="relative z-10 max-w-2xl">
+            <span
+              class="inline-flex items-center px-3 py-1 rounded-full bg-secondary-container/10 text-secondary font-label-sm mb-4"
+              >{{ tx('Nâng cấp tài khoản', 'Upgrade account') }}</span
+            >
+            <h1 class="font-headline-lg text-headline-lg text-on-surface">
+              {{ tx('Thanh toán gói', 'Checkout plan') }} {{ plan|upper }}
+            </h1>
+            <p class="font-body-md text-body-md text-on-surface-variant mt-sm">
+              {{ tx('Quét mã QR để chuyển khoản, sau đó xác nhận để hệ thống
+              kích hoạt gói.', 'Scan the QR code to transfer, then confirm to
+              activate your plan.') }}
+            </p>
+          </div>
+          <div
+            class="relative z-10 w-full md:w-1/3 h-40 rounded-2xl overflow-hidden shadow-lg border-4 border-white"
+          >
+            <img
+              alt="Smart pet identification"
+              class="w-full h-full object-cover"
+              data-alt="A clean modern office workspace with a golden retriever sitting patiently next to a high-tech tablet showing AI analysis"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuAcn17XARKt4XHrZb4z25rDOrXN-6ecgUsT2YMGxdBXYzSoaL2IDb1Z4Crd4QeT9m4wm1zY8N7rcqvyxgW-XS9FfhfBwG2Pkl6H7nRxvVRjL8dAz-BEHFbBiNsfBCimY29kHQGJgCnP62OFMbL3JFh9ZKnRwYflvQgUlun7XtdUs5qLGVvUakFo8Ree47lq-jEj-AUIdTFAz_KPHCBp8sNSuS4_UWgPkdrlYaop1kgORzObzI1FL09AhpSiPTxAECXfvyuXrjaPdSI"
+            />
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"
+            ></div>
+          </div>
+        </section>
+
+        <section class="grid grid-cols-1 xl:grid-cols-12 gap-gutter">
+          <div class="xl:col-span-7 space-y-gutter">
+            <article
+              class="bg-surface-container-lowest p-md rounded-2xl shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-surface-container-highest/40"
+            >
+              <div class="flex items-center gap-sm mb-6">
+                <span class="material-symbols-outlined text-primary"
+                  >shopping_bag</span
+                >
+                <h2 class="font-headline-md text-headline-md text-on-surface">
+                  {{ tx('Thông tin đơn hàng', 'Order details') }}
+                </h2>
+              </div>
+              <div class="space-y-4">
+                <div
+                  class="flex justify-between py-2 border-b border-outline-variant/30"
+                >
+                  <span class="text-on-surface-variant"
+                    >{{ tx('Mã đơn hàng', 'Order ID') }}</span
+                  >
+                  <span class="font-semibold text-on-surface"
+                    >#{{ order_id }}</span
+                  >
+                </div>
+                <div
+                  class="flex justify-between py-2 border-b border-outline-variant/30"
+                >
+                  <span class="text-on-surface-variant"
+                    >{{ tx('Gói dịch vụ', 'Plan') }}</span
+                  >
+                  <span class="font-semibold text-primary"
+                    >{{ plan|upper }}</span
+                  >
+                </div>
+                <div
+                  class="flex justify-between py-2 border-b border-outline-variant/30"
+                >
+                  <span class="text-on-surface-variant"
+                    >{{ tx('Phương thức', 'Method') }}</span
+                  >
+                  <span class="font-semibold text-on-surface">
+                    {% if (payment_method or '')|lower == 'qr' %} {{ tx('Chuyển
+                    khoản QR', 'QR transfer') }} {% else %} {{ (payment_method
+                    or '').upper() }} {% endif %}
+                  </span>
+                </div>
+                <div class="flex justify-between pt-2">
+                  <span class="text-on-surface-variant font-medium"
+                    >{{ tx('Tổng thanh toán', 'Total') }}</span
+                  >
+                  <span class="font-headline-md text-secondary">
+                    {% if amount_vnd and amount_vnd > 0 %} {{
+                    "{:,}".format(amount_vnd).replace(",", ".") }}đ {% else %}
+                    {{ tx('Liên hệ', 'Contact us') }} {% endif %}
+                  </span>
+                </div>
+              </div>
+            </article>
+
+            <article
+              class="bg-surface-container-lowest p-md rounded-2xl shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-surface-container-highest/40"
+            >
+              <div class="flex items-center gap-sm mb-6">
+                <span class="material-symbols-outlined text-primary">info</span>
+                <h2 class="font-headline-md text-headline-md text-on-surface">
+                  {{ tx('Hướng dẫn chuyển khoản', 'Transfer instructions') }}
+                </h2>
+              </div>
+              <ol class="space-y-4 mb-8">
+                <li class="flex gap-4">
+                  <span
+                    class="flex-shrink-0 w-6 h-6 rounded-full bg-primary text-on-primary text-[12px] flex items-center justify-center font-bold"
+                    >1</span
+                  >
+                  <p class="text-body-md text-on-surface-variant">
+                    {{ tx('Mở ứng dụng Ngân hàng trên điện thoại của bạn.',
+                    'Open your banking app on your phone.') }}
+                  </p>
+                </li>
+                <li class="flex gap-4">
+                  <span
+                    class="flex-shrink-0 w-6 h-6 rounded-full bg-primary text-on-primary text-[12px] flex items-center justify-center font-bold"
+                    >2</span
+                  >
+                  <p class="text-body-md text-on-surface-variant">
+                    {{ tx('Sử dụng tính năng', 'Use the') }}
+                    <strong class="text-on-surface"
+                      >{{ tx('Quét mã QR', 'Scan QR') }}</strong
+                    >
+                    {{ tx('để thanh toán nhanh nhất.', 'feature to pay
+                    quickly.') }}
+                  </p>
+                </li>
+                <li class="flex gap-4">
+                  <span
+                    class="flex-shrink-0 w-6 h-6 rounded-full bg-primary text-on-primary text-[12px] flex items-center justify-center font-bold"
+                    >3</span
+                  >
+                  <p class="text-body-md text-on-surface-variant">
+                    {{ tx('Kiểm tra thông tin số tiền và nội dung chuyển khoản
+                    trước khi xác nhận.', 'Verify amount and transfer note
+                    before confirming.') }}
+                  </p>
+                </li>
+              </ol>
+              <div
+                class="bg-surface-container-low p-md rounded-xl border border-outline-variant/40"
+              >
+                <p
+                  class="text-xs font-bold text-primary uppercase tracking-wider mb-4"
+                >
+                  {{ tx('Chi tiết tài khoản', 'Account details') }}
+                </p>
+                <div
+                  class="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-gutter"
+                >
+                  <div>
+                    <p class="text-[12px] text-on-surface-variant mb-1">
+                      {{ tx('Ngân hàng', 'Bank') }}
+                    </p>
+                    <p class="font-semibold text-on-surface">
+                      {{ config.get('VIETQR_BANK_NAME', 'Vietcombank') }}
+                    </p>
+                  </div>
+                  <div>
+                    <p class="text-[12px] text-on-surface-variant mb-1">
+                      {{ tx('Số tài khoản', 'Account number') }}
+                    </p>
+                    <p
+                      class="font-semibold text-on-surface flex items-center gap-2"
+                    >
+                      {{ config.get('VIETQR_ACCOUNT_NUMBER', tx('Chưa cấu hình',
+                      'Not configured')) }}
+                      <button
+                        class="material-symbols-outlined text-xs text-primary"
+                        type="button"
+                      >
+                        content_copy
+                      </button>
+                    </p>
+                  </div>
+                  <div>
+                    <p class="text-[12px] text-on-surface-variant mb-1">
+                      {{ tx('Chủ tài khoản', 'Account name') }}
+                    </p>
+                    <p class="font-semibold text-on-surface">
+                      {{ config.get('VIETQR_ACCOUNT_NAME', 'DOG AI APP') }}
+                    </p>
+                  </div>
+                  <div>
+                    <p class="text-[12px] text-on-surface-variant mb-1">
+                      {{ tx('Nội dung', 'Transfer note') }}
+                    </p>
+                    <p
+                      class="font-semibold text-secondary flex items-center gap-2"
+                    >
+                      DOGAI {{ (plan or 'pro')|upper }} {{ order_id }}
+                      <button
+                        class="material-symbols-outlined text-xs text-primary"
+                        type="button"
+                      >
+                        content_copy
+                      </button>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <div class="xl:col-span-5 flex flex-col gap-gutter">
+            <article
+              class="bg-surface-container-lowest p-md rounded-2xl shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-surface-container-highest/40 flex flex-col items-center"
+            >
+              <div class="w-full flex items-center gap-sm mb-6">
+                <span class="material-symbols-outlined text-primary"
+                  >qr_code_2</span
+                >
+                <h2 class="font-headline-md text-headline-md text-on-surface">
+                  {{ tx('Mã QR thanh toán', 'Payment QR code') }}
+                </h2>
+              </div>
+              {% if qr_available %}
+              <div
+                class="p-4 bg-white border-2 border-outline-variant/40 rounded-2xl shadow-inner mb-6 w-full max-w-[320px]"
+              >
+                <img
+                  alt="{{ tx('Mã QR thanh toán', 'Payment QR code') }}"
+                  class="w-full aspect-square object-contain"
+                  src="{{ url_for('predict.payment_qr_png') }}"
+                />
+              </div>
+              {% else %}
+              <div
+                class="w-full text-center text-on-surface-variant bg-surface-container-low border border-outline-variant/40 rounded-xl p-4 mb-6"
+              >
+                {{ tx('Thiếu thư viện tạo QR. Cài thêm', 'Missing QR generation
+                library. Install') }}
+                <code>qrcode</code>
+                {{ tx('để hiển thị QR.', 'to display QR.') }}
+              </div>
+              {% endif %}
+
+              <div class="flex items-center gap-2 text-on-surface-variant mb-8">
+                <span
+                  class="w-2 h-2 rounded-full bg-error animate-pulse"
+                ></span>
+                <span class="text-[12px] font-medium italic">
+                  {{ tx('Đang chờ xác nhận từ ngân hàng...', 'Waiting for bank
+                  confirmation...') }}
+                </span>
+              </div>
+
+              <div class="w-full">
+                {% if config.get('ALLOW_MANUAL_TRANSFER_CONFIRM', True) %}
+                <form
+                  method="post"
+                  action="{{ url_for('predict.confirm_transfer') }}"
+                  id="confirmTransferForm"
+                >
+                  <input type="hidden" name="order_id" value="{{ order_id }}" />
+                  <button
+                    type="submit"
+                    class="w-full py-4 bg-primary text-on-primary rounded-xl font-semibold flex items-center justify-center gap-2 hover:opacity-90 transition-all active:scale-[0.98] shadow-lg shadow-primary/20"
+                    id="confirmTransferBtn"
+                  >
+                    <span class="material-symbols-outlined">check_circle</span>
+                    {{ tx('Tôi đã chuyển tiền', 'I have transferred') }}
+                  </button>
+                </form>
+                {% else %}
+                <div
+                  class="w-full text-center text-on-surface-variant bg-surface-container-low border border-outline-variant/40 rounded-xl p-4"
+                >
+                  {{ tx('Hệ thống đang dùng webhook tự xác nhận, bạn không cần
+                  xác nhận thủ công.', 'Auto-confirm webhook is enabled. No
+                  manual confirmation is needed.') }}
+                </div>
+                {% endif %}
+              </div>
+
+              <p class="mt-6 text-[12px] text-center text-on-surface-variant">
+                {{ tx('Hệ thống sẽ tự động kích hoạt sau 1-5 phút khi nhận được
+                tiền.', 'Your plan will be activated within 1-5 minutes after
+                payment is received.') }}
+                <br />
+                {{ tx('Nếu quá lâu, vui lòng', 'If it takes too long, please')
+                }}
+                <a class="text-primary font-semibold underline" href="#"
+                  >{{ tx('Gửi hỗ trợ', 'Contact support') }}</a
+                >.
+              </p>
+            </article>
+
+            <div
+              class="bg-surface-container-low p-4 rounded-xl flex items-center gap-4"
+            >
+              <span class="material-symbols-outlined text-secondary text-3xl"
+                >verified_user</span
+              >
+              <div>
+                <p class="text-xs font-bold text-on-surface">
+                  {{ tx('Giao dịch an toàn', 'Secure transaction') }}
+                </p>
+                <p class="text-[11px] text-on-surface-variant">
+                  {{ tx('Thông tin thanh toán của bạn được mã hóa và xử lý tự
+                  động bởi hệ thống AI.', 'Your payment data is encrypted and
+                  processed automatically by the AI system.') }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <script>
+      (function () {
+        const form = document.getElementById("confirmTransferForm");
+        const btn = document.getElementById("confirmTransferBtn");
+        if (!form || !btn) return;
+
+        form.addEventListener("submit", function () {
+          btn.disabled = true;
+          btn.innerHTML = `<span class="inline-flex h-4 w-4 border-2 border-white/50 border-t-white rounded-full animate-spin"></span>{{ tx('Đang gửi xác nhận...', 'Sending confirmation...') }}`;
+        });
+      })();
+    </script>
+  </body>
+</html>

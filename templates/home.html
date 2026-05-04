@@ -1,0 +1,1153 @@
+<!doctype html>
+
+<html
+  class="{{ 'dark' if ui_theme == 'dark' else 'light' }}"
+  lang="vi"
+  data-theme="{{ ui_theme or 'light' }}"
+>
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <script>
+      (function () {
+        const root = document.documentElement;
+        const storedTheme = (function () {
+          try {
+            return localStorage.getItem("theme");
+          } catch (e) {
+            return null;
+          }
+        })();
+        const preferredTheme = storedTheme || "{{ ui_theme or 'light' }}";
+
+        function resolveTheme(theme) {
+          if (theme !== "auto") return theme;
+          try {
+            return window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+          } catch (e) {
+            return "light";
+          }
+        }
+
+        function applyTheme(theme) {
+          const resolved = resolveTheme(theme);
+          root.classList.toggle("dark", resolved === "dark");
+          root.classList.toggle("light", resolved !== "dark");
+          root.setAttribute("data-theme", resolved);
+        }
+
+        applyTheme(preferredTheme);
+
+        if (preferredTheme === "auto") {
+          try {
+            const mql = window.matchMedia("(prefers-color-scheme: dark)");
+            const handler = function () {
+              applyTheme("auto");
+            };
+            if (mql.addEventListener) {
+              mql.addEventListener("change", handler);
+            } else if (mql.addListener) {
+              mql.addListener(handler);
+            }
+          } catch (e) {}
+        }
+      })();
+    </script>
+    <title>PetAI Recognition - AI thông minh cho thú cưng của bạn</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/theme-dark.css') }}"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Sora:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-primary": "#ffffff",
+              "outline-variant": "#c3c6d7",
+              "secondary-fixed-dim": "#ffb95f",
+              "surface-container-highest": "#d3e4fe",
+              "on-tertiary-fixed": "#360f00",
+              "secondary-fixed": "#ffddb8",
+              "surface-container-high": "#dce9ff",
+              "on-background": "#0b1c30",
+              "on-tertiary-container": "#ffede6",
+              "on-error": "#ffffff",
+              "error-container": "#ffdad6",
+              "on-tertiary-fixed-variant": "#7d2d00",
+              "surface-container": "#e5eeff",
+              "on-secondary-container": "#684000",
+              "on-primary-fixed-variant": "#003ea8",
+              "primary-fixed-dim": "#b4c5ff",
+              "on-tertiary": "#ffffff",
+              "secondary-container": "#fea619",
+              "tertiary-fixed-dim": "#ffb596",
+              "surface-dim": "#cbdbf5",
+              error: "#ba1a1a",
+              "on-error-container": "#93000a",
+              "inverse-on-surface": "#eaf1ff",
+              surface: "#f8f9ff",
+              tertiary: "#943700",
+              "surface-bright": "#f8f9ff",
+              "surface-container-low": "#eff4ff",
+              "on-secondary-fixed-variant": "#653e00",
+              primary: "#004ac6",
+              "surface-container-lowest": "#ffffff",
+              "on-primary-fixed": "#00174b",
+              "on-surface-variant": "#434655",
+              "inverse-surface": "#213145",
+              "on-primary-container": "#eeefff",
+              "surface-variant": "#d3e4fe",
+              "on-secondary-fixed": "#2a1700",
+              "tertiary-fixed": "#ffdbcd",
+              secondary: "#855300",
+              "on-surface": "#0b1c30",
+              "primary-fixed": "#dbe1ff",
+              "tertiary-container": "#bc4800",
+              outline: "#737686",
+              "surface-tint": "#0053db",
+              background: "#f8f9ff",
+              "inverse-primary": "#b4c5ff",
+              "on-secondary": "#ffffff",
+              "primary-container": "#2563eb",
+            },
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px",
+            },
+            spacing: {
+              lg: "48px",
+              gutter: "24px",
+              md: "24px",
+              base: "8px",
+              xl: "80px",
+              xs: "4px",
+              sm: "12px",
+              margin: "32px",
+            },
+            fontFamily: {
+              "body-lg": ["Manrope"],
+              "display-xl": ["Sora"],
+              "body-md": ["Manrope"],
+              "headline-lg": ["Sora"],
+              "headline-md": ["Sora"],
+              "label-sm": ["Manrope"],
+            },
+            fontSize: {
+              "body-lg": ["18px", { lineHeight: "28px", fontWeight: "400" }],
+              "display-xl": [
+                "60px",
+                {
+                  lineHeight: "72px",
+                  letterSpacing: "-0.02em",
+                  fontWeight: "700",
+                },
+              ],
+              "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+              "headline-lg": [
+                "36px",
+                {
+                  lineHeight: "44px",
+                  letterSpacing: "-0.01em",
+                  fontWeight: "600",
+                },
+              ],
+              "headline-md": [
+                "24px",
+                { lineHeight: "32px", fontWeight: "600" },
+              ],
+              "label-sm": ["14px", { lineHeight: "20px", fontWeight: "500" }],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      .material-symbols-outlined {
+        font-variation-settings:
+          "FILL" 0,
+          "wght" 400,
+          "GRAD" 0,
+          "opsz" 24;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-background text-on-background antialiased min-h-screen flex flex-col pt-16"
+  >
+    <!-- TopAppBar -->
+    <header
+      class="fixed top-0 w-full z-50 border-b border-slate-200 shadow-sm bg-white/90 backdrop-blur-md transition-all duration-200"
+    >
+      <div
+        class="flex justify-between items-center max-w-7xl mx-auto px-6 h-16"
+      >
+        <div class="flex items-center gap-8">
+          <a
+            class="text-xl font-bold tracking-tight text-blue-600 active:scale-95 transition-transform hover:opacity-80"
+            href="{{ url_for('home.index') }}"
+          >
+            PetAI
+          </a>
+          <nav class="hidden md:flex gap-6">
+            <a
+              class="font-['Manrope'] text-sm font-medium tracking-tight text-blue-600 border-b-2 border-blue-600 pb-1 hover:opacity-80 transition-all duration-200"
+              href="#product"
+              >Sản phẩm</a
+            >
+            <a
+              class="font-['Manrope'] text-sm font-medium tracking-tight text-slate-600 hover:text-blue-600 hover:opacity-80 transition-all duration-200"
+              href="#features"
+              >Tính năng</a
+            >
+            <a
+              class="font-['Manrope'] text-sm font-medium tracking-tight text-slate-600 hover:text-blue-600 hover:opacity-80 transition-all duration-200"
+              href="#pricing"
+              >Bảng giá</a
+            >
+            <a
+              class="font-['Manrope'] text-sm font-medium tracking-tight text-slate-600 hover:text-blue-600 hover:opacity-80 transition-all duration-200"
+              href="#about"
+              >Giới thiệu</a
+            >
+          </nav>
+        </div>
+        <div class="flex items-center gap-4">
+          <a
+            class="font-['Manrope'] text-sm font-medium tracking-tight text-slate-600 hover:text-blue-600 hover:opacity-80 transition-all duration-200"
+            href="{{ url_for('login.login') }}"
+            >Đăng nhập</a
+          >
+          <a
+            class="font-['Manrope'] text-sm font-medium tracking-tight bg-primary text-on-primary px-4 py-2 rounded-lg hover:opacity-80 transition-all duration-200 active:scale-95"
+            href="{{ url_for('register.register') }}"
+            >Đăng ký</a
+          >
+        </div>
+      </div>
+    </header>
+    <main class="flex-grow">
+      <!-- Hero Section -->
+      <section
+        class="max-w-7xl mx-auto px-6 py-24 md:py-32 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center"
+        id="product"
+      >
+        <div class="space-y-8">
+          <h1
+            class="font-display-xl text-5xl lg:text-7xl font-extrabold text-slate-900 leading-tight tracking-tight"
+          >
+            AI thông minh cho
+            <span
+              class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600"
+              >thú cưng của bạn</span
+            >
+          </h1>
+          <p
+            class="font-body-lg text-lg md:text-xl text-slate-600 max-w-lg leading-relaxed"
+          >
+            Khám phá nguồn gốc thú cưng với PetAI tiên tiến. Nhận diện giống chó
+            tức thì chỉ từ một bức ảnh. Tăng sự gắn kết nhờ trợ lý thông minh.
+          </p>
+          <div class="flex flex-wrap gap-4 pt-4">
+            <a
+              class="bg-primary hover:bg-blue-700 text-white font-medium text-base px-8 py-4 rounded-xl shadow-lg shadow-blue-600/20 transition-all transform hover:-translate-y-1"
+              href="{{ url_for('predict.upload_page') }}"
+            >
+              Dùng thử (Miễn phí)
+            </a>
+            <a
+              class="bg-amber-500 hover:bg-amber-600 text-white font-medium text-base px-8 py-4 rounded-xl shadow-lg shadow-amber-500/20 transition-all transform hover:-translate-y-1"
+              href="#pricing"
+            >
+              Xem bảng giá
+            </a>
+          </div>
+        </div>
+        <div class="relative">
+          <div
+            class="rounded-3xl overflow-hidden shadow-2xl relative aspect-[4/3] transform transition-transform hover:scale-[1.02] duration-500"
+          >
+            <img
+              alt="Chó beagle đáng yêu nhìn thẳng ống kính với khung nhận diện AI"
+              class="w-full h-full object-cover"
+              data-alt="Cận cảnh chó beagle với khung quét AI màu xanh neon, ánh sáng hiện đại, phong cách công nghệ"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuBlTRASBxJ_3GQ37zC3uQw1jEwC6spuquwHouUHWc6vAU5Cv9B9GqzaGw_vjkpH-xvrFneOY53OgDfValB8lNi7EP-Quo3WA5pw5wa2eJXyXdk-C9R_PlLofQL9z6eY1Z1fpzML35-boDUe6UxdwwmmfqQNoeW28L12stR4lAZqjF0HDHSCoQlleAMUaXHkuqbeAckqJTI81s9sFzX-WKwoA9bfpCHi1W4p0Kc7n7PZPH_A-gwAw8MJs1wjjK8AGbN4pvF8MaePd7k"
+            />
+            <!-- AI Scanning Overlay Simulation -->
+            <div
+              class="absolute inset-0 border-[3px] border-amber-400/80 m-8 md:m-12 rounded-xl pointer-events-none relative shadow-[0_0_30px_rgba(251,191,36,0.4)] transition-all duration-1000 ease-in-out"
+            >
+              <div
+                class="absolute top-0 left-0 bg-amber-400 text-amber-900 font-bold text-sm px-4 py-1.5 rounded-br-xl rounded-tl-lg shadow-md backdrop-blur-sm bg-opacity-90"
+              >
+                Beagle 98%
+              </div>
+            </div>
+          </div>
+          <!-- Decorative elements -->
+          <div
+            class="absolute -z-10 top-1/2 -translate-y-1/2 -right-12 w-64 h-64 bg-blue-400 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"
+          ></div>
+          <div
+            class="absolute -z-10 top-1/2 -translate-y-1/2 -left-12 w-64 h-64 bg-amber-400 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"
+          ></div>
+        </div>
+      </section>
+      <!-- How It Works Section -->
+      <section
+        class="bg-white py-24 md:py-32 border-t border-slate-100"
+        id="how-it-works"
+      >
+        <div class="max-w-7xl mx-auto px-6">
+          <div class="text-center mb-20">
+            <h2
+              class="font-headline-lg text-4xl md:text-5xl font-bold text-slate-900 mb-6"
+            >
+              Cách hoạt động
+            </h2>
+            <p class="font-body-lg text-xl text-slate-600 max-w-2xl mx-auto">
+              Nhận diện giống thú cưng qua 3 bước đơn giản.
+            </p>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 relative">
+            <!-- Connecting lines for desktop -->
+            <div
+              class="hidden md:block absolute top-12 left-1/6 right-1/6 h-0.5 bg-gradient-to-r from-blue-100 via-blue-200 to-blue-100 w-2/3 mx-auto z-0"
+            ></div>
+            <div
+              class="relative z-10 bg-slate-50 rounded-3xl p-8 border border-slate-100 shadow-sm hover:shadow-lg transition-all duration-300 transform hover:-translate-y-2 text-center"
+            >
+              <div
+                class="w-24 h-24 mx-auto rounded-2xl bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-3xl shadow-inner border border-blue-200/50 mb-8 transform -translate-y-12"
+              >
+                1
+              </div>
+              <h3 class="font-bold text-2xl text-slate-900 mb-4 -mt-8">
+                Tải ảnh lên
+              </h3>
+              <p class="text-slate-600 text-lg leading-relaxed">
+                Chụp ảnh rõ nét thú cưng hoặc tải ảnh từ thư viện của bạn.
+              </p>
+            </div>
+            <div
+              class="relative z-10 bg-slate-50 rounded-3xl p-8 border border-slate-100 shadow-sm hover:shadow-lg transition-all duration-300 transform hover:-translate-y-2 text-center"
+            >
+              <div
+                class="w-24 h-24 mx-auto rounded-2xl bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-3xl shadow-inner border border-blue-200/50 mb-8 transform -translate-y-12"
+              >
+                2
+              </div>
+              <h3 class="font-bold text-2xl text-slate-900 mb-4 -mt-8">
+                AI phân tích
+              </h3>
+              <p class="text-slate-600 text-lg leading-relaxed">
+                Mô hình YOLOv8 quét ảnh để phát hiện đặc trưng giống loài.
+              </p>
+            </div>
+            <div
+              class="relative z-10 bg-slate-50 rounded-3xl p-8 border border-slate-100 shadow-sm hover:shadow-lg transition-all duration-300 transform hover:-translate-y-2 text-center"
+            >
+              <div
+                class="w-24 h-24 mx-auto rounded-2xl bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-3xl shadow-inner border border-blue-200/50 mb-8 transform -translate-y-12"
+              >
+                3
+              </div>
+              <h3 class="font-bold text-2xl text-slate-900 mb-4 -mt-8">
+                Nhận kết quả
+              </h3>
+              <p class="text-slate-600 text-lg leading-relaxed">
+                Nhận tên giống, độ chính xác và các đặc điểm nổi bật ngay lập
+                tức.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- Giới thiệu PetAI Section -->
+      <section
+        class="bg-surface-container-low py-24 md:py-32 border-t border-slate-100"
+        id="about"
+      >
+        <div class="max-w-7xl mx-auto px-6">
+          <div class="text-center mb-16">
+            <h2
+              class="font-headline-lg text-4xl md:text-5xl font-bold text-slate-900 mb-6"
+            >
+              Giới thiệu PetAI
+            </h2>
+            <p
+              class="font-body-lg text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed"
+            >
+              PetAI là nền tảng nhận diện giống thú cưng ứng dụng YOLOv8 và các
+              mô hình học sâu để mang lại kết quả nhanh, rõ ràng và hữu ích cho
+              người nuôi thú cưng. Chúng tôi tập trung vào minh bạch kết quả,
+              trải nghiệm thân thiện và khả năng mở rộng cho cộng đồng.
+            </p>
+          </div>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="space-y-8">
+              <!-- Sứ mệnh -->
+              <div
+                class="bg-white rounded-2xl p-8 shadow-sm border border-slate-100 hover:shadow-md transition-shadow"
+              >
+                <h3 class="font-bold text-2xl text-slate-900 mb-4">Sứ mệnh</h3>
+                <p class="text-slate-600 text-lg leading-relaxed">
+                  Giúp mọi người hiểu rõ thú cưng của mình thông qua dữ liệu,
+                  hình ảnh và gợi ý chăm sóc dễ áp dụng.
+                </p>
+              </div>
+              <!-- Tầm nhìn -->
+              <div
+                class="bg-white rounded-2xl p-8 shadow-sm border border-slate-100 hover:shadow-md transition-shadow"
+              >
+                <h3 class="font-bold text-2xl text-slate-900 mb-4">Tầm nhìn</h3>
+                <p class="text-slate-600 text-lg leading-relaxed">
+                  Xây dựng hệ sinh thái dữ liệu thú cưng đáng tin cậy cho cộng
+                  đồng, từ nhận diện, chăm sóc đến theo dõi hành vi dài hạn.
+                </p>
+              </div>
+            </div>
+            <!-- Giá trị cốt lõi -->
+            <div
+              class="bg-white rounded-2xl p-8 shadow-sm border border-slate-100 hover:shadow-md transition-shadow h-full"
+            >
+              <h3 class="font-bold text-2xl text-slate-900 mb-8">
+                Giá trị cốt lõi
+              </h3>
+              <div class="space-y-8">
+                <div class="flex items-start gap-4">
+                  <span
+                    class="material-symbols-outlined text-blue-600 text-2xl mt-1"
+                    data-icon="verified"
+                    >verified</span
+                  >
+                  <div>
+                    <h4 class="font-bold text-lg text-slate-900 mb-1">
+                      Minh bạch
+                    </h4>
+                    <p class="text-slate-600 text-base leading-relaxed">
+                      Kết quả luôn có ngữ cảnh và giải thích rõ ràng.
+                    </p>
+                  </div>
+                </div>
+                <div class="flex items-start gap-4">
+                  <span
+                    class="material-symbols-outlined text-blue-600 text-2xl mt-1"
+                    data-icon="bolt"
+                    >bolt</span
+                  >
+                  <div>
+                    <h4 class="font-bold text-lg text-slate-900 mb-1">
+                      Nhanh &amp; ổn định
+                    </h4>
+                    <p class="text-slate-600 text-base leading-relaxed">
+                      Xử lý ảnh tối ưu để trả kết quả chỉ trong vài giây.
+                    </p>
+                  </div>
+                </div>
+                <div class="flex items-start gap-4">
+                  <span
+                    class="material-symbols-outlined text-blue-600 text-2xl mt-1"
+                    data-icon="favorite"
+                    >favorite</span
+                  >
+                  <div>
+                    <h4 class="font-bold text-lg text-slate-900 mb-1">
+                      Thân thiện
+                    </h4>
+                    <p class="text-slate-600 text-base leading-relaxed">
+                      Giao diện dễ dùng, phù hợp với mọi đối tượng.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- Features Section -->
+      <section
+        class="py-24 md:py-32 bg-slate-50 border-t border-slate-100"
+        id="features"
+      >
+        <div class="max-w-7xl mx-auto px-6">
+          <div class="text-center mb-20">
+            <h2
+              class="font-headline-lg text-4xl md:text-5xl font-bold text-slate-900 mb-6"
+            >
+              Tính năng nổi bật
+            </h2>
+            <p class="font-body-lg text-xl text-slate-600 max-w-2xl mx-auto">
+              Ứng dụng công nghệ hiện đại để cho kết quả chính xác và trải
+              nghiệm mượt mà.
+            </p>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Feature 1 -->
+            <div
+              class="bg-white rounded-3xl p-10 shadow-sm border border-slate-100 transition-all duration-300 hover:shadow-xl hover:border-blue-200 group"
+            >
+              <div
+                class="w-16 h-16 rounded-2xl bg-blue-50 flex items-center justify-center mb-8 text-blue-600 group-hover:scale-110 group-hover:bg-blue-100 transition-transform duration-300"
+              >
+                <span
+                  class="material-symbols-outlined text-3xl"
+                  data-icon="pets"
+                  data-weight="fill"
+                  style="font-variation-settings: &quot;FILL&quot; 1"
+                  >pets</span
+                >
+              </div>
+              <h3 class="font-bold text-2xl text-slate-900 mb-4">
+                Nhận diện AI
+              </h3>
+              <p class="text-slate-600 text-lg leading-relaxed">
+                Ứng dụng YOLOv8 để nhận diện giống chó và mèo siêu nhanh, độ
+                chính xác cao từ mọi bức ảnh.
+              </p>
+            </div>
+            <!-- Feature 2 -->
+            <div
+              class="bg-white rounded-3xl p-10 shadow-sm border border-slate-100 transition-all duration-300 hover:shadow-xl hover:border-amber-200 group"
+            >
+              <div
+                class="w-16 h-16 rounded-2xl bg-amber-50 flex items-center justify-center mb-8 text-amber-600 group-hover:scale-110 group-hover:bg-amber-100 transition-transform duration-300"
+              >
+                <span
+                  class="material-symbols-outlined text-3xl"
+                  data-icon="dashboard"
+                  data-weight="fill"
+                  style="font-variation-settings: &quot;FILL&quot; 1"
+                  >dashboard</span
+                >
+              </div>
+              <h3 class="font-bold text-2xl text-slate-900 mb-4">
+                Bảng điều khiển cá nhân
+              </h3>
+              <p class="text-slate-600 text-lg leading-relaxed">
+                Theo dõi lịch sử quét, xem thống kê chi tiết và quản lý dữ liệu
+                thú cưng tại một nơi.
+              </p>
+            </div>
+            <!-- Feature 3 -->
+            <div
+              class="bg-white rounded-3xl p-10 shadow-sm border border-slate-100 transition-all duration-300 hover:shadow-xl hover:border-indigo-200 group"
+            >
+              <div
+                class="w-16 h-16 rounded-2xl bg-indigo-50 flex items-center justify-center mb-8 text-indigo-600 group-hover:scale-110 group-hover:bg-indigo-100 transition-transform duration-300"
+              >
+                <span
+                  class="material-symbols-outlined text-3xl"
+                  data-icon="payments"
+                  data-weight="fill"
+                  style="font-variation-settings: &quot;FILL&quot; 1"
+                  >payments</span
+                >
+              </div>
+              <h3 class="font-bold text-2xl text-slate-900 mb-4">
+                Thanh toán dễ dàng
+              </h3>
+              <p class="text-slate-600 text-lg leading-relaxed">
+                Nâng cấp gói dễ dàng với VietQR &amp; SePay, giao dịch nhanh
+                chóng và an toàn.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- Testimonials Section -->
+      <section
+        class="bg-white py-24 md:py-32 border-t border-slate-100"
+        id="testimonials"
+      >
+        <div class="max-w-7xl mx-auto px-6">
+          <div class="text-center mb-20">
+            <h2
+              class="font-headline-lg text-4xl md:text-5xl font-bold text-slate-900 mb-6"
+            >
+              Người dùng nói gì
+            </h2>
+            <p class="font-body-lg text-xl text-slate-600 max-w-2xl mx-auto">
+              Hàng ngàn người nuôi thú cưng đã khám phá thêm về bạn nhỏ của
+              mình.
+            </p>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div
+              class="bg-slate-50 rounded-3xl p-10 shadow-sm border border-slate-100 hover:shadow-md transition-shadow"
+            >
+              <div class="flex items-center gap-5 mb-8">
+                <div
+                  class="w-14 h-14 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold text-lg shadow-inner"
+                >
+                  SJ
+                </div>
+                <div>
+                  <h4 class="font-bold text-lg text-slate-900">
+                    Sarah Jenkins
+                  </h4>
+                  <p class="text-base text-slate-500">Chủ nuôi chó</p>
+                </div>
+              </div>
+              <p class="text-slate-700 text-lg italic leading-relaxed">
+                "Cuối cùng tôi cũng biết giống của bé cún cứu hộ! AI cực nhanh
+                và các gợi ý giúp tôi hiểu mức năng lượng của bé tốt hơn."
+              </p>
+            </div>
+            <div
+              class="bg-slate-50 rounded-3xl p-10 shadow-sm border border-slate-100 hover:shadow-md transition-shadow"
+            >
+              <div class="flex items-center gap-5 mb-8">
+                <div
+                  class="w-14 h-14 rounded-full bg-amber-100 flex items-center justify-center text-amber-700 font-bold text-lg shadow-inner"
+                >
+                  MR
+                </div>
+                <div>
+                  <h4 class="font-bold text-lg text-slate-900">Michael Ross</h4>
+                  <p class="text-base text-slate-500">Người yêu mèo</p>
+                </div>
+              </div>
+              <p class="text-slate-700 text-lg italic leading-relaxed">
+                "Độ chính xác thật khó tin. AI nhận diện đúng giống mèo hiếm của
+                tôi chỉ trong vài giây. Dashboard giúp theo dõi lịch sử rất
+                tiện."
+              </p>
+            </div>
+            <div
+              class="bg-slate-50 rounded-3xl p-10 shadow-sm border border-slate-100 hover:shadow-md transition-shadow"
+            >
+              <div class="flex items-center gap-5 mb-8">
+                <div
+                  class="w-14 h-14 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold text-lg shadow-inner"
+                >
+                  EC
+                </div>
+                <div>
+                  <h4 class="font-bold text-lg text-slate-900">Emily Chen</h4>
+                  <p class="text-base text-slate-500">Người nuôi tạm</p>
+                </div>
+              </div>
+              <p class="text-slate-700 text-lg italic leading-relaxed">
+                "Là người nuôi tạm, công cụ này vô cùng hữu ích. Biết các giống
+                khả dĩ giúp cún được nhận nuôi nhanh hơn. Rất đáng thử!"
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- Pricing Section -->
+      <section
+        class="py-24 md:py-32 bg-slate-50 border-t border-slate-100"
+        id="pricing"
+      >
+        <div class="max-w-7xl mx-auto px-6">
+          <div class="text-center mb-20">
+            <h2
+              class="font-headline-lg text-4xl md:text-5xl font-bold text-slate-900 mb-6"
+            >
+              Bảng giá đơn giản, minh bạch
+            </h2>
+            <p class="font-body-lg text-xl text-slate-600 max-w-2xl mx-auto">
+              Chọn gói phù hợp nhu cầu. Nâng cấp bất cứ lúc nào với VietQR tích
+              hợp mượt mà.
+            </p>
+          </div>
+          <div
+            class="grid grid-cols-1 lg:grid-cols-4 gap-8 items-center max-w-6xl mx-auto"
+          >
+            <!-- Free Plan -->
+            <div
+              class="bg-white rounded-3xl p-8 shadow-sm border border-slate-200 flex flex-col h-full hover:shadow-md transition-shadow"
+            >
+              <h3 class="font-semibold text-2xl text-slate-900 mb-2">
+                Miễn phí
+              </h3>
+              <div class="flex items-baseline gap-1 mb-8">
+                <span class="text-5xl font-extrabold text-slate-900">0</span>
+                <span class="text-lg text-slate-500 font-medium">VND</span>
+              </div>
+              <ul class="space-y-5 mb-8 flex-grow">
+                <li class="flex items-start gap-4 text-slate-700 text-lg">
+                  <span
+                    class="material-symbols-outlined text-slate-400 text-2xl"
+                    data-icon="check_circle"
+                    >check_circle</span
+                  >
+                  Tổng 10 lượt sử dụng
+                </li>
+                <li class="flex items-start gap-4 text-slate-700 text-lg">
+                  <span
+                    class="material-symbols-outlined text-slate-400 text-2xl"
+                    data-icon="check_circle"
+                    >check_circle</span
+                  >
+                  Có quảng cáo
+                </li>
+                <li class="flex items-start gap-4 text-slate-700 text-lg">
+                  <span
+                    class="material-symbols-outlined text-slate-400 text-2xl"
+                    data-icon="check_circle"
+                    >check_circle</span
+                  >
+                  Nhận diện AI cơ bản
+                </li>
+              </ul>
+              <button
+                class="w-full border-2 border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-slate-300 font-semibold py-3.5 rounded-xl transition-colors text-lg"
+              >
+                Gói hiện tại
+              </button>
+            </div>
+            <!-- Basic Plan -->
+            <div
+              class="bg-white rounded-3xl p-8 shadow-sm border border-slate-200 flex flex-col h-full hover:shadow-md transition-shadow"
+            >
+              <h3 class="font-semibold text-2xl text-slate-900 mb-2">Cơ bản</h3>
+              <div class="flex items-baseline gap-1 mb-8">
+                <span class="text-5xl font-extrabold text-slate-900">1k</span>
+                <span class="text-lg text-slate-500 font-medium">/ 7 ngày</span>
+              </div>
+              <ul class="space-y-5 mb-8 flex-grow">
+                <li class="flex items-start gap-4 text-slate-700 text-lg">
+                  <span
+                    class="material-symbols-outlined text-blue-500 text-2xl"
+                    data-icon="check_circle"
+                    >check_circle</span
+                  >
+                  Quét không giới hạn
+                </li>
+                <li class="flex items-start gap-4 text-slate-700 text-lg">
+                  <span
+                    class="material-symbols-outlined text-blue-500 text-2xl"
+                    data-icon="check_circle"
+                    >check_circle</span
+                  >
+                  Không quảng cáo
+                </li>
+                <li class="flex items-start gap-4 text-slate-700 text-lg">
+                  <span
+                    class="material-symbols-outlined text-blue-500 text-2xl"
+                    data-icon="check_circle"
+                    >check_circle</span
+                  >
+                  Hỗ trợ tiêu chuẩn
+                </li>
+              </ul>
+              <button
+                class="w-full border-2 border-blue-600 text-blue-600 hover:bg-blue-50 font-semibold py-3.5 rounded-xl transition-colors text-lg"
+              >
+                Chọn gói
+              </button>
+            </div>
+            <!-- Pro Plan -->
+            <div
+              class="bg-gradient-to-b from-blue-600 to-indigo-700 rounded-3xl p-8 shadow-2xl relative flex flex-col h-full transform lg:-translate-y-8 lg:scale-105 border border-blue-500"
+            >
+              <div
+                class="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-amber-400 to-amber-500 text-amber-950 font-bold text-sm px-6 py-1.5 rounded-full whitespace-nowrap shadow-lg"
+              >
+                Phổ biến nhất
+              </div>
+              <h3 class="font-semibold text-2xl text-white mb-2 pt-2">Pro</h3>
+              <div class="flex items-baseline gap-1 mb-8">
+                <span class="text-5xl font-extrabold text-white">5k</span>
+                <span class="text-lg text-blue-200 font-medium">/ 30 ngày</span>
+              </div>
+              <ul class="space-y-5 mb-8 flex-grow">
+                <li class="flex items-start gap-4 text-blue-50 text-lg">
+                  <span
+                    class="material-symbols-outlined text-amber-400 text-2xl"
+                    data-icon="check_circle"
+                    data-weight="fill"
+                    style="font-variation-settings: &quot;FILL&quot; 1"
+                    >check_circle</span
+                  >
+                  Bao gồm mọi thứ của Cơ bản
+                </li>
+                <li class="flex items-start gap-4 text-blue-50 text-lg">
+                  <span
+                    class="material-symbols-outlined text-amber-400 text-2xl"
+                    data-icon="check_circle"
+                    data-weight="fill"
+                    style="font-variation-settings: &quot;FILL&quot; 1"
+                    >check_circle</span
+                  >
+                  Thống kê nâng cao
+                </li>
+                <li class="flex items-start gap-4 text-blue-50 text-lg">
+                  <span
+                    class="material-symbols-outlined text-amber-400 text-2xl"
+                    data-icon="check_circle"
+                    data-weight="fill"
+                    style="font-variation-settings: &quot;FILL&quot; 1"
+                    >check_circle</span
+                  >
+                  Xử lý ưu tiên
+                </li>
+              </ul>
+              <button
+                class="w-full bg-white text-blue-600 hover:bg-blue-50 font-bold py-3.5 rounded-xl shadow-lg transition-colors text-lg"
+              >
+                Chọn Pro
+              </button>
+            </div>
+            <!-- Enterprise Plan -->
+            <div
+              class="bg-white rounded-3xl p-8 shadow-sm border border-slate-200 flex flex-col h-full hover:shadow-md transition-shadow"
+            >
+              <h3 class="font-semibold text-2xl text-slate-900 mb-2">
+                Doanh nghiệp
+              </h3>
+              <div class="flex items-baseline gap-1 mb-8">
+                <span class="text-5xl font-extrabold text-slate-900">15k</span>
+                <span class="text-lg text-slate-500 font-medium"
+                  >/ 90 ngày</span
+                >
+              </div>
+              <ul class="space-y-5 mb-8 flex-grow">
+                <li class="flex items-start gap-4 text-slate-700 text-lg">
+                  <span
+                    class="material-symbols-outlined text-indigo-500 text-2xl"
+                    data-icon="check_circle"
+                    data-weight="fill"
+                    style="font-variation-settings: &quot;FILL&quot; 1"
+                    >check_circle</span
+                  >
+                  Không giới hạn mọi thứ
+                </li>
+                <li class="flex items-start gap-4 text-slate-700 text-lg">
+                  <span
+                    class="material-symbols-outlined text-indigo-500 text-2xl"
+                    data-icon="check_circle"
+                    data-weight="fill"
+                    style="font-variation-settings: &quot;FILL&quot; 1"
+                    >check_circle</span
+                  >
+                  Truy cập API
+                </li>
+                <li class="flex items-start gap-4 text-slate-700 text-lg">
+                  <span
+                    class="material-symbols-outlined text-indigo-500 text-2xl"
+                    data-icon="check_circle"
+                    data-weight="fill"
+                    style="font-variation-settings: &quot;FILL&quot; 1"
+                    >check_circle</span
+                  >
+                  Hỗ trợ 24/7
+                </li>
+              </ul>
+              <button
+                class="w-full border-2 border-slate-800 text-slate-800 hover:bg-slate-50 font-semibold py-3.5 rounded-xl transition-colors text-lg"
+              >
+                Liên hệ tư vấn
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- FAQ Section -->
+      <section
+        class="bg-white py-24 md:py-32 border-t border-slate-100"
+        id="faq"
+      >
+        <div class="max-w-4xl mx-auto px-6">
+          <div class="text-center mb-20">
+            <h2
+              class="font-headline-lg text-4xl md:text-5xl font-bold text-slate-900 mb-6"
+            >
+              Câu hỏi thường gặp
+            </h2>
+            <p class="font-body-lg text-xl text-slate-600">
+              Giải đáp các thắc mắc phổ biến về AI và dịch vụ.
+            </p>
+          </div>
+          <div class="space-y-6">
+            <div
+              class="bg-slate-50 rounded-2xl p-8 shadow-sm border border-slate-100 hover:border-blue-200 hover:shadow-md transition-all duration-300"
+            >
+              <h3 class="font-bold text-xl text-slate-900 mb-4">
+                AI nhận diện chính xác đến đâu?
+              </h3>
+              <p class="text-slate-600 text-lg leading-relaxed">
+                Mô hình YOLOv8 đạt trên 95% với các giống phổ biến khi ảnh rõ
+                nét và đủ sáng.
+              </p>
+            </div>
+            <div
+              class="bg-slate-50 rounded-2xl p-8 shadow-sm border border-slate-100 hover:border-blue-200 hover:shadow-md transition-all duration-300"
+            >
+              <h3 class="font-bold text-xl text-slate-900 mb-4">
+                Có nhận diện giống lai không?
+              </h3>
+              <p class="text-slate-600 text-lg leading-relaxed">
+                Có. AI trả về tỷ lệ phần trăm các giống có khả năng xuất hiện
+                trong thú cưng lai của bạn.
+              </p>
+            </div>
+            <div
+              class="bg-slate-50 rounded-2xl p-8 shadow-sm border border-slate-100 hover:border-blue-200 hover:shadow-md transition-all duration-300"
+            >
+              <h3 class="font-bold text-xl text-slate-900 mb-4">
+                Hết lượt miễn phí thì sao?
+              </h3>
+              <p class="text-slate-600 text-lg leading-relaxed">
+                Khi dùng hết 10 lượt miễn phí, bạn có thể nâng cấp lên một trong
+                các gói trả phí để dùng không giới hạn và mở thêm tính năng.
+              </p>
+            </div>
+            <div
+              class="bg-slate-50 rounded-2xl p-8 shadow-sm border border-slate-100 hover:border-blue-200 hover:shadow-md transition-all duration-300"
+            >
+              <h3 class="font-bold text-xl text-slate-900 mb-4">
+                Thanh toán có an toàn không?
+              </h3>
+              <p class="text-slate-600 text-lg leading-relaxed">
+                Hoàn toàn an toàn. Chúng tôi tích hợp VietQR và SePay để bảo vệ
+                thông tin thanh toán của bạn.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- Technology Banner -->
+      <section class="border-y border-slate-200 bg-slate-50 py-16">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+          <p
+            class="font-semibold text-slate-500 mb-10 uppercase tracking-widest text-sm"
+          >
+            Được vận hành bởi các công nghệ hàng đầu
+          </p>
+          <div
+            class="flex flex-wrap justify-center items-center gap-12 md:gap-24 opacity-70 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500"
+          >
+            <div class="text-3xl font-extrabold text-slate-800">
+              Thị giác YOLOv8
+            </div>
+            <div class="text-3xl font-extrabold text-slate-800">
+              Backend Flask
+            </div>
+            <div class="text-3xl font-extrabold text-slate-800">
+              Tích hợp VietQR
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-16 w-full mt-auto">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-12 mb-16">
+          <!-- Research -->
+          <div>
+            <h4
+              class="font-bold text-slate-900 mb-6 text-base uppercase tracking-wider"
+            >
+              Công nghệ
+            </h4>
+            <ul class="space-y-4">
+              <li>
+                <a
+                  class="text-base text-slate-600 hover:text-blue-600 font-medium transition-colors"
+                  href="#"
+                  >Thị giác YOLOv8</a
+                >
+              </li>
+              <li>
+                <a
+                  class="text-base text-slate-600 hover:text-blue-600 font-medium transition-colors"
+                  href="#"
+                  >Học sâu</a
+                >
+              </li>
+              <li>
+                <a
+                  class="text-base text-slate-600 hover:text-blue-600 font-medium transition-colors"
+                  href="#"
+                  >Huấn luyện mô hình</a
+                >
+              </li>
+              <li>
+                <a
+                  class="text-base text-slate-600 hover:text-blue-600 font-medium transition-colors"
+                  href="#"
+                  >Bộ dữ liệu</a
+                >
+              </li>
+            </ul>
+          </div>
+          <!-- Product -->
+          <div>
+            <h4
+              class="font-bold text-slate-900 mb-6 text-base uppercase tracking-wider"
+            >
+              Tính năng
+            </h4>
+            <ul class="space-y-4">
+              <li>
+                <a
+                  class="text-base text-slate-600 hover:text-blue-600 font-medium transition-colors"
+                  href="#"
+                  >Nhận diện giống chó</a
+                >
+              </li>
+              <li>
+                <a
+                  class="text-base text-slate-600 hover:text-blue-600 font-medium transition-colors"
+                  href="#"
+                  >Phân tích hình thái</a
+                >
+              </li>
+              <li>
+                <a
+                  class="text-base text-slate-600 hover:text-blue-600 font-medium transition-colors"
+                  href="{{ url_for('history.history') }}"
+                  >Lịch sử dự đoán</a
+                >
+              </li>
+              <li>
+                <a
+                  class="text-base text-slate-600 hover:text-blue-600 font-medium transition-colors"
+                  href="{{ url_for('statistics.statistics') }}"
+                  >Thống kê cá nhân</a
+                >
+              </li>
+            </ul>
+          </div>
+          <!-- Legal & Safety -->
+          <div>
+            <h4
+              class="font-bold text-slate-900 mb-6 text-base uppercase tracking-wider"
+            >
+              Hỗ trợ
+            </h4>
+            <ul class="space-y-4">
+              <li>
+                <a
+                  class="text-base text-slate-600 hover:text-blue-600 font-medium transition-colors"
+                  href="#"
+                  >Trung tâm trợ giúp</a
+                >
+              </li>
+              <li>
+                <a
+                  class="text-base text-slate-600 hover:text-blue-600 font-medium transition-colors"
+                  href="#"
+                  >Hướng dẫn sử dụng</a
+                >
+              </li>
+              <li>
+                <a
+                  class="text-base text-slate-600 hover:text-blue-600 font-medium transition-colors"
+                  href="#"
+                  >Tài liệu API</a
+                >
+              </li>
+              <li>
+                <a
+                  class="text-base text-slate-600 hover:text-blue-600 font-medium transition-colors"
+                  href="#"
+                  >Liên hệ</a
+                >
+              </li>
+            </ul>
+          </div>
+          <!-- Join Us -->
+          <div>
+            <h4
+              class="font-bold text-slate-900 mb-6 text-base uppercase tracking-wider"
+            >
+              Pháp lý
+            </h4>
+            <ul class="space-y-4">
+              <li>
+                <a
+                  class="text-base text-slate-600 hover:text-blue-600 font-medium transition-colors"
+                  href="#"
+                  >Điều khoản dịch vụ</a
+                >
+              </li>
+              <li>
+                <a
+                  class="text-base text-slate-600 hover:text-blue-600 font-medium transition-colors"
+                  href="#"
+                  >Chính sách bảo mật</a
+                >
+              </li>
+              <li>
+                <a
+                  class="text-base text-slate-600 hover:text-blue-600 font-medium transition-colors"
+                  href="#"
+                  >Chính sách thanh toán</a
+                >
+              </li>
+              <li>
+                <a
+                  class="text-base text-slate-600 hover:text-blue-600 font-medium transition-colors"
+                  href="#"
+                  >Thiết lập cookie</a
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div
+          class="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-slate-200"
+        >
+          <div class="flex items-center gap-3 mb-6 md:mb-0">
+            <span class="material-symbols-outlined text-blue-600 text-4xl"
+              >pets</span
+            >
+            <a
+              class="text-2xl font-extrabold text-slate-900 tracking-tight"
+              href="{{ url_for('home.index') }}"
+              >Pet<span class="text-blue-600">AI</span></a
+            >
+          </div>
+          <p
+            class="text-base text-slate-500 max-w-md md:ml-8 text-center md:text-left leading-relaxed"
+          >
+            PetAI là người bạn đồng hành thông minh cho người yêu thú cưng, giúp
+            bạn hiểu bạn nhỏ của mình hơn nhờ công nghệ AI tiên tiến.
+          </p>
+          <div class="flex gap-6 mt-6 md:mt-0">
+            <a
+              class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-blue-600 hover:text-white transition-all duration-300"
+              href="#"
+              ><span class="material-symbols-outlined">mail</span></a
+            >
+            <a
+              class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-blue-600 hover:text-white transition-all duration-300"
+              href="#"
+              ><span class="material-symbols-outlined">forum</span></a
+            >
+            <a
+              class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-blue-600 hover:text-white transition-all duration-300"
+              href="#"
+              ><span class="material-symbols-outlined">code</span></a
+            >
+            <a
+              class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-blue-600 hover:text-white transition-all duration-300"
+              href="#"
+              ><span class="material-symbols-outlined">close</span></a
+            >
+          </div>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

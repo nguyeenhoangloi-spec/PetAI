@@ -1,0 +1,527 @@
+<!doctype html>
+
+<html
+  class="{{ 'dark' if ui_theme == 'dark' else 'light' }}"
+  lang="vi"
+  data-theme="{{ ui_theme or 'light' }}"
+>
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <script>
+      (function () {
+        const root = document.documentElement;
+        const storedTheme = (function () {
+          try {
+            return localStorage.getItem("theme");
+          } catch (e) {
+            return null;
+          }
+        })();
+        const preferredTheme = storedTheme || "{{ ui_theme or 'light' }}";
+
+        function resolveTheme(theme) {
+          if (theme !== "auto") return theme;
+          try {
+            return window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+          } catch (e) {
+            return "light";
+          }
+        }
+
+        function applyTheme(theme) {
+          const resolved = resolveTheme(theme);
+          root.classList.toggle("dark", resolved === "dark");
+          root.classList.toggle("light", resolved !== "dark");
+          root.setAttribute("data-theme", resolved);
+        }
+
+        applyTheme(preferredTheme);
+
+        if (preferredTheme === "auto") {
+          try {
+            const mql = window.matchMedia("(prefers-color-scheme: dark)");
+            const handler = function () {
+              applyTheme("auto");
+            };
+            if (mql.addEventListener) {
+              mql.addEventListener("change", handler);
+            } else if (mql.addListener) {
+              mql.addListener(handler);
+            }
+          } catch (e) {}
+        }
+      })();
+    </script>
+    <title>Đăng nhập - PetAI</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/theme-dark.css') }}"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "error-container": "#ffdad6",
+              "surface-tint": "#0053db",
+              "on-primary-fixed": "#00174b",
+              "on-error-container": "#93000a",
+              "inverse-primary": "#b4c5ff",
+              "tertiary-container": "#bc4800",
+              "on-tertiary-fixed": "#360f00",
+              "on-tertiary": "#ffffff",
+              "surface-variant": "#d3e4fe",
+              "secondary-fixed-dim": "#ffb95f",
+              "on-tertiary-fixed-variant": "#7d2d00",
+              tertiary: "#943700",
+              "surface-dim": "#cbdbf5",
+              "on-error": "#ffffff",
+              "outline-variant": "#c3c6d7",
+              "on-surface": "#0b1c30",
+              "surface-container-lowest": "#ffffff",
+              "surface-bright": "#f8f9ff",
+              "on-secondary-container": "#684000",
+              primary: "#004ac6",
+              "on-primary": "#ffffff",
+              "on-secondary-fixed-variant": "#653e00",
+              "primary-fixed": "#dbe1ff",
+              "surface-container-high": "#dce9ff",
+              surface: "#f8f9ff",
+              "tertiary-fixed": "#ffdbcd",
+              "tertiary-fixed-dim": "#ffb596",
+              "on-tertiary-container": "#ffede6",
+              "on-primary-fixed-variant": "#003ea8",
+              "on-secondary": "#ffffff",
+              "secondary-container": "#fea619",
+              outline: "#737686",
+              "inverse-surface": "#213145",
+              "inverse-on-surface": "#eaf1ff",
+              "surface-container-low": "#eff4ff",
+              "primary-fixed-dim": "#b4c5ff",
+              "on-surface-variant": "#434655",
+              "on-primary-container": "#eeefff",
+              "on-background": "#0b1c30",
+              "surface-container-highest": "#d3e4fe",
+              background: "#f8f9ff",
+              "surface-container": "#e5eeff",
+              "on-secondary-fixed": "#2a1700",
+              secondary: "#855300",
+              error: "#ba1a1a",
+              "secondary-fixed": "#ffddb8",
+              "primary-container": "#2563eb",
+            },
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px",
+            },
+            spacing: {
+              md: "24px",
+              gutter: "24px",
+              base: "8px",
+              xl: "80px",
+              sm: "12px",
+              xs: "4px",
+              lg: "48px",
+              margin: "32px",
+            },
+            fontFamily: {
+              "headline-lg": ["Inter"],
+              "display-xl": ["Inter"],
+              "headline-md": ["Inter"],
+              "body-md": ["Inter"],
+              "label-sm": ["Inter"],
+              "body-lg": ["Inter"],
+            },
+            fontSize: {
+              "headline-lg": [
+                "36px",
+                {
+                  lineHeight: "44px",
+                  letterSpacing: "-0.01em",
+                  fontWeight: "600",
+                },
+              ],
+              "display-xl": [
+                "60px",
+                {
+                  lineHeight: "72px",
+                  letterSpacing: "-0.02em",
+                  fontWeight: "700",
+                },
+              ],
+              "headline-md": [
+                "24px",
+                { lineHeight: "32px", fontWeight: "600" },
+              ],
+              "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+              "label-sm": ["14px", { lineHeight: "20px", fontWeight: "500" }],
+              "body-lg": ["18px", { lineHeight: "28px", fontWeight: "400" }],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      .material-symbols-outlined {
+        font-variation-settings:
+          "FILL" 0,
+          "wght" 400,
+          "GRAD" 0,
+          "opsz" 24;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-background text-on-background font-body-md min-h-screen flex flex-col"
+  >
+    <main class="flex-grow flex items-center justify-center p-md lg:p-margin">
+      <div
+        class="max-w-[1280px] w-full mx-auto grid grid-cols-1 lg:grid-cols-2 gap-md bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] overflow-hidden min-h-[700px]"
+      >
+        <section
+          class="hidden lg:flex flex-col relative rounded-l-xl overflow-hidden bg-surface-container"
+        >
+          <div class="absolute inset-0 z-0">
+            <img
+              alt="Chó Beagle nhìn thẳng vào ống kính với phông nền ấm"
+              class="w-full h-full object-cover"
+              data-alt="Chân dung cận cảnh chó Beagle với ánh sáng tự nhiên, hậu cảnh mờ"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5fynjldTqzOeKUmgn9EN68dTw34EIKyLxt0PGNI2uSCmNkUn8JDlAhjZyoP048x6EDyYnM_0Jxu33O7MS_gI_RF6IImVuYwRWgTjCL156CU6J85f0aL6HuMR8e2k_qBPQYK2szZ3gkqEFDv4n9urLGwtng38kqg1O51qQAH3yeu1YVZo92hbsFb-l9bFV08j0kq8N1c0NcNnhYmi1ojx6TC9Qd_d7t_P4EjdDxm3XYyi2dZA5QemVz0eRpMuvnPX21_SxBiYGfBM"
+            />
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-on-background/80 via-on-background/40 to-transparent"
+            ></div>
+          </div>
+          <div
+            class="relative z-10 p-lg mt-auto flex flex-col gap-md text-on-primary"
+          >
+            <div>
+              <div class="flex items-center gap-xs mb-md">
+                <span
+                  class="material-symbols-outlined text-primary-fixed"
+                  data-icon="pets"
+                  data-weight="fill"
+                  style="font-variation-settings: &quot;FILL&quot; 1"
+                  >pets</span
+                >
+                <span class="font-headline-md text-headline-md text-on-primary"
+                  >PetAI</span
+                >
+              </div>
+              <h1 class="font-headline-lg text-headline-lg mb-sm">
+                Nhận diện giống chó nhanh và chính xác
+              </h1>
+              <p class="font-body-lg text-body-lg text-primary-fixed-dim">
+                Trợ lý thông minh giúp bạn nhận diện và hiểu hơn về thú cưng của
+                mình.
+              </p>
+            </div>
+            <div class="space-y-sm">
+              <div
+                class="flex items-center gap-sm bg-on-background/30 backdrop-blur-sm p-sm rounded-lg border border-on-primary/10"
+              >
+                <span
+                  class="material-symbols-outlined text-secondary-fixed"
+                  data-icon="analytics"
+                  data-weight="fill"
+                  style="font-variation-settings: &quot;FILL&quot; 1"
+                  >analytics</span
+                >
+                <div>
+                  <h3 class="font-label-sm text-label-sm text-on-primary">
+                    Điểm tin cậy rõ ràng
+                  </h3>
+                  <p
+                    class="font-body-md text-body-md text-primary-fixed-dim text-sm"
+                  >
+                    Phân tích chi tiết từ AI
+                  </p>
+                </div>
+              </div>
+              <div
+                class="flex items-center gap-sm bg-on-background/30 backdrop-blur-sm p-sm rounded-lg border border-on-primary/10"
+              >
+                <span
+                  class="material-symbols-outlined text-secondary-fixed"
+                  data-icon="history"
+                  data-weight="fill"
+                  style="font-variation-settings: &quot;FILL&quot; 1"
+                  >history</span
+                >
+                <div>
+                  <h3 class="font-label-sm text-label-sm text-on-primary">
+                    Lịch sử quét
+                  </h3>
+                  <p
+                    class="font-body-md text-body-md text-primary-fixed-dim text-sm"
+                  >
+                    Lưu lại các kết quả nhận diện
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section class="flex flex-col justify-center p-md lg:p-xl relative">
+          <div class="lg:hidden flex items-center justify-center gap-xs mb-lg">
+            <span
+              class="material-symbols-outlined text-primary"
+              data-icon="pets"
+              data-weight="fill"
+              style="font-variation-settings: &quot;FILL&quot; 1"
+              >pets</span
+            >
+            <span class="font-headline-md text-headline-md text-primary"
+              >PetAI</span
+            >
+          </div>
+          <div class="w-full max-w-[400px] mx-auto flex flex-col gap-md">
+            <div class="text-center mb-md">
+              <h2 class="font-headline-lg text-headline-lg text-on-surface">
+                Đăng nhập tài khoản
+              </h2>
+              <p
+                class="font-body-md text-body-md text-on-surface-variant mt-xs"
+              >
+                Chào mừng bạn quay lại! Vui lòng nhập thông tin.
+              </p>
+            </div>
+            {% with messages = get_flashed_messages(with_categories=true) %} {%
+            if messages %} {% for category, message in messages %}
+            <div
+              class="p-sm mb-4 text-sm rounded-lg {% if category == 'error' %}bg-error-container text-on-error-container{% else %}bg-surface-container-high text-on-surface{% endif %}"
+              role="alert"
+            >
+              {{ message }}
+            </div>
+            {% endfor %} {% endif %} {% endwith %}
+            <form
+              action="{{ url_for('login.login') }}"
+              class="flex flex-col gap-md"
+              id="loginForm"
+              method="post"
+              novalidate
+            >
+              <input
+                type="hidden"
+                name="csrf_token"
+                value="{{ csrf_token() }}"
+              />
+              <div class="flex flex-col gap-xs">
+                <label
+                  class="font-label-sm text-label-sm text-on-surface"
+                  for="username"
+                  >Tên đăng nhập hoặc email</label
+                >
+                <input
+                  class="w-full px-4 py-3 rounded border border-outline-variant bg-surface-container-lowest text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all font-body-md text-body-md"
+                  id="username"
+                  name="username"
+                  placeholder="vd: username hoặc email@example.com"
+                  required
+                  type="text"
+                  autocomplete="username"
+                />
+                <small
+                  class="text-xs text-error mt-xs"
+                  id="usernameError"
+                ></small>
+              </div>
+              <div class="flex flex-col gap-xs">
+                <div class="flex justify-between items-center">
+                  <label
+                    class="font-label-sm text-label-sm text-on-surface"
+                    for="password"
+                    >Mật khẩu</label
+                  >
+                  <a
+                    class="font-label-sm text-label-sm text-primary hover:text-primary-container transition-colors"
+                    href="{{ url_for('account.forgot') }}"
+                    >Quên mật khẩu?</a
+                  >
+                </div>
+                <div class="relative">
+                  <input
+                    class="w-full px-4 py-3 pr-10 rounded border border-outline-variant bg-surface-container-lowest text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all font-body-md text-body-md"
+                    id="password"
+                    name="password"
+                    placeholder="Nhập mật khẩu"
+                    required
+                    type="password"
+                    autocomplete="current-password"
+                  />
+                  <button
+                    class="absolute right-3 top-1/2 -translate-y-1/2 text-outline hover:text-on-surface"
+                    type="button"
+                    id="togglePassword"
+                  >
+                    <span
+                      class="material-symbols-outlined"
+                      id="eyeIcon"
+                      data-icon="visibility"
+                      >visibility</span
+                    >
+                  </button>
+                </div>
+                <small
+                  class="text-xs text-error mt-xs"
+                  id="passwordError"
+                ></small>
+              </div>
+              <div class="flex items-center">
+                <input
+                  class="h-4 w-4 rounded border-outline-variant text-primary focus:ring-primary bg-surface-container-lowest"
+                  id="remember"
+                  name="remember"
+                  type="checkbox"
+                />
+                <label
+                  class="ml-2 font-body-md text-body-md text-on-surface-variant"
+                  for="remember"
+                  >Ghi nhớ đăng nhập</label
+                >
+              </div>
+              <button
+                class="w-full py-3 px-4 bg-primary text-on-primary font-label-sm text-label-sm rounded hover:bg-primary-container hover:-translate-y-[1px] transition-all shadow-sm active:scale-95 flex items-center justify-center gap-xs"
+                type="submit"
+              >
+                Đăng nhập
+                <span
+                  class="material-symbols-outlined text-[18px]"
+                  data-icon="arrow_forward"
+                  >arrow_forward</span
+                >
+              </button>
+            </form>
+            <div class="relative flex items-center py-sm">
+              <div class="flex-grow border-t border-outline-variant"></div>
+              <span
+                class="flex-shrink-0 mx-4 text-on-surface-variant font-body-md text-body-md text-sm"
+                >hoặc tiếp tục với</span
+              >
+              <div class="flex-grow border-t border-outline-variant"></div>
+            </div>
+            <a
+              class="w-full py-3 px-4 bg-surface-container-lowest border border-outline-variant text-on-surface font-label-sm text-label-sm rounded hover:bg-surface-container hover:-translate-y-[1px] transition-all shadow-sm flex items-center justify-center gap-sm"
+              href="{{ url_for('login_google') }}"
+            >
+              <img
+                alt="Logo Google"
+                class="w-5 h-5"
+                data-alt="Logo chữ G của Google"
+                src="https://www.gstatic.com/images/branding/googleg/1x/googleg_standard_color_128dp.png"
+              />
+              Đăng nhập bằng Google
+            </a>
+            <p
+              class="text-center font-body-md text-body-md text-on-surface-variant mt-sm"
+            >
+              Chưa có tài khoản?
+              <a
+                class="font-label-sm text-label-sm text-primary hover:text-primary-container transition-colors"
+                href="{{ url_for('register.register') }}"
+                >Đăng ký ngay</a
+              >
+            </p>
+          </div>
+        </section>
+      </div>
+    </main>
+    <footer
+      class="w-full py-8 mt-auto border-t border-slate-100 bg-white flex flex-col md:flex-row justify-between items-center gap-4 px-6 lg:px-12 max-w-[1280px] mx-auto text-sm font-['Inter'] text-slate-500 opacity-100 hover:opacity-80 transition-opacity"
+    >
+      <div class="text-lg font-semibold text-slate-900">PetAI</div>
+      <div>
+        2026
+        <a
+          class="text-xl font-bold tracking-tight text-blue-600 active:scale-95 transition-transform hover:opacity-80"
+          href="{{ url_for('home.index') }}"
+        >PetAI</a>. Chăm sóc thông minh cho thú cưng của bạn
+      </div>
+      <div class="flex gap-4">
+        <a
+          class="text-slate-500 hover:text-slate-900 transition-colors hover:text-blue-600"
+          href="#"
+          >Chính sách riêng tư</a
+        >
+        <a
+          class="text-slate-500 hover:text-slate-900 transition-colors hover:text-blue-600"
+          href="#"
+          >Điều khoản dịch vụ</a
+        >
+        <a
+          class="text-slate-500 hover:text-slate-900 transition-colors hover:text-blue-600"
+          href="#"
+          >Tùy chỉnh cookie</a
+        >
+      </div>
+    </footer>
+    <script>
+      (function () {
+        const messages = JSON.parse(
+          `{{ {'usernameShort': tx('Tên đăng nhập/email cần ít nhất 3 ký tự.', 'Username/email must be at least 3 characters.'), 'passwordShort': tx('Mật khẩu cần ít nhất 6 ký tự.', 'Password must be at least 6 characters.')} | tojson }}`,
+        );
+        const toggleBtn = document.getElementById("togglePassword");
+        const passwordInput = document.getElementById("password");
+        const eyeIcon = document.getElementById("eyeIcon");
+        const form = document.getElementById("loginForm");
+        const usernameInput = document.getElementById("username");
+        const usernameError = document.getElementById("usernameError");
+        const passwordError = document.getElementById("passwordError");
+
+        if (toggleBtn && passwordInput && eyeIcon) {
+          toggleBtn.addEventListener("click", function () {
+            const nextType =
+              passwordInput.getAttribute("type") === "password"
+                ? "text"
+                : "password";
+            passwordInput.setAttribute("type", nextType);
+            eyeIcon.textContent =
+              nextType === "password" ? "visibility" : "visibility_off";
+          });
+        }
+
+        if (
+          form &&
+          usernameInput &&
+          passwordInput &&
+          usernameError &&
+          passwordError
+        ) {
+          form.addEventListener("submit", function (e) {
+            let ok = true;
+            usernameError.textContent = "";
+            passwordError.textContent = "";
+
+            if ((usernameInput.value || "").trim().length < 3) {
+              usernameError.textContent = messages.usernameShort;
+              ok = false;
+            }
+
+            if ((passwordInput.value || "").length < 6) {
+              passwordError.textContent = messages.passwordShort;
+              ok = false;
+            }
+
+            if (!ok) e.preventDefault();
+          });
+        }
+      })();
+    </script>
+  </body>
+</html>

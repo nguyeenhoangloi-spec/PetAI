@@ -1,0 +1,75 @@
+@startuml
+left to right direction
+
+skinparam backgroundColor #F4F4F4
+skinparam shadowing false
+skinparam defaultFontName "Times New Roman"
+skinparam defaultFontSize 14
+skinparam ArrowColor #303030
+skinparam packageStyle rectangle
+
+skinparam rectangle {
+  BorderColor #404040
+  BackgroundColor #FFFFFF
+  RoundCorner 0
+}
+
+skinparam usecase {
+  BorderColor #404040
+  BackgroundColor #FFFFFF
+}
+
+together {
+  rectangle "Image n" as ImgN
+  rectangle "Image 2" as Img2
+  rectangle "Image 1" as Img1
+}
+
+(Process) as Process
+(CNN) as CNN
+(Image detector\nAgent-AI) as Detector
+(Google lens) as GLens
+
+Img1 --> Process
+Img2 ..> Process
+ImgN ..> Process
+
+Process --> CNN
+Process --> Detector
+Process --> GLens
+
+together {
+  rectangle "Context 1" as Ctx1
+  rectangle "Context 2" as Ctx2
+  rectangle "Context n" as Ctxn
+}
+
+GLens --> Ctx1 : n
+Ctx2 ..> Ctx1
+Ctxn ..> Ctx1
+
+(Context Agent-AI) as CtxAgent
+rectangle "Result" as ResultCtx
+
+Ctx1 --> CtxAgent
+CtxAgent --> ResultCtx
+
+rectangle "Result" as ResultCnn
+rectangle "Result" as ResultDet
+
+CNN --> ResultCnn
+Detector --> ResultDet
+
+(LLM Agent-AI) as LLM
+rectangle "Final result" as Final
+
+ResultCtx --> LLM
+ResultCnn --> LLM
+ResultDet --> LLM
+LLM --> Final
+
+legend bottom
+Hinh 3.1: So do luong xu ly he thong
+endlegend
+
+@enduml

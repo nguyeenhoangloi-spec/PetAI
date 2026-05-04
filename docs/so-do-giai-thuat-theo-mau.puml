@@ -1,0 +1,92 @@
+@startuml
+left to right direction
+
+skinparam backgroundColor #F4F4F4
+skinparam shadowing false
+skinparam defaultFontName "Times New Roman"
+skinparam defaultFontSize 14
+skinparam ArrowColor #303030
+skinparam packageStyle rectangle
+
+skinparam rectangle {
+  BorderColor #404040
+  BackgroundColor #FFFFFF
+  RoundCorner 0
+}
+
+skinparam usecase {
+  BorderColor #404040
+  BackgroundColor #FFFFFF
+}
+
+together {
+  rectangle "Ảnh n" as ImgN
+  rectangle "Ảnh 2" as Img2
+  rectangle "Ảnh 1" as Img1
+}
+
+(Xử lý\nTải lên + Lưu ảnh) as Process
+
+(Phát hiện\nYOLOv8 Chó/Mèo + bbox) as YOLO
+(Tiền xử lý vùng chó\nCrop bbox tốt nhất) as Crop
+(Phân loại\nSoftmax Top-K) as Softmax
+(Tương đồng\nPrototype Top-K) as Sim
+
+Img1 --> Process
+Img2 ..> Process
+ImgN ..> Process
+
+Process --> YOLO
+YOLO --> Crop
+Crop --> Softmax
+Crop --> Sim
+
+(Cổng kiểm tra\nĐủ điều kiện là chó?) as DogGate
+(Độ tin cậy\nkết luận/tham khảo/từ chối) as ConfGate
+(Quyết định nghi lai\nrule theo similarity) as HybridGate
+
+YOLO --> DogGate
+Softmax --> ConfGate
+Sim --> HybridGate
+
+rectangle "Kết quả\nCổng loài" as R1
+rectangle "Kết quả\nĐộ tin cậy giống" as R2
+rectangle "Kết quả\nỨng viên chó lai" as R3
+
+DogGate --> R1
+ConfGate --> R2
+HybridGate --> R3
+
+(Hợp nhất quyết định\nLuật nghiệp vụ) as Fusion
+rectangle "Kết quả cuối\n- Top-1 kết luận\n- Top-1 tham khảo\n- Nghi lai: A x B (gợi ý)\n- Không xác định" as Final
+
+R1 --> Fusion
+R2 --> Fusion
+R3 --> Fusion
+Fusion --> Final
+
+note right of DogGate
+DOG_THRESHOLD = 0.55
+BREED_FALLBACK_THRESHOLD = 0.70
+DOG_FALLBACK_MIN_DET_CONF = 0.25
+end note
+
+note right of HybridGate
+s1 >= min_score
+s2 >= min_score_2
+(s1 - s2) <= max_gap
+s2/s1 >= min_ratio
+(s1+s2)/2 >= min_mean_score
+(chỉ là gợi ý nghi lai)
+end note
+
+note bottom of Fusion
+Nếu is_dog_enough = false -> không xác định / không phải chó
+Nếu confidence = conclude -> Top-1 kết luận
+Nếu confidence = reference -> Top-1 tham khảo
+Nếu confidence = reject và có ứng viên nghi lai -> hiển thị Nghi lai: A x B
+Nếu confidence = reject và không có ứng viên nghi lai -> không xác định
+Nghi lai là suy luận theo hình thái, không phải kết luận di truyền (ADN)
+end note
+
+@enduml

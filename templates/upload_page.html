@@ -1,0 +1,1077 @@
+<!doctype html>
+
+<html
+  class="{{ 'dark' if ui_theme == 'dark' else 'light' }}"
+  lang="vi"
+  data-theme="{{ ui_theme or 'light' }}"
+>
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <script>
+      (function () {
+        const root = document.documentElement;
+        const storedTheme = (function () {
+          try {
+            return localStorage.getItem("theme");
+          } catch (e) {
+            return null;
+          }
+        })();
+        const preferredTheme = storedTheme || "{{ ui_theme or 'light' }}";
+
+        function resolveTheme(theme) {
+          if (theme !== "auto") return theme;
+          try {
+            return window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+          } catch (e) {
+            return "light";
+          }
+        }
+
+        function applyTheme(theme) {
+          const resolved = resolveTheme(theme);
+          root.classList.toggle("dark", resolved === "dark");
+          root.classList.toggle("light", resolved !== "dark");
+          root.setAttribute("data-theme", resolved);
+        }
+
+        applyTheme(preferredTheme);
+
+        if (preferredTheme === "auto") {
+          try {
+            const mql = window.matchMedia("(prefers-color-scheme: dark)");
+            const handler = function () {
+              applyTheme("auto");
+            };
+            if (mql.addEventListener) {
+              mql.addEventListener("change", handler);
+            } else if (mql.addListener) {
+              mql.addListener(handler);
+            }
+          } catch (e) {}
+        }
+      })();
+    </script>
+    <title>{{ tx('Tải ảnh & Phân tích', 'Upload & Analyze') }} - PetAI</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/theme-dark.css') }}"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-tertiary-fixed": "#360f00",
+              "secondary-fixed-dim": "#ffb95f",
+              "surface-container": "#e5eeff",
+              "on-primary-fixed": "#00174b",
+              error: "#ba1a1a",
+              "secondary-container": "#fea619",
+              primary: "#004ac6",
+              "tertiary-container": "#bc4800",
+              "surface-tint": "#0053db",
+              "on-secondary": "#ffffff",
+              "surface-variant": "#d3e4fe",
+              "on-secondary-container": "#684000",
+              "tertiary-fixed-dim": "#ffb596",
+              "surface-dim": "#cbdbf5",
+              outline: "#737686",
+              "inverse-on-surface": "#eaf1ff",
+              "on-error": "#ffffff",
+              "secondary-fixed": "#ffddb8",
+              "on-primary": "#ffffff",
+              "on-primary-container": "#eeefff",
+              "surface-container-highest": "#d3e4fe",
+              "on-surface": "#0b1c30",
+              "surface-container-lowest": "#ffffff",
+              "on-primary-fixed-variant": "#003ea8",
+              "outline-variant": "#c3c6d7",
+              "primary-fixed": "#dbe1ff",
+              "inverse-primary": "#b4c5ff",
+              "on-error-container": "#93000a",
+              "on-tertiary": "#ffffff",
+              surface: "#f8f9ff",
+              "primary-fixed-dim": "#b4c5ff",
+              "on-background": "#0b1c30",
+              "surface-bright": "#f8f9ff",
+              "inverse-surface": "#213145",
+              "on-tertiary-fixed-variant": "#7d2d00",
+              "on-surface-variant": "#434655",
+              "tertiary-fixed": "#ffdbcd",
+              "surface-container-high": "#dce9ff",
+              "on-secondary-fixed": "#2a1700",
+              "on-tertiary-container": "#ffede6",
+              secondary: "#855300",
+              tertiary: "#943700",
+              background: "#f8f9ff",
+              "primary-container": "#2563eb",
+              "surface-container-low": "#eff4ff",
+              "on-secondary-fixed-variant": "#653e00",
+              "error-container": "#ffdad6",
+            },
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px",
+            },
+            spacing: {
+              md: "24px",
+              base: "8px",
+              sm: "12px",
+              margin: "32px",
+              lg: "48px",
+              xl: "80px",
+              gutter: "24px",
+              xs: "4px",
+            },
+            fontFamily: {
+              "headline-md": ["Inter"],
+              "headline-lg": ["Inter"],
+              "display-xl": ["Inter"],
+              "body-md": ["Inter"],
+              "label-sm": ["Inter"],
+              "body-lg": ["Inter"],
+            },
+            fontSize: {
+              "headline-md": [
+                "24px",
+                { lineHeight: "32px", fontWeight: "600" },
+              ],
+              "headline-lg": [
+                "36px",
+                {
+                  lineHeight: "44px",
+                  letterSpacing: "-0.01em",
+                  fontWeight: "600",
+                },
+              ],
+              "display-xl": [
+                "60px",
+                {
+                  lineHeight: "72px",
+                  letterSpacing: "-0.02em",
+                  fontWeight: "700",
+                },
+              ],
+              "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+              "label-sm": ["14px", { lineHeight: "20px", fontWeight: "500" }],
+              "body-lg": ["18px", { lineHeight: "28px", fontWeight: "400" }],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      .material-symbols-outlined {
+        font-variation-settings:
+          "FILL" 0,
+          "wght" 400,
+          "GRAD" 0,
+          "opsz" 24;
+      }
+      .is-dragover {
+        border-color: rgba(0, 74, 198, 0.6);
+        background-color: #dce9ff;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-background text-on-background font-body-md text-body-md antialiased min-h-screen flex flex-col"
+    data-watch-ad-open="{{ '1' if open_watch_ad else '0' }}"
+  >
+    {% set display_role = session.get('role') or 'user' %} {% set display_plan =
+    current_plan or 'free' %}
+
+    <nav
+      class="bg-white/80 dark:bg-slate-950/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-200 dark:border-slate-800 shadow-sm font-['Inter'] antialiased"
+    >
+      <div class="flex items-center justify-between px-6 h-16 w-full">
+        <div class="flex items-center gap-gutter">
+          <span class="text-lg font-semibold text-primary tracking-tight"
+            >PetAI</span
+          >
+        </div>
+        <div class="hidden md:flex items-center gap-margin">
+          <a
+            class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-3 py-2 border-b-2 border-transparent pb-1 font-semibold"
+            href="{{ url_for('dashboard.dashboard') }}"
+            >Bảng điều khiển</a
+          >
+          <a
+            class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-3 py-2 border-b-2 border-transparent pb-1 font-semibold"
+            href="{{ url_for('history.history') }}"
+            >Lịch sử</a
+          >
+          <a
+            class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-3 py-2 border-b-2 border-transparent pb-1 font-semibold"
+            href="{{ url_for('statistics.statistics') }}"
+            >Thống kê</a
+          >
+          <a
+            class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-3 py-2 border-b-2 border-transparent pb-1 font-semibold"
+            href="{{ url_for('predict.upgrade') }}"
+            >Nâng cấp</a
+          >
+          {% if session.get('role') == 'user' %}
+          <a
+            class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-3 py-2 border-b-2 border-transparent pb-1 font-semibold"
+            href="{{ url_for('predict.my_payments') }}"
+            >{{ tx('Lịch sử thanh toán', 'Payment history') }}</a
+          >
+          {% endif %} {% if session.get('role') == 'admin' %}
+          <a
+            class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-3 py-2 border-b-2 border-transparent pb-1 font-semibold"
+            href="{{ url_for('users.list_users') }}"
+            >Quản lý người dùng</a
+          >
+          <a
+            class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-3 py-2 border-b-2 border-transparent pb-1 font-semibold"
+            href="{{ url_for('users.confirmations_list') }}"
+            >Duyệt đơn</a
+          >
+          {% endif %}
+        </div>
+        <div class="flex items-center gap-md">
+          <a
+            class="hidden md:inline-flex bg-primary text-on-primary px-4 py-2 rounded-lg font-label-sm hover:opacity-90 active:scale-95 duration-150 transition-all"
+            href="{{ url_for('predict.upload_page') }}"
+            >Nhận diện</a
+          >
+          <div class="flex items-center gap-base">
+            <a
+              aria-label="Cai dat"
+              class="p-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all"
+              href="{{ url_for('settings.settings') }}"
+            >
+              <span class="material-symbols-outlined" data-icon="settings"
+                >settings</span
+              >
+            </a>
+            <div class="relative group cursor-pointer">
+              <img
+                alt="Anh dai dien"
+                class="w-9 h-9 rounded-full border-2 border-primary/20 p-0.5"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuABdf7zKSVKEqdGUUjqEkF9ftdFTrLW87Tb24r2IiZiv_JP0LrItrCxl23SH-gYj2Mqtkma0ak9DZbUtKM5nW747pmivDYGVbYhNr1PZbxbFuOrZdGJvnbhdSurFLfL3BcmhN2p1h9wv_6geT-x8eoTG1TDoLL40P8wDiaymvRT--SA4jYjU9A77WIji5FmOi99mPDXw7xS6dUyUNJYU2gHLk4-smzFrCuBbQbgtpATDvNo6hq3YR-cfSaNblImtCnDXIb8np7J4HA"
+              />
+              <div
+                class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white dark:border-slate-900 rounded-full"
+              ></div>
+              <div
+                class="absolute right-0 top-full w-52 bg-white dark:bg-slate-900 rounded-lg shadow-xl border border-slate-200 dark:border-slate-800 py-2 hidden group-hover:block z-50"
+              >
+                <div class="px-4 pb-2">
+                  <div class="text-xs text-slate-500 dark:text-slate-400">
+                    Vai trò:
+                    <span
+                      class="font-semibold text-slate-800 dark:text-slate-200"
+                      >{{ display_role|upper }}</span
+                    >
+                  </div>
+                  <div class="text-xs text-slate-500 dark:text-slate-400">
+                    Gói:
+                    <span
+                      class="font-semibold text-slate-800 dark:text-slate-200"
+                      >{{ display_plan|upper }}</span
+                    >
+                  </div>
+                </div>
+                <div class="h-px bg-slate-200 dark:bg-slate-800 my-1"></div>
+                <a
+                  class="flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors font-semibold"
+                  href="{{ url_for('logout.logout') }}"
+                >
+                  <span class="material-symbols-outlined text-[18px]"
+                    >logout</span
+                  >
+                  Đăng xuất
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <main
+      class="flex-grow w-full px-6 py-margin grid grid-cols-1 md:grid-cols-[290px_minmax(0,1fr)] gap-gutter"
+    >
+      <aside class="col-span-1">
+        <div
+          class="bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] p-md flex flex-col gap-sm sticky top-24 border border-surface-container-highest/50"
+        >
+          <h3
+            class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-xs px-sm"
+          >
+            Truy cập nhanh
+          </h3>
+          <a
+            class="flex items-center gap-sm p-sm rounded-lg text-primary bg-primary-fixed/50 transition-colors group"
+            href="{{ url_for('predict.upload_page') }}"
+          >
+            <span
+              class="material-symbols-outlined text-primary group-hover:scale-105 transition-transform"
+              data-icon="upload_file"
+              data-weight="fill"
+              style="font-variation-settings: &quot;FILL&quot; 1"
+              >upload_file</span
+            >
+            <span class="font-label-sm text-label-sm font-semibold"
+              >Tải ảnh &amp; Nhận diện</span
+            >
+          </a>
+          <a
+            class="flex items-center gap-sm p-sm rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
+            href="{{ url_for('history.history') }}"
+          >
+            <span
+              class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
+              data-icon="history"
+              >history</span
+            >
+            <span class="font-label-sm text-label-sm">Lịch sử dự đoán</span>
+          </a>
+          {% if session.get('role') == 'user' %}
+          <a
+            class="flex items-center gap-sm p-sm rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
+            href="{{ url_for('predict.my_payments') }}"
+          >
+            <span
+              class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
+              data-icon="payments"
+              >payments</span
+            >
+            <span class="font-label-sm text-label-sm">Lịch sử thanh toán</span>
+          </a>
+          {% endif %}
+          <a
+            class="flex items-center gap-sm p-sm rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
+            href="{{ url_for('statistics.statistics') }}"
+          >
+            <span
+              class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
+              data-icon="bar_chart"
+              >bar_chart</span
+            >
+            <span class="font-label-sm text-label-sm">Thống kê cá nhân</span>
+          </a>
+          <a
+            class="flex items-center gap-sm p-sm rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
+            href="{{ url_for('predict.upgrade') }}"
+          >
+            <span
+              class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
+              data-icon="upgrade"
+              >upgrade</span
+            >
+            <span class="font-label-sm text-label-sm">Nâng cấp gói</span>
+          </a>
+          {% if session.get('role') == 'admin' %}
+          <a
+            class="flex items-center gap-sm p-sm rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
+            href="{{ url_for('users.list_users') }}"
+          >
+            <span
+              class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
+              data-icon="groups"
+              >groups</span
+            >
+            <span class="font-label-sm text-label-sm">Quản lý người dùng</span>
+          </a>
+          <a
+            class="flex items-center gap-sm p-sm rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
+            href="{{ url_for('users.confirmations_list') }}"
+          >
+            <span
+              class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
+              data-icon="receipt_long"
+              >receipt_long</span
+            >
+            <span class="font-label-sm text-label-sm">Duyệt đơn</span>
+          </a>
+          {% endif %}
+          <hr class="border-outline-variant/30 my-xs" />
+          <a
+            class="flex items-center gap-sm p-sm rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
+            href="{{ url_for('settings.settings') }}"
+          >
+            <span
+              class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
+              data-icon="settings"
+              >settings</span
+            >
+            <span class="font-label-sm text-label-sm">Cài đặt tài khoản</span>
+          </a>
+        </div>
+      </aside>
+
+      <div class="col-span-1 flex flex-col gap-gutter">
+        <section
+          class="flex flex-col md:flex-row justify-between items-start md:items-center bg-surface-container-low p-margin rounded-xl border border-surface-container-highest/50 relative overflow-hidden"
+        >
+          <div
+            class="absolute inset-0 bg-gradient-to-r from-transparent to-primary-fixed/20 pointer-events-none"
+          ></div>
+          <div class="relative z-10 max-w-2xl">
+            <h1 class="font-headline-lg text-headline-lg text-on-surface">
+              {{ tx('Tải ảnh để nhận diện giống chó', 'Upload an image to
+              identify dog breed') }}
+            </h1>
+            <p class="font-body-md text-body-md text-on-surface-variant mt-sm">
+              {{ tx('Kéo thả ảnh chó của bạn để AI phân tích và dự đoán giống
+              với độ tin cậy chi tiết.', 'Drag and drop your dog image for AI
+              analysis with detailed confidence.') }}
+            </p>
+          </div>
+          <a
+            class="relative z-10 bg-primary text-on-primary px-md py-sm rounded-lg font-label-sm hover:-translate-y-[1px] shadow-sm hover:shadow-md transition-all flex items-center gap-base"
+            href="{{ url_for('predict.upgrade') }}"
+          >
+            <span
+              class="material-symbols-outlined text-[18px]"
+              data-icon="workspace_premium"
+              >workspace_premium</span
+            >
+            {{ tx('Nâng cấp gói', 'Upgrade plan') }}
+          </a>
+        </section>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+          <div class="lg:col-span-8 flex flex-col gap-gutter">
+            <form
+              action="{{ url_for('predict.upload') }}"
+              method="post"
+              enctype="multipart/form-data"
+              class="bg-surface-container-lowest rounded-xl border border-outline-variant/30 p-md shadow-[0_4px_20px_rgba(0,0,0,0.05)]"
+              id="uploadForm"
+            >
+              <input
+                type="hidden"
+                name="csrf_token"
+                value="{{ csrf_token() }}"
+              />
+              <div class="flex items-center gap-sm mb-md">
+                <span class="material-symbols-outlined text-primary"
+                  >cloud_upload</span
+                >
+                <h2 class="font-headline-md text-headline-md text-on-surface">
+                  {{ tx('Khu vực tải ảnh', 'Upload area') }}
+                </h2>
+              </div>
+              <div
+                id="dropZone"
+                class="relative border-2 border-dashed border-primary/40 rounded-lg bg-surface-container-low hover:bg-surface-container-high transition-colors p-10 flex flex-col items-center justify-center text-center gap-3"
+              >
+                <input
+                  type="file"
+                  class="absolute inset-0 opacity-0 cursor-pointer"
+                  name="image"
+                  accept="image/png,image/jpeg,image/jpg"
+                  required
+                  id="imageInput"
+                />
+                <div id="dropState" class="flex flex-col items-center gap-3">
+                  <div
+                    class="w-16 h-16 rounded-full bg-primary-container text-primary flex items-center justify-center"
+                  >
+                    <span class="material-symbols-outlined text-[32px]"
+                      >cloud_upload</span
+                    >
+                  </div>
+                  <h3 class="font-headline-md text-[20px] text-on-surface">
+                    {{ tx('Kéo & thả ảnh vào đây', 'Drag & drop image here') }}
+                  </h3>
+                  <p class="text-sm text-on-surface-variant">
+                    {{ tx('hoặc bấm để chọn ảnh từ máy tính', 'or click to
+                    choose from your computer') }}
+                  </p>
+                  <span
+                    class="px-4 py-2 bg-surface-container rounded-full text-sm text-on-surface-variant"
+                  >
+                    {{ tx('Hỗ trợ JPG, JPEG, PNG • Tối đa 10MB', 'Supports JPG,
+                    JPEG, PNG • Max 10MB') }}
+                  </span>
+                </div>
+                <div
+                  id="previewState"
+                  class="hidden flex flex-col items-center gap-4"
+                >
+                  <img
+                    id="imagePreview"
+                    class="w-full max-h-[360px] rounded-lg object-contain bg-surface"
+                    alt="{{ tx('Xem trước ảnh tải lên', 'Upload preview') }}"
+                  />
+                  <div class="flex flex-wrap items-center gap-3">
+                    <button
+                      type="button"
+                      class="px-4 py-2 rounded-lg border border-outline-variant text-on-surface hover:bg-surface-container-low font-label-sm text-label-sm transition-colors"
+                      id="changeBtn"
+                    >
+                      {{ tx('Đổi ảnh', 'Change image') }}
+                    </button>
+                    <button
+                      type="submit"
+                      class="px-4 py-2 rounded-lg bg-primary text-on-primary font-label-sm text-label-sm hover:opacity-90 transition-opacity flex items-center gap-2"
+                      id="analyzeBtn"
+                    >
+                      <span class="material-symbols-outlined text-[18px]"
+                        >search</span
+                      >
+                      {{ tx('Phân tích ngay', 'Analyze now') }}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+
+          <div class="lg:col-span-4 flex flex-col gap-gutter">
+            <section
+              class="bg-surface-container-lowest rounded-xl border border-outline-variant/30 p-md shadow-[0_4px_20px_rgba(0,0,0,0.05)]"
+            >
+              <div class="flex items-center justify-between mb-sm">
+                <div>
+                  <p class="text-sm text-on-surface-variant">
+                    {{ tx('Gói hiện tại', 'Current plan') }}
+                  </p>
+                  <div class="text-lg font-semibold text-on-surface">
+                    {{ (quota_info.plan if quota_info else display_plan)|upper
+                    }}
+                  </div>
+                </div>
+                <span
+                  class="px-3 py-1 bg-surface-container-low text-primary rounded-full text-xs font-semibold"
+                  >{{ tx('Hạn mức', 'Quota') }}</span
+                >
+              </div>
+
+              {% if quota_info %} {% if quota_info.plan == 'free' %}
+              <div class="space-y-3">
+                <div
+                  class="flex items-center justify-between p-3 bg-surface-container-low rounded-lg border border-outline-variant/30"
+                >
+                  <div class="flex items-center gap-2">
+                    <span
+                      class="material-symbols-outlined text-primary text-[18px]"
+                      >electric_bolt</span
+                    >
+                    <span class="text-sm text-on-surface-variant"
+                      >{{ tx('Lượt miễn phí còn lại', 'Free predictions left')
+                      }}</span
+                    >
+                  </div>
+                  <span class="font-headline-md text-headline-md text-primary"
+                    >{{ quota_info.remaining_free }}</span
+                  >
+                </div>
+                <div
+                  class="flex items-center justify-between p-3 bg-secondary-container/10 rounded-lg border border-secondary-container/30"
+                >
+                  <div class="flex items-center gap-2">
+                    <span
+                      class="material-symbols-outlined text-secondary text-[18px]"
+                      >play_circle</span
+                    >
+                    <span class="text-sm text-on-surface-variant"
+                      >{{ tx('Mở khóa từ quảng cáo', 'Ad unlocks remaining')
+                      }}</span
+                    >
+                  </div>
+                  <span class="font-headline-md text-headline-md text-secondary"
+                    >{{ quota_info.ad_unlocks_remaining }}</span
+                  >
+                </div>
+                <div
+                  class="flex items-center justify-between p-3 bg-surface-container-low rounded-lg border border-outline-variant/30"
+                >
+                  <div class="flex items-center gap-2">
+                    <span
+                      class="material-symbols-outlined text-outline text-[18px]"
+                      >visibility</span
+                    >
+                    <span class="text-sm text-on-surface-variant"
+                      >{{ tx('Quảng cáo đã xem', 'Ads watched') }}</span
+                    >
+                  </div>
+                  <span class="text-sm text-on-surface"
+                    >{{ quota_info.ad_views_used }}/{{ quota_info.ad_views_limit
+                    }}</span
+                  >
+                </div>
+              </div>
+              {% if quota_info.remaining_free <= 0 %}
+              <a
+                class="mt-md w-full inline-flex items-center justify-center gap-2 py-2.5 bg-inverse-surface text-inverse-on-surface rounded-lg font-label-sm text-label-sm hover:bg-on-background transition-colors"
+                href="{{ url_for('predict.watch_ad') }}"
+                data-watch-ad-trigger
+                aria-haspopup="dialog"
+                aria-controls="watchAdModal"
+              >
+                <span class="material-symbols-outlined text-[18px]"
+                  >smart_display</span
+                >
+                {{ tx('Xem quảng cáo để thêm lượt', 'Watch ad to unlock') }}
+              </a>
+              {% endif %} {% else %}
+              <div
+                class="p-3 bg-primary-fixed/40 rounded-lg border border-primary/20"
+              >
+                <div class="text-sm text-on-surface-variant">
+                  {{ tx('Bạn đang dùng gói trả phí', 'You are on a paid plan')
+                  }}
+                </div>
+                <div class="font-label-sm text-label-sm text-on-surface mt-1">
+                  {{ tx('Không giới hạn', 'Unlimited') }}
+                </div>
+              </div>
+              {% endif %} {% else %}
+              <div class="text-sm text-on-surface-variant">
+                {{ tx('Đang tải thông tin', 'Loading info') }}
+              </div>
+              {% endif %}
+            </section>
+
+            <aside
+              class="bg-surface-container-lowest rounded-xl border border-outline-variant/30 p-md shadow-[0_4px_20px_rgba(0,0,0,0.05)]"
+            >
+              <h3
+                class="font-headline-md text-[20px] font-semibold text-on-background mb-4 flex items-center gap-2"
+              >
+                <span class="material-symbols-outlined text-primary"
+                  >auto_awesome</span
+                >
+                {{ tx('Trải nghiệm dự đoán', 'Prediction experience') }}
+              </h3>
+              <ul class="flex flex-col gap-3 text-sm text-on-surface-variant">
+                <li class="flex items-start gap-2">
+                  <span
+                    class="material-symbols-outlined text-primary text-[18px]"
+                    >check</span
+                  >
+                  {{ tx('Nhận diện giống chó với độ tin cậy %', 'Dog breed
+                  prediction with confidence %') }}
+                </li>
+                <li class="flex items-start gap-2">
+                  <span
+                    class="material-symbols-outlined text-primary text-[18px]"
+                    >check</span
+                  >
+                  {{ tx('Hỗ trợ ảnh có bounding box YOLO', 'Supports YOLO
+                  bounding-box images') }}
+                </li>
+                <li class="flex items-start gap-2">
+                  <span
+                    class="material-symbols-outlined text-primary text-[18px]"
+                    >check</span
+                  >
+                  {{ tx('Lưu lịch sử dự đoán tự động', 'Auto-save prediction
+                  history') }}
+                </li>
+                <li class="flex items-start gap-2">
+                  <span
+                    class="material-symbols-outlined text-primary text-[18px]"
+                    >check</span
+                  >
+                  {{ tx('Tối ưu cho cả Mobile/Tablet/Desktop', 'Optimized for
+                  Mobile/Tablet/Desktop') }}
+                </li>
+              </ul>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    {% if quota_info and quota_info.plan == 'free' %}
+    <div
+      id="watchAdModal"
+      class="fixed inset-0 z-[60] hidden items-center justify-center bg-black/40 backdrop-blur-sm p-4"
+      role="dialog"
+      aria-modal="true"
+      aria-hidden="true"
+    >
+      <div
+        class="w-full max-w-xl bg-surface-container-lowest rounded-2xl border border-outline-variant/30 shadow-[0_24px_60px_rgba(0,0,0,0.2)] p-6 relative"
+      >
+        <button
+          type="button"
+          id="watchAdClose"
+          class="absolute top-4 right-4 text-on-surface-variant hover:text-on-surface transition-colors"
+          aria-label="{{ tx('Đóng', 'Close') }}"
+        >
+          <span class="material-symbols-outlined">close</span>
+        </button>
+
+        <div class="flex items-start gap-3">
+          <span
+            class="material-symbols-outlined text-primary bg-primary-fixed/60 rounded-full p-2"
+            >smart_display</span
+          >
+          <div>
+            <p class="text-xs uppercase tracking-wider text-on-surface-variant">
+              {{ tx('Mở khóa bằng quảng cáo', 'Ad unlock') }}
+            </p>
+            <h3 class="text-xl font-semibold text-on-surface">
+              {{ tx('Xem quảng cáo để mở khóa lượt nhận diện', 'Watch ads to
+              unlock predictions') }}
+            </h3>
+          </div>
+        </div>
+
+        <div class="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div
+            class="rounded-lg border border-outline-variant/30 bg-surface-container-low p-3"
+          >
+            <p class="text-xs text-on-surface-variant">
+              {{ tx('Đã nhận diện', 'Predictions used') }}
+            </p>
+            <div class="text-lg font-semibold text-on-surface">
+              {{ quota_info.total_predictions }}/{{ quota_info.free_limit }}
+            </div>
+          </div>
+          <div
+            class="rounded-lg border border-outline-variant/30 bg-secondary-container/10 p-3"
+          >
+            <p class="text-xs text-on-surface-variant">
+              {{ tx('Unlock còn', 'Unlocks left') }}
+            </p>
+            <div class="text-lg font-semibold text-secondary">
+              {{ quota_info.ad_unlocks_remaining }}
+            </div>
+          </div>
+          <div
+            class="rounded-lg border border-outline-variant/30 bg-surface-container-low p-3"
+          >
+            <p class="text-xs text-on-surface-variant">
+              {{ tx('Ads đã xem', 'Ads watched') }}
+            </p>
+            <div class="text-lg font-semibold text-on-surface">
+              {{ quota_info.ad_views_used }}/{{ quota_info.ad_views_limit }}
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="mt-4 rounded-xl border border-outline-variant/30 bg-surface-container-low p-4"
+        >
+          <div class="text-sm font-semibold text-on-surface">
+            {{ tx('Đang phát quảng cáo mô phỏng', 'Playing simulated ad') }}
+          </div>
+          <p class="text-sm text-on-surface-variant mt-1">
+            {{ tx('Vui lòng chờ', 'Please wait') }}
+            <strong><span id="watchAdCountdown">8</span>s</strong>
+            {{ tx('để bật nút xác nhận.', 'to enable the confirm button.') }}
+          </p>
+          <div class="mt-3 h-2 rounded-full bg-surface-container-high">
+            <div
+              id="watchAdBar"
+              class="h-2 rounded-full bg-primary transition-all duration-300"
+              style="width: 0%"
+            ></div>
+          </div>
+        </div>
+
+        <form
+          method="post"
+          action="{{ url_for('predict.watch_ad_complete') }}"
+          class="mt-5 flex flex-col sm:flex-row items-center justify-end gap-2"
+          id="watchAdCompleteForm"
+        >
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+          <button
+            type="button"
+            id="watchAdCancel"
+            class="w-full sm:w-auto px-md py-sm rounded-lg border border-outline-variant text-on-surface hover:bg-surface-container-low font-label-sm text-label-sm transition-colors"
+          >
+            {{ tx('Đóng', 'Close') }}
+          </button>
+          <button
+            type="submit"
+            id="watchAdCompleteBtn"
+            class="w-full sm:w-auto px-md py-sm rounded-lg bg-primary text-on-primary font-label-sm text-label-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
+            disabled
+          >
+            <span class="material-symbols-outlined text-[18px]">check</span>
+            {{ tx('Tôi đã xem xong', 'I finished watching') }}
+          </button>
+        </form>
+
+        <p class="mt-4 text-sm text-on-surface-variant">
+          {{ tx( 'Nếu đã xem đủ 3 lần, bạn cần nâng cấp gói để tiếp tục.', 'If
+          you have watched 3 ads, upgrade your plan to continue.' ) }}
+        </p>
+      </div>
+    </div>
+    {% endif %}
+
+    <footer
+      class="bg-slate-50 dark:bg-slate-900 w-full border-t border-slate-200 dark:border-slate-800 mt-auto"
+    >
+      <div
+        class="flex flex-col md:flex-row justify-between items-center py-10 px-6 w-full"
+      >
+        <div class="mb-4 md:mb-0 text-center md:text-left">
+          <div
+            class="text-lg font-bold text-slate-700 dark:text-slate-300 mb-2"
+          >
+            PetAI
+          </div>
+          <div
+            class="text-sm font-['Inter'] text-slate-500 dark:text-slate-400"
+          >
+            2026
+            <a
+              class="text-xl font-bold tracking-tight text-blue-600 active:scale-95 transition-transform hover:opacity-80"
+              href="{{ url_for('home.index') }}"
+            >PetAI</a>. Chăm sóc thông minh cho thú cưng của bạn
+          </div>
+        </div>
+        <div class="flex flex-wrap justify-center gap-6">
+          <a
+            class="text-sm font-['Inter'] text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:underline decoration-2 underline-offset-4 transition-opacity duration-200"
+            href="#"
+            >Chính sách riêng tư</a
+          >
+          <a
+            class="text-sm font-['Inter'] text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:underline decoration-2 underline-offset-4 transition-opacity duration-200"
+            href="#"
+            >Điều khoản dịch vụ</a
+          >
+          <a
+            class="text-sm font-['Inter'] text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:underline decoration-2 underline-offset-4 transition-opacity duration-200"
+            href="#"
+            >Hỗ trợ</a
+          >
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      (function () {
+        const dropZone = document.getElementById("dropZone");
+        const imageInput = document.getElementById("imageInput");
+        const dropState = document.getElementById("dropState");
+        const previewState = document.getElementById("previewState");
+        const imagePreview = document.getElementById("imagePreview");
+        const changeBtn = document.getElementById("changeBtn");
+        const analyzeBtn = document.getElementById("analyzeBtn");
+        const uploadForm = document.getElementById("uploadForm");
+
+        if (!dropZone || !imageInput) return;
+
+        ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
+          dropZone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          });
+        });
+
+        ["dragenter", "dragover"].forEach((eventName) => {
+          dropZone.addEventListener(eventName, () => {
+            dropZone.classList.add("is-dragover");
+          });
+        });
+
+        ["dragleave", "drop"].forEach((eventName) => {
+          dropZone.addEventListener(eventName, () => {
+            dropZone.classList.remove("is-dragover");
+          });
+        });
+
+        dropZone.addEventListener("drop", (e) => {
+          const files = e.dataTransfer && e.dataTransfer.files;
+          if (files && files.length > 0) {
+            imageInput.files = files;
+            showPreview(files[0]);
+          }
+        });
+
+        imageInput.addEventListener("change", (e) => {
+          const file = e.target.files && e.target.files[0];
+          if (file) showPreview(file);
+        });
+
+        if (changeBtn) {
+          changeBtn.addEventListener("click", () => {
+            imageInput.value = "";
+            imagePreview.src = "";
+            imageInput.style.pointerEvents = "auto";
+            dropState.classList.remove("hidden");
+            previewState.classList.add("hidden");
+          });
+        }
+
+        if (uploadForm) {
+          uploadForm.addEventListener("submit", () => {
+            if (analyzeBtn) {
+              analyzeBtn.disabled = true;
+              analyzeBtn.textContent =
+                "{{ tx('Đang phân tích...', 'Analyzing...') }}";
+            }
+          });
+        }
+
+        function showPreview(file) {
+          const validTypes = ["image/png", "image/jpeg", "image/jpg"];
+          const fileName = (file.name || "").toLowerCase();
+          const hasValidExt = /\.(png|jpe?g)$/.test(fileName);
+          const mimeOk = !file.type || validTypes.includes(file.type);
+          if (!(mimeOk && hasValidExt)) {
+            alert(
+              "{{ tx('Chỉ hỗ trợ ảnh JPG, JPEG hoặc PNG.', 'Only JPG, JPEG, or PNG images are supported.') }}",
+            );
+            return;
+          }
+
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            imagePreview.src = e.target.result;
+            imageInput.style.pointerEvents = "none";
+            dropState.classList.add("hidden");
+            previewState.classList.remove("hidden");
+          };
+          reader.readAsDataURL(file);
+        }
+
+        const watchAdModal = document.getElementById("watchAdModal");
+        const watchAdTrigger = document.querySelector(
+          "[data-watch-ad-trigger]",
+        );
+        const watchAdClose = document.getElementById("watchAdClose");
+        const watchAdCancel = document.getElementById("watchAdCancel");
+        const watchAdCountdown = document.getElementById("watchAdCountdown");
+        const watchAdCompleteBtn =
+          document.getElementById("watchAdCompleteBtn");
+        const watchAdBar = document.getElementById("watchAdBar");
+        const watchAdForm = document.getElementById("watchAdCompleteForm");
+        const openWatchAd =
+          document.body.dataset.watchAdOpen &&
+          document.body.dataset.watchAdOpen !== "0";
+        const watchAdTotal = 8;
+        let watchAdRemaining = watchAdTotal;
+        let watchAdTimer = null;
+
+        function resetWatchAd() {
+          watchAdRemaining = watchAdTotal;
+          if (watchAdCountdown) {
+            watchAdCountdown.textContent = String(watchAdTotal);
+          }
+          if (watchAdCompleteBtn) {
+            watchAdCompleteBtn.disabled = true;
+            watchAdCompleteBtn.innerHTML =
+              "<span class=\"material-symbols-outlined text-[18px]\">check</span>{{ tx('Tôi đã xem xong', 'I finished watching') }}";
+          }
+          if (watchAdBar) {
+            watchAdBar.style.width = "0%";
+          }
+          if (watchAdTimer) {
+            clearTimeout(watchAdTimer);
+            watchAdTimer = null;
+          }
+        }
+
+        function tickWatchAd() {
+          watchAdRemaining -= 1;
+          if (watchAdRemaining <= 0) {
+            if (watchAdCountdown) {
+              watchAdCountdown.textContent = "0";
+            }
+            if (watchAdCompleteBtn) {
+              watchAdCompleteBtn.disabled = false;
+            }
+            if (watchAdBar) {
+              watchAdBar.style.width = "100%";
+            }
+            return;
+          }
+          if (watchAdCountdown) {
+            watchAdCountdown.textContent = String(watchAdRemaining);
+          }
+          if (watchAdBar) {
+            const progress =
+              ((watchAdTotal - watchAdRemaining) / watchAdTotal) * 100;
+            watchAdBar.style.width = progress.toFixed(0) + "%";
+          }
+          watchAdTimer = setTimeout(tickWatchAd, 1000);
+        }
+
+        function openWatchAdModal() {
+          if (!watchAdModal) return;
+          resetWatchAd();
+          watchAdModal.classList.remove("hidden");
+          watchAdModal.classList.add("flex");
+          watchAdModal.setAttribute("aria-hidden", "false");
+          document.body.classList.add("overflow-hidden");
+          watchAdTimer = setTimeout(tickWatchAd, 1000);
+        }
+
+        function closeWatchAdModal() {
+          if (!watchAdModal) return;
+          watchAdModal.classList.add("hidden");
+          watchAdModal.classList.remove("flex");
+          watchAdModal.setAttribute("aria-hidden", "true");
+          document.body.classList.remove("overflow-hidden");
+          if (watchAdTimer) {
+            clearTimeout(watchAdTimer);
+            watchAdTimer = null;
+          }
+        }
+
+        if (watchAdTrigger && watchAdModal) {
+          watchAdTrigger.addEventListener("click", (event) => {
+            event.preventDefault();
+            openWatchAdModal();
+          });
+        }
+
+        if (watchAdClose) {
+          watchAdClose.addEventListener("click", closeWatchAdModal);
+        }
+
+        if (watchAdCancel) {
+          watchAdCancel.addEventListener("click", closeWatchAdModal);
+        }
+
+        if (watchAdModal) {
+          watchAdModal.addEventListener("click", (event) => {
+            if (event.target === watchAdModal) {
+              closeWatchAdModal();
+            }
+          });
+        }
+
+        document.addEventListener("keydown", (event) => {
+          if (event.key === "Escape") {
+            closeWatchAdModal();
+          }
+        });
+
+        if (watchAdForm && watchAdCompleteBtn) {
+          watchAdForm.addEventListener("submit", () => {
+            watchAdCompleteBtn.disabled = true;
+            watchAdCompleteBtn.textContent =
+              "{{ tx('Đang xác nhận...', 'Confirming...') }}";
+          });
+        }
+
+        if (openWatchAd) {
+          openWatchAdModal();
+        }
+      })();
+    </script>
+  </body>
+</html>

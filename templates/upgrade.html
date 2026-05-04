@@ -1,0 +1,849 @@
+<!doctype html>
+
+<html
+  class="{{ 'dark' if ui_theme == 'dark' else 'light' }}"
+  lang="vi"
+  data-theme="{{ ui_theme or 'light' }}"
+>
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <script>
+      (function () {
+        const root = document.documentElement;
+        const storedTheme = (function () {
+          try {
+            return localStorage.getItem("theme");
+          } catch (e) {
+            return null;
+          }
+        })();
+        const preferredTheme = storedTheme || "{{ ui_theme or 'light' }}";
+
+        function resolveTheme(theme) {
+          if (theme !== "auto") return theme;
+          try {
+            return window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+          } catch (e) {
+            return "light";
+          }
+        }
+
+        function applyTheme(theme) {
+          const resolved = resolveTheme(theme);
+          root.classList.toggle("dark", resolved === "dark");
+          root.classList.toggle("light", resolved !== "dark");
+          root.setAttribute("data-theme", resolved);
+        }
+
+        applyTheme(preferredTheme);
+
+        if (preferredTheme === "auto") {
+          try {
+            const mql = window.matchMedia("(prefers-color-scheme: dark)");
+            const handler = function () {
+              applyTheme("auto");
+            };
+            if (mql.addEventListener) {
+              mql.addEventListener("change", handler);
+            } else if (mql.addListener) {
+              mql.addListener(handler);
+            }
+          } catch (e) {}
+        }
+      })();
+    </script>
+    <title>{{ tx('Nâng cấp gói', 'Upgrade plan') }} - PetAI</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/theme-dark.css') }}"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-tertiary-fixed": "#360f00",
+              "secondary-fixed-dim": "#ffb95f",
+              "surface-container": "#e5eeff",
+              "on-primary-fixed": "#00174b",
+              error: "#ba1a1a",
+              "secondary-container": "#fea619",
+              primary: "#004ac6",
+              "tertiary-container": "#bc4800",
+              "surface-tint": "#0053db",
+              "on-secondary": "#ffffff",
+              "surface-variant": "#d3e4fe",
+              "on-secondary-container": "#684000",
+              "tertiary-fixed-dim": "#ffb596",
+              "surface-dim": "#cbdbf5",
+              outline: "#737686",
+              "inverse-on-surface": "#eaf1ff",
+              "on-error": "#ffffff",
+              "secondary-fixed": "#ffddb8",
+              "on-primary": "#ffffff",
+              "on-primary-container": "#eeefff",
+              "surface-container-highest": "#d3e4fe",
+              "on-surface": "#0b1c30",
+              "surface-container-lowest": "#ffffff",
+              "on-primary-fixed-variant": "#003ea8",
+              "outline-variant": "#c3c6d7",
+              "primary-fixed": "#dbe1ff",
+              "inverse-primary": "#b4c5ff",
+              "on-error-container": "#93000a",
+              "on-tertiary": "#ffffff",
+              surface: "#f8f9ff",
+              "primary-fixed-dim": "#b4c5ff",
+              "on-background": "#0b1c30",
+              "surface-bright": "#f8f9ff",
+              "inverse-surface": "#213145",
+              "on-tertiary-fixed-variant": "#7d2d00",
+              "on-surface-variant": "#434655",
+              "tertiary-fixed": "#ffdbcd",
+              "surface-container-high": "#dce9ff",
+              "on-secondary-fixed": "#2a1700",
+              "on-tertiary-container": "#ffede6",
+              secondary: "#855300",
+              tertiary: "#943700",
+              background: "#f8f9ff",
+              "primary-container": "#2563eb",
+              "surface-container-low": "#eff4ff",
+              "on-secondary-fixed-variant": "#653e00",
+              "error-container": "#ffdad6",
+            },
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px",
+            },
+            spacing: {
+              md: "24px",
+              base: "8px",
+              sm: "12px",
+              margin: "32px",
+              lg: "48px",
+              xl: "80px",
+              gutter: "24px",
+              xs: "4px",
+            },
+            fontFamily: {
+              "headline-md": ["Inter"],
+              "headline-lg": ["Inter"],
+              "display-xl": ["Inter"],
+              "body-md": ["Inter"],
+              "label-sm": ["Inter"],
+              "body-lg": ["Inter"],
+            },
+            fontSize: {
+              "headline-md": [
+                "24px",
+                { lineHeight: "32px", fontWeight: "600" },
+              ],
+              "headline-lg": [
+                "36px",
+                {
+                  lineHeight: "44px",
+                  letterSpacing: "-0.01em",
+                  fontWeight: "600",
+                },
+              ],
+              "display-xl": [
+                "60px",
+                {
+                  lineHeight: "72px",
+                  letterSpacing: "-0.02em",
+                  fontWeight: "700",
+                },
+              ],
+              "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+              "label-sm": ["14px", { lineHeight: "20px", fontWeight: "500" }],
+              "body-lg": ["18px", { lineHeight: "28px", fontWeight: "400" }],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      .material-symbols-outlined {
+        font-variation-settings:
+          "FILL" 0,
+          "wght" 400,
+          "GRAD" 0,
+          "opsz" 24;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-background text-on-background font-body-md text-body-md antialiased min-h-screen flex flex-col"
+  >
+    {% set display_role = session.get('role') or 'user' %} {% set display_plan =
+    current_plan or 'free' %}
+
+    <nav
+      class="bg-white/80 dark:bg-slate-950/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-200 dark:border-slate-800 shadow-sm font-['Inter'] antialiased"
+    >
+      <div class="flex items-center justify-between px-6 h-16 w-full">
+        <div class="flex items-center gap-gutter">
+          <span class="text-lg font-semibold text-primary tracking-tight"
+            >PetAI</span
+          >
+        </div>
+        <div class="hidden md:flex items-center gap-margin">
+          <a
+            class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-3 py-2 border-b-2 border-transparent pb-1 font-semibold"
+            href="{{ url_for('dashboard.dashboard') }}"
+            >Bảng điều khiển</a
+          >
+          <a
+            class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-3 py-2 border-b-2 border-transparent pb-1 font-semibold"
+            href="{{ url_for('history.history') }}"
+            >Lịch sử</a
+          >
+          <a
+            class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-3 py-2 border-b-2 border-transparent pb-1 font-semibold"
+            href="{{ url_for('statistics.statistics') }}"
+            >Thống kê</a
+          >
+          <a
+            class="text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400 px-3 py-2 pb-1 font-semibold rounded-lg transition-all"
+            href="{{ url_for('predict.upgrade') }}"
+            >Nâng cấp</a
+          >
+          {% if session.get('role') == 'user' %}
+          <a
+            class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-3 py-2 border-b-2 border-transparent pb-1 font-semibold"
+            href="{{ url_for('predict.my_payments') }}"
+            >{{ tx('Lịch sử thanh toán', 'Payment history') }}</a
+          >
+          {% endif %} {% if session.get('role') == 'admin' %}
+          <a
+            class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-3 py-2 border-b-2 border-transparent pb-1 font-semibold"
+            href="{{ url_for('users.list_users') }}"
+            >Quản lý người dùng</a
+          >
+          <a
+            class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-3 py-2 border-b-2 border-transparent pb-1 font-semibold"
+            href="{{ url_for('users.confirmations_list') }}"
+            >Duyệt đơn</a
+          >
+          {% endif %}
+        </div>
+        <div class="flex items-center gap-md">
+          <a
+            class="hidden md:inline-flex bg-primary text-on-primary px-4 py-2 rounded-lg font-label-sm hover:opacity-90 active:scale-95 duration-150 transition-all"
+            href="{{ url_for('predict.upload_page') }}"
+            >Nhận diện</a
+          >
+          <div class="flex items-center gap-base">
+            <a
+              aria-label="Cai dat"
+              class="p-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all"
+              href="{{ url_for('settings.settings') }}"
+            >
+              <span class="material-symbols-outlined" data-icon="settings"
+                >settings</span
+              >
+            </a>
+            <div class="relative group cursor-pointer">
+              <img
+                alt="Anh dai dien"
+                class="w-9 h-9 rounded-full border-2 border-primary/20 p-0.5"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuABdf7zKSVKEqdGUUjqEkF9ftdFTrLW87Tb24r2IiZiv_JP0LrItrCxl23SH-gYj2Mqtkma0ak9DZbUtKM5nW747pmivDYGVbYhNr1PZbxbFuOrZdGJvnbhdSurFLfL3BcmhN2p1h9wv_6geT-x8eoTG1TDoLL40P8wDiaymvRT--SA4jYjU9A77WIji5FmOi99mPDXw7xS6dUyUNJYU2gHLk4-smzFrCuBbQbgtpATDvNo6hq3YR-cfSaNblImtCnDXIb8np7J4HA"
+              />
+              <div
+                class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white dark:border-slate-900 rounded-full"
+              ></div>
+              <div
+                class="absolute right-0 top-full w-52 bg-white dark:bg-slate-900 rounded-lg shadow-xl border border-slate-200 dark:border-slate-800 py-2 hidden group-hover:block z-50"
+              >
+                <div class="px-4 pb-2">
+                  <div class="text-xs text-slate-500 dark:text-slate-400">
+                    Vai trò:
+                    <span
+                      class="font-semibold text-slate-800 dark:text-slate-200"
+                      >{{ display_role|upper }}</span
+                    >
+                  </div>
+                  <div class="text-xs text-slate-500 dark:text-slate-400">
+                    Gói:
+                    <span
+                      class="font-semibold text-slate-800 dark:text-slate-200"
+                      >{{ display_plan|upper }}</span
+                    >
+                  </div>
+                </div>
+                <div class="h-px bg-slate-200 dark:bg-slate-800 my-1"></div>
+                <a
+                  class="flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors font-semibold"
+                  href="{{ url_for('logout.logout') }}"
+                >
+                  <span class="material-symbols-outlined text-[18px]"
+                    >logout</span
+                  >
+                  Đăng xuất
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <main
+      class="flex-grow w-full px-6 py-margin grid grid-cols-1 md:grid-cols-[290px_minmax(0,1fr)] gap-gutter"
+    >
+      <aside class="col-span-1">
+        <div
+          class="bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] p-md flex flex-col gap-sm sticky top-24 border border-surface-container-highest/50"
+        >
+          <h3
+            class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-xs px-sm"
+          >
+            Truy cập nhanh
+          </h3>
+          <a
+            class="flex items-center gap-sm p-sm rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
+            href="{{ url_for('predict.upload_page') }}"
+          >
+            <span
+              class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
+              data-icon="upload_file"
+              data-weight="fill"
+              style="font-variation-settings: &quot;FILL&quot; 1"
+              >upload_file</span
+            >
+            <span class="font-label-sm text-label-sm"
+              >Tải ảnh &amp; Nhận diện</span
+            >
+          </a>
+          <a
+            class="flex items-center gap-sm p-sm rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
+            href="{{ url_for('history.history') }}"
+          >
+            <span
+              class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
+              data-icon="history"
+              >history</span
+            >
+            <span class="font-label-sm text-label-sm">Lịch sử dự đoán</span>
+          </a>
+          {% if session.get('role') == 'user' %}
+          <a
+            class="flex items-center gap-sm p-sm rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
+            href="{{ url_for('predict.my_payments') }}"
+          >
+            <span
+              class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
+              data-icon="payments"
+              >payments</span
+            >
+            <span class="font-label-sm text-label-sm">Lịch sử thanh toán</span>
+          </a>
+          {% endif %}
+          <a
+            class="flex items-center gap-sm p-sm rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
+            href="{{ url_for('statistics.statistics') }}"
+          >
+            <span
+              class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
+              data-icon="bar_chart"
+              >bar_chart</span
+            >
+            <span class="font-label-sm text-label-sm">Thống kê cá nhân</span>
+          </a>
+          <a
+            class="flex items-center gap-sm p-sm rounded-lg text-primary bg-primary-fixed/50 transition-colors group"
+            href="{{ url_for('predict.upgrade') }}"
+          >
+            <span
+              class="material-symbols-outlined text-primary group-hover:scale-105 transition-transform"
+              data-icon="rocket_launch"
+              >rocket_launch</span
+            >
+            <span class="font-label-sm text-label-sm font-semibold"
+              >Nâng cấp gói</span
+            >
+          </a>
+          {% if session.get('role') == 'admin' %}
+          <a
+            class="flex items-center gap-sm p-sm rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
+            href="{{ url_for('users.list_users') }}"
+          >
+            <span
+              class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
+              data-icon="groups"
+              >groups</span
+            >
+            <span class="font-label-sm text-label-sm">Quản lý người dùng</span>
+          </a>
+          <a
+            class="flex items-center gap-sm p-sm rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
+            href="{{ url_for('users.confirmations_list') }}"
+          >
+            <span
+              class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
+              data-icon="receipt_long"
+              >receipt_long</span
+            >
+            <span class="font-label-sm text-label-sm">Duyệt đơn</span>
+          </a>
+          {% endif %}
+          <hr class="border-outline-variant/30 my-xs" />
+          <a
+            class="flex items-center gap-sm p-sm rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
+            href="{{ url_for('settings.settings') }}"
+          >
+            <span
+              class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
+              data-icon="settings"
+              >settings</span
+            >
+            <span class="font-label-sm text-label-sm">Cài đặt tài khoản</span>
+          </a>
+        </div>
+      </aside>
+
+      <div class="col-span-1 flex flex-col gap-gutter">
+        <section
+          class="flex flex-col md:flex-row justify-between items-start md:items-center bg-surface-container-low p-margin rounded-xl border border-surface-container-highest/50 relative overflow-hidden"
+        >
+          <div
+            class="absolute inset-0 bg-gradient-to-r from-transparent to-primary-fixed/20 pointer-events-none"
+          ></div>
+          <div class="relative z-10 max-w-2xl">
+            <h1 class="font-headline-lg text-headline-lg text-on-surface">
+              {{ tx('Nâng cấp gói sử dụng', 'Upgrade your plan') }}
+            </h1>
+            {% if current_plan == 'free' or not current_plan %}
+            <p class="font-body-md text-body-md text-on-surface-variant mt-sm">
+              {{ tx('Bạn đang dùng gói FREE. Nâng cấp để có thêm lượt nhận diện
+              và trải nghiệm mượt hơn.', 'You are on FREE plan. Upgrade for more
+              predictions and smoother experience.') }}
+            </p>
+            {% else %}
+            <p class="font-body-md text-body-md text-on-surface-variant mt-sm">
+              {{ tx('Bạn đang sử dụng gói', 'You are currently on') }}
+              <strong class="text-on-surface">{{ display_plan|upper }}</strong>.
+              {{ tx('Có thể gia hạn hoặc nâng cấp gói cao hơn.', 'You can renew
+              or upgrade to a higher plan.') }}
+            </p>
+            {% endif %}
+          </div>
+          <a
+            class="relative z-10 bg-primary text-on-primary px-md py-sm rounded-lg font-label-sm hover:-translate-y-[1px] shadow-sm hover:shadow-md transition-all flex items-center gap-base"
+            href="#checkout"
+          >
+            <span
+              class="material-symbols-outlined text-[18px]"
+              data-icon="workspace_premium"
+              >workspace_premium</span
+            >
+            {{ tx('Chọn gói', 'Choose a plan') }}
+          </a>
+        </section>
+
+        <section
+          class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-gutter"
+        >
+          <article
+            class="bg-surface-container-lowest rounded-xl p-md border border-outline-variant/30 shadow-[0_4px_20px_rgba(0,0,0,0.05)] flex flex-col"
+          >
+            <div class="flex items-start justify-between mb-sm">
+              <div>
+                <h3 class="font-headline-md text-headline-md text-on-surface">
+                  {{ tx('Miễn phí', 'Free') }}
+                </h3>
+                <p class="text-sm text-on-surface-variant">
+                  {{ tx('Gói khởi đầu', 'Starter plan') }}
+                </p>
+              </div>
+              <span class="material-symbols-outlined text-outline"
+                >cruelty_free</span
+              >
+            </div>
+            <div class="mt-sm">
+              <div class="font-headline-lg text-headline-lg text-on-surface">
+                0đ
+              </div>
+              <div class="text-sm text-on-surface-variant">
+                {{ tx('luôn miễn phí', 'forever free') }}
+              </div>
+            </div>
+            <ul class="mt-md space-y-2 text-sm text-on-surface">
+              <li class="flex items-start gap-2">
+                <span class="material-symbols-outlined text-outline text-[18px]"
+                  >check_circle</span
+                >{{ tx('10 lượt nhận diện miễn phí', '10 free predictions') }}
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="material-symbols-outlined text-outline text-[18px]"
+                  >check_circle</span
+                >{{ tx('Tối đa 3 lần xem quảng cáo để mở khoá', 'Up to 3 ad
+                unlocks') }}
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="material-symbols-outlined text-outline text-[18px]"
+                  >check_circle</span
+                >{{ tx('Phù hợp dùng thử', 'Great for trial use') }}
+              </li>
+            </ul>
+            <button
+              class="mt-auto w-full py-2.5 px-4 rounded-lg border border-outline text-on-surface font-label-sm text-label-sm cursor-not-allowed opacity-70"
+              type="button"
+              disabled
+            >
+              {{ tx('Gói hiện có', 'Current plan') }}
+            </button>
+          </article>
+
+          <article
+            class="bg-surface-container-lowest rounded-xl p-md border border-outline-variant/30 shadow-[0_4px_20px_rgba(0,0,0,0.05)] flex flex-col"
+          >
+            <div class="flex items-start justify-between mb-sm">
+              <div>
+                <h3 class="font-headline-md text-headline-md text-on-surface">
+                  {{ tx('Cơ bản', 'Basic') }}
+                </h3>
+                <p class="text-sm text-on-surface-variant">
+                  {{ tx('Nhu cầu nhẹ', 'Light usage') }}
+                </p>
+              </div>
+              <span class="material-symbols-outlined text-primary">bolt</span>
+            </div>
+            <div class="mt-sm">
+              <div class="font-headline-lg text-headline-lg text-on-surface">
+                1.000đ
+              </div>
+              <div class="text-sm text-on-surface-variant">
+                / 7 {{ tx('ngày', 'days') }}
+              </div>
+            </div>
+            <ul class="mt-md space-y-2 text-sm text-on-surface">
+              <li class="flex items-start gap-2">
+                <span
+                  class="material-symbols-outlined text-primary text-[18px]"
+                  style="font-variation-settings: &quot;FILL&quot; 1"
+                  >check_circle</span
+                >{{ tx('50 lượt nhận diện', '50 predictions') }}
+              </li>
+              <li class="flex items-start gap-2">
+                <span
+                  class="material-symbols-outlined text-primary text-[18px]"
+                  style="font-variation-settings: &quot;FILL&quot; 1"
+                  >check_circle</span
+                >{{ tx('Không cần xem quảng cáo', 'No ad required') }}
+              </li>
+              <li class="flex items-start gap-2">
+                <span
+                  class="material-symbols-outlined text-primary text-[18px]"
+                  style="font-variation-settings: &quot;FILL&quot; 1"
+                  >check_circle</span
+                >{{ tx('Tiết kiệm cho nhu cầu nhẹ', 'Cost-saving for light
+                usage') }}
+              </li>
+            </ul>
+            <button
+              class="mt-auto w-full py-2.5 px-4 rounded-lg bg-surface-container-high text-on-surface font-label-sm text-label-sm hover:bg-surface-variant transition-colors"
+              type="button"
+              data-plan="basic"
+            >
+              {{ tx('Chọn Basic', 'Choose Basic') }}
+            </button>
+          </article>
+
+          <article
+            class="relative bg-surface-container-lowest rounded-xl p-md border-2 border-primary shadow-[0_8px_30px_rgba(0,0,0,0.08)] flex flex-col"
+          >
+            <div
+              class="absolute -top-3 left-1/2 -translate-x-1/2 bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full text-xs font-semibold"
+            >
+              {{ tx('Khuyên dùng', 'Recommended') }}
+            </div>
+            <div class="flex items-start justify-between mb-sm mt-2">
+              <div>
+                <h3 class="font-headline-md text-headline-md text-primary">
+                  Pro
+                </h3>
+                <p class="text-sm text-on-surface-variant">
+                  {{ tx('Tối ưu nhất', 'Best value') }}
+                </p>
+              </div>
+              <span class="material-symbols-outlined text-primary"
+                >verified</span
+              >
+            </div>
+            <div class="mt-sm">
+              <div class="font-headline-lg text-headline-lg text-on-surface">
+                5.000đ
+              </div>
+              <div class="text-sm text-on-surface-variant">
+                / 30 {{ tx('ngày', 'days') }}
+              </div>
+            </div>
+            <ul class="mt-md space-y-2 text-sm text-on-surface">
+              <li class="flex items-start gap-2">
+                <span
+                  class="material-symbols-outlined text-primary text-[18px]"
+                  style="font-variation-settings: &quot;FILL&quot; 1"
+                  >check_circle</span
+                >{{ tx('200 lượt nhận diện', '200 predictions') }}
+              </li>
+              <li class="flex items-start gap-2">
+                <span
+                  class="material-symbols-outlined text-primary text-[18px]"
+                  style="font-variation-settings: &quot;FILL&quot; 1"
+                  >check_circle</span
+                >{{ tx('Ưu tiên tốc độ xử lý', 'Priority processing speed') }}
+              </li>
+              <li class="flex items-start gap-2">
+                <span
+                  class="material-symbols-outlined text-primary text-[18px]"
+                  style="font-variation-settings: &quot;FILL&quot; 1"
+                  >check_circle</span
+                >{{ tx('Không quảng cáo, dùng thoải mái', 'Ad-free experience')
+                }}
+              </li>
+            </ul>
+            <button
+              class="mt-auto w-full py-2.5 px-4 rounded-lg bg-primary text-on-primary font-label-sm text-label-sm hover:opacity-90 transition-opacity"
+              type="button"
+              data-plan="pro"
+            >
+              {{ tx('Chọn Pro', 'Choose Pro') }}
+            </button>
+          </article>
+
+          <article
+            class="bg-surface-container-lowest rounded-xl p-md border border-outline-variant/30 shadow-[0_4px_20px_rgba(0,0,0,0.05)] flex flex-col"
+          >
+            <div class="flex items-start justify-between mb-sm">
+              <div>
+                <h3 class="font-headline-md text-headline-md text-on-surface">
+                  {{ tx('Doanh nghiệp', 'Enterprise') }}
+                </h3>
+                <p class="text-sm text-on-surface-variant">
+                  {{ tx('Nhu cầu cao', 'Heavy usage') }}
+                </p>
+              </div>
+              <span class="material-symbols-outlined text-secondary"
+                >domain</span
+              >
+            </div>
+            <div class="mt-sm">
+              <div class="font-headline-lg text-headline-lg text-on-surface">
+                15.000đ
+              </div>
+              <div class="text-sm text-on-surface-variant">
+                / 90 {{ tx('ngày', 'days') }}
+              </div>
+            </div>
+            <ul class="mt-md space-y-2 text-sm text-on-surface">
+              <li class="flex items-start gap-2">
+                <span
+                  class="material-symbols-outlined text-secondary text-[18px]"
+                  style="font-variation-settings: &quot;FILL&quot; 1"
+                  >check_circle</span
+                >{{ tx('Không giới hạn lượt nhận diện', 'Unlimited predictions')
+                }}
+              </li>
+              <li class="flex items-start gap-2">
+                <span
+                  class="material-symbols-outlined text-secondary text-[18px]"
+                  style="font-variation-settings: &quot;FILL&quot; 1"
+                  >check_circle</span
+                >{{ tx('Tối ưu cho sử dụng thường xuyên', 'Optimized for heavy
+                usage') }}
+              </li>
+              <li class="flex items-start gap-2">
+                <span
+                  class="material-symbols-outlined text-secondary text-[18px]"
+                  style="font-variation-settings: &quot;FILL&quot; 1"
+                  >check_circle</span
+                >{{ tx('Hỗ trợ ưu tiên', 'Priority support') }}
+              </li>
+            </ul>
+            <button
+              class="mt-auto w-full py-2.5 px-4 rounded-lg bg-surface-container-high text-on-surface font-label-sm text-label-sm hover:bg-surface-variant transition-colors"
+              type="button"
+              data-plan="enterprise"
+            >
+              {{ tx('Chọn Enterprise', 'Choose Enterprise') }}
+            </button>
+          </article>
+        </section>
+
+        <section
+          id="checkout"
+          class="bg-surface-container-lowest rounded-xl border border-outline-variant/30 p-md md:p-lg shadow-[0_4px_20px_rgba(0,0,0,0.05)]"
+        >
+          <div class="flex items-center gap-sm mb-md">
+            <span class="material-symbols-outlined text-primary"
+              >shopping_cart</span
+            >
+            <h2 class="font-headline-md text-headline-md text-on-surface">
+              {{ tx('Xác nhận thanh toán', 'Checkout') }}
+            </h2>
+          </div>
+          <form
+            method="post"
+            action="{{ url_for('predict.checkout') }}"
+            class="flex flex-col gap-md"
+            id="checkoutForm"
+          >
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+            <div>
+              <label
+                class="font-label-sm text-label-sm text-on-surface-variant"
+                for="plan"
+                >{{ tx('Gói thanh toán', 'Payment plan') }}</label
+              >
+              <div class="relative mt-2">
+                <select
+                  id="plan"
+                  name="plan"
+                  class="w-full appearance-none bg-surface border border-outline-variant rounded-lg py-3 px-4 text-on-surface font-body-md focus:ring-2 focus:ring-primary focus:outline-none transition-shadow"
+                  required
+                >
+                  <option value="basic">
+                    {{ tx('Basic — 1.000đ / 7 ngày / 50 lượt', 'Basic — 1,000đ /
+                    7 days / 50 predictions') }}
+                  </option>
+                  <option value="pro" selected>
+                    {{ tx('Pro — 5.000đ / 30 ngày / 200 lượt', 'Pro — 5,000đ /
+                    30 days / 200 predictions') }}
+                  </option>
+                  <option value="enterprise">
+                    {{ tx('Enterprise — 15.000đ / 90 ngày / Không giới hạn',
+                    'Enterprise — 15,000đ / 90 days / Unlimited') }}
+                  </option>
+                </select>
+                <span
+                  class="material-symbols-outlined absolute right-3 top-3 text-outline-variant pointer-events-none"
+                  >expand_more</span
+                >
+              </div>
+            </div>
+
+            <input type="hidden" name="payment_method" value="qr" />
+
+            <div
+              class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-sm"
+            >
+              <a
+                class="px-4 py-2 border border-outline-variant rounded-lg text-on-surface hover:bg-surface-container-low font-label-sm text-label-sm transition-colors text-center"
+                href="{{ url_for('predict.upload_page') }}"
+              >
+                {{ tx('Quay lại', 'Back') }}
+              </a>
+              <button
+                class="px-4 py-2 rounded-lg bg-primary text-on-primary font-label-sm text-label-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
+                type="submit"
+                id="payBtn"
+              >
+                <span class="material-symbols-outlined text-[18px]">lock</span>
+                {{ tx('Tiếp tục thanh toán', 'Continue to checkout') }}
+              </button>
+            </div>
+          </form>
+          <p
+            class="mt-md text-sm text-on-surface-variant flex items-center gap-2"
+          >
+            <span class="material-symbols-outlined text-[18px]"
+              >qr_code_scanner</span
+            >
+            {{ tx('Thanh toán qua VietQR. Chuyển đúng số tiền và nội dung để hệ
+            thống tự ghi nhận.', 'Pay via VietQR. Transfer the exact amount with
+            correct note for automatic confirmation.') }}
+          </p>
+        </section>
+      </div>
+    </main>
+
+    <footer
+      class="bg-slate-50 dark:bg-slate-900 w-full border-t border-slate-200 dark:border-slate-800 mt-auto"
+    >
+      <div
+        class="flex flex-col md:flex-row justify-between items-center py-10 px-6 w-full"
+      >
+        <div class="mb-4 md:mb-0 text-center md:text-left">
+          <div
+            class="text-lg font-bold text-slate-700 dark:text-slate-300 mb-2"
+          >
+            PetAI
+          </div>
+          <div
+            class="text-sm font-['Inter'] text-slate-500 dark:text-slate-400"
+          >
+            2026
+            <a
+              class="text-xl font-bold tracking-tight text-blue-600 active:scale-95 transition-transform hover:opacity-80"
+              href="{{ url_for('home.index') }}"
+            >PetAI</a>. Chăm sóc thông minh cho thú cưng của bạn
+          </div>
+        </div>
+        <div class="flex flex-wrap justify-center gap-6">
+          <a
+            class="text-sm font-['Inter'] text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:underline decoration-2 underline-offset-4 transition-opacity duration-200"
+            href="#"
+            >Chính sách riêng tư</a
+          >
+          <a
+            class="text-sm font-['Inter'] text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:underline decoration-2 underline-offset-4 transition-opacity duration-200"
+            href="#"
+            >Điều khoản dịch vụ</a
+          >
+          <a
+            class="text-sm font-['Inter'] text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:underline decoration-2 underline-offset-4 transition-opacity duration-200"
+            href="#"
+            >Hỗ trợ</a
+          >
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      (function () {
+        const planSelect = document.getElementById("plan");
+        const planButtons = document.querySelectorAll("[data-plan]");
+        const checkoutForm = document.getElementById("checkoutForm");
+        const payBtn = document.getElementById("payBtn");
+
+        planButtons.forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const plan = btn.getAttribute("data-plan");
+            if (!planSelect || !plan) return;
+            planSelect.value = plan;
+            planSelect.focus();
+            try {
+              document
+                .getElementById("checkout")
+                .scrollIntoView({ behavior: "smooth" });
+            } catch (e) {}
+          });
+        });
+
+        if (checkoutForm) {
+          checkoutForm.addEventListener("submit", () => {
+            if (!payBtn) return;
+            payBtn.disabled = true;
+            payBtn.textContent =
+              "{{ tx('Đang tạo đơn...', 'Creating order...') }}";
+          });
+        }
+      })();
+    </script>
+  </body>
+</html>

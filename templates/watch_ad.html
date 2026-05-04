@@ -1,0 +1,120 @@
+{% extends 'base.html' %} {% block title %}{{ tx('Xem quảng cáo', 'Watch ad')
+}}{% endblock %} {% block extra_css %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/pages/monetization.css') }}"
+/>
+{% endblock %} {% block content %}
+<section class="checkout-hero ad-hero">
+  <div>
+    <span class="kicker"
+      ><i class="bi bi-play-circle-fill me-1"></i> {{ tx('Mở khóa bằng quảng
+      cáo', 'Ad unlock') }}</span
+    >
+    <h1>
+      {{ tx('Xem quảng cáo để mở khóa lượt nhận diện', 'Watch ads to unlock
+      predictions') }}
+    </h1>
+    <p>
+      {{ tx('Sau 10 lượt miễn phí, mỗi quảng cáo mở thêm 3 lượt (tối đa 3 lần
+      xem).', 'After 10 free uses, each ad unlocks 3 more predictions (max 3 ad
+      views).') }}
+    </p>
+  </div>
+</section>
+
+<section class="ad-unlock-card">
+  {% if quota_info %}
+  <div class="ad-stats">
+    <span
+      >{{ tx('Đã nhận diện:', 'Predictions used:') }}
+      <strong
+        >{{ quota_info.total_predictions }}/{{ quota_info.free_limit }}</strong
+      ></span
+    >
+    <span
+      >{{ tx('Unlock còn:', 'Unlocks left:') }}
+      <strong>{{ quota_info.ad_unlocks_remaining }}</strong></span
+    >
+    <span
+      >{{ tx('Ads đã xem:', 'Ads watched:') }}
+      <strong
+        >{{ quota_info.ad_views_used }}/{{ quota_info.ad_views_limit }}</strong
+      ></span
+    >
+  </div>
+  {% endif %}
+
+  <div class="ad-player">
+    <div class="ad-title">
+      {{ tx('Đang phát quảng cáo mô phỏng', 'Playing simulated ad') }}
+    </div>
+    <p class="ad-sub">
+      {{ tx('Vui lòng chờ', 'Please wait') }}
+      <strong><span id="countdown">8</span>s</strong> {{ tx('để bật nút xác
+      nhận.', 'to enable the confirm button.') }}
+    </p>
+    <div class="ad-bar-track"><span id="adBar"></span></div>
+  </div>
+
+  <form
+    method="post"
+    action="{{ url_for('predict.watch_ad_complete') }}"
+    class="ad-actions"
+    id="adCompleteForm"
+  >
+    <a class="btn btn-outline-plan" href="{{ url_for('predict.upload_page') }}"
+      >{{ tx('Quay lại', 'Back') }}</a
+    >
+    <button
+      class="btn btn-confirm-transfer"
+      type="submit"
+      id="completeBtn"
+      disabled
+    >
+      <i class="bi bi-check2-circle me-1"></i>{{ tx('Tôi đã xem xong', 'I
+      finished watching') }}
+    </button>
+  </form>
+
+  <p class="checkout-note">
+    {{ tx('Nếu đã xem đủ 3 lần, bạn cần nâng cấp gói để tiếp tục.', 'If you have
+    watched 3 ads, upgrade your plan to continue.') }}
+  </p>
+</section>
+{% endblock %} {% block extra_js %}
+<script>
+  (function () {
+    const total = 8;
+    let remaining = total;
+    const countdownEl = document.getElementById("countdown");
+    const btn = document.getElementById("completeBtn");
+    const form = document.getElementById("adCompleteForm");
+    const bar = document.getElementById("adBar");
+
+    function tick() {
+      remaining -= 1;
+      if (remaining <= 0) {
+        countdownEl.textContent = "0";
+        btn.disabled = false;
+        bar.style.width = "100%";
+        return;
+      }
+      countdownEl.textContent = String(remaining);
+      const progress = ((total - remaining) / total) * 100;
+      bar.style.width = progress.toFixed(0) + "%";
+      setTimeout(tick, 1000);
+    }
+
+    bar.style.width = "0%";
+    setTimeout(tick, 1000);
+
+    if (form) {
+      form.addEventListener("submit", function () {
+        btn.disabled = true;
+        btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>{{ tx('Đang xác nhận...', 'Confirming...') }}`;
+      });
+    }
+  })();
+</script>
+{% endblock %}
