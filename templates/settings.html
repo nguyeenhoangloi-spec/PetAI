@@ -52,6 +52,7 @@
     <title>{{ tx('Cài đặt tài khoản', 'Account settings') }} - PetAI</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/theme-dark.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/toasts.css') }}" />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
@@ -175,6 +176,7 @@
     </style>
   </head>
   <body class="bg-background text-on-background font-body-md text-body-md antialiased min-h-screen flex flex-col dark:bg-slate-950 dark:text-slate-100">
+    {% include '_toasts.html' %}
     {% set display_name = session.get('fullname') or session.get('username') or session.get('email') or 'Người dùng' %}
     {% set display_email = session.get('email') %}
     {% set display_role = session.get('role') or 'user' %}
@@ -508,5 +510,6 @@
         }
       })();
     </script>
+    <script src="{{ url_for('static', filename='js/toasts.js') }}"></script>
   </body>
 </html>

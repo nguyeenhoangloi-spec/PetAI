@@ -53,6 +53,7 @@
     <title>{{ tx('Quản trị Người dùng', 'Admin User') }} #{{ user.id }} - PetAI</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/theme-dark.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/toasts.css') }}" />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
@@ -181,6 +182,7 @@
   <body
     class="bg-background text-on-background font-body-md text-body-md antialiased min-h-screen flex flex-col"
   >
+    {% include '_toasts.html' %}
     {% set display_role = session.get('role') or 'user' %} {% set display_plan =
     current_plan or 'free' %}
 
@@ -647,6 +649,7 @@
       </div>
     </div>
 
+    <script src="{{ url_for('static', filename='js/toasts.js') }}"></script>
     <script>
       (function () {
         const modal = document.getElementById("confirmModal");
@@ -736,7 +739,14 @@
             const url = isActive ? `/users/lock/${userId}` : `/users/unlock/${userId}`;
             const { res, data } = await postJson(url);
             if (!res.ok || !data?.success) {
-              alert(data?.error || "{{ tx('Thao tác thất bại.', 'Action failed.') }}");
+              if (typeof window.showToast === "function") {
+                window.showToast(
+                  "error",
+                  data?.error || "{{ tx('Thao tác thất bại.', 'Action failed.') }}",
+                );
+              } else {
+                alert(data?.error || "{{ tx('Thao tác thất bại.', 'Action failed.') }}");
+              }
               return;
             }
             location.reload();
@@ -756,12 +766,26 @@
             const typed = (ans.value || "").trim();
             const valid = typed.toUpperCase() === "DELETE" || typed.toLowerCase() === username.toLowerCase();
             if (!valid) {
-              alert("{{ tx('Xác nhận không đúng.', 'Invalid confirmation.') }}");
+              if (typeof window.showToast === "function") {
+                window.showToast(
+                  "warning",
+                  "{{ tx('Xác nhận không đúng.', 'Invalid confirmation.') }}",
+                );
+              } else {
+                alert("{{ tx('Xác nhận không đúng.', 'Invalid confirmation.') }}");
+              }
               return;
             }
             const { res, data } = await postJson(`/users/delete/${userId}`, { confirm: typed });
             if (!res.ok || !data?.success) {
-              alert(data?.error || "{{ tx('Xóa thất bại.', 'Delete failed.') }}");
+              if (typeof window.showToast === "function") {
+                window.showToast(
+                  "error",
+                  data?.error || "{{ tx('Xóa thất bại.', 'Delete failed.') }}",
+                );
+              } else {
+                alert(data?.error || "{{ tx('Xóa thất bại.', 'Delete failed.') }}");
+              }
               return;
             }
             window.location.href = "{{ url_for('users.list_users') }}";

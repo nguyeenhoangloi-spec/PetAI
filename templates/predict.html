@@ -61,6 +61,10 @@
       href="{{ url_for('static', filename='css/theme-dark.css') }}"
     />
     <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/toasts.css') }}"
+    />
+    <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;500;600;700;800;900&display=swap"
       rel="stylesheet"
     />
@@ -202,13 +206,13 @@
   <body
     class="bg-background text-on-background font-body-md text-body-md antialiased min-h-screen flex flex-col"
   >
-    {% set has_conf = result.breed_conf is defined and result.breed_conf is not
-    none %} {% set conf_percent = (result.breed_conf * 100) if has_conf else 0
-    %} {% set conf_percent_clamped = 0 if conf_percent < 0 else (100 if
-    conf_percent > 100 else conf_percent) %} {% set breed_name = result.breed if
-    result.breed else tx('Chưa xác định', 'Unknown') %} {% set primary_label =
-    tx('Giống dự đoán', 'Predicted breed') %} {% if result.parts_info and
-    result.parts_info.decision and
+    {% include '_toasts.html' %} {% set has_conf = result.breed_conf is defined
+    and result.breed_conf is not none %} {% set conf_percent =
+    (result.breed_conf * 100) if has_conf else 0 %} {% set conf_percent_clamped
+    = 0 if conf_percent < 0 else (100 if conf_percent > 100 else conf_percent)
+    %} {% set breed_name = result.breed if result.breed else tx('Chưa xác định',
+    'Unknown') %} {% set primary_label = tx('Giống dự đoán', 'Predicted breed')
+    %} {% if result.parts_info and result.parts_info.decision and
     result.parts_info.decision.is_hybrid_candidate %} {% set primary_label =
     tx('Nghi lai', 'Suspected hybrid') %} {% elif result.parts_info and
     result.parts_info.acceptance and result.parts_info.acceptance.level ==
@@ -910,5 +914,6 @@
           });
       });
     </script>
+    <script src="{{ url_for('static', filename='js/toasts.js') }}"></script>
   </body>
 </html>

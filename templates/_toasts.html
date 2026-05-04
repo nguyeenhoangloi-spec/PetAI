@@ -1,0 +1,42 @@
+{% set toast_titles = { 'success': tx('Thành công', 'Success'), 'error':
+tx('Lỗi', 'Error'), 'warning': tx('Cảnh báo', 'Warning'), 'info': tx('Thông
+tin', 'Info'), } %}
+
+<div
+  class="toast-stack"
+  role="region"
+  aria-live="polite"
+  aria-atomic="true"
+  data-title-success="{{ toast_titles['success'] }}"
+  data-title-error="{{ toast_titles['error'] }}"
+  data-title-warning="{{ toast_titles['warning'] }}"
+  data-title-info="{{ toast_titles['info'] }}"
+  data-close-label="{{ tx('Đóng', 'Close') }}"
+>
+  {% with messages = get_flashed_messages(with_categories=true) %} {% if
+  messages %} {% for category, message in messages %} {% set toast_type =
+  (category or 'info')|lower %} {% if toast_type not in ['success', 'error',
+  'warning', 'info'] %} {% set toast_type = 'info' %} {% endif %}
+  <div class="toast toast--{{ toast_type }}" role="alert" data-timeout="3000">
+    <div class="toast__icon">
+      <span class="material-symbols-outlined">
+        {% if toast_type == 'success' %}check_circle{% elif toast_type ==
+        'error' %}error{% elif toast_type == 'warning' %}warning{% else %}info{%
+        endif %}
+      </span>
+    </div>
+    <div class="toast__body">
+      <div class="toast__title">{{ toast_titles[toast_type] }}</div>
+      <div class="toast__message">{{ message }}</div>
+    </div>
+    <button
+      type="button"
+      class="toast__close"
+      data-toast-close
+      aria-label="{{ tx('Đóng', 'Close') }}"
+    >
+      <span class="material-symbols-outlined">close</span>
+    </button>
+  </div>
+  {% endfor %} {% endif %} {% endwith %}
+</div>
