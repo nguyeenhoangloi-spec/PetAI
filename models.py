@@ -353,7 +353,7 @@ class UserQuota:
                     INSERT INTO user_quota (user_id, plan, plan_expire, paid_uses_remaining)
                     VALUES (%s, %s, %s, %s)
                     ON DUPLICATE KEY UPDATE
-                    SET plan = %s,
+                        plan = %s,
                         plan_expire = %s,
                         paid_uses_remaining = %s,
                         updated_at = CURRENT_TIMESTAMP
@@ -374,7 +374,7 @@ class UserQuota:
                     INSERT INTO user_quota (user_id, plan, paid_uses_remaining)
                     VALUES (%s, %s, %s)
                     ON DUPLICATE KEY UPDATE
-                    SET plan = %s,
+                        plan = %s,
                         paid_uses_remaining = %s,
                         updated_at = CURRENT_TIMESTAMP
                     """,

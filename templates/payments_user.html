@@ -438,7 +438,10 @@
             <div class="text-xs text-on-surface-variant">
               {{ tx('Gói hiện tại', 'Current plan') }}
             </div>
-            <div class="font-headline-md text-headline-md text-on-surface">
+            <div
+              class="font-headline-md text-headline-md text-on-surface"
+              id="currentPlanValue"
+            >
               {{ quota_info.plan|upper if quota_info and quota_info.plan else
               'FREE' }}
             </div>
@@ -492,7 +495,11 @@
               <tbody class="divide-y divide-outline-variant/30">
                 {% for o in orders %} {% set status = (o.status or
                 'pending')|lower %}
-                <tr class="hover:bg-surface-container-low/60 transition-colors">
+                <tr
+                  class="hover:bg-surface-container-low/60 transition-colors"
+                  data-order-id="{{ o.order_id }}"
+                  data-status="{{ status }}"
+                >
                   <td
                     class="px-4 py-3 font-mono text-xs text-on-surface-variant"
                   >
@@ -517,16 +524,19 @@
                     {% if status == 'paid' %}
                     <span
                       class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700 border border-green-200"
+                      data-status-badge
                       >{{ tx('Đã thanh toán', 'Paid') }}</span
                     >
                     {% elif status == 'user_confirmed' %}
                     <span
                       class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-700 border border-amber-200"
+                      data-status-badge
                       >{{ tx('Đã báo chuyển', 'Transfer reported') }}</span
                     >
                     {% else %}
                     <span
                       class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-surface-container text-on-surface-variant border border-outline-variant/30"
+                      data-status-badge
                       >{{ tx('Đang chờ', 'Pending') }}</span
                     >
                     {% endif %}
@@ -541,7 +551,7 @@
                     o.confirmed_at and o.confirmed_at.strftime is defined else
                     (o.confirmed_at or '-') }}
                   </td>
-                  <td class="px-4 py-3">
+                  <td class="px-4 py-3" data-action-cell>
                     {% if status == 'pending' %} {% if
                     config.get('ALLOW_MANUAL_TRANSFER_CONFIRM', True) %}
                     <form
@@ -622,6 +632,92 @@
             btn.textContent = "{{ tx('Đang gửi...', 'Sending...') }}";
           });
         });
+
+        const labels = {
+          paid: "{{ tx('Đã thanh toán', 'Paid') }}",
+          user_confirmed: "{{ tx('Đã báo chuyển', 'Transfer reported') }}",
+          pending: "{{ tx('Đang chờ', 'Pending') }}",
+        };
+
+        const badgeClasses = {
+          paid: "inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700 border border-green-200",
+          user_confirmed:
+            "inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-700 border border-amber-200",
+          pending:
+            "inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-surface-container text-on-surface-variant border border-outline-variant/30",
+        };
+
+        const planValue = document.getElementById("currentPlanValue");
+        const rows = Array.from(document.querySelectorAll("tr[data-order-id]"));
+        if (!rows.length) return;
+
+        const setBadge = function (badge, status) {
+          if (!badge) return;
+          const key = status || "pending";
+          badge.className = badgeClasses[key] || badgeClasses.pending;
+          badge.textContent = labels[key] || labels.pending;
+        };
+
+        const setActionPaid = function (cell) {
+          if (!cell) return;
+          cell.innerHTML =
+            '<span class="text-on-surface-variant text-xs">-</span>';
+        };
+
+        const pollStatuses = async function () {
+          let pendingCount = 0;
+          for (const row of rows) {
+            const orderId = row.dataset.orderId;
+            if (!orderId) continue;
+            const currentStatus = (row.dataset.status || "").toLowerCase();
+            if (currentStatus === "paid") continue;
+            pendingCount += 1;
+            try {
+              const res = await fetch(
+                "{{ url_for('predict.payment_status') }}?order_id=" +
+                  encodeURIComponent(orderId),
+                { cache: "no-store" },
+              );
+              if (!res.ok) continue;
+              const data = await res.json();
+              if (!data || !data.success) continue;
+              const nextStatus = (data.status || "").toLowerCase();
+              if (nextStatus && nextStatus !== currentStatus) {
+                row.dataset.status = nextStatus;
+                setBadge(row.querySelector("[data-status-badge]"), nextStatus);
+                if (nextStatus === "paid") {
+                  setActionPaid(row.querySelector("[data-action-cell]"));
+                }
+              }
+              if (nextStatus === "paid" && planValue) {
+                const nextPlan = (
+                  data.current_plan ||
+                  data.order_plan ||
+                  "free"
+                ).toUpperCase();
+                planValue.textContent = nextPlan;
+              }
+            } catch (e) {}
+          }
+
+          if (pendingCount === 0) {
+            return false;
+          }
+          return true;
+        };
+
+        let active = true;
+        const tick = async function () {
+          if (!active) return;
+          const keepGoing = await pollStatuses();
+          if (!keepGoing) {
+            active = false;
+            return;
+          }
+          setTimeout(tick, 5000);
+        };
+
+        tick();
       })();
     </script>
   </body>

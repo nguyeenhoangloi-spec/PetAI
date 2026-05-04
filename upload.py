@@ -2,7 +2,7 @@
 # upload.py
 # Blueprint xử lý upload ảnh và dự đoán
 
-from flask import Blueprint, request, redirect, url_for, flash, render_template, current_app, session, send_file
+from flask import Blueprint, request, redirect, url_for, flash, render_template, current_app, session, send_file, jsonify
 from predict import ImagePredictor
 from werkzeug.utils import secure_filename
 import cv2
@@ -367,6 +367,69 @@ def payment_qr_png():
 	img.save(buf, "PNG")
 	buf.seek(0)
 	return send_file(buf, mimetype="image/png")
+
+
+@predict_bp.route("/payments/status", methods=["GET"])
+def payment_status():
+	user_id = _get_session_user_id()
+	if user_id is None:
+		return jsonify({"success": False, "error": "unauthorized"}), 401
+
+	order_id = (request.args.get("order_id") or "").strip()
+	if not order_id:
+		pending = session.get("pending_payment") or {}
+		order_id = (pending.get("order_id") or "").strip()
+
+	if not order_id:
+		return jsonify({"success": False, "error": "missing_order_id"}), 400
+
+	conn = None
+	try:
+		conn = get_connection()
+		order = PaymentOrder.get_by_order_id(conn, order_id)
+		if not order or int(order.get("user_id") or 0) != int(user_id):
+			return jsonify({"success": False, "error": "not_found"}), 404
+
+		status = (order.get("status") or PaymentOrder.STATUS_PENDING).lower()
+		confirmed_at = order.get("confirmed_at")
+		confirmed_at_str = None
+		if confirmed_at:
+			try:
+				confirmed_at_str = confirmed_at.strftime("%Y-%m-%d %H:%M:%S")
+			except Exception:
+				confirmed_at_str = str(confirmed_at)
+
+		order_plan = (order.get("plan") or "free").lower()
+		quota = UserQuota.get_or_create(conn, user_id)
+		current_plan = (quota.get("plan") or "free").lower()
+
+		if status == PaymentOrder.STATUS_PAID:
+			# Sync plan if webhook updated order but quota is stale
+			if order_plan and current_plan != order_plan:
+				UserQuota.set_plan(conn, user_id, order_plan, _plan_expire_for(order_plan))
+				quota = UserQuota.get_or_create(conn, user_id)
+				current_plan = (quota.get("plan") or "free").lower()
+
+			pending = session.get("pending_payment") or {}
+			if (pending.get("order_id") or "") == order_id:
+				try:
+					session.pop("pending_payment", None)
+				except Exception:
+					pass
+
+		return jsonify(
+			{
+				"success": True,
+				"order_id": order_id,
+				"status": status,
+				"order_plan": order_plan,
+				"current_plan": current_plan,
+				"confirmed_at": confirmed_at_str,
+			}
+		)
+	finally:
+		if conn:
+			conn.close()
 
 
 @predict_bp.route("/upgrade/buy", methods=["POST"])

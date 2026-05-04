@@ -14,6 +14,8 @@ sepay_bp = Blueprint("sepay", __name__)
 
 
 _ORDER_ID_FROM_CONTENT_RE = re.compile(r"(?:\bORDER\s*=\s*|\bDH\s*[:\- ]\s*)([a-zA-Z0-9]{8,32})")
+_ORDER_ID_DOGAI_RE = re.compile(r"\bDOGAI\b(?:\s+(?:BASIC|PRO|ENTERPRISE))?\s+([a-f0-9]{8,32})", re.IGNORECASE)
+_ORDER_ID_HEX_ALPHA_RE = re.compile(r"\b(?=[a-f0-9]{12,32}\b)(?=[a-f0-9]*[a-f])[a-f0-9]{12,32}\b", re.IGNORECASE)
 _ORDER_ID_HEX12_RE = re.compile(r"\b[a-f0-9]{12}\b", re.IGNORECASE)
 
 
@@ -39,23 +41,40 @@ def _first_present(payload: dict, keys: list[str]):
     return None
 
 
-def _extract_order_id(payload: dict) -> str | None:
+def _extract_order_candidates(payload: dict) -> list[str]:
     payload = _as_event_dict(payload)
+    candidates: list[str] = []
+
+    def add(val: str | None) -> None:
+        if not val:
+            return
+        v = val.strip()
+        if v and v not in candidates:
+            candidates.append(v)
+
+    def add_matches(text: str) -> None:
+        if not text:
+            return
+        for pattern in (
+            _ORDER_ID_DOGAI_RE,
+            _ORDER_ID_FROM_CONTENT_RE,
+            _ORDER_ID_HEX_ALPHA_RE,
+            _ORDER_ID_HEX12_RE,
+        ):
+            for match in pattern.finditer(text):
+                if match.lastindex:
+                    add(match.group(1))
+                else:
+                    add(match.group(0))
 
     code = payload.get("code")
     if isinstance(code, str) and code.strip():
-        return code.strip()
+        add(code)
 
     # Some payloads use referenceCode/reference_code for the payment code
-    # Only accept it if we can safely extract our order_id pattern from it.
     ref = _first_present(payload, ["referenceCode", "reference_code"])
     if isinstance(ref, str) and ref.strip():
-        mref = _ORDER_ID_FROM_CONTENT_RE.search(ref)
-        if mref:
-            return mref.group(1).strip()
-        mref2 = _ORDER_ID_HEX12_RE.search(ref)
-        if mref2:
-            return mref2.group(0).strip()
+        add_matches(ref)
 
     # Search order_id in common "content" fields
     content = _first_present(payload, [
@@ -69,14 +88,14 @@ def _extract_order_id(payload: dict) -> str | None:
         "note",
     ])
     if isinstance(content, str) and content.strip():
-        m = _ORDER_ID_FROM_CONTENT_RE.search(content)
-        if m:
-            return m.group(1).strip()
-        m2 = _ORDER_ID_HEX12_RE.search(content)
-        if m2:
-            return m2.group(0).strip()
+        add_matches(content)
 
-    return None
+    return candidates
+
+
+def _extract_order_id(payload: dict) -> str | None:
+    candidates = _extract_order_candidates(payload)
+    return candidates[0] if candidates else None
 
 
 def _is_authorized(req) -> bool:
@@ -189,7 +208,8 @@ def webhook_sepay():
     except Exception:
         transfer_amount = None
 
-    order_id = _extract_order_id(payload)
+    order_candidates = _extract_order_candidates(payload)
+    order_id = order_candidates[0] if order_candidates else None
     try:
         print(f"[SEPAY] recv tx={sepay_tx_id} transfer_type={transfer_type or 'in'} amount={transfer_amount} order_id={order_id}")
     except Exception:
@@ -222,17 +242,23 @@ def webhook_sepay():
             except Exception:
                 pass
 
-        if not order_id:
+        if not order_candidates:
             try:
                 print(f"[SEPAY] no order_id found tx={sepay_tx_id} -> ignore")
             except Exception:
                 pass
             return jsonify({"success": True}), 200
 
-        order = PaymentOrder.get_by_order_id(conn, str(order_id))
+        order = None
+        for candidate in order_candidates:
+            order = PaymentOrder.get_by_order_id(conn, str(candidate))
+            if order:
+                order_id = candidate
+                break
+
         if not order:
             try:
-                print(f"[SEPAY] order not found order_id={order_id} tx={sepay_tx_id} -> ignore")
+                print(f"[SEPAY] order not found order_id={order_id} tx={sepay_tx_id} candidates={order_candidates[:5]} -> ignore")
             except Exception:
                 pass
             return jsonify({"success": True}), 200
@@ -254,13 +280,16 @@ def webhook_sepay():
             user_id = order.get("user_id")
             if user_id is not None:
                 try:
-                    # Apply EXACT plan of this order (avoid "random" highest-plan selection)
+                    # Apply EXACT plan of this order after successful payment
                     paid_plan = str(order.get("plan") or "free").lower()
                     UserQuota.get_or_create(conn, int(user_id))
-                    UserQuota.set_plan_upgrade_only(conn, int(user_id), paid_plan, _plan_expire_for(paid_plan))
-                except Exception:
-                    # Không làm webhook fail vì lỗi set plan
-                    pass
+                    UserQuota.set_plan(conn, int(user_id), paid_plan, _plan_expire_for(paid_plan))
+                except Exception as e:
+                    # Don't fail webhook because plan update errored
+                    try:
+                        print(f"[SEPAY] plan update error user_id={user_id} order={order_id} err={e}")
+                    except Exception:
+                        pass
 
         try:
             print(
