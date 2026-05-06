@@ -1,120 +1,207 @@
-{% extends 'base.html' %} {% block title %}{{ tx('Xem quảng cáo', 'Watch ad')
-}}{% endblock %} {% block extra_css %}
-<link
-  rel="stylesheet"
-  href="{{ url_for('static', filename='css/pages/monetization.css') }}"
-/>
-{% endblock %} {% block content %}
-<section class="checkout-hero ad-hero">
-  <div>
-    <span class="kicker"
-      ><i class="bi bi-play-circle-fill me-1"></i> {{ tx('Mở khóa bằng quảng
-      cáo', 'Ad unlock') }}</span
+<div
+  id="watchAdModal"
+  class="fixed inset-0 z-[60] hidden bg-black/40 backdrop-blur-sm"
+  role="dialog"
+  aria-modal="true"
+  aria-hidden="true"
+>
+  <div class="relative w-full h-full overflow-y-auto">
+    <div
+      class="min-h-screen bg-background text-on-background font-body-md text-body-md antialiased"
     >
-    <h1>
-      {{ tx('Xem quảng cáo để mở khóa lượt nhận diện', 'Watch ads to unlock
-      predictions') }}
-    </h1>
-    <p>
-      {{ tx('Sau 10 lượt miễn phí, mỗi quảng cáo mở thêm 3 lượt (tối đa 3 lần
-      xem).', 'After 10 free uses, each ad unlocks 3 more predictions (max 3 ad
-      views).') }}
-    </p>
-  </div>
-</section>
+      <div class="relative w-full max-w-5xl mx-auto pt-10 pb-12 px-6 md:px-8">
+        <button
+          type="button"
+          id="watchAdClose"
+          class="absolute top-4 right-4 text-on-surface-variant hover:text-on-surface transition-colors"
+          aria-label="{{ tx('Đóng', 'Close') }}"
+        >
+          <span class="material-symbols-outlined">close</span>
+        </button>
 
-<section class="ad-unlock-card">
-  {% if quota_info %}
-  <div class="ad-stats">
-    <span
-      >{{ tx('Đã nhận diện:', 'Predictions used:') }}
-      <strong
-        >{{ quota_info.total_predictions }}/{{ quota_info.free_limit }}</strong
-      ></span
-    >
-    <span
-      >{{ tx('Unlock còn:', 'Unlocks left:') }}
-      <strong>{{ quota_info.ad_unlocks_remaining }}</strong></span
-    >
-    <span
-      >{{ tx('Ads đã xem:', 'Ads watched:') }}
-      <strong
-        >{{ quota_info.ad_views_used }}/{{ quota_info.ad_views_limit }}</strong
-      ></span
-    >
-  </div>
-  {% endif %}
+        <header class="text-center space-y-4 pt-4">
+          <h1 class="font-headline-lg text-headline-lg text-on-background">
+            {{ tx('Xem quảng cáo để mở khóa lượt nhận diện', 'Watch ads to
+            unlock predictions') }}
+          </h1>
+          <p
+            class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto"
+          >
+            {{ tx('Bạn đã sử dụng hết 10 lượt miễn phí. Xem một đoạn quảng cáo
+            ngắn để nhận thêm', 'You used all free predictions. Watch a short ad
+            to get') }}
+            <strong class="text-on-background font-semibold"
+              >3 {{ tx('lượt', 'more') }}</strong
+            >
+            {{ tx('nhận diện AI. (Tối đa 3 lần).', 'AI predictions. (Up to 3
+            times per day).') }}
+          </p>
+        </header>
 
-  <div class="ad-player">
-    <div class="ad-title">
-      {{ tx('Đang phát quảng cáo mô phỏng', 'Playing simulated ad') }}
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch mt-10">
+          <div class="lg:col-span-4 flex flex-col gap-4">
+            <div
+              class="bg-surface-container-lowest p-md rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-outline-variant flex flex-col justify-between flex-grow"
+            >
+              <div class="flex items-center justify-between mb-4">
+                <span
+                  class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider"
+                >
+                  {{ tx('Đã nhận diện', 'Predictions used') }}
+                </span>
+                <span class="material-symbols-outlined text-error"
+                  >warning</span
+                >
+              </div>
+              <div class="flex items-baseline gap-2">
+                <span
+                  class="font-display-xl text-display-xl text-on-background"
+                >
+                  {{ quota_info.total_predictions }}
+                </span>
+                <span class="font-body-lg text-body-lg text-on-surface-variant">
+                  / {{ quota_info.free_limit }}
+                </span>
+              </div>
+              <div
+                class="w-full h-1.5 bg-surface-container mt-4 rounded-full overflow-hidden"
+              >
+                <div class="h-full bg-error w-full rounded-full"></div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 flex-grow">
+              <div
+                class="bg-surface-container-lowest p-4 rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-outline-variant flex flex-col justify-center"
+              >
+                <span
+                  class="font-label-sm text-label-sm text-on-surface-variant mb-1"
+                >
+                  {{ tx('Unlock còn', 'Unlocks left') }}
+                </span>
+                <span class="font-headline-md text-headline-md text-primary">
+                  {{ quota_info.ad_unlocks_remaining }}
+                  <span
+                    class="font-body-md text-body-md text-on-surface-variant"
+                    >{{ tx('lần', 'times') }}</span
+                  >
+                </span>
+              </div>
+              <div
+                class="bg-surface-container-lowest p-4 rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-outline-variant flex flex-col justify-center"
+              >
+                <span
+                  class="font-label-sm text-label-sm text-on-surface-variant mb-1"
+                >
+                  {{ tx('Ads đã xem', 'Ads watched') }}
+                </span>
+                <span
+                  class="font-headline-md text-headline-md text-on-background"
+                >
+                  {{ quota_info.ad_views_used }}
+                  <span
+                    class="font-body-md text-body-md text-on-surface-variant"
+                    >/ {{ quota_info.ad_views_limit }}</span
+                  >
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="lg:col-span-8 bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-outline-variant overflow-hidden flex flex-col relative"
+          >
+            <div
+              class="px-md py-4 border-b border-outline-variant flex items-center justify-between bg-surface-container-lowest z-10"
+            >
+              <div class="flex items-center gap-2 text-primary">
+                <span class="material-symbols-outlined">smart_display</span>
+                <span class="font-label-sm text-label-sm font-semibold">
+                  {{ tx('Nhà Tài Trợ PetAI', 'PetAI Sponsor') }}
+                </span>
+              </div>
+              <div
+                class="bg-surface-variant text-primary px-3 py-1 rounded-full font-label-sm text-label-sm flex items-center gap-1"
+              >
+                <span class="material-symbols-outlined text-[16px]">timer</span>
+                {{ tx('Còn', 'Remaining') }}
+                <span id="watchAdCountdown">8</span>s
+              </div>
+            </div>
+
+            <div
+              class="flex-grow bg-inverse-surface relative flex items-center justify-center min-h-[320px] overflow-hidden"
+            >
+              <div
+                class="absolute inset-0 bg-gradient-to-br from-inverse-surface to-[#0b1c30] opacity-80 z-0"
+              ></div>
+              <div
+                class="z-10 flex flex-col items-center gap-4 text-center p-8"
+              >
+                <span
+                  class="material-symbols-outlined text-on-primary text-[64px] animate-pulse"
+                  >play_circle</span
+                >
+                <h3 class="font-headline-md text-headline-md text-on-primary">
+                  {{ tx('Đang phát quảng cáo mô phỏng', 'Playing simulated ad')
+                  }}
+                </h3>
+                <p
+                  class="font-body-md text-body-md text-outline-variant max-w-sm"
+                >
+                  {{ tx('Vui lòng không đóng cửa sổ này. Lượt nhận diện sẽ được
+                  cộng vào tài khoản sau khi video kết thúc.', 'Please keep this
+                  window open. Predictions will be added after the video ends.')
+                  }}
+                </p>
+              </div>
+            </div>
+
+            <div class="w-full h-2 bg-surface-container z-10">
+              <div
+                id="watchAdBar"
+                class="h-full bg-primary"
+                style="width: 0%"
+              ></div>
+            </div>
+          </div>
+        </div>
+
+        <form
+          method="post"
+          action="{{ url_for('predict.watch_ad_complete') }}"
+          class="flex flex-col items-center gap-6 mt-8"
+          id="watchAdCompleteForm"
+        >
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+          <div class="flex items-center gap-4">
+            <button
+              type="button"
+              id="watchAdCancel"
+              class="px-8 py-3 rounded-lg border-2 border-outline-variant font-label-sm text-label-sm font-semibold text-on-surface hover:bg-surface-container transition-colors focus:ring-2 focus:ring-primary focus:outline-none"
+            >
+              {{ tx('Quay lại', 'Back') }}
+            </button>
+            <button
+              type="submit"
+              id="watchAdCompleteBtn"
+              class="px-8 py-3 rounded-lg bg-primary text-on-primary font-label-sm text-label-sm font-semibold border-2 border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled
+            >
+              {{ tx('Tôi đã xem xong', 'I finished watching') }}
+            </button>
+          </div>
+          <div
+            class="flex items-center gap-2 text-outline bg-surface-container-low px-4 py-2 rounded-lg border border-outline-variant/50"
+          >
+            <span class="material-symbols-outlined text-[18px]">info</span>
+            <p class="font-label-sm text-label-sm">
+              {{ tx('Nếu đã xem đủ 3 lần, bạn cần nâng cấp gói để tiếp tục.',
+              'If you have watched 3 ads, upgrade your plan to continue.') }}
+            </p>
+          </div>
+        </form>
+      </div>
     </div>
-    <p class="ad-sub">
-      {{ tx('Vui lòng chờ', 'Please wait') }}
-      <strong><span id="countdown">8</span>s</strong> {{ tx('để bật nút xác
-      nhận.', 'to enable the confirm button.') }}
-    </p>
-    <div class="ad-bar-track"><span id="adBar"></span></div>
   </div>
-
-  <form
-    method="post"
-    action="{{ url_for('predict.watch_ad_complete') }}"
-    class="ad-actions"
-    id="adCompleteForm"
-  >
-    <a class="btn btn-outline-plan" href="{{ url_for('predict.upload_page') }}"
-      >{{ tx('Quay lại', 'Back') }}</a
-    >
-    <button
-      class="btn btn-confirm-transfer"
-      type="submit"
-      id="completeBtn"
-      disabled
-    >
-      <i class="bi bi-check2-circle me-1"></i>{{ tx('Tôi đã xem xong', 'I
-      finished watching') }}
-    </button>
-  </form>
-
-  <p class="checkout-note">
-    {{ tx('Nếu đã xem đủ 3 lần, bạn cần nâng cấp gói để tiếp tục.', 'If you have
-    watched 3 ads, upgrade your plan to continue.') }}
-  </p>
-</section>
-{% endblock %} {% block extra_js %}
-<script>
-  (function () {
-    const total = 8;
-    let remaining = total;
-    const countdownEl = document.getElementById("countdown");
-    const btn = document.getElementById("completeBtn");
-    const form = document.getElementById("adCompleteForm");
-    const bar = document.getElementById("adBar");
-
-    function tick() {
-      remaining -= 1;
-      if (remaining <= 0) {
-        countdownEl.textContent = "0";
-        btn.disabled = false;
-        bar.style.width = "100%";
-        return;
-      }
-      countdownEl.textContent = String(remaining);
-      const progress = ((total - remaining) / total) * 100;
-      bar.style.width = progress.toFixed(0) + "%";
-      setTimeout(tick, 1000);
-    }
-
-    bar.style.width = "0%";
-    setTimeout(tick, 1000);
-
-    if (form) {
-      form.addEventListener("submit", function () {
-        btn.disabled = true;
-        btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>{{ tx('Đang xác nhận...', 'Confirming...') }}`;
-      });
-    }
-  })();
-</script>
-{% endblock %}
+</div>
