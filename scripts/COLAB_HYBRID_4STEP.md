@@ -56,7 +56,7 @@ Pipeline này dùng **một backbone CNN** (ResNet50 hoặc EfficientNet-B0) đ�
   - Tính similarity với mọi prototype: $s_c = p_c^\top e$ (tương đương cosine vì đã chuẩn hoá).
   - Lấy top-$k$ theo $s_c$.
 - **Nhận biết chó lai vs chó thuần (điều kiện “nghi lai”)**:
-  - Thuật toán *không* dùng xét nghiệm DNA; đây là suy luận **lai hình thái** dựa trên mức giống nhau về đặc trưng thị giác.
+  - Thuật toán _không_ dùng xét nghiệm DNA; đây là suy luận **lai hình thái** dựa trên mức giống nhau về đặc trưng thị giác.
   - **Ký hiệu**:
     - $x$: ảnh đầu vào; $f(\cdot)$: backbone CNN sau khi train.
     - $e=f(x)\in\mathbb{R}^d$: embedding của ảnh (vector đặc trưng).
@@ -71,11 +71,11 @@ Pipeline này dùng **một backbone CNN** (ResNet50 hoặc EfficientNet-B0) đ�
     - `gap = s1 - s2` (độ cách biệt giữa 2 giống đầu).
     - `ratio = s2 / s1` (mức “bám sát” của top-2 so với top-1).
     - `mean = (s1 + s2) / 2` (độ tin cậy trung bình của cặp top-2).
-  - Tạo ngưỡng khoảng cách hiệu dụng (để ép top-1 và top-2 phải *gần nhau*):
+  - Tạo ngưỡng khoảng cách hiệu dụng (để ép top-1 và top-2 phải _gần nhau_):
     - `effective_max_gap = min(max_gap, (1 - min_ratio) * s1)`
     - Ý nghĩa: nếu muốn `ratio >= min_ratio` thì tương đương cần `s2 >= min_ratio * s1` ⇒ `gap = s1 - s2 <= (1 - min_ratio) * s1`.
   - Kết luận **“nghi lai”** nếu **đồng thời**:
-    - (C1) $s_1 \ge$ `min_score`  (top-1 đủ cao)
+    - (C1) $s_1 \ge$ `min_score` (top-1 đủ cao)
     - (C2) $s_2 \ge$ `min_score_2` (top-2 cũng đủ cao)
     - (C3) `gap <= effective_max_gap` (top-1 và top-2 đủ sát nhau, tức `ratio` đủ lớn)
     - (C4) $\frac{s_1+s_2}{2} \ge$ `min_mean_score` (cả cặp đủ mạnh, tránh trường hợp 2 điểm đều thấp nhưng vẫn “gần nhau”)
@@ -94,10 +94,10 @@ Pipeline này dùng **một backbone CNN** (ResNet50 hoặc EfficientNet-B0) đ�
 **Bảng ngưỡng theo profile (giống hệt trong code)**
 
 | `--profile` | `min_score` | `min_score_2` | `max_gap` | `min_ratio` | `min_mean_score` |
-|---|---:|---:|---:|---:|---:|
-| `strict` | 0.70 | 0.70 | 0.08 | 0.90 | 0.60 |
-| `balanced` | 0.55 | 0.50 | 0.12 | 0.88 | 0.53 |
-| `sensitive` | 0.40 | 0.35 | 0.15 | 0.85 | 0.45 |
+| ----------- | ----------: | ------------: | --------: | ----------: | ---------------: |
+| `strict`    |        0.70 |          0.70 |      0.08 |        0.90 |             0.60 |
+| `balanced`  |        0.55 |          0.50 |      0.12 |        0.88 |             0.53 |
+| `sensitive` |        0.40 |          0.35 |      0.15 |        0.85 |             0.45 |
 
 Ghi chú: nếu bạn truyền trực tiếp các flag như `--min-score`, `--max-gap`... thì các giá trị đó sẽ **ưu tiên hơn** `--profile`.
 
@@ -116,7 +116,7 @@ Ghi chú: nếu bạn truyền trực tiếp các flag như `--min-score`, `--ma
   - `min_score_2`: loại trường hợp top-2 chỉ là nhiễu
   - `max_gap`: độ chênh lệch tuyệt đối cho phép giữa top-1 và top-2
   - `min_ratio`: ràng buộc tương đối (top-2 phải đạt ít nhất bao nhiêu % top-1)
-  - `min_mean_score`: bộ lọc để tránh *cặp gần nhau nhưng đều thấp*
+  - `min_mean_score`: bộ lọc để tránh _cặp gần nhau nhưng đều thấp_
 - Cách hiệu chỉnh thực tế (ngắn gọn): cố định 1 profile (ví dụ `balanced`), sau đó sweep từng ngưỡng trên tập ảnh kiểm thử; chọn bộ ngưỡng theo mục tiêu (ví dụ ưu tiên precision cho “nghi lai”).
 
 **Giả mã (pseudo-code)**
@@ -146,7 +146,7 @@ else:
 
 **Trường hợp biên & lưu ý khi báo cáo kết quả**
 
-- Nếu ảnh đầu vào **không phải chó** hoặc chó ở góc chụp quá khác (ngoài phân phối dữ liệu), các $s_c$ có thể thấp → thường rơi vào “giống trội” nhưng độ tin cậy thấp. Khi viết luận văn, nên nhấn mạnh đây là phân loại trong *không gian đặc trưng học được* từ tập huấn luyện.
+- Nếu ảnh đầu vào **không phải chó** hoặc chó ở góc chụp quá khác (ngoài phân phối dữ liệu), các $s_c$ có thể thấp → thường rơi vào “giống trội” nhưng độ tin cậy thấp. Khi viết luận văn, nên nhấn mạnh đây là phân loại trong _không gian đặc trưng học được_ từ tập huấn luyện.
 - Cosine similarity có thể âm nếu embedding và prototype lệch hướng mạnh; lúc đó (C1)(C2)(C4) gần như không đạt, nên hệ thống không gắn nhãn “nghi lai”.
 - Đây là “lai hình thái” (visual-morphology) dựa trên ảnh đơn; không thể kết luận “thuần chủng” theo nghĩa phả hệ/di truyền.
 
