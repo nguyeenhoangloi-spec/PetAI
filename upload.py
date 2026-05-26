@@ -537,11 +537,7 @@ def confirm_transfer():
 		flash("Vui lòng đăng nhập để sử dụng chức năng này.", "warning")
 		return redirect(url_for("login.login"))
 
-	allow_manual = bool(current_app.config.get("ALLOW_MANUAL_TRANSFER_CONFIRM", True))
-	auto_confirm = bool(current_app.config.get("AUTO_CONFIRM_ON_USER_CONFIRM", False))
-	if not allow_manual:
-		flash("Hệ thống sẽ tự xác nhận khi nhận được giao dịch. Bạn không cần bấm xác nhận thủ công.", "info")
-		return redirect(url_for("predict.my_payments"))
+	action = (request.form.get("action") or "").strip().lower()
 
 	order_id = (request.form.get("order_id") or "").strip()
 	if not order_id:
@@ -559,6 +555,21 @@ def confirm_transfer():
 		order = PaymentOrder.get_by_order_id(conn, order_id)
 		if not order or int(order.get("user_id") or 0) != int(user_id):
 			flash("Đơn thanh toán không tồn tại hoặc không thuộc tài khoản của bạn.", "error")
+			return redirect(url_for("predict.my_payments"))
+
+		if action == "check":
+			status = (order.get("status") or PaymentOrder.STATUS_PENDING).lower()
+			if status == PaymentOrder.STATUS_PAID:
+				plan_label = str(order.get("plan") or "free").upper()
+				flash(f"Gói {plan_label} vừa mua thành công.", "success")
+			else:
+				flash("Bạn chưa thanh toán.", "warning")
+			return redirect(url_for("predict.upgrade"))
+
+		allow_manual = bool(current_app.config.get("ALLOW_MANUAL_TRANSFER_CONFIRM", True))
+		auto_confirm = bool(current_app.config.get("AUTO_CONFIRM_ON_USER_CONFIRM", False))
+		if not allow_manual:
+			flash("Hệ thống sẽ tự xác nhận khi nhận được giao dịch. Bạn không cần bấm xác nhận thủ công.", "info")
 			return redirect(url_for("predict.my_payments"))
 
 		ok = PaymentOrder.mark_user_confirmed(conn, order_id, user_id=user_id)
@@ -869,6 +880,7 @@ def upload():
 		)
 
 		is_dog_enough = yolo_dog_enough or breed_fallback_enough
+		should_save_prediction = is_dog_enough
 
 		if is_dog_enough and det_label != "Dog":
 			det_label = "Dog"
@@ -876,39 +888,34 @@ def upload():
 				yolo_conf = best_dog_conf
 
 		if not is_dog_enough:
-			# Không phải chó / hoặc độ tin cậy thấp -> không suy luận giống
+			# Không chắc chắn là chó nhưng vẫn trả kết quả (kèm cảnh báo).
 			note = None
 			if best_dog_conf is not None:
 				dog_pct = int(round(float(best_dog_conf or 0.0) * 100))
 				note = (
 					f"Độ tin cậy CHÓ từ YOLO chỉ {dog_pct}% (< {int(DOG_THRESHOLD*100)}%). "
-					"Vui lòng tải ảnh rõ hơn để nhận diện giống."
+					"Kết quả giống dưới đây chỉ mang tính tham khảo."
 				)
 			elif breed_model_ready and not breed_is_unknown:
 				breed_pct = int(round(float(breed_conf_fallback or 0.0) * 100))
 				note = (
 					f"AI giống đang nghiêng về chó ({breed_pct}%) nhưng chưa đủ ngưỡng xác nhận. "
-					"Vui lòng thử ảnh rõ toàn thân/mặt hơn để hệ thống kết luận chắc chắn."
+					"Kết quả dưới đây chỉ mang tính tham khảo."
 				)
 			else:
 				note = (
 					"Ảnh này chưa được nhận diện chắc chắn là CHÓ. "
-					"Vui lòng tải ảnh có chó rõ ràng hơn (toàn thân/mặt rõ, đủ sáng)."
+					"Kết quả giống dưới đây chỉ mang tính tham khảo."
 				)
 			flash(note, "warning")
-			return render_template(
-				"predict.html",
-				image_path=annotated_path.replace("\\", "/"),
-				result={"breed": "Không xác định", "breed_conf": 0.0, "note": note},
-				yolo_species=det_label,
-				yolo_species_conf=yolo_conf,
-				yolo_detections=det_items,
-			)
+			if isinstance(result, dict) and note:
+				existing_note = str(result.get("note") or "").strip()
+				result["note"] = f"{existing_note} {note}".strip() if existing_note else note
 
 		
-		# Lưu vào database (chỉ khi đã pass gate chó)
+		# Lưu vào database (ưu tiên khi đã pass gate chó)
 		try:
-			if user_id is not None:
+			if user_id is not None and should_save_prediction:
 				conn = get_connection()
 				# Consume 1 paid-use after passing the dog gate (paid plans only)
 				try:

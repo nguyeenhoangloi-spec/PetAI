@@ -469,24 +469,16 @@ class ImagePredictor:
 			# Hybrid suggestion is morphology-based (not genetic confirmation).
 			min_score = float(os.getenv("HYBRID_MIN_SCORE", "0.55"))
 			min_score_2 = float(os.getenv("HYBRID_MIN_SCORE_2", "0.50"))
-			max_gap = float(os.getenv("HYBRID_MAX_GAP", "0.12"))
+			max_gap = float(os.getenv("HYBRID_MAX_GAP", "0.14"))
 			min_ratio = float(os.getenv("HYBRID_MIN_RATIO", "0.88"))
 			min_mean_score = float(os.getenv("HYBRID_MIN_MEAN_SCORE", "0.53"))
+			min_entropy = float(os.getenv("HYBRID_MIN_ENTROPY", "0.0"))
 			tie_enabled = str(os.getenv("HYBRID_TIE_ENABLED", "1")).strip().lower() not in {"0", "false", "no", "off"}
 			tie_max_gap = float(os.getenv("HYBRID_TIE_MAX_GAP", "0.01"))
-			distant_enabled = str(os.getenv("HYBRID_DISTANT_ENABLED", "0")).strip().lower() not in {"0", "false", "no", "off"}
-			distant_min_score = float(os.getenv("HYBRID_DISTANT_MIN_SCORE", "0.35"))
-			distant_min_score_2 = float(os.getenv("HYBRID_DISTANT_MIN_SCORE_2", "0.33"))
-			distant_max_gap = float(os.getenv("HYBRID_DISTANT_MAX_GAP", "0.05"))
-			distant_min_ratio = float(os.getenv("HYBRID_DISTANT_MIN_RATIO", "0.93"))
-			distant_min_mean_score = float(os.getenv("HYBRID_DISTANT_MIN_MEAN_SCORE", "0.36"))
-			distant_min_entropy = float(os.getenv("HYBRID_DISTANT_MIN_ENTROPY", "0.72"))
 			max_gap = max(0.0, max_gap)
 			min_ratio = max(0.0, min(1.0, min_ratio))
 			tie_max_gap = max(0.0, tie_max_gap)
-			distant_max_gap = max(0.0, distant_max_gap)
-			distant_min_ratio = max(0.0, min(1.0, distant_min_ratio))
-			distant_min_entropy = max(0.0, min(1.0, distant_min_entropy))
+			min_entropy = max(0.0, min(1.0, min_entropy))
 			note = ""
 			decision = {
 				"is_hybrid_candidate": False,
@@ -504,15 +496,9 @@ class ImagePredictor:
 				"max_gap": max_gap,
 				"min_ratio": min_ratio,
 				"min_mean_score": min_mean_score,
+				"min_entropy": min_entropy,
 				"tie_enabled": tie_enabled,
 				"tie_max_gap": tie_max_gap,
-				"distant_enabled": distant_enabled,
-				"distant_min_score": distant_min_score,
-				"distant_min_score_2": distant_min_score_2,
-				"distant_max_gap": distant_max_gap,
-				"distant_min_ratio": distant_min_ratio,
-				"distant_min_mean_score": distant_min_mean_score,
-				"distant_min_entropy": distant_min_entropy,
 			}
 			# Hybrid candidate logic should be based on similarity ranking (prototype-nearest),
 			# not softmax ranking (classifier probabilities).
@@ -524,7 +510,6 @@ class ImagePredictor:
 				effective_max_gap = min(max_gap, max(0.0, (1.0 - min_ratio) * s1))
 				is_tie_close_pair = gap <= tie_max_gap
 				is_strict_close_pair = gap <= effective_max_gap
-				is_distant_close_pair = gap <= distant_max_gap
 				mean_top2 = (s1 + s2) / 2.0
 				strict_hybrid_candidate = (
 					(s1 >= min_score)
@@ -537,17 +522,6 @@ class ImagePredictor:
 					and (not strict_hybrid_candidate)
 					and is_tie_close_pair
 				)
-				distant_hybrid_candidate = (
-					distant_enabled
-					and (not strict_hybrid_candidate)
-					and (not tie_hybrid_candidate)
-					and (s1 >= distant_min_score)
-					and (s2 >= distant_min_score_2)
-					and (ratio >= distant_min_ratio)
-					and is_distant_close_pair
-					and (mean_top2 >= distant_min_mean_score)
-					and (softmax_entropy >= distant_min_entropy)
-				)
 				decision.update({
 					"top1_score": s1,
 					"top2_score": s2,
@@ -557,7 +531,6 @@ class ImagePredictor:
 					"top12_mean_score": mean_top2,
 					"tie_hybrid_candidate": tie_hybrid_candidate,
 					"strict_hybrid_candidate": strict_hybrid_candidate,
-					"distant_hybrid_candidate": distant_hybrid_candidate,
 				})
 				if strict_hybrid_candidate:
 					decision["is_hybrid_candidate"] = True
@@ -570,13 +543,6 @@ class ImagePredictor:
 					decision["is_hybrid_candidate"] = True
 					decision["hybrid_mode"] = "tie"
 					decision["reason"] = "Ứng viên nghi lai (Top-1 và Top-2 rất sát nhau)."
-					top1_vi = self._to_vi_breed_name(self.classes[int(sim_top_idx[0])])
-					top2_vi = self._to_vi_breed_name(self.classes[int(sim_top_idx[1])])
-					note = ""
-				elif distant_hybrid_candidate:
-					decision["is_hybrid_candidate"] = True
-					decision["hybrid_mode"] = "distant"
-					decision["reason"] = "Ứng viên nghi lai."
 					top1_vi = self._to_vi_breed_name(self.classes[int(sim_top_idx[0])])
 					top2_vi = self._to_vi_breed_name(self.classes[int(sim_top_idx[1])])
 					note = ""
@@ -624,15 +590,9 @@ class ImagePredictor:
 					"max_gap": max_gap,
 					"min_ratio": min_ratio,
 					"min_mean_score": min_mean_score,
+					"min_entropy": min_entropy,
 					"tie_enabled": tie_enabled,
 					"tie_max_gap": tie_max_gap,
-					"distant_enabled": distant_enabled,
-					"distant_min_score": distant_min_score,
-					"distant_min_score_2": distant_min_score_2,
-					"distant_max_gap": distant_max_gap,
-					"distant_min_ratio": distant_min_ratio,
-					"distant_min_mean_score": distant_min_mean_score,
-					"distant_min_entropy": distant_min_entropy,
 				},
 				"decision": decision,
 				"display": {
