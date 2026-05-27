@@ -75,6 +75,53 @@
       .scan-line {
         animation: scan 2s linear infinite;
       }
+      /* Mobile fixes: reduce oversized hero text and large desktop paddings
+         to avoid horizontal overflow on narrow Android viewports. */
+      @media (max-width: 640px) {
+        .text-display-lg {
+          font-size: 40px !important;
+          line-height: 48px !important;
+        }
+        /* Shrink large decorative glows that caused overflow */
+        .aura-glow.w-\[600px\],
+        .aura-glow.w-\[500px\] {
+          width: 300px !important;
+          height: 300px !important;
+        }
+        /* Reduce the large horizontal padding used for desktop */
+        .px-margin-desktop {
+          padding-left: 20px !important;
+          padding-right: 20px !important;
+        }
+        /* Make hero floating shape a bit smaller on phones */
+        .floating-shape img,
+        .floating-shape {
+          max-width: 340px;
+        }
+        /* Header/nav mobile adjustments to prevent overflow */
+        nav > div {
+          height: 48px !important;
+        }
+        nav img.h-16 {
+          height: 40px !important;
+        }
+        /* Reduce register button size on phones */
+        nav a.bg-primary {
+          padding-left: 12px !important;
+          padding-right: 12px !important;
+          padding-top: 6px !important;
+          padding-bottom: 6px !important;
+          font-size: 14px !important;
+        }
+        /* Reduce spacing around header links */
+        nav .flex.items-center.gap-6 {
+          gap: 8px !important;
+        }
+        /* Ensure fixed header doesn't overlap content: reduce main top padding on small screens */
+        main.relative.z-10.pt-20 {
+          padding-top: 56px !important;
+        }
+      }
     </style>
     <script id="tailwind-config">
       tailwind.config = {
