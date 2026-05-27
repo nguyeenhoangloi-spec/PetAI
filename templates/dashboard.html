@@ -552,9 +552,9 @@
           </div>
           {% if recent_predictions and recent_predictions|length > 0 %}
           <div
-            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-gutter"
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-gutter"
           >
-            {% for pred in recent_predictions %}
+            {% for pred in recent_predictions[:10] %}
             <div
               class="bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-surface-container-highest/50 overflow-hidden flex flex-col group cursor-pointer hover:shadow-md transition-shadow"
             >
@@ -712,6 +712,3 @@
     <script src="{{ url_for('static', filename='js/toasts.js') }}"></script>
   </body>
 </html>
-
-
-
