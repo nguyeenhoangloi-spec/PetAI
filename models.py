@@ -98,6 +98,84 @@ class PredictionHistory:
                 'species': row[4],
                 'created_at': row[5]
             } for row in rows]
+
+    @staticmethod
+    def get_by_user_in_range(
+        conn,
+        user_id: int,
+        start_at: datetime,
+        end_at: datetime,
+        limit: Optional[int] = 50,
+        offset: int = 0,
+    ) -> List[Dict]:
+        """Lấy lịch sử nhận diện theo khoảng thời gian"""
+        with conn.cursor() as cur:
+            if limit is None:
+                cur.execute("""
+                    SELECT id, image_path, breed, confidence, species, created_at
+                    FROM prediction_history
+                    WHERE user_id = %s
+                      AND created_at >= %s
+                      AND created_at < %s
+                    ORDER BY created_at DESC
+                """, (user_id, start_at, end_at))
+            else:
+                cur.execute("""
+                    SELECT id, image_path, breed, confidence, species, created_at
+                    FROM prediction_history
+                    WHERE user_id = %s
+                      AND created_at >= %s
+                      AND created_at < %s
+                    ORDER BY created_at DESC
+                    LIMIT %s OFFSET %s
+                """, (user_id, start_at, end_at, limit, offset))
+            rows = cur.fetchall()
+            return [{
+                'id': row[0],
+                'image_path': row[1],
+                'breed': to_common_vietnamese_breed_name(row[2]),
+                'confidence': row[3],
+                'species': row[4],
+                'created_at': row[5]
+            } for row in rows]
+
+    @staticmethod
+    def count_by_user_in_range(
+        conn,
+        user_id: int,
+        start_at: datetime,
+        end_at: datetime,
+    ) -> int:
+        """Đếm số bản ghi trong khoảng thời gian"""
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT COUNT(*)
+                FROM prediction_history
+                WHERE user_id = %s
+                  AND created_at >= %s
+                  AND created_at < %s
+            """, (user_id, start_at, end_at))
+            return cur.fetchone()[0]
+
+    @staticmethod
+    def avg_confidence_by_user_in_range(
+        conn,
+        user_id: int,
+        start_at: datetime,
+        end_at: datetime,
+    ) -> float:
+        """Tính độ tin cậy trung bình trong khoảng thời gian"""
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT AVG(confidence)
+                FROM prediction_history
+                WHERE user_id = %s
+                  AND created_at >= %s
+                  AND created_at < %s
+                  AND confidence IS NOT NULL
+            """, (user_id, start_at, end_at))
+            value = cur.fetchone()[0]
+            return float(value or 0.0)
     
     @staticmethod
     def count_by_user(conn, user_id: int) -> int:

@@ -25,7 +25,7 @@ def history():
         
         # Phân trang
         page = request.args.get('page', 1, type=int)
-        per_page = 20
+        per_page = 30
         offset = (page - 1) * per_page
         
         # Lấy tổng số bản ghi và dữ liệu trang hiện tại

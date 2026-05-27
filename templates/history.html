@@ -412,7 +412,6 @@
           <hr class="border-outline-variant/30 my-xs" />
           <a
             class="flex items-center gap-sm py-1.5 px-1.5 rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
-            `r`n
             href="{{ url_for('settings.settings') }}"
           >
             <span
@@ -426,87 +425,72 @@
       </aside>
 
       <div class="col-span-1 flex flex-col">
-        <section
-          class="mb-margin flex flex-col md:flex-row justify-between items-start md:items-center bg-surface-container-low p-margin rounded-xl border border-surface-container-highest/50 relative overflow-hidden"
-        >
+        <section class="mb-8">
           <div
-            class="absolute inset-0 bg-gradient-to-r from-transparent to-primary-fixed/20 pointer-events-none"
-          ></div>
-          <div class="relative z-10">
-            <h1 class="font-headline-lg text-headline-lg text-on-surface">
-              {{ tx('Lịch sử nhận diện', 'Recognition history') }}
-            </h1>
-            <p class="font-body-md text-body-md text-on-surface-variant mt-sm">
-              {{ tx('Bạn có tổng cộng', 'You have') }} {{ total_records }} {{
-              tx('bản ghi dự đoán.', 'prediction records in total.') }}
-            </p>
-          </div>
-          <a
-            class="relative z-10 bg-primary text-on-primary px-md py-sm rounded-lg font-label-sm hover:-translate-y-[1px] shadow-sm hover:shadow-md transition-all flex items-center gap-base"
-            href="{{ url_for('predict.upload_page') }}"
+            class="flex flex-col md:flex-row md:items-center md:justify-between gap-4"
           >
-            <span
-              class="material-symbols-outlined text-[18px]"
-              data-icon="add_a_photo"
-              >add_a_photo</span
+            <div class="flex flex-col gap-1">
+              <h1 class="text-xl font-semibold text-on-surface">
+                {{ tx('Lịch sử nhận diện', 'Recognition history') }}
+              </h1>
+              <p class="text-sm text-on-surface-variant">
+                {{ tx('Bạn có tổng cộng', 'You have') }} {{ total_records }} {{
+                tx('bản ghi dự đoán.', 'prediction records in total.') }}
+              </p>
+            </div>
+            <a
+              class="inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium rounded-lg shadow-sm text-white bg-primary hover:opacity-90 transition-colors"
+              href="{{ url_for('predict.upload_page') }}"
             >
-            {{ tx('Nhận diện mới', 'New prediction') }}
-          </a>
+              <span class="material-symbols-outlined text-[18px] mr-2"
+                >add_a_photo</span
+              >
+              {{ tx('Nhận diện mới', 'New prediction') }}
+            </a>
+          </div>
         </section>
 
         {% if predictions and predictions|length > 0 %}
-        <section
-          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter mb-lg"
-        >
+        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
           {% for pred in predictions %} {% set conf_pct = ((pred.confidence or
           0) * 100) %}
           <article
-            class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-outline-variant/30 flex flex-col hover:-translate-y-1 transition-transform duration-200"
+            class="bg-white rounded-lg overflow-hidden shadow-[0_4px_10px_rgba(15,23,42,0.08)] border border-slate-200 flex flex-col"
           >
-            <a
-              href="/{{ pred.image_path }}"
-              target="_blank"
-              class="relative h-48 w-full bg-surface-variant block"
-            >
+            <div class="relative h-48 w-full">
               <img
                 alt="{{ tx('Ảnh nhận diện', 'Detected image') }}"
                 class="w-full h-full object-cover"
                 src="/{{ pred.image_path }}"
               />
               <div
-                class="absolute top-3 right-3 bg-surface-container-lowest/90 backdrop-blur-sm px-2 py-1 rounded-md border border-outline-variant/20 shadow-sm flex items-center gap-1"
+                class="absolute top-3 right-3 bg-white/90 backdrop-blur px-2 py-1 rounded text-[11px] font-bold text-slate-800 border border-white/50 shadow-sm flex items-center gap-1"
               >
                 <span class="w-2 h-2 rounded-full bg-primary"></span>
-                <span class="font-label-sm text-[12px] text-on-surface">
-                  {% if pred.confidence is not none %} {{
-                  '%.1f'|format(conf_pct) }}% {% else %} 0.0% {% endif %}
-                </span>
+                {% if pred.confidence is not none %} {{ '%.1f'|format(conf_pct)
+                }}% {% else %} 0.0% {% endif %}
               </div>
-            </a>
-            <div class="p-sm flex-1 flex flex-col">
-              <h3
-                class="font-headline-md text-[18px] leading-snug text-on-surface mb-1"
+            </div>
+            <div class="p-4 flex flex-col flex-grow">
+              <h2
+                class="text-base font-semibold text-slate-900 leading-tight mb-1 truncate"
               >
                 {{ pred.breed or tx('Chưa xác định', 'Unknown') }}
-              </h3>
-              <p
-                class="font-label-sm text-[13px] text-on-surface-variant mb-3 flex items-center gap-1"
-              >
-                <span class="material-symbols-outlined text-[16px]">pets</span>
-                {{ pred.species or tx('Chó', 'Dog') }}
-              </p>
-              <div class="mt-auto">
-                <div
-                  class="w-full bg-surface-container h-1.5 rounded-full overflow-hidden mb-3"
+              </h2>
+              <div class="flex items-center text-slate-500 text-xs mb-4">
+                <span class="material-symbols-outlined text-[14px] mr-1"
+                  >pets</span
                 >
+                <span>{{ pred.species or tx('Chó', 'Dog') }}</span>
+              </div>
+              <div class="mt-auto">
+                <div class="h-1 rounded-full bg-slate-200 overflow-hidden mb-3">
                   <div
-                    class="bg-primary h-full rounded-full history-fill"
+                    class="h-full bg-primary history-fill"
                     data-width="{{ conf_pct|round(1) }}"
                   ></div>
                 </div>
-                <div
-                  class="flex items-center text-on-surface-variant/70 font-label-sm text-[12px]"
-                >
+                <div class="flex items-center text-slate-400 text-[11px]">
                   <span class="material-symbols-outlined text-[14px] mr-1"
                     >schedule</span
                   >
@@ -519,90 +503,87 @@
           {% endfor %}
         </section>
 
-        <nav
-          class="flex items-center justify-between border-t border-outline-variant/50 pt-md pb-xl"
-          aria-label="{{ tx('Phân trang lịch sử', 'History pagination') }}"
-        >
-          {% if page > 1 %}
-          <a
-            class="flex items-center gap-1 px-4 py-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-low rounded-lg transition-colors font-label-sm text-label-sm"
-            href="{{ url_for('history.history', page=page-1) }}"
+        {% if total_pages and total_pages > 1 %}
+        <div class="mt-10 flex items-center justify-center">
+          <nav
+            aria-label="{{ tx('Phân trang lịch sử', 'History pagination') }}"
+            class="inline-flex -space-x-px rounded-md shadow-sm"
           >
-            <span class="material-symbols-outlined text-[18px]"
-              >arrow_back</span
-            >
-            {{ tx('Trước', 'Previous') }}
-          </a>
-          {% else %}
-          <span
-            class="flex items-center gap-1 px-4 py-2 text-on-surface-variant/60 rounded-lg font-label-sm text-label-sm cursor-not-allowed"
-          >
-            <span class="material-symbols-outlined text-[18px]"
-              >arrow_back</span
-            >
-            {{ tx('Trước', 'Previous') }}
-          </span>
-          {% endif %}
-
-          <div class="hidden sm:flex items-center gap-1">
-            {% for p in range(1, total_pages + 1) %} {% if p == page %}
-            <span
-              class="w-10 h-10 flex items-center justify-center rounded-lg bg-primary text-on-primary font-label-sm text-label-sm shadow-sm"
-              >{{ p }}</span
-            >
-            {% elif p == 1 or p == total_pages or (p >= page - 2 and p <= page +
-            2) %}
+            {% if page > 1 %}
             <a
-              class="w-10 h-10 flex items-center justify-center rounded-lg text-on-surface-variant hover:bg-surface-container-low font-label-sm text-label-sm transition-colors"
-              href="{{ url_for('history.history', page=p) }}"
-              >{{ p }}</a
+              class="relative inline-flex items-center rounded-l-lg px-3 py-2 text-slate-500 ring-1 ring-inset ring-slate-300 hover:bg-slate-50"
+              href="{{ url_for('history.history', page=page-1) }}"
             >
-            {% elif p == page - 3 or p == page + 3 %}
+              <span class="material-symbols-outlined text-[18px]"
+                >chevron_left</span
+              >
+            </a>
+            {% else %}
             <span
-              class="w-10 h-10 flex items-center justify-center text-on-surface-variant"
-              >…</span
+              class="relative inline-flex items-center rounded-l-lg px-3 py-2 text-slate-300 ring-1 ring-inset ring-slate-300 cursor-not-allowed"
             >
-            {% endif %} {% endfor %}
-          </div>
-
-          {% if page < total_pages %}
-          <a
-            class="flex items-center gap-1 px-4 py-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-low rounded-lg transition-colors font-label-sm text-label-sm"
-            href="{{ url_for('history.history', page=page+1) }}"
-          >
-            {{ tx('Sau', 'Next') }}
-            <span class="material-symbols-outlined text-[18px]"
-              >arrow_forward</span
+              <span class="material-symbols-outlined text-[18px]"
+                >chevron_left</span
+              >
+            </span>
+            {% endif %} {% for p in range(1, total_pages + 1) %} {% if p == page
+            %}
+            <span
+              class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-white bg-primary"
             >
-          </a>
-          {% else %}
-          <span
-            class="flex items-center gap-1 px-4 py-2 text-on-surface-variant/60 rounded-lg font-label-sm text-label-sm cursor-not-allowed"
-          >
-            {{ tx('Sau', 'Next') }}
-            <span class="material-symbols-outlined text-[18px]"
-              >arrow_forward</span
+              {{ p }}
+            </span>
+            {% elif p == 1 or p == total_pages or (p >= page - 1 and p <= page +
+            1) %}
+            <a
+              class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-slate-700 ring-1 ring-inset ring-slate-300 hover:bg-slate-50"
+              href="{{ url_for('history.history', page=p) }}"
             >
-          </span>
-          {% endif %}
-        </nav>
-        {% else %}
+              {{ p }}
+            </a>
+            {% elif p == page - 2 or p == page + 2 %}
+            <span
+              class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-slate-400 ring-1 ring-inset ring-slate-300"
+            >
+              …
+            </span>
+            {% endif %} {% endfor %} {% if page < total_pages %}
+            <a
+              class="relative inline-flex items-center rounded-r-lg px-3 py-2 text-slate-500 ring-1 ring-inset ring-slate-300 hover:bg-slate-50"
+              href="{{ url_for('history.history', page=page+1) }}"
+            >
+              <span class="material-symbols-outlined text-[18px]"
+                >chevron_right</span
+              >
+            </a>
+            {% else %}
+            <span
+              class="relative inline-flex items-center rounded-r-lg px-3 py-2 text-slate-300 ring-1 ring-inset ring-slate-300 cursor-not-allowed"
+            >
+              <span class="material-symbols-outlined text-[18px]"
+                >chevron_right</span
+              >
+            </span>
+            {% endif %}
+          </nav>
+        </div>
+        {% endif %} {% else %}
         <section
-          class="bg-surface-container-lowest rounded-xl border border-outline-variant/30 p-md text-on-surface-variant"
+          class="bg-white rounded-xl border border-slate-200 p-6 text-slate-500"
         >
-          <div class="flex items-center gap-sm mb-sm">
+          <div class="flex items-center gap-2 mb-2">
             <span class="material-symbols-outlined">inbox</span>
-            <h3 class="font-headline-md text-headline-md text-on-surface">
+            <h3 class="text-base font-semibold text-slate-900">
               {{ tx('Chưa có lịch sử nhận diện', 'No recognition history yet')
               }}
             </h3>
           </div>
-          <p class="font-body-md text-body-md text-on-surface-variant mb-md">
+          <p class="text-sm text-slate-500 mb-4">
             {{ tx('Hãy tải ảnh đầu tiên để bắt đầu hành trình dự đoán giống
             chó.', 'Upload your first image to start breed prediction.') }}
           </p>
           <a
-            class="inline-flex items-center gap-2 bg-primary text-on-primary px-md py-sm rounded-lg font-label-sm hover:-translate-y-[1px] shadow-sm hover:shadow-md transition-all"
+            class="inline-flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition-colors"
             href="{{ url_for('predict.upload_page') }}"
           >
             <span class="material-symbols-outlined text-[18px]"
@@ -726,6 +707,3 @@
     <script src="{{ url_for('static', filename='js/toasts.js') }}"></script>
   </body>
 </html>
-
-
-

@@ -422,185 +422,214 @@
       </aside>
 
       <div class="col-span-1 flex flex-col">
-        <section
-          class="mb-margin flex flex-col md:flex-row justify-between items-start md:items-center bg-surface-container-low p-margin rounded-xl border border-surface-container-highest/50 relative overflow-hidden"
-        >
-          <div
-            class="absolute inset-0 bg-gradient-to-r from-transparent to-primary-fixed/20 pointer-events-none"
-          ></div>
-          <div class="relative z-10 max-w-2xl">
-            <h1 class="font-headline-lg text-headline-lg text-on-surface">
+        <section class="mb-8">
+          <div class="flex flex-col gap-1">
+            <h1 class="text-xl font-semibold text-on-surface">
               Xin chào {{ session.get('fullname') or session.get('username') or
               'bạn' }}
             </h1>
-            <p class="font-body-lg text-body-lg text-on-surface-variant mt-sm">
+            <p class="text-sm text-on-surface-variant">
               Theo dõi nhanh hoạt động nhận diện, lịch sử và hiệu suất dự đoán
               của bạn.
             </p>
-            <div class="flex flex-wrap gap-sm mt-md">
-              <a
-                class="bg-primary text-on-primary px-md py-sm rounded-lg font-label-sm hover:-translate-y-[1px] shadow-sm hover:shadow-md transition-all flex items-center gap-base"
-                href="{{ url_for('predict.upload_page') }}"
+          </div>
+          <div class="mt-4 flex flex-wrap gap-3">
+            <a
+              class="bg-primary text-on-primary px-4 py-2 rounded-lg font-label-sm shadow-sm hover:shadow-md transition-all flex items-center gap-2"
+              href="{{ url_for('predict.upload_page') }}"
+            >
+              <span class="material-symbols-outlined text-[18px]"
+                >add_a_photo</span
               >
-                <span
-                  class="material-symbols-outlined text-[18px]"
-                  data-icon="add_a_photo"
-                  >add_a_photo</span
-                >
-                Tải ảnh mới
-              </a>
-              <a
-                class="bg-surface-container-lowest text-on-surface px-md py-sm rounded-lg font-label-sm border border-outline-variant hover:border-primary hover:text-primary transition-colors flex items-center gap-base"
-                href="{{ url_for('history.history') }}"
+              Tải ảnh mới
+            </a>
+            <a
+              class="bg-surface-container-lowest text-on-surface px-4 py-2 rounded-lg font-label-sm border border-outline-variant hover:border-primary hover:text-primary transition-colors flex items-center gap-2"
+              href="{{ url_for('history.history') }}"
+            >
+              <span class="material-symbols-outlined text-[18px]"
+                >manage_search</span
               >
-                <span
-                  class="material-symbols-outlined text-[18px]"
-                  data-icon="manage_search"
-                  >manage_search</span
-                >
-                Xem lịch sử
-              </a>
-            </div>
+              Xem lịch sử
+            </a>
           </div>
         </section>
 
-        {% set ns = namespace(total_conf=0.0, total_count=0) %} {% if
-        recent_predictions %} {% for pred in recent_predictions %} {% if
-        pred.confidence is not none %} {% set ns.total_conf = ns.total_conf +
-        (pred.confidence or 0) %} {% set ns.total_count = ns.total_count + 1 %}
-        {% endif %} {% endfor %} {% endif %}
-
-        <section class="grid grid-cols-1 md:grid-cols-3 gap-gutter mb-margin">
+        <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
           <div
-            class="bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] p-md border border-surface-container-highest/50 flex flex-col"
+            class="p-6 bg-white rounded-xl border border-gray-100 flex flex-col gap-4 shadow-sm"
           >
-            <div class="flex justify-between items-start mb-sm">
-              <div
-                class="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center"
+            <div class="flex items-center justify-between">
+              <span
+                class="text-gray-500 font-medium text-xs uppercase tracking-wider"
+                >TỔNG DỰ ĐOÁN</span
               >
-                <span
-                  class="material-symbols-outlined text-primary"
-                  data-icon="pets"
-                  data-weight="fill"
-                  style="font-variation-settings: &quot;FILL&quot; 1"
-                  >pets</span
-                >
+              <div
+                class="w-10 h-10 rounded-lg bg-[#e8f1ff] flex items-center justify-center text-primary"
+              >
+                <span class="material-symbols-outlined">analytics</span>
               </div>
             </div>
-            <p class="font-label-sm text-label-sm text-on-surface-variant">
-              Tổng lượt dự đoán gần đây
-            </p>
-            <p class="font-headline-lg text-headline-lg text-on-surface mt-xs">
-              {{ recent_predictions|length }}
-            </p>
+            <div class="flex items-baseline gap-2">
+              <span class="text-2xl font-bold text-on-surface">
+                {{ recent_predictions_count if recent_predictions_count is not
+                none else (recent_predictions|length) }}
+              </span>
+            </div>
           </div>
           <div
-            class="bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] p-md border border-surface-container-highest/50 flex flex-col"
+            class="p-6 bg-white rounded-xl border border-gray-100 flex flex-col gap-4 shadow-sm"
           >
-            <div class="flex justify-between items-start mb-sm">
-              <div
-                class="w-10 h-10 rounded-full bg-secondary-fixed flex items-center justify-center"
+            <div class="flex items-center justify-between">
+              <span
+                class="text-gray-500 font-medium text-xs uppercase tracking-wider"
+                >ĐỘ TIN CẬY TB</span
               >
-                <span
-                  class="material-symbols-outlined text-secondary"
-                  data-icon="analytics"
-                  data-weight="fill"
-                  style="font-variation-settings: &quot;FILL&quot; 1"
-                  >analytics</span
-                >
+              <div
+                class="w-10 h-10 rounded-lg bg-[#e8f1ff] flex items-center justify-center text-primary"
+              >
+                <span class="material-symbols-outlined">bolt</span>
               </div>
             </div>
-            <p class="font-label-sm text-label-sm text-on-surface-variant">
-              Độ tin cậy trung bình
-            </p>
-            <p class="font-headline-lg text-headline-lg text-on-surface mt-xs">
-              {% if ns.total_count > 0 %} {{ '%.1f'|format((ns.total_conf /
-              ns.total_count) * 100) }}% {% else %} 0.0% {% endif %}
-            </p>
+            <div class="flex items-baseline gap-2">
+              <span class="text-2xl font-bold text-on-surface">
+                {{ '%.1f'|format((avg_confidence or 0) * 100) }}%
+              </span>
+            </div>
           </div>
           <a
-            class="bg-primary text-on-primary rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] p-md flex flex-col justify-center items-center hover:bg-primary/90 transition-colors group"
+            class="group p-6 bg-primary rounded-xl flex flex-col justify-between text-white shadow-lg shadow-primary/20 hover:scale-[1.01] transition-transform"
             href="{{ url_for('statistics.statistics') }}"
           >
-            <span
-              class="material-symbols-outlined text-4xl mb-sm group-hover:scale-110 transition-transform"
-              data-icon="open_in_new"
-              >open_in_new</span
-            >
-            <span class="font-label-sm text-label-sm text-center"
-              >Mở thống kê</span
-            >
+            <div class="flex items-center justify-between">
+              <span
+                class="font-medium text-xs uppercase tracking-wider opacity-90"
+                >XEM BÁO CÁO</span
+              >
+              <span
+                class="material-symbols-outlined group-hover:translate-x-1 transition-transform"
+                >arrow_forward</span
+              >
+            </div>
+            <div class="mt-4">
+              <p class="text-lg font-bold">Thống kê chi tiết</p>
+              <p class="text-xs opacity-80 leading-relaxed mt-1">
+                Phân tích sâu về dữ liệu huấn luyện.
+              </p>
+            </div>
           </a>
         </section>
 
         <section>
-          <div class="flex justify-between items-end mb-md">
-            <h2 class="font-headline-md text-headline-md text-on-surface">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-sm font-semibold text-on-surface">
               Kết quả gần đây
             </h2>
             <a
-              class="font-label-sm text-label-sm text-primary hover:underline flex items-center gap-xs"
+              class="text-primary font-semibold text-xs hover:underline"
               href="{{ url_for('history.history') }}"
             >
               Xem tất cả
-              <span
-                class="material-symbols-outlined text-[16px]"
-                data-icon="arrow_forward"
-                >arrow_forward</span
-              >
+            </a>
+          </div>
+          <div
+            class="flex items-center gap-2 mb-8 p-1.5 bg-[#f0f2f5] rounded-xl w-fit"
+          >
+            <a
+              class="px-5 py-2 rounded-lg text-xs transition-all {% if active_range == 'today' %}bg-primary text-white shadow-sm font-semibold{% else %}text-gray-500 hover:bg-gray-200 font-medium{% endif %}"
+              href="{{ url_for('dashboard.dashboard', range='today') }}"
+            >
+              Hôm nay
+            </a>
+            <a
+              class="px-5 py-2 rounded-lg text-xs transition-all {% if active_range == 'yesterday' %}bg-primary text-white shadow-sm font-semibold{% else %}text-gray-500 hover:bg-gray-200 font-medium{% endif %}"
+              href="{{ url_for('dashboard.dashboard', range='yesterday') }}"
+            >
+              Hôm qua
+            </a>
+            <a
+              class="px-5 py-2 rounded-lg text-xs transition-all {% if active_range == '7days' %}bg-primary text-white shadow-sm font-semibold{% else %}text-gray-500 hover:bg-gray-200 font-medium{% endif %}"
+              href="{{ url_for('dashboard.dashboard', range='7days') }}"
+            >
+              7 ngày gần đây
             </a>
           </div>
           {% if recent_predictions and recent_predictions|length > 0 %}
-          <div
-            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-gutter"
-          >
-            {% for pred in recent_predictions[:10] %}
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+            {% for pred in recent_predictions %}
             <div
-              class="bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-surface-container-highest/50 overflow-hidden flex flex-col group cursor-pointer hover:shadow-md transition-shadow"
+              class="bg-white rounded-2xl border border-gray-100 overflow-hidden group hover:shadow-xl transition-all duration-300"
             >
-              <div class="relative h-48 overflow-hidden bg-surface-container">
+              <div class="aspect-square relative overflow-hidden">
                 <img
                   alt="Ảnh nhận diện"
                   class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   src="/{{ pred.image_path }}"
                 />
                 <div
-                  class="absolute top-sm right-sm bg-surface-container-lowest/90 backdrop-blur-sm px-sm py-xs rounded-full shadow-sm flex items-center gap-xs"
+                  class="absolute top-3 right-3 px-2 py-1 bg-white/90 backdrop-blur rounded-md text-[10px] font-bold text-primary shadow-sm uppercase tracking-tight"
                 >
-                  <div class="w-2 h-2 rounded-full bg-primary"></div>
-                  <span
-                    class="font-label-sm text-label-sm text-primary font-bold"
-                  >
-                    {% if pred.confidence is not none %} {{
-                    '%.1f'|format((pred.confidence or 0) * 100) }}% {% else %}
-                    0.0% {% endif %}
-                  </span>
+                  {% if pred.confidence is not none %} {{
+                  '%.1f'|format((pred.confidence or 0) * 100) }}% {% else %}
+                  0.0% {% endif %}
                 </div>
               </div>
-              <div class="p-md flex flex-col flex-grow">
-                <h3
-                  class="font-label-sm text-label-sm text-on-surface font-semibold text-lg truncate"
-                >
+              <div class="p-5">
+                <h3 class="text-sm font-bold text-on-surface truncate">
                   {{ pred.breed or 'Chưa xác định' }}
                 </h3>
-                <p
-                  class="font-body-md text-body-md text-on-surface-variant text-sm mt-auto pt-sm flex items-center gap-xs"
-                >
-                  <span
-                    class="material-symbols-outlined text-[14px]"
-                    data-icon="schedule"
-                    >schedule</span
-                  >
-                  {{ pred.created_at.strftime('%d/%m/%Y %H:%M') if
-                  pred.created_at else '' }}
+                <p class="text-xs text-on-surface-variant mt-1">
+                  Dự đoán: {{ pred.breed or 'Chưa xác định' }}
                 </p>
+                <div
+                  class="mt-8 flex items-center justify-between border-t border-gray-50 pt-4"
+                >
+                  <span class="text-[10px] text-gray-400 uppercase font-medium">
+                    {{ pred.created_at.strftime('%d/%m/%Y %H:%M') if
+                    pred.created_at else '' }}
+                  </span>
+                  <span
+                    class="material-symbols-outlined text-[18px] text-primary"
+                    >open_in_new</span
+                  >
+                </div>
               </div>
             </div>
             {% endfor %}
           </div>
-          {% else %}
+          {% if total_pages and total_pages > 1 %}
+          <div class="flex justify-center mt-8">
+            <nav
+              aria-label="Pagination"
+              class="inline-flex items-center gap-1 rounded-md bg-white border border-gray-200 px-2 py-1"
+            >
+              <a
+                aria-label="Trang truoc"
+                class="px-2 py-1 text-xs rounded-md {% if page <= 1 %}text-gray-300 pointer-events-none{% else %}text-gray-500 hover:text-primary hover:bg-gray-100{% endif %}"
+                href="{{ url_for('dashboard.dashboard', range=active_range, page=page-1) }}"
+              >
+                &lsaquo;
+              </a>
+              {% for p in range(1, total_pages + 1) %}
+              <a
+                class="px-2.5 py-1 text-xs rounded-md {% if p == page %}bg-primary text-white font-semibold{% else %}text-gray-500 hover:text-primary hover:bg-gray-100{% endif %}"
+                href="{{ url_for('dashboard.dashboard', range=active_range, page=p) }}"
+              >
+                {{ p }}
+              </a>
+              {% endfor %}
+              <a
+                aria-label="Trang sau"
+                class="px-2 py-1 text-xs rounded-md {% if page >= total_pages %}text-gray-300 pointer-events-none{% else %}text-gray-500 hover:text-primary hover:bg-gray-100{% endif %}"
+                href="{{ url_for('dashboard.dashboard', range=active_range, page=page+1) }}"
+              >
+                &rsaquo;
+              </a>
+            </nav>
+          </div>
+          {% endif %} {% else %}
           <div
-            class="bg-surface-container-lowest rounded-xl border border-surface-container-highest/50 p-md text-on-surface-variant"
+            class="bg-white rounded-xl border border-gray-100 p-6 text-gray-500"
           >
             Bạn chưa có lịch sử nhận diện nào. Hãy bắt đầu bằng cách tải ảnh
             mới.
