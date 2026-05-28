@@ -7,34 +7,29 @@
 >
   <div class="relative w-full h-full overflow-y-auto">
     <div
-      class="min-h-screen bg-background text-on-background font-body-md text-body-md antialiased"
+      class="min-h-screen bg-background text-on-background body-md antialiased"
     >
-      <div class="relative w-full max-w-5xl mx-auto pt-10 pb-12 px-6 md:px-8">
+      <div class="relative w-full max-w-5xl mx-auto pt-10 pb-12 px-4 md:px-6">
         <button
           type="button"
           id="watchAdClose"
           class="absolute top-4 right-4 text-on-surface-variant hover:text-on-surface transition-colors"
-          aria-label="{{ tx('Đóng', 'Close') }}"
+          aria-label="Đóng"
         >
           <span class="material-symbols-outlined">close</span>
         </button>
 
         <header class="text-center space-y-4 pt-4">
-          <h1 class="font-headline-lg text-headline-lg text-on-background">
-            {{ tx('Xem quảng cáo để mở khóa lượt nhận diện', 'Watch ads to
-            unlock predictions') }}
+          <h1 class="headline-lg text-on-background">
+            Xem quảng cáo để mở khóa lượt nhận diện
           </h1>
-          <p
-            class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto"
-          >
-            {{ tx('Bạn đã sử dụng hết 10 lượt miễn phí. Xem một đoạn quảng cáo
-            ngắn để nhận thêm', 'You used all free predictions. Watch a short ad
-            to get') }}
+          <p class="body-md text-on-surface-variant max-w-2xl mx-auto">
+            Bạn đã sử dụng hết 10 lượt miễn phí. Xem một đoạn quảng cáo
+            ngắn để nhận thêm
             <strong class="text-on-background font-semibold"
-              >3 {{ tx('lượt', 'more') }}</strong
+              >3 lượt</strong
             >
-            {{ tx('nhận diện AI. (Tối đa 3 lần).', 'AI predictions. (Up to 3
-            times per day).') }}
+            nhận diện AI. (Tối đa 3 lần).
           </p>
         </header>
 
@@ -45,9 +40,9 @@
             >
               <div class="flex items-center justify-between mb-4">
                 <span
-                  class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider"
+                  class="label-sm label-sm text-on-surface-variant uppercase tracking-wider"
                 >
-                  {{ tx('Đã nhận diện', 'Predictions used') }}
+                  Đã nhận diện
                 </span>
                 <span class="material-symbols-outlined text-error"
                   >warning</span
@@ -59,7 +54,7 @@
                 >
                   {{ quota_info.total_predictions }}
                 </span>
-                <span class="font-body-lg text-body-lg text-on-surface-variant">
+                <span class="body-md body-md text-on-surface-variant">
                   / {{ quota_info.free_limit }}
                 </span>
               </div>
@@ -74,33 +69,25 @@
               <div
                 class="bg-surface-container-lowest p-4 rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-outline-variant flex flex-col justify-center"
               >
-                <span
-                  class="font-label-sm text-label-sm text-on-surface-variant mb-1"
-                >
-                  {{ tx('Unlock còn', 'Unlocks left') }}
+                <span class="label-sm label-sm text-on-surface-variant mb-1">
+                  Unlock còn
                 </span>
-                <span class="font-headline-md text-headline-md text-primary">
+                <span class="headline-md text-primary">
                   {{ quota_info.ad_unlocks_remaining }}
-                  <span
-                    class="font-body-md text-body-md text-on-surface-variant"
-                    >{{ tx('lần', 'times') }}</span
+                  <span class="body-md text-on-surface-variant"
+                    >lần</span
                   >
                 </span>
               </div>
               <div
                 class="bg-surface-container-lowest p-4 rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-outline-variant flex flex-col justify-center"
               >
-                <span
-                  class="font-label-sm text-label-sm text-on-surface-variant mb-1"
-                >
-                  {{ tx('Ads đã xem', 'Ads watched') }}
+                <span class="label-sm label-sm text-on-surface-variant mb-1">
+                  Ads đã xem
                 </span>
-                <span
-                  class="font-headline-md text-headline-md text-on-background"
-                >
+                <span class="headline-md text-on-background">
                   {{ quota_info.ad_views_used }}
-                  <span
-                    class="font-body-md text-body-md text-on-surface-variant"
+                  <span class="body-md text-on-surface-variant"
                     >/ {{ quota_info.ad_views_limit }}</span
                   >
                 </span>
@@ -116,15 +103,15 @@
             >
               <div class="flex items-center gap-2 text-primary">
                 <span class="material-symbols-outlined">smart_display</span>
-                <span class="font-label-sm text-label-sm font-semibold">
-                  {{ tx('Nhà Tài Trợ PetAI', 'PetAI Sponsor') }}
+                <span class="label-sm label-sm font-semibold">
+                  Nhà Tài Trợ PetAI
                 </span>
               </div>
               <div
-                class="bg-surface-variant text-primary px-3 py-1 rounded-full font-label-sm text-label-sm flex items-center gap-1"
+                class="bg-surface-variant text-primary px-3 py-1 rounded-full label-sm label-sm flex items-center gap-1"
               >
                 <span class="material-symbols-outlined text-[16px]">timer</span>
-                {{ tx('Còn', 'Remaining') }}
+                Còn
                 <span id="watchAdCountdown">8</span>s
               </div>
             </div>
@@ -142,17 +129,12 @@
                   class="material-symbols-outlined text-on-primary text-[64px] animate-pulse"
                   >play_circle</span
                 >
-                <h3 class="font-headline-md text-headline-md text-on-primary">
-                  {{ tx('Đang phát quảng cáo mô phỏng', 'Playing simulated ad')
-                  }}
+                <h3 class="headline-md text-on-primary">
+                  Đang phát quảng cáo mô phỏng
                 </h3>
-                <p
-                  class="font-body-md text-body-md text-outline-variant max-w-sm"
-                >
-                  {{ tx('Vui lòng không đóng cửa sổ này. Lượt nhận diện sẽ được
-                  cộng vào tài khoản sau khi video kết thúc.', 'Please keep this
-                  window open. Predictions will be added after the video ends.')
-                  }}
+                <p class="body-md text-outline-variant max-w-sm">
+                  Vui lòng không đóng cửa sổ này. Lượt nhận diện sẽ được
+                  cộng vào tài khoản sau khi video kết thúc.
                 </p>
               </div>
             </div>
@@ -178,26 +160,25 @@
             <button
               type="button"
               id="watchAdCancel"
-              class="px-8 py-3 rounded-lg border-2 border-outline-variant font-label-sm text-label-sm font-semibold text-on-surface hover:bg-surface-container transition-colors focus:ring-2 focus:ring-primary focus:outline-none"
+              class="px-8 py-3 rounded-lg border-2 border-outline-variant label-sm label-sm font-semibold text-on-surface hover:bg-surface-container transition-colors focus:ring-2 focus:ring-primary focus:outline-none"
             >
-              {{ tx('Quay lại', 'Back') }}
+              Quay lại
             </button>
             <button
               type="submit"
               id="watchAdCompleteBtn"
-              class="px-8 py-3 rounded-lg bg-primary text-on-primary font-label-sm text-label-sm font-semibold border-2 border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+              class="px-8 py-3 rounded-lg bg-primary text-on-primary label-sm label-sm font-semibold border-2 border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
               disabled
             >
-              {{ tx('Tôi đã xem xong', 'I finished watching') }}
+              Tôi đã xem xong
             </button>
           </div>
           <div
             class="flex items-center gap-2 text-outline bg-surface-container-low px-4 py-2 rounded-lg border border-outline-variant/50"
           >
             <span class="material-symbols-outlined text-[18px]">info</span>
-            <p class="font-label-sm text-label-sm">
-              {{ tx('Nếu đã xem đủ 3 lần, bạn cần nâng cấp gói để tiếp tục.',
-              'If you have watched 3 ads, upgrade your plan to continue.') }}
+            <p class="label-sm label-sm">
+              Nếu đã xem đủ 3 lần, bạn cần nâng cấp gói để tiếp tục.
             </p>
           </div>
         </form>
@@ -205,3 +186,4 @@
     </div>
   </div>
 </div>
+

@@ -1,13 +1,17 @@
 <!doctype html>
 
-<html class="light" lang="vi" style="">
+<html class="light" lang="vi">
   <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>PetAI | Nhận diện giống chó thông minh</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap"
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/typography.css') }}"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap"
       rel="stylesheet"
     />
     <link
@@ -79,8 +83,8 @@
          to avoid horizontal overflow on narrow Android viewports. */
       @media (max-width: 640px) {
         .text-display-lg {
-          font-size: 40px !important;
-          line-height: 48px !important;
+          font-size: 30px !important;
+          line-height: 36px !important;
         }
         /* Shrink large decorative glows that caused overflow */
         .aura-glow.w-\[600px\],
@@ -88,22 +92,38 @@
           width: 300px !important;
           height: 300px !important;
         }
+        .aura-glow {
+          display: none !important;
+        }
         /* Reduce the large horizontal padding used for desktop */
         .px-margin-desktop {
-          padding-left: 20px !important;
-          padding-right: 20px !important;
+          padding-left: 16px !important;
+          padding-right: 16px !important;
+        }
+        section#product,
+        section#spotlight,
+        section#social-proof,
+        section#faq,
+        section#cta-final {
+          padding-top: 24px !important;
+          padding-bottom: 24px !important;
+        }
+        section#product {
+          margin-bottom: 24px !important;
         }
         /* Make hero floating shape a bit smaller on phones */
         .floating-shape img,
         .floating-shape {
-          max-width: 340px;
+          max-width: 280px;
         }
         /* Header/nav mobile adjustments to prevent overflow */
         nav > div {
-          height: 48px !important;
+          height: 52px !important;
+          padding-left: 12px !important;
+          padding-right: 12px !important;
         }
         nav img.h-16 {
-          height: 40px !important;
+          height: 34px !important;
         }
         /* Reduce register button size on phones */
         nav a.bg-primary {
@@ -119,7 +139,145 @@
         }
         /* Ensure fixed header doesn't overlap content: reduce main top padding on small screens */
         main.relative.z-10.pt-20 {
-          padding-top: 56px !important;
+          padding-top: 60px !important;
+        }
+        section#product > .grid {
+          gap: 20px !important;
+        }
+        section#product > .grid > .relative.flex.justify-center.items-center {
+          display: none !important;
+        }
+        section#product h1,
+        section#cta-final h2 {
+          font-size: 30px !important;
+          line-height: 36px !important;
+          margin-bottom: 12px !important;
+        }
+        section#product p,
+        section#cta-final p {
+          margin-bottom: 14px !important;
+          font-size: 14px !important;
+          line-height: 21px !important;
+        }
+        section#product .flex.flex-wrap.gap-6,
+        section#cta-final .flex.flex-wrap.gap-6 {
+          gap: 12px !important;
+        }
+        section#product .flex.flex-wrap.gap-6 > a,
+        section#cta-final .flex.flex-wrap.gap-6 > a {
+          width: 100% !important;
+          justify-content: center !important;
+          text-align: center !important;
+        }
+        section#product .mt-24 {
+          margin-top: 28px !important;
+        }
+        section#product .mt-24 .flex.flex-col.md\:flex-row {
+          gap: 12px !important;
+        }
+        section#product .mt-24 .w-full.md\:w-72 {
+          padding: 16px !important;
+        }
+        section#product .mt-24 .font-display-lg.headline-lg {
+          font-size: 28px !important;
+          line-height: 32px !important;
+        }
+        section#product .mt-24 .text-3xl {
+          font-size: 24px !important;
+          line-height: 28px !important;
+        }
+        section#spotlight .glass-card.rounded-\[40px\] {
+          padding: 20px !important;
+          min-height: auto !important;
+        }
+        section#spotlight .spotlight-panel {
+          gap: 20px !important;
+        }
+        section#spotlight .spotlight-panel h3 {
+          font-size: 24px !important;
+          line-height: 32px !important;
+        }
+        section#spotlight .spotlight-panel ul {
+          gap: 12px !important;
+        }
+        section#spotlight .spotlight-panel .bg-surface-container-low {
+          padding: 20px !important;
+        }
+        section#spotlight .flex.justify-center.mb-12 > div {
+          overflow-x: auto;
+          max-width: 100%;
+        }
+        section#spotlight .spotlight-tab {
+          white-space: nowrap;
+        }
+        section#social-proof .glass-card {
+          padding: 16px !important;
+          border-radius: 20px !important;
+        }
+        section#social-proof .font-display-lg {
+          font-size: 32px !important;
+          line-height: 36px !important;
+        }
+        section#faq details {
+          padding: 16px !important;
+          border-radius: 18px !important;
+        }
+        section#faq summary {
+          font-size: 18px !important;
+          line-height: 26px !important;
+        }
+        section#cta-final .glass-card {
+          padding: 20px !important;
+          border-radius: 28px !important;
+        }
+        section#cta-final h2 {
+          margin-bottom: 8px !important;
+        }
+        section#cta-final .space-y-10 {
+          gap: 16px !important;
+        }
+        section#cta-final .absolute.-top-32.-right-32 {
+          width: 240px !important;
+          height: 240px !important;
+          top: -120px !important;
+          right: -120px !important;
+        }
+        footer {
+          padding-top: 24px !important;
+          padding-bottom: 20px !important;
+        }
+        footer .max-w-container-max > .grid {
+          gap: 24px !important;
+          margin-bottom: 24px !important;
+        }
+        footer .lg\:col-span-6 {
+          grid-column: auto !important;
+        }
+        footer p,
+        footer a {
+          font-size: 13px !important;
+          line-height: 20px !important;
+        }
+        footer .grid.grid-cols-2.md\:grid-cols-2 {
+          grid-template-columns: 1fr !important;
+          gap: 24px !important;
+        }
+        footer .flex.flex-col.md\:flex-row {
+          align-items: flex-start !important;
+          gap: 12px !important;
+        }
+        footer .flex.gap-6 {
+          gap: 16px !important;
+          flex-wrap: wrap !important;
+        }
+        footer .inline-flex.items-center.gap-0 img {
+          height: 28px !important;
+        }
+        footer .inline-flex.items-center.gap-0 span {
+          font-size: 14px !important;
+        }
+        footer .label-sm.underline {
+          font-size: 11px !important;
         }
       }
     </style>
@@ -241,7 +399,7 @@
       };
     </script>
   </head>
-  <body class="font-body-md text-on-surface selection:bg-primary/20">
+  <body class="body-md text-on-surface selection:bg-primary/20">
     <!-- Auras -->
     <div
       class="aura-glow bg-primary-container w-[600px] h-[600px] -top-48 -left-48"
@@ -257,39 +415,44 @@
         class="flex justify-between items-center px-margin-desktop py-base max-w-container-max mx-auto h-16"
       >
         <div
-          class="font-headline-md text-headline-md font-bold tracking-tighter text-primary"
+          class="headline-md headline-md font-bold tracking-tighter text-primary"
         >
-          <img
-            alt="PetAI New Logo"
-            class="w-auto h-16"
-            src="data:image/png;base64,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"
-          />
+          <span class="inline-flex items-center gap-0">
+            <img
+              alt="PetAI New Logo"
+              class="w-auto h-14 md:h-24"
+              src="{{ url_for('static', filename='logo.png') }}"
+            />
+            <span class="ml-0 text-xl md:text-3xl font-bold text-primary"
+              >PetAI</span
+            >
+          </span>
         </div>
         <div class="hidden md:flex items-center gap-10">
           <a
-            class="font-label-caps text-xs text-primary font-semibold"
+            class="label-sm label-sm text-primary font-semibold"
             href="#product"
             >Sản phẩm</a
           >
           <a
-            class="font-label-caps text-xs text-on-surface-variant hover:text-primary transition-colors duration-300"
+            class="label-sm label-sm text-on-surface-variant hover:text-primary transition-colors duration-300"
             href="#features"
             >Tính năng</a
           >
           <a
-            class="font-label-caps text-xs text-on-surface-variant hover:text-primary transition-colors duration-300"
+            class="label-sm label-sm text-on-surface-variant hover:text-primary transition-colors duration-300"
             href="#pricing"
             >Bảng giá</a
           >
           <a
-            class="font-label-caps text-xs text-on-surface-variant hover:text-primary transition-colors duration-300"
+            class="label-sm label-sm text-on-surface-variant hover:text-primary transition-colors duration-300"
             href="#social-proof"
             >Giới thiệu</a
           >
         </div>
         <div class="flex items-center gap-6">
           <a
-            class="font-label-caps text-xs text-on-surface-variant hover:text-primary font-semibold transition-colors duration-300"
+            class="label-sm label-sm text-on-surface-variant hover:text-primary font-semibold transition-colors duration-300"
             href="{{ url_for('login.login') }}"
             >Đăng nhập</a
           >
@@ -310,7 +473,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-gutter items-center">
           <div class="relative z-20">
             <span
-              class="inline-block font-label-caps text-label-caps text-primary mb-6 tracking-[0.2em]"
+              class="inline-block label-sm label-sm text-primary mb-6 tracking-[0.2em]"
               >ĐỀ TÀI: NHẬN DIỆN GIỐNG CHÓ</span
             >
             <h1
@@ -322,9 +485,7 @@
                 >GIỐNG CHÓ</span
               >
             </h1>
-            <p
-              class="font-body-lg text-body-lg text-on-surface-variant mb-12 max-w-xl"
-            >
+            <p class="body-md body-md text-on-surface-variant mb-12 max-w-xl">
               PetAI sử dụng mô hình học sâu để xác định giống chó từ ảnh chụp,
               trả về Top-3 kết quả kèm tỷ lệ tin cậy rõ ràng cho chó thuần và
               chó lai.
@@ -368,12 +529,11 @@
                 <div class="w-3 h-3 rounded-full bg-error"></div>
                 <div class="w-3 h-3 rounded-full bg-secondary-container"></div>
                 <div class="w-3 h-3 rounded-full bg-primary-container"></div>
-                <span
-                  class="ml-4 font-label-caps text-label-caps text-on-surface-variant"
+                <span class="ml-4 label-sm label-sm text-on-surface-variant"
                   >MINH_HỌA_KẾT_QUẢ.SH</span
                 >
               </div>
-              <div class="space-y-4 font-code-sm text-code-sm">
+              <div class="space-y-4 label-sm text-code-sm">
                 <div class="flex gap-4">
                   <span class="text-primary font-bold">Đầu vào:</span>
                   <span class="text-on-surface"
@@ -396,17 +556,15 @@
               class="w-full md:w-72 bg-white rounded-lg p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm"
             >
               <div class="text-center">
-                <div class="font-display-lg text-headline-lg text-primary mb-2">
-                  98.4<span class="text-headline-md">%</span>
+                <div class="font-display-lg headline-lg text-primary mb-2">
+                  98.4<span class="headline-md">%</span>
                 </div>
-                <div
-                  class="font-label-caps text-label-caps text-on-surface-variant"
-                >
+                <div class="label-sm label-sm text-on-surface-variant">
                   ĐỘ CHÍNH XÁC
                 </div>
               </div>
               <a
-                class="w-full py-3 bg-primary text-on-primary rounded-lg font-bold text-sm mt-8 text-center"
+                class="w-full py-3 bg-primary text-on-primary rounded-lg font-bold body-md mt-8 text-center"
                 href="{{ url_for('predict.upload_page') }}"
               >
                 Thử ngay
@@ -422,11 +580,11 @@
       >
         <div class="text-center mb-8">
           <h2
-            class="font-headline-lg text-headline-lg mb-4 uppercase tracking-tight text-on-surface"
+            class="headline-lg headline-lg mb-4 uppercase tracking-tight text-on-surface"
           >
             Điều gì làm PetAI nổi bật?
           </h2>
-          <p class="font-body-md text-body-md text-on-surface-variant">
+          <p class="body-md body-md text-on-surface-variant">
             Trải nghiệm nhận diện nhanh, rõ ràng và dễ hiểu.
           </p>
         </div>
@@ -436,25 +594,25 @@
             class="glass-card p-1.5 rounded-full flex gap-1 bg-surface-container-low"
           >
             <button
-              class="spotlight-tab px-6 py-2.5 rounded-full font-body-md text-sm transition-all duration-300 bg-primary text-on-primary shadow-md"
+              class="spotlight-tab px-6 py-2.5 rounded-full body-md body-md transition-all duration-300 bg-primary text-on-primary shadow-md"
               data-tab="fast-id"
             >
               Nhận diện nhanh
             </button>
             <button
-              class="spotlight-tab px-6 py-2.5 rounded-full font-body-md text-sm transition-all duration-300 text-on-surface-variant hover:text-primary"
+              class="spotlight-tab px-6 py-2.5 rounded-full body-md body-md transition-all duration-300 text-on-surface-variant hover:text-primary"
               data-tab="top-3"
             >
               Top-3 giống
             </button>
             <button
-              class="spotlight-tab px-6 py-2.5 rounded-full font-body-md text-sm transition-all duration-300 text-on-surface-variant hover:text-primary"
+              class="spotlight-tab px-6 py-2.5 rounded-full body-md body-md transition-all duration-300 text-on-surface-variant hover:text-primary"
               data-tab="visual"
             >
               Giải thích trực quan
             </button>
             <button
-              class="spotlight-tab px-6 py-2.5 rounded-full font-body-md text-sm transition-all duration-300 text-on-surface-variant hover:text-primary"
+              class="spotlight-tab px-6 py-2.5 rounded-full body-md body-md transition-all duration-300 text-on-surface-variant hover:text-primary"
               data-tab="history"
             >
               Lưu lịch sử
@@ -477,10 +635,10 @@
             id="fast-id"
           >
             <div class="space-y-8">
-              <h3 class="font-headline-md text-headline-md text-on-surface">
+              <h3 class="headline-md headline-md text-on-surface">
                 Nhận diện nhanh, rõ trong vài giây
               </h3>
-              <p class="text-on-surface-variant text-body-lg">
+              <p class="text-on-surface-variant body-md">
                 PetAI phân tích ảnh và trả về kết quả rõ ràng, giúp bạn nhận
                 diện giống chó nhanh chóng.
               </p>
@@ -510,7 +668,7 @@
             >
               <div class="flex items-center justify-between mb-8">
                 <span
-                  class="font-label-caps text-[10px] text-on-surface-variant tracking-[0.2em]"
+                  class="label-sm label-sm text-on-surface-variant tracking-[0.2em]"
                   >MINH HỌA KẾT QUẢ</span
                 >
                 <span
@@ -518,11 +676,11 @@
                   >more_horiz</span
                 >
               </div>
-              <div class="space-y-6 font-body-md">
+              <div class="space-y-6 body-md">
                 <div class="space-y-2">
-                  <div class="flex justify-between text-sm">
+                  <div class="flex justify-between body-md">
                     <span class="text-on-surface">Shiba Inu</span>
-                    <span class="text-primary font-code-sm">82%</span>
+                    <span class="text-primary label-sm">82%</span>
                   </div>
                   <div
                     class="h-2 bg-outline-variant/20 rounded-full overflow-hidden"
@@ -531,9 +689,9 @@
                   </div>
                 </div>
                 <div class="space-y-2">
-                  <div class="flex justify-between text-sm">
+                  <div class="flex justify-between body-md">
                     <span class="text-on-surface">Akita</span>
-                    <span class="text-secondary font-code-sm">11%</span>
+                    <span class="text-secondary label-sm">11%</span>
                   </div>
                   <div
                     class="h-2 bg-outline-variant/20 rounded-full overflow-hidden"
@@ -542,9 +700,9 @@
                   </div>
                 </div>
                 <div class="space-y-2">
-                  <div class="flex justify-between text-sm">
+                  <div class="flex justify-between body-md">
                     <span class="text-on-surface">Basenji</span>
-                    <span class="text-on-surface-variant font-code-sm">7%</span>
+                    <span class="text-on-surface-variant label-sm">7%</span>
                   </div>
                   <div
                     class="h-2 bg-outline-variant/20 rounded-full overflow-hidden"
@@ -557,7 +715,7 @@
                 class="mt-8 pt-6 border-t border-outline-variant/20 flex items-center justify-between"
               >
                 <a
-                  class="text-xs text-primary flex items-center gap-2 hover:underline cursor-pointer font-bold"
+                  class="label-sm text-primary flex items-center gap-2 hover:underline cursor-pointer font-bold"
                   href="{{ url_for('history.history') }}"
                 >
                   Xem lịch sử nhận diện
@@ -573,10 +731,8 @@
             id="top-3"
           >
             <div class="space-y-8">
-              <h3 class="font-headline-md text-headline-md">
-                Top-3 giống để dễ so sánh
-              </h3>
-              <p class="text-on-surface-variant text-body-lg">
+              <h3 class="headline-md headline-md">Top-3 giống để dễ so sánh</h3>
+              <p class="text-on-surface-variant body-md">
                 Hệ thống trả về 3 giống có khả năng xuất hiện cao nhất, hữu ích
                 cho trường hợp chó lai.
               </p>
@@ -605,7 +761,7 @@
               class="bg-surface-container-low border border-outline-variant/30 p-8 rounded-2xl shadow-inner"
             >
               <div
-                class="font-label-caps text-[10px] text-on-surface-variant mb-6 tracking-[0.2em]"
+                class="label-sm label-sm text-on-surface-variant mb-6 tracking-[0.2em]"
               >
                 TOP-3 GỢI Ý
               </div>
@@ -629,7 +785,7 @@
                   <span class="text-secondary font-bold">13%</span>
                 </div>
               </div>
-              <p class="mt-8 text-[11px] text-on-surface-variant italic">
+              <p class="mt-8 label-sm text-on-surface-variant italic">
                 Kết quả minh họa, tỷ lệ có thể thay đổi.
               </p>
             </div>
@@ -639,10 +795,10 @@
             id="visual"
           >
             <div class="space-y-8">
-              <h3 class="font-headline-md text-headline-md">
+              <h3 class="headline-md headline-md">
                 Giải thích trực quan, dễ hiểu
               </h3>
-              <p class="text-on-surface-variant text-body-lg">
+              <p class="text-on-surface-variant body-md">
                 Làm nổi bật vùng đặc trưng giúp bạn hiểu vì sao AI đưa ra kết
                 quả.
               </p>
@@ -671,7 +827,7 @@
               class="bg-surface-container-low border border-outline-variant/30 p-8 rounded-2xl shadow-inner"
             >
               <div
-                class="font-label-caps text-[10px] text-on-surface-variant mb-6 tracking-[0.2em]"
+                class="label-sm label-sm text-on-surface-variant mb-6 tracking-[0.2em]"
               >
                 VÙNG NỔI BẬT
               </div>
@@ -689,16 +845,16 @@
                   class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"
                 ></div>
                 <div
-                  class="absolute bottom-4 left-4 font-code-sm text-[10px] text-primary-container"
+                  class="absolute bottom-4 left-4 label-sm label-sm text-primary-container"
                 >
                   REGION_ID: 0xFF4A2
                 </div>
               </div>
               <div class="mt-6 space-y-2">
-                <p class="text-sm text-on-surface">
+                <p class="body-md text-on-surface">
                   Vùng tai và mắt được đánh dấu rõ ràng.
                 </p>
-                <p class="text-xs text-on-surface-variant">
+                <p class="label-sm text-on-surface-variant">
                   Mô phỏng minh họa heatmap.
                 </p>
               </div>
@@ -709,10 +865,10 @@
             id="history"
           >
             <div class="space-y-8">
-              <h3 class="font-headline-md text-headline-md">
+              <h3 class="headline-md headline-md">
                 Lưu lịch sử để tra cứu lại
               </h3>
-              <p class="text-on-surface-variant text-body-lg">
+              <p class="text-on-surface-variant body-md">
                 Xem lại các lần nhận diện trước đó, tiện so sánh và chia sẻ.
               </p>
               <ul class="space-y-6">
@@ -740,7 +896,7 @@
               class="bg-surface-container-low border border-outline-variant/30 p-8 rounded-2xl shadow-inner"
             >
               <div
-                class="font-label-caps text-[10px] text-on-surface-variant mb-6 tracking-[0.2em]"
+                class="label-sm label-sm text-on-surface-variant mb-6 tracking-[0.2em]"
               >
                 LỊCH SỬ GẦN NHẤT
               </div>
@@ -752,9 +908,9 @@
                     <span class="material-symbols-outlined text-primary text-sm"
                       >pets</span
                     >
-                    <span class="text-sm font-medium">Shiba Inu</span>
+                    <span class="body-md font-medium">Shiba Inu</span>
                   </div>
-                  <span class="text-xs text-on-surface-variant">Hôm nay</span>
+                  <span class="label-sm text-on-surface-variant">Hôm nay</span>
                 </div>
                 <div class="h-px bg-outline-variant/20"></div>
                 <div
@@ -764,9 +920,9 @@
                     <span class="material-symbols-outlined text-primary text-sm"
                       >pets</span
                     >
-                    <span class="text-sm font-medium">Corgi</span>
+                    <span class="body-md font-medium">Corgi</span>
                   </div>
-                  <span class="text-xs text-on-surface-variant">Hôm qua</span>
+                  <span class="label-sm text-on-surface-variant">Hôm qua</span>
                 </div>
                 <div class="h-px bg-outline-variant/20"></div>
                 <div
@@ -776,13 +932,13 @@
                     <span class="material-symbols-outlined text-primary text-sm"
                       >pets</span
                     >
-                    <span class="text-sm font-medium">Husky</span>
+                    <span class="body-md font-medium">Husky</span>
                   </div>
-                  <span class="text-xs text-on-surface-variant">12/05</span>
+                  <span class="label-sm text-on-surface-variant">12/05</span>
                 </div>
               </div>
               <button
-                class="mt-8 text-xs text-secondary-container flex items-center gap-2 hover:underline"
+                class="mt-8 label-sm text-secondary-container flex items-center gap-2 hover:underline"
               >
                 Mở lịch sử
                 <span class="material-symbols-outlined text-sm"
@@ -799,12 +955,10 @@
         id="social-proof"
       >
         <div class="text-center mb-8">
-          <h2 class="font-headline-lg text-headline-lg mb-4 text-on-surface">
+          <h2 class="headline-lg headline-lg mb-4 text-on-surface">
             ĐƯỢC TIN DÙNG BỞI CỘNG ĐỒNG YÊU THÚ CƯNG
           </h2>
-          <p
-            class="font-body-md text-body-md text-on-surface-variant max-w-2xl mx-auto"
-          >
+          <p class="body-md body-md text-on-surface-variant max-w-2xl mx-auto">
             PetAI hỗ trợ người nuôi chó, cửa hàng thú cưng và phòng khám thú y
             ra quyết định nhanh hơn từ ảnh chụp thực tế.
           </p>
@@ -821,14 +975,14 @@
                 >group</span
               >
               <span
-                class="font-label-caps text-[10px] text-on-surface-variant tracking-[0.2em] uppercase"
+                class="label-sm label-sm text-on-surface-variant tracking-[0.2em] uppercase"
                 >NGƯỜI DÙNG</span
               >
             </div>
             <div class="font-display-lg text-4xl font-bold text-primary mb-2">
               10,000+
             </div>
-            <p class="font-body-md text-sm text-on-surface-variant">
+            <p class="body-md body-md text-on-surface-variant">
               Tài khoản đã đăng ký
             </p>
           </div>
@@ -841,14 +995,14 @@
                 >query_stats</span
               >
               <span
-                class="font-label-caps text-[10px] text-on-surface-variant tracking-[0.2em] uppercase"
+                class="label-sm label-sm text-on-surface-variant tracking-[0.2em] uppercase"
                 >DỰ ĐOÁN</span
               >
             </div>
             <div class="font-display-lg text-4xl font-bold text-primary mb-2">
               1M+
             </div>
-            <p class="font-body-md text-sm text-on-surface-variant">
+            <p class="body-md body-md text-on-surface-variant">
               Lượt nhận diện đã xử lý
             </p>
           </div>
@@ -861,14 +1015,14 @@
                 >precision_manufacturing</span
               >
               <span
-                class="font-label-caps text-[10px] text-on-surface-variant tracking-[0.2em] uppercase"
+                class="label-sm label-sm text-on-surface-variant tracking-[0.2em] uppercase"
                 >ĐỘ CHÍNH XÁC</span
               >
             </div>
             <div class="font-display-lg text-4xl font-bold text-primary mb-2">
               Top-3
             </div>
-            <p class="font-body-md text-sm text-on-surface-variant">
+            <p class="body-md body-md text-on-surface-variant">
               Tối ưu cho chó thuần và chó lai
             </p>
           </div>
@@ -881,14 +1035,14 @@
                 >support_agent</span
               >
               <span
-                class="font-label-caps text-[10px] text-on-surface-variant tracking-[0.2em] uppercase"
+                class="label-sm label-sm text-on-surface-variant tracking-[0.2em] uppercase"
                 >HỖ TRỢ</span
               >
             </div>
             <div class="font-display-lg text-4xl font-bold text-primary mb-2">
               24/7
             </div>
-            <p class="font-body-md text-sm text-on-surface-variant">
+            <p class="body-md body-md text-on-surface-variant">
               Hỗ trợ trong quá trình sử dụng
             </p>
           </div>
@@ -943,7 +1097,7 @@
         </style>
         <div class="flex items-center gap-8 px-margin-desktop mb-6">
           <span
-            class="font-label-caps text-label-caps text-on-surface-variant/70 flex items-center gap-2 whitespace-nowrap"
+            class="label-sm label-sm text-on-surface-variant/70 flex items-center gap-2 whitespace-nowrap"
           >
             CÁC LOẠI GIỐNG CHÓ
             <span class="material-symbols-outlined text-sm">chevron_right</span>
@@ -952,7 +1106,7 @@
             <div class="marquee-track">
               <div class="flex items-center gap-4 px-4">
                 <div
-                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full font-code-sm text-on-surface whitespace-nowrap"
+                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full label-sm text-on-surface whitespace-nowrap"
                 >
                   <span class="material-symbols-outlined text-primary"
                     >pets</span
@@ -960,7 +1114,7 @@
                   Shiba Inu
                 </div>
                 <div
-                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full font-code-sm text-on-surface whitespace-nowrap"
+                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full label-sm text-on-surface whitespace-nowrap"
                 >
                   <span class="material-symbols-outlined text-primary"
                     >pets</span
@@ -968,7 +1122,7 @@
                   Husky
                 </div>
                 <div
-                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full font-code-sm text-on-surface whitespace-nowrap"
+                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full label-sm text-on-surface whitespace-nowrap"
                 >
                   <span class="material-symbols-outlined text-primary"
                     >pets</span
@@ -976,7 +1130,7 @@
                   Corgi
                 </div>
                 <div
-                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full font-code-sm text-on-surface whitespace-nowrap"
+                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full label-sm text-on-surface whitespace-nowrap"
                 >
                   <span class="material-symbols-outlined text-primary"
                     >pets</span
@@ -984,7 +1138,7 @@
                   Akita
                 </div>
                 <div
-                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full font-code-sm text-on-surface whitespace-nowrap"
+                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full label-sm text-on-surface whitespace-nowrap"
                 >
                   <span class="material-symbols-outlined text-primary"
                     >pets</span
@@ -992,7 +1146,7 @@
                   Beagle
                 </div>
                 <div
-                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full font-code-sm text-on-surface whitespace-nowrap"
+                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full label-sm text-on-surface whitespace-nowrap"
                 >
                   <span class="material-symbols-outlined text-primary"
                     >pets</span
@@ -1000,7 +1154,7 @@
                   Poodle
                 </div>
                 <div
-                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full font-code-sm text-on-surface whitespace-nowrap"
+                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full label-sm text-on-surface whitespace-nowrap"
                 >
                   <span class="material-symbols-outlined text-primary"
                     >pets</span
@@ -1008,7 +1162,7 @@
                   Golden Retriever
                 </div>
                 <div
-                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full font-code-sm text-on-surface whitespace-nowrap"
+                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full label-sm text-on-surface whitespace-nowrap"
                 >
                   <span class="material-symbols-outlined text-primary"
                     >pets</span
@@ -1016,7 +1170,7 @@
                   Labrador
                 </div>
                 <div
-                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full font-code-sm text-on-surface whitespace-nowrap"
+                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full label-sm text-on-surface whitespace-nowrap"
                 >
                   <span class="material-symbols-outlined text-primary"
                     >pets</span
@@ -1024,7 +1178,7 @@
                   German Shepherd
                 </div>
                 <div
-                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full font-code-sm text-on-surface whitespace-nowrap"
+                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full label-sm text-on-surface whitespace-nowrap"
                 >
                   <span class="material-symbols-outlined text-primary"
                     >pets</span
@@ -1032,7 +1186,7 @@
                   French Bulldog
                 </div>
                 <div
-                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full font-code-sm text-on-surface whitespace-nowrap"
+                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full label-sm text-on-surface whitespace-nowrap"
                 >
                   <span class="material-symbols-outlined text-primary"
                     >pets</span
@@ -1040,7 +1194,7 @@
                   Bulldog
                 </div>
                 <div
-                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full font-code-sm text-on-surface whitespace-nowrap"
+                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full label-sm text-on-surface whitespace-nowrap"
                 >
                   <span class="material-symbols-outlined text-primary"
                     >pets</span
@@ -1048,7 +1202,7 @@
                   Chihuahua
                 </div>
                 <div
-                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full font-code-sm text-on-surface whitespace-nowrap"
+                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full label-sm text-on-surface whitespace-nowrap"
                 >
                   <span class="material-symbols-outlined text-primary"
                     >pets</span
@@ -1056,7 +1210,7 @@
                   Pomeranian
                 </div>
                 <div
-                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full font-code-sm text-on-surface whitespace-nowrap"
+                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full label-sm text-on-surface whitespace-nowrap"
                 >
                   <span class="material-symbols-outlined text-primary"
                     >pets</span
@@ -1064,7 +1218,7 @@
                   Doberman
                 </div>
                 <div
-                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full font-code-sm text-on-surface whitespace-nowrap"
+                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full label-sm text-on-surface whitespace-nowrap"
                 >
                   <span class="material-symbols-outlined text-primary"
                     >pets</span
@@ -1072,7 +1226,7 @@
                   Rottweiler
                 </div>
                 <div
-                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full font-code-sm text-on-surface whitespace-nowrap"
+                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full label-sm text-on-surface whitespace-nowrap"
                 >
                   <span class="material-symbols-outlined text-primary"
                     >pets</span
@@ -1080,7 +1234,7 @@
                   Border Collie
                 </div>
                 <div
-                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full font-code-sm text-on-surface whitespace-nowrap"
+                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full label-sm text-on-surface whitespace-nowrap"
                 >
                   <span class="material-symbols-outlined text-primary"
                     >pets</span
@@ -1088,7 +1242,7 @@
                   Samoyed
                 </div>
                 <div
-                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full font-code-sm text-on-surface whitespace-nowrap"
+                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full label-sm text-on-surface whitespace-nowrap"
                 >
                   <span class="material-symbols-outlined text-primary"
                     >pets</span
@@ -1096,7 +1250,7 @@
                   Shih Tzu
                 </div>
                 <div
-                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full font-code-sm text-on-surface whitespace-nowrap"
+                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full label-sm text-on-surface whitespace-nowrap"
                 >
                   <span class="material-symbols-outlined text-primary"
                     >pets</span
@@ -1104,7 +1258,7 @@
                   Dachshund
                 </div>
                 <div
-                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full font-code-sm text-on-surface whitespace-nowrap"
+                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full label-sm text-on-surface whitespace-nowrap"
                 >
                   <span class="material-symbols-outlined text-primary"
                     >pets</span
@@ -1115,7 +1269,7 @@
               <!-- Duplicate for infinite effect -->
               <div class="flex items-center gap-4 px-4">
                 <div
-                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full font-code-sm text-on-surface whitespace-nowrap"
+                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full label-sm text-on-surface whitespace-nowrap"
                 >
                   <span class="material-symbols-outlined text-primary"
                     >pets</span
@@ -1123,7 +1277,7 @@
                   Shiba Inu
                 </div>
                 <div
-                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full font-code-sm text-on-surface whitespace-nowrap"
+                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full label-sm text-on-surface whitespace-nowrap"
                 >
                   <span class="material-symbols-outlined text-primary"
                     >pets</span
@@ -1131,7 +1285,7 @@
                   Husky
                 </div>
                 <div
-                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full font-code-sm text-on-surface whitespace-nowrap"
+                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full label-sm text-on-surface whitespace-nowrap"
                 >
                   <span class="material-symbols-outlined text-primary"
                     >pets</span
@@ -1139,7 +1293,7 @@
                   Corgi
                 </div>
                 <div
-                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full font-code-sm text-on-surface whitespace-nowrap"
+                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full label-sm text-on-surface whitespace-nowrap"
                 >
                   <span class="material-symbols-outlined text-primary"
                     >pets</span
@@ -1147,7 +1301,7 @@
                   Akita
                 </div>
                 <div
-                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full font-code-sm text-on-surface whitespace-nowrap"
+                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full label-sm text-on-surface whitespace-nowrap"
                 >
                   <span class="material-symbols-outlined text-primary"
                     >pets</span
@@ -1155,7 +1309,7 @@
                   Beagle
                 </div>
                 <div
-                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full font-code-sm text-on-surface whitespace-nowrap"
+                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full label-sm text-on-surface whitespace-nowrap"
                 >
                   <span class="material-symbols-outlined text-primary"
                     >pets</span
@@ -1163,7 +1317,7 @@
                   Poodle
                 </div>
                 <div
-                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full font-code-sm text-on-surface whitespace-nowrap"
+                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full label-sm text-on-surface whitespace-nowrap"
                 >
                   <span class="material-symbols-outlined text-primary"
                     >pets</span
@@ -1171,7 +1325,7 @@
                   Golden Retriever
                 </div>
                 <div
-                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full font-code-sm text-on-surface whitespace-nowrap"
+                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full label-sm text-on-surface whitespace-nowrap"
                 >
                   <span class="material-symbols-outlined text-primary"
                     >pets</span
@@ -1179,7 +1333,7 @@
                   Labrador
                 </div>
                 <div
-                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full font-code-sm text-on-surface whitespace-nowrap"
+                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full label-sm text-on-surface whitespace-nowrap"
                 >
                   <span class="material-symbols-outlined text-primary"
                     >pets</span
@@ -1187,7 +1341,7 @@
                   German Shepherd
                 </div>
                 <div
-                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full font-code-sm text-on-surface whitespace-nowrap"
+                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full label-sm text-on-surface whitespace-nowrap"
                 >
                   <span class="material-symbols-outlined text-primary"
                     >pets</span
@@ -1195,7 +1349,7 @@
                   French Bulldog
                 </div>
                 <div
-                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full font-code-sm text-on-surface whitespace-nowrap"
+                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full label-sm text-on-surface whitespace-nowrap"
                 >
                   <span class="material-symbols-outlined text-primary"
                     >pets</span
@@ -1203,7 +1357,7 @@
                   Bulldog
                 </div>
                 <div
-                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full font-code-sm text-on-surface whitespace-nowrap"
+                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full label-sm text-on-surface whitespace-nowrap"
                 >
                   <span class="material-symbols-outlined text-primary"
                     >pets</span
@@ -1211,7 +1365,7 @@
                   Chihuahua
                 </div>
                 <div
-                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full font-code-sm text-on-surface whitespace-nowrap"
+                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full label-sm text-on-surface whitespace-nowrap"
                 >
                   <span class="material-symbols-outlined text-primary"
                     >pets</span
@@ -1219,7 +1373,7 @@
                   Pomeranian
                 </div>
                 <div
-                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full font-code-sm text-on-surface whitespace-nowrap"
+                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full label-sm text-on-surface whitespace-nowrap"
                 >
                   <span class="material-symbols-outlined text-primary"
                     >pets</span
@@ -1227,7 +1381,7 @@
                   Doberman
                 </div>
                 <div
-                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full font-code-sm text-on-surface whitespace-nowrap"
+                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full label-sm text-on-surface whitespace-nowrap"
                 >
                   <span class="material-symbols-outlined text-primary"
                     >pets</span
@@ -1235,7 +1389,7 @@
                   Rottweiler
                 </div>
                 <div
-                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full font-code-sm text-on-surface whitespace-nowrap"
+                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full label-sm text-on-surface whitespace-nowrap"
                 >
                   <span class="material-symbols-outlined text-primary"
                     >pets</span
@@ -1243,7 +1397,7 @@
                   Border Collie
                 </div>
                 <div
-                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full font-code-sm text-on-surface whitespace-nowrap"
+                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full label-sm text-on-surface whitespace-nowrap"
                 >
                   <span class="material-symbols-outlined text-primary"
                     >pets</span
@@ -1251,7 +1405,7 @@
                   Samoyed
                 </div>
                 <div
-                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full font-code-sm text-on-surface whitespace-nowrap"
+                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full label-sm text-on-surface whitespace-nowrap"
                 >
                   <span class="material-symbols-outlined text-primary"
                     >pets</span
@@ -1259,7 +1413,7 @@
                   Shih Tzu
                 </div>
                 <div
-                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full font-code-sm text-on-surface whitespace-nowrap"
+                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full label-sm text-on-surface whitespace-nowrap"
                 >
                   <span class="material-symbols-outlined text-primary"
                     >pets</span
@@ -1267,7 +1421,7 @@
                   Dachshund
                 </div>
                 <div
-                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full font-code-sm text-on-surface whitespace-nowrap"
+                  class="breed-tag flex items-center gap-2 px-6 py-2.5 rounded-full label-sm text-on-surface whitespace-nowrap"
                 >
                   <span class="material-symbols-outlined text-primary"
                     >pets</span
@@ -1285,12 +1439,10 @@
         id="features"
       >
         <div class="text-center mb-10">
-          <h2 class="font-headline-lg text-headline-lg mb-4 text-on-surface">
+          <h2 class="headline-lg headline-lg mb-4 text-on-surface">
             GIÁ TRỊ CỐT LÕI
           </h2>
-          <p
-            class="font-body-md text-body-md text-on-surface-variant max-w-2xl mx-auto"
-          >
+          <p class="body-md body-md text-on-surface-variant max-w-2xl mx-auto">
             Nhận diện nhanh, rõ ràng, dễ hiểu với công nghệ học sâu tiên tiến.
           </p>
         </div>
@@ -1302,13 +1454,10 @@
             class="md:col-span-8 md:row-span-1 glass-card p-gutter rounded-3xl flex flex-col justify-between group overflow-hidden relative bg-white"
           >
             <div class="relative z-10">
-              <span
-                class="font-label-caps text-label-caps text-primary mb-4 block"
+              <span class="label-sm label-sm text-primary mb-4 block"
                 >01 / DỮ LIỆU</span
               >
-              <h3
-                class="font-headline-md text-headline-md mb-2 text-on-surface"
-              >
+              <h3 class="headline-md headline-md mb-2 text-on-surface">
                 120+ giống chó
               </h3>
               <p class="text-on-surface-variant max-w-md">
@@ -1330,15 +1479,14 @@
           <div
             class="md:col-span-4 md:row-span-1 glass-card p-gutter rounded-3xl flex flex-col group border-l-4 border-l-primary bg-white"
           >
-            <span
-              class="font-label-caps text-label-caps text-secondary mb-4 block"
+            <span class="label-sm label-sm text-secondary mb-4 block"
               >02 / KẾT QUẢ</span
             >
-            <h3 class="font-headline-md text-headline-md mb-4 text-on-surface">
+            <h3 class="headline-md headline-md mb-4 text-on-surface">
               Top-3 kết quả
             </h3>
             <div
-              class="font-code-sm text-code-sm bg-surface-container-low p-4 rounded-xl border border-outline-variant/30 flex-grow shadow-inner"
+              class="label-sm text-code-sm bg-surface-container-low p-4 rounded-xl border border-outline-variant/30 flex-grow shadow-inner"
             >
               <code class="text-primary font-medium"
                 >petai.identify(image) {<br />
@@ -1361,9 +1509,7 @@
               <span class="material-symbols-outlined text-primary text-4xl mb-6"
                 >visibility</span
               >
-              <h3
-                class="font-headline-md text-headline-md mb-2 text-on-surface"
-              >
+              <h3 class="headline-md headline-md mb-2 text-on-surface">
                 Giải thích trực quan
               </h3>
             </div>
@@ -1376,11 +1522,10 @@
           <div
             class="md:col-span-4 md:row-span-1 glass-card p-gutter rounded-3xl bg-surface-container-low border-outline-variant/30"
           >
-            <span
-              class="font-label-caps text-label-caps text-on-surface-variant mb-4 block"
+            <span class="label-sm label-sm text-on-surface-variant mb-4 block"
               >04 / BẢO MẬT</span
             >
-            <h3 class="font-headline-md text-headline-md mb-4 text-on-surface">
+            <h3 class="headline-md headline-md mb-4 text-on-surface">
               Bảo vệ dữ liệu
             </h3>
             <div class="flex items-end gap-1 h-24 mb-6">
@@ -1404,9 +1549,7 @@
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuCc6n9M76tFoshxhAyUwjlQPCPUhw2_3Trp2aG7Z4iOzqoT_RxK7lBQv4fMSUdm0-MIRRb1W-i3FG8t37d1jaO03SBuTNSdxBGlrsNRQ0-95aq9iC9OCiam9rmRm8frFGOBqeFBPwO_p5tiiZ2GWFpSDlD-aun0WbFpdd8nebTCW0fedH4-arfRedc_r9prCGKW2v3X4SImeMdcgfTOuwmyXv9D4wKI00p6ONKeMu8CbgRC3_pkmt11JcoziCiS7TVBLzjxzKu-Slo"
             />
             <div class="relative z-10">
-              <h3
-                class="font-headline-md text-headline-md mb-2 text-on-surface"
-              >
+              <h3 class="headline-md headline-md mb-2 text-on-surface">
                 Xử lý tức thì
               </h3>
               <p class="text-on-surface-variant">
@@ -1422,12 +1565,10 @@
         id="pricing"
       >
         <div class="text-center mb-10">
-          <h2 class="font-headline-lg text-headline-lg mb-4 text-on-surface">
+          <h2 class="headline-lg headline-lg mb-4 text-on-surface">
             BẢNG GIÁ MINH BẠCH
           </h2>
-          <p
-            class="font-body-md text-body-md text-on-surface-variant max-w-2xl mx-auto"
-          >
+          <p class="body-md body-md text-on-surface-variant max-w-2xl mx-auto">
             Chọn gói phù hợp với nhu cầu nhận diện của bạn.
           </p>
         </div>
@@ -1439,16 +1580,16 @@
             class="glass-card p-gutter rounded-3xl flex flex-col justify-between border border-outline-variant/30 bg-white"
           >
             <div>
-              <h3 class="font-headline-md text-headline-md text-primary mb-2">
+              <h3 class="headline-md headline-md text-primary mb-2">
                 Miễn phí
               </h3>
               <div class="text-3xl font-bold mb-6 text-on-surface">
                 0đ
-                <span class="text-sm font-normal text-on-surface-variant"
+                <span class="body-md font-normal text-on-surface-variant"
                   >/ vĩnh viễn</span
                 >
               </div>
-              <ul class="space-y-4 text-on-surface-variant text-sm mb-8">
+              <ul class="space-y-4 text-on-surface-variant body-md mb-8">
                 <li class="flex items-center gap-2">
                   <span class="material-symbols-outlined text-primary text-lg"
                     >check_circle</span
@@ -1480,16 +1621,14 @@
             class="glass-card p-gutter rounded-3xl flex flex-col justify-between border border-outline-variant/30 bg-white"
           >
             <div>
-              <h3 class="font-headline-md text-headline-md text-primary mb-2">
-                Cơ bản
-              </h3>
+              <h3 class="headline-md headline-md text-primary mb-2">Cơ bản</h3>
               <div class="text-3xl font-bold mb-6 text-on-surface">
                 1.000đ
-                <span class="text-sm font-normal text-on-surface-variant"
+                <span class="body-md font-normal text-on-surface-variant"
                   >/ 7 ngày</span
                 >
               </div>
-              <ul class="space-y-4 text-on-surface-variant text-sm mb-8">
+              <ul class="space-y-4 text-on-surface-variant body-md mb-8">
                 <li class="flex items-center gap-2">
                   <span class="material-symbols-outlined text-primary text-lg"
                     >check_circle</span
@@ -1515,21 +1654,19 @@
             class="glass-card p-gutter rounded-3xl flex flex-col justify-between border-2 border-primary relative bg-white shadow-xl"
           >
             <div
-              class="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary text-on-primary px-4 py-1 rounded-full text-xs font-bold shadow-md"
+              class="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary text-on-primary px-4 py-1 rounded-full label-sm font-bold shadow-md"
             >
               KHUYÊN DÙNG
             </div>
             <div>
-              <h3 class="font-headline-md text-headline-md text-primary mb-2">
-                Pro
-              </h3>
+              <h3 class="headline-md headline-md text-primary mb-2">Pro</h3>
               <div class="text-3xl font-bold mb-6 text-on-surface">
                 5.000đ
-                <span class="text-sm font-normal text-on-surface-variant"
+                <span class="body-md font-normal text-on-surface-variant"
                   >/ 30 ngày</span
                 >
               </div>
-              <ul class="space-y-4 text-on-surface-variant text-sm mb-8">
+              <ul class="space-y-4 text-on-surface-variant body-md mb-8">
                 <li class="flex items-center gap-2">
                   <span class="material-symbols-outlined text-primary text-lg"
                     >check_circle</span
@@ -1555,16 +1692,16 @@
             class="glass-card p-gutter rounded-3xl flex flex-col justify-between border border-outline-variant/30 bg-white"
           >
             <div>
-              <h3 class="font-headline-md text-headline-md text-primary mb-2">
+              <h3 class="headline-md headline-md text-primary mb-2">
                 Doanh nghiệp
               </h3>
               <div class="text-3xl font-bold mb-6 text-on-surface">
                 15.000đ
-                <span class="text-sm font-normal text-on-surface-variant"
+                <span class="body-md font-normal text-on-surface-variant"
                   >/ 90 ngày</span
                 >
               </div>
-              <ul class="space-y-4 text-on-surface-variant text-sm mb-8">
+              <ul class="space-y-4 text-on-surface-variant body-md mb-8">
                 <li class="flex items-center gap-2">
                   <span class="material-symbols-outlined text-primary text-lg"
                     >check_circle</span
@@ -1589,7 +1726,7 @@
         <div class="flex flex-col lg:flex-row gap-gutter">
           <div class="lg:w-1/3 mb-12 lg:mb-0">
             <h2
-              class="font-headline-lg text-headline-lg mb-6 leading-tight text-on-surface"
+              class="headline-lg headline-lg mb-6 leading-tight text-on-surface"
             >
               Quy trình nhận diện
             </h2>
@@ -1604,23 +1741,22 @@
             <div class="space-y-16">
               <div class="relative pl-20 group">
                 <div
-                  class="absolute left-0 top-0 w-12 h-12 rounded-full border-2 border-primary bg-white flex items-center justify-center font-code-sm text-primary z-10 font-bold transition-transform group-hover:scale-110"
+                  class="absolute left-0 top-0 w-12 h-12 rounded-full border-2 border-primary bg-white flex items-center justify-center label-sm text-primary z-10 font-bold transition-transform group-hover:scale-110"
                 >
                   01
                 </div>
                 <div class="space-y-4">
-                  <span
-                    class="font-label-caps text-label-caps text-primary block"
+                  <span class="label-sm label-sm text-primary block"
                     >BƯỚC 1 - TẢI ẢNH</span
                   >
-                  <h3 class="font-headline-md text-headline-md text-on-surface">
+                  <h3 class="headline-md headline-md text-on-surface">
                     Tải ảnh rõ nét
                   </h3>
                   <p class="text-on-surface-variant">
                     Chụp ảnh chính diện, ánh sáng tốt để tăng độ chính xác.
                   </p>
                   <div
-                    class="inline-block px-3 py-1 bg-surface-container-high border border-outline-variant rounded text-[10px] font-bold text-on-surface-variant tracking-widest font-code-sm"
+                    class="inline-block px-3 py-1 bg-surface-container-high border border-outline-variant rounded label-sm font-bold text-on-surface-variant tracking-widest label-sm"
                   >
                     SẴN SÀNG
                   </div>
@@ -1628,23 +1764,22 @@
               </div>
               <div class="relative pl-20 group">
                 <div
-                  class="absolute left-0 top-0 w-12 h-12 rounded-full border-2 border-primary bg-white flex items-center justify-center font-code-sm text-primary z-10 font-bold transition-transform group-hover:scale-110"
+                  class="absolute left-0 top-0 w-12 h-12 rounded-full border-2 border-primary bg-white flex items-center justify-center label-sm text-primary z-10 font-bold transition-transform group-hover:scale-110"
                 >
                   02
                 </div>
                 <div class="space-y-4">
-                  <span
-                    class="font-label-caps text-label-caps text-primary block"
+                  <span class="label-sm label-sm text-primary block"
                     >BƯỚC 2 - AI PHÂN TÍCH</span
                   >
-                  <h3 class="font-headline-md text-headline-md text-on-surface">
+                  <h3 class="headline-md headline-md text-on-surface">
                     Mô hình YOLOv8 + phân loại
                   </h3>
                   <p class="text-on-surface-variant">
                     Phát hiện chó và phân loại giống theo đặc trưng khuôn mặt.
                   </p>
                   <div
-                    class="inline-block px-3 py-1 bg-primary/10 border border-primary/20 rounded text-[10px] font-bold text-primary tracking-widest font-code-sm uppercase"
+                    class="inline-block px-3 py-1 bg-primary/10 border border-primary/20 rounded label-sm font-bold text-primary tracking-widest label-sm uppercase"
                   >
                     Xử lý tức thì
                   </div>
@@ -1652,22 +1787,19 @@
               </div>
               <div class="relative pl-20 group">
                 <div
-                  class="absolute left-0 top-0 w-12 h-12 rounded-full border-2 border-primary bg-white flex items-center justify-center font-code-sm text-primary z-10 font-bold transition-transform group-hover:scale-110"
+                  class="absolute left-0 top-0 w-12 h-12 rounded-full border-2 border-primary bg-white flex items-center justify-center label-sm text-primary z-10 font-bold transition-transform group-hover:scale-110"
                 >
                   03
                 </div>
                 <div class="space-y-4">
-                  <span
-                    class="font-label-caps text-label-caps text-primary block"
+                  <span class="label-sm label-sm text-primary block"
                     >BƯỚC 3 - TRẢ KẾT QUẢ</span
                   >
-                  <h3
-                    class="font-headline-md text-headline-md text-on-surface py-1"
-                  >
+                  <h3 class="headline-md headline-md text-on-surface py-1">
                     Top-3 giống &amp; độ tin cậy
                   </h3>
                   <a
-                    class="bg-primary text-on-primary px-6 py-2 rounded font-bold text-xs tracking-widest hover:shadow-md transition-all uppercase"
+                    class="bg-primary text-on-primary px-6 py-2 rounded font-bold label-sm tracking-widest hover:shadow-md transition-all uppercase"
                     href="{{ url_for('predict.upload_page') }}"
                     >Hoàn thành</a
                   >
@@ -1684,7 +1816,7 @@
       >
         <div class="text-center mb-8">
           <h2
-            class="font-headline-lg text-headline-lg mb-4 uppercase tracking-tight text-on-surface"
+            class="headline-lg headline-lg mb-4 uppercase tracking-tight text-on-surface"
           >
             Phù hợp cho nhiều nhóm người dùng
           </h2>
@@ -1695,7 +1827,7 @@
           >
             <div class="relative z-10">
               <span
-                class="font-code-sm text-xs text-on-surface-variant/70 block mb-6 tracking-widest uppercase"
+                class="label-sm label-sm text-on-surface-variant/70 block mb-6 tracking-widest uppercase"
                 >CASE_01</span
               >
               <div
@@ -1705,7 +1837,7 @@
                   >person</span
                 >
               </div>
-              <h3 class="font-headline-md text-2xl mb-4 text-on-surface">
+              <h3 class="headline-md headline-md mb-4 text-on-surface">
                 Người nuôi thú cưng
               </h3>
               <p class="text-on-surface-variant leading-relaxed">
@@ -1719,7 +1851,7 @@
           >
             <div class="relative z-10">
               <span
-                class="font-code-sm text-xs text-on-surface-variant/70 block mb-6 tracking-widest uppercase"
+                class="label-sm label-sm text-on-surface-variant/70 block mb-6 tracking-widest uppercase"
                 >CASE_02</span
               >
               <div
@@ -1729,7 +1861,7 @@
                   >storefront</span
                 >
               </div>
-              <h3 class="font-headline-md text-2xl mb-4 text-on-surface">
+              <h3 class="headline-md headline-md mb-4 text-on-surface">
                 Cửa hàng thú cưng
               </h3>
               <p class="text-on-surface-variant leading-relaxed">
@@ -1742,7 +1874,7 @@
           >
             <div class="relative z-10">
               <span
-                class="font-code-sm text-xs text-on-surface-variant/70 block mb-6 tracking-widest uppercase"
+                class="label-sm label-sm text-on-surface-variant/70 block mb-6 tracking-widest uppercase"
                 >CASE_03</span
               >
               <div
@@ -1752,7 +1884,7 @@
                   >medical_services</span
                 >
               </div>
-              <h3 class="font-headline-md text-2xl mb-4 text-on-surface">
+              <h3 class="headline-md headline-md mb-4 text-on-surface">
                 Phòng khám thú y
               </h3>
               <p class="text-on-surface-variant leading-relaxed">
@@ -1770,11 +1902,11 @@
       >
         <div class="text-center mb-8">
           <h2
-            class="font-headline-lg text-headline-lg mb-4 text-on-surface uppercase tracking-tight"
+            class="headline-lg headline-lg mb-4 text-on-surface uppercase tracking-tight"
           >
             CÂU HỎI THƯỜNG GẶP
           </h2>
-          <p class="font-body-md text-body-md text-on-surface-variant">
+          <p class="body-md body-md text-on-surface-variant">
             Giải đáp nhanh các thắc mắc về PetAI.
           </p>
         </div>
@@ -1783,7 +1915,7 @@
             class="glass-card p-6 rounded-2xl group cursor-pointer bg-white transition-all duration-300 open:shadow-lg"
           >
             <summary
-              class="flex justify-between items-center font-bold text-on-surface text-lg list-none"
+              class="flex justify-between items-center font-bold text-on-surface headline-md list-none"
             >
               Kết quả có chính xác 100% không?
               <span
@@ -1792,9 +1924,7 @@
               >
             </summary>
             <div class="overflow-hidden">
-              <p
-                class="mt-4 text-on-surface-variant leading-relaxed font-body-md"
-              >
+              <p class="mt-4 text-on-surface-variant leading-relaxed body-md">
                 Không. Hệ thống AI trả về kết quả dựa trên xác suất từ kho dữ
                 liệu huấn luyện. Chúng tôi cung cấp Top-3 giống có độ tin cậy
                 cao nhất để người dùng có cái nhìn khách quan và tham khảo tốt
@@ -1806,7 +1936,7 @@
             class="glass-card p-6 rounded-2xl group cursor-pointer bg-white transition-all duration-300 open:shadow-lg"
           >
             <summary
-              class="flex justify-between items-center font-bold text-on-surface text-lg list-none"
+              class="flex justify-between items-center font-bold text-on-surface headline-md list-none"
             >
               Mất bao lâu để có kết quả?
               <span
@@ -1815,9 +1945,7 @@
               >
             </summary>
             <div class="overflow-hidden">
-              <p
-                class="mt-4 text-on-surface-variant leading-relaxed font-body-md"
-              >
+              <p class="mt-4 text-on-surface-variant leading-relaxed body-md">
                 Hệ thống được tối ưu hóa để trả về kết quả chỉ trong vòng vài
                 giây (thường từ 2-5 giây) sau khi ảnh được tải lên thành công.
                 Tốc độ này có thể thay đổi nhẹ tùy thuộc vào tốc độ mạng của bạn
@@ -1829,7 +1957,7 @@
             class="glass-card p-6 rounded-2xl group cursor-pointer bg-white transition-all duration-300 open:shadow-lg"
           >
             <summary
-              class="flex justify-between items-center font-bold text-on-surface text-lg list-none"
+              class="flex justify-between items-center font-bold text-on-surface headline-md list-none"
             >
               Ảnh tải lên được xử lý như thế nào?
               <span
@@ -1838,9 +1966,7 @@
               >
             </summary>
             <div class="overflow-hidden">
-              <p
-                class="mt-4 text-on-surface-variant leading-relaxed font-body-md"
-              >
+              <p class="mt-4 text-on-surface-variant leading-relaxed body-md">
                 Mỗi hình ảnh bạn tải lên đều được mã hóa và truyền tải qua giao
                 thức bảo mật. PetAI cam kết chỉ sử dụng ảnh cho mục đích nhận
                 diện giống chó và không chia sẻ dữ liệu cá nhân của bạn với bất
@@ -1852,7 +1978,7 @@
             class="glass-card p-6 rounded-2xl group cursor-pointer bg-white transition-all duration-300 open:shadow-lg"
           >
             <summary
-              class="flex justify-between items-center font-bold text-on-surface text-lg list-none"
+              class="flex justify-between items-center font-bold text-on-surface headline-md list-none"
             >
               PetAI có hỗ trợ chó lai không?
               <span
@@ -1861,9 +1987,7 @@
               >
             </summary>
             <div class="overflow-hidden">
-              <p
-                class="mt-4 text-on-surface-variant leading-relaxed font-body-md"
-              >
+              <p class="mt-4 text-on-surface-variant leading-relaxed body-md">
                 Có, PetAI được thiết kế đặc biệt để xử lý cả chó thuần chủng và
                 chó lai. Với chó lai, hệ thống sẽ phân tích các đặc điểm hình
                 thái và hiển thị Top-3 giống chó có đặc điểm tương đồng nhất kèm
@@ -1896,7 +2020,7 @@
               </h2>
             </div>
             <div class="space-y-10">
-              <p class="font-body-lg text-on-surface-variant max-w-lg">
+              <p class="body-md text-on-surface-variant max-w-lg">
                 Top-3 giống, độ tin cậy rõ ràng. Tham gia cùng cộng đồng hàng
                 ngàn người yêu thú cưng đang sử dụng PetAI mỗi ngày.
               </p>
@@ -1920,21 +2044,26 @@
       </section>
     </main>
     <footer
-      class="bg-surface-container-low border-t border-outline-variant/30 px-6 md:px-10 pt-6 pb-4"
+      class="bg-surface-container-low border-t border-outline-variant/30 px-4 md:px-6 pt-6 pb-4"
     >
       <div class="max-w-container-max mx-auto">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-10">
           <div class="lg:col-span-6 space-y-6">
             <div
-              class="font-headline-md text-2xl font-bold tracking-tighter text-primary"
+              class="headline-md headline-md font-bold tracking-tighter text-primary"
             >
-              <img
-                alt="PetAI New Logo"
-                class="h-8 w-auto"
-                src="data:image/png;base64,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"
-              />
+              <span class="inline-flex items-center gap-0">
+                <img
+                  alt="PetAI New Logo"
+                  class="h-8 w-auto md:h-10"
+                  src="{{ url_for('static', filename='logo.png') }}"
+                />
+                <span class="ml-0 text-sm md:text-lg font-semibold text-primary"
+                  >PetAI</span
+                >
+              </span>
             </div>
-            <p class="font-body-md text-on-surface-variant max-w-sm">
+            <p class="body-md text-on-surface-variant max-w-sm">
               Ứng dụng nhận diện giống chó bằng AI dành cho người yêu thú cưng.
               Kết quả chính xác, nhanh chóng.
             </p>
@@ -1942,7 +2071,7 @@
           <div class="lg:col-span-6 grid grid-cols-2 md:grid-cols-2 gap-8">
             <div class="space-y-6">
               <h4
-                class="font-label-caps text-label-caps text-primary uppercase tracking-widest"
+                class="label-sm label-sm text-primary uppercase tracking-widest"
               >
                 Về PetAI
               </h4>
@@ -1972,7 +2101,7 @@
             </div>
             <div class="space-y-6">
               <h4
-                class="font-label-caps text-label-caps text-primary uppercase tracking-widest"
+                class="label-sm label-sm text-primary uppercase tracking-widest"
               >
                 Kết nối
               </h4>
@@ -1995,21 +2124,21 @@
             </div>
           </div>
         </div>
-        <div class="border-t border-outline-variant/20 relative pt-6">
+        <div class="border-t border-outline-variant/20 relative py-1">
           <div
             class="flex flex-col md:flex-row justify-between items-center gap-4"
           >
-            <p class="font-code-sm text-xs text-on-surface-variant/70">
+            <p class="label-sm label-sm text-on-surface-variant/70">
               Bản quyền © 2026 PetAI. Mọi quyền được bảo lưu
             </p>
             <div class="flex gap-6">
               <a
-                class="text-on-surface-variant/70 hover:text-primary transition-colors text-xs font-code-sm underline underline-offset-4"
+                class="text-on-surface-variant/70 hover:text-primary transition-colors label-sm label-sm underline underline-offset-4"
                 href="#faq"
                 >ĐIỀU KHOẢN</a
               >
               <a
-                class="text-on-surface-variant/70 hover:text-primary transition-colors text-xs font-code-sm underline underline-offset-4"
+                class="text-on-surface-variant/70 hover:text-primary transition-colors label-sm label-sm underline underline-offset-4"
                 href="#faq"
                 >BẢO MẬT</a
               >

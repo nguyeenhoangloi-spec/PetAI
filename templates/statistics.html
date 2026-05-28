@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 
 <html
   class="{{ 'dark' if ui_theme == 'dark' else 'light' }}"
@@ -11,14 +11,23 @@
     <script>
       (function () {
         const root = document.documentElement;
-        const storedTheme = (function () {
+        const themeStorageKey =
+          "{{ 'theme:' ~ session.get('user_id') if session.get('user_id') else '' }}";
+        const serverTheme = "{{ ui_theme or 'light' }}";
+        if (themeStorageKey) {
           try {
-            return localStorage.getItem("theme");
+            localStorage.setItem(themeStorageKey, serverTheme);
+          } catch (e) {}
+        }
+        const storedTheme = (function () {
+          if (!themeStorageKey) return null;
+          try {
+            return localStorage.getItem(themeStorageKey);
           } catch (e) {
             return null;
           }
         })();
-        const preferredTheme = storedTheme || "{{ ui_theme or 'light' }}";
+        const preferredTheme = storedTheme || serverTheme;
 
         function resolveTheme(theme) {
           if (theme !== "auto") return theme;
@@ -55,8 +64,12 @@
         }
       })();
     </script>
-    <title>{{ tx('Thống kê', 'Statistics') }} - PetAI</title>
+    <title>Thống kê - PetAI</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/typography.css') }}"
+    />
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='css/theme-dark.css') }}"
@@ -193,12 +206,13 @@
           "opsz" 24;
       }
       .card-shadow {
-        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05),
+        box-shadow:
+          0 1px 3px 0 rgba(0, 0, 0, 0.05),
           0 1px 2px 0 rgba(0, 0, 0, 0.03);
       }
       .progress-bar-container {
         height: 8px;
-        background-color: #e5e7eb;
+        background-color: rgba(148, 163, 184, 0.18);
         border-radius: 9999px;
         overflow: hidden;
       }
@@ -210,7 +224,7 @@
     </style>
   </head>
   <body
-    class="bg-background text-on-background font-body-md text-body-md antialiased min-h-screen flex flex-col"
+    class="bg-background text-on-background body-md body-md antialiased min-h-screen flex flex-col"
   >
     {% include '_toasts.html' %} {% set display_role = session.get('role') or
     'user' %} {% set display_plan = current_plan or 'free' %}
@@ -218,16 +232,21 @@
     <nav
       class="bg-white/80 dark:bg-slate-950/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-200 dark:border-slate-800 shadow-sm font-['Inter'] antialiased"
     >
-      <div class="flex items-center justify-between px-3 h-16 w-full">
+      <div class="flex items-center justify-between px-4 md:px-6 h-16 w-full">
         <div class="flex items-center gap-gutter">
-          <img
-            alt="PetAI New Logo"
-            class="w-auto h-16"
-            src="data:image/png;base64,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"
-          />
+          <span class="inline-flex items-center gap-0">
+            <img
+              alt="PetAI New Logo"
+              class="w-auto h-10 md:h-24"
+              src="{{ url_for('static', filename='logo.png') }}"
+            />
+            <span class="ml-0 text-lg md:text-2xl font-semibold text-primary"
+              >PetAI</span
+            >
+          </span>
         </div>
         <div
-          class="hidden md:flex flex-1 items-center justify-end gap-margin mr-gutter [&>a]:px-0.5 [&>a]:text-[15px]"
+          class="hidden md:flex flex-1 items-center justify-end gap-margin mr-gutter [&>a]:px-0.5 [&>a]:body-md"
         >
           <a
             class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
@@ -253,7 +272,7 @@
           <a
             class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
             href="{{ url_for('predict.my_payments') }}"
-            >{{ tx('Lịch sử thanh toán', 'Payment history') }}</a
+            >Lịch sử thanh toán</a
           >
           {% endif %} {% if session.get('role') == 'admin' %}
           <a
@@ -270,13 +289,13 @@
         </div>
         <div class="flex items-center gap-md">
           <a
-            class="hidden md:inline-flex bg-primary text-on-primary px-4 py-2 rounded-lg font-label-sm hover:opacity-90 active:scale-95 duration-150 transition-all"
+            class="hidden md:inline-flex bg-primary text-on-primary px-4 py-2 rounded-lg label-sm hover:opacity-90 active:scale-95 duration-150 transition-all"
             href="{{ url_for('predict.upload_page') }}"
             >Nhận diện</a
           >
           <div class="flex items-center gap-base">
             <a
-              aria-label="Cai dat"
+              aria-label="Cài đặt"
               class="p-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all"
               href="{{ url_for('settings.settings') }}"
             >
@@ -286,7 +305,7 @@
             </a>
             <div class="relative group cursor-pointer">
               <img
-                alt="Anh dai dien"
+                alt="Ảnh đại diện"
                 class="w-9 h-9 rounded-full border-2 border-primary/20 p-0.5"
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuABdf7zKSVKEqdGUUjqEkF9ftdFTrLW87Tb24r2IiZiv_JP0LrItrCxl23SH-gYj2Mqtkma0ak9DZbUtKM5nW747pmivDYGVbYhNr1PZbxbFuOrZdGJvnbhdSurFLfL3BcmhN2p1h9wv_6geT-x8eoTG1TDoLL40P8wDiaymvRT--SA4jYjU9A77WIji5FmOi99mPDXw7xS6dUyUNJYU2gHLk4-smzFrCuBbQbgtpATDvNo6hq3YR-cfSaNblImtCnDXIb8np7J4HA"
               />
@@ -297,14 +316,14 @@
                 class="absolute right-0 top-full w-52 bg-white dark:bg-slate-900 rounded-lg shadow-xl border border-slate-200 dark:border-slate-800 py-2 hidden group-hover:block z-50"
               >
                 <div class="px-4 pb-2">
-                  <div class="text-xs text-slate-500 dark:text-slate-400">
+                  <div class="label-sm text-slate-500 dark:text-slate-400">
                     Vai trò:
                     <span
                       class="font-semibold text-slate-800 dark:text-slate-200"
                       >{{ display_role|upper }}</span
                     >
                   </div>
-                  <div class="text-xs text-slate-500 dark:text-slate-400">
+                  <div class="label-sm text-slate-500 dark:text-slate-400">
                     Gói:
                     <span
                       class="font-semibold text-slate-800 dark:text-slate-200"
@@ -314,7 +333,7 @@
                 </div>
                 <div class="h-px bg-slate-200 dark:bg-slate-800 my-1"></div>
                 <a
-                  class="flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors font-semibold"
+                  class="flex items-center gap-2 px-4 py-2 body-md text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors font-semibold"
                   href="{{ url_for('logout.logout') }}"
                 >
                   <span class="material-symbols-outlined text-[18px]"
@@ -330,14 +349,14 @@
     </nav>
 
     <main
-      class="flex-grow w-full px-6 py-margin grid grid-cols-1 md:grid-cols-[230px_minmax(0,1fr)] gap-gutter"
+      class="flex-grow w-full px-4 md:px-6 py-margin grid grid-cols-1 md:grid-cols-[230px_minmax(0,1fr)] gap-gutter"
     >
       <aside class="col-span-1">
         <div
           class="bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] py-sm px-2 flex flex-col gap-sm sticky top-24 border border-surface-container-highest/50"
         >
           <h3
-            class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-xs px-1.5"
+            class="label-sm label-sm text-on-surface-variant uppercase tracking-wider mb-xs px-1.5"
           >
             Truy cập nhanh
           </h3>
@@ -352,9 +371,7 @@
               style="font-variation-settings: &quot;FILL&quot; 1"
               >upload_file</span
             >
-            <span class="font-label-sm text-label-sm"
-              >Tải ảnh &amp; Phân tích</span
-            >
+            <span class="label-sm label-sm">Tải ảnh &amp; Phân tích</span>
           </a>
           <a
             class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
@@ -365,7 +382,7 @@
               data-icon="history"
               >history</span
             >
-            <span class="font-label-sm text-label-sm">Lịch sử dự đoán</span>
+            <span class="label-sm label-sm">Lịch sử dự đoán</span>
           </a>
           {% if session.get('role') == 'user' %}
           <a
@@ -377,7 +394,7 @@
               data-icon="payments"
               >payments</span
             >
-            <span class="font-label-sm text-label-sm">Lịch sử thanh toán</span>
+            <span class="label-sm label-sm">Lịch sử thanh toán</span>
           </a>
           {% endif %}
           <a
@@ -389,7 +406,7 @@
               data-icon="bar_chart"
               >bar_chart</span
             >
-            <span class="font-label-sm text-label-sm font-semibold"
+            <span class="label-sm label-sm font-semibold"
               >Thống kê cá nhân</span
             >
           </a>
@@ -402,7 +419,7 @@
               data-icon="upgrade"
               >upgrade</span
             >
-            <span class="font-label-sm text-label-sm">Nâng cấp gói</span>
+            <span class="label-sm label-sm">Nâng cấp gói</span>
           </a>
           {% if session.get('role') == 'admin' %}
           <a
@@ -414,7 +431,7 @@
               data-icon="groups"
               >groups</span
             >
-            <span class="font-label-sm text-label-sm">Quản lý người dùng</span>
+            <span class="label-sm label-sm">Quản lý người dùng</span>
           </a>
           <a
             class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
@@ -425,13 +442,12 @@
               data-icon="receipt_long"
               >receipt_long</span
             >
-            <span class="font-label-sm text-label-sm">Duyệt đơn</span>
+            <span class="label-sm label-sm">Duyệt đơn</span>
           </a>
           {% endif %}
           <hr class="border-outline-variant/30 my-xs" />
           <a
             class="flex items-center gap-sm py-1.5 px-1.5 rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
-            `r`n
             href="{{ url_for('settings.settings') }}"
           >
             <span
@@ -439,257 +455,355 @@
               data-icon="settings"
               >settings</span
             >
-            <span class="font-label-sm text-label-sm">Cài đặt tài khoản</span>
+            <span class="label-sm label-sm">Cài đặt tài khoản</span>
           </a>
         </div>
       </aside>
 
-      <div class="col-span-1 flex flex-col gap-gutter">
-        <section class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
-          <div>
-            <h1 class="text-xl font-semibold text-on-surface">
+      <div class="col-span-1 flex flex-col">
+        <section
+          class="flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-8"
+        >
+          <div class="flex flex-col gap-2 flex-1 min-w-0">
+            <h1 class="headline-lg font-semibold text-on-surface">
               Thống kê nhận diện của bạn
             </h1>
-            <p class="text-sm text-on-surface-variant">
+            <p class="body-md text-on-surface-variant">
               Tổng quan số lần dự đoán, độ tin cậy và top giống chó phổ biến.
             </p>
           </div>
-          <a
-            class="flex items-center gap-2 bg-primary hover:bg-blue-700 text-white px-4 py-2.5 rounded-lg transition-colors font-medium text-sm shadow-sm"
-            href="{{ url_for('history.history') }}"
-          >
-            <span class="material-symbols-outlined text-[20px]">history</span>
-            Xem lịch sử
-          </a>
+          <div class="mt-4 md:mt-0 md:flex-none">
+            <a
+              class="flex items-center gap-2 bg-primary hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors font-medium body-md shadow-sm"
+              href="{{ url_for('history.history') }}"
+            >
+              <span class="material-symbols-outlined text-[20px]">history</span>
+              Xem lịch sử
+            </a>
+          </div>
         </section>
 
-        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <article class="bg-white p-5 rounded-lg border border-slate-100 card-shadow">
+        <section
+          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch"
+        >
+          <article
+            class="soft-panel bg-surface-container-lowest p-5 rounded-lg card-shadow h-full"
+          >
             <div class="flex justify-between items-start">
               <div>
-                <p class="text-slate-500 text-xs font-medium uppercase tracking-wider">
+                <p
+                  class="text-on-surface-variant label-sm font-medium uppercase tracking-wider"
+                >
                   Tổng lượt nhận diện
                 </p>
-                <h3 class="text-3xl font-bold mt-2 text-slate-900">1506</h3>
+                <h3 class="text-3xl font-bold mt-2 text-on-surface">1506</h3>
               </div>
-              <span class="material-symbols-outlined text-primary bg-blue-50 p-2 rounded-md">
+              <span
+                class="material-symbols-outlined text-primary bg-primary-fixed/50 dark:bg-primary/20 p-2 rounded-md"
+              >
                 qr_code_scanner
               </span>
             </div>
           </article>
-          <article class="bg-white p-5 rounded-lg border border-slate-100 card-shadow">
+          <article
+            class="soft-panel bg-surface-container-lowest p-5 rounded-lg card-shadow h-full"
+          >
             <div class="flex justify-between items-start">
               <div>
-                <p class="text-slate-500 text-xs font-medium uppercase tracking-wider">
+                <p
+                  class="text-on-surface-variant label-sm font-medium uppercase tracking-wider"
+                >
                   Độ tin cậy trung bình
                 </p>
-                <h3 class="text-3xl font-bold mt-2 text-slate-900">77.2%</h3>
+                <h3 class="text-3xl font-bold mt-2 text-on-surface">77.2%</h3>
               </div>
-              <span class="material-symbols-outlined text-amber-500 bg-amber-50 p-2 rounded-md">
+              <span
+                class="material-symbols-outlined text-amber-500 bg-amber-50 dark:bg-amber-900/30 p-2 rounded-md"
+              >
                 analytics
               </span>
             </div>
           </article>
-          <article class="bg-white p-5 rounded-lg border border-slate-100 card-shadow">
+          <article
+            class="soft-panel bg-surface-container-lowest p-5 rounded-lg card-shadow h-full"
+          >
             <div class="flex justify-between items-start">
               <div>
-                <p class="text-slate-500 text-xs font-medium uppercase tracking-wider">
+                <p
+                  class="text-on-surface-variant label-sm font-medium uppercase tracking-wider"
+                >
                   Số giống nổi bật
                 </p>
-                <h3 class="text-3xl font-bold mt-2 text-slate-900">5</h3>
+                <h3 class="text-3xl font-bold mt-2 text-on-surface">5</h3>
               </div>
-              <span class="material-symbols-outlined text-orange-700 bg-orange-50 p-2 rounded-md">
+              <span
+                class="material-symbols-outlined text-orange-700 bg-orange-50 dark:bg-orange-900/30 p-2 rounded-md"
+              >
                 pets
               </span>
             </div>
           </article>
-          <article class="bg-white p-5 rounded-lg border border-slate-100 card-shadow">
+          <article
+            class="soft-panel bg-surface-container-lowest p-5 rounded-lg card-shadow h-full"
+          >
             <div class="flex justify-between items-start">
               <div>
-                <p class="text-slate-500 text-xs font-medium uppercase tracking-wider">
+                <p
+                  class="text-on-surface-variant label-sm font-medium uppercase tracking-wider"
+                >
                   Hoạt động gần đây
                 </p>
-                <h3 class="text-3xl font-bold mt-2 text-slate-900">10</h3>
+                <h3 class="text-3xl font-bold mt-2 text-on-surface">10</h3>
               </div>
-              <span class="material-symbols-outlined text-indigo-600 bg-indigo-50 p-2 rounded-md">
+              <span
+                class="material-symbols-outlined text-indigo-600 bg-indigo-50 dark:bg-indigo-900/30 p-2 rounded-md"
+              >
                 update
               </span>
             </div>
           </article>
         </section>
 
-        <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          <article class="lg:col-span-4 bg-white rounded-lg border border-slate-100 card-shadow p-6">
+        <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-6">
+          <article
+            class="soft-panel lg:col-span-4 bg-surface-container-lowest rounded-lg card-shadow p-6"
+          >
             <div class="flex items-center justify-between mb-8">
-              <h2 class="text-lg font-bold text-slate-900">Top 5 giống phổ biến</h2>
-              <span class="material-symbols-outlined text-primary">bar_chart</span>
+              <h2 class="headline-md font-bold text-on-surface">
+                Top 5 giống phổ biến
+              </h2>
+              <span class="material-symbols-outlined text-primary"
+                >bar_chart</span
+              >
             </div>
             <div class="space-y-7">
               <div class="space-y-2">
-                <div class="flex justify-between text-sm">
-                  <span class="font-semibold text-slate-800">#1 Chó Corgi Cardigan 🏆</span>
-                  <span class="text-slate-500">38 lần</span>
+                <div class="flex justify-between body-md">
+                  <span class="font-semibold text-on-surface"
+                    >#1 Chó Corgi Cardigan</span
+                  >
+                  <span class="text-on-surface-variant">38 lần</span>
                 </div>
                 <div class="progress-bar-container">
-                  <div class="progress-bar-fill" style="width: 95%;"></div>
+                  <div class="progress-bar-fill" style="width: 95%"></div>
                 </div>
               </div>
               <div class="space-y-2">
-                <div class="flex justify-between text-sm">
-                  <span class="font-semibold text-slate-800">#2 Chó chihuahua</span>
-                  <span class="text-slate-500">37 lần</span>
+                <div class="flex justify-between body-md">
+                  <span class="font-semibold text-on-surface"
+                    >#2 Chó Chihuahua</span
+                  >
+                  <span class="text-on-surface-variant">37 lần</span>
                 </div>
                 <div class="progress-bar-container">
-                  <div class="progress-bar-fill" style="width: 92%;"></div>
+                  <div class="progress-bar-fill" style="width: 92%"></div>
                 </div>
               </div>
               <div class="space-y-2">
-                <div class="flex justify-between text-sm">
-                  <span class="font-semibold text-slate-800 text-xs truncate max-w-[200px]">
+                <div class="flex justify-between body-md">
+                  <span
+                    class="font-semibold text-on-surface label-sm truncate max-w-[200px]"
+                  >
                     #3 Nghi lai: Chó Béc Giê Đức x Chó Sable Đen
                   </span>
-                  <span class="text-slate-500">28 lần</span>
+                  <span class="text-on-surface-variant">28 lần</span>
                 </div>
                 <div class="progress-bar-container">
-                  <div class="progress-bar-fill" style="width: 70%;"></div>
+                  <div class="progress-bar-fill" style="width: 70%"></div>
                 </div>
               </div>
               <div class="space-y-2">
-                <div class="flex justify-between text-sm">
-                  <span class="font-semibold text-slate-800">#4 Chó samoyed</span>
-                  <span class="text-slate-500">25 lần</span>
+                <div class="flex justify-between body-md">
+                  <span class="font-semibold text-on-surface"
+                    >#4 Chó Samoyed</span
+                  >
+                  <span class="text-on-surface-variant">25 lần</span>
                 </div>
                 <div class="progress-bar-container">
-                  <div class="progress-bar-fill" style="width: 62%;"></div>
+                  <div class="progress-bar-fill" style="width: 62%"></div>
                 </div>
               </div>
               <div class="space-y-2">
-                <div class="flex justify-between text-sm">
-                  <span class="font-semibold text-slate-800">#5 Chó nhật chin</span>
-                  <span class="text-slate-500">24 lần</span>
+                <div class="flex justify-between body-md">
+                  <span class="font-semibold text-on-surface"
+                    >#5 Chó Nhật Chin</span
+                  >
+                  <span class="text-on-surface-variant">24 lần</span>
                 </div>
                 <div class="progress-bar-container">
-                  <div class="progress-bar-fill" style="width: 60%;"></div>
+                  <div class="progress-bar-fill" style="width: 60%"></div>
                 </div>
               </div>
             </div>
           </article>
 
-          <article class="lg:col-span-8 bg-white rounded-lg border border-slate-100 card-shadow overflow-hidden flex flex-col">
-            <div class="p-6 border-b border-slate-100 flex items-center justify-between">
-              <h2 class="text-lg font-bold text-slate-900">Hoạt động gần đây</h2>
-              <a class="text-primary hover:underline text-sm font-medium flex items-center gap-1" href="{{ url_for('history.history') }}">
-                Xem tất cả <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+          <article
+            class="soft-panel lg:col-span-8 bg-surface-container-lowest rounded-lg card-shadow overflow-hidden flex flex-col"
+          >
+            <div
+              class="p-6 border-b border-outline-variant/20 flex items-center justify-between"
+            >
+              <h2 class="headline-md font-bold text-on-surface">
+                Hoạt động gần đây
+              </h2>
+              <a
+                class="text-primary hover:underline body-md font-medium flex items-center gap-1"
+                href="{{ url_for('history.history') }}"
+              >
+                Xem tất cả
+                <span class="material-symbols-outlined text-[18px]"
+                  >arrow_forward</span
+                >
               </a>
             </div>
-            <div class="divide-y divide-slate-100">
-              <div class="p-4 flex items-center justify-between hover:bg-slate-50 transition-colors">
+            <div class="divide-y divide-outline-variant/15">
+              <div
+                class="p-4 flex items-center justify-between hover:bg-surface-container-low transition-colors"
+              >
                 <div class="flex items-center gap-4">
                   <img
-                    alt="Chó cổ Trung Quốc x Chó Bắc Kinh"
-                    class="w-12 h-12 rounded-md object-cover border border-slate-100"
+                    alt="Chó cỏ Trung Quốc x Chó Bắc Kinh"
+                    class="w-12 h-12 rounded-md object-cover border border-outline-variant/20"
                     src="https://lh3.googleusercontent.com/aida-public/AB6AXuCN6EmsLSCS861TjuAmx0w7be9rIK9Ph9CoduzuyDxAw1NXbFWdDvLbk8nKk_GuTBVoE8VK69Si6sG_uRfO8RluqMw9UAcGPIddk8Fv6XXVqaSFIjePkH-17tBXXFMBn0vkQHqg3vd6_hIkmU8iWGuoF9NDZHIPabJyJ20M3riQDGuW8sMsmsuPujM9f1WU4bMV4Esi9v3HUbQxDZb8OcxXe8iCJDvl2ow3GObUN2pgGRGae8lxdz6yHz-sFaEcMIoIYuH-A0_b5QQ"
                   />
                   <div>
-                    <h4 class="font-semibold text-slate-900">
-                      Nghi lai: Chó cổ Trung Quốc x Chó Bắc Kinh
+                    <h4 class="font-semibold text-on-surface">
+                      Nghi lai: Chó cỏ Trung Quốc x Chó Bắc Kinh
                     </h4>
-                    <p class="text-xs text-slate-400 flex items-center gap-1 mt-0.5">
-                      <span class="material-symbols-outlined text-[14px]">schedule</span>
+                    <p
+                      class="label-sm text-on-surface-variant flex items-center gap-1 mt-0.5"
+                    >
+                      <span class="material-symbols-outlined text-[14px]"
+                        >schedule</span
+                      >
                       27/05/2026 21:28
                     </p>
                   </div>
                 </div>
                 <div class="flex items-center">
-                  <div class="bg-blue-50 text-primary text-xs font-bold px-2 py-1 rounded-full border border-blue-100 min-w-[42px] text-center">
+                  <div
+                    class="bg-primary-fixed/60 dark:bg-primary/20 text-primary label-sm font-bold px-2 py-1 rounded-full border border-primary/10 min-w-[42px] text-center"
+                  >
                     67%
                   </div>
                 </div>
               </div>
-              <div class="p-4 flex items-center justify-between hover:bg-slate-50 transition-colors">
+              <div
+                class="p-4 flex items-center justify-between hover:bg-surface-container-low transition-colors"
+              >
                 <div class="flex items-center gap-4">
                   <img
                     alt="Chó Lhasa"
-                    class="w-12 h-12 rounded-md object-cover border border-slate-100"
+                    class="w-12 h-12 rounded-md object-cover border border-outline-variant/20"
                     src="https://lh3.googleusercontent.com/aida-public/AB6AXuBO3Ab4JCTQykRc2uNThYKsepZ-m3PpVQRybXZRIXeAsWVyFSgJ_0j-QfW4yO7__d2YKDrAY4_ENvm4Cr8IkTGY1FulhjBrSF6qIDudH50QBJuvva3MjXVUwi0isVgUNyNcoZZ35GojQ4QpkUiGGyUTnK_WN8n6V-0s9fcV_oGOnMd1fq1MKGtXeTkq7OnrvJdvwl-T2Sh3rEgDH73yQP1NA-JJANtvvYnz60qocVsvSKn-QgG2KY4ZMI4i9hFPzds0zyIXJBflUwA"
                   />
                   <div>
-                    <h4 class="font-semibold text-slate-900">Chó Lhasa</h4>
-                    <p class="text-xs text-slate-400 flex items-center gap-1 mt-0.5">
-                      <span class="material-symbols-outlined text-[14px]">schedule</span>
+                    <h4 class="font-semibold text-on-surface">Chó Lhasa</h4>
+                    <p
+                      class="label-sm text-on-surface-variant flex items-center gap-1 mt-0.5"
+                    >
+                      <span class="material-symbols-outlined text-[14px]"
+                        >schedule</span
+                      >
                       27/05/2026 17:20
                     </p>
                   </div>
                 </div>
                 <div class="flex items-center">
-                  <div class="bg-blue-50 text-primary text-xs font-bold px-2 py-1 rounded-full border border-blue-100 min-w-[42px] text-center">
+                  <div
+                    class="bg-primary-fixed/60 dark:bg-primary/20 text-primary label-sm font-bold px-2 py-1 rounded-full border border-primary/10 min-w-[42px] text-center"
+                  >
                     8%
                   </div>
                 </div>
               </div>
-              <div class="p-4 flex items-center justify-between hover:bg-slate-50 transition-colors">
+              <div
+                class="p-4 flex items-center justify-between hover:bg-surface-container-low transition-colors"
+              >
                 <div class="flex items-center gap-4">
                   <img
                     alt="Chó Ngao Tây Tạng x Chó Leonberger"
-                    class="w-12 h-12 rounded-md object-cover border border-slate-100"
+                    class="w-12 h-12 rounded-md object-cover border border-outline-variant/20"
                     src="https://lh3.googleusercontent.com/aida-public/AB6AXuB0kQ8onyE-zjv1Dqa2HeRoVulgh1hTu4HraAAmITS_qD6ZmU5fFsd7ribWHyC7Iol3gCB9CNoVmdtUYeZzIT_iTXmHOahcOB4D-mvOdxqCtRKB6mCAUOd9aimxszIwb3EcNLPULSAtCVIBPP_8OS5s_jaI0EK5nJf2h3O1DPlI38yK-JQVeXcL7ceUjAyvdiReKBY6G4qiCENTcFTrfpotia9K0bKz9I8z4W4fdSfZvgY2_rQWbh2xZalG2L9ppzUyee7XDeY2Gqk"
                   />
                   <div>
-                    <h4 class="font-semibold text-slate-900">
+                    <h4 class="font-semibold text-on-surface">
                       Nghi lai: Chó Ngao Tây Tạng x Chó Leonberger
                     </h4>
-                    <p class="text-xs text-slate-400 flex items-center gap-1 mt-0.5">
-                      <span class="material-symbols-outlined text-[14px]">schedule</span>
+                    <p
+                      class="label-sm text-on-surface-variant flex items-center gap-1 mt-0.5"
+                    >
+                      <span class="material-symbols-outlined text-[14px]"
+                        >schedule</span
+                      >
                       27/05/2026 17:19
                     </p>
                   </div>
                 </div>
                 <div class="flex items-center">
-                  <div class="bg-blue-50 text-primary text-xs font-bold px-2 py-1 rounded-full border border-blue-100 min-w-[42px] text-center">
+                  <div
+                    class="bg-primary-fixed/60 dark:bg-primary/20 text-primary label-sm font-bold px-2 py-1 rounded-full border border-primary/10 min-w-[42px] text-center"
+                  >
                     66%
                   </div>
                 </div>
               </div>
-              <div class="p-4 flex items-center justify-between hover:bg-slate-50 transition-colors">
+              <div
+                class="p-4 flex items-center justify-between hover:bg-surface-container-low transition-colors"
+              >
                 <div class="flex items-center gap-4">
                   <img
                     alt="Chó Yorkshire Terrier x Chó Silky Terrier"
-                    class="w-12 h-12 rounded-md object-cover border border-slate-100"
+                    class="w-12 h-12 rounded-md object-cover border border-outline-variant/20"
                     src="https://lh3.googleusercontent.com/aida-public/AB6AXuAush9My2bjPdK317NGBt4VHG7wyAXJCiJwBPNjigHvey26BRt6tbqhsq6nfldrAuvY44xZv2xxMHhtVijjOfjtJ5fBlW21KmmLwH7lUd-OzpFwh3eA3pOhmcF42hca7h69sSLg0uIJz43qKv2G86M5zvg19fLKt5aNrbACUauvEaOZH-S3a8QcwRxUwtGgKAoXEDvUU1GVgvMaXveF5N93v9bXU_6I_q8wfM52tP9RoZU6Pb5_xQkfcOzRO_Mek5Q-VIbHmhEB9oA"
                   />
                   <div>
-                    <h4 class="font-semibold text-slate-900">
+                    <h4 class="font-semibold text-on-surface">
                       Nghi lai: Chó Yorkshire Terrier x Chó Silky Terrier
                     </h4>
-                    <p class="text-xs text-slate-400 flex items-center gap-1 mt-0.5">
-                      <span class="material-symbols-outlined text-[14px]">schedule</span>
+                    <p
+                      class="label-sm text-on-surface-variant flex items-center gap-1 mt-0.5"
+                    >
+                      <span class="material-symbols-outlined text-[14px]"
+                        >schedule</span
+                      >
                       27/05/2026 17:19
                     </p>
                   </div>
                 </div>
                 <div class="flex items-center">
-                  <div class="bg-blue-50 text-primary text-xs font-bold px-2 py-1 rounded-full border border-blue-100 min-w-[42px] text-center">
+                  <div
+                    class="bg-primary-fixed/60 dark:bg-primary/20 text-primary label-sm font-bold px-2 py-1 rounded-full border border-primary/10 min-w-[42px] text-center"
+                  >
                     46%
                   </div>
                 </div>
               </div>
-              <div class="p-4 flex items-center justify-between hover:bg-slate-50 transition-colors">
+              <div
+                class="p-4 flex items-center justify-between hover:bg-surface-container-low transition-colors"
+              >
                 <div class="flex items-center gap-4">
                   <img
                     alt="Chó Lhasa"
-                    class="w-12 h-12 rounded-md object-cover border border-slate-100"
+                    class="w-12 h-12 rounded-md object-cover border border-outline-variant/20"
                     src="https://lh3.googleusercontent.com/aida-public/AB6AXuAMgSAHpLHYeokUmsDzfLz2BRuIL3XoazE5G2hxuj3mtMYx12N_WrLJoG0IDOx-Eaur85IrEfSfdOH5AWSGGD-XUUWpHgWJZ6MqWJHIZQicss5fv7em6S43becQOaj08wvbTIczaiwNwf3IOPYBbs3JKfBFuvy5oxgYCwHLdtWrJ4Ieik9Z2-eiZHiBL389pNmXCS9o0e52odXalSg-Q9LKDx67XFyDOpio9ecZhu1t5h6kQAydSzPcLLWTdznPZGPdc6gIh4lwzaw"
                   />
                   <div>
-                    <h4 class="font-semibold text-slate-900">Chó Lhasa</h4>
-                    <p class="text-xs text-slate-400 flex items-center gap-1 mt-0.5">
-                      <span class="material-symbols-outlined text-[14px]">schedule</span>
+                    <h4 class="font-semibold text-on-surface">Chó Lhasa</h4>
+                    <p
+                      class="label-sm text-on-surface-variant flex items-center gap-1 mt-0.5"
+                    >
+                      <span class="material-symbols-outlined text-[14px]"
+                        >schedule</span
+                      >
                       27/05/2026 17:19
                     </p>
                   </div>
                 </div>
                 <div class="flex items-center">
-                  <div class="bg-blue-50 text-primary text-xs font-bold px-2 py-1 rounded-full border border-blue-100 min-w-[42px] text-center">
+                  <div
+                    class="bg-primary-fixed/60 dark:bg-primary/20 text-primary label-sm font-bold px-2 py-1 rounded-full border border-primary/10 min-w-[42px] text-center"
+                  >
                     8%
                   </div>
                 </div>
@@ -701,21 +815,26 @@
     </main>
 
     <footer
-      class="bg-surface-container-low border-t border-outline-variant/30 px-6 md:px-10 pt-6 pb-4"
+      class="bg-surface-container-low border-t border-outline-variant/30 px-4 md:px-6 pt-6 pb-4"
     >
       <div class="max-w-container-max mx-auto">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-10">
           <div class="lg:col-span-6 space-y-6">
             <div
-              class="font-headline-md text-2xl font-bold tracking-tighter text-primary"
+              class="headline-md headline-md font-bold tracking-tighter text-primary"
             >
-              <img
-                alt="PetAI New Logo"
-                class="h-8 w-auto"
-                src="data:image/png;base64,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"
-              />
+              <span class="inline-flex items-center gap-0">
+                <img
+                  alt="PetAI New Logo"
+                  class="h-8 w-auto md:h-10"
+                  src="{{ url_for('static', filename='logo.png') }}"
+                />
+                <span class="ml-0 text-sm md:text-lg font-semibold text-primary"
+                  >PetAI</span
+                >
+              </span>
             </div>
-            <p class="font-body-md text-on-surface-variant max-w-sm">
+            <p class="body-md text-on-surface-variant max-w-sm">
               Ứng dụng nhận diện giống chó bằng AI dành cho người yêu thú cưng.
               Kết quả chính xác, nhanh chóng.
             </p>
@@ -723,7 +842,7 @@
           <div class="lg:col-span-6 grid grid-cols-2 md:grid-cols-2 gap-8">
             <div class="space-y-6">
               <h4
-                class="font-label-caps text-label-caps text-primary uppercase tracking-widest"
+                class="label-sm label-sm text-primary uppercase tracking-widest"
               >
                 Về PetAI
               </h4>
@@ -753,7 +872,7 @@
             </div>
             <div class="space-y-6">
               <h4
-                class="font-label-caps text-label-caps text-primary uppercase tracking-widest"
+                class="label-sm label-sm text-primary uppercase tracking-widest"
               >
                 Kết nối
               </h4>
@@ -776,21 +895,21 @@
             </div>
           </div>
         </div>
-        <div class="border-t border-outline-variant/20 relative pt-6">
+        <div class="border-t border-outline-variant/20 relative py-1">
           <div
             class="flex flex-col md:flex-row justify-between items-center gap-4"
           >
-            <p class="font-code-sm text-xs text-on-surface-variant/70">
+            <p class="label-sm label-sm text-on-surface-variant/70">
               Bản quyền © 2026 PetAI. Mọi quyền được bảo lưu
             </p>
             <div class="flex gap-6">
               <a
-                class="text-on-surface-variant/70 hover:text-primary transition-colors text-xs font-code-sm underline underline-offset-4"
+                class="text-on-surface-variant/70 hover:text-primary transition-colors label-sm label-sm underline underline-offset-4"
                 href="#faq"
                 >ĐIỀU KHOẢN</a
               >
               <a
-                class="text-on-surface-variant/70 hover:text-primary transition-colors text-xs font-code-sm underline underline-offset-4"
+                class="text-on-surface-variant/70 hover:text-primary transition-colors label-sm label-sm underline underline-offset-4"
                 href="#faq"
                 >BẢO MẬT</a
               >

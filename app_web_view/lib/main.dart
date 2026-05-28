@@ -291,6 +291,8 @@ class _WebViewScreenState extends State<WebViewScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final topInset = MediaQuery.of(context).viewPadding.top;
+
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, _) async {
@@ -303,13 +305,20 @@ class _WebViewScreenState extends State<WebViewScreen> {
       },
       child: Scaffold(
         backgroundColor: const Color(0xFFFCFAF7),
-        body: Stack(
+        body: Column(
           children: [
-            if (!_hasError)
-              WebViewWidget(controller: _controller)
-            else
-              _ErrorView(onRetry: () => _controller.reload()),
-            if (_isLoading && !_hasError) _buildProgressBar(),
+            if (topInset > 0) SizedBox(height: topInset),
+            Expanded(
+              child: Stack(
+                children: [
+                  if (!_hasError)
+                    WebViewWidget(controller: _controller)
+                  else
+                    _ErrorView(onRetry: () => _controller.reload()),
+                  if (_isLoading && !_hasError) _buildProgressBar(),
+                ],
+              ),
+            ),
           ],
         ),
       ),

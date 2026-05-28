@@ -1,6 +1,5 @@
-{% set toast_titles = { 'success': tx('Thành công', 'Success'), 'error':
-tx('Lỗi', 'Error'), 'warning': tx('Cảnh báo', 'Warning'), 'info': tx('Thông
-tin', 'Info'), } %}
+{% set toast_titles = { 'success': 'Thành công', 'error': 'Lỗi', 'warning':
+'Cảnh báo', 'info': 'Thông tin' } %}
 
 <div
   class="toast-stack"
@@ -11,7 +10,7 @@ tin', 'Info'), } %}
   data-title-error="{{ toast_titles['error'] }}"
   data-title-warning="{{ toast_titles['warning'] }}"
   data-title-info="{{ toast_titles['info'] }}"
-  data-close-label="{{ tx('Đóng', 'Close') }}"
+  data-close-label="Đóng"
 >
   {% with messages = get_flashed_messages(with_categories=true) %} {% if
   messages %} {% for category, message in messages %} {% set toast_type =
@@ -33,7 +32,7 @@ tin', 'Info'), } %}
       type="button"
       class="toast__close"
       data-toast-close
-      aria-label="{{ tx('Đóng', 'Close') }}"
+      aria-label="Đóng"
     >
       <span class="material-symbols-outlined">close</span>
     </button>

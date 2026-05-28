@@ -8,7 +8,6 @@ logout_bp = Blueprint("logout", __name__)
 
 @logout_bp.route("/")
 def logout():
-    session.pop("user_id", None)
-    session.pop("username", None)
+    session.clear()
     flash("Bạn đã đăng xuất.", "info")
     return redirect(url_for("home.index"))

@@ -5,6 +5,7 @@ def register_context_processors(app):
     def inject_ui_prefs():
         current_plan = None
         ui_language = "vi"
+        ui_theme = "light"
         from flask import session
 
         user_id_raw = session.get("user_id")
@@ -20,28 +21,16 @@ def register_context_processors(app):
                     quota = UserQuota.get_or_create(conn, user_id)
                     current_plan = (quota or {}).get("plan") or "free"
                     user_settings = UserSettings.get_or_create(conn, user_id)
-                    lang_raw = (user_settings or {}).get("language")
-                    if isinstance(lang_raw, str) and lang_raw.strip().lower() in {"vi", "en"}:
-                        ui_language = lang_raw.strip().lower()
-                        session["language"] = ui_language
+                    theme_raw = (user_settings or {}).get("theme")
+                    if isinstance(theme_raw, str) and theme_raw.strip().lower() in {"light", "dark", "auto"}:
+                        ui_theme = theme_raw.strip().lower()
                 finally:
                     conn.close()
             except Exception:
                 current_plan = None
 
-        session_lang = session.get("language")
-        if isinstance(session_lang, str) and session_lang.strip().lower() in {"vi", "en"}:
-            ui_language = session_lang.strip().lower()
-
-        def tx(vi_text: str, en_text: str | None = None) -> str:
-            if ui_language == "en":
-                if en_text is not None:
-                    return en_text
-            return vi_text
-
         return {
-            "ui_theme": session.get("theme", "light"),
+            "ui_theme": ui_theme,
             "current_plan": current_plan,
             "ui_language": ui_language,
-            "tx": tx,
         }

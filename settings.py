@@ -32,7 +32,6 @@ def settings():
         try:
             conn = get_connection()
             theme = request.form.get('theme', 'light').strip()
-            language = request.form.get('language', 'vi').strip().lower()
             fullname = request.form.get("fullname", "").strip()
             if not fullname:
                 fullname = (session.get("fullname") or session.get("username") or "").strip()
@@ -44,12 +43,9 @@ def settings():
             # Validate theme
             if theme not in ('light', 'dark', 'auto'):
                 theme = 'light'
-            if language not in ('vi', 'en'):
-                language = 'vi'
             
             settings_data = {
                 'theme': theme,
-                'language': language,
                 'notifications': request.form.get('notifications') == 'on',
                 'email_notifications': request.form.get('email_notifications') == 'on'
             }
@@ -66,10 +62,6 @@ def settings():
             UserSettings.update(conn, user_id, settings_data)
             conn.close()
             
-            # Lưu theme vào session để apply ngay
-            session['theme'] = theme
-            session['language'] = language
-            
             flash("Cài đặt đã được lưu thành công!", "success")
             return redirect(url_for("settings.settings"))
         except Exception:
@@ -80,13 +72,6 @@ def settings():
         conn = get_connection()
         user_settings = UserSettings.get_or_create(conn, user_id)
         conn.close()
-        try:
-            lang_now = (user_settings or {}).get('language')
-            if isinstance(lang_now, str) and lang_now.strip().lower() in ('vi', 'en'):
-                session['language'] = lang_now.strip().lower()
-        except Exception:
-            pass
-        
         return render_template("settings.html", settings=user_settings)
     except Exception:
         logger.exception("Error loading settings")

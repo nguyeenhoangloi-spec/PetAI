@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>PetAI - {{ tx('Lỗi', 'Error') }} {{ code }}</title>
+    <title>PetAI - Lá»—i {{ code }}</title>
     <link href="https://fonts.googleapis.com" rel="preconnect" />
     <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin />
     <link
@@ -15,6 +15,10 @@
       rel="stylesheet"
     />
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/typography.css') }}"
+    />
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='css/toasts.css') }}"
@@ -169,9 +173,9 @@
           class="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-32 bg-primary-fixed rounded-full blur-[40px] opacity-50 pointer-events-none"
         ></div>
         <div
-          class="inline-flex items-center justify-center bg-error-container text-on-error-container px-sm py-xs rounded-full font-label-sm text-label-sm mb-md relative z-10"
+          class="inline-flex items-center justify-center bg-error-container text-on-error-container px-sm py-xs rounded-full label-sm mb-md relative z-10"
         >
-          {{ tx('Lỗi', 'Error') }} {{ code }}
+          Lá»—i {{ code }}
         </div>
         <div
           class="w-24 h-24 bg-surface-container flex items-center justify-center rounded-full mb-md relative z-10 text-primary-container"
@@ -183,48 +187,43 @@
           >
         </div>
         <h1
-          class="font-headline-lg text-headline-lg text-on-surface mb-sm relative z-10"
+          class="headline-lg text-on-surface mb-sm relative z-10"
         >
-          {{ tx('Đã có sự cố', 'Something went wrong') }}
+          Đã có sự cố
         </h1>
         <p
-          class="font-body-md text-body-md text-on-surface-variant mb-lg max-w-sm relative z-10"
+          class="body-md text-on-surface-variant mb-lg max-w-sm relative z-10"
         >
-          {{ message or tx( 'Chúng tôi đang gặp sự cố khi truy xuất dữ liệu yêu
-          cầu. Tài nguyên bạn tìm có thể đã được chuyển hoặc tạm thời không khả
-          dụng.', "We're having trouble retrieving the requested data. The
-          resource you are looking for might have been moved or is temporarily
-          unavailable." ) }}
+          {{ message or 'Chúng tôi đang gặp sự cố khi truy xuất dữ liệu yêu cầu. Tài nguyên bạn tìm có thể đã được chuyển hoặc tạm thời không khả dụng.' }}
         </p>
         <div
           class="w-full flex flex-col sm:flex-row items-center justify-center gap-sm relative z-10"
         >
           <a
-            class="w-full sm:w-auto bg-primary-container text-on-primary-container hover:bg-primary transition-colors px-md py-sm rounded-lg font-label-sm text-label-sm flex items-center justify-center gap-xs shadow-sm hover:-translate-y-[1px] duration-150"
+            class="w-full sm:w-auto bg-primary-container text-on-primary-container hover:bg-primary transition-colors px-md py-sm rounded-lg label-sm flex items-center justify-center gap-xs shadow-sm hover:-translate-y-[1px] duration-150"
             href="{{ url_for('home.index') }}"
           >
             <span class="material-symbols-outlined text-[18px]">home</span>
-            {{ tx('Quay lại trang chủ', 'Back to home') }}
+            Quay lại trang chủ
           </a>
           <a
-            class="w-full sm:w-auto border border-outline text-on-surface hover:bg-surface-container-highest transition-colors px-md py-sm rounded-lg font-label-sm text-label-sm flex items-center justify-center gap-xs duration-150"
+            class="w-full sm:w-auto border border-outline text-on-surface hover:bg-surface-container-highest transition-colors px-md py-sm rounded-lg label-sm flex items-center justify-center gap-xs duration-150"
             href="{{ url_for('health.health') }}"
           >
             <span class="material-symbols-outlined text-[18px]">
               monitoring
             </span>
-            {{ tx('Kiểm tra hệ thống', 'System health') }}
+            Kiểm tra hệ thống
           </a>
         </div>
       </div>
-      <p class="font-label-sm text-label-sm text-outline mt-margin text-center">
-        {{ tx( 'Nếu lỗi vẫn tiếp diễn, vui lòng thử lại sau.', 'If the issue
-        continues, please try again later.' ) }}
+      <p class="label-sm label-sm text-outline mt-margin text-center">
+        Nếu lỗi vẫn tiếp diễn, vui lòng thử lại sau.
       </p>
     </main>
               />
             </div>
-            <p class="font-body-md text-on-surface-variant max-w-sm">
+            <p class="body-md text-on-surface-variant max-w-sm">
               Ứng dụng nhận diện giống chó bằng AI dành cho người yêu thú cưng.
               Kết quả chính xác, nhanh chóng.
             </p>
@@ -232,7 +231,7 @@
           <div class="lg:col-span-6 grid grid-cols-2 md:grid-cols-2 gap-8">
             <div class="space-y-6">
               <h4
-                class="font-label-caps text-label-caps text-primary uppercase tracking-widest"
+                class="label-sm label-sm text-primary uppercase tracking-widest"
               >
                 Về PetAI
               </h4>
@@ -262,7 +261,7 @@
             </div>
             <div class="space-y-6">
               <h4
-                class="font-label-caps text-label-caps text-primary uppercase tracking-widest"
+                class="label-sm label-sm text-primary uppercase tracking-widest"
               >
                 Kết nối
               </h4>
@@ -285,21 +284,21 @@
             </div>
           </div>
         </div>
-        <div class="border-t border-outline-variant/20 relative pt-6">
+        <div class="border-t border-outline-variant/20 relative py-1">
           <div
             class="flex flex-col md:flex-row justify-between items-center gap-4"
           >
-            <p class="font-code-sm text-xs text-on-surface-variant/70">
+            <p class="label-sm label-sm text-on-surface-variant/70">
               Bản quyền © 2026 PetAI. Mọi quyền được bảo lưu
             </p>
             <div class="flex gap-6">
               <a
-                class="text-on-surface-variant/70 hover:text-primary transition-colors text-xs font-code-sm underline underline-offset-4"
+                class="text-on-surface-variant/70 hover:text-primary transition-colors label-sm label-sm underline underline-offset-4"
                 href="#faq"
                 >ĐIỀU KHOẢN</a
               >
               <a
-                class="text-on-surface-variant/70 hover:text-primary transition-colors text-xs font-code-sm underline underline-offset-4"
+                class="text-on-surface-variant/70 hover:text-primary transition-colors label-sm label-sm underline underline-offset-4"
                 href="#faq"
                 >BẢO MẬT</a
               >
@@ -310,3 +309,4 @@
     </footer>
   </body>
 </html>
+
