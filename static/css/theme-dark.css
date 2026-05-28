@@ -138,3 +138,38 @@ html.dark .border-slate-100,
 html[data-theme="dark"] .border-slate-100 {
   border-color: #1f2937 !important;
 }
+
+/* Global scrollbar styling (WebKit + Firefox) */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 #f1f1f1;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+
+html.dark *,
+html[data-theme="dark"] * {
+  scrollbar-color: #334155 #0f172a;
+}
+
+html.dark ::-webkit-scrollbar-track,
+html[data-theme="dark"] ::-webkit-scrollbar-track {
+  background: #0f172a;
+}
+
+html.dark ::-webkit-scrollbar-thumb,
+html[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: #334155;
+}

@@ -469,30 +469,34 @@
           <div
             class="flex flex-col md:flex-row md:items-end justify-between gap-md mb-2"
           >
-            <div class="space-y-1">
-              <h1 class="font-headline-lg text-headline-lg text-on-surface">
+            <div class="flex flex-col gap-1">
+              <h1 class="text-xl font-semibold text-on-surface">
                 {{ tx('Kết quả nhận diện giống chó', 'Dog breed prediction
                 result') }}
               </h1>
-              <p class="font-body-lg text-body-lg text-outline">
+              <p class="text-sm text-on-surface-variant">
                 {{ tx('Hệ thống AI đã hoàn tất phân tích hình ảnh với độ chính
                 xác cao.', 'The AI system has completed the image analysis with
                 high accuracy.') }}
               </p>
             </div>
-            <div class="flex gap-3">
+            <div class="flex flex-wrap gap-3">
               <a
-                class="px-6 py-2.5 rounded-xl border border-primary text-primary font-semibold hover:bg-primary-container/10 transition-colors flex items-center gap-2"
+                class="bg-surface-container-lowest text-on-surface px-4 py-2 rounded-lg font-label-sm border border-outline-variant hover:border-primary hover:text-primary transition-colors flex items-center gap-2"
                 href="{{ url_for('dashboard.dashboard') }}"
               >
-                <span class="material-symbols-outlined">dashboard</span>
+                <span class="material-symbols-outlined text-[18px]"
+                  >dashboard</span
+                >
                 {{ tx('Về bảng điều khiển', 'Back to dashboard') }}
               </a>
               <a
-                class="px-6 py-2.5 rounded-xl bg-primary text-on-primary font-semibold hover:shadow-lg hover:shadow-primary/20 transition-all flex items-center gap-2"
+                class="bg-primary text-on-primary px-4 py-2 rounded-lg font-label-sm shadow-sm hover:shadow-md transition-all flex items-center gap-2"
                 href="{{ url_for('predict.upload_page') }}"
               >
-                <span class="material-symbols-outlined">photo_camera</span>
+                <span class="material-symbols-outlined text-[18px]"
+                  >photo_camera</span
+                >
                 {{ tx('Phân tích ảnh khác', 'Analyze another image') }}
               </a>
             </div>

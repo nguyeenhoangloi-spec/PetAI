@@ -427,25 +427,20 @@
       </aside>
 
       <div class="col-span-1 flex flex-col gap-gutter">
-        <section
-          class="flex flex-col md:flex-row justify-between items-start md:items-center bg-surface-container-low p-margin rounded-xl border border-surface-container-highest/50 relative overflow-hidden"
-        >
-          <div
-            class="absolute inset-0 bg-gradient-to-r from-transparent to-primary-fixed/20 pointer-events-none"
-          ></div>
-          <div class="relative z-10 max-w-2xl">
-            <h1 class="font-headline-lg text-headline-lg text-on-surface">
+        <section class="flex flex-col md:flex-row justify-between items-start md:items-center">
+          <div class="max-w-2xl">
+            <h1 class="text-xl font-semibold text-on-surface">
               {{ tx('Tải ảnh để nhận diện giống chó', 'Upload an image to
               identify dog breed') }}
             </h1>
-            <p class="font-body-md text-body-md text-on-surface-variant mt-sm">
+            <p class="text-sm text-on-surface-variant mt-1">
               {{ tx('Kéo thả ảnh chó của bạn để AI phân tích và dự đoán giống
               với độ tin cậy chi tiết.', 'Drag and drop your dog image for AI
               analysis with detailed confidence.') }}
             </p>
           </div>
           <a
-            class="relative z-10 bg-primary text-on-primary px-md py-sm rounded-lg font-label-sm hover:-translate-y-[1px] shadow-sm hover:shadow-md transition-all flex items-center gap-base"
+            class="bg-primary text-on-primary px-4 py-2 rounded-lg font-label-sm shadow-sm hover:shadow-md transition-all flex items-center gap-2"
             href="{{ url_for('predict.upgrade') }}"
           >
             <span

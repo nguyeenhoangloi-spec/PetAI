@@ -391,321 +391,257 @@
       </aside>
 
       <div class="col-span-1 flex flex-col gap-gutter">
-        <section
-          class="flex flex-col md:flex-row justify-between items-start md:items-center bg-surface-container-low p-margin rounded-xl border border-surface-container-highest/50 relative overflow-hidden"
-        >
-          <div
-            class="absolute inset-0 bg-gradient-to-r from-transparent to-primary-fixed/20 pointer-events-none"
-          ></div>
-          <div class="relative z-10">
-            <h1 class="font-headline-lg text-headline-lg text-on-surface">
-              {{ tx('Danh sách người dùng', 'User list') }}
-            </h1>
-            <p class="font-body-md text-body-md text-on-surface-variant mt-sm">
-              {{ tx('Quản lý trạng thái tài khoản, gói dịch vụ và quyền truy cập.', 'Manage account status, plans, and access permissions.') }}
-            </p>
-          </div>
-          <a
-            class="relative z-10 bg-primary text-on-primary px-md py-sm rounded-lg font-label-sm hover:-translate-y-[1px] shadow-sm hover:shadow-md transition-all flex items-center gap-base"
-            href="{{ url_for('users.confirmations_list') }}"
-          >
-            <span
-              class="material-symbols-outlined text-[18px]"
-              data-icon="receipt_long"
-              >receipt_long</span
-            >
-            {{ tx('Duyệt đơn', 'Payment approvals') }}
-          </a>
-        </section>
+        <style>
+          .table-container {
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+          }
+        </style>
 
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-gutter">
-          <div
-            class="bg-surface-container-lowest rounded-xl p-md shadow-[0px_4px_20px_rgba(0,0,0,0.05)] flex items-center justify-between border border-surface-container-low"
+        <div class="space-y-gutter">
+          <section
+            class="flex flex-col md:flex-row md:items-center justify-between gap-4"
+            data-purpose="page-header"
           >
             <div>
-              <p class="font-label-sm text-label-sm text-on-surface-variant mb-1">
-                {{ tx('Tổng người dùng', 'Total users') }}
-              </p>
-              <p
-                class="font-headline-md text-headline-md text-on-surface"
-                id="statTotal"
-              >
-                0
+              <h1 class="text-2xl font-bold text-gray-900">Danh sách người dùng</h1>
+              <p class="text-sm text-gray-500">
+                Quản lý trạng thái tài khoản, gói dịch vụ và quyền truy cập của hệ thống.
               </p>
             </div>
-            <div
-              class="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center text-primary"
+            <a
+              class="bg-primary hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 text-sm font-medium transition-colors shadow-sm"
+              href="{{ url_for('users.confirmations_list') }}"
             >
-              <span class="material-symbols-outlined">group</span>
-            </div>
-          </div>
-          <div
-            class="bg-surface-container-lowest rounded-xl p-md shadow-[0px_4px_20px_rgba(0,0,0,0.05)] flex items-center justify-between border border-surface-container-low"
-          >
-            <div>
-              <p class="font-label-sm text-label-sm text-on-surface-variant mb-1">
-                {{ tx('Tổng quản trị', 'Total admins') }}
-              </p>
-              <p
-                class="font-headline-md text-headline-md text-on-surface"
-                id="statAdmins"
+              <svg
+                class="h-4 w-4"
+                fill="none"
+                stroke="currentColor"
+                viewbox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
               >
-                0
-              </p>
-            </div>
-            <div
-              class="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface"
-            >
-              <span class="material-symbols-outlined">admin_panel_settings</span>
-            </div>
-          </div>
-          <div
-            class="bg-surface-container-lowest rounded-xl p-md shadow-[0px_4px_20px_rgba(0,0,0,0.05)] flex items-center justify-between border border-surface-container-low"
-          >
-            <div>
-              <p class="font-label-sm text-label-sm text-on-surface-variant mb-1">
-                {{ tx('Hoạt động', 'Active accounts') }}
-              </p>
-              <p
-                class="font-headline-md text-headline-md text-on-surface"
-                id="statActive"
-              >
-                0
-              </p>
-            </div>
-            <div
-              class="w-12 h-12 rounded-full bg-[#dcfce7] flex items-center justify-center text-[#166534]"
-            >
-              <span class="material-symbols-outlined">check_circle</span>
-            </div>
-          </div>
-          <div
-            class="bg-surface-container-lowest rounded-xl p-md shadow-[0px_4px_20px_rgba(0,0,0,0.05)] flex items-center justify-between border border-surface-container-low"
-          >
-            <div>
-              <p class="font-label-sm text-label-sm text-on-surface-variant mb-1">
-                {{ tx('Đã khóa', 'Locked accounts') }}
-              </p>
-              <p
-                class="font-headline-md text-headline-md text-on-surface"
-                id="statLocked"
-              >
-                0
-              </p>
-            </div>
-            <div
-              class="w-12 h-12 rounded-full bg-error-container flex items-center justify-center text-on-error-container"
-            >
-              <span class="material-symbols-outlined">lock</span>
-            </div>
-          </div>
-        </div>
+                <path
+                  d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                ></path>
+              </svg>
+              Duyệt đơn
+            </a>
+          </section>
 
-        <div
-          class="bg-surface-container-lowest rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-surface-container-low overflow-hidden"
-        >
-          <div
-            class="p-md border-b border-surface-container-low flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+          <section
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
+            data-purpose="statistics-overview"
           >
-            <div class="relative flex-1 max-w-md">
-              <span
-                class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline"
-                >search</span
-              >
+            <div class="bg-white p-6 rounded-xl border border-gray-100 flex justify-between items-center shadow-sm">
+              <div>
+                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Tổng người dùng</p>
+                <p class="text-2xl font-bold text-gray-900 mt-1" id="statTotal">0</p>
+              </div>
+              <div class="p-3 bg-blue-50 text-blue-600 rounded-xl">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                </svg>
+              </div>
+            </div>
+            <div class="bg-white p-6 rounded-xl border border-gray-100 flex justify-between items-center shadow-sm">
+              <div>
+                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Tổng quản trị</p>
+                <p class="text-2xl font-bold text-gray-900 mt-1" id="statAdmins">0</p>
+              </div>
+              <div class="p-3 bg-indigo-50 text-indigo-600 rounded-xl">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                </svg>
+              </div>
+            </div>
+            <div class="bg-white p-6 rounded-xl border border-gray-100 flex justify-between items-center shadow-sm">
+              <div>
+                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Hoạt động</p>
+                <p class="text-2xl font-bold text-gray-900 mt-1" id="statActive">0</p>
+              </div>
+              <div class="p-3 bg-green-50 text-green-600 rounded-xl">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                </svg>
+              </div>
+            </div>
+            <div class="bg-white p-6 rounded-xl border border-gray-100 flex justify-between items-center shadow-sm">
+              <div>
+                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Đã khóa</p>
+                <p class="text-2xl font-bold text-gray-900 mt-1" id="statLocked">0</p>
+              </div>
+              <div class="p-3 bg-red-50 text-red-600 rounded-xl">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                </svg>
+              </div>
+            </div>
+          </section>
+
+          <section class="flex flex-wrap items-center gap-3" data-purpose="search-and-filters">
+            <div class="relative flex-grow max-w-xl">
+              <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                </svg>
+              </span>
               <input
                 id="usersSearch"
-                class="w-full pl-10 pr-4 py-2 border border-outline-variant rounded-lg text-body-md font-body-md focus:ring-2 focus:ring-primary focus:border-primary outline-none"
-                placeholder="{{ tx('Tìm username/email/họ tên...', 'Search username/email/full name...') }}"
+                class="w-full pl-10 pr-4 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:ring-primary focus:border-primary"
+                placeholder="Tìm username/email/họ tên..."
                 type="text"
               />
             </div>
-            <div class="flex items-center gap-3">
-              <select
-                id="roleFilter"
-                class="border border-outline-variant rounded-lg py-2 pl-3 pr-8 text-body-md font-body-md focus:ring-2 focus:ring-primary focus:border-primary outline-none bg-white"
-                aria-label="{{ tx('Lọc vai trò', 'Filter role') }}"
-              >
-                <option value="">{{ tx('Tất cả vai trò', 'All roles') }}</option>
-                <option value="admin">{{ tx('Quản trị', 'Admin') }}</option>
-                <option value="user">{{ tx('Người dùng', 'User') }}</option>
-              </select>
-              <select
-                id="statusFilter"
-                class="border border-outline-variant rounded-lg py-2 pl-3 pr-8 text-body-md font-body-md focus:ring-2 focus:ring-primary focus:border-primary outline-none bg-white"
-                aria-label="{{ tx('Lọc trạng thái', 'Filter status') }}"
-              >
-                <option value="">{{ tx('Tất cả trạng thái', 'All statuses') }}</option>
-                <option value="active">{{ tx('Hoạt động', 'Active') }}</option>
-                <option value="locked">{{ tx('Đã khóa', 'Locked') }}</option>
-              </select>
-              <button
-                type="button"
-                class="bg-surface-container-high text-on-surface py-2 px-4 rounded-lg font-label-sm text-label-sm hover:bg-surface-container-highest transition-colors flex items-center gap-2 border border-outline-variant"
-                id="clearFilters"
-              >
-                <span class="material-symbols-outlined text-[20px]"
-                  >filter_list</span
-                >
-                {{ tx('Xoá lọc', 'Clear filters') }}
-              </button>
-            </div>
-          </div>
+            <select
+              id="roleFilter"
+              class="bg-white border border-gray-200 rounded-lg py-2 pl-3 pr-10 text-sm focus:ring-primary focus:border-primary min-w-[150px]"
+            >
+              <option value="">Tất cả vai trò</option>
+              <option value="admin">Admin</option>
+              <option value="user">User</option>
+            </select>
+            <select
+              id="statusFilter"
+              class="bg-white border border-gray-200 rounded-lg py-2 pl-3 pr-10 text-sm focus:ring-primary focus:border-primary min-w-[150px]"
+            >
+              <option value="">Tất cả trạng thái</option>
+              <option value="active">Hoạt động</option>
+              <option value="locked">Khóa</option>
+            </select>
+            <button
+              class="bg-gray-100 hover:bg-gray-200 text-gray-600 px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors"
+              type="button"
+              id="clearFilters"
+            >
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+              </svg>
+              Xoá lọc
+            </button>
+          </section>
 
-          {% if users %}
-          <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse" id="usersTable">
-              <thead>
-                <tr class="border-b border-surface-container-low bg-surface-bright">
-                  <th
-                    class="p-4 font-label-sm text-label-sm text-on-surface-variant whitespace-nowrap"
+          <section
+            class="bg-white rounded-xl border border-gray-100 overflow-hidden shadow-sm table-container"
+            data-purpose="user-data-table"
+          >
+            {% if users %}
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse" id="usersTable">
+                <thead>
+                  <tr class="bg-gray-50 border-b border-gray-100">
+                    <th class="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-wider">Người dùng</th>
+                    <th class="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-wider text-center">Vai trò</th>
+                    <th class="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-wider text-center">Trạng thái</th>
+                    <th class="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-wider text-center">Ngày tạo</th>
+                    <th class="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-wider text-center">Cấp gói</th>
+                    <th class="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-wider text-right">Thao tác</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-50">
+                  {% for u in users %}
+                  {% set role_val = (u.role or 'user')|lower %}
+                  {% set plan_val = (u.plan or 'free')|lower %}
+                  <tr
+                    class="hover:bg-blue-50/30 transition-colors"
+                    data-user-id="{{ u.id }}"
+                    data-role="{{ role_val }}"
+                    data-active="{{ '1' if u.is_active else '0' }}"
                   >
-                    {{ tx('Người dùng', 'User details') }}
-                  </th>
-                  <th
-                    class="p-4 font-label-sm text-label-sm text-on-surface-variant whitespace-nowrap"
-                  >
-                    {{ tx('Vai trò', 'Role') }}
-                  </th>
-                  <th
-                    class="p-4 font-label-sm text-label-sm text-on-surface-variant whitespace-nowrap"
-                  >
-                    {{ tx('Gói', 'Plan') }}
-                  </th>
-                  <th
-                    class="p-4 font-label-sm text-label-sm text-on-surface-variant whitespace-nowrap"
-                  >
-                    {{ tx('Trạng thái', 'Status') }}
-                  </th>
-                  <th
-                    class="p-4 font-label-sm text-label-sm text-on-surface-variant whitespace-nowrap"
-                  >
-                    {{ tx('Ngày tạo', 'Created at') }}
-                  </th>
-                  <th
-                    class="p-4 font-label-sm text-label-sm text-on-surface-variant whitespace-nowrap"
-                  >
-                    {{ tx('Cấp gói', 'Set plan') }}
-                  </th>
-                  <th
-                    class="p-4 font-label-sm text-label-sm text-on-surface-variant whitespace-nowrap text-right"
-                  >
-                    {{ tx('Thao tác', 'Actions') }}
-                  </th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-surface-container-low font-body-md text-body-md">
-                {% for u in users %}
-                {% set role_val = (u.role or 'user')|lower %}
-                {% set plan_val = (u.plan or 'free')|lower %}
-                {% set plan_class = 'bg-surface-container-low text-on-surface-variant' %}
-                {% if plan_val == 'enterprise' %}
-                {% set plan_class = 'bg-primary-fixed text-on-primary-fixed' %}
-                {% elif plan_val == 'pro' %}
-                {% set plan_class = 'border border-primary text-primary bg-surface-container-lowest' %}
-                {% elif plan_val == 'basic' %}
-                {% set plan_class = 'bg-secondary-fixed text-on-secondary-fixed' %}
-                {% endif %}
-                <tr
-                  class="hover:bg-surface-container-lowest transition-colors"
-                  data-user-id="{{ u.id }}"
-                  data-role="{{ role_val }}"
-                  data-active="{{ '1' if u.is_active else '0' }}"
-                >
-                  <td class="p-4">
-                    <div class="flex items-center gap-3">
-                      <div
-                        class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container font-medium"
-                      >
-                        {{ (u.username or '?')[:1]|upper }}
+                    <td class="px-6 py-4">
+                      <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-sm">
+                          {{ (u.username or '?')[:1]|upper }}
+                        </div>
+                        <div>
+                          <div class="text-sm font-semibold text-gray-900">
+                            <a
+                              class="hover:text-primary"
+                              href="{{ url_for('users.user_detail_page', user_id=u.id) }}"
+                            >
+                              {{ u.username }}
+                            </a>
+                          </div>
+                          <div class="text-xs text-gray-500">{{ u.email or '-' }}</div>
+                        </div>
                       </div>
-                      <div>
-                        <p class="font-medium text-on-surface">
-                          <a
-                            class="hover:text-primary"
-                            href="{{ url_for('users.user_detail_page', user_id=u.id) }}"
-                          >
-                            {{ u.username }}
-                          </a>
-                        </p>
-                        <p class="text-sm text-on-surface-variant">
-                          {{ u.email or '-' }}
-                        </p>
-                      </div>
-                    </div>
-                  </td>
-                  <td class="p-4">
-                    <span
-                      class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ 'bg-primary-fixed text-on-primary-fixed' if role_val == 'admin' else 'bg-surface-container-high text-on-surface-variant' }}"
-                    >
-                      {{ (u.role or 'user')|upper }}
-                    </span>
-                  </td>
-                  <td class="p-4">
-                    <span
-                      class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ plan_class }}"
-                    >
-                      {{ plan_val|upper }}
-                    </span>
-                  </td>
-                  <td class="p-4">
-                    <span
-                      class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ 'bg-[#dcfce7] text-[#166534]' if u.is_active else 'bg-error-container text-on-error-container' }}"
-                    >
-                      {{ tx('Hoạt động', 'Active') if u.is_active else tx('Đã khóa', 'Locked') }}
-                    </span>
-                  </td>
-                  <td class="p-4 text-on-surface-variant">
-                    {{ u.created_at.strftime('%d/%m/%Y %H:%M') if u.created_at else '' }}
-                  </td>
-                  <td class="p-4">
-                    <form
-                      class="set-plan-form flex items-center gap-2"
-                      method="POST"
-                      action="{{ url_for('users.set_user_plan') }}"
-                      data-username="{{ u.username }}"
-                      data-userid="{{ u.id }}"
-                    >
-                      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-                      <input type="hidden" name="user_id" value="{{ u.id }}" />
-                      <select
-                        name="plan"
-                        class="border border-outline-variant rounded-md py-1 pl-2 pr-6 text-sm bg-white text-on-surface focus:ring-primary focus:border-primary"
-                        aria-label="{{ tx('Cấp gói', 'Set plan') }}"
+                    </td>
+                    <td class="px-6 py-4 text-center">
+                      <span class="inline-block px-3 py-1 bg-blue-100 text-blue-600 text-[10px] font-bold rounded-full uppercase">
+                        {{ (u.role or 'user')|upper }}
+                      </span>
+                    </td>
+                    <td class="px-6 py-4 text-center">
+                      <span
+                        class="inline-flex items-center gap-1.5 px-3 py-1 text-[11px] font-medium rounded-full {{ 'bg-green-50 text-green-600' if u.is_active else 'bg-red-50 text-red-600' }}"
                       >
-                        <option value="free" {{ 'selected' if plan_val == 'free' else '' }}>FREE</option>
-                        <option value="basic" {{ 'selected' if plan_val == 'basic' else '' }}>BASIC</option>
-                        <option value="pro" {{ 'selected' if plan_val == 'pro' else '' }}>PRO</option>
-                        <option value="enterprise" {{ 'selected' if plan_val == 'enterprise' else '' }}>ENTERPRISE</option>
-                      </select>
-                      <button
-                        type="submit"
-                        class="p-1 text-primary hover:bg-primary-fixed rounded transition-colors"
-                        title="{{ tx('Lưu', 'Save') }}"
+                        <span
+                          class="w-1.5 h-1.5 rounded-full {{ 'bg-green-500' if u.is_active else 'bg-red-500' }}"
+                        ></span>
+                        {{ 'Hoạt động' if u.is_active else 'Đã khóa' }}
+                      </span>
+                    </td>
+                    <td class="px-6 py-4 text-center text-sm text-gray-600">
+                      {{ u.created_at.strftime('%d/%m/%Y %H:%M') if u.created_at else '' }}
+                    </td>
+                    <td class="px-6 py-4 text-center">
+                      <form
+                        class="set-plan-form flex items-center justify-center gap-2"
+                        method="POST"
+                        action="{{ url_for('users.set_user_plan') }}"
+                        data-username="{{ u.username }}"
+                        data-userid="{{ u.id }}"
                       >
-                        <span class="material-symbols-outlined text-[20px]"
-                          >save</span
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                        <input type="hidden" name="user_id" value="{{ u.id }}" />
+                        <select
+                          name="plan"
+                          class="bg-white border border-gray-200 rounded-md py-1 px-2 text-[10px] font-bold uppercase focus:ring-primary"
+                          aria-label="Cấp gói"
                         >
-                      </button>
-                    </form>
-                  </td>
-                  <td class="p-4 text-right">
-                    <a
-                      class="text-primary hover:text-on-primary-fixed-variant font-label-sm text-label-sm"
-                      href="{{ url_for('users.user_detail_page', user_id=u.id) }}"
-                    >
-                      {{ tx('Chi tiết', 'Details') }}
-                    </a>
-                  </td>
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
-          {% else %}
-          <div class="p-gutter text-on-surface-variant">
-            {{ tx('Chưa có dữ liệu người dùng.', 'No user data yet.') }}
-          </div>
-          {% endif %}
+                          <option value="free" {{ 'selected' if plan_val == 'free' else '' }}>FREE</option>
+                          <option value="basic" {{ 'selected' if plan_val == 'basic' else '' }}>BASIC</option>
+                          <option value="pro" {{ 'selected' if plan_val == 'pro' else '' }}>PRO</option>
+                          <option value="enterprise" {{ 'selected' if plan_val == 'enterprise' else '' }}>ENTERPRISE</option>
+                        </select>
+                        <button class="text-blue-500 hover:text-blue-700" type="submit">
+                          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+                        </button>
+                      </form>
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                      <a
+                        class="text-xs font-bold text-blue-600 hover:text-blue-800 uppercase"
+                        href="{{ url_for('users.user_detail_page', user_id=u.id) }}"
+                      >
+                        Chi tiết
+                      </a>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+            <div
+              class="px-6 py-4 flex items-center justify-between border-t border-gray-100 bg-gray-50/50"
+              data-purpose="table-pagination"
+            >
+              <span class="text-xs text-gray-500">Hiển thị 1 - 10 trên {{ users|length }} người dùng</span>
+              <div class="flex items-center gap-1">
+                <button class="p-2 rounded border border-gray-200 text-gray-400 hover:bg-gray-100" disabled>
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M15 19l-7-7 7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+                </button>
+                <button class="w-8 h-8 rounded bg-primary text-white text-xs font-bold" type="button">1</button>
+                <button class="p-2 rounded border border-gray-200 text-gray-400 hover:bg-gray-100" disabled>
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+                </button>
+              </div>
+            </div>
+            {% else %}
+            <div class="p-6 text-gray-500">Chưa có dữ liệu người dùng.</div>
+            {% endif %}
+          </section>
         </div>
       </div>
     </main>
