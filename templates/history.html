@@ -206,6 +206,20 @@
           "opsz" 24;
       }
     </style>
+    <style>
+      /* Ensure rounded-custom and history grid tokens */
+      .rounded-custom {
+        border-radius: 4px;
+      }
+      .history-grid > * {
+        border: 1px solid rgba(226, 232, 240, 1); /* border-slate-100 */
+        box-shadow:
+          0 1px 2px rgba(15, 23, 42, 0.03),
+          0 6px 12px rgba(148, 163, 184, 0.06);
+        border-radius: 4px;
+        background-clip: padding-box;
+      }
+    </style>
   </head>
   <body
     class="bg-background text-on-background body-md body-md antialiased min-h-screen flex flex-col"
@@ -456,10 +470,10 @@
               </p>
             </div>
             <a
-              class="inline-flex items-center justify-center px-5 py-2.5 body-md font-medium rounded-lg shadow-sm text-white bg-primary hover:opacity-90 transition-colors"
+              class="bg-primary text-on-primary px-4 py-2 rounded-lg label-sm shadow-sm hover:shadow-md transition-all flex items-center gap-2"
               href="{{ url_for('predict.upload_page') }}"
             >
-              <span class="material-symbols-outlined text-[18px] mr-2"
+              <span class="material-symbols-outlined text-[18px]"
                 >add_a_photo</span
               >
               Nhận diện mới
@@ -468,11 +482,13 @@
         </section>
 
         {% if predictions and predictions|length > 0 %}
-        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+        <section
+          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 history-grid"
+        >
           {% for pred in predictions %} {% set conf_pct = ((pred.confidence or
           0) * 100) %}
           <article
-            class="soft-panel bg-white rounded-lg overflow-hidden flex flex-col"
+            class="soft-panel bg-white rounded-custom overflow-hidden flex flex-col border border-slate-100 shadow-sm"
           >
             <div class="relative h-48 w-full">
               <img
@@ -585,7 +601,9 @@
           </nav>
         </div>
         {% endif %} {% else %}
-        <section class="soft-panel bg-white rounded-xl p-6 text-slate-500">
+        <section
+          class="soft-panel bg-white rounded-custom p-6 text-slate-500 border border-slate-100 shadow-sm"
+        >
           <div class="flex items-center gap-2 mb-2">
             <span class="material-symbols-outlined">inbox</span>
             <h3 class="body-md font-semibold text-slate-900">
@@ -694,17 +712,19 @@
           <div
             class="flex flex-col md:flex-row justify-between items-center gap-4"
           >
-            <p class="label-sm label-sm text-on-surface-variant/70">
+            <p
+              class="label-sm label-sm text-on-surface-variant/70 dark:text-slate-400"
+            >
               Bản quyền © 2026 PetAI. Mọi quyền được bảo lưu
             </p>
             <div class="flex gap-6">
               <a
-                class="text-on-surface-variant/70 hover:text-primary transition-colors label-sm label-sm underline underline-offset-4"
+                class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm label-sm underline underline-offset-4"
                 href="#faq"
                 >ĐIỀU KHOẢN</a
               >
               <a
-                class="text-on-surface-variant/70 hover:text-primary transition-colors label-sm label-sm underline underline-offset-4"
+                class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm label-sm underline underline-offset-4"
                 href="#faq"
                 >BẢO MẬT</a
               >

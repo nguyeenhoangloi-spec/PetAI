@@ -198,6 +198,20 @@
       };
     </script>
     <style>
+      /* Ensure rounded-custom and panel styles available on this page */
+      .rounded-custom {
+        border-radius: 4px;
+      }
+      .confirm-panel {
+        border: 1px solid rgba(226, 232, 240, 1); /* approx border-slate-100 */
+        box-shadow:
+          0 1px 2px rgba(15, 23, 42, 0.03),
+          0 6px 12px rgba(148, 163, 184, 0.06);
+        background: #ffffff;
+        border-radius: 4px;
+      }
+    </style>
+    <style>
       .material-symbols-outlined {
         font-variation-settings:
           "FILL" 0,
@@ -611,7 +625,7 @@
                     </tr>
                   </thead>
                   <tbody class="divide-y divide-slate-100">
-                    <tr class="hover:bg-slate-50 transition-colors">
+                    <tr class="hover:bg-primary/5 transition-colors">
                       <td class="px-6 py-4 body-md font-medium text-slate-900">
                         a2a2fcf2b8f6
                       </td>
@@ -635,7 +649,7 @@
                         25/05/2026 20:48
                       </td>
                     </tr>
-                    <tr class="hover:bg-slate-50 transition-colors">
+                    <tr class="hover:bg-primary/5 transition-colors">
                       <td class="px-6 py-4 body-md font-medium text-slate-900">
                         d2f1a971c543
                       </td>
@@ -659,7 +673,7 @@
                         25/05/2026 20:42
                       </td>
                     </tr>
-                    <tr class="hover:bg-slate-50 transition-colors">
+                    <tr class="hover:bg-primary/5 transition-colors">
                       <td class="px-6 py-4 body-md font-medium text-slate-900">
                         02a343926e9b
                       </td>
@@ -683,7 +697,7 @@
                         25/05/2026 20:41
                       </td>
                     </tr>
-                    <tr class="hover:bg-slate-50 transition-colors">
+                    <tr class="hover:bg-primary/5 transition-colors">
                       <td class="px-6 py-4 body-md font-medium text-slate-900">
                         6599835ea9b0
                       </td>
@@ -769,7 +783,7 @@
                     {% if orders and orders|length > 0 %} {% for o in orders %}
                     {% set display_name = o.fullname or o.username or o.email or
                     'U' %}
-                    <tr class="hover:bg-slate-50 transition-colors">
+                    <tr class="hover:bg-primary/5 transition-colors">
                       <td class="px-6 py-4 body-md font-medium text-slate-900">
                         {{ o.order_id }}
                       </td>
@@ -836,16 +850,21 @@
                             name="order_id"
                             value="{{ o.order_id }}"
                           />
+                          <input
+                            type="hidden"
+                            name="page"
+                            value="{{ page or 1 }}"
+                          />
                           <button
                             type="submit"
-                            class="bg-primary hover:bg-blue-700 text-white px-4 py-2 rounded-custom body-md font-medium transition-colors"
+                            class="bg-primary text-on-primary px-4 py-2 rounded-lg label-sm shadow-sm hover:shadow-md transition-all"
                           >
                             Xác nhận
                           </button>
                         </form>
                         {% else %}
                         <button
-                          class="bg-slate-200 text-slate-500 px-4 py-2 rounded-custom body-md font-medium cursor-not-allowed"
+                          class="bg-slate-200 text-slate-500 px-4 py-2 rounded-lg label-sm cursor-not-allowed"
                           type="button"
                           disabled
                         >
@@ -865,6 +884,106 @@
                 </table>
               </div>
             </div>
+            {% if total_pages and total_pages > 1 %}
+            <div
+              class="px-6 py-4 border-t border-slate-100 flex items-center justify-between"
+            >
+              <p class="label-sm text-slate-500">
+                Hiển thị {{ orders|length }} / {{ total_orders }} đơn chờ xác
+                nhận
+              </p>
+              <div class="flex items-center gap-1">
+                {% if page > 1 %}
+                <a
+                  class="p-2 rounded border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container-low"
+                  href="{{ url_for('users.confirmations_list', page=page-1) }}"
+                  aria-label="Trang trước"
+                >
+                  <svg
+                    class="h-4 w-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewbox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M15 19l-7-7 7-7"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                    ></path>
+                  </svg>
+                </a>
+                {% else %}
+                <span
+                  class="p-2 rounded border border-outline-variant/30 text-on-surface-variant/50 cursor-not-allowed"
+                >
+                  <svg
+                    class="h-4 w-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewbox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M15 19l-7-7 7-7"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                    ></path>
+                  </svg>
+                </span>
+                {% endif %}
+
+                <span
+                  class="px-3 h-8 inline-flex items-center rounded bg-primary text-white label-sm font-bold"
+                  >{{ page }} / {{ total_pages }}</span
+                >
+
+                {% if page < total_pages %}
+                <a
+                  class="p-2 rounded border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container-low"
+                  href="{{ url_for('users.confirmations_list', page=page+1) }}"
+                  aria-label="Trang sau"
+                >
+                  <svg
+                    class="h-4 w-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewbox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M9 5l7 7-7 7"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                    ></path>
+                  </svg>
+                </a>
+                {% else %}
+                <span
+                  class="p-2 rounded border border-outline-variant/30 text-on-surface-variant/50 cursor-not-allowed"
+                >
+                  <svg
+                    class="h-4 w-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewbox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M9 5l7 7-7 7"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                    ></path>
+                  </svg>
+                </span>
+                {% endif %}
+              </div>
+            </div>
+            {% endif %}
           </section>
         </div>
       </div>
@@ -955,17 +1074,19 @@
           <div
             class="flex flex-col md:flex-row justify-between items-center gap-4"
           >
-            <p class="label-sm label-sm text-on-surface-variant/70">
+            <p
+              class="label-sm label-sm text-on-surface-variant/70 dark:text-slate-400"
+            >
               Bản quyền © 2026 PetAI. Mọi quyền được bảo lưu
             </p>
             <div class="flex gap-6">
               <a
-                class="text-on-surface-variant/70 hover:text-primary transition-colors label-sm label-sm underline underline-offset-4"
+                class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm label-sm underline underline-offset-4"
                 href="#faq"
                 >ĐIỀU KHOẢN</a
               >
               <a
-                class="text-on-surface-variant/70 hover:text-primary transition-colors label-sm label-sm underline underline-offset-4"
+                class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm label-sm underline underline-offset-4"
                 href="#faq"
                 >BẢO MẬT</a
               >
@@ -980,7 +1101,9 @@
       id="confirmModal"
       aria-hidden="true"
     >
-      <div class="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
+      <div
+        class="bg-white rounded-custom shadow-sm max-w-md w-full p-6 border border-slate-100"
+      >
         <h3 class="headline-md headline-md text-on-surface">
           Xác nhận duyệt đơn
         </h3>
@@ -993,7 +1116,7 @@
             type="button"
             id="modalCancel"
           >
-            Huá»·
+            Huỷ
           </button>
           <button
             class="px-4 py-2 rounded-lg bg-primary text-on-primary hover:opacity-90"
@@ -1056,6 +1179,34 @@
           });
         });
       })();
+    </script>
+    <script>
+      // Ensure pagination navigation doesn't leave sidebar scrolled out of view.
+      document.addEventListener("DOMContentLoaded", function () {
+        try {
+          var params = new URLSearchParams(window.location.search || "");
+          if (params.has("page")) {
+            if ("scrollRestoration" in history)
+              history.scrollRestoration = "manual";
+            var mainEl = document.querySelector("main");
+            if (mainEl) {
+              mainEl.setAttribute("tabindex", "-1");
+              mainEl.style.outline = "none";
+              mainEl.style.boxShadow = "none";
+              try {
+                mainEl.focus({ preventScroll: true });
+              } catch (e) {
+                try {
+                  mainEl.focus();
+                } catch (e) {}
+              }
+              mainEl.scrollIntoView({ behavior: "auto", block: "start" });
+            }
+          }
+        } catch (e) {
+          // ignore
+        }
+      });
     </script>
     <script src="{{ url_for('static', filename='js/toasts.js') }}"></script>
   </body>

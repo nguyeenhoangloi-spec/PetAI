@@ -206,9 +206,23 @@
           "opsz" 24;
       }
     </style>
+    <style>
+      /* Ensure rounded-custom is available and enforce dashboard grid token */
+      .rounded-custom {
+        border-radius: 4px;
+      }
+      .dashboard-grid > * {
+        border: 1px solid rgba(226, 232, 240, 1); /* border-slate-100 */
+        box-shadow:
+          0 1px 2px rgba(15, 23, 42, 0.03),
+          0 6px 12px rgba(148, 163, 184, 0.06); /* soft shadow-sm */
+        border-radius: 4px;
+        background-clip: padding-box;
+      }
+    </style>
   </head>
   <body
-    class="bg-background text-on-background body-md body-md antialiased min-h-screen flex flex-col"
+    class="bg-background text-on-background body-md antialiased min-h-screen flex flex-col"
   >
     {% include '_toasts.html' %} {% set display_role = session.get('role') or
     'Thanh vien' %} {% set display_plan = current_plan or 'free' %}
@@ -278,7 +292,7 @@
           >
           <div class="flex items-center gap-base">
             <a
-              aria-label="Cai dat"
+              aria-label="Cài đặt"
               class="p-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all"
               href="{{ url_for('settings.settings') }}"
             >
@@ -288,7 +302,7 @@
             </a>
             <div class="relative group cursor-pointer">
               <img
-                alt="Anh dai dien"
+                alt="Ảnh đại diện"
                 class="w-9 h-9 rounded-full border-2 border-primary/20 p-0.5"
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuABdf7zKSVKEqdGUUjqEkF9ftdFTrLW87Tb24r2IiZiv_JP0LrItrCxl23SH-gYj2Mqtkma0ak9DZbUtKM5nW747pmivDYGVbYhNr1PZbxbFuOrZdGJvnbhdSurFLfL3BcmhN2p1h9wv_6geT-x8eoTG1TDoLL40P8wDiaymvRT--SA4jYjU9A77WIji5FmOi99mPDXw7xS6dUyUNJYU2gHLk4-smzFrCuBbQbgtpATDvNo6hq3YR-cfSaNblImtCnDXIb8np7J4HA"
               />
@@ -339,7 +353,7 @@
           class="bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] py-sm px-2 flex flex-col gap-sm sticky top-24 border border-surface-container-highest/50"
         >
           <h3
-            class="label-sm label-sm text-on-surface-variant uppercase tracking-wider mb-xs px-1.5"
+            class="label-sm text-on-surface-variant uppercase tracking-wider mb-xs px-1.5"
           >
             Truy cập nhanh
           </h3>
@@ -354,9 +368,7 @@
               style="font-variation-settings: &quot;FILL&quot; 1"
               >upload_file</span
             >
-            <span class="label-sm label-sm font-semibold"
-              >Tải ảnh &amp; Phân tích</span
-            >
+            <span class="label-sm font-semibold">Tải ảnh &amp; Phân tích</span>
           </a>
           <a
             class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
@@ -367,7 +379,7 @@
               data-icon="history"
               >history</span
             >
-            <span class="label-sm label-sm">Lịch sử dự đoán</span>
+            <span class="label-sm">Lịch sử dự đoán</span>
           </a>
           {% if session.get('role') == 'user' %}
           <a
@@ -379,7 +391,7 @@
               data-icon="payments"
               >payments</span
             >
-            <span class="label-sm label-sm">Lịch sử thanh toán</span>
+            <span class="label-sm">Lịch sử thanh toán</span>
           </a>
           {% endif %}
           <a
@@ -391,7 +403,7 @@
               data-icon="bar_chart"
               >bar_chart</span
             >
-            <span class="label-sm label-sm">Thống kê cá nhân</span>
+            <span class="label-sm">Thống kê cá nhân</span>
           </a>
           <a
             class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
@@ -402,7 +414,7 @@
               data-icon="upgrade"
               >upgrade</span
             >
-            <span class="label-sm label-sm">Nâng cấp gói</span>
+            <span class="label-sm">Nâng cấp gói</span>
           </a>
           {% if session.get('role') == 'admin' %}
           <a
@@ -414,7 +426,7 @@
               data-icon="groups"
               >groups</span
             >
-            <span class="label-sm label-sm">Quản lý người dùng</span>
+            <span class="label-sm">Quản lý người dùng</span>
           </a>
           <a
             class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
@@ -425,7 +437,7 @@
               data-icon="receipt_long"
               >receipt_long</span
             >
-            <span class="label-sm label-sm">Duyệt đơn</span>
+            <span class="label-sm">Duyệt đơn</span>
           </a>
           {% endif %}
           <hr class="border-outline-variant/30 my-xs" />
@@ -438,7 +450,7 @@
               data-icon="settings"
               >settings</span
             >
-            <span class="label-sm label-sm">Cài đặt tài khoản</span>
+            <span class="label-sm">Cài đặt tài khoản</span>
           </a>
         </div>
       </aside>
@@ -477,9 +489,11 @@
           </div>
         </section>
 
-        <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+        <section
+          class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10 dashboard-grid"
+        >
           <div
-            class="soft-panel bg-surface-container-lowest rounded-xl p-6 flex flex-col gap-4"
+            class="soft-panel bg-surface-container-lowest rounded-custom p-6 flex flex-col gap-4 border border-slate-100 shadow-sm"
           >
             <div class="flex items-center justify-between">
               <span
@@ -500,7 +514,7 @@
             </div>
           </div>
           <div
-            class="soft-panel bg-surface-container-lowest rounded-xl p-6 flex flex-col gap-4"
+            class="soft-panel bg-surface-container-lowest rounded-custom p-6 flex flex-col gap-4 border border-slate-100 shadow-sm"
           >
             <div class="flex items-center justify-between">
               <span
@@ -520,7 +534,7 @@
             </div>
           </div>
           <a
-            class="group p-6 bg-primary rounded-xl flex flex-col justify-between text-white shadow-lg shadow-primary/20 hover:scale-[1.01] transition-transform"
+            class="group p-6 bg-primary rounded-custom flex flex-col justify-between text-white shadow-sm hover:shadow-md hover:scale-[1.01] transition-transform"
             href="{{ url_for('statistics.statistics') }}"
           >
             <div class="flex items-center justify-between">
@@ -577,10 +591,12 @@
             </a>
           </div>
           {% if recent_predictions and recent_predictions|length > 0 %}
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+          <div
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 dashboard-grid"
+          >
             {% for pred in recent_predictions %}
             <div
-              class="soft-panel bg-surface-container-lowest rounded-2xl overflow-hidden group hover:shadow-xl transition-all duration-300"
+              class="soft-panel bg-surface-container-lowest rounded-custom overflow-hidden group shadow-sm hover:shadow-md transition-all duration-300 border border-slate-100"
             >
               <div class="aspect-square relative overflow-hidden">
                 <img
@@ -656,7 +672,7 @@
             class="soft-panel bg-surface-container-lowest rounded-xl p-6 text-on-surface-variant"
           >
             Bạn chưa có lịch sử nhận diện nào. Hãy bắt đầu bằng cách tải ảnh
-            má»›i.
+            mới.
           </div>
           {% endif %}
         </section>
@@ -669,9 +685,7 @@
       <div class="max-w-container-max mx-auto">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-10">
           <div class="lg:col-span-6 space-y-6">
-            <div
-              class="headline-md headline-md font-bold tracking-tighter text-primary"
-            >
+            <div class="headline-md font-bold tracking-tighter text-primary">
               <span class="inline-flex items-center gap-0">
                 <img
                   alt="PetAI New Logo"
@@ -690,9 +704,7 @@
           </div>
           <div class="lg:col-span-6 grid grid-cols-2 md:grid-cols-2 gap-8">
             <div class="space-y-6">
-              <h4
-                class="label-sm label-sm text-primary uppercase tracking-widest"
-              >
+              <h4 class="label-sm text-primary uppercase tracking-widest">
                 Về PetAI
               </h4>
               <ul class="space-y-4">
@@ -720,9 +732,7 @@
               </ul>
             </div>
             <div class="space-y-6">
-              <h4
-                class="label-sm label-sm text-primary uppercase tracking-widest"
-              >
+              <h4 class="label-sm text-primary uppercase tracking-widest">
                 Kết nối
               </h4>
               <ul class="space-y-4">
@@ -748,17 +758,17 @@
           <div
             class="flex flex-col md:flex-row justify-between items-center gap-4"
           >
-            <p class="label-sm label-sm text-on-surface-variant/70">
+            <p class="label-sm text-on-surface-variant/70 dark:text-slate-400">
               Bản quyền © 2026 PetAI. Mọi quyền được bảo lưu
             </p>
             <div class="flex gap-6">
               <a
-                class="text-on-surface-variant/70 hover:text-primary transition-colors label-sm label-sm underline underline-offset-4"
+                class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
                 href="#faq"
                 >ĐIỀU KHOẢN</a
               >
               <a
-                class="text-on-surface-variant/70 hover:text-primary transition-colors label-sm label-sm underline underline-offset-4"
+                class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
                 href="#faq"
                 >BẢO MẬT</a
               >

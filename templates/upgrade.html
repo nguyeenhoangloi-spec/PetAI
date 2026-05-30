@@ -227,7 +227,7 @@
     </style>
   </head>
   <body
-    class="bg-background text-on-background body-md body-md antialiased min-h-screen flex flex-col"
+    class="bg-background text-on-background body-md antialiased min-h-screen flex flex-col"
   >
     {% include '_toasts.html' %} {% set display_role = session.get('role') or
     'user' %} {% set display_plan = current_plan or 'free' %}
@@ -298,7 +298,7 @@
           >
           <div class="flex items-center gap-base">
             <a
-              aria-label="Cai dat"
+              aria-label="Cài đặt"
               class="p-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all"
               href="{{ url_for('settings.settings') }}"
             >
@@ -308,7 +308,7 @@
             </a>
             <div class="relative group cursor-pointer">
               <img
-                alt="Anh dai dien"
+                alt="Ảnh đại diện"
                 class="w-9 h-9 rounded-full border-2 border-primary/20 p-0.5"
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuABdf7zKSVKEqdGUUjqEkF9ftdFTrLW87Tb24r2IiZiv_JP0LrItrCxl23SH-gYj2Mqtkma0ak9DZbUtKM5nW747pmivDYGVbYhNr1PZbxbFuOrZdGJvnbhdSurFLfL3BcmhN2p1h9wv_6geT-x8eoTG1TDoLL40P8wDiaymvRT--SA4jYjU9A77WIji5FmOi99mPDXw7xS6dUyUNJYU2gHLk4-smzFrCuBbQbgtpATDvNo6hq3YR-cfSaNblImtCnDXIb8np7J4HA"
               />
@@ -356,10 +356,10 @@
     >
       <aside class="col-span-1">
         <div
-          class="bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] py-sm px-2 flex flex-col gap-sm sticky top-24 border border-surface-container-highest/50"
+          class="bg-surface-container-lowest rounded-custom py-sm px-2 flex flex-col gap-sm sticky top-24 border border-slate-100 shadow-sm"
         >
           <h3
-            class="label-sm label-sm text-on-surface-variant uppercase tracking-wider mb-xs px-1.5"
+            class="label-sm text-on-surface-variant uppercase tracking-wider mb-xs px-1.5"
           >
             Truy cập nhanh
           </h3>
@@ -374,7 +374,7 @@
               style="font-variation-settings: &quot;FILL&quot; 1"
               >upload_file</span
             >
-            <span class="label-sm label-sm">Tải ảnh &amp; Phân tích</span>
+            <span class="label-sm">Tải ảnh &amp; Phân tích</span>
           </a>
           <a
             class="flex w-full items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
@@ -385,7 +385,7 @@
               data-icon="history"
               >history</span
             >
-            <span class="label-sm label-sm">Lịch sử dự đoán</span>
+            <span class="label-sm">Lịch sử dự đoán</span>
           </a>
           {% if session.get('role') == 'user' %}
           <a
@@ -397,7 +397,7 @@
               data-icon="payments"
               >payments</span
             >
-            <span class="label-sm label-sm">Lịch sử thanh toán</span>
+            <span class="label-sm">Lịch sử thanh toán</span>
           </a>
           {% endif %}
           <a
@@ -409,7 +409,7 @@
               data-icon="bar_chart"
               >bar_chart</span
             >
-            <span class="label-sm label-sm">Thống kê cá nhân</span>
+            <span class="label-sm">Thống kê cá nhân</span>
           </a>
           <span
             class="flex w-full items-center gap-sm py-1.5 px-2 rounded-lg text-primary bg-primary-fixed/50 transition-colors group cursor-default pointer-events-none"
@@ -420,7 +420,7 @@
               data-icon="upgrade"
               >upgrade</span
             >
-            <span class="label-sm label-sm font-semibold">Nâng cấp gói</span>
+            <span class="label-sm font-semibold">Nâng cấp gói</span>
           </span>
           {% if session.get('role') == 'admin' %}
           <a
@@ -432,7 +432,7 @@
               data-icon="groups"
               >groups</span
             >
-            <span class="label-sm label-sm">Quản lý người dùng</span>
+            <span class="label-sm">Quản lý người dùng</span>
           </a>
           <a
             class="flex w-full items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
@@ -443,7 +443,7 @@
               data-icon="receipt_long"
               >receipt_long</span
             >
-            <span class="label-sm label-sm">Duyệt đơn</span>
+            <span class="label-sm">Duyệt đơn</span>
           </a>
           {% endif %}
           <hr class="border-outline-variant/30 my-xs" />
@@ -456,7 +456,7 @@
               data-icon="settings"
               >settings</span
             >
-            <span class="label-sm label-sm">Cài đặt tài khoản</span>
+            <span class="label-sm">Cài đặt tài khoản</span>
           </a>
         </div>
       </aside>
@@ -465,24 +465,18 @@
         <style>
           .pricing-card {
             transition:
-              transform 0.2s ease-in-out,
-              box-shadow 0.2s ease-in-out;
-            border: 1px solid rgba(148, 163, 184, 0.16);
-            box-shadow:
-              0 1px 2px rgba(15, 23, 42, 0.04),
-              0 12px 30px rgba(148, 163, 184, 0.12);
+              transform 0.15s ease-in-out,
+              box-shadow 0.15s ease-in-out;
+            border: 1px solid rgba(226, 232, 240, 1); /* border-slate-100 */
+            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05); /* match shadow-sm */
           }
           .pricing-card:hover {
-            transform: translateY(-4px);
-            box-shadow:
-              0 2px 6px rgba(15, 23, 42, 0.06),
-              0 18px 40px rgba(148, 163, 184, 0.18);
+            transform: translateY(-3px);
+            box-shadow: 0 2px 6px rgba(15, 23, 42, 0.06);
           }
           .checkout-panel {
-            border: 1px solid rgba(148, 163, 184, 0.14);
-            box-shadow:
-              0 1px 2px rgba(15, 23, 42, 0.03),
-              0 10px 26px rgba(148, 163, 184, 0.1);
+            border: 1px solid rgba(226, 232, 240, 1); /* border-slate-100 */
+            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05); /* match shadow-sm */
           }
           .pro-highlight {
             border-color: rgba(25, 120, 229, 0.28);
@@ -504,7 +498,7 @@
             font-weight: 600;
           }
           .rounded-custom {
-            border-radius: 8px;
+            border-radius: 4px;
           }
         </style>
 
@@ -523,11 +517,11 @@
               </p>
             </div>
             <a
-              class="bg-primary hover:bg-blue-700 text-white px-4 py-2 rounded-lg label-sm font-medium flex items-center gap-2 transition-colors"
+              class="bg-primary text-on-primary px-4 py-2 rounded-lg label-sm shadow-sm hover:shadow-md transition-all flex items-center gap-2"
               href="#checkout"
             >
               <svg
-                class="w-5 h-5"
+                class="w-[18px] h-[18px]"
                 fill="none"
                 stroke="currentColor"
                 viewbox="0 0 24 24"
@@ -549,7 +543,7 @@
             data-purpose="pricing-grid"
           >
             <article
-              class="pricing-card bg-white p-5 rounded-custom flex flex-col justify-between"
+              class="pricing-card bg-white p-5 rounded-custom flex flex-col justify-between border border-slate-100 shadow-sm"
             >
               <div>
                 <div class="flex justify-between items-start mb-4">
@@ -630,7 +624,7 @@
                 </ul>
               </div>
               <button
-                class="w-full py-2.5 border border-slate-200 rounded-custom text-slate-400 font-medium cursor-not-allowed bg-slate-50"
+                class="w-full py-2.5 border border-slate-200 rounded-custom text-slate-400 label-sm font-medium cursor-not-allowed bg-slate-50"
                 disabled
                 type="button"
               >
@@ -639,7 +633,7 @@
             </article>
 
             <article
-              class="pricing-card bg-white p-5 rounded-custom flex flex-col justify-between"
+              class="pricing-card bg-white p-5 rounded-custom flex flex-col justify-between border border-slate-100 shadow-sm"
             >
               <div>
                 <div class="flex justify-between items-start mb-4">
@@ -720,7 +714,7 @@
                 </ul>
               </div>
               <button
-                class="w-full py-2.5 bg-blue-50 text-primary border border-blue-100 rounded-custom font-medium hover:bg-blue-100 transition-colors"
+                class="w-full py-2.5 bg-blue-50 text-primary border border-blue-100 rounded-custom label-sm font-medium hover:bg-blue-100 transition-colors"
                 type="button"
                 data-plan="basic"
               >
@@ -729,7 +723,7 @@
             </article>
 
             <article
-              class="pricing-card bg-white p-5 rounded-custom pro-highlight flex flex-col justify-between"
+              class="pricing-card bg-white p-5 rounded-custom pro-highlight flex flex-col justify-between border border-slate-100 shadow-sm"
             >
               <span class="badge-recommended">Khuyên dùng</span>
               <div>
@@ -811,7 +805,7 @@
                 </ul>
               </div>
               <button
-                class="w-full py-2.5 bg-primary text-white rounded-custom font-medium hover:bg-blue-700 transition-colors"
+                class="w-full py-2.5 bg-primary text-white rounded-custom label-sm font-medium hover:bg-blue-700 transition-colors"
                 type="button"
                 data-plan="pro"
               >
@@ -820,7 +814,7 @@
             </article>
 
             <article
-              class="pricing-card bg-white p-5 rounded-custom flex flex-col justify-between"
+              class="pricing-card bg-white p-5 rounded-custom flex flex-col justify-between border border-slate-100 shadow-sm"
             >
               <div>
                 <div class="flex justify-between items-start mb-4">
@@ -903,7 +897,7 @@
                 </ul>
               </div>
               <button
-                class="w-full py-2.5 bg-blue-50 text-primary border border-blue-100 rounded-custom font-medium hover:bg-blue-100 transition-colors"
+                class="w-full py-2.5 bg-blue-50 text-primary border border-blue-100 rounded-custom label-sm font-medium hover:bg-blue-100 transition-colors"
                 type="button"
                 data-plan="enterprise"
               >
@@ -914,7 +908,7 @@
 
           <section
             id="checkout"
-            class="checkout-panel bg-white rounded-custom p-8"
+            class="checkout-panel bg-white rounded-custom p-8 border border-slate-100 shadow-sm"
             data-purpose="checkout-section"
           >
             <div class="flex items-center gap-2 mb-6 text-primary">
@@ -955,7 +949,7 @@
                 >
                 <div class="relative">
                   <select
-                    class="block w-full appearance-none bg-slate-50 border border-slate-200 rounded-custom px-4 py-3 pr-10 text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent cursor-pointer"
+                    class="block w-full appearance-none bg-slate-50 border border-slate-200 rounded-custom px-4 py-3 pr-10 label-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent cursor-pointer"
                     id="plan"
                     name="plan"
                     required
@@ -994,14 +988,14 @@
                 class="flex flex-col md:flex-row justify-between items-center pt-6 gap-4 border-t border-slate-100"
               >
                 <a
-                  class="w-full md:w-auto px-6 py-2.5 border border-slate-200 rounded-custom font-medium text-slate-600 hover:bg-slate-50 transition-colors text-center"
+                  class="w-full md:w-auto px-6 py-2.5 border border-slate-100 rounded-custom label-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors text-center"
                   href="{{ url_for('predict.upload_page') }}"
                 >
                   Quay lại
                 </a>
                 <div class="flex flex-col items-end gap-2 w-full md:w-auto">
                   <button
-                    class="w-full md:w-auto bg-primary hover:bg-blue-700 text-white px-8 py-3 rounded-custom font-bold flex items-center justify-center gap-2 transition-all shadow-md"
+                    class="w-full md:w-auto bg-primary hover:bg-blue-700 text-white px-8 py-3 rounded-custom label-sm font-bold flex items-center justify-center gap-2 transition-all shadow-md"
                     type="submit"
                     id="payBtn"
                   >
@@ -1044,9 +1038,7 @@
       <div class="max-w-container-max mx-auto">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-10">
           <div class="lg:col-span-6 space-y-6">
-            <div
-              class="headline-md headline-md font-bold tracking-tighter text-primary"
-            >
+            <div class="headline-md font-bold tracking-tighter text-primary">
               <span class="inline-flex items-center gap-0">
                 <img
                   alt="PetAI New Logo"
@@ -1065,9 +1057,7 @@
           </div>
           <div class="lg:col-span-6 grid grid-cols-2 md:grid-cols-2 gap-8">
             <div class="space-y-6">
-              <h4
-                class="label-sm label-sm text-primary uppercase tracking-widest"
-              >
+              <h4 class="label-sm text-primary uppercase tracking-widest">
                 Về PetAI
               </h4>
               <ul class="space-y-4">
@@ -1095,9 +1085,7 @@
               </ul>
             </div>
             <div class="space-y-6">
-              <h4
-                class="label-sm label-sm text-primary uppercase tracking-widest"
-              >
+              <h4 class="label-sm text-primary uppercase tracking-widest">
                 Kết nối
               </h4>
               <ul class="space-y-4">
@@ -1123,17 +1111,17 @@
           <div
             class="flex flex-col md:flex-row justify-between items-center gap-4"
           >
-            <p class="label-sm label-sm text-on-surface-variant/70">
+            <p class="label-sm text-on-surface-variant/70 dark:text-slate-400">
               Bản quyền © 2026 PetAI. Mọi quyền được bảo lưu
             </p>
             <div class="flex gap-6">
               <a
-                class="text-on-surface-variant/70 hover:text-primary transition-colors label-sm label-sm underline underline-offset-4"
+                class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
                 href="#faq"
                 >ĐIỀU KHOẢN</a
               >
               <a
-                class="text-on-surface-variant/70 hover:text-primary transition-colors label-sm label-sm underline underline-offset-4"
+                class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
                 href="#faq"
                 >BẢO MẬT</a
               >

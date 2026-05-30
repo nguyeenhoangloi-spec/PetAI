@@ -253,7 +253,7 @@
           >
           <div class="flex items-center gap-base">
             <a
-              aria-label="Cai dat"
+              aria-label="Cài đặt"
               class="p-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all"
               href="{{ url_for('settings.settings') }}"
             >
@@ -263,7 +263,7 @@
             </a>
             <div class="relative group cursor-pointer">
               <img
-                alt="Anh dai dien"
+                alt="Ảnh đại diện"
                 class="w-9 h-9 rounded-full border-2 border-primary/20 p-0.5"
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuABdf7zKSVKEqdGUUjqEkF9ftdFTrLW87Tb24r2IiZiv_JP0LrItrCxl23SH-gYj2Mqtkma0ak9DZbUtKM5nW747pmivDYGVbYhNr1PZbxbFuOrZdGJvnbhdSurFLfL3BcmhN2p1h9wv_6geT-x8eoTG1TDoLL40P8wDiaymvRT--SA4jYjU9A77WIji5FmOi99mPDXw7xS6dUyUNJYU2gHLk4-smzFrCuBbQbgtpATDvNo6hq3YR-cfSaNblImtCnDXIb8np7J4HA"
               />
@@ -311,7 +311,7 @@
     >
       <aside class="col-span-1">
         <div
-          class="soft-panel bg-surface-container-lowest rounded-xl py-sm px-2 flex flex-col gap-sm sticky top-24"
+          class="soft-panel bg-surface-container-lowest rounded-custom py-sm px-2 flex flex-col gap-sm sticky top-24 border border-slate-100 shadow-sm"
         >
           <h3
             class="label-sm label-sm text-on-surface-variant uppercase tracking-wider mb-xs px-1.5"
@@ -409,7 +409,7 @@
 
       <div class="col-span-1 flex flex-col gap-gutter">
         <section
-          class="flex flex-col md:flex-row justify-between items-start md:items-center bg-surface-container-low p-margin rounded-xl border border-surface-container-highest/50 relative overflow-hidden"
+          class="flex flex-col md:flex-row justify-between items-start md:items-center bg-surface-container-low p-margin rounded-custom border border-slate-100 shadow-sm relative overflow-hidden"
         >
           <div
             class="absolute inset-0 bg-gradient-to-r from-transparent to-primary-fixed/20 pointer-events-none"
@@ -435,7 +435,7 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
           <article
-            class="soft-panel bg-surface-container-lowest rounded-xl p-md"
+            class="soft-panel bg-surface-container-lowest rounded-custom p-md border border-slate-100 shadow-sm"
           >
             <h2 class="headline-md headline-md text-on-surface mb-4">
               Thông tin tài khoản
@@ -477,7 +477,7 @@
           </article>
 
           <article
-            class="soft-panel bg-surface-container-lowest rounded-xl p-md"
+            class="soft-panel bg-surface-container-lowest rounded-custom p-md border border-slate-100 shadow-sm"
           >
             <h2 class="headline-md headline-md text-on-surface mb-4">
               Gói & hạn mức
@@ -524,7 +524,7 @@
               <select
                 name="plan"
                 aria-label="Chọn gói"
-                class="border border-outline-variant rounded-md py-1 pl-2 pr-6 body-md bg-white text-on-surface focus:ring-primary focus:border-primary"
+                class="border border-outline-variant rounded-lg py-2 pl-4 pr-8 label-sm bg-white text-on-surface focus:ring-primary focus:border-primary"
               >
                 <option value="free" {{ 'selected' if plan_val == 'free' else '' }}>FREE</option>
                 <option value="basic" {{ 'selected' if plan_val == 'basic' else '' }}>BASIC</option>
@@ -533,7 +533,7 @@
               </select>
               <button
                 type="submit"
-                class="px-3 py-1 rounded-md bg-primary text-on-primary body-md hover:opacity-90"
+                class="px-4 py-2 rounded-lg bg-primary text-on-primary label-sm shadow-sm hover:shadow-md transition-all"
               >
                 Cấp gói
               </button>
@@ -541,7 +541,7 @@
           </article>
 
           <article
-            class="soft-panel bg-surface-container-lowest rounded-xl p-md"
+            class="soft-panel bg-surface-container-lowest rounded-custom p-md border border-slate-100 shadow-sm"
           >
             <h2 class="headline-md headline-md text-on-surface mb-4">
               Vùng thao tác nhạy cảm
@@ -552,7 +552,7 @@
             <div class="mt-4 flex flex-col gap-3">
               <button
                 type="button"
-                class="px-3 py-2 rounded-md border border-outline-variant text-on-surface hover:bg-surface-container-low"
+                class="px-4 py-2 rounded-lg border border-outline-variant text-on-surface label-sm hover:bg-surface-container-low"
                 id="toggleUserBtn"
                 data-user-id="{{ user.id }}"
                 data-active="{{ '1' if user.is_active else '0' }}"
@@ -562,7 +562,7 @@
               </button>
               <button
                 type="button"
-                class="px-3 py-2 rounded-md bg-error text-on-error hover:opacity-90"
+                class="px-4 py-2 rounded-lg bg-error text-on-error label-sm shadow-sm hover:shadow-md transition-all"
                 id="deleteUserBtn"
                 data-user-id="{{ user.id }}"
                 data-username="{{ user.username }}"
@@ -654,17 +654,15 @@
           <div
             class="flex flex-col md:flex-row justify-between items-center gap-4"
           >
-            <p class="label-sm label-sm text-on-surface-variant/70">
-              Bản quyền © 2026 PetAI. Mọi quyền được bảo lưu
-            </p>
+            <p class="label-sm label-sm text-on-surface-variant/70 dark:text-slate-400">Bản quyền © 2026 PetAI. Mọi quyền được bảo lưu</p>
             <div class="flex gap-6">
               <a
-                class="text-on-surface-variant/70 hover:text-primary transition-colors label-sm label-sm underline underline-offset-4"
+                class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm label-sm underline underline-offset-4"
                 href="#faq"
                 >ĐIỀU KHOẢN</a
               >
               <a
-                class="text-on-surface-variant/70 hover:text-primary transition-colors label-sm label-sm underline underline-offset-4"
+                class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm label-sm underline underline-offset-4"
                 href="#faq"
                 >BẢO MẬT</a
               >
@@ -679,7 +677,7 @@
       id="confirmModal"
       aria-hidden="true"
     >
-      <div class="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
+      <div class="bg-white rounded-custom shadow-sm max-w-md w-full p-6 border border-slate-100">
         <h3 id="modalTitle" class="headline-md headline-md text-on-surface">
           Xác nhận
         </h3>
@@ -698,14 +696,14 @@
         </div>
         <div class="mt-6 flex items-center justify-end gap-3">
           <button
-            class="px-4 py-2 rounded-lg border border-outline-variant text-on-surface hover:bg-surface-container-low"
+            class="px-4 py-2 rounded-lg border border-outline-variant text-on-surface label-sm hover:bg-surface-container-low"
             type="button"
             id="modalCancel"
           >
-            Huá»·
+            Huỷ
           </button>
           <button
-            class="px-4 py-2 rounded-lg bg-primary text-on-primary hover:opacity-90"
+            class="px-4 py-2 rounded-lg bg-primary text-on-primary label-sm shadow-sm hover:shadow-md transition-all"
             type="button"
             id="modalOk"
           >

@@ -337,7 +337,7 @@
     >
       <aside class="col-span-1">
         <div
-          class="bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] py-sm px-2 flex flex-col gap-sm sticky top-24 border border-surface-container-highest/50"
+          class="bg-surface-container-lowest rounded-custom shadow-sm py-sm px-2 flex flex-col gap-sm sticky top-24 border border-slate-100"
         >
           <h3
             class="label-sm label-sm text-on-surface-variant uppercase tracking-wider mb-xs px-1.5"
@@ -460,7 +460,7 @@
             >
           </div>
           <div
-            class="relative z-10 w-full md:w-1/4 h-40 rounded-2xl overflow-hidden"
+            class="relative z-10 w-full md:w-1/4 h-40 rounded-custom overflow-hidden border border-slate-100 shadow-sm"
           >
             <img
               alt="Smart pet identification"
@@ -474,7 +474,7 @@
         <section class="grid grid-cols-1 xl:grid-cols-12 gap-6">
           <div class="xl:col-span-7 space-y-6">
             <article
-              class="bg-surface-container-lowest p-5 rounded-2xl shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-surface-container-highest/40"
+              class="bg-surface-container-lowest p-5 rounded-custom border border-slate-100 shadow-sm"
             >
               <div class="flex items-center gap-sm mb-6">
                 <span class="material-symbols-outlined text-primary"
@@ -525,7 +525,7 @@
             </article>
 
             <article
-              class="bg-surface-container-lowest p-5 rounded-2xl shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-surface-container-highest/40"
+              class="bg-surface-container-lowest p-5 rounded-custom border border-slate-100 shadow-sm"
             >
               <div class="flex items-center gap-sm mb-6">
                 <span class="material-symbols-outlined text-primary">info</span>
@@ -565,7 +565,9 @@
                   </p>
                 </li>
               </ol>
-              <div class="soft-panel bg-surface-container-low p-5 rounded-xl">
+              <div
+                class="soft-panel bg-surface-container-low p-5 rounded-custom border border-slate-100 shadow-sm"
+              >
                 <p
                   class="label-sm font-bold text-primary uppercase tracking-wider mb-4"
                 >
@@ -608,7 +610,7 @@
                   </div>
                   <div>
                     <p class="label-sm text-on-surface-variant mb-1">
-                      Ná»™i dung
+                      Nội dung
                     </p>
                     <p
                       class="font-semibold text-secondary flex items-center gap-2"
@@ -629,7 +631,7 @@
 
           <div class="xl:col-span-5 flex flex-col gap-6">
             <article
-              class="soft-panel bg-surface-container-lowest p-5 rounded-2xl flex flex-col items-center"
+              class="soft-panel bg-surface-container-lowest p-5 rounded-custom flex flex-col items-center border border-slate-100 shadow-sm"
             >
               <div class="w-full flex items-center gap-sm mb-6">
                 <span class="material-symbols-outlined text-primary"
@@ -641,7 +643,7 @@
               </div>
               {% if qr_available %}
               <div
-                class="soft-panel-strong p-5 bg-white rounded-2xl mb-6 w-full max-w-[320px]"
+                class="soft-panel-strong p-5 bg-white rounded-custom mb-6 w-full max-w-[320px] border border-slate-100 shadow-sm"
               >
                 <img
                   alt="Mã QR thanh toán"
@@ -651,7 +653,7 @@
               </div>
               {% else %}
               <div
-                class="soft-panel bg-surface-container-low w-full text-center text-on-surface-variant rounded-xl p-5 mb-6"
+                class="soft-panel bg-surface-container-low w-full text-center text-on-surface-variant rounded-custom p-5 mb-6 border border-slate-100 shadow-sm"
               >
                 Thiếu thư viện tạo QR. Cài thêm
                 <code>qrcode</code>
@@ -695,7 +697,7 @@
                   <input type="hidden" name="order_id" value="{{ order_id }}" />
                   <button
                     type="submit"
-                    class="w-full px-4 py-2 bg-primary text-on-primary rounded-xl font-semibold flex items-center justify-center gap-2 hover:opacity-90 transition-all active:scale-[0.98] shadow-lg shadow-primary/20"
+                    class="w-full px-4 py-2 bg-primary text-on-primary rounded-custom font-semibold flex items-center justify-center gap-2 hover:opacity-90 transition-all active:scale-[0.98] shadow-sm"
                     id="confirmTransferBtn"
                   >
                     <span class="material-symbols-outlined">check_circle</span>
@@ -705,7 +707,7 @@
                 {% else %}
                 <button
                   type="button"
-                  class="w-full px-4 py-2 bg-primary text-on-primary rounded-xl font-semibold flex items-center justify-center gap-2 transition-all active:scale-[0.98] shadow-lg shadow-primary/20 opacity-60 cursor-not-allowed"
+                  class="w-full px-4 py-2 bg-primary text-on-primary rounded-custom font-semibold flex items-center justify-center gap-2 transition-all active:scale-[0.98] shadow-sm opacity-60 cursor-not-allowed"
                   id="exitAfterPaidBtn"
                   disabled
                 >
@@ -920,17 +922,19 @@
           <div
             class="flex flex-col md:flex-row justify-between items-center gap-4"
           >
-            <p class="label-sm label-sm text-on-surface-variant/70">
+            <p
+              class="label-sm label-sm text-on-surface-variant/70 dark:text-slate-400"
+            >
               Bản quyền © 2026 PetAI. Mọi quyền được bảo lưu
             </p>
             <div class="flex gap-6">
               <a
-                class="text-on-surface-variant/70 hover:text-primary transition-colors label-sm label-sm underline underline-offset-4"
+                class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm label-sm underline underline-offset-4"
                 href="#faq"
                 >ĐIỀU KHOẢN</a
               >
               <a
-                class="text-on-surface-variant/70 hover:text-primary transition-colors label-sm label-sm underline underline-offset-4"
+                class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm label-sm underline underline-offset-4"
                 href="#faq"
                 >BẢO MẬT</a
               >

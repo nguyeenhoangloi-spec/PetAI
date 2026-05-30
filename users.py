@@ -53,9 +53,25 @@ def list_users():
 
     conn = None
     users = []
+    page_raw = (request.args.get("page") or "1").strip()
+    try:
+        page = max(int(page_raw), 1)
+    except Exception:
+        page = 1
+    per_page = 10
+    total_users = 0
+    total_pages = 0
     try:
         conn = get_connection()
         with conn.cursor(DictCursor) as cur:
+            cur.execute("SELECT COUNT(*) AS total FROM users")
+            row = cur.fetchone() or {}
+            total_users = int(row.get("total") or 0)
+            total_pages = (total_users + per_page - 1) // per_page
+            if total_pages > 0 and page > total_pages:
+                page = total_pages
+            offset = (page - 1) * per_page
+
             cur.execute(
                 """
                 SELECT u.id, u.username, u.fullname, u.email, u.role, u.is_active, u.created_at,
@@ -63,8 +79,10 @@ def list_users():
                 FROM users u
                 LEFT JOIN user_quota q ON q.user_id = u.id
                 ORDER BY created_at DESC
-                LIMIT 200
+                LIMIT %s OFFSET %s
                 """
+                ,
+                (per_page, offset),
             )
             users = cur.fetchall() or []
     except Exception:
@@ -74,7 +92,19 @@ def list_users():
         if conn:
             conn.close()
 
-    return render_template("users.html", users=users)
+    start_index = ((page - 1) * per_page + 1) if total_users > 0 else 0
+    end_index = min(page * per_page, total_users) if total_users > 0 else 0
+
+    return render_template(
+        "users.html",
+        users=users,
+        page=page,
+        per_page=per_page,
+        total_users=total_users,
+        total_pages=total_pages,
+        start_index=start_index,
+        end_index=end_index,
+    )
 
 
 @users_bp.route("/detail/<int:user_id>")
@@ -310,6 +340,12 @@ def confirmations_list():
 
     conn = None
     orders = []
+    page_raw = (request.args.get("page") or "1").strip()
+    try:
+        page = max(int(page_raw), 1)
+    except Exception:
+        page = 1
+    per_page = 10
     try:
         conn = get_connection()
         orders = PaymentOrder.list_all(conn, limit=200) or []
@@ -334,12 +370,24 @@ def confirmations_list():
 
     # Chỉ hiển thị đơn user đã bấm "Tôi đã chuyển tiền" (user_confirmed)
     orders = [o for o in orders if (o.get("status") or "").lower() == PaymentOrder.STATUS_USER_CONFIRMED]
+    total_orders = len(orders)
+    total_pages = (total_orders + per_page - 1) // per_page
+    if total_pages > 0 and page > total_pages:
+        page = total_pages
+    start_idx = (page - 1) * per_page
+    end_idx = start_idx + per_page
+    orders = orders[start_idx:end_idx]
+
     allow_manual_confirm = bool(current_app.config.get("ALLOW_MANUAL_TRANSFER_CONFIRM", True))
     auto_confirm_on_user = bool(current_app.config.get("AUTO_CONFIRM_ON_USER_CONFIRM", False))
 
     return render_template(
         "confirmations.html",
         orders=orders,
+        page=page,
+        per_page=per_page,
+        total_orders=total_orders,
+        total_pages=total_pages,
         total_paid_amount=total_paid_amount,
         total_paid_count=total_paid_count,
         latest_paid_at=latest_paid_at,
@@ -354,9 +402,14 @@ def confirm_payment():
     if not require_admin():
         return redirect(url_for("login.login"))
     order_id = (request.form.get("order_id") or "").strip()
+    page_raw = (request.form.get("page") or "1").strip()
+    try:
+        current_page = max(int(page_raw), 1)
+    except Exception:
+        current_page = 1
     if not order_id:
         flash("Thiếu mã đơn.", "error")
-        return redirect(url_for("users.confirmations_list"))
+        return redirect(url_for("users.confirmations_list", page=current_page))
     conn = None
     try:
         conn = get_connection()
@@ -387,7 +440,7 @@ def confirm_payment():
     finally:
         if conn:
             conn.close()
-    return redirect(url_for("users.confirmations_list"))
+    return redirect(url_for("users.confirmations_list", page=current_page))
 
 
 @users_bp.route("/set-plan", methods=["POST"])
@@ -397,6 +450,11 @@ def set_user_plan():
 
     user_id_raw = (request.form.get("user_id") or "").strip()
     plan = (request.form.get("plan") or "free").strip().lower()
+    page_raw = (request.form.get("page") or "").strip()
+    try:
+        current_page = max(int(page_raw), 1) if page_raw else None
+    except Exception:
+        current_page = None
     allowed_plans = {"free", "basic", "pro", "enterprise"}
     if plan not in allowed_plans:
         plan = "free"
@@ -405,6 +463,8 @@ def set_user_plan():
         user_id = int(user_id_raw)
     except Exception:
         flash("User ID không hợp lệ.", "error")
+        if current_page:
+            return redirect(url_for("users.list_users", page=current_page))
         return redirect(url_for("users.list_users"))
 
     conn = None
@@ -420,4 +480,6 @@ def set_user_plan():
         if conn:
             conn.close()
 
+    if current_page:
+        return redirect(url_for("users.list_users", page=current_page))
     return redirect(url_for("users.list_users"))
