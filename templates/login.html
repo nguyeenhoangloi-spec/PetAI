@@ -166,28 +166,33 @@
             },
             fontSize: {
               "headline-lg": [
-                "36px",
+                "30px",
                 {
-                  lineHeight: "44px",
-                  letterSpacing: "-0.01em",
+                  lineHeight: "40px",
                   fontWeight: "600",
                 },
               ],
-              "display-xl": [
-                "60px",
+              "headline-md": [
+                "20px",
                 {
-                  lineHeight: "72px",
-                  letterSpacing: "-0.02em",
-                  fontWeight: "700",
+                  lineHeight: "28px",
+                  fontWeight: "600",
                 },
               ],
-              "headline-md": [
-                "24px",
-                { lineHeight: "32px", fontWeight: "600" },
+              "body-md": [
+                "15px",
+                {
+                  lineHeight: "22px",
+                  fontWeight: "400",
+                },
               ],
-              "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
-              "label-sm": ["14px", { lineHeight: "20px", fontWeight: "500" }],
-              "body-lg": ["18px", { lineHeight: "28px", fontWeight: "400" }],
+              "label-sm": [
+                "12px",
+                {
+                  lineHeight: "16px",
+                  fontWeight: "500",
+                },
+              ],
             },
           },
         },
@@ -259,9 +264,7 @@
                   >analytics</span
                 >
                 <div>
-                  <h3 class="label-sm label-sm text-on-primary">
-                    Điểm tin cậy rõ ràng
-                  </h3>
+                  <h3 class="label-sm text-on-primary">Điểm tin cậy rõ ràng</h3>
                   <p class="body-md text-primary-fixed-dim">
                     Phân tích chi tiết từ AI
                   </p>
@@ -278,9 +281,7 @@
                   >history</span
                 >
                 <div>
-                  <h3 class="label-sm label-sm text-on-primary">
-                    Lịch sử quét
-                  </h3>
+                  <h3 class="label-sm text-on-primary">Lịch sử quét</h3>
                   <p class="body-md text-primary-fixed-dim">
                     Lưu lại các kết quả nhận diện
                   </p>
@@ -296,7 +297,7 @@
               class="h-8 w-auto"
               src="{{ url_for('static', filename='logo.png') }}"
             />
-            <span class="text-lg font-semibold text-primary">PetAI</span>
+            <span class="headline-md text-primary">PetAI</span>
           </div>
           <div class="w-full max-w-[400px] mx-auto flex flex-col gap-md">
             <div class="text-center mb-md">
@@ -318,11 +319,11 @@
                 value="{{ csrf_token() }}"
               />
               <div class="flex flex-col gap-xs">
-                <label class="label-sm label-sm text-on-surface" for="username"
+                <label class="label-sm text-on-surface" for="username"
                   >Tên đăng nhập hoặc email</label
                 >
                 <input
-                  class="w-full px-4 py-3 rounded border border-outline-variant bg-surface-container-lowest text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all body-md body-md"
+                  class="w-full px-4 py-3 rounded border border-outline-variant bg-surface-container-lowest text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all body-md"
                   id="username"
                   name="username"
                   placeholder="vd: username hoặc email@example.com"
@@ -337,20 +338,18 @@
               </div>
               <div class="flex flex-col gap-xs">
                 <div class="flex justify-between items-center">
-                  <label
-                    class="label-sm label-sm text-on-surface"
-                    for="password"
+                  <label class="label-sm text-on-surface" for="password"
                     >Mật khẩu</label
                   >
                   <a
-                    class="label-sm label-sm text-primary hover:text-primary-container transition-colors"
+                    class="label-sm text-primary hover:text-primary-container transition-colors"
                     href="{{ url_for('account.forgot') }}"
                     >Quên mật khẩu?</a
                   >
                 </div>
                 <div class="relative">
                   <input
-                    class="w-full px-4 py-3 pr-10 rounded border border-outline-variant bg-surface-container-lowest text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all body-md body-md"
+                    class="w-full px-4 py-3 pr-10 rounded border border-outline-variant bg-surface-container-lowest text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all body-md"
                     id="password"
                     name="password"
                     placeholder="Nhập mật khẩu"
@@ -384,13 +383,13 @@
                   type="checkbox"
                 />
                 <label
-                  class="ml-2 body-md body-md text-on-surface-variant"
+                  class="ml-2 body-md text-on-surface-variant"
                   for="remember"
                   >Ghi nhớ đăng nhập</label
                 >
               </div>
               <button
-                class="w-full py-3 px-4 bg-primary text-on-primary label-sm label-sm rounded hover:bg-primary-container hover:-translate-y-[1px] transition-all shadow-sm active:scale-95 flex items-center justify-center gap-xs"
+                class="w-full py-3 px-4 bg-primary text-on-primary label-sm rounded hover:bg-primary-container hover:-translate-y-[1px] transition-all shadow-sm active:scale-95 flex items-center justify-center gap-xs"
                 type="submit"
               >
                 Đăng nhập
@@ -403,14 +402,13 @@
             </form>
             <div class="relative flex items-center py-sm">
               <div class="flex-grow border-t border-outline-variant"></div>
-              <span
-                class="flex-shrink-0 mx-4 text-on-surface-variant body-md body-md body-md"
+              <span class="flex-shrink-0 mx-4 text-on-surface-variant body-md"
                 >hoặc tiếp tục với</span
               >
               <div class="flex-grow border-t border-outline-variant"></div>
             </div>
             <a
-              class="w-full py-3 px-4 bg-surface-container-lowest border border-outline-variant text-on-surface label-sm label-sm rounded hover:bg-surface-container hover:-translate-y-[1px] transition-all shadow-sm flex items-center justify-center gap-sm"
+              class="w-full py-3 px-4 bg-surface-container-lowest border border-outline-variant text-on-surface label-sm rounded hover:bg-surface-container hover:-translate-y-[1px] transition-all shadow-sm flex items-center justify-center gap-sm"
               href="{{ url_for('login_google') }}"
             >
               <img
@@ -421,12 +419,10 @@
               />
               Đăng nhập bằng Google
             </a>
-            <p
-              class="text-center body-md body-md text-on-surface-variant mt-sm"
-            >
+            <p class="text-center body-md text-on-surface-variant mt-sm">
               Chưa có tài khoản?
               <a
-                class="label-sm label-sm text-primary hover:text-primary-container transition-colors"
+                class="label-sm text-primary hover:text-primary-container transition-colors"
                 href="{{ url_for('register.register') }}"
                 >Đăng ký ngay</a
               >
@@ -441,16 +437,14 @@
       <div class="max-w-container-max mx-auto">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-10">
           <div class="lg:col-span-6 space-y-6">
-            <div
-              class="headline-md headline-md font-bold tracking-tighter text-primary"
-            >
+            <div class="headline-md tracking-tighter text-primary">
               <span class="inline-flex items-center gap-0">
                 <img
                   alt="PetAI New Logo"
                   class="h-8 w-auto md:h-10"
                   src="{{ url_for('static', filename='logo.png') }}"
                 />
-                <span class="ml-0 text-sm md:text-lg font-semibold">PetAI</span>
+                <span class="ml-0 headline-md">PetAI</span>
               </span>
             </div>
             <p class="body-md text-on-surface-variant max-w-sm">
@@ -460,9 +454,7 @@
           </div>
           <div class="lg:col-span-6 grid grid-cols-2 md:grid-cols-2 gap-8">
             <div class="space-y-6">
-              <h4
-                class="label-sm label-sm text-primary uppercase tracking-widest"
-              >
+              <h4 class="label-sm text-primary uppercase tracking-widest">
                 Về PetAI
               </h4>
               <ul class="space-y-4">
@@ -490,9 +482,7 @@
               </ul>
             </div>
             <div class="space-y-6">
-              <h4
-                class="label-sm label-sm text-primary uppercase tracking-widest"
-              >
+              <h4 class="label-sm text-primary uppercase tracking-widest">
                 Kết nối
               </h4>
               <ul class="space-y-4">
@@ -518,19 +508,17 @@
           <div
             class="flex flex-col md:flex-row justify-between items-center gap-4"
           >
-            <p
-              class="label-sm label-sm text-on-surface-variant/70 dark:text-slate-400"
-            >
+            <p class="label-sm text-on-surface-variant/70 dark:text-slate-400">
               Bản quyền © 2026 PetAI. Mọi quyền được bảo lưu
             </p>
             <div class="flex gap-6">
               <a
-                class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm label-sm underline underline-offset-4"
+                class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
                 href="#faq"
                 >ĐIỀU KHOẢN</a
               >
               <a
-                class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm label-sm underline underline-offset-4"
+                class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
                 href="#faq"
                 >BẢO MẬT</a
               >
