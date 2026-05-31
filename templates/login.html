@@ -214,10 +214,10 @@
     {% include '_toasts.html' %}
     <main class="flex-grow flex items-center justify-center p-md lg:p-margin">
       <div
-        class="max-w-[1280px] w-full mx-auto grid grid-cols-1 lg:grid-cols-2 gap-md bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] overflow-hidden min-h-[700px]"
+        class="max-w-[1280px] w-full mx-auto grid grid-cols-1 lg:grid-cols-2 gap-md bg-surface-container-lowest rounded border border-slate-100 shadow-sm overflow-hidden min-h-[700px]"
       >
         <section
-          class="hidden lg:flex flex-col relative rounded-l-xl overflow-hidden bg-surface-container"
+          class="hidden lg:flex flex-col relative rounded-l overflow-hidden bg-surface-container"
         >
           <div class="absolute inset-0 z-0">
             <img
@@ -242,7 +242,9 @@
                   style="font-variation-settings: &quot;FILL&quot; 1"
                   >pets</span
                 >
-                <span class="headline-md text-on-primary">PetAI</span>
+                <span class="text-sm md:text-lg font-semibold text-on-primary"
+                  >PetAI</span
+                >
               </div>
               <h1 class="headline-lg mb-sm">
                 Nhận diện giống chó nhanh và chính xác
@@ -294,10 +296,12 @@
           <div class="lg:hidden flex items-center justify-center gap-xs mb-lg">
             <img
               alt="PetAI New Logo"
-              class="h-8 w-auto"
+              class="h-8 w-auto md:h-10"
               src="{{ url_for('static', filename='logo.png') }}"
             />
-            <span class="headline-md text-primary">PetAI</span>
+            <span class="text-sm md:text-lg font-semibold text-primary"
+              >PetAI</span
+            >
           </div>
           <div class="w-full max-w-[400px] mx-auto flex flex-col gap-md">
             <div class="text-center mb-md">
@@ -437,14 +441,16 @@
       <div class="max-w-container-max mx-auto">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-10">
           <div class="lg:col-span-6 space-y-6">
-            <div class="headline-md tracking-tighter text-primary">
+            <div class="headline-md font-bold tracking-tighter text-primary">
               <span class="inline-flex items-center gap-0">
                 <img
                   alt="PetAI New Logo"
                   class="h-8 w-auto md:h-10"
                   src="{{ url_for('static', filename='logo.png') }}"
                 />
-                <span class="ml-0 headline-md">PetAI</span>
+                <span class="ml-0 text-sm md:text-lg font-semibold text-primary"
+                  >PetAI</span
+                >
               </span>
             </div>
             <p class="body-md text-on-surface-variant max-w-sm">

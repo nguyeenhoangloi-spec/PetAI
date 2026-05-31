@@ -11,6 +11,14 @@
       href="{{ url_for('static', filename='css/typography.css') }}"
     />
     <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/theme-dark.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/mobile-header-fix.css') }}"
+    />
+    <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap"
       rel="stylesheet"
     />
@@ -41,6 +49,13 @@
       .glass-card:hover {
         background: #f1f3fc;
         box-shadow: none;
+      }
+      .home-hero-title {
+        font-family: "Inter", sans-serif;
+        font-size: clamp(44px, 6vw, 72px);
+        line-height: 1.05;
+        letter-spacing: -0.04em;
+        font-weight: 700;
       }
       .material-symbols-outlined {
         font-variation-settings:
@@ -82,37 +97,68 @@
       /* Mobile fixes: reduce oversized hero text and large desktop paddings
          to avoid horizontal overflow on narrow Android viewports. */
 
-      /* Force dashboard-like full-width layout on every viewport.
-         This prevents old container tokens from keeping the landing page centered. */
+      /* Header/footer keep the dashboard shell: w-full px-4 md:px-6.
+         Only main content sections use a larger visual gutter. */
+      :root {
+        --content-gutter: 16px;
+      }
+
+      @media (min-width: 768px) {
+        :root {
+          --content-gutter: 24px;
+        }
+      }
+
+      @media (min-width: 1280px) {
+        :root {
+          --content-gutter: 64px;
+        }
+      }
+
       .dashboard-width nav > div,
-      .dashboard-width main > section,
-      .dashboard-width footer,
-      .dashboard-width footer > div {
+      .dashboard-width footer {
         width: 100% !important;
         max-width: none !important;
         margin-left: 0 !important;
         margin-right: 0 !important;
-      }
-      .dashboard-width nav > div,
-      .dashboard-width main > section,
-      .dashboard-width footer {
         padding-left: 1rem !important;
         padding-right: 1rem !important;
+        box-sizing: border-box;
       }
+
+      @media (min-width: 768px) {
+        .dashboard-width nav > div,
+        .dashboard-width footer {
+          padding-left: 1.5rem !important;
+          padding-right: 1.5rem !important;
+        }
+      }
+
+      .dashboard-width footer > .footer-inner {
+        width: 100% !important;
+        max-width: none !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+      }
+
+      .dashboard-width main > section {
+        width: 100% !important;
+        max-width: none !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        padding-left: var(--content-gutter) !important;
+        padding-right: var(--content-gutter) !important;
+        box-sizing: border-box;
+      }
+
       .dashboard-width main > section > .grid,
       .dashboard-width main > section > .glass-card,
       .dashboard-width main > section > .spotlight-panel,
       .dashboard-width main > section > div:not(.aura-glow) {
         width: 100% !important;
         max-width: none !important;
-      }
-      @media (min-width: 768px) {
-        .dashboard-width nav > div,
-        .dashboard-width main > section,
-        .dashboard-width footer {
-          padding-left: 1.5rem !important;
-          padding-right: 1.5rem !important;
-        }
       }
 
       @media (max-width: 640px) {
@@ -304,12 +350,6 @@
           gap: 16px !important;
           flex-wrap: wrap !important;
         }
-        footer .inline-flex.items-center.gap-0 img {
-          height: 28px !important;
-        }
-        footer .inline-flex.items-center.gap-0 span {
-          font-size: 14px !important;
-        }
         footer .label-sm.underline {
           font-size: 11px !important;
         }
@@ -443,21 +483,17 @@
     ></div>
     <!-- TopNavBar -->
     <nav
-      class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-md border-b border-outline-variant/30"
+      class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-md border-b border-outline-variant/30 font-['Inter'] antialiased nav-reduce-height"
     >
-      <div
-        class="flex justify-between items-center px-4 md:px-6 py-base w-full h-16"
-      >
-        <div
-          class="headline-md headline-md font-bold tracking-tighter text-primary"
-        >
+      <div class="flex justify-between items-center w-full px-4 md:px-6 h-16">
+        <div class="flex items-center gap-gutter">
           <span class="inline-flex items-center gap-0">
             <img
               alt="PetAI New Logo"
-              class="w-auto h-14 md:h-24"
+              class="w-auto h-10 md:h-24"
               src="{{ url_for('static', filename='logo.png') }}"
             />
-            <span class="ml-0 text-xl md:text-3xl font-bold text-primary"
+            <span class="ml-0 text-lg md:text-2xl font-semibold text-primary"
               >PetAI</span
             >
           </span>
@@ -507,9 +543,7 @@
               class="inline-block label-sm label-sm text-primary mb-6 tracking-[0.2em]"
               >ĐỀ TÀI: NHẬN DIỆN GIỐNG CHÓ</span
             >
-            <h1
-              class="font-display-lg text-display-lg leading-tight mb-8 text-on-surface"
-            >
+            <h1 class="home-hero-title mb-8 text-on-surface">
               NHẬN DIỆN <br />
               <span
                 class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary"
@@ -2051,9 +2085,9 @@
       </section>
     </main>
     <footer
-      class="bg-surface-container-low border-t border-outline-variant/30 px-4 md:px-6 pt-6 pb-4"
+      class="w-full bg-surface-container-low border-t border-outline-variant/30 px-4 md:px-6 pt-6 pb-4"
     >
-      <div class="footer-inner w-full">
+      <div class="footer-inner w-full max-w-none mx-0">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-10">
           <div class="lg:col-span-6 space-y-6">
             <div
