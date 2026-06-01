@@ -122,6 +122,28 @@
       .scan-line {
         animation: scan 2s linear infinite;
       }
+      .cta-edge-fade::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          90deg,
+          rgba(249, 249, 255, 1) 0%,
+          rgba(249, 249, 255, 0.55) 18%,
+          rgba(249, 249, 255, 0.2) 30%,
+          rgba(249, 249, 255, 0) 40%,
+          rgba(249, 249, 255, 0) 60%,
+          rgba(249, 249, 255, 0.2) 70%,
+          rgba(249, 249, 255, 0.55) 82%,
+          rgba(249, 249, 255, 1) 100%
+        );
+        pointer-events: none;
+        z-index: 1;
+      }
+      .cta-edge-fade > * {
+        position: relative;
+        z-index: 2;
+      }
       /* Mobile fixes: reduce oversized hero text and large desktop paddings
          to avoid horizontal overflow on narrow Android viewports. */
 
@@ -179,6 +201,16 @@
         padding-left: var(--content-gutter) !important;
         padding-right: var(--content-gutter) !important;
         box-sizing: border-box;
+      }
+
+      .dashboard-width main > section#cta-final {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+      }
+
+      .dashboard-width #cta-final .glass-card {
+        border-radius: 0 !important;
+        padding: 0 !important;
       }
 
       .dashboard-width main > section > .grid,
@@ -338,6 +370,36 @@
           padding: 20px !important;
           border-radius: 28px !important;
         }
+        /* Intensify CTA edge fade on mobile so edges feel stronger */
+        section#cta-final .cta-edge-fade::before {
+          background: linear-gradient(
+            90deg,
+            rgba(249, 249, 255, 1) 0%,
+            rgba(249, 249, 255, 0.85) 10%,
+            rgba(249, 249, 255, 0.45) 25%,
+            rgba(249, 249, 255, 0) 45%,
+            rgba(249, 249, 255, 0) 55%,
+            rgba(249, 249, 255, 0.45) 75%,
+            rgba(249, 249, 255, 0.85) 90%,
+            rgba(249, 249, 255, 1) 100%
+          );
+          z-index: 50 !important;
+          pointer-events: none;
+        }
+        /* dark theme mobile variant */
+        .dark section#cta-final .cta-edge-fade::before {
+          background: linear-gradient(
+            90deg,
+            rgba(17, 24, 39, 0.98) 0%,
+            rgba(17, 24, 39, 0.85) 10%,
+            rgba(17, 24, 39, 0.45) 25%,
+            rgba(17, 24, 39, 0) 45%,
+            rgba(17, 24, 39, 0) 55%,
+            rgba(17, 24, 39, 0.45) 75%,
+            rgba(17, 24, 39, 0.85) 90%,
+            rgba(17, 24, 39, 0.98) 100%
+          );
+        }
         section#cta-final h2 {
           margin-bottom: 8px !important;
         }
@@ -349,37 +411,6 @@
           height: 240px !important;
           top: -120px !important;
           right: -120px !important;
-        }
-        footer {
-          padding-top: 24px !important;
-          padding-bottom: 20px !important;
-        }
-        footer .footer-inner > .grid {
-          gap: 24px !important;
-          margin-bottom: 24px !important;
-        }
-        footer .lg\:col-span-6 {
-          grid-column: auto !important;
-        }
-        footer p,
-        footer a {
-          font-size: 13px !important;
-          line-height: 20px !important;
-        }
-        footer .grid.grid-cols-2.md\:grid-cols-2 {
-          grid-template-columns: 1fr !important;
-          gap: 24px !important;
-        }
-        footer .flex.flex-col.md\:flex-row {
-          align-items: flex-start !important;
-          gap: 12px !important;
-        }
-        footer .flex.gap-6 {
-          gap: 16px !important;
-          flex-wrap: wrap !important;
-        }
-        footer .label-sm.underline {
-          font-size: 11px !important;
         }
       }
     </style>
@@ -1135,7 +1166,7 @@
         </div>
       </section>
       <!-- Marquee Section -->
-      <section class="py-12 overflow-hidden relative">
+      <section class="py-1 overflow-hidden relative">
         <style>
           @keyframes marquee {
             0% {
@@ -1181,13 +1212,9 @@
             color: #005ab4;
           }
         </style>
-        <div class="flex items-center gap-8 px-4 md:px-6 mb-6">
-          <span
-            class="label-sm label-sm text-on-surface-variant/70 flex items-center gap-2 whitespace-nowrap"
-          >
-            CÁC LOẠI GIỐNG CHÓ
-            <span class="material-symbols-outlined text-sm">chevron_right</span>
-          </span>
+        <div
+          class="flex flex-col items-center md:flex-row md:items-center gap-4 md:gap-8 px-4 md:px-6 mb-6"
+        >
           <div class="marquee-container flex-grow overflow-hidden">
             <div class="marquee-track">
               <div class="flex items-center gap-4 px-4">
@@ -2069,15 +2096,21 @@
         </div>
       </section>
       <!-- CTA Section -->
-      <section class="px-4 md:px-6 w-full py-16" id="cta-final">
+      <section class="px-0 w-full py-16" id="cta-final">
         <div
-          class="glass-card bg-surface-container-low rounded-[40px] relative overflow-hidden border-outline-variant/20 p-10"
+          class="glass-card bg-surface-container-low rounded-none relative overflow-hidden border-outline-variant/20 w-full cta-edge-fade"
         >
           <div
             class="absolute -top-32 -right-32 w-96 h-96 bg-primary/5 blur-[120px] rounded-full pointer-events-none"
           ></div>
           <div
-            class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10"
+            class="absolute -top-32 -left-32 w-96 h-96 bg-primary/5 blur-[120px] rounded-full pointer-events-none"
+          ></div>
+          <div
+            class="absolute top-1/2 -translate-y-1/2 -left-40 w-[420px] h-[420px] bg-primary/5 blur-[140px] rounded-full pointer-events-none"
+          ></div>
+          <div
+            class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10 max-w-container-max mx-auto px-6 md:px-10 py-10"
           >
             <div>
               <h2
@@ -2112,14 +2145,12 @@
       </section>
     </main>
     <footer
-      class="w-full bg-surface-container-low border-t border-outline-variant/30 px-4 md:px-6 pt-6 pb-4"
+      class="bg-surface-container-low border-t border-outline-variant/30 px-4 md:px-6 pt-6 pb-4"
     >
-      <div class="footer-inner w-full max-w-none mx-0">
+      <div class="footer-inner max-w-container-max mx-auto">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-10">
           <div class="lg:col-span-6 space-y-6">
-            <div
-              class="headline-md headline-md font-bold tracking-tighter text-primary"
-            >
+            <div class="headline-md font-bold tracking-tighter text-primary">
               <span class="inline-flex items-center gap-0">
                 <img
                   alt="PetAI New Logo"
@@ -2138,9 +2169,7 @@
           </div>
           <div class="lg:col-span-6 grid grid-cols-2 md:grid-cols-2 gap-8">
             <div class="space-y-6">
-              <h4
-                class="label-sm label-sm text-primary uppercase tracking-widest"
-              >
+              <h4 class="label-sm text-primary uppercase tracking-widest">
                 Về PetAI
               </h4>
               <ul class="space-y-4">
@@ -2168,9 +2197,7 @@
               </ul>
             </div>
             <div class="space-y-6">
-              <h4
-                class="label-sm label-sm text-primary uppercase tracking-widest"
-              >
+              <h4 class="label-sm text-primary uppercase tracking-widest">
                 Kết nối
               </h4>
               <ul class="space-y-4">
@@ -2196,19 +2223,17 @@
           <div
             class="flex flex-col md:flex-row justify-between items-center gap-4"
           >
-            <p
-              class="label-sm label-sm text-on-surface-variant/70 dark:text-slate-400"
-            >
+            <p class="label-sm text-on-surface-variant/70 dark:text-slate-400">
               Bản quyền © 2026 PetAI. Mọi quyền được bảo lưu
             </p>
             <div class="flex gap-6">
               <a
-                class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm label-sm underline underline-offset-4"
+                class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
                 href="#faq"
                 >ĐIỀU KHOẢN</a
               >
               <a
-                class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm label-sm underline underline-offset-4"
+                class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
                 href="#faq"
                 >BẢO MẬT</a
               >
