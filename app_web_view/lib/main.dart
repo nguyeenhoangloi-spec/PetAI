@@ -201,9 +201,24 @@ class _WebViewScreenState extends State<WebViewScreen> {
   /// Chặn các điều hướng không hợp lệ
   NavigationDecision _handleNavigation(NavigationRequest request) {
     final url = request.url;
+    final uri = Uri.tryParse(url);
+
+    bool isGoogleAuthHost(String host) {
+      return host == 'accounts.google.com' ||
+          host.endsWith('.google.com') ||
+          host.endsWith('.googleusercontent.com') ||
+          host.endsWith('.gstatic.com');
+    }
 
     // ✅ Cho phép các URL chứa callback hoặc token đi qua bình thường
     if (url.contains('callback') || url.contains('token=')) {
+      return NavigationDecision.navigate;
+    }
+
+    // Cho phép luồng đăng nhập Google đi qua trong WebView trên mobile.
+    // Nếu chặn ở đây, APK sẽ mở được trang login ban đầu nhưng bị dừng ngay
+    // khi Google chuyển sang accounts.google.com.
+    if (uri != null && uri.hasAuthority && isGoogleAuthHost(uri.host)) {
       return NavigationDecision.navigate;
     }
 

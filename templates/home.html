@@ -370,35 +370,37 @@
           padding: 20px !important;
           border-radius: 28px !important;
         }
-        /* Intensify CTA edge fade on mobile so edges feel stronger */
+        /* Make CTA edges less opaque on mobile so CTA reads clearer */
         section#cta-final .cta-edge-fade::before {
           background: linear-gradient(
             90deg,
             rgba(249, 249, 255, 1) 0%,
-            rgba(249, 249, 255, 0.85) 10%,
-            rgba(249, 249, 255, 0.45) 25%,
+            rgba(249, 249, 255, 0.55) 10%,
+            rgba(249, 249, 255, 0.28) 25%,
             rgba(249, 249, 255, 0) 45%,
             rgba(249, 249, 255, 0) 55%,
-            rgba(249, 249, 255, 0.45) 75%,
-            rgba(249, 249, 255, 0.85) 90%,
+            rgba(249, 249, 255, 0.28) 75%,
+            rgba(249, 249, 255, 0.55) 90%,
             rgba(249, 249, 255, 1) 100%
           );
-          z-index: 50 !important;
+          z-index: 1 !important;
           pointer-events: none;
         }
-        /* dark theme mobile variant */
+        /* dark theme mobile variant: reduce opacity so CTA text sits above fade */
         .dark section#cta-final .cta-edge-fade::before {
           background: linear-gradient(
             90deg,
             rgba(17, 24, 39, 0.98) 0%,
-            rgba(17, 24, 39, 0.85) 10%,
-            rgba(17, 24, 39, 0.45) 25%,
+            rgba(17, 24, 39, 0.6) 10%,
+            rgba(17, 24, 39, 0.3) 25%,
             rgba(17, 24, 39, 0) 45%,
             rgba(17, 24, 39, 0) 55%,
-            rgba(17, 24, 39, 0.45) 75%,
-            rgba(17, 24, 39, 0.85) 90%,
+            rgba(17, 24, 39, 0.3) 75%,
+            rgba(17, 24, 39, 0.6) 90%,
             rgba(17, 24, 39, 0.98) 100%
           );
+          z-index: 1 !important;
+          pointer-events: none;
         }
         section#cta-final h2 {
           margin-bottom: 8px !important;
