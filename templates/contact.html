@@ -1,0 +1,1142 @@
+<!doctype html>
+
+<html class="light" lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Liên hệ | PetAI</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/typography.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/theme-dark.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/mobile-header-fix.css') }}"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        background-color: #f9f9ff;
+        color: #181c22;
+        overflow-x: hidden;
+      }
+      .aura-glow {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(120px);
+        z-index: 0;
+        opacity: 0.1;
+        pointer-events: none;
+      }
+      .glass-card {
+        background: #ffffff;
+        border: none;
+        box-shadow: none;
+        transition: all 0.3s ease;
+      }
+      .glass-card:hover {
+        background: #f1f3fc;
+        box-shadow: none;
+      }
+      .rounded-custom {
+        border-radius: 8px;
+      }
+      .home-rounded main a.rounded-xl,
+      .home-rounded main a.rounded-lg,
+      .home-rounded main a.rounded-full,
+      .home-rounded main button.rounded-xl,
+      .home-rounded main button.rounded-lg,
+      .home-rounded main button.rounded-full,
+      .home-rounded main .spotlight-tab,
+      .home-rounded main .breed-tag,
+      .home-rounded main .ai-chip,
+      .home-rounded nav a.rounded-full,
+      .home-rounded nav a.rounded-lg {
+        border-radius: 8px !important;
+      }
+      .home-rounded main .glass-card,
+      .home-rounded main div.rounded-2xl,
+      .home-rounded main div.rounded-3xl,
+      .home-rounded main div.rounded-xl,
+      .home-rounded main div.rounded-lg,
+      .home-rounded main div.rounded-\[40px\],
+      .home-rounded main div.rounded-\[36px\],
+      .home-rounded main div.rounded-\[28px\],
+      .home-rounded main div.rounded-t-xl,
+      .home-rounded main div.rounded-b-xl {
+        border-radius: 4px !important;
+      }
+      .home-hero-title {
+        font-family: "Inter", sans-serif;
+        font-size: clamp(44px, 6vw, 72px);
+        line-height: 1.05;
+        letter-spacing: -0.04em;
+        font-weight: 700;
+      }
+      .material-symbols-outlined {
+        font-variation-settings:
+          "FILL" 0,
+          "wght" 400,
+          "GRAD" 0,
+          "opsz" 24;
+      }
+      @keyframes float {
+        0% {
+          transform: translateY(0px);
+        }
+        50% {
+          transform: translateY(-20px);
+        }
+        100% {
+          transform: translateY(0px);
+        }
+      }
+      .floating-shape {
+        animation: float 6s ease-in-out infinite;
+      }
+      @keyframes scan {
+        0% {
+          top: 0%;
+          opacity: 0;
+        }
+        50% {
+          opacity: 1;
+        }
+        100% {
+          top: 100%;
+          opacity: 0;
+        }
+      }
+      .scan-line {
+        animation: scan 2s linear infinite;
+      }
+      .cta-edge-fade::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          90deg,
+          rgba(249, 249, 255, 1) 0%,
+          rgba(249, 249, 255, 0.55) 18%,
+          rgba(249, 249, 255, 0.2) 30%,
+          rgba(249, 249, 255, 0) 40%,
+          rgba(249, 249, 255, 0) 60%,
+          rgba(249, 249, 255, 0.2) 70%,
+          rgba(249, 249, 255, 0.55) 82%,
+          rgba(249, 249, 255, 1) 100%
+        );
+        pointer-events: none;
+        z-index: 1;
+      }
+      .cta-edge-fade > * {
+        position: relative;
+        z-index: 2;
+      }
+      /* Mobile fixes: reduce oversized hero text and large desktop paddings
+         to avoid horizontal overflow on narrow Android viewports. */
+
+      /* Header/footer keep the dashboard shell: w-full px-4 md:px-6.
+         Only main content sections use a larger visual gutter. */
+      :root {
+        --content-gutter: 28px;
+      }
+
+      @media (min-width: 768px) {
+        :root {
+          --content-gutter: 36px;
+        }
+      }
+
+      @media (min-width: 1280px) {
+        :root {
+          --content-gutter: 96px;
+        }
+      }
+
+      .dashboard-width nav > div,
+      .dashboard-width footer {
+        width: 100% !important;
+        max-width: none !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+        box-sizing: border-box;
+      }
+
+      @media (min-width: 768px) {
+        .dashboard-width nav > div,
+        .dashboard-width footer {
+          padding-left: 1.5rem !important;
+          padding-right: 1.5rem !important;
+        }
+      }
+
+      .dashboard-width footer > .footer-inner {
+        width: 100% !important;
+        max-width: none !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+      }
+
+      .dashboard-width main > section {
+        width: 100% !important;
+        max-width: none !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        padding-left: var(--content-gutter) !important;
+        padding-right: var(--content-gutter) !important;
+        box-sizing: border-box;
+      }
+
+      .dashboard-width main > section#cta-final {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+      }
+
+      .dashboard-width #cta-final .glass-card {
+        border-radius: 0 !important;
+        padding: 0 !important;
+      }
+
+      .dashboard-width main > section > .grid,
+      .dashboard-width main > section > .glass-card,
+      .dashboard-width main > section > .spotlight-panel,
+      .dashboard-width main > section > div:not(.aura-glow) {
+        width: 100% !important;
+        max-width: none !important;
+      }
+
+      @media (max-width: 640px) {
+        .text-display-lg {
+          font-size: 30px !important;
+          line-height: 36px !important;
+        }
+        /* Shrink large decorative glows that caused overflow */
+        .aura-glow.w-\[600px\],
+        .aura-glow.w-\[500px\] {
+          width: 300px !important;
+          height: 300px !important;
+        }
+        .aura-glow {
+          display: none !important;
+        }
+        /* Reduce the large horizontal padding used for desktop */
+        .px-margin-desktop {
+          padding-left: 16px !important;
+          padding-right: 16px !important;
+        }
+        section#product,
+        section#spotlight,
+        section#social-proof,
+        section#faq,
+        section#cta-final {
+          padding-top: 24px !important;
+          padding-bottom: 24px !important;
+        }
+        section#product {
+          margin-bottom: 24px !important;
+        }
+        /* Make hero floating shape a bit smaller on phones */
+        .floating-shape img,
+        .floating-shape {
+          max-width: 280px;
+        }
+        /* Header/nav mobile adjustments to prevent overflow */
+        nav > div {
+          height: 52px !important;
+          padding-left: 12px !important;
+          padding-right: 12px !important;
+        }
+        nav img.h-16 {
+          height: 34px !important;
+        }
+        /* Reduce register button size on phones */
+        nav a.bg-primary {
+          padding-left: 12px !important;
+          padding-right: 12px !important;
+          padding-top: 6px !important;
+          padding-bottom: 6px !important;
+          font-size: 14px !important;
+        }
+        /* Reduce spacing around header links */
+        nav .flex.items-center.gap-6 {
+          gap: 8px !important;
+        }
+        /* Ensure fixed header doesn't overlap content: reduce main top padding on small screens */
+        main.relative.z-10.pt-20 {
+          padding-top: 60px !important;
+        }
+        section#product > .grid {
+          gap: 20px !important;
+        }
+        section#product > .grid > .relative.flex.justify-center.items-center {
+          display: none !important;
+        }
+        section#product h1,
+        section#cta-final h2 {
+          font-size: 30px !important;
+          line-height: 36px !important;
+          margin-bottom: 12px !important;
+        }
+        section#product p,
+        section#cta-final p {
+          margin-bottom: 14px !important;
+          font-size: 14px !important;
+          line-height: 21px !important;
+        }
+        section#product .flex.flex-wrap.gap-6,
+        section#cta-final .flex.flex-wrap.gap-6 {
+          gap: 12px !important;
+        }
+        section#product .flex.flex-wrap.gap-6 > a,
+        section#cta-final .flex.flex-wrap.gap-6 > a {
+          width: 100% !important;
+          justify-content: center !important;
+          text-align: center !important;
+        }
+        section#product .mt-24 {
+          margin-top: 28px !important;
+        }
+        section#product .mt-24 .flex.flex-col.md\:flex-row {
+          gap: 12px !important;
+        }
+        section#product .mt-24 .w-full.md\:w-72 {
+          padding: 16px !important;
+        }
+        section#product .mt-24 .font-display-lg.headline-lg {
+          font-size: 28px !important;
+          line-height: 32px !important;
+        }
+        section#product .mt-24 .text-3xl {
+          font-size: 24px !important;
+          line-height: 28px !important;
+        }
+        section#spotlight .glass-card.rounded-\[40px\] {
+          padding: 20px !important;
+          min-height: auto !important;
+        }
+        section#spotlight .spotlight-panel {
+          gap: 20px !important;
+        }
+        section#spotlight .spotlight-panel h3 {
+          font-size: 24px !important;
+          line-height: 32px !important;
+        }
+        section#spotlight .spotlight-panel ul {
+          gap: 12px !important;
+        }
+        section#spotlight .spotlight-panel .bg-surface-container-low {
+          padding: 20px !important;
+        }
+        section#spotlight .flex.justify-center.mb-12 > div {
+          overflow-x: auto;
+          max-width: 100%;
+        }
+        section#spotlight .spotlight-tab {
+          white-space: nowrap;
+        }
+        section#social-proof .glass-card {
+          padding: 16px !important;
+          border-radius: 20px !important;
+        }
+        section#social-proof .font-display-lg {
+          font-size: 32px !important;
+          line-height: 36px !important;
+        }
+        section#faq details {
+          padding: 16px !important;
+          border-radius: 18px !important;
+        }
+        section#faq summary {
+          font-size: 18px !important;
+          line-height: 26px !important;
+        }
+        section#cta-final .glass-card {
+          padding: 20px !important;
+          border-radius: 28px !important;
+        }
+        /* Make CTA edges less opaque on mobile so CTA reads clearer */
+        section#cta-final .cta-edge-fade::before {
+          background: linear-gradient(
+            90deg,
+            rgba(249, 249, 255, 1) 0%,
+            rgba(249, 249, 255, 0.55) 10%,
+            rgba(249, 249, 255, 0.28) 25%,
+            rgba(249, 249, 255, 0) 45%,
+            rgba(249, 249, 255, 0) 55%,
+            rgba(249, 249, 255, 0.28) 75%,
+            rgba(249, 249, 255, 0.55) 90%,
+            rgba(249, 249, 255, 1) 100%
+          );
+          z-index: 1 !important;
+          pointer-events: none;
+        }
+        /* dark theme mobile variant: reduce opacity so CTA text sits above fade */
+        .dark section#cta-final .cta-edge-fade::before {
+          background: linear-gradient(
+            90deg,
+            rgba(17, 24, 39, 0.98) 0%,
+            rgba(17, 24, 39, 0.6) 10%,
+            rgba(17, 24, 39, 0.3) 25%,
+            rgba(17, 24, 39, 0) 45%,
+            rgba(17, 24, 39, 0) 55%,
+            rgba(17, 24, 39, 0.3) 75%,
+            rgba(17, 24, 39, 0.6) 90%,
+            rgba(17, 24, 39, 0.98) 100%
+          );
+          z-index: 1 !important;
+          pointer-events: none;
+        }
+        section#cta-final h2 {
+          margin-bottom: 8px !important;
+        }
+        section#cta-final .space-y-10 {
+          gap: 16px !important;
+        }
+        section#cta-final .absolute.-top-32.-right-32 {
+          width: 240px !important;
+          height: 240px !important;
+          top: -120px !important;
+          right: -120px !important;
+        }
+      }
+    </style>
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-secondary": "#ffffff",
+              "tertiary-container": "#bd5700",
+              "tertiary-fixed": "#ffdbc9",
+              "error-container": "#ffdad6",
+              "secondary-container": "#b6d0ff",
+              "outline-variant": "#c1c6d5",
+              "on-tertiary-container": "#fffbff",
+              "on-secondary-fixed": "#001b3d",
+              "secondary-fixed": "#d6e3ff",
+              "on-secondary-container": "#3f5881",
+              "on-primary-fixed": "#001b3e",
+              "surface-tint": "#005db8",
+              "primary-container": "#0a73e0",
+              "on-primary": "#ffffff",
+              "on-surface-variant": "#414753",
+              "surface-container-highest": "#e0e2eb",
+              "surface-bright": "#f9f9ff",
+              "surface-container-high": "#e6e8f1",
+              "on-tertiary-fixed-variant": "#763400",
+              "on-primary-fixed-variant": "#00458d",
+              "primary-fixed-dim": "#aac7ff",
+              "on-error": "#ffffff",
+              "primary-fixed": "#d6e3ff",
+              "on-tertiary-fixed": "#321200",
+              error: "#ba1a1a",
+              "on-error-container": "#93000a",
+              "inverse-on-surface": "#eef0fa",
+              background: "#f9f9ff",
+              "tertiary-fixed-dim": "#ffb68c",
+              "surface-variant": "#e0e2eb",
+              "surface-dim": "#d7dae3",
+              "on-background": "#181c22",
+              outline: "#717785",
+              tertiary: "#964400",
+              "inverse-surface": "#2d3037",
+              "on-surface": "#181c22",
+              "on-primary-container": "#fefcff",
+              "surface-container-lowest": "#ffffff",
+              "secondary-fixed-dim": "#aec7f7",
+              "surface-container": "#ebedf7",
+              secondary: "#465f88",
+              "on-secondary-fixed-variant": "#2d476f",
+              "inverse-primary": "#aac7ff",
+              primary: "#005ab4",
+              "on-tertiary": "#ffffff",
+              "surface-container-low": "#f1f3fc",
+              surface: "#f9f9ff",
+            },
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px",
+            },
+            spacing: {
+              xl: "32px",
+              md: "16px",
+              gutter: "16px",
+              xs: "4px",
+              base: "8px",
+              sm: "8px",
+              margin: "24px",
+              lg: "24px",
+              "margin-desktop": "64px",
+              "margin-mobile": "20px",
+              "bento-gap": "16px",
+              "container-max": "1280px",
+            },
+            fontFamily: {
+              "headline-md": ["Inter"],
+              "body-lg": ["Inter"],
+              "body-md": ["Inter"],
+              "label-md": ["Inter"],
+              "headline-lg": ["Inter"],
+              "label-caps": ["JetBrains Mono"],
+              "code-sm": ["JetBrains Mono"],
+            },
+            fontSize: {
+              "headline-md": [
+                "24px",
+                { lineHeight: "32px", fontWeight: "600" },
+              ],
+              "body-lg": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+              "body-md": ["14px", { lineHeight: "20px", fontWeight: "400" }],
+              "label-md": ["12px", { lineHeight: "16px", fontWeight: "500" }],
+              "headline-lg": [
+                "32px",
+                { lineHeight: "40px", fontWeight: "700" },
+              ],
+              "display-lg": [
+                "72px",
+                {
+                  lineHeight: "80px",
+                  letterSpacing: "-0.04em",
+                  fontWeight: "700",
+                },
+              ],
+              "label-caps": [
+                "12px",
+                {
+                  lineHeight: "16px",
+                  letterSpacing: "0.1em",
+                  fontWeight: "500",
+                },
+              ],
+              "code-sm": ["14px", { lineHeight: "20px", fontWeight: "400" }],
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+  <body
+    class="dashboard-width body-md text-on-surface selection:bg-primary/20 home-rounded"
+  >
+    <!-- Auras -->
+    <div
+      class="aura-glow bg-primary-container w-[600px] h-[600px] -top-48 -left-48"
+    ></div>
+    <div
+      class="aura-glow bg-secondary-container w-[500px] h-[500px] top-1/2 -right-24"
+    ></div>
+    <!-- TopNavBar -->
+    <nav
+      class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-md border-b border-outline-variant/30 font-['Inter'] antialiased nav-reduce-height"
+    >
+      <div class="flex justify-between items-center w-full px-4 md:px-6 h-16">
+        <div class="flex items-center gap-gutter">
+          <a href="{{ url_for('home.index') }}" class="inline-flex items-center gap-0">
+            <img
+              alt="PetAI New Logo"
+              class="w-auto h-10 md:h-24"
+              src="{{ url_for('static', filename='logo.png') }}"
+            />
+            <span class="ml-0 text-lg md:text-2xl font-semibold text-primary"
+              >PetAI</span
+            >
+          </a>
+        </div>
+        {% if not session.get('user_id') %}
+        <div class="hidden md:flex items-center gap-10">
+          <a class="body-md text-primary font-semibold" href="/#product"
+            >Sản phẩm</a
+          >
+          <a
+            class="body-md text-on-surface-variant hover:text-primary transition-colors duration-300"
+            href="/#features"
+            >Tính năng</a
+          >
+          <a
+            class="body-md text-on-surface-variant hover:text-primary transition-colors duration-300"
+            href="/#pricing"
+            >Bảng giá</a
+          >
+          <a
+            class="body-md text-on-surface-variant hover:text-primary transition-colors duration-300"
+            href="/#social-proof"
+            >Giới thiệu</a
+          >
+        </div>
+        {% endif %}
+        {% if session.get('user_id') %}
+        <div class="flex items-center gap-6">
+          <a
+            class="body-md text-on-surface-variant hover:text-primary transition-colors duration-300 font-semibold"
+            href="{{ url_for('dashboard.dashboard') }}"
+            >Bảng điều khiển</a
+          >
+          <div class="flex items-center gap-base">
+            <a
+              aria-label="Cài đặt"
+              class="p-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all"
+              href="{{ url_for('settings.settings') }}"
+            >
+              <span class="material-symbols-outlined" data-icon="settings"
+                >settings</span
+              >
+            </a>
+            <div class="relative group cursor-pointer">
+              <a href="{{ url_for('dashboard.dashboard') }}">
+                <img
+                alt="Ảnh đại diện"
+                class="w-9 h-9 rounded-full border-2 border-primary/20 p-0.5"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuABdf7zKSVKEqdGUUjqEkF9ftdFTrLW87Tb24r2IiZiv_JP0LrItrCxl23SH-gYj2Mqtkma0ak9DZbUtKM5nW747pmivDYGVbYhNr1PZbxbFuOrZdGJvnbhdSurFLfL3BcmhN2p1h9wv_6geT-x8eoTG1TDoLL40P8wDiaymvRT--SA4jYjU9A77WIji5FmOi99mPDXw7xS6dUyUNJYU2gHLk4-smzFrCuBbQbgtpATDvNo6hq3YR-cfSaNblImtCnDXIb8np7J4HA"
+              />
+              </a>
+              <div
+                class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white dark:border-slate-900 rounded-full"
+              ></div>
+              <div
+                class="absolute right-0 top-full w-52 bg-white dark:bg-slate-900 rounded-lg shadow-xl border border-slate-200 dark:border-slate-800 py-2 hidden group-hover:block z-50 text-left text-on-surface"
+              >
+                <div class="px-4 pb-2">
+                  <div class="label-sm text-slate-500 dark:text-slate-400">
+                    Vai trò:
+                    <span
+                      class="font-semibold text-slate-800 dark:text-slate-200"
+                      >{{ (session.get('role') or 'USER')|upper }}</span
+                    >
+                  </div>
+                  <div class="label-sm text-slate-500 dark:text-slate-400">
+                    Gói:
+                    <span
+                      class="font-semibold text-slate-800 dark:text-slate-200"
+                      >{{ (current_plan or 'FREE')|upper }}</span
+                    >
+                  </div>
+                </div>
+                <div class="h-px bg-slate-200 dark:bg-slate-800 my-1"></div>
+                <a
+                  class="flex items-center gap-2 px-4 py-2 body-md text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors font-semibold"
+                  href="{{ url_for('logout.logout') }}"
+                >
+                  <span class="material-symbols-outlined text-[18px]"
+                    >logout</span
+                  >
+                  Đăng xuất
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% else %}
+        {% if session.get('user_id') %}
+        <div class="flex items-center gap-6">
+          <a
+            class="body-md text-on-surface-variant hover:text-primary transition-colors duration-300 font-semibold"
+            href="{{ url_for('dashboard.dashboard') }}"
+            >Bảng điều khiển</a
+          >
+          <div class="flex items-center gap-base">
+            <a
+              aria-label="Cài đặt"
+              class="p-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all"
+              href="{{ url_for('settings.settings') }}"
+            >
+              <span class="material-symbols-outlined" data-icon="settings"
+                >settings</span
+              >
+            </a>
+            <div class="relative group cursor-pointer">
+              <a href="{{ url_for('dashboard.dashboard') }}">
+                <img
+                alt="Ảnh đại diện"
+                class="w-9 h-9 rounded-full border-2 border-primary/20 p-0.5"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuABdf7zKSVKEqdGUUjqEkF9ftdFTrLW87Tb24r2IiZiv_JP0LrItrCxl23SH-gYj2Mqtkma0ak9DZbUtKM5nW747pmivDYGVbYhNr1PZbxbFuOrZdGJvnbhdSurFLfL3BcmhN2p1h9wv_6geT-x8eoTG1TDoLL40P8wDiaymvRT--SA4jYjU9A77WIji5FmOi99mPDXw7xS6dUyUNJYU2gHLk4-smzFrCuBbQbgtpATDvNo6hq3YR-cfSaNblImtCnDXIb8np7J4HA"
+              />
+              </a>
+              <div
+                class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white dark:border-slate-900 rounded-full"
+              ></div>
+              <div
+                class="absolute right-0 top-full w-52 bg-white dark:bg-slate-900 rounded-lg shadow-xl border border-slate-200 dark:border-slate-800 py-2 hidden group-hover:block z-50 text-left text-on-surface"
+              >
+                <div class="px-4 pb-2">
+                  <div class="label-sm text-slate-500 dark:text-slate-400">
+                    Vai trò:
+                    <span
+                      class="font-semibold text-slate-800 dark:text-slate-200"
+                      >{{ (session.get('role') or 'USER')|upper }}</span
+                    >
+                  </div>
+                  <div class="label-sm text-slate-500 dark:text-slate-400">
+                    Gói:
+                    <span
+                      class="font-semibold text-slate-800 dark:text-slate-200"
+                      >{{ (current_plan or 'FREE')|upper }}</span
+                    >
+                  </div>
+                </div>
+                <div class="h-px bg-slate-200 dark:bg-slate-800 my-1"></div>
+                <a
+                  class="flex items-center gap-2 px-4 py-2 body-md text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors font-semibold"
+                  href="{{ url_for('logout.logout') }}"
+                >
+                  <span class="material-symbols-outlined text-[18px]"
+                    >logout</span
+                  >
+                  Đăng xuất
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% else %}
+        {% if session.get('user_id') %}
+        <div class="flex items-center gap-6">
+          <a
+            class="body-md text-on-surface-variant hover:text-primary transition-colors duration-300 font-semibold"
+            href="{{ url_for('dashboard.dashboard') }}"
+            >Bảng điều khiển</a
+          >
+          <div class="flex items-center gap-base">
+            <a
+              aria-label="Cài đặt"
+              class="p-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all"
+              href="{{ url_for('settings.settings') }}"
+            >
+              <span class="material-symbols-outlined" data-icon="settings"
+                >settings</span
+              >
+            </a>
+            <div class="relative group cursor-pointer">
+              <a href="{{ url_for('dashboard.dashboard') }}">
+                <img
+                alt="Ảnh đại diện"
+                class="w-9 h-9 rounded-full border-2 border-primary/20 p-0.5"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuABdf7zKSVKEqdGUUjqEkF9ftdFTrLW87Tb24r2IiZiv_JP0LrItrCxl23SH-gYj2Mqtkma0ak9DZbUtKM5nW747pmivDYGVbYhNr1PZbxbFuOrZdGJvnbhdSurFLfL3BcmhN2p1h9wv_6geT-x8eoTG1TDoLL40P8wDiaymvRT--SA4jYjU9A77WIji5FmOi99mPDXw7xS6dUyUNJYU2gHLk4-smzFrCuBbQbgtpATDvNo6hq3YR-cfSaNblImtCnDXIb8np7J4HA"
+              />
+              </a>
+              <div
+                class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white dark:border-slate-900 rounded-full"
+              ></div>
+              <div
+                class="absolute right-0 top-full w-52 bg-white dark:bg-slate-900 rounded-lg shadow-xl border border-slate-200 dark:border-slate-800 py-2 hidden group-hover:block z-50 text-left text-on-surface"
+              >
+                <div class="px-4 pb-2">
+                  <div class="label-sm text-slate-500 dark:text-slate-400">
+                    Vai trò:
+                    <span
+                      class="font-semibold text-slate-800 dark:text-slate-200"
+                      >{{ (session.get('role') or 'USER')|upper }}</span
+                    >
+                  </div>
+                  <div class="label-sm text-slate-500 dark:text-slate-400">
+                    Gói:
+                    <span
+                      class="font-semibold text-slate-800 dark:text-slate-200"
+                      >{{ (current_plan or 'FREE')|upper }}</span
+                    >
+                  </div>
+                </div>
+                <div class="h-px bg-slate-200 dark:bg-slate-800 my-1"></div>
+                <a
+                  class="flex items-center gap-2 px-4 py-2 body-md text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors font-semibold"
+                  href="{{ url_for('logout.logout') }}"
+                >
+                  <span class="material-symbols-outlined text-[18px]"
+                    >logout</span
+                  >
+                  Đăng xuất
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% else %}
+        {% if session.get('user_id') %}
+        <div class="flex items-center gap-6">
+          <a
+            class="body-md text-on-surface-variant hover:text-primary transition-colors duration-300 font-semibold"
+            href="{{ url_for('dashboard.dashboard') }}"
+            >Bảng điều khiển</a
+          >
+          <div class="flex items-center gap-base">
+            <a
+              aria-label="Cài đặt"
+              class="p-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all"
+              href="{{ url_for('settings.settings') }}"
+            >
+              <span class="material-symbols-outlined" data-icon="settings"
+                >settings</span
+              >
+            </a>
+            <div class="relative group cursor-pointer">
+              <a href="{{ url_for('dashboard.dashboard') }}">
+                <img
+                alt="Ảnh đại diện"
+                class="w-9 h-9 rounded-full border-2 border-primary/20 p-0.5"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuABdf7zKSVKEqdGUUjqEkF9ftdFTrLW87Tb24r2IiZiv_JP0LrItrCxl23SH-gYj2Mqtkma0ak9DZbUtKM5nW747pmivDYGVbYhNr1PZbxbFuOrZdGJvnbhdSurFLfL3BcmhN2p1h9wv_6geT-x8eoTG1TDoLL40P8wDiaymvRT--SA4jYjU9A77WIji5FmOi99mPDXw7xS6dUyUNJYU2gHLk4-smzFrCuBbQbgtpATDvNo6hq3YR-cfSaNblImtCnDXIb8np7J4HA"
+              />
+              </a>
+              <div
+                class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white dark:border-slate-900 rounded-full"
+              ></div>
+              <div
+                class="absolute right-0 top-full w-52 bg-white dark:bg-slate-900 rounded-lg shadow-xl border border-slate-200 dark:border-slate-800 py-2 hidden group-hover:block z-50 text-left text-on-surface"
+              >
+                <div class="px-4 pb-2">
+                  <div class="label-sm text-slate-500 dark:text-slate-400">
+                    Vai trò:
+                    <span
+                      class="font-semibold text-slate-800 dark:text-slate-200"
+                      >{{ (session.get('role') or 'USER')|upper }}</span
+                    >
+                  </div>
+                  <div class="label-sm text-slate-500 dark:text-slate-400">
+                    Gói:
+                    <span
+                      class="font-semibold text-slate-800 dark:text-slate-200"
+                      >{{ (current_plan or 'FREE')|upper }}</span
+                    >
+                  </div>
+                </div>
+                <div class="h-px bg-slate-200 dark:bg-slate-800 my-1"></div>
+                <a
+                  class="flex items-center gap-2 px-4 py-2 body-md text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors font-semibold"
+                  href="{{ url_for('logout.logout') }}"
+                >
+                  <span class="material-symbols-outlined text-[18px]"
+                    >logout</span
+                  >
+                  Đăng xuất
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% else %}
+        <div class="flex items-center gap-6">
+          <a
+            class="label-sm text-on-surface-variant hover:text-primary font-semibold transition-colors duration-300"
+            href="{{ url_for('login.login') }}"
+            >Đăng nhập</a
+          >
+          <a
+            class="bg-primary text-on-primary px-6 py-2.5 rounded-full label-sm font-semibold hover:shadow-lg active:scale-95 transition-all"
+            href="{{ url_for('register.register') }}"
+            >Đăng ký</a
+          >
+        </div>
+        {% endif %}
+        {% endif %}
+        {% endif %}
+        {% endif %}
+      </div>
+    </nav>
+    <main class="relative z-10 pt-20">
+      <section
+        class="px-4 md:px-6 w-full py-16 mb-16 max-w-4xl mx-auto dashboard-width"
+      >
+        <div
+          class="glass-card p-gutter rounded-3xl bg-surface-container-low border border-outline-variant/30"
+        >
+          <h1 class="headline-lg text-on-surface mb-6 font-bold">Liên hệ</h1>
+          <div
+            class="space-y-6 text-on-surface-variant body-md leading-relaxed"
+          >
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+              <div class="space-y-6">
+                <h2 class="text-2xl font-bold text-primary">
+                  Thông tin liên lạc
+                </h2>
+                <ul class="space-y-4">
+                  <li>
+                    <strong>Tên ứng dụng/website:</strong> [Tên app hoặc
+                    website]
+                  </li>
+                  <li>
+                    <strong>Tên nhà phát triển/công ty:</strong> [Tên cá nhân
+                    hoặc công ty]
+                  </li>
+                  <li>
+                    <strong>Email liên hệ:</strong>
+                    <a
+                      href="mailto:support@example.com"
+                      class="text-primary hover:underline font-medium"
+                      >support@example.com</a
+                    >
+                  </li>
+                  <li>
+                    <strong>Website:</strong>
+                    <a
+                      href="https://yourdomain.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="text-primary hover:underline font-medium"
+                      >https://yourdomain.com</a
+                    >
+                  </li>
+                  <li>
+                    <strong>Địa chỉ:</strong> [Nếu có thì ghi, nếu không thì ghi
+                    “Không áp dụng”]
+                  </li>
+                </ul>
+                <div
+                  class="bg-surface-container-low p-4 rounded-xl mt-6 border border-outline-variant/30"
+                >
+                  <p class="text-sm font-bold text-primary">
+                    Lưu ý thời gian xử lý:
+                  </p>
+                  <p class="text-sm text-on-surface-variant">
+                    Thường trong 1-3 ngày làm việc. Cảm ơn sự hỗ trợ thiết thực
+                    của bạn!
+                  </p>
+                </div>
+              </div>
+
+              <div
+                class="bg-white border border-outline-variant/30 rounded-2xl p-8 shadow-sm"
+              >
+                <h2 class="text-2xl font-bold text-primary mb-6">
+                  Gửi tin nhắn trực tuyến
+                </h2>
+                <form
+                  onsubmit="
+                    event.preventDefault();
+                    alert('Bạn đã bấm Gửi thành công! (Dữ liệu Demo)');
+                  "
+                  class="space-y-5"
+                >
+                  <div>
+                    <label class="block text-sm font-bold text-on-surface mb-2"
+                      >Họ tên</label
+                    >
+                    <input
+                      type="text"
+                      required
+                      class="w-full bg-surface-container-low border border-outline-variant/50 rounded-lg px-4 py-3 outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+                      placeholder="Tên của bạn..."
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-bold text-on-surface mb-2"
+                      >Email</label
+                    >
+                    <input
+                      type="email"
+                      required
+                      class="w-full bg-surface-container-low border border-outline-variant/50 rounded-lg px-4 py-3 outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+                      placeholder="Địa chỉ email..."
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-bold text-on-surface mb-2"
+                      >Chủ đề</label
+                    >
+                    <input
+                      type="text"
+                      required
+                      class="w-full bg-surface-container-low border border-outline-variant/50 rounded-lg px-4 py-3 outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+                      placeholder="Bạn cần hỗ trợ gì?"
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-bold text-on-surface mb-2"
+                      >Nội dung</label
+                    >
+                    <textarea
+                      rows="4"
+                      required
+                      class="w-full bg-surface-container-low border border-outline-variant/50 rounded-lg px-4 py-3 outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+                      placeholder="Ghi chú chi tiết thêm..."
+                    ></textarea>
+                  </div>
+                  <button
+                    type="submit"
+                    class="w-full bg-primary text-on-primary font-bold py-3 px-4 rounded-xl transition-all hover:bg-primary/90 active:scale-95 shadow-md"
+                  >
+                    Gửi biểu mẫu
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer
+      class="bg-surface-container-low border-t border-outline-variant/30 px-4 md:px-6 pt-6 pb-4"
+    >
+      <div class="footer-inner max-w-container-max mx-auto">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-10">
+          <div class="lg:col-span-6 space-y-6">
+            <div class="headline-md font-bold tracking-tighter text-primary">
+              <span class="inline-flex items-center gap-0">
+                <img
+                  alt="PetAI New Logo"
+                  class="h-8 w-auto md:h-10"
+                  src="{{ url_for('static', filename='logo.png') }}"
+                />
+                <span class="ml-0 text-sm md:text-lg font-semibold text-primary"
+                  >PetAI</span
+                >
+              </span>
+            </div>
+            <p class="body-md text-on-surface-variant max-w-sm">
+              Ứng dụng nhận diện giống chó bằng AI dành cho người yêu thú cưng.
+              Kết quả chính xác, nhanh chóng.
+            </p>
+          </div>
+          <div class="lg:col-span-6 grid grid-cols-2 md:grid-cols-2 gap-8">
+            <div class="space-y-6">
+              <h4 class="label-sm text-primary uppercase tracking-widest">
+                Về PetAI
+              </h4>
+              <ul class="space-y-4">
+                <li class="">
+                  <a
+                    class="text-on-surface-variant hover:text-primary transition-colors font-medium"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href="{{ url_for('legal.privacy_policy') }}"
+                    >Chính sách quyền riêng tư</a
+                  >
+                </li>
+                <li class="">
+                  <a
+                    class="text-on-surface-variant hover:text-primary transition-colors font-medium"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href="{{ url_for('legal.terms_of_service') }}"
+                    >Điều khoản sử dụng</a
+                  >
+                </li>
+                <li class="">
+                  <a
+                    class="text-on-surface-variant hover:text-primary transition-colors font-medium"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href="{{ url_for('legal.data_deletion') }}"
+                    >Chính sách xóa dữ liệu</a
+                  >
+                </li>
+                <li class="">
+                  <a
+                    class="text-on-surface-variant hover:text-primary transition-colors font-medium"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href="{{ url_for('legal.support') }}"
+                    >Hỗ trợ</a
+                  >
+                </li>
+                <li class="">
+                  <a
+                    class="text-on-surface-variant hover:text-primary transition-colors font-medium"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href="{{ url_for('legal.contact') }}"
+                    >Liên hệ</a
+                  >
+                </li>
+              </ul>
+            </div>
+            <div class="space-y-6">
+              <h4 class="label-sm text-primary uppercase tracking-widest">
+                Kết nối
+              </h4>
+              <ul class="space-y-4">
+                <li class="">
+                  <a
+                    class="text-on-surface-variant hover:text-primary transition-colors font-medium"
+                    href="{{ url_for('predict.upload_page') }}"
+                    >Nhận diện ngay</a
+                  >
+                </li>
+                <li class="">
+                  <a
+                    class="text-on-surface-variant hover:text-primary transition-colors font-medium"
+                    href="{{ url_for('history.history') }}"
+                    >Bộ sưu tập</a
+                  >
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="border-t border-outline-variant/20 relative py-1">
+          <div
+            class="flex flex-col md:flex-row justify-between items-center gap-4"
+          >
+            <p class="label-sm text-on-surface-variant/70 dark:text-slate-400">
+              Bản quyền © 2026 PetAI. Mọi quyền được bảo lưu
+            </p>
+            <div class="flex gap-6">
+              <a
+                class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
+                target="_blank"
+                rel="noopener noreferrer"
+                href="{{ url_for('legal.terms_of_service') }}"
+                >ĐIỀU KHOẢN</a
+              >
+              <a
+                class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
+                target="_blank"
+                rel="noopener noreferrer"
+                href="{{ url_for('legal.privacy_policy') }}"
+                >BẢO MẬT</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      (function () {
+        const tabs = Array.from(document.querySelectorAll(".spotlight-tab"));
+        const panels = Array.from(
+          document.querySelectorAll(".spotlight-panel"),
+        );
+        if (!tabs.length || !panels.length) {
+          return;
+        }
+
+        const setActive = (tabId) => {
+          tabs.forEach((tab) => {
+            const isActive = tab.dataset.tab === tabId;
+            tab.classList.toggle("bg-primary", isActive);
+            tab.classList.toggle("text-on-primary", isActive);
+            tab.classList.toggle("shadow-md", isActive);
+            tab.classList.toggle("text-on-surface-variant", !isActive);
+            tab.classList.toggle("hover:text-on-primary", isActive);
+            tab.classList.toggle("hover:text-primary", !isActive);
+          });
+
+          panels.forEach((panel) => {
+            panel.classList.toggle("hidden", panel.id !== tabId);
+          });
+        };
+
+        tabs.forEach((tab) => {
+          tab.addEventListener("click", () => setActive(tab.dataset.tab));
+        });
+      })();
+    </script>
+  </body>
+</html>

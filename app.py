@@ -55,6 +55,7 @@ from users import users_bp
 from account import account_bp
 from routes.health import health_bp
 from routes.sepay import sepay_bp
+from routes.legal import legal_bp
 from config import configure_app
 from middleware import register_block_inactive_users, register_csrf_protection
 from context_processors import register_context_processors
@@ -90,6 +91,7 @@ app.register_blueprint(account_bp, url_prefix="/account")
 app.register_blueprint(users_bp, url_prefix="/users")
 app.register_blueprint(health_bp, url_prefix="")
 app.register_blueprint(sepay_bp, url_prefix="")
+app.register_blueprint(legal_bp, url_prefix="")
 
 # Middleware registration
 register_block_inactive_users(app)

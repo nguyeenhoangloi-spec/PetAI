@@ -441,7 +441,7 @@
     <footer
       class="bg-surface-container-low border-t border-outline-variant/30 px-4 md:px-6 pt-6 pb-4"
     >
-      <div class="max-w-container-max mx-auto">
+      <div class="footer-inner max-w-container-max mx-auto">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-10">
           <div class="lg:col-span-6 space-y-6">
             <div class="headline-md font-bold tracking-tighter text-primary">
@@ -470,21 +470,35 @@
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                    href="#faq"
-                    >Chính sách bảo mật</a
+                    target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.privacy_policy') }}"
+                    >Chính sách quyền riêng tư</a
                   >
                 </li>
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                    href="#faq"
-                    >Câu hỏi thường gặp</a
+                    target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.terms_of_service') }}"
+                    >Điều khoản sử dụng</a
                   >
                 </li>
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                    href="#faq"
+                    target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.data_deletion') }}"
+                    >Chính sách xóa dữ liệu</a
+                  >
+                </li>
+                <li class="">
+                  <a
+                    class="text-on-surface-variant hover:text-primary transition-colors font-medium"
+                    target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.support') }}"
+                    >Hỗ trợ</a
+                  >
+                </li>
+                <li class="">
+                  <a
+                    class="text-on-surface-variant hover:text-primary transition-colors font-medium"
+                    target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.contact') }}"
                     >Liên hệ</a
                   >
                 </li>
@@ -523,12 +537,12 @@
             <div class="flex gap-6">
               <a
                 class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
-                href="#faq"
+                target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.terms_of_service') }}"
                 >ĐIỀU KHOẢN</a
               >
               <a
                 class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
-                href="#faq"
+                target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.privacy_policy') }}"
                 >BẢO MẬT</a
               >
             </div>
