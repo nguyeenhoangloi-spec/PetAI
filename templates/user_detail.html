@@ -55,6 +55,13 @@
             }
           } catch (e) {}
         }
+
+        try {
+          const isCollapsed = localStorage.getItem("sidebar-collapsed") === "true";
+          if (isCollapsed && window.innerWidth >= 768) {
+            root.classList.add("sidebar-collapsed");
+          }
+        } catch (e) {}
       })();
     </script>
     <meta name="csrf-token" content="{{ csrf_token() }}" />
@@ -196,8 +203,9 @@
     class="bg-background text-on-background body-md body-md antialiased min-h-screen flex flex-col"
   >
     {% include '_toasts.html' %}
-    {% set display_role = session.get('role') or 'user' %} {% set display_plan =
-    current_plan or 'free' %}
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    {% set display_role = session.get('role') or 'user' %}
+    {% set display_plan = current_plan or 'free' %}
 
     <nav
       class="bg-white/80 dark:bg-slate-950/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-200 dark:border-slate-800 shadow-sm font-['Inter'] antialiased"
@@ -216,6 +224,11 @@
               >PetAI</span
             >
           </a>
+          <button class="menu-toggle ml-2" id="menuToggle" aria-label="Mở menu" aria-expanded="false" type="button">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
         </div>
         <div class="hidden md:flex flex-1 items-center justify-end gap-margin mr-gutter [&>a]:px-0.5 [&>a]:body-md">
           <a
@@ -258,6 +271,25 @@
             >Nhận diện</a
           >
           <div class="flex items-center gap-base">
+                        <div class="language-switcher mr-2" id="languageSwitcher">
+              <button class="language-button" id="languageButton" type="button" aria-haspopup="true" aria-expanded="false">
+                <span class="language-flag">🇻🇳</span>
+                <span class="language-current">VN</span>
+                <span class="language-arrow">▼</span>
+              </button>
+              <div class="language-menu" id="languageMenu">
+                <button class="language-option active" type="button" data-lang="vi">
+                  <span class="language-check">✓</span>
+                  <span class="language-flag">🇻🇳</span>
+                  <span>Tiếng Việt</span>
+                </button>
+                <button class="language-option" type="button" data-lang="en">
+                  <span class="language-check"></span>
+                  <span class="language-flag">🇺🇸</span>
+                  <span>English</span>
+                </button>
+              </div>
+            </div>
             <a
               aria-label="Cài đặt"
               class="p-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all"
@@ -317,14 +349,14 @@
     <main
       class="flex-grow w-full px-4 md:px-6 py-margin grid grid-cols-1 md:grid-cols-[230px_minmax(0,1fr)] gap-gutter"
     >
-      <aside class="col-span-1">
+      <aside class="sidebar col-span-1" id="sidebar">
         <div
           class="soft-panel bg-surface-container-lowest rounded-custom py-sm px-2 flex flex-col gap-sm sticky top-24 border border-slate-100 shadow-sm"
         >
           <h3
             class="label-sm label-sm text-on-surface-variant uppercase tracking-wider mb-xs px-1.5"
           >
-            Truy cập nhanh
+            <span data-i18n="quickAccess">Truy cập nhanh</span>
           </h3>
           <a
             class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
@@ -350,7 +382,7 @@
               data-icon="history"
               >history</span
             >
-            <span class="label-sm label-sm">Lịch sử dự đoán</span>
+            <span class="label-sm label-sm"><span data-i18n="predictionHistory">Lịch sử dự đoán</span></span>
           </a>
           <a
             class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
@@ -361,7 +393,7 @@
               data-icon="bar_chart"
               >bar_chart</span
             >
-            <span class="label-sm label-sm">Thống kê cá nhân</span>
+            <span class="label-sm label-sm"><span data-i18n="personalStats">Thống kê cá nhân</span></span>
           </a>
           <a
             class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
@@ -372,7 +404,7 @@
               data-icon="upgrade"
               >upgrade</span
             >
-            <span class="label-sm label-sm">Nâng cấp gói</span>
+            <span class="label-sm label-sm"><span data-i18n="upgradePlan">Nâng cấp gói</span></span>
           </a>
           {% if session.get('role') == 'admin' %}
           <a
@@ -410,7 +442,7 @@
               data-icon="settings"
               >settings</span
             >
-            <span class="label-sm label-sm">Cài đặt tài khoản</span>
+            <span class="label-sm label-sm"><span data-i18n="accountSettings">Cài đặt tài khoản</span></span>
           </a>
         </div>
       </aside>
@@ -608,64 +640,60 @@
           </div>
           <div class="lg:col-span-6 grid grid-cols-2 md:grid-cols-2 gap-8">
             <div class="space-y-6">
-              <h4 class="label-sm text-primary uppercase tracking-widest">
-                Về PetAI
-              </h4>
+              <h4 class="label-sm text-primary uppercase tracking-widest"><span data-i18n="aboutPetAI">Về PetAI</span></h4>
               <ul class="space-y-4">
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
                     target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.privacy_policy') }}"
-                    >Chính sách quyền riêng tư</a
+                     data-i18n="privacy">Chính sách quyền riêng tư</a
                   >
                 </li>
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
                     target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.terms_of_service') }}"
-                    >Điều khoản sử dụng</a
+                     data-i18n="terms">Điều khoản sử dụng</a
                   >
                 </li>
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
                     target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.data_deletion') }}"
-                    >Chính sách xóa dữ liệu</a
+                     data-i18n="dataDeletion">Chính sách xóa dữ liệu</a
                   >
                 </li>
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
                     target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.support') }}"
-                    >Hỗ trợ</a
+                     data-i18n="support">Hỗ trợ</a
                   >
                 </li>
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
                     target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.contact') }}"
-                    >Liên hệ</a
+                     data-i18n="contact">Liên hệ</a
                   >
                 </li>
               </ul>
             </div>
             <div class="space-y-6">
-              <h4 class="label-sm text-primary uppercase tracking-widest">
-                Kết nối
-              </h4>
+              <h4 class="label-sm text-primary uppercase tracking-widest"><span data-i18n="connect">Kết nối</span></h4>
               <ul class="space-y-4">
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
                     href="{{ url_for('predict.upload_page') }}"
-                    >Nhận diện ngay</a
+                     data-i18n="identifyNow">Nhận diện ngay</a
                   >
                 </li>
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
                     href="{{ url_for('history.history') }}"
-                    >Bộ sưu tập</a
+                     data-i18n="collection">Bộ sưu tập</a
                   >
                 </li>
               </ul>
@@ -676,9 +704,7 @@
           <div
             class="flex flex-col md:flex-row justify-between items-center gap-4"
           >
-            <p class="label-sm text-on-surface-variant/70 dark:text-slate-400">
-              Bản quyền © 2026 PetAI. Mọi quyền được bảo lưu
-            </p>
+            <p class="label-sm text-on-surface-variant/70 dark:text-slate-400"><span data-i18n="copyright">Bản quyền © 2026 PetAI. Mọi quyền được bảo lưu</span></p>
             <div class="flex gap-6">
               <a
                 class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
@@ -738,6 +764,7 @@
     </div>
 
     <script src="{{ url_for('static', filename='js/toasts.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
     <script>
       (function () {
         const modal = document.getElementById("confirmModal");

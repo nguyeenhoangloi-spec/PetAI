@@ -37,3 +37,271 @@
     font-size: 14px !important;
   }
 }
+
+/* --- Responsive Collapsible Sidebar Styles --- */
+
+/* Hamburger menu toggle button styling */
+.menu-toggle {
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  padding: 8px;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+  color: var(--on-surface, #0b1c30); /* Match text color */
+}
+
+/* Dark mode compatibility */
+.dark .menu-toggle {
+  color: #f8f9ff;
+}
+
+.menu-toggle:hover {
+  background-color: rgba(0, 74, 198, 0.08); /* light theme hover */
+}
+.dark .menu-toggle:hover {
+  background-color: rgba(255, 255, 255, 0.08); /* dark theme hover */
+}
+
+.menu-toggle span {
+  width: 22px;
+  height: 2px;
+  background-color: currentColor;
+  border-radius: 2px;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  display: block;
+}
+
+/* Menu toggle active animation (disabled, always remains as three-bar icon) */
+
+/* Sidebar overlay for mobile/tablet */
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  z-index: 40; /* under nav/sidebar but above content */
+}
+
+.sidebar-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Sidebar transition and state styling */
+.sidebar {
+  transition: transform 0.3s ease, opacity 0.3s ease, width 0.3s ease, padding 0.3s ease, margin 0.3s ease, border-color 0.3s ease;
+}
+
+/* Desktop behaviors */
+@media (min-width: 768px) {
+  main {
+    transition: grid-template-columns 0.3s ease, gap 0.3s ease;
+  }
+
+  /* On desktop: when collapsed, set width of sidebar and layout column to 0 */
+  .sidebar-collapsed main,
+  main.sidebar-collapsed {
+    grid-template-columns: 0px minmax(0, 1fr) !important;
+    gap: 0 !important;
+  }
+  
+  .sidebar-collapsed .sidebar,
+  main.sidebar-collapsed .sidebar {
+    width: 0 !important;
+    opacity: 0 !important;
+    overflow: hidden !important;
+    pointer-events: none !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    border-color: transparent !important;
+  }
+}
+
+/* Mobile/Tablet behaviors */
+@media (max-width: 767px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 280px;
+    transform: translateX(-100%);
+    z-index: 999; /* overlay is below this */
+    background-color: var(--surface-container-lowest, #ffffff);
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
+    padding: 16px !important;
+    margin: 0 !important;
+  }
+
+  .dark .sidebar {
+    background-color: #0b1329 !important; /* Slate/dark background matching dark theme */
+    border-right: 1px solid #1e293b;
+  }
+
+  .sidebar.active {
+    transform: translateX(0);
+  }
+  
+  /* Make sure the sticky positioning does not interfere with fixed full-height menu on mobile */
+  .sidebar > div {
+    position: static !important;
+    box-shadow: none !important;
+    border: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+  }
+}
+
+/* --- Language Switcher Styling --- */
+.language-switcher {
+  position: relative;
+  display: inline-block;
+  font-family: "Inter", sans-serif;
+}
+
+.language-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 76px; /* Fixed width to lock size and prevent any shifting of navbar items */
+  height: 36px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--on-surface-variant, #434655);
+  padding: 6px;
+  border-radius: 8px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  box-sizing: border-box;
+}
+
+.language-button:hover {
+  background: rgba(0, 74, 198, 0.08);
+  color: var(--primary, #004ac6);
+}
+
+.dark .language-button {
+  color: #c3c6d7;
+}
+
+.dark .language-button:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #b4c5ff;
+}
+
+.language-flag {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.language-current {
+  display: inline-block;
+  width: 22px; /* Prevent header shifting with short language codes (VN/US) */
+  text-align: center;
+}
+
+.language-arrow {
+  font-size: 10px;
+  margin-left: 2px;
+  transition: transform 0.2s ease;
+}
+
+.language-switcher.open .language-arrow {
+  transform: rotate(180deg);
+}
+
+.language-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 180px;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px);
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+  z-index: 9999;
+}
+
+.dark .language-menu {
+  background: #1e293b;
+  border-color: #334155;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.language-switcher.open .language-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.language-option {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: none;
+  background: transparent;
+  padding: 10px 16px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: left;
+  color: #334155;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.language-option:hover {
+  background: #f1f5f9;
+  color: var(--primary, #004ac6);
+}
+
+.dark .language-option {
+  color: #c3c6d7;
+}
+
+.dark .language-option:hover {
+  background: #334155;
+  color: #b4c5ff;
+}
+
+.language-option.active {
+  background: #e2e8f0;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.dark .language-option.active {
+  background: #475569;
+  color: #ffffff;
+}
+
+.language-check {
+  width: 14px;
+  display: inline-block;
+  font-weight: bold;
+  color: var(--primary, #004ac6);
+}
+
+.dark .language-check {
+  color: #b4c5ff;
+}
