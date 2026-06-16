@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -5,6 +6,9 @@ import 'package:file_selector/file_selector.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'config.dart';
 
@@ -210,16 +214,24 @@ class _WebViewScreenState extends State<WebViewScreen> {
           host.endsWith('.gstatic.com');
     }
 
+    bool isBlockedAuthPath(String path) {
+      return path == '/authorize/google' ||
+          path == '/login/google' ||
+          path == '/auth/google/login/flutter';
+    }
+
     // ✅ Cho phép các URL chứa callback hoặc token đi qua bình thường
     if (url.contains('callback') || url.contains('token=')) {
       return NavigationDecision.navigate;
     }
 
-    // Cho phép luồng đăng nhập Google đi qua trong WebView trên mobile.
-    // Nếu chặn ở đây, APK sẽ mở được trang login ban đầu nhưng bị dừng ngay
-    // khi Google chuyển sang accounts.google.com.
-    if (uri != null && uri.hasAuthority && isGoogleAuthHost(uri.host)) {
-      return NavigationDecision.navigate;
+    if (uri != null && uri.hasAuthority) {
+      if (isGoogleAuthHost(uri.host) || isBlockedAuthPath(uri.path)) {
+        if (!_isAuthenticating) {
+          unawaited(_runExternalAuth(url));
+        }
+        return NavigationDecision.prevent;
+      }
     }
 
     if (url.startsWith(AppConfig.webBaseUrl)) {
@@ -251,6 +263,49 @@ class _WebViewScreenState extends State<WebViewScreen> {
 
   int _cctOpenCount = 0;
 
+  String _buildFlutterGoogleLoginUrl(String sessionId) {
+    final uri = Uri.parse(AppConfig.googleLoginFlutterUrl);
+    return uri
+        .replace(
+          queryParameters: {...uri.queryParameters, 'session_id': sessionId},
+        )
+        .toString();
+  }
+
+  Future<void> _runExternalAuth(
+    String loginUrl, {
+    bool useAuthGuard = true,
+  }) async {
+    if (useAuthGuard) {
+      if (_isAuthenticating) return;
+      _isAuthenticating = true;
+    }
+
+    try {
+      final result = await FlutterWebAuth2.authenticate(
+        url: loginUrl,
+        callbackUrlScheme: AppConfig.callbackScheme,
+      );
+
+      final resultUri = Uri.tryParse(result);
+      if (resultUri != null) {
+        final token =
+            resultUri.queryParameters['access_token'] ??
+            resultUri.queryParameters['token'];
+        if (token != null && token.isNotEmpty) {
+          await _saveToken(token);
+          await _injectTokenToWeb(token);
+        }
+      }
+    } catch (e) {
+      debugPrint('==> External auth failed: $e');
+    } finally {
+      if (useAuthGuard) {
+        _isAuthenticating = false;
+      }
+    }
+  }
+
   Future<void> _triggerNativeGoogleLogin(String sessionId) async {
     if (_isAuthenticating) return;
     _isAuthenticating = true;
@@ -261,17 +316,61 @@ class _WebViewScreenState extends State<WebViewScreen> {
     );
 
     try {
-      final loginUrl =
-          '${AppConfig.apiBaseUrl}/auth/google/login/flutter?session_id=$sessionId';
-
-      // Mở CCT. Ở luồng mới này, App chỉ cần mở Tab.
-      // Người dùng login xong Server cập nhật DB, Web sẽ tự Polling thấy Token.
-      await FlutterWebAuth2.authenticate(
-        url: loginUrl,
-        callbackUrlScheme: 'none', // Không dùng callback scheme nữa
+      // Try native Google Sign-In first (avoids WebView user-agent blocks)
+      final google = GoogleSignIn(
+        scopes: ['email', 'profile', 'openid'],
+        // Use web client id from project credentials so server can exchange codes
+        serverClientId:
+            '531393801063-u2u5ntopagsiqu4ohn7li5qpsj2cvhv6.apps.googleusercontent.com',
       );
+
+      final account = await google.signIn();
+      if (account != null) {
+        final auth = await account.authentication;
+        final idToken = auth.idToken;
+        final serverAuthCode = account.serverAuthCode;
+
+        // Send tokens to backend to finalize login for this session
+        try {
+          final resp = await http.post(
+            Uri.parse(AppConfig.googleLoginFlutterUrl),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({
+              'session_id': sessionId,
+              'id_token': idToken,
+              'server_auth_code': serverAuthCode,
+              'source': 'native',
+            }),
+          );
+
+          if (resp.statusCode == 200) {
+            debugPrint('==> Native login token posted to server');
+            // Server will attach token and web will pick it up via polling
+          } else {
+            debugPrint('==> Server responded ${resp.statusCode}: ${resp.body}');
+            // Fallback to browser flow
+            final loginUrl = _buildFlutterGoogleLoginUrl(sessionId);
+            await _runExternalAuth(loginUrl, useAuthGuard: false);
+          }
+        } catch (e) {
+          debugPrint('==> Failed to POST token to server: $e');
+          final loginUrl = _buildFlutterGoogleLoginUrl(sessionId);
+          await _runExternalAuth(loginUrl, useAuthGuard: false);
+        }
+      } else {
+        // User cancelled native sign-in; fallback to browser flow
+        final loginUrl = _buildFlutterGoogleLoginUrl(sessionId);
+        await _runExternalAuth(loginUrl, useAuthGuard: false);
+      }
     } catch (e) {
-      debugPrint('==> CCT closed/cancelled');
+      debugPrint('==> Native google sign-in failed, falling back: $e');
+      // If native flow fails for any reason, fallback to CCT browser flow
+      try {
+        final loginUrl = _buildFlutterGoogleLoginUrl(sessionId);
+        await _runExternalAuth(loginUrl, useAuthGuard: false);
+      } catch (e2) {
+        debugPrint('==> CCT fallback also failed: $e2');
+      }
     } finally {
       _isAuthenticating = false;
     }
@@ -376,7 +475,7 @@ class _ErrorView extends StatelessWidget {
             Icon(
               Icons.cloud_off_rounded,
               size: 80,
-              color: colorScheme.primary.withOpacity(0.6),
+              color: colorScheme.primary.withValues(alpha: 0.6),
             ),
             const SizedBox(height: 24),
             Text(

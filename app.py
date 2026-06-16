@@ -6,6 +6,8 @@ import re
 import secrets
 from urllib.parse import urlparse
 
+from jwt_utils import build_jwt_access_token, build_mobile_deeplink
+
 from connect import get_connection
 from pymysql.cursors import DictCursor
 from werkzeug.security import generate_password_hash
@@ -135,6 +137,66 @@ def _ensure_unique_username(cur, base: str) -> str:
         username = f"{trimmed}_{suffix_str}"
 
 
+def _get_or_create_user_from_google(userinfo: dict) -> tuple[dict, str | None]:
+    email = (userinfo.get("email") or "").strip().lower()
+    fullname = (userinfo.get("name") or "").strip() or email
+    google_id = userinfo.get("sub") or userinfo.get("id")
+    avatar = userinfo.get("picture") or userinfo.get("avatar")
+    if not email:
+        raise ValueError("missing_email")
+
+    conn = get_connection()
+    try:
+        with conn.cursor(DictCursor) as cur:
+            cur.execute("SELECT * FROM users WHERE email = %s", (email,))
+            user = cur.fetchone()
+
+            if not user:
+                username_base = _normalize_username_from_email(email)
+                username = _ensure_unique_username(cur, username_base)
+                random_password = secrets.token_urlsafe(24)
+                pwd_hash = generate_password_hash(random_password)
+
+                cur.execute(
+                    """
+                    INSERT INTO users (username, password_hash, email, fullname, google_id, created_at)
+                    VALUES (%s, %s, %s, %s, %s, NOW())
+                    """,
+                    (username, pwd_hash, email, fullname, google_id),
+                )
+                new_user_id = cur.lastrowid
+                conn.commit()
+                cur.execute(
+                    """
+                    SELECT id, username, fullname, email, role, is_active, google_id
+                    FROM users
+                    WHERE id = %s
+                    """,
+                    (new_user_id,),
+                )
+                user = cur.fetchone()
+            else:
+                if google_id and (not user.get("google_id")):
+                    cur.execute(
+                        "UPDATE users SET google_id = %s WHERE id = %s",
+                        (google_id, user["id"]),
+                    )
+                    conn.commit()
+
+        if not user:
+            raise ValueError("create_user_failed")
+
+        if not user.get("is_active", True):
+            raise PermissionError("user_inactive")
+
+        return user, avatar
+    finally:
+        try:
+            conn.close()
+        except Exception:
+            pass
+
+
 def _set_login_session(user: dict) -> None:
     session["user_id"] = user["id"]
     session["username"] = user.get("username")
@@ -168,7 +230,20 @@ def login_google():
     next_url = request.args.get("next")
     if _is_safe_next_url(next_url):
         session["oauth_next"] = next_url
-    redirect_uri = url_for("authorize_google", _external=True)
+     # Build both HTTPS and HTTP redirect URIs
+    redirect_uri_https = url_for("authorize_google", _external=True, _scheme="https")
+    redirect_uri_http = url_for("authorize_google", _external=True, _scheme="http")
+
+    # If running locally, prefer HTTP; otherwise prefer HTTPS (or forwarded proto)
+    host = (request.host or "").split(":")[0]
+    forwarded = request.headers.get("X-Forwarded-Proto", "").split(",")[0].strip().lower()
+
+    if host in ("localhost", "127.0.0.1"):
+        redirect_uri = redirect_uri_http
+    elif forwarded == "http":
+        redirect_uri = redirect_uri_http
+    else:
+        redirect_uri = redirect_uri_https
     return google.authorize_redirect(redirect_uri)
 
 # Google authorize callback
@@ -184,86 +259,71 @@ def authorize_google():
         flash("Phiên đăng nhập Google không hợp lệ hoặc đã hết hạn. Vui lòng thử lại.", "warning")
         return redirect(url_for("login.login"))
 
-    userinfo = token.get('userinfo')
+    userinfo = token.get("userinfo")
     if not userinfo:
         # Fetch userinfo if not present
-        resp = google.get('userinfo')
+        resp = google.get("userinfo")
         userinfo = resp.json()
 
-    email = (userinfo.get("email") or "").strip().lower()
-    fullname = (userinfo.get("name") or "").strip() or email
-    google_id = userinfo.get("sub") or userinfo.get("id")
-    if not email:
+    try:
+        user, _ = _get_or_create_user_from_google(userinfo)
+    except PermissionError:
+        flash("Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên.", "error")
+        return redirect(url_for("login.login"))
+    except ValueError:
         flash("Không lấy được email từ Google. Vui lòng thử lại.", "error")
         return redirect(url_for("login.login"))
-
-    conn = get_connection()
-    try:
-        with conn.cursor(DictCursor) as cur:
-            cur.execute("SELECT * FROM users WHERE email = %s", (email,))
-            user = cur.fetchone()
-
-            if not user:
-                username_base = _normalize_username_from_email(email)
-                username = _ensure_unique_username(cur, username_base)
-                random_password = secrets.token_urlsafe(24)
-                pwd_hash = generate_password_hash(random_password)
-
-                cur.execute(
-                    """
-                    INSERT INTO users (username, password_hash, email, fullname, google_id, created_at)
-                    VALUES (%s, %s, %s, %s, %s, NOW())
-                    """,
-                    (username, pwd_hash, email, fullname, google_id),
-                )
-                new_user_id = cur.lastrowid
-                conn.commit()
-                cur.execute(
-                    """
-                    SELECT id, username, fullname, email, role, is_active, google_id
-                    FROM users
-                    WHERE id = %s
-                    """,
-                    (new_user_id,),
-                )
-                user = cur.fetchone()
-            else:
-                # Nếu user đã có nhưng chưa có google_id thì cập nhật
-                if google_id and (not user.get("google_id")):
-                    cur.execute(
-                        "UPDATE users SET google_id = %s WHERE id = %s",
-                        (google_id, user["id"]),
-                    )
-                    conn.commit()
-
-        if not user:
-            flash("Không thể tạo tài khoản từ Google. Vui lòng thử lại.", "error")
-            return redirect(url_for("login.login"))
-
-        if not user.get("is_active", True):
-            flash("Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên.", "error")
-            return redirect(url_for("login.login"))
-
-        _set_login_session(user)
-        flash(f"Xin chào, {session.get('fullname') or 'bạn'}!", "success")
-
-        next_url = session.pop("oauth_next", None)
-        if _is_safe_next_url(next_url):
-            return redirect(next_url)
-        return redirect(url_for("dashboard.dashboard"))
     except Exception as e:
-        try:
-            conn.rollback()
-        except Exception:
-            pass
         print(f"[GOOGLE LOGIN ERROR] {e}")
         flash("Đăng nhập Google thất bại. Vui lòng thử lại.", "error")
         return redirect(url_for("login.login"))
-    finally:
-        try:
-            conn.close()
-        except Exception:
-            pass
+
+    _set_login_session(user)
+    flash(f"Xin chào, {session.get('fullname') or 'bạn'}!", "success")
+
+    next_url = session.pop("oauth_next", None)
+    if _is_safe_next_url(next_url):
+        return redirect(next_url)
+    return redirect(url_for("dashboard.dashboard"))
+
+
+@app.route("/auth/google/login/flutter")
+def login_google_flutter():
+    if google is None:
+        return redirect("petai://auth?error=google_not_configured")
+
+    redirect_uri = "https://nonsuspensively-monacidic-raylan.ngrok-free.dev/auth/google/callback/flutter"
+    return google.authorize_redirect(redirect_uri)
+
+
+@app.route("/auth/google/callback/flutter")
+def authorize_google_flutter():
+    if google is None:
+        return redirect("petai://auth?error=google_not_configured")
+
+    try:
+        redirect_uri = "https://nonsuspensively-monacidic-raylan.ngrok-free.dev/auth/google/callback/flutter"
+        token = google.authorize_access_token(redirect_uri=redirect_uri)
+    except Exception:
+        return redirect("petai://auth?error=invalid_google_session")
+
+    userinfo = token.get("userinfo")
+    if not userinfo:
+        resp = google.get("userinfo")
+        userinfo = resp.json()
+
+    try:
+        user, avatar = _get_or_create_user_from_google(userinfo)
+        jwt_token = build_jwt_access_token(user, avatar)
+        deeplink = build_mobile_deeplink(jwt_token, user)
+        return redirect(deeplink)
+    except PermissionError:
+        return redirect("petai://auth?error=user_inactive")
+    except ValueError:
+        return redirect("petai://auth?error=missing_email")
+    except Exception as e:
+        print(f"[GOOGLE LOGIN FLUTTER ERROR] {e}")
+        return redirect("petai://auth?error=login_failed")
 # Health route now provided via blueprint
 
 

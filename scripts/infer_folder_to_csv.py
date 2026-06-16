@@ -181,8 +181,8 @@ def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description="Infer images in a folder and export CSV")
     p.add_argument(
         "--folder",
-        default=r"C:\\Users\\User\\Downloads\\Dog_Test",
-        help="Folder containing images (default: C:\\Users\\User\\Downloads\\Dog_Test)",
+        default=r"C:\\Users\\User\\Downloads\\Mixed_Breed",
+        help="Folder containing images (default: C:\\Users\\User\\Downloads\\Mixed_Breed)",
     )
     p.add_argument("--out", default="outputs/predictions.csv", help="Output CSV path")
     p.add_argument("--recursive", action="store_true", help="Scan subfolders recursively")
