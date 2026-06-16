@@ -5,97 +5,97 @@ document.addEventListener("DOMContentLoaded", function () {
   const overlay = document.getElementById("sidebarOverlay");
   const root = document.documentElement;
 
-  if (!menuToggle || !sidebar) return;
+  if (menuToggle && sidebar) {
+    const isMobile = () => window.innerWidth < 768;
 
-  const isMobile = () => window.innerWidth < 768;
-
-  // Initialize desktop sidebar state from localStorage
-  if (!isMobile()) {
-    const isCollapsed = localStorage.getItem("sidebar-collapsed") === "true";
-    if (isCollapsed) {
-      root.classList.add("sidebar-collapsed");
-      menuToggle.setAttribute("aria-expanded", "true");
-    }
-  }
-
-  function openSidebarMobile() {
-    sidebar.classList.add("active");
-    if (overlay) overlay.classList.add("active");
-    menuToggle.setAttribute("aria-expanded", "true");
-  }
-
-  function closeSidebarMobile() {
-    sidebar.classList.remove("active");
-    if (overlay) overlay.classList.remove("active");
-    menuToggle.setAttribute("aria-expanded", "false");
-  }
-
-  function toggleSidebar() {
-    if (isMobile()) {
-      if (sidebar.classList.contains("active")) {
-        closeSidebarMobile();
-      } else {
-        openSidebarMobile();
-      }
-    } else {
-      // Desktop collapse toggle
-      const collapsed = root.classList.toggle("sidebar-collapsed");
-      localStorage.setItem("sidebar-collapsed", collapsed ? "true" : "false");
-      menuToggle.setAttribute("aria-expanded", collapsed ? "true" : "false");
-    }
-  }
-
-  menuToggle.addEventListener("click", function (e) {
-    e.stopPropagation();
-    toggleSidebar();
-  });
-
-  if (overlay) {
-    overlay.addEventListener("click", function () {
-      if (isMobile()) {
-        closeSidebarMobile();
-      }
-    });
-  }
-
-  // Close when clicking outside sidebar on mobile
-  document.addEventListener("click", function (event) {
-    if (isMobile() && sidebar.classList.contains("active")) {
-      if (!sidebar.contains(event.target) && !menuToggle.contains(event.target)) {
-        closeSidebarMobile();
-      }
-    }
-  });
-
-  document.addEventListener("keydown", function (event) {
-    if (event.key === "Escape") {
-      if (isMobile()) {
-        closeSidebarMobile();
-      }
-    }
-  });
-
-  // Handle window resize gracefully
-  window.addEventListener("resize", function () {
+    // Initialize desktop sidebar state from localStorage
     if (!isMobile()) {
-      // Clear mobile active classes if resized to desktop
-      sidebar.classList.remove("active");
-      if (overlay) overlay.classList.remove("active");
-      
-      // Re-apply desktop preference
       const isCollapsed = localStorage.getItem("sidebar-collapsed") === "true";
       if (isCollapsed) {
         root.classList.add("sidebar-collapsed");
         menuToggle.setAttribute("aria-expanded", "true");
+      }
+    }
+
+    function openSidebarMobile() {
+      sidebar.classList.add("active");
+      if (overlay) overlay.classList.add("active");
+      menuToggle.setAttribute("aria-expanded", "true");
+    }
+
+    function closeSidebarMobile() {
+      sidebar.classList.remove("active");
+      if (overlay) overlay.classList.remove("active");
+      menuToggle.setAttribute("aria-expanded", "false");
+    }
+
+    function toggleSidebar() {
+      if (isMobile()) {
+        if (sidebar.classList.contains("active")) {
+          closeSidebarMobile();
+        } else {
+          openSidebarMobile();
+        }
+      } else {
+        // Desktop collapse toggle
+        const collapsed = root.classList.toggle("sidebar-collapsed");
+        localStorage.setItem("sidebar-collapsed", collapsed ? "true" : "false");
+        menuToggle.setAttribute("aria-expanded", collapsed ? "true" : "false");
+      }
+    }
+
+    menuToggle.addEventListener("click", function (e) {
+      e.stopPropagation();
+      toggleSidebar();
+    });
+
+    if (overlay) {
+      overlay.addEventListener("click", function () {
+        if (isMobile()) {
+          closeSidebarMobile();
+        }
+      });
+    }
+
+    // Close when clicking outside sidebar on mobile
+    document.addEventListener("click", function (event) {
+      if (isMobile() && sidebar.classList.contains("active")) {
+        if (!sidebar.contains(event.target) && !menuToggle.contains(event.target)) {
+          closeSidebarMobile();
+        }
+      }
+    });
+
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape") {
+        if (isMobile()) {
+          closeSidebarMobile();
+        }
+      }
+    });
+
+    // Handle window resize gracefully
+    window.addEventListener("resize", function () {
+      if (!isMobile()) {
+        // Clear mobile active classes if resized to desktop
+        sidebar.classList.remove("active");
+        if (overlay) overlay.classList.remove("active");
+        
+        // Re-apply desktop preference
+        const isCollapsed = localStorage.getItem("sidebar-collapsed") === "true";
+        if (isCollapsed) {
+          root.classList.add("sidebar-collapsed");
+          menuToggle.setAttribute("aria-expanded", "true");
+        } else {
+          root.classList.remove("sidebar-collapsed");
+          menuToggle.setAttribute("aria-expanded", "false");
+        }
       } else {
         root.classList.remove("sidebar-collapsed");
-        menuToggle.setAttribute("aria-expanded", "false");
+        menuToggle.setAttribute("aria-expanded", sidebar.classList.contains("active") ? "true" : "false");
       }
-    } else {
-      root.classList.remove("sidebar-collapsed");
-      menuToggle.setAttribute("aria-expanded", sidebar.classList.contains("active") ? "true" : "false");
-    }
-  });
+    });
+  }
 
   // --- Language Switcher Logic ---
   const languageSwitcher = document.getElementById("languageSwitcher");
@@ -139,7 +139,11 @@ document.addEventListener("DOMContentLoaded", function () {
         collection: "Bộ sưu tập",
         copyright: "Bản quyền © 2026 PetAI. Mọi quyền được bảo lưu",
         footerTerms: "ĐIỀU KHOẢN",
-        footerPrivacy: "BẢO MẬT"
+        footerPrivacy: "BẢO MẬT",
+        product: "Sản phẩm",
+        features: "Tính năng",
+        pricing: "Bảng giá",
+        about: "Giới thiệu"
       },
       en: {
         languageLabel: "English",
@@ -174,7 +178,11 @@ document.addEventListener("DOMContentLoaded", function () {
         collection: "Collection",
         copyright: "Copyright © 2026 PetAI. All rights reserved",
         footerTerms: "TERMS",
-        footerPrivacy: "PRIVACY"
+        footerPrivacy: "PRIVACY",
+        product: "Product",
+        features: "Features",
+        pricing: "Pricing",
+        about: "About"
       }
     };
 

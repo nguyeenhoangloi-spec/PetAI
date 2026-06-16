@@ -564,22 +564,22 @@
         {% if not session.get('user_id') %}
         <div class="hidden md:flex items-center gap-10">
           <a class="body-md text-primary font-semibold" href="/#product"
-            >Sản phẩm</a
+             data-i18n="product">Sản phẩm</a
           >
           <a
             class="body-md text-on-surface-variant hover:text-primary transition-colors duration-300"
             href="/#features"
-            >Tính năng</a
+             data-i18n="features">Tính năng</a
           >
           <a
             class="body-md text-on-surface-variant hover:text-primary transition-colors duration-300"
             href="/#pricing"
-            >Bảng giá</a
+             data-i18n="pricing">Bảng giá</a
           >
           <a
             class="body-md text-on-surface-variant hover:text-primary transition-colors duration-300"
             href="/#social-proof"
-            >Giới thiệu</a
+             data-i18n="about">Giới thiệu</a
           >
         </div>
         {% endif %}
@@ -591,6 +591,8 @@
             >Bảng điều khiển</a
           >
           <div class="flex items-center gap-base">
+                        </div>
+                        </div>
                         <div class="language-switcher mr-2" id="languageSwitcher">
               <button class="language-button" id="languageButton" type="button" aria-haspopup="true" aria-expanded="false">
                 <span class="language-flag">🇻🇳</span>
@@ -672,6 +674,26 @@
             >Bảng điều khiển</a
           >
           <div class="flex items-center gap-base">
+                        </div>
+                        <div class="language-switcher mr-2" id="languageSwitcher">
+              <button class="language-button" id="languageButton" type="button" aria-haspopup="true" aria-expanded="false">
+                <span class="language-flag">🇻🇳</span>
+                <span class="language-current">VN</span>
+                <span class="language-arrow">▼</span>
+              </button>
+              <div class="language-menu" id="languageMenu">
+                <button class="language-option active" type="button" data-lang="vi">
+                  <span class="language-check">✓</span>
+                  <span class="language-flag">🇻🇳</span>
+                  <span>Tiếng Việt</span>
+                </button>
+                <button class="language-option" type="button" data-lang="en">
+                  <span class="language-check"></span>
+                  <span class="language-flag">🇺🇸</span>
+                  <span>English</span>
+                </button>
+              </div>
+            </div>
             <a
               aria-label="Cài đặt"
               class="p-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all"
@@ -734,6 +756,26 @@
             >Bảng điều khiển</a
           >
           <div class="flex items-center gap-base">
+                        </div>
+                        <div class="language-switcher mr-2" id="languageSwitcher">
+              <button class="language-button" id="languageButton" type="button" aria-haspopup="true" aria-expanded="false">
+                <span class="language-flag">🇻🇳</span>
+                <span class="language-current">VN</span>
+                <span class="language-arrow">▼</span>
+              </button>
+              <div class="language-menu" id="languageMenu">
+                <button class="language-option active" type="button" data-lang="vi">
+                  <span class="language-check">✓</span>
+                  <span class="language-flag">🇻🇳</span>
+                  <span>Tiếng Việt</span>
+                </button>
+                <button class="language-option" type="button" data-lang="en">
+                  <span class="language-check"></span>
+                  <span class="language-flag">🇺🇸</span>
+                  <span>English</span>
+                </button>
+              </div>
+            </div>
             <a
               aria-label="Cài đặt"
               class="p-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all"
@@ -796,6 +838,26 @@
             >Bảng điều khiển</a
           >
           <div class="flex items-center gap-base">
+                        </div>
+                        <div class="language-switcher mr-2" id="languageSwitcher">
+              <button class="language-button" id="languageButton" type="button" aria-haspopup="true" aria-expanded="false">
+                <span class="language-flag">🇻🇳</span>
+                <span class="language-current">VN</span>
+                <span class="language-arrow">▼</span>
+              </button>
+              <div class="language-menu" id="languageMenu">
+                <button class="language-option active" type="button" data-lang="vi">
+                  <span class="language-check">✓</span>
+                  <span class="language-flag">🇻🇳</span>
+                  <span>Tiếng Việt</span>
+                </button>
+                <button class="language-option" type="button" data-lang="en">
+                  <span class="language-check"></span>
+                  <span class="language-flag">🇺🇸</span>
+                  <span>English</span>
+                </button>
+              </div>
+            </div>
             <a
               aria-label="Cài đặt"
               class="p-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all"
@@ -851,14 +913,33 @@
         </div>
         {% else %}
         <div class="flex items-center gap-6">
+                    <div class="language-switcher mr-2" id="languageSwitcher">
+            <button class="language-button" id="languageButton" type="button" aria-haspopup="true" aria-expanded="false">
+              <span class="language-flag">🇻🇳</span>
+              <span class="language-current">VN</span>
+              <span class="language-arrow">▼</span>
+            </button>
+            <div class="language-menu" id="languageMenu">
+              <button class="language-option active" type="button" data-lang="vi">
+                <span class="language-check">✓</span>
+                <span class="language-flag">🇻🇳</span>
+                <span>Tiếng Việt</span>
+              </button>
+              <button class="language-option" type="button" data-lang="en">
+                <span class="language-check"></span>
+                <span class="language-flag">🇺🇸</span>
+                <span>English</span>
+              </button>
+            </div>
+          </div>
           <a
             class="label-sm text-on-surface-variant hover:text-primary font-semibold transition-colors duration-300"
-            href="{{ url_for('login.login') }}"
+            href="{{ url_for('login.login') }}" data-i18n="login"
             >Đăng nhập</a
           >
           <a
             class="bg-primary text-on-primary px-6 py-2.5 rounded-full label-sm font-semibold hover:shadow-lg active:scale-95 transition-all"
-            href="{{ url_for('register.register') }}"
+            href="{{ url_for('register.register') }}" data-i18n="register"
             >Đăng ký</a
           >
         </div>
@@ -1131,5 +1212,6 @@
         });
       })();
     </script>
+      <script src="{{ url_for('static', filename='js/script.js') }}"></script>
   </body>
 </html>
