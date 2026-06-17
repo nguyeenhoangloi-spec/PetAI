@@ -4,10 +4,11 @@
 import json
 from datetime import datetime, time, timedelta
 
-from flask import Blueprint, render_template, session, redirect, url_for, flash, request
+from flask import Blueprint, render_template, session, redirect, url_for, flash, request, jsonify
 
 from connect import get_connection
 from models import PredictionHistory
+from breed_names import to_common_vietnamese_breed_name
 
 PREDICTIONS_PER_PAGE = 10
 
@@ -306,3 +307,7 @@ def dashboard():
                 conn.close()
         except Exception:
             pass
+
+
+
+

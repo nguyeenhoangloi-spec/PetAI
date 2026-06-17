@@ -583,22 +583,51 @@
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
             <div>
               <h3 class="text-lg font-bold text-on-surface">Xu hướng Doanh thu</h3>
-              <p class="text-xs text-on-surface-variant mt-0.5">Tổng tiền từ đơn đã thanh toán (VND)</p>
+              <p class="text-xs text-on-surface-variant mt-0.5" id="revenueTrendSubtitle">Tổng tiền từ đơn đã thanh toán (VND)</p>
             </div>
-            <!-- Period Tabs -->
-            <div class="flex items-center gap-1 p-1 bg-surface-container-low dark:bg-slate-800 rounded-lg" id="revenuePeriodTabs">
-              <button type="button" data-period="daily"
-                class="rev-tab px-3 py-1.5 rounded-md label-sm font-semibold transition-all bg-primary text-white shadow-sm">
-                7 ngày
-              </button>
-              <button type="button" data-period="monthly"
-                class="rev-tab px-3 py-1.5 rounded-md label-sm font-medium transition-all text-on-surface-variant hover:bg-surface-container-high">
-                12 tháng
-              </button>
-              <button type="button" data-period="yearly"
-                class="rev-tab px-3 py-1.5 rounded-md label-sm font-medium transition-all text-on-surface-variant hover:bg-surface-container-high">
-                5 năm
-              </button>
+            <!-- Period Tabs Wrapper to contain Popover absolutely -->
+            <div class="relative">
+              <div class="flex items-center gap-1 p-1 bg-surface-container-low dark:bg-slate-800 rounded-lg" id="revenuePeriodTabs">
+                <button type="button" data-period="7days"
+                  class="rev-tab px-3 py-1.5 rounded-md label-sm font-semibold transition-all bg-primary text-white shadow-sm">
+                  7 ngày
+                </button>
+                <button type="button" data-period="30days"
+                  class="rev-tab px-3 py-1.5 rounded-md label-sm font-medium transition-all text-on-surface-variant hover:bg-surface-container-high">
+                  30 ngày
+                </button>
+                <button type="button" data-period="90days"
+                  class="rev-tab px-3 py-1.5 rounded-md label-sm font-medium transition-all text-on-surface-variant hover:bg-surface-container-high">
+                  90 ngày
+                </button>
+                <button type="button" data-period="12months"
+                  class="rev-tab px-3 py-1.5 rounded-md label-sm font-medium transition-all text-on-surface-variant hover:bg-surface-container-high">
+                  12 tháng
+                </button>
+                <button type="button" data-period="custom" id="revenueCustomBtn"
+                  class="rev-tab px-3 py-1.5 rounded-md label-sm font-medium transition-all text-on-surface-variant hover:bg-surface-container-high flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-[16px]">calendar_today</span>
+                  <span>Tùy chọn</span>
+                </button>
+              </div>
+
+              <!-- Custom Date Range Popover for Revenue -->
+              <div id="revenueCustomPopover" class="hidden absolute right-0 top-full mt-2 p-4 bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-xl shadow-lg z-50 min-w-[280px] flex flex-col gap-3">
+                <div class="text-sm font-bold text-on-surface">Chọn khoảng thời gian</div>
+                <div class="grid grid-cols-2 gap-2">
+                  <div class="flex flex-col gap-1">
+                    <label class="text-[10px] uppercase font-semibold text-on-surface-variant">Từ ngày</label>
+                    <input type="date" id="revenueStartDate" class="px-2 py-1.5 rounded-md border border-outline-variant bg-surface-container-low dark:bg-slate-800 text-on-surface text-xs focus:outline-none focus:border-primary">
+                  </div>
+                  <div class="flex flex-col gap-1">
+                    <label class="text-[10px] uppercase font-semibold text-on-surface-variant">Đến ngày</label>
+                    <input type="date" id="revenueEndDate" class="px-2 py-1.5 rounded-md border border-outline-variant bg-surface-container-low dark:bg-slate-800 text-on-surface text-xs focus:outline-none focus:border-primary">
+                  </div>
+                </div>
+                <button type="button" id="applyRevenueCustom" class="w-full py-1.5 bg-primary text-white rounded-md text-xs font-semibold hover:bg-primary/95 transition-all shadow-sm">
+                  Áp dụng
+                </button>
+              </div>
             </div>
           </div>
           <div class="chart-container" style="position:relative;height:300px;">
@@ -637,20 +666,49 @@
             Biểu đồ hoạt động
           </h2>
           <div class="flex items-center flex-wrap gap-2">
-            <!-- Timeframe selector -->
-            <div class="flex items-center gap-1 p-1 bg-surface-container-low dark:bg-slate-800 rounded-lg" id="activityPeriodTabs">
-              <button type="button" data-period="7"
-                class="act-tab px-3 py-1.5 rounded-md label-sm font-semibold transition-all bg-primary text-white shadow-sm">
-                7 ngày
-              </button>
-              <button type="button" data-period="30"
-                class="act-tab px-3 py-1.5 rounded-md label-sm font-medium transition-all text-on-surface-variant hover:bg-surface-container-high">
-                30 ngày
-              </button>
-              <button type="button" data-period="all"
-                class="act-tab px-3 py-1.5 rounded-md label-sm font-medium transition-all text-on-surface-variant hover:bg-surface-container-high">
-                Tất cả
-              </button>
+            <!-- Timeframe selector Wrapper to contain Popover absolutely -->
+            <div class="relative">
+              <div class="flex items-center gap-1 p-1 bg-surface-container-low dark:bg-slate-800 rounded-lg" id="activityPeriodTabs">
+                <button type="button" data-period="7days"
+                  class="act-tab px-3 py-1.5 rounded-md label-sm font-semibold transition-all bg-primary text-white shadow-sm">
+                  7 ngày
+                </button>
+                <button type="button" data-period="30days"
+                  class="act-tab px-3 py-1.5 rounded-md label-sm font-medium transition-all text-on-surface-variant hover:bg-surface-container-high">
+                  30 ngày
+                </button>
+                <button type="button" data-period="90days"
+                  class="act-tab px-3 py-1.5 rounded-md label-sm font-medium transition-all text-on-surface-variant hover:bg-surface-container-high">
+                  90 ngày
+                </button>
+                <button type="button" data-period="12months"
+                  class="act-tab px-3 py-1.5 rounded-md label-sm font-medium transition-all text-on-surface-variant hover:bg-surface-container-high">
+                  12 tháng
+                </button>
+                <button type="button" data-period="custom" id="activityCustomBtn"
+                  class="act-tab px-3 py-1.5 rounded-md label-sm font-medium transition-all text-on-surface-variant hover:bg-surface-container-high flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-[16px]">calendar_today</span>
+                  <span>Tùy chọn</span>
+                </button>
+              </div>
+
+              <!-- Custom Date Range Popover for Activity -->
+              <div id="activityCustomPopover" class="hidden absolute right-0 top-full mt-2 p-4 bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-xl shadow-lg z-50 min-w-[280px] flex flex-col gap-3">
+                <div class="text-sm font-bold text-on-surface">Chọn khoảng thời gian</div>
+                <div class="grid grid-cols-2 gap-2">
+                  <div class="flex flex-col gap-1">
+                    <label class="text-[10px] uppercase font-semibold text-on-surface-variant">Từ ngày</label>
+                    <input type="date" id="activityStartDate" class="px-2 py-1.5 rounded-md border border-outline-variant bg-surface-container-low dark:bg-slate-800 text-on-surface text-xs focus:outline-none focus:border-primary">
+                  </div>
+                  <div class="flex flex-col gap-1">
+                    <label class="text-[10px] uppercase font-semibold text-on-surface-variant">Đến ngày</label>
+                    <input type="date" id="activityEndDate" class="px-2 py-1.5 rounded-md border border-outline-variant bg-surface-container-low dark:bg-slate-800 text-on-surface text-xs focus:outline-none focus:border-primary">
+                  </div>
+                </div>
+                <button type="button" id="applyActivityCustom" class="w-full py-1.5 bg-primary text-white rounded-md text-xs font-semibold hover:bg-primary/95 transition-all shadow-sm">
+                  Áp dụng
+                </button>
+              </div>
             </div>
             <span
               class="text-xs text-on-surface-variant/70 bg-surface-container/50 dark:bg-slate-800 px-3 py-1.5 rounded-lg flex items-center gap-1.5 font-medium">
@@ -1041,21 +1099,96 @@
 
             // Period tab switching
             document.querySelectorAll('.rev-tab').forEach(function(btn) {
-              btn.addEventListener('click', function() {
+              btn.addEventListener('click', function(e) {
                 const period = this.getAttribute('data-period');
-                const newData = buildRevenueDataset(period);
-                revenueChart.data.labels = newData.labels;
-                revenueChart.data.datasets[0].data = newData.datasets[0].data;
-                revenueChart.update();
-                // Update active tab styles
+                if (period === 'custom') {
+                  const popover = document.getElementById('revenueCustomPopover');
+                  if (popover) {
+                    popover.classList.toggle('hidden');
+                  }
+                  return;
+                }
+
+                // Hide custom popover
+                const popover = document.getElementById('revenueCustomPopover');
+                if (popover) popover.classList.add('hidden');
+
+                // Switch styles
                 document.querySelectorAll('.rev-tab').forEach(function(t) {
                   t.classList.remove('bg-primary', 'text-white', 'shadow-sm', 'font-semibold');
                   t.classList.add('text-on-surface-variant', 'font-medium');
                 });
                 this.classList.add('bg-primary', 'text-white', 'shadow-sm', 'font-semibold');
                 this.classList.remove('text-on-surface-variant', 'font-medium');
+
+                // Fetch dynamic data
+                fetch(`/dashboard/api/revenue-stats?period=${period}`)
+                  .then(res => res.json())
+                  .then(data => {
+                    if (revenueChart) {
+                      revenueChart.data.labels = data.labels;
+                      revenueChart.data.datasets[0].data = data.data;
+                      revenueChart.update();
+                    }
+                    const subtitle = document.getElementById('revenueTrendSubtitle');
+                    if (subtitle) {
+                      if (period === '7days') subtitle.textContent = "Tổng tiền từ đơn đã thanh toán (7 ngày gần đây)";
+                      else if (period === '30days') subtitle.textContent = "Tổng tiền từ đơn đã thanh toán (30 ngày gần đây)";
+                      else if (period === '90days') subtitle.textContent = "Tổng tiền từ đơn đã thanh toán (90 ngày gần đây)";
+                      else if (period === '12months') subtitle.textContent = "Tổng tiền từ đơn đã thanh toán (12 tháng gần đây)";
+                    }
+                  })
+                  .catch(err => console.error("Error fetching revenue stats:", err));
               });
             });
+
+            // Apply custom range button
+            const applyRevBtn = document.getElementById('applyRevenueCustom');
+            if (applyRevBtn) {
+              applyRevBtn.addEventListener('click', function() {
+                const start = document.getElementById('revenueStartDate').value;
+                const end = document.getElementById('revenueEndDate').value;
+                if (!start || !end) {
+                  alert("Vui lòng chọn đầy đủ ngày bắt đầu và ngày kết thúc!");
+                  return;
+                }
+                if (new Date(start) > new Date(end)) {
+                  alert("Ngày bắt đầu không được lớn hơn ngày kết thúc!");
+                  return;
+                }
+
+                // Fetch dynamic data
+                fetch(`/dashboard/api/revenue-stats?period=custom&startDate=${start}&endDate=${end}`)
+                  .then(res => res.json())
+                  .then(data => {
+                    if (revenueChart) {
+                      revenueChart.data.labels = data.labels;
+                      revenueChart.data.datasets[0].data = data.data;
+                      revenueChart.update();
+                    }
+                    const subtitle = document.getElementById('revenueTrendSubtitle');
+                    if (subtitle) {
+                      subtitle.textContent = `Tổng tiền từ đơn đã thanh toán (Từ ngày ${start.split('-').reverse().join('/')} đến ngày ${end.split('-').reverse().join('/')})`;
+                    }
+                    
+                    // Update active button styles
+                    document.querySelectorAll('.rev-tab').forEach(function(t) {
+                      t.classList.remove('bg-primary', 'text-white', 'shadow-sm', 'font-semibold');
+                      t.classList.add('text-on-surface-variant', 'font-medium');
+                    });
+                    const customBtn = document.getElementById('revenueCustomBtn');
+                    if (customBtn) {
+                      customBtn.classList.add('bg-primary', 'text-white', 'shadow-sm', 'font-semibold');
+                      customBtn.classList.remove('text-on-surface-variant', 'font-medium');
+                    }
+                    
+                    // Hide popover
+                    const popover = document.getElementById('revenueCustomPopover');
+                    if (popover) popover.classList.add('hidden');
+                  })
+                  .catch(err => console.error("Error fetching revenue stats:", err));
+              });
+            }
           }
 
           // ── Subscription Doughnut ──
@@ -1317,62 +1450,89 @@
         });
       }
 
-      // ── Function to switch timeframe for activity charts ──
-      function updateActivityCharts(period) {
-        const d = activityDatasets[period];
-        if (!d) return;
-
-        // 1. Line Chart
-        if (dailyChartInstance) {
-          dailyChartInstance.data.labels = d.dailyLabels;
-          dailyChartInstance.data.datasets[0].data = d.dailyData;
-          dailyChartInstance.update();
+      // ── Function to switch timeframe for activity charts dynamically ──
+      function updateActivityChartsData(period, startDate, endDate) {
+        let url = `/dashboard/api/activity-stats?period=${period}`;
+        if (startDate && endDate) {
+          url += `&startDate=${startDate}&endDate=${endDate}`;
         }
+        
+        fetch(url)
+          .then(res => res.json())
+          .then(d => {
+            // 1. Line Chart
+            if (dailyChartInstance) {
+              dailyChartInstance.data.labels = d.dailyLabels;
+              dailyChartInstance.data.datasets[0].data = d.dailyData;
+              dailyChartInstance.update();
+            }
 
-        // Update titles, subtitles and badges dynamically
-        const trendTitle = document.getElementById("predictionTrendTitle");
-        const trendBadge = document.getElementById("predictionTrendBadge");
-        const trendSubtitle = document.getElementById("predictionTrendSubtitle");
-        if (trendTitle && trendBadge && trendSubtitle) {
-          if (period === '7') {
-            trendTitle.textContent = "Xu hướng dự đoán 7 ngày gần đây";
-            trendBadge.textContent = "7 ngày qua";
-            trendSubtitle.textContent = "Số lượng ảnh đã nhận diện mỗi ngày";
-          } else if (period === '30') {
-            trendTitle.textContent = "Xu hướng dự đoán 30 ngày gần đây";
-            trendBadge.textContent = "30 ngày qua";
-            trendSubtitle.textContent = "Số lượng ảnh đã nhận diện mỗi ngày";
-          } else {
-            trendTitle.textContent = "Xu hướng dự đoán toàn thời gian";
-            trendBadge.textContent = "Toàn thời gian";
-            trendSubtitle.textContent = "Số lượng ảnh đã nhận diện theo tháng";
-          }
-        }
+            // Update titles, subtitles and badges dynamically
+            const trendTitle = document.getElementById("predictionTrendTitle");
+            const trendBadge = document.getElementById("predictionTrendBadge");
+            const trendSubtitle = document.getElementById("predictionTrendSubtitle");
+            if (trendTitle && trendBadge && trendSubtitle) {
+              if (period === '7days') {
+                trendTitle.textContent = "Xu hướng dự đoán 7 ngày gần đây";
+                trendBadge.textContent = "7 ngày qua";
+                trendSubtitle.textContent = "Số lượng ảnh đã nhận diện mỗi ngày";
+              } else if (period === '30days') {
+                trendTitle.textContent = "Xu hướng dự đoán 30 ngày gần đây";
+                trendBadge.textContent = "30 ngày qua";
+                trendSubtitle.textContent = "Số lượng ảnh đã nhận diện mỗi ngày";
+              } else if (period === '90days') {
+                trendTitle.textContent = "Xu hướng dự đoán 90 ngày gần đây";
+                trendBadge.textContent = "90 ngày qua";
+                trendSubtitle.textContent = "Số lượng ảnh đã nhận diện mỗi ngày";
+              } else if (period === '12months') {
+                trendTitle.textContent = "Xu hướng dự đoán 12 tháng gần đây";
+                trendBadge.textContent = "12 tháng qua";
+                trendSubtitle.textContent = "Số lượng ảnh đã nhận diện theo tháng";
+              } else {
+                trendTitle.textContent = "Xu hướng dự đoán tùy chỉnh";
+                trendBadge.textContent = "Tùy chỉnh";
+                trendSubtitle.textContent = `Từ ngày ${startDate.split('-').reverse().join('/')} đến ngày ${endDate.split('-').reverse().join('/')}`;
+              }
+            }
 
-        // 2. Top Breeds Chart
-        if (topBreedsChartInstance) {
-          const hasData = d.topBreeds.length > 0;
-          topBreedsChartInstance.data.labels = hasData ? d.topBreeds : ["Chưa có dữ liệu"];
-          topBreedsChartInstance.data.datasets[0].data = hasData ? d.topBreedsCounts : [1];
-          topBreedsChartInstance.data.datasets[0].backgroundColor = hasData
-            ? ["#004ac6", "#fea619", "#943700", "#10b981", "#8b5cf6"]
-            : [isDarkMode ? "#334155" : "#cbd5e1"];
-          topBreedsChartInstance.options.plugins.tooltip.enabled = hasData;
-          topBreedsChartInstance.update();
-        }
+            // 2. Top Breeds Chart
+            if (topBreedsChartInstance) {
+              const hasData = d.topBreeds && d.topBreeds.length > 0;
+              topBreedsChartInstance.data.labels = hasData ? d.topBreeds : ["Chưa có dữ liệu"];
+              topBreedsChartInstance.data.datasets[0].data = hasData ? d.topBreedsCounts : [1];
+              topBreedsChartInstance.data.datasets[0].backgroundColor = hasData
+                ? ["#004ac6", "#fea619", "#943700", "#10b981", "#8b5cf6"]
+                : [isDarkMode ? "#334155" : "#cbd5e1"];
+              topBreedsChartInstance.options.plugins.tooltip.enabled = hasData;
+              topBreedsChartInstance.update();
+            }
 
-        // 3. Confidence Distribution Chart
-        if (confidenceChartInstance) {
-          confidenceChartInstance.data.datasets[0].data = d.confidenceDist;
-          confidenceChartInstance.update();
-        }
+            // 3. Confidence Distribution Chart
+            if (confidenceChartInstance) {
+              confidenceChartInstance.data.datasets[0].data = d.confidenceDist;
+              confidenceChartInstance.update();
+            }
+          })
+          .catch(err => console.error("Error fetching activity stats:", err));
       }
 
       // Timeframe selector for activity charts
       document.querySelectorAll('.act-tab').forEach(function(btn) {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function(e) {
           const period = this.getAttribute('data-period');
-          updateActivityCharts(period);
+          if (period === 'custom') {
+            const popover = document.getElementById('activityCustomPopover');
+            if (popover) {
+              popover.classList.toggle('hidden');
+            }
+            return;
+          }
+
+          // Hide custom popover
+          const popover = document.getElementById('activityCustomPopover');
+          if (popover) popover.classList.add('hidden');
+
+          updateActivityChartsData(period);
 
           // Update active tab styles
           document.querySelectorAll('.act-tab').forEach(function(t) {
@@ -1382,6 +1542,58 @@
           this.classList.add('bg-primary', 'text-white', 'shadow-sm', 'font-semibold');
           this.classList.remove('text-on-surface-variant', 'font-medium');
         });
+      });
+
+      // Apply custom range button for activity
+      const applyActBtn = document.getElementById('applyActivityCustom');
+      if (applyActBtn) {
+        applyActBtn.addEventListener('click', function() {
+          const start = document.getElementById('activityStartDate').value;
+          const end = document.getElementById('activityEndDate').value;
+          if (!start || !end) {
+            alert("Vui lòng chọn đầy đủ ngày bắt đầu và ngày kết thúc!");
+            return;
+          }
+          if (new Date(start) > new Date(end)) {
+            alert("Ngày bắt đầu không được lớn hơn ngày kết thúc!");
+            return;
+          }
+
+          updateActivityChartsData('custom', start, end);
+
+          // Update active styles
+          document.querySelectorAll('.act-tab').forEach(function(t) {
+            t.classList.remove('bg-primary', 'text-white', 'shadow-sm', 'font-semibold');
+            t.classList.add('text-on-surface-variant', 'font-medium');
+          });
+          const customBtn = document.getElementById('activityCustomBtn');
+          if (customBtn) {
+            customBtn.classList.add('bg-primary', 'text-white', 'shadow-sm', 'font-semibold');
+            customBtn.classList.remove('text-on-surface-variant', 'font-medium');
+          }
+
+          // Hide popover
+          const popover = document.getElementById('activityCustomPopover');
+          if (popover) popover.classList.add('hidden');
+        });
+      }
+
+      // Close popovers on outside click
+      document.addEventListener('click', function(event) {
+        const revPopover = document.getElementById('revenueCustomPopover');
+        const revBtn = document.getElementById('revenueCustomBtn');
+        if (revPopover && !revPopover.classList.contains('hidden')) {
+          if (!revPopover.contains(event.target) && !revBtn.contains(event.target)) {
+            revPopover.classList.add('hidden');
+          }
+        }
+        const actPopover = document.getElementById('activityCustomPopover');
+        const actBtn = document.getElementById('activityCustomBtn');
+        if (actPopover && !actPopover.classList.contains('hidden')) {
+          if (!actPopover.contains(event.target) && !actBtn.contains(event.target)) {
+            actPopover.classList.add('hidden');
+          }
+        }
       });
       // ── Animated counter for stat cards ──
       (function () {

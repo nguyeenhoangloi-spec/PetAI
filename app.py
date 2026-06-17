@@ -46,6 +46,7 @@ from home import home_bp
 from login import login_bp
 from register import register_bp
 from dashboard import dashboard_bp
+from routes.dashboard_api import dashboard_api_bp
 from upload import predict_bp
 from logout import logout_bp
 from history import history_bp
@@ -82,6 +83,7 @@ app.register_blueprint(home_bp, url_prefix="")
 app.register_blueprint(login_bp, url_prefix="/login")
 app.register_blueprint(register_bp, url_prefix="/register")
 app.register_blueprint(dashboard_bp, url_prefix="/dashboard")
+app.register_blueprint(dashboard_api_bp, url_prefix="/dashboard/api")
 app.register_blueprint(predict_bp, url_prefix="/predict")
 app.register_blueprint(logout_bp, url_prefix="/logout")
 app.register_blueprint(history_bp, url_prefix="/history")
