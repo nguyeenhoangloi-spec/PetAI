@@ -421,7 +421,13 @@
               data-suffix="đ" data-use-commas="true">
               0đ
             </span>
-            <span class="label-sm text-on-surface-variant/70 mt-1">Từ các gói đã thanh toán</span>
+            <span class="label-sm text-on-surface-variant/70 mt-2 flex items-center justify-between">
+              <span>Từ các gói đã thanh toán</span>
+              <span class="text-xs text-emerald-600 dark:text-emerald-400 font-semibold bg-emerald-500/10 dark:bg-emerald-500/20 px-2 py-0.5 rounded flex items-center gap-0.5" title="Doanh thu được ghi nhận trong tháng này">
+                <span class="material-symbols-outlined text-[13px] font-bold">trending_up</span>
+                +{{ '{:,}'.format(revenue_this_month).replace(',', '.') }}đ tháng này
+              </span>
+            </span>
           </div>
         </div>
 
@@ -439,12 +445,18 @@
             <span class="text-3xl font-bold text-on-surface tracking-tight" data-counter="{{ total_users }}">
               0
             </span>
-            <span class="label-sm text-on-surface-variant/70 mt-1">Tài khoản đã đăng ký</span>
+            <span class="label-sm text-on-surface-variant/70 mt-2 flex items-center justify-between">
+              <span>Tài khoản đã đăng ký</span>
+              <span class="text-xs text-blue-600 dark:text-blue-400 font-semibold bg-blue-500/10 dark:bg-blue-500/20 px-2 py-0.5 rounded flex items-center gap-0.5" title="Số tài khoản mới đăng ký trong 7 ngày qua">
+                <span class="material-symbols-outlined text-[13px] font-bold">person_add</span>
+                +{{ new_users_this_week }} mới tuần này
+              </span>
+            </span>
           </div>
         </div>
 
         <!-- Card 3: Đơn hàng chờ duyệt -->
-        <a class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[140px] hover:border-yellow-500/50 transition-colors"
+        <a class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[140px] hover:border-yellow-500/50 transition-colors group"
           href="{{ url_for('users.confirmations_list') }}">
           <div class="flex items-center justify-between">
             <span class="label-sm text-on-surface-variant font-semibold uppercase tracking-wider">Đơn chờ duyệt</span>
@@ -464,9 +476,17 @@
               </span>
               {% endif %}
             </span>
-            <span class="label-sm text-primary group-hover:underline mt-1 flex items-center gap-0.5">
-              Xem danh sách chờ duyệt <span class="material-symbols-outlined text-[14px]">chevron_right</span>
-            </span>
+            <div class="label-sm text-on-surface-variant/70 mt-2 flex items-center justify-between">
+              <span class="text-primary group-hover:underline flex items-center gap-0.5">
+                Xem danh sách chờ duyệt <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+              </span>
+              {% if new_orders_today > 0 %}
+              <span class="text-xs text-amber-600 dark:text-amber-400 font-semibold bg-amber-500/10 dark:bg-amber-500/20 px-2 py-0.5 rounded flex items-center gap-0.5" title="Các đơn hàng mới tạo ngày hôm nay">
+                <span class="material-symbols-outlined text-[13px] font-bold">notifications_active</span>
+                +{{ new_orders_today }} hôm nay
+              </span>
+              {% endif %}
+            </div>
           </div>
         </a>
 
@@ -485,7 +505,13 @@
             <span class="text-3xl font-bold text-on-surface tracking-tight" data-counter="{{ total_all_time }}">
               0
             </span>
-            <span class="label-sm text-on-surface-variant/70 mt-1">Toàn bộ lượt quét của hệ thống</span>
+            <span class="label-sm text-on-surface-variant/70 mt-2 flex items-center justify-between">
+              <span>Toàn bộ lượt quét của hệ thống</span>
+              <span class="text-xs text-purple-600 dark:text-purple-400 font-semibold bg-purple-500/10 dark:bg-purple-500/20 px-2 py-0.5 rounded flex items-center gap-0.5" title="Số lượt dự đoán thực hiện hôm nay">
+                <span class="material-symbols-outlined text-[13px] font-bold">monitoring</span>
+                +{{ predictions_today }} hôm nay
+              </span>
+            </span>
           </div>
         </div>
       </section>

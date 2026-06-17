@@ -694,13 +694,16 @@
               {% endif %}
 
               <!-- Auto-checking Status Container -->
-              <div class="w-full flex flex-col items-center justify-center p-4 bg-amber-500/10 dark:bg-amber-500/5 rounded-xl border border-amber-500/20 text-center mb-6">
+              <div id="paymentStatusContainer" class="w-full flex flex-col items-center justify-center p-5 bg-amber-500/10 dark:bg-amber-500/5 rounded-xl border border-amber-500/20 text-center mb-6 shadow-sm transition-all duration-300">
+                <div id="paymentStatusIcon" class="mb-3 flex items-center justify-center">
+                  <!-- CSS Spinner -->
+                  <div class="animate-spin rounded-full h-5.5 w-5.5 border-2.5 border-amber-600 dark:border-amber-400 border-t-transparent"></div>
+                </div>
                 <div class="flex items-center gap-2 text-amber-600 dark:text-amber-400 mb-2">
-                  <span class="w-2.5 h-2.5 rounded-full bg-amber-500 animate-ping" id="paymentStatusDot"></span>
                   <span class="label-sm font-bold uppercase tracking-wider" id="paymentStatusHeader">Đang kiểm tra</span>
                 </div>
                 <p class="body-md text-slate-700 dark:text-slate-300 font-medium" id="paymentStatusText">
-                  ⏳ Hệ thống đang tự động kiểm tra thanh toán...<br>
+                  Hệ thống đang tự động kiểm tra thanh toán...<br>
                   Vui lòng không tắt trang cho đến khi giao dịch được xác nhận.
                 </p>
               </div>
@@ -849,7 +852,8 @@
     <script>
       (function () {
         const orderId = "{{ order_id }}";
-        const statusDot = document.getElementById("paymentStatusDot");
+        const statusContainer = document.getElementById("paymentStatusContainer");
+        const statusIcon = document.getElementById("paymentStatusIcon");
         const statusText = document.getElementById("paymentStatusText");
         const statusHeader = document.getElementById("paymentStatusHeader");
 
@@ -947,16 +951,19 @@
             const currentStatus = (data.status || "").toLowerCase();
             
             if (currentStatus === "paid") {
-              if (statusDot) {
-                statusDot.classList.remove("bg-amber-500", "animate-ping");
-                statusDot.classList.add("bg-emerald-500");
+              if (statusContainer) {
+                statusContainer.classList.remove("bg-amber-500/10", "border-amber-500/20");
+                statusContainer.classList.add("bg-emerald-500/10", "border-emerald-500/20", "dark:bg-emerald-500/5", "dark:border-emerald-500/20");
+              }
+              if (statusIcon) {
+                statusIcon.innerHTML = '<span class="material-symbols-outlined text-[28px] text-emerald-500 animate-bounce">check_circle</span>';
               }
               if (statusHeader) {
                 statusHeader.textContent = "THÀNH CÔNG";
                 statusHeader.className = "label-sm font-bold text-emerald-600 dark:text-emerald-400 mb-2";
               }
               if (statusText) {
-                statusText.innerHTML = "✅ Thanh toán thành công!<br>Hóa đơn của bạn đang được hiển thị.";
+                statusText.innerHTML = "Thanh toán thành công!<br>Hóa đơn của bạn đang được hiển thị.";
               }
               
               // Open modal immediately
@@ -964,7 +971,7 @@
               return true;
             } else {
               if (statusText) {
-                statusText.innerHTML = "⏳ Đang chờ thanh toán...<br>Hệ thống sẽ tự động kiểm tra lại sau vài giây.";
+                statusText.innerHTML = "Đang chờ thanh toán...<br>Hệ thống sẽ tự động kiểm tra lại sau vài giây.";
               }
             }
           } catch (e) {

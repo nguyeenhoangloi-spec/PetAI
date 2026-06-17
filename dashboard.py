@@ -128,6 +128,10 @@ def dashboard():
         total_users = 0
         total_revenue = 0
         pending_orders_count = 0
+        revenue_this_month = 0
+        new_users_this_week = 0
+        new_orders_today = 0
+        predictions_today = 0
         revenue_daily_labels = []
         revenue_daily_data = []
         revenue_monthly_labels = []
@@ -149,6 +153,22 @@ def dashboard():
                 # Pending/user confirmed orders
                 cur.execute("SELECT COUNT(*) FROM payment_orders WHERE status = 'user_confirmed'")
                 pending_orders_count = int(cur.fetchone()[0] or 0)
+
+                # Micro-indicator: Revenue this month
+                cur.execute("SELECT SUM(amount_vnd) FROM payment_orders WHERE status = 'paid' AND confirmed_at >= DATE_FORMAT(CURDATE(), '%Y-%m-01')")
+                revenue_this_month = int(cur.fetchone()[0] or 0)
+
+                # Micro-indicator: New users in the last 7 days
+                cur.execute("SELECT COUNT(*) FROM users WHERE created_at >= CURDATE() - INTERVAL 7 DAY")
+                new_users_this_week = int(cur.fetchone()[0] or 0)
+
+                # Micro-indicator: New pending orders today
+                cur.execute("SELECT COUNT(*) FROM payment_orders WHERE status = 'user_confirmed' AND created_at >= CURDATE()")
+                new_orders_today = int(cur.fetchone()[0] or 0)
+
+                # Micro-indicator: Predictions made today
+                cur.execute("SELECT COUNT(*) FROM prediction_history WHERE created_at >= CURDATE()")
+                predictions_today = int(cur.fetchone()[0] or 0)
 
                 # --- Revenue Trend: last 7 days ---
                 cur.execute("""
@@ -249,6 +269,10 @@ def dashboard():
             total_users=total_users,
             total_revenue=total_revenue,
             pending_orders_count=pending_orders_count,
+            revenue_this_month=revenue_this_month,
+            new_users_this_week=new_users_this_week,
+            new_orders_today=new_orders_today,
+            predictions_today=predictions_today,
             is_admin=is_admin,
             # Admin financial analytics
             revenue_daily_labels_json=json.dumps(revenue_daily_labels),
@@ -291,6 +315,10 @@ def dashboard():
             total_users=0,
             total_revenue=0,
             pending_orders_count=0,
+            revenue_this_month=0,
+            new_users_this_week=0,
+            new_orders_today=0,
+            predictions_today=0,
             is_admin=False,
             revenue_daily_labels_json='[]',
             revenue_daily_data_json='[]',

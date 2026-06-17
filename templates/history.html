@@ -536,47 +536,55 @@
         </section>
 
         <div id="history-pjax-container" class="space-y-6 transition-all duration-300">
-          <section class="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-3.5"
+          <section class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2"
             data-purpose="search-and-filters">
-            <!-- Segmented Tab Selection Bar -->
-            <div
-              class="flex items-center gap-1 p-1 bg-slate-100/80 dark:bg-slate-900/80 backdrop-blur-md rounded-xl w-fit border border-slate-200 dark:border-slate-800 shadow-sm self-end sm:self-auto">
-              <a class="px-4 py-2 rounded-lg text-xs font-semibold tracking-wide transition-all duration-200 {% if selected_type == 'all' or not selected_type %}bg-primary text-white shadow-sm{% else %}text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/60{% endif %}"
-                href="{{ url_for('history.history', type='all', q=search_query) }}">
-                Tất cả
-              </a>
-              <a class="px-4 py-2 rounded-lg text-xs font-semibold tracking-wide transition-all duration-200 {% if selected_type == 'pure' %}bg-primary text-white shadow-sm{% else %}text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/60{% endif %}"
-                href="{{ url_for('history.history', type='pure', q=search_query) }}">
-                Chó thuần
-              </a>
-              <a class="px-4 py-2 rounded-lg text-xs font-semibold tracking-wide transition-all duration-200 {% if selected_type == 'hybrid' %}bg-primary text-white shadow-sm{% else %}text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/60{% endif %}"
-                href="{{ url_for('history.history', type='hybrid', q=search_query) }}">
-                Chó lai
-              </a>
-            </div>
+            <!-- Left title -->
+            <h2 class="headline-md font-semibold text-on-surface self-start sm:self-center">
+              Danh sách nhận diện
+            </h2>
 
-            <!-- Search Input Form -->
-            <form method="GET" action="{{ url_for('history.history') }}"
-              class="flex items-center gap-2 w-full sm:w-auto justify-end self-end sm:self-auto">
-              <input type="hidden" name="type" value="{{ selected_type or 'all' }}" />
-
-              <div class="relative w-full sm:w-64">
-                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 dark:text-slate-500">
-                  <span class="material-symbols-outlined text-[20px]">search</span>
-                </span>
-                <input name="q" value="{{ search_query or '' }}"
-                  class="w-full pl-10 pr-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-xs font-medium text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-primary/10 focus:border-primary dark:focus:ring-blue-500/10 dark:focus:border-blue-500 transition-all shadow-sm"
-                  placeholder="Tìm kiếm giống..." type="text" />
+            <!-- Right filters container -->
+            <div class="flex flex-col sm:flex-row sm:items-center gap-3.5 w-full sm:w-auto self-end sm:self-auto justify-end">
+              <!-- Segmented Tab Selection Bar -->
+              <div
+                class="flex items-center gap-1 p-1 bg-slate-100/80 dark:bg-slate-900/80 backdrop-blur-md rounded-xl w-fit border border-slate-200 dark:border-slate-800 shadow-sm self-end sm:self-auto">
+                <a class="px-4 py-2 rounded-lg text-xs font-semibold tracking-wide transition-all duration-200 {% if selected_type == 'all' or not selected_type %}bg-primary text-white shadow-sm{% else %}text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/60{% endif %}"
+                  href="{{ url_for('history.history', type='all', q=search_query) }}">
+                  Tất cả
+                </a>
+                <a class="px-4 py-2 rounded-lg text-xs font-semibold tracking-wide transition-all duration-200 {% if selected_type == 'pure' %}bg-primary text-white shadow-sm{% else %}text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/60{% endif %}"
+                  href="{{ url_for('history.history', type='pure', q=search_query) }}">
+                  Chó thuần
+                </a>
+                <a class="px-4 py-2 rounded-lg text-xs font-semibold tracking-wide transition-all duration-200 {% if selected_type == 'hybrid' %}bg-primary text-white shadow-sm{% else %}text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/60{% endif %}"
+                  href="{{ url_for('history.history', type='hybrid', q=search_query) }}">
+                  Chó lai
+                </a>
               </div>
 
-              {% if search_query %}
-              <a href="{{ url_for('history.history', type=selected_type) }}"
-                class="p-2 bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 rounded-lg transition-colors border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-center"
-                title="Xoá tìm kiếm">
-                <span class="material-symbols-outlined text-[18px]">close</span>
-              </a>
-              {% endif %}
-            </form>
+              <!-- Search Input Form -->
+              <form method="GET" action="{{ url_for('history.history') }}"
+                class="flex items-center gap-2 w-full sm:w-auto justify-end self-end sm:self-auto">
+                <input type="hidden" name="type" value="{{ selected_type or 'all' }}" />
+
+                <div class="relative w-full sm:w-64">
+                  <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 dark:text-slate-500">
+                    <span class="material-symbols-outlined text-[20px]">search</span>
+                  </span>
+                  <input name="q" value="{{ search_query or '' }}"
+                    class="w-full pl-10 pr-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-xs font-medium text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-primary/10 focus:border-primary dark:focus:ring-blue-500/10 dark:focus:border-blue-500 transition-all shadow-sm"
+                    placeholder="Tìm kiếm giống..." type="text" />
+                </div>
+
+                {% if search_query %}
+                <a href="{{ url_for('history.history', type=selected_type) }}"
+                  class="p-2 bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 rounded-lg transition-colors border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-center"
+                  title="Xoá tìm kiếm">
+                  <span class="material-symbols-outlined text-[18px]">close</span>
+                </a>
+                {% endif %}
+              </form>
+            </div>
           </section>
 
           {% if predictions and predictions|length > 0 %}

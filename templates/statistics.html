@@ -590,7 +590,7 @@
 
       <div class="col-span-1 flex flex-col">
         <!-- ── Page Header ── -->
-        <section class="mb-8">
+        <section class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-outline-variant/20 dark:border-slate-800 pb-5 mb-8" data-purpose="page-header">
           <div class="flex flex-col gap-2">
             <h1 class="headline-lg font-semibold text-on-surface">
               Thống kê nhận diện của bạn
@@ -599,21 +599,14 @@
               Tổng quan số lần dự đoán, độ tin cậy và top giống chó phổ biến.
             </p>
           </div>
-          <div class="mt-4 flex flex-wrap gap-3">
-            <a
-              class="bg-primary text-on-primary px-4 py-2 rounded-lg label-sm shadow-sm hover:shadow-md transition-all flex items-center gap-2"
-              href="{{ url_for('predict.upload_page') }}"
+          <div class="flex items-center gap-3">
+            <button
+              id="exportReportBtn"
+              class="bg-surface-container-lowest dark:bg-slate-900 text-on-surface dark:text-slate-200 border border-outline-variant/60 dark:border-slate-800 hover:border-primary hover:text-primary dark:hover:text-blue-400 px-4 py-2.5 rounded-lg label-sm shadow-sm hover:shadow-md transition-all flex items-center gap-2 font-semibold"
             >
-              <span class="material-symbols-outlined text-[18px]">add_a_photo</span>
-              Tải ảnh mới
-            </a>
-            <a
-              class="bg-surface-container-lowest text-on-surface px-4 py-2 rounded-lg label-sm border border-outline-variant hover:border-primary hover:text-primary transition-colors flex items-center gap-2"
-              href="{{ url_for('history.history') }}"
-            >
-              <span class="material-symbols-outlined text-[18px]">manage_search</span>
-              Xem lịch sử
-            </a>
+              <span class="material-symbols-outlined text-[18px]">download</span>
+              Xuất báo cáo
+            </button>
           </div>
         </section>
 
@@ -1053,6 +1046,63 @@
       })();
     </script>
 
+    <script id="topBreedsData" type="application/json">
+      {{ (stats.top_breeds or []) | tojson | safe }}
+    </script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const exportBtn = document.getElementById("exportReportBtn");
+        if (exportBtn) {
+          exportBtn.addEventListener("click", function () {
+            // Get stats values from cards
+            const stats = document.querySelectorAll("[data-counter]");
+            const totalPredictions = stats[0] ? (stats[0].getAttribute("data-counter") || "0") : "0";
+            const avgConfidence = stats[1] ? (stats[1].getAttribute("data-counter") || "0") : "0";
+            const uniqueBreeds = stats[2] ? (stats[2].getAttribute("data-counter") || "0") : "0";
+            const recentActivity = stats[3] ? (stats[3].getAttribute("data-counter") || "0") : "0";
+            
+            let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
+            csvContent += "BÁO CÁO THỐNG KÊ NHẬN DIỆN PETAI\n";
+            csvContent += "Thời gian xuất: ," + new Date().toLocaleString("vi-VN") + "\n\n";
+            csvContent += "CHỈ SỐ TỔNG QUAN\n";
+            csvContent += "Tổng lượt nhận diện," + totalPredictions + "\n";
+            csvContent += "Độ tin cậy trung bình," + avgConfidence + "%\n";
+            csvContent += "Số giống đã khám phá," + uniqueBreeds + "\n";
+            csvContent += "Lượt nhận diện gần nhất," + recentActivity + "\n\n";
+            
+            // Add top breeds if available
+            csvContent += "DANH SÁCH GIỐNG CHÓ PHỔ BIẾN NHẤT\n";
+            csvContent += "Hạng,Giống chó,Số lần nhận diện\n";
+            
+            const topBreedsEl = document.getElementById("topBreedsData");
+            let topBreeds = [];
+            if (topBreedsEl) {
+              try {
+                topBreeds = JSON.parse(topBreedsEl.textContent || "[]");
+              } catch (e) {}
+            }
+            
+            if (topBreeds && topBreeds.length > 0) {
+              topBreeds.forEach((item, index) => {
+                csvContent += (index + 1) + ',"' + item.breed + '",' + item.count + "\n";
+              });
+            } else {
+              csvContent += ",Chưa có dữ liệu,\n";
+            }
+            
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "BaoCaoThongKe_PetAI_" + new Date().toISOString().slice(0, 10) + ".csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+          });
+        }
+      });
+    </script>
+
     <script>
     /* ══════════ Chart.js – Data from Jinja2 ══════════ */
     (function() {
@@ -1106,7 +1156,7 @@
                 borderWidth: 1,
                 padding: 10,
                 callbacks: {
-                  label: ctx => ` ${ctx.parsed.y} lượt`
+                  label: function(ctx) { return " " + ctx.parsed.y + " lượt"; }
                 }
               }
             },
@@ -1165,7 +1215,7 @@
                 borderWidth: 1,
                 padding: 10,
                 callbacks: {
-                  label: ctx => ` ${ctx.label}: ${ctx.parsed} lần`
+                  label: function(ctx) { return " " + ctx.label + ": " + ctx.parsed + " lần"; }
                 }
               }
             }
@@ -1205,7 +1255,7 @@
                 borderWidth: 1,
                 padding: 10,
                 callbacks: {
-                  label: ctx => ` ${ctx.parsed.y} lượt`
+                  label: function(ctx) { return " " + ctx.parsed.y + " lượt"; }
                 }
               }
             },

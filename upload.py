@@ -636,11 +636,51 @@ def my_payments():
 		return redirect(url_for("users.confirmations_list"))
 
 	conn = None
-	quota_info = {}
 	orders = []
+	page = request.args.get("page", 1, type=int)
+	if page < 1:
+		page = 1
+	per_page = 10
+	offset = (page - 1) * per_page
+	total_pages = 1
+	total_count = 0
+
 	try:
 		conn = get_connection()
-		orders = PaymentOrder.list_by_user(conn, user_id, limit=50) or []
+		PaymentOrder.create_table(conn)
+
+		with conn.cursor() as cur:
+			cur.execute("SELECT COUNT(*) FROM payment_orders WHERE user_id = %s", (user_id,))
+			total_count = cur.fetchone()[0] or 0
+
+		import math
+		total_pages = math.ceil(total_count / per_page) if total_count > 0 else 1
+
+		with conn.cursor() as cur:
+			cur.execute(
+				"""
+				SELECT order_id, plan, payment_method, amount_vnd, status, created_at, confirmed_at
+				FROM payment_orders
+				WHERE user_id = %s
+				ORDER BY created_at DESC
+				LIMIT %s OFFSET %s
+				""",
+				(user_id, per_page, offset),
+			)
+			rows = cur.fetchall() or []
+			orders = [
+				{
+					"order_id": r[0],
+					"plan": r[1],
+					"payment_method": r[2],
+					"amount_vnd": int(r[3] or 0),
+					"status": r[4],
+					"created_at": r[5],
+					"confirmed_at": r[6],
+				}
+				for r in rows
+			]
+
 		quota = UserQuota.get_or_create(conn, user_id)
 		quota_info = {
 			"plan": quota.get("plan", "free"),
@@ -730,7 +770,7 @@ def my_payments():
 	except Exception as e:
 		print("Error building auto_show_invoice:", e)
 
-	return render_template("payments_user.html", orders=orders, quota_info=quota_info, auto_show_invoice=auto_show_invoice)
+	return render_template("payments_user.html", orders=orders, quota_info=quota_info, auto_show_invoice=auto_show_invoice, page=page, total_pages=total_pages, total_count=total_count)
 
 
 def allowed_file(filename: str) -> bool:
