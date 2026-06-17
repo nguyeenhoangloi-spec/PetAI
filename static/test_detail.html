@@ -1,14 +1,14 @@
 <!doctype html>
 
-<html class="{{ 'dark' if ui_theme == 'dark' else 'light' }}" lang="vi" data-theme="{{ ui_theme or 'light' }}">
+<html class="light" lang="vi" data-theme="light">
   <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <script>
       (function () {
         const root = document.documentElement;
-        const themeStorageKey = "{{ 'theme:' ~ session.get('user_id') if session.get('user_id') else '' }}";
-        const serverTheme = "{{ ui_theme or 'light' }}";
+        const themeStorageKey = "theme:1";
+        const serverTheme = "light";
         if (themeStorageKey) {
           try {
             localStorage.setItem(themeStorageKey, serverTheme);
@@ -64,16 +64,16 @@
         } catch (e) {}
       })();
     </script>
-    <meta name="csrf-token" content="{{ csrf_token() }}" />
-    <title>Quản trị Người dùng #{{ user.id }} - PetAI</title>
+    <meta name="csrf-token" content="PsYxsDNdVKYpgCKAdwiWRN3nwRxQ9gloM6flqx1dP5I" />
+    <title>Quản trị Người dùng #30 - PetAI</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link
       rel="stylesheet"
-      href="{{ url_for('static', filename='css/typography.css') }}"
+      href="/static/css/typography.css"
     />
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/theme-dark.css') }}" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/toasts.css') }}" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile-header-fix.css') }}" />
+    <link rel="stylesheet" href="/static/css/theme-dark.css" />
+    <link rel="stylesheet" href="/static/css/toasts.css" />
+    <link rel="stylesheet" href="/static/css/mobile-header-fix.css" />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
@@ -202,10 +202,24 @@
   <body
     class="bg-background text-on-background body-md body-md antialiased min-h-screen flex flex-col"
   >
-    {% include '_toasts.html' %}
+    
+
+<div
+  class="toast-stack"
+  role="region"
+  aria-live="polite"
+  aria-atomic="true"
+  data-title-success="Thành công"
+  data-title-error="Lỗi"
+  data-title-warning="Cảnh báo"
+  data-title-info="Thông tin"
+  data-close-label="Đóng"
+>
+    
+</div>
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
-    {% set display_role = session.get('role') or 'user' %}
-    {% set display_plan = current_plan or 'free' %}
+    
+    
 
     <nav
       class="bg-white/80 dark:bg-slate-950/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-200 dark:border-slate-800 shadow-sm font-['Inter'] antialiased"
@@ -214,11 +228,11 @@
         class="flex items-center justify-between px-4 md:px-6 h-16 w-full"
       >
           <div class="flex items-center gap-gutter">
-          <a href="{{ url_for('home.index') }}" class="inline-flex items-center gap-0">
+          <a href="/" class="inline-flex items-center gap-0">
             <img
               alt="PetAI New Logo"
               class="w-auto h-10 md:h-24"
-              src="{{ url_for('static', filename='logo.png') }}"
+              src="/static/logo.png"
             />
             <span class="ml-0 text-lg md:text-2xl font-semibold text-primary"
               >PetAI</span
@@ -233,41 +247,41 @@
         <div class="hidden md:flex flex-1 items-center justify-end gap-margin mr-gutter [&>a]:px-0.5 [&>a]:body-md">
           <a
             class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-3 py-2 border-b-2 border-transparent pb-1 font-semibold"
-            href="{{ url_for('dashboard.dashboard') }}"
+            href="/dashboard/"
             >Bảng điều khiển</a
           >
           <a
             class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-3 py-2 border-b-2 border-transparent pb-1 font-semibold"
-            href="{{ url_for('history.history') }}"
+            href="/history/"
             >Lịch sử</a
           >
           <a
             class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-3 py-2 border-b-2 border-transparent pb-1 font-semibold"
-            href="{{ url_for('statistics.statistics') }}"
+            href="/statistics/"
             >Thống kê</a
           >
           <a
             class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-3 py-2 border-b-2 border-transparent pb-1 font-semibold"
-            href="{{ url_for('predict.upgrade') }}"
+            href="/predict/upgrade"
             >Nâng cấp</a
           >
-          {% if session.get('role') == 'admin' %}
+          
           <a
             class="text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400 px-3 py-2 pb-1 font-semibold rounded-lg transition-all"
-            href="{{ url_for('users.list_users') }}"
+            href="/users/"
             >Quản lý người dùng</a
           >
           <a
             class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-3 py-2 border-b-2 border-transparent pb-1 font-semibold"
-            href="{{ url_for('users.confirmations_list') }}"
+            href="/users/confirmations"
             >Duyệt đơn</a
           >
-          {% endif %}
+          
         </div>
         <div class="flex items-center gap-md">
           <a
             class="hidden md:inline-flex bg-primary text-on-primary px-4 py-2 rounded-lg label-sm hover:opacity-90 active:scale-95 duration-150 transition-all"
-            href="{{ url_for('predict.upload_page') }}"
+            href="/predict/upload-page"
             >Nhận diện</a
           >
           <div class="language-switcher mr-2" id="languageSwitcher">
@@ -307,19 +321,19 @@
                     Vai trò:
                     <span
                       class="font-semibold text-slate-800 dark:text-slate-200"
-                      >{{ display_role|upper }}</span
+                      >ADMIN</span
                     >
                   </div>
                   <div class="label-sm text-slate-500 dark:text-slate-400">
                     Gói:
                     <span
                       class="font-semibold text-slate-800 dark:text-slate-200"
-                      >{{ display_plan|upper }}</span
+                      >FREE</span
                     >
                   </div>
                 </div>                <a
                   class="flex items-center gap-2 px-4 py-2 body-md text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors font-semibold"
-                  href="{{ url_for('settings.settings') }}"
+                  href="/settings/"
                 >
                   <span class="material-symbols-outlined text-[18px]"
                     >settings</span
@@ -330,7 +344,7 @@
                 <div class="h-px bg-slate-200 dark:bg-slate-800 my-1"></div>
                 <a
                   class="flex items-center gap-2 px-4 py-2 body-md text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors font-semibold"
-                  href="{{ url_for('logout.logout') }}"
+                  href="/logout/"
                 >
                   <span class="material-symbols-outlined text-[18px]"
                     >logout</span
@@ -357,7 +371,7 @@
           </h3>
           <a
             class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface dark:text-slate-300 hover:text-primary dark:hover:text-blue-400 hover:bg-surface-container dark:hover:bg-slate-800 transition-colors group"
-            href="{{ url_for('predict.upload_page') }}"
+            href="/predict/upload-page"
           >
             <span
               class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
@@ -372,7 +386,7 @@
           </a>
           <a
             class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface dark:text-slate-300 hover:text-primary dark:hover:text-blue-400 hover:bg-surface-container dark:hover:bg-slate-800 transition-colors group"
-            href="{{ url_for('history.history') }}"
+            href="/history/"
           >
             <span
               class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
@@ -383,7 +397,7 @@
           </a>
           <a
             class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface dark:text-slate-300 hover:text-primary dark:hover:text-blue-400 hover:bg-surface-container dark:hover:bg-slate-800 transition-colors group"
-            href="{{ url_for('statistics.statistics') }}"
+            href="/statistics/"
           >
             <span
               class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
@@ -394,7 +408,7 @@
           </a>
           <a
             class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface dark:text-slate-300 hover:text-primary dark:hover:text-blue-400 hover:bg-surface-container dark:hover:bg-slate-800 transition-colors group"
-            href="{{ url_for('predict.upgrade') }}"
+            href="/predict/upgrade"
           >
             <span
               class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
@@ -403,10 +417,10 @@
             >
             <span class="label-sm label-sm"><span data-i18n="upgradePlan">Nâng cấp gói</span></span>
           </a>
-          {% if session.get('role') == 'admin' %}
+          
           <a
             class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-primary bg-primary-fixed/50 dark:bg-primary/20 transition-colors group"
-            href="{{ url_for('users.list_users') }}"
+            href="/users/"
           >
             <span
               class="material-symbols-outlined text-primary group-hover:scale-105 transition-transform"
@@ -419,7 +433,7 @@
           </a>
           <a
             class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface dark:text-slate-300 hover:text-primary dark:hover:text-blue-400 hover:bg-surface-container dark:hover:bg-slate-800 transition-colors group"
-            href="{{ url_for('users.confirmations_list') }}"
+            href="/users/confirmations"
           >
             <span
               class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
@@ -428,11 +442,11 @@
             >
             <span class="label-sm label-sm">Duyệt đơn</span>
           </a>
-          {% endif %}
+          
           <hr class="border-outline-variant/30 dark:border-slate-850 my-xs" />
           <a
             class="flex items-center gap-sm py-1.5 px-1.5 rounded-lg text-on-surface dark:text-slate-300 hover:text-primary dark:hover:text-blue-400 hover:bg-surface-container dark:hover:bg-slate-800 transition-colors group"
-            href="{{ url_for('settings.settings') }}"
+            href="/settings/"
           >
             <span
               class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
@@ -451,7 +465,7 @@
           <div class="absolute -right-16 -top-16 w-32 h-32 bg-primary/5 rounded-full blur-2xl"></div>
           <div class="relative z-10 flex items-center gap-4">
             <a
-              href="{{ url_for('users.list_users') }}"
+              href="/users/"
               class="flex items-center justify-center w-10 h-10 rounded-full border border-outline-variant/30 dark:border-slate-800 bg-surface-container-lowest dark:bg-slate-900 text-on-surface-variant dark:text-slate-400 hover:text-primary dark:hover:text-blue-400 hover:bg-surface-container-low dark:hover:bg-slate-800 hover:scale-105 hover:shadow-sm transition-all"
               title="Quay lại danh sách"
             >
@@ -460,9 +474,9 @@
             <div>
               <div class="flex items-center gap-2">
                 <h1 class="text-2xl font-bold text-on-surface dark:text-slate-100">Chi tiết tài khoản</h1>
-                <span class="px-2 py-0.5 bg-primary/10 dark:bg-primary/20 text-primary dark:text-blue-400 text-xs font-semibold rounded-full mt-1">#{{ user.id }}</span>
+                <span class="px-2 py-0.5 bg-primary/10 dark:bg-primary/20 text-primary dark:text-blue-400 text-xs font-semibold rounded-full mt-1">#30</span>
               </div>
-              <p class="text-sm text-on-surface-variant dark:text-slate-400 mt-0.5">Quản lý và cấp quyền thành viên cho tài khoản <span class="font-semibold text-on-surface dark:text-slate-200">@{{ user.username }}</span></p>
+              <p class="text-sm text-on-surface-variant dark:text-slate-400 mt-0.5">Quản lý và cấp quyền thành viên cho tài khoản <span class="font-semibold text-on-surface dark:text-slate-200">@nguyenhoangloi</span></p>
             </div>
           </div>
         </section>
@@ -473,41 +487,37 @@
           <div class="lg:col-span-4 flex flex-col gap-6">
             <div class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 dark:border-slate-800 rounded-xl p-6 shadow-sm flex flex-col items-center text-center relative overflow-hidden">
               <!-- Status dot absolute positioned top right -->
-              <span class="absolute top-4 right-4 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold {{ 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' if user.is_active else 'bg-rose-500/10 text-rose-600 dark:text-rose-400' }}">
-                <span class="w-1.5 h-1.5 rounded-full {{ 'bg-emerald-500' if user.is_active else 'bg-rose-500' }}"></span>
-                {{ 'Hoạt động' if user.is_active else 'Đã khóa' }}
+              <span class="absolute top-4 right-4 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                Hoạt động
               </span>
 
               <!-- Large Avatar Circle with Initials -->
               <div class="w-20 h-20 rounded-full bg-gradient-to-tr from-primary/10 to-blue-500/10 dark:from-primary/20 dark:to-blue-500/20 text-primary dark:text-blue-400 flex items-center justify-center text-2xl font-bold border border-outline-variant/20 dark:border-slate-800 shadow-sm mb-4">
-                {{ (user.username or '?')[:2]|upper }}
+                NG
               </div>
 
-              <h2 class="text-xl font-bold text-on-surface dark:text-slate-100">{{ user.fullname or user.username }}</h2>
-              <p class="text-sm text-on-surface-variant dark:text-slate-400 mt-1">@{{ user.username }}</p>
+              <h2 class="text-xl font-bold text-on-surface dark:text-slate-100">Nguyễn Hoàng Lợi</h2>
+              <p class="text-sm text-on-surface-variant dark:text-slate-400 mt-1">@nguyenhoangloi</p>
 
               <!-- Role Badge -->
               <div class="mt-3">
-                {% if (user.role or 'user') == 'admin' %}
-                <span class="px-3 py-1 bg-blue-500/10 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 label-sm font-semibold rounded-full uppercase tracking-wider text-[11px]">
-                  Administrator
-                </span>
-                {% else %}
+                
                 <span class="px-3 py-1 bg-slate-100 dark:bg-slate-805 text-slate-600 dark:text-slate-400 label-sm font-medium rounded-full uppercase tracking-wider text-[11px]">
                   Standard User
                 </span>
-                {% endif %}
+                
               </div>
 
               <!-- Quick metadata -->
               <div class="w-full border-t border-outline-variant/15 dark:border-slate-800 mt-6 pt-4 space-y-3.5 text-left text-sm">
                 <div class="flex items-center gap-3 text-on-surface-variant dark:text-slate-400">
                   <span class="material-symbols-outlined text-[18px]">mail</span>
-                  <span class="truncate">{{ user.email or 'Chưa cập nhật email' }}</span>
+                  <span class="truncate">loinh@test.com</span>
                 </div>
                 <div class="flex items-center gap-3 text-on-surface-variant dark:text-slate-400">
                   <span class="material-symbols-outlined text-[18px]">calendar_today</span>
-                  <span>Tham gia: {{ user.created_at.strftime('%d/%m/%Y') if user.created_at else '-' }}</span>
+                  <span>Tham gia: 17/06/2026</span>
                 </div>
               </div>
             </div>
@@ -525,21 +535,21 @@
               <div class="flex flex-col gap-2.5">
                 <button
                   type="button"
-                  class="w-full px-4 py-2.5 rounded-lg border {{ 'border-rose-200 dark:border-rose-900/30 text-rose-600 dark:text-rose-450 hover:bg-rose-50 dark:hover:bg-rose-950/25' if user.is_active else 'border-emerald-200 dark:border-emerald-900/30 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/25' }} label-sm font-semibold transition-colors flex items-center justify-center gap-2"
+                  class="w-full px-4 py-2.5 rounded-lg border border-rose-200 dark:border-rose-900/30 text-rose-600 dark:text-rose-450 hover:bg-rose-50 dark:hover:bg-rose-950/25 label-sm font-semibold transition-colors flex items-center justify-center gap-2"
                   id="toggleUserBtn"
-                  data-user-id="{{ user.id }}"
-                  data-active="{{ '1' if user.is_active else '0' }}"
-                  data-username="{{ user.username }}"
+                  data-user-id="30"
+                  data-active="1"
+                  data-username="nguyenhoangloi"
                 >
-                  <span class="material-symbols-outlined text-[18px]">{{ 'block' if user.is_active else 'check_circle' }}</span>
-                  {{ 'Khoá tài khoản' if user.is_active else 'Mở khoá tài khoản' }}
+                  <span class="material-symbols-outlined text-[18px]">block</span>
+                  Khoá tài khoản
                 </button>
                 <button
                   type="button"
                   class="w-full px-4 py-2.5 rounded-lg bg-red-600 hover:bg-red-750 dark:bg-red-700 dark:hover:bg-red-800 text-white label-sm font-semibold shadow hover:shadow-md transition-colors flex items-center justify-center gap-2"
                   id="deleteUserBtn"
-                  data-user-id="{{ user.id }}"
-                  data-username="{{ user.username }}"
+                  data-user-id="30"
+                  data-username="nguyenhoangloi"
                 >
                   <span class="material-symbols-outlined text-[18px]">delete</span>
                   Xoá người dùng
@@ -561,35 +571,31 @@
               <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                 <div class="p-4 bg-surface dark:bg-slate-850 rounded-xl border border-outline-variant/15 dark:border-slate-800 flex flex-col">
                   <span class="text-xs text-on-surface-variant dark:text-slate-400 uppercase tracking-wider font-semibold">Gói hiện tại</span>
-                  {% set plan_val = (user.plan or 'free')|lower %}
-                  {% set plan_class = 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700' %}
-                  {% if plan_val == 'enterprise' %}
-                  {% set plan_class = 'bg-purple-100 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800' %}
-                  {% elif plan_val == 'pro' %}
-                  {% set plan_class = 'bg-blue-100 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800' %}
-                  {% elif plan_val == 'basic' %}
-                  {% set plan_class = 'bg-amber-100 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800' %}
-                  {% endif %}
+                  
+                  
+                  
+                  
+                  
                   <div class="mt-2.5">
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase {{ plan_class }}">
-                      {{ plan_val|upper }}
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase bg-blue-100 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+                      PRO
                     </span>
                   </div>
                 </div>
                 <div class="p-4 bg-surface dark:bg-slate-855 rounded-xl border border-outline-variant/15 dark:border-slate-800 flex flex-col">
                   <span class="text-xs text-on-surface-variant dark:text-slate-400 uppercase tracking-wider font-semibold">Ads đã xem</span>
-                  <span class="text-2xl font-bold text-on-surface dark:text-slate-100 mt-1.5">{{ user.ad_views_used if user.ad_views_used is not none else 0 }}</span>
+                  <span class="text-2xl font-bold text-on-surface dark:text-slate-100 mt-1.5">3</span>
                 </div>
                 <div class="p-4 bg-surface dark:bg-slate-855 rounded-xl border border-outline-variant/15 dark:border-slate-800 flex flex-col">
                   <span class="text-xs text-on-surface-variant dark:text-slate-400 uppercase tracking-wider font-semibold">Unlock còn lại</span>
-                  <span class="text-2xl font-bold text-on-surface dark:text-slate-100 mt-1.5">{{ user.ad_unlocks_remaining if user.ad_unlocks_remaining is not none else 0 }}</span>
+                  <span class="text-2xl font-bold text-on-surface dark:text-slate-100 mt-1.5">10</span>
                 </div>
               </div>
 
               <div class="space-y-4 text-sm text-on-surface-variant dark:text-slate-400">
                 <div class="flex items-center justify-between py-2 border-b border-outline-variant/10 dark:border-slate-800/40">
                   <span>Ngày hết hạn gói</span>
-                  <strong class="text-on-surface dark:text-slate-205">{{ user.plan_expire.strftime('%d/%m/%Y %H:%M') if user.plan_expire else 'Vô thời hạn (FREE)' }}</strong>
+                  <strong class="text-on-surface dark:text-slate-205">17/07/2026 15:21</strong>
                 </div>
               </div>
 
@@ -597,11 +603,11 @@
               <form
                 id="setPlanForm"
                 method="POST"
-                action="{{ url_for('users.set_user_plan') }}"
+                action="/users/set-plan"
                 class="mt-6 p-4 bg-surface dark:bg-slate-850 border border-outline-variant/20 dark:border-slate-800 rounded-xl flex flex-col sm:flex-row items-center gap-4"
               >
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-                <input type="hidden" name="user_id" value="{{ user.id }}" />
+                <input type="hidden" name="csrf_token" value="PsYxsDNdVKYpgCKAdwiWRN3nwRxQ9gloM6flqx1dP5I" />
+                <input type="hidden" name="user_id" value="30" />
                 <div class="flex flex-col gap-1 w-full sm:flex-1">
                   <label class="text-xs font-semibold text-on-surface-variant dark:text-slate-400" for="planSelector">Thay đổi gói thành viên</label>
                   <div class="relative inline-flex items-center w-full mt-1">
@@ -611,10 +617,10 @@
                       aria-label="Chọn gói cấp"
                       class="w-full bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/40 dark:border-slate-800 rounded-lg py-2.5 pl-3 pr-9 label-sm text-on-surface dark:text-slate-100 focus:ring-primary focus:border-primary dark:focus:ring-blue-500 dark:focus:border-blue-500 cursor-pointer appearance-none bg-none transition-colors"
                     >
-                      <option value="free" {{ 'selected' if plan_val == 'free' else '' }}>FREE</option>
-                      <option value="basic" {{ 'selected' if plan_val == 'basic' else '' }}>BASIC</option>
-                      <option value="pro" {{ 'selected' if plan_val == 'pro' else '' }}>PRO</option>
-                      <option value="enterprise" {{ 'selected' if plan_val == 'enterprise' else '' }}>ENTERPRISE</option>
+                      <option value="free" >FREE</option>
+                      <option value="basic" >BASIC</option>
+                      <option value="pro" selected>PRO</option>
+                      <option value="enterprise" >ENTERPRISE</option>
                     </select>
                     <span class="absolute right-3 flex items-center pointer-events-none text-slate-550 dark:text-slate-400">
                       <span class="material-symbols-outlined text-[16px]">expand_more</span>
@@ -640,24 +646,24 @@
               <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 text-sm">
                 <div class="flex flex-col py-1 border-b border-outline-variant/10 dark:border-slate-800/40">
                   <span class="text-xs text-on-surface-variant dark:text-slate-400 font-medium">Tên tài khoản (Username)</span>
-                  <strong class="text-on-surface dark:text-slate-200 mt-0.5 text-base">{{ user.username }}</strong>
+                  <strong class="text-on-surface dark:text-slate-200 mt-0.5 text-base">nguyenhoangloi</strong>
                 </div>
                 <div class="flex flex-col py-1 border-b border-outline-variant/10 dark:border-slate-800/40">
                   <span class="text-xs text-on-surface-variant dark:text-slate-400 font-medium">Họ và tên</span>
-                  <strong class="text-on-surface dark:text-slate-200 mt-0.5 text-base">{{ user.fullname or '-' }}</strong>
+                  <strong class="text-on-surface dark:text-slate-200 mt-0.5 text-base">Nguyễn Hoàng Lợi</strong>
                 </div>
                 <div class="flex flex-col py-1 border-b border-outline-variant/10 dark:border-slate-800/40">
                   <span class="text-xs text-on-surface-variant dark:text-slate-400 font-medium">Địa chỉ Email</span>
-                  <strong class="text-on-surface dark:text-slate-200 mt-0.5 text-base">{{ user.email or '-' }}</strong>
+                  <strong class="text-on-surface dark:text-slate-200 mt-0.5 text-base">loinh@test.com</strong>
                 </div>
                 <div class="flex flex-col py-1 border-b border-outline-variant/10 dark:border-slate-800/40">
                   <span class="text-xs text-on-surface-variant dark:text-slate-400 font-medium">Mã số tài khoản (User ID)</span>
-                  <strong class="text-on-surface dark:text-slate-200 mt-0.5 text-base">#{{ user.id }}</strong>
+                  <strong class="text-on-surface dark:text-slate-200 mt-0.5 text-base">#30</strong>
                 </div>
                 <div class="flex flex-col py-1 border-b border-outline-variant/10 dark:border-slate-800/40 md:col-span-2">
                   <span class="text-xs text-on-surface-variant dark:text-slate-400 font-medium">Thời gian đăng ký hệ thống</span>
                   <strong class="text-on-surface dark:text-slate-200 mt-0.5 text-base">
-                    {{ user.created_at.strftime('%d/%m/%Y %H:%M:%S') if user.created_at else '-' }}
+                    17/06/2026 15:21:48
                   </strong>
                 </div>
               </div>
@@ -678,7 +684,7 @@
                 <img
                   alt="PetAI New Logo"
                   class="h-8 w-auto md:h-10"
-                  src="{{ url_for('static', filename='logo.png') }}"
+                  src="/static/logo.png"
                 />
                 <span class="ml-0 text-sm md:text-lg font-semibold text-primary"
                   >PetAI</span
@@ -697,35 +703,35 @@
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                    target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.privacy_policy') }}"
+                    target="_blank" rel="noopener noreferrer" href="/privacy-policy"
                      data-i18n="privacy">Chính sách quyền riêng tư</a
                   >
                 </li>
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                    target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.terms_of_service') }}"
+                    target="_blank" rel="noopener noreferrer" href="/terms-of-service"
                      data-i18n="terms">Điều khoản sử dụng</a
                   >
                 </li>
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                    target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.data_deletion') }}"
+                    target="_blank" rel="noopener noreferrer" href="/data-deletion"
                      data-i18n="dataDeletion">Chính sách xóa dữ liệu</a
                   >
                 </li>
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                    target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.support') }}"
+                    target="_blank" rel="noopener noreferrer" href="/support"
                      data-i18n="support">Hỗ trợ</a
                   >
                 </li>
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                    target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.contact') }}"
+                    target="_blank" rel="noopener noreferrer" href="/contact"
                      data-i18n="contact">Liên hệ</a
                   >
                 </li>
@@ -737,14 +743,14 @@
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                    href="{{ url_for('predict.upload_page') }}"
+                    href="/predict/upload-page"
                      data-i18n="identifyNow">Nhận diện ngay</a
                   >
                 </li>
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                    href="{{ url_for('history.history') }}"
+                    href="/history/"
                      data-i18n="collection">Bộ sưu tập</a
                   >
                 </li>
@@ -760,12 +766,12 @@
             <div class="flex gap-6">
               <a
                 class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
-                target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.terms_of_service') }}"
+                target="_blank" rel="noopener noreferrer" href="/terms-of-service"
                 >ĐIỀU KHOẢN</a
               >
               <a
                 class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
-                target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.privacy_policy') }}"
+                target="_blank" rel="noopener noreferrer" href="/privacy-policy"
                 >BẢO MẬT</a
               >
             </div>
@@ -817,8 +823,8 @@
       </div>
     </div>
 
-    <script src="{{ url_for('static', filename='js/toasts.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="/static/js/toasts.js"></script>
+    <script src="/static/js/script.js"></script>
     <script>
       (function () {
         const modal = document.getElementById("confirmModal");
@@ -957,14 +963,13 @@
               }
               return;
             }
-            window.location.href = "{{ url_for('users.list_users') }}";
+            window.location.href = "/users/";
           });
         }
       })();
     </script>
   </body>
 </html>
-
 
 
 
