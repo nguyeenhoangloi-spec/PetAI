@@ -85,7 +85,7 @@ def api_revenue_stats():
                     curr += timedelta(days=1)
             else: # group_by == "month"
                 cur.execute("""
-                    SELECT DATE_FORMAT(confirmed_at, '%Y-%m') AS month, SUM(amount_vnd) AS total
+                    SELECT DATE_FORMAT(confirmed_at, '%%Y-%%m') AS month, SUM(amount_vnd) AS total
                     FROM payment_orders
                     WHERE status = 'paid'
                       AND confirmed_at >= %s AND confirmed_at < %s
@@ -212,7 +212,7 @@ def api_activity_stats():
             else: # group_by == "month"
                 if query_user_id is not None:
                     cur.execute("""
-                        SELECT DATE_FORMAT(created_at, '%Y-%m') AS month, COUNT(*) AS cnt
+                        SELECT DATE_FORMAT(created_at, '%%Y-%%m') AS month, COUNT(*) AS cnt
                         FROM prediction_history
                         WHERE user_id = %s
                           AND created_at >= %s AND created_at < %s
@@ -220,7 +220,7 @@ def api_activity_stats():
                     """, (query_user_id, start_date.strftime('%Y-%m-01'), (end_date + timedelta(days=32)).strftime('%Y-%m-01')))
                 else:
                     cur.execute("""
-                        SELECT DATE_FORMAT(created_at, '%Y-%m') AS month, COUNT(*) AS cnt
+                        SELECT DATE_FORMAT(created_at, '%%Y-%%m') AS month, COUNT(*) AS cnt
                         FROM prediction_history
                         WHERE created_at >= %s AND created_at < %s
                         GROUP BY month

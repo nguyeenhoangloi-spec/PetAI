@@ -246,19 +246,7 @@
             <span></span>
           </button>
         </div>
-        <div class="hidden md:flex flex-1 items-center justify-end gap-margin mr-gutter [&>a]:px-0.5 [&>a]:body-md">
-          <a class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-3 py-2 border-b-2 border-transparent pb-1 font-semibold" href="{{ url_for('dashboard.dashboard') }}" data-i18n="dashboard"><span data-i18n="dashboard">Bảng điều khiển</span></a>
-          <a class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-3 py-2 border-b-2 border-transparent pb-1 font-semibold" href="{{ url_for('history.history') }}" data-i18n="history"><span data-i18n="history">Lịch sử</span></a>
-          <a class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-3 py-2 border-b-2 border-transparent pb-1 font-semibold" href="{{ url_for('statistics.statistics') }}" data-i18n="statistics"><span data-i18n="statistics">Thống kê</span></a>
-          <a class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-3 py-2 border-b-2 border-transparent pb-1 font-semibold" href="{{ url_for('predict.upgrade') }}" data-i18n="upgrade"><span data-i18n="upgrade">Nâng cấp</span></a>
-          {% if session.get('role') == 'user' %}
-          <a class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-3 py-2 border-b-2 border-transparent pb-1 font-semibold" href="{{ url_for('predict.my_payments') }}" data-i18n="payments"><span data-i18n="payments">Lịch sử thanh toán</span></a>
-          {% endif %}
-          {% if session.get('role') == 'admin' %}
-          <a class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-3 py-2 border-b-2 border-transparent pb-1 font-semibold" href="{{ url_for('users.list_users') }}" data-i18n="manageUsers"><span data-i18n="manageUsers">Quản lý người dùng</span></a>
-          <a class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-3 py-2 border-b-2 border-transparent pb-1 font-semibold" href="{{ url_for('users.confirmations_list') }}" data-i18n="approveOrders"><span data-i18n="approveOrders">Duyệt đơn</span></a>
-          {% endif %}
-        </div>
+        
         <div class="flex items-center gap-md">
           <a class="hidden md:inline-flex bg-primary text-on-primary px-4 py-2 rounded-lg label-sm hover:opacity-90 active:scale-95 duration-150 transition-all" href="{{ url_for('predict.upload_page') }}" data-i18n="predict"><span data-i18n="predict">Nhận diện</span></a>
           <div class="language-switcher mr-2" id="languageSwitcher">
@@ -321,6 +309,8 @@
               </div>
             </div>
             <div class="pt-sm flex flex-col gap-xs">
+              <a class="flex items-center gap-sm px-2 py-1.5 rounded-lg text-on-surface-variant dark:text-slate-300 hover:text-on-surface dark:hover:text-slate-100 hover:bg-surface-container-low dark:hover:bg-slate-800 label-sm label-sm" href="{{ url_for('dashboard.dashboard') }}">
+                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">home</span><span data-i18n="home">Trang chủ</span></a>
               <a class="flex items-center gap-sm px-2 py-1.5 rounded-lg bg-primary-container/10 dark:bg-blue-500/20 text-primary dark:text-blue-200 label-sm label-sm" href="#profile">
                 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">person</span><span data-i18n="infoSidebarLink">Thông tin</span></a>
               <a class="flex items-center gap-sm px-2 py-1.5 rounded-lg text-on-surface-variant dark:text-slate-300 hover:text-on-surface dark:hover:text-slate-100 hover:bg-surface-container-low dark:hover:bg-slate-800 label-sm label-sm" href="#appearance">

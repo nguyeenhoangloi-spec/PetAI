@@ -294,55 +294,7 @@
             <span></span>
           </button>
         </div>
-        <div
-          class="hidden md:flex flex-1 items-center justify-end gap-margin mr-gutter [&>a]:px-0.5 [&>a]:body-md"
-        >
-          <a
-            class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
-            href="{{ url_for('dashboard.dashboard') }}"
-            data-i18n="dashboard"
-            ><span data-i18n="dashboard">Bảng điều khiển</span></a
-          >
-          <a
-            class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
-            href="{{ url_for('history.history') }}"
-            data-i18n="history"
-            ><span data-i18n="history">Lịch sử</span></a
-          >
-          <a
-            class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
-            href="{{ url_for('statistics.statistics') }}"
-            data-i18n="statistics"
-            ><span data-i18n="statistics">Thống kê</span></a
-          >
-          <a
-            class="text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400 px-2 py-2 pb-1 font-semibold rounded-lg transition-all"
-            href="{{ url_for('predict.upgrade') }}"
-            data-i18n="upgrade"
-            ><span data-i18n="upgrade">Nâng cấp</span></a
-          >
-          {% if session.get('role') == 'user' %}
-          <a
-            class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
-            href="{{ url_for('predict.my_payments') }}"
-            data-i18n="payments"
-            ><span data-i18n="payments">Lịch sử thanh toán</span></a
-          >
-          {% endif %} {% if session.get('role') == 'admin' %}
-          <a
-            class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
-            href="{{ url_for('users.list_users') }}"
-            data-i18n="manageUsers"
-            ><span data-i18n="manageUsers">Quản lý người dùng</span></a
-          >
-          <a
-            class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
-            href="{{ url_for('users.confirmations_list') }}"
-            data-i18n="approveOrders"
-            ><span data-i18n="approveOrders">Duyệt đơn</span></a
-          >
-          {% endif %}
-        </div>
+        
         <div class="flex items-center gap-md">
           <a
             class="hidden md:inline-flex bg-primary text-on-primary px-4 py-2 rounded-lg label-sm hover:opacity-90 active:scale-95 duration-150 transition-all"
@@ -444,6 +396,17 @@
           >
             <span data-i18n="quickAccess">Truy cập nhanh</span>
           </h3>
+          <a
+            class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
+            href="{{ url_for('dashboard.dashboard') }}"
+          >
+            <span
+              class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
+              data-icon="home"
+              >home</span
+            >
+            <span class="label-sm" data-i18n="home">Trang chủ</span>
+          </a>
           <a
             class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
             href="{{ url_for('predict.upload_page') }}"

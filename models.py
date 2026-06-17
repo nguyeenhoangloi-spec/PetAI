@@ -350,7 +350,7 @@ class PredictionHistory:
                 # All time: group by month
                 if user_id is not None:
                     cur.execute("""
-                        SELECT DATE_FORMAT(created_at, '%Y-%m') AS month, COUNT(*) AS cnt
+                        SELECT DATE_FORMAT(created_at, '%%Y-%%m') AS month, COUNT(*) AS cnt
                         FROM prediction_history
                         WHERE user_id = %s
                         GROUP BY month
@@ -358,11 +358,11 @@ class PredictionHistory:
                     """, (user_id,))
                 else:
                     cur.execute("""
-                        SELECT DATE_FORMAT(created_at, '%Y-%m') AS month, COUNT(*) AS cnt
+                        SELECT DATE_FORMAT(created_at, '%%Y-%%m') AS month, COUNT(*) AS cnt
                         FROM prediction_history
                         GROUP BY month
                         ORDER BY month ASC
-                    """)
+                    """, ())
                 rows = cur.fetchall()
                 formatted_rows = []
                 for row in rows:
