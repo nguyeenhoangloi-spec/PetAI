@@ -1,11 +1,31 @@
 <!doctype html>
 
-<html
-  class="{{ 'dark' if ui_theme == 'dark' else 'light' }}"
-  lang="vi"
-  data-theme="{{ ui_theme or 'light' }}"
->
+<html class="{{ 'dark' if ui_theme == 'dark' else 'light' }}{{ ' i18n-loading' if ui_language == 'en' else '' }}" lang="{{ ui_language or 'vi' }}" data-theme="{{ ui_theme or 'light' }}">
   <head>
+    <script>
+      (function () {
+        var savedLang = "vi";
+        try {
+          savedLang = localStorage.getItem("siteLanguage") || "vi";
+        } catch (e) {}
+        document.documentElement.setAttribute("data-user-lang", savedLang);
+        if (savedLang === "en") {
+          document.documentElement.classList.add("i18n-loading");
+        }
+      })();
+    </script>
+    <style>
+      html.i18n-loading body {
+        visibility: hidden !important;
+      }
+    </style>
+    <noscript>
+      <style>
+        html.i18n-loading body {
+          visibility: visible !important;
+        }
+      </style>
+    </noscript>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <script>
@@ -64,14 +84,15 @@
         }
 
         try {
-          const isCollapsed = localStorage.getItem("sidebar-collapsed") === "true";
+          const isCollapsed =
+            localStorage.getItem("sidebar-collapsed") === "true";
           if (isCollapsed && window.innerWidth >= 768) {
             root.classList.add("sidebar-collapsed");
           }
         } catch (e) {}
       })();
     </script>
-    <title>Thống kê - PetAI</title>
+    <title data-i18n="statisticsPageTitle">{{ 'Statistics - PetAI' if ui_language == 'en' else 'Thống kê - PetAI' }}</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
     <link
@@ -224,17 +245,17 @@
         background: transparent;
       }
       .time-filter-btn:hover {
-        background: rgba(37,99,235,0.06);
+        background: rgba(37, 99, 235, 0.06);
         color: #2563eb;
       }
       .time-filter-btn.active {
         background: #fff;
         color: #2563eb;
         font-weight: 700;
-        box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
       }
       html.dark .time-filter-btn.active {
-        background: rgba(37,99,235,0.18);
+        background: rgba(37, 99, 235, 0.18);
         color: #93c5fd;
       }
       html.dark .time-filter-btn {
@@ -255,22 +276,45 @@
 
       /* ── Ranking badges ── */
       .rank-badge {
-        width: 28px; height: 28px; border-radius: 8px;
-        display: inline-flex; align-items: center; justify-content: center;
-        font-size: 12px; font-weight: 800; flex-shrink: 0;
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: 800;
+        flex-shrink: 0;
         transition: transform 0.2s ease;
       }
-      .rank-badge:hover { transform: scale(1.15); }
-      .rank-badge--1 { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #78350f; }
-      .rank-badge--2 { background: linear-gradient(135deg, #d1d5db, #9ca3af); color: #374151; }
-      .rank-badge--3 { background: linear-gradient(135deg, #fdba74, #f97316); color: #7c2d12; }
-      .rank-badge--4 { background: linear-gradient(135deg, #bfdbfe, #60a5fa); color: #1e3a5f; }
-      .rank-badge--5 { background: linear-gradient(135deg, #c7d2fe, #818cf8); color: #312e81; }
+      .rank-badge:hover {
+        transform: scale(1.15);
+      }
+      .rank-badge--1 {
+        background: linear-gradient(135deg, #fbbf24, #f59e0b);
+        color: #78350f;
+      }
+      .rank-badge--2 {
+        background: linear-gradient(135deg, #d1d5db, #9ca3af);
+        color: #374151;
+      }
+      .rank-badge--3 {
+        background: linear-gradient(135deg, #fdba74, #f97316);
+        color: #7c2d12;
+      }
+      .rank-badge--4 {
+        background: linear-gradient(135deg, #bfdbfe, #60a5fa);
+        color: #1e3a5f;
+      }
+      .rank-badge--5 {
+        background: linear-gradient(135deg, #c7d2fe, #818cf8);
+        color: #312e81;
+      }
 
       /* ── Progress bar ── */
       .progress-track {
         height: 6px;
-        background: rgba(148,163,184,0.12);
+        background: rgba(148, 163, 184, 0.12);
         border-radius: 9999px;
         overflow: hidden;
       }
@@ -278,67 +322,111 @@
         height: 100%;
         border-radius: 9999px;
         background: linear-gradient(90deg, #2563eb, #3b82f6);
-        transition: width 0.8s cubic-bezier(.4,0,.2,1);
+        transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
       }
 
       .breed-row {
         padding: 10px 0;
-        border-bottom: 1px solid rgba(148,163,184,0.10);
+        border-bottom: 1px solid rgba(148, 163, 184, 0.1);
         transition: background 0.15s ease;
       }
-      .breed-row:last-child { border-bottom: none; }
-      .breed-row:hover { background: rgba(37,99,235,0.03); border-radius: 8px; margin: 0 -8px; padding-left: 8px; padding-right: 8px; }
+      .breed-row:last-child {
+        border-bottom: none;
+      }
+      .breed-row:hover {
+        background: rgba(37, 99, 235, 0.03);
+        border-radius: 8px;
+        margin: 0 -8px;
+        padding-left: 8px;
+        padding-right: 8px;
+      }
 
       /* ── Activity item ── */
       .activity-item {
         transition: background 0.15s ease;
       }
       .activity-item:hover {
-        background: rgba(37,99,235,0.03);
+        background: rgba(37, 99, 235, 0.03);
       }
       .activity-thumb {
-        width: 44px; height: 44px; border-radius: 10px;
+        width: 44px;
+        height: 44px;
+        border-radius: 10px;
         object-fit: cover;
-        border: 2px solid rgba(148,163,184,0.12);
-        transition: transform 0.2s ease, border-color 0.2s ease;
+        border: 2px solid rgba(148, 163, 184, 0.12);
+        transition:
+          transform 0.2s ease,
+          border-color 0.2s ease;
       }
       .activity-item:hover .activity-thumb {
         transform: scale(1.05);
-        border-color: rgba(37,99,235,0.3);
+        border-color: rgba(37, 99, 235, 0.3);
       }
       .confidence-pill {
-        font-size: 12px; font-weight: 700; padding: 3px 10px;
-        border-radius: 9999px; min-width: 46px; text-align: center;
+        font-size: 12px;
+        font-weight: 700;
+        padding: 3px 10px;
+        border-radius: 9999px;
+        min-width: 46px;
+        text-align: center;
       }
-      .confidence-high { background: rgba(34,197,94,0.12); color: #16a34a; border: 1px solid rgba(34,197,94,0.18); }
-      .confidence-mid  { background: rgba(245,158,11,0.12); color: #d97706; border: 1px solid rgba(245,158,11,0.18); }
-      .confidence-low  { background: rgba(239,68,68,0.12);  color: #dc2626; border: 1px solid rgba(239,68,68,0.18); }
-      html.dark .confidence-high { background: rgba(34,197,94,0.15); color: #4ade80; }
-      html.dark .confidence-mid  { background: rgba(245,158,11,0.15); color: #fbbf24; }
-      html.dark .confidence-low  { background: rgba(239,68,68,0.15); color: #f87171; }
+      .confidence-high {
+        background: rgba(34, 197, 94, 0.12);
+        color: #16a34a;
+        border: 1px solid rgba(34, 197, 94, 0.18);
+      }
+      .confidence-mid {
+        background: rgba(245, 158, 11, 0.12);
+        color: #d97706;
+        border: 1px solid rgba(245, 158, 11, 0.18);
+      }
+      .confidence-low {
+        background: rgba(239, 68, 68, 0.12);
+        color: #dc2626;
+        border: 1px solid rgba(239, 68, 68, 0.18);
+      }
+      html.dark .confidence-high {
+        background: rgba(34, 197, 94, 0.15);
+        color: #4ade80;
+      }
+      html.dark .confidence-mid {
+        background: rgba(245, 158, 11, 0.15);
+        color: #fbbf24;
+      }
+      html.dark .confidence-low {
+        background: rgba(239, 68, 68, 0.15);
+        color: #f87171;
+      }
 
       /* ── Section icon ── */
       .section-icon-dot {
-        width: 36px; height: 36px; border-radius: 10px;
-        display: inline-flex; align-items: center; justify-content: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
       }
     </style>
   </head>
   <body
     class="bg-background text-on-background body-md antialiased min-h-screen flex flex-col"
   >
-    {% set default_logo = url_for('static', filename='logo.png') %}
-    {% include '_toasts.html' %}
+    {% set default_logo = url_for('static', filename='logo.png') %} {% include
+    '_toasts.html' %}
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
-    {% set display_role = session.get('role') or 'user' %}
-    {% set display_plan = current_plan or 'free' %}
+    {% set display_role = session.get('role') or 'user' %} {% set display_plan =
+    current_plan or 'free' %}
 
     <nav
       class="bg-white/80 dark:bg-slate-950/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-200 dark:border-slate-800 shadow-sm font-['Inter'] antialiased"
     >
       <div class="flex items-center justify-between px-4 md:px-6 h-16 w-full">
         <div class="flex items-center gap-gutter">
-          <a href="{{ url_for('home.index') }}" class="inline-flex items-center gap-0">
+          <a
+            href="{{ url_for('home.index') }}"
+            class="inline-flex items-center gap-0"
+          >
             <img
               alt="PetAI New Logo"
               class="w-auto h-10 md:h-24"
@@ -348,7 +436,14 @@
               >PetAI</span
             >
           </a>
-          <button class="menu-toggle ml-2" id="menuToggle" type="button" aria-label="Mở menu" aria-expanded="false">
+          <button
+            class="menu-toggle ml-2"
+            id="menuToggle"
+            type="button"
+            aria-label="Mở menu"
+            aria-expanded="false"
+            data-i18n-aria="openMenu"
+          >
             <span></span>
             <span></span>
             <span></span>
@@ -360,39 +455,46 @@
           <a
             class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
             href="{{ url_for('dashboard.dashboard') }}"
-            >Bảng điều khiển</a
+            data-i18n="dashboard"
+            ><span data-i18n="dashboard">Bảng điều khiển</span></a
           >
           <a
             class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
             href="{{ url_for('history.history') }}"
-            >Lịch sử</a
+            data-i18n="history"
+            ><span data-i18n="history">Lịch sử</span></a
           >
           <a
             class="text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400 px-2 py-2 pb-1 font-semibold rounded-lg transition-all"
             href="{{ url_for('statistics.statistics') }}"
-            >Thống kê</a
+            data-i18n="statistics"
+            ><span data-i18n="statistics">Thống kê</span></a
           >
           <a
             class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
             href="{{ url_for('predict.upgrade') }}"
-            >Nâng cấp</a
+            data-i18n="upgrade"
+            ><span data-i18n="upgrade">Nâng cấp</span></a
           >
           {% if session.get('role') == 'user' %}
           <a
             class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
             href="{{ url_for('predict.my_payments') }}"
-            >Lịch sử thanh toán</a
+            data-i18n="payments"
+            ><span data-i18n="payments">Lịch sử thanh toán</span></a
           >
           {% endif %} {% if session.get('role') == 'admin' %}
           <a
             class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
             href="{{ url_for('users.list_users') }}"
-            >Quản lý người dùng</a
+            data-i18n="manageUsers"
+            ><span data-i18n="manageUsers">Quản lý người dùng</span></a
           >
           <a
             class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
             href="{{ url_for('users.confirmations_list') }}"
-            >Duyệt đơn</a
+            data-i18n="approveOrders"
+            ><span data-i18n="approveOrders">Duyệt đơn</span></a
           >
           {% endif %}
         </div>
@@ -400,80 +502,90 @@
           <a
             class="hidden md:inline-flex bg-primary text-on-primary px-4 py-2 rounded-lg label-sm hover:opacity-90 active:scale-95 duration-150 transition-all"
             href="{{ url_for('predict.upload_page') }}"
-            >Nhận diện</a
+            data-i18n="predict"
+            ><span data-i18n="predict">Nhận diện</span></a
           >
           <div class="language-switcher mr-2" id="languageSwitcher">
-              <button class="language-button" id="languageButton" type="button" aria-haspopup="true" aria-expanded="false">
-                <span class="language-flag">🇻🇳</span>
-                <span class="language-current">VN</span>
-                <span class="language-arrow">▼</span>
-              </button>
-              <div class="language-menu" id="languageMenu">
-                <button class="language-option active" type="button" data-lang="vi">
-                  <span class="language-check">✓</span>
-                  <span class="language-flag">🇻🇳</span>
-                  <span>Tiếng Việt</span>
-                </button>
-                <button class="language-option" type="button" data-lang="en">
-                  <span class="language-check"></span>
-                  <span class="language-flag">🇺🇸</span>
-                  <span>English</span>
-                </button>
-              </div>
-            </div>
-            <div class="relative cursor-pointer avatar-wrapper">
-                              <img
-                alt="Ảnh đại diện"
-                class="w-9 h-9 rounded-full border-2 border-primary/20 p-0.5"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuABdf7zKSVKEqdGUUjqEkF9ftdFTrLW87Tb24r2IiZiv_JP0LrItrCxl23SH-gYj2Mqtkma0ak9DZbUtKM5nW747pmivDYGVbYhNr1PZbxbFuOrZdGJvnbhdSurFLfL3BcmhN2p1h9wv_6geT-x8eoTG1TDoLL40P8wDiaymvRT--SA4jYjU9A77WIji5FmOi99mPDXw7xS6dUyUNJYU2gHLk4-smzFrCuBbQbgtpATDvNo6hq3YR-cfSaNblImtCnDXIb8np7J4HA"
-              />
-
-              <div
-                class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white dark:border-slate-900 rounded-full"
-              ></div>
-              <div
-                class="absolute right-0 top-full w-52 bg-white dark:bg-slate-900 rounded-lg shadow-xl border border-slate-200 dark:border-slate-800 py-2 hidden avatar-dropdown-menu z-50"
+            <button
+              class="language-button"
+              id="languageButton"
+              type="button"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              <span class="language-flag" data-i18n="languageFlag">🇻🇳</span>
+              <span class="language-current" data-i18n="shortLabel">VN</span>
+              <span class="language-arrow">▼</span>
+            </button>
+            <div class="language-menu" id="languageMenu">
+              <button
+                class="language-option active"
+                type="button"
+                data-lang="vi"
               >
-                <div class="px-4 pb-2">
-                  <div class="label-sm text-slate-500 dark:text-slate-400">
-                    Vai trò:
-                    <span
-                      class="font-semibold text-slate-800 dark:text-slate-200"
-                      >{{ display_role|upper }}</span
-                    >
-                  </div>
-                  <div class="label-sm text-slate-500 dark:text-slate-400">
-                    Gói:
-                    <span
-                      class="font-semibold text-slate-800 dark:text-slate-200"
-                      >{{ display_plan|upper }}</span
-                    >
-                  </div>
-                </div>                <a
-                  class="flex items-center gap-2 px-4 py-2 body-md text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors font-semibold"
-                  href="{{ url_for('settings.settings') }}"
-                >
-                  <span class="material-symbols-outlined text-[18px]"
-                    >settings</span
-                  >
-                  <span data-i18n="personalInfo">Thông tin cá nhân</span>
-                </a>
+                <span class="language-check">✓</span>
+                <span class="language-flag" data-i18n="languageFlag">🇻🇳</span>
+                <span data-i18n="languageLabel">Tiếng Việt</span>
+              </button>
+              <button class="language-option" type="button" data-lang="en">
+                <span class="language-check"></span>
+                <span class="language-flag">🇺🇸</span>
+                <span>English</span>
+              </button>
+            </div>
+          </div>
+          <div class="relative cursor-pointer avatar-wrapper">
+            <img
+              alt="Ảnh đại diện"
+              class="w-9 h-9 rounded-full border-2 border-primary/20 p-0.5"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuABdf7zKSVKEqdGUUjqEkF9ftdFTrLW87Tb24r2IiZiv_JP0LrItrCxl23SH-gYj2Mqtkma0ak9DZbUtKM5nW747pmivDYGVbYhNr1PZbxbFuOrZdGJvnbhdSurFLfL3BcmhN2p1h9wv_6geT-x8eoTG1TDoLL40P8wDiaymvRT--SA4jYjU9A77WIji5FmOi99mPDXw7xS6dUyUNJYU2gHLk4-smzFrCuBbQbgtpATDvNo6hq3YR-cfSaNblImtCnDXIb8np7J4HA"
+            />
 
-                <div class="h-px bg-slate-200 dark:bg-slate-800 my-1"></div>
-                <a
-                  class="flex items-center gap-2 px-4 py-2 body-md text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors font-semibold"
-                  href="{{ url_for('logout.logout') }}"
-                >
-                  <span class="material-symbols-outlined text-[18px]"
-                    >logout</span
+            <div
+              class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white dark:border-slate-900 rounded-full"
+            ></div>
+            <div
+              class="absolute right-0 top-full w-52 bg-white dark:bg-slate-900 rounded-lg shadow-xl border border-slate-200 dark:border-slate-800 py-2 hidden avatar-dropdown-menu z-50"
+            >
+              <div class="px-4 pb-2">
+                <div class="label-sm text-slate-500 dark:text-slate-400">
+                  <span data-i18n="role">Vai trò:</span
+                  ><span
+                    class="font-semibold text-slate-800 dark:text-slate-200"
+                    >{{ display_role|upper }}</span
                   >
-                  Đăng xuất
-                </a>
+                </div>
+                <div class="label-sm text-slate-500 dark:text-slate-400">
+                  <span data-i18n="plan">Gói:</span
+                  ><span
+                    class="font-semibold text-slate-800 dark:text-slate-200"
+                    >{{ display_plan|upper }}</span
+                  >
+                </div>
               </div>
+              <a
+                class="flex items-center gap-2 px-4 py-2 body-md text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors font-semibold"
+                href="{{ url_for('settings.settings') }}"
+              >
+                <span class="material-symbols-outlined text-[18px]"
+                  >settings</span
+                >
+                <span data-i18n="personalInfo">Thông tin cá nhân</span>
+              </a>
+
+              <div class="h-px bg-slate-200 dark:bg-slate-800 my-1"></div>
+              <a
+                class="flex items-center gap-2 px-4 py-2 body-md text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors font-semibold"
+                href="{{ url_for('logout.logout') }}"
+              >
+                <span class="material-symbols-outlined text-[18px]">logout</span
+                ><span data-i18n="logout">Đăng xuất</span></a
+              >
             </div>
           </div>
         </div>
-      </nav>
+      </div>
+    </nav>
 
     <main
       class="flex-grow w-full px-4 md:px-6 py-margin grid grid-cols-1 md:grid-cols-[230px_minmax(0,1fr)] gap-gutter"
@@ -498,7 +610,9 @@
               style="font-variation-settings: &quot;FILL&quot; 1"
               >upload_file</span
             >
-            <span class="label-sm label-sm">Tải ảnh &amp; Phân tích</span>
+            <span class="label-sm label-sm" data-i18n="uploadAnalyze"
+              >Tải ảnh & Phân tích</span
+            >
           </a>
           <a
             class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
@@ -509,7 +623,19 @@
               data-icon="history"
               >history</span
             >
-            <span class="label-sm label-sm"><span data-i18n="predictionHistory">Lịch sử dự đoán</span></span>
+            <span class="label-sm label-sm"
+              ><span data-i18n="predictionHistory"
+                ><span data-i18n="predictionHistory"
+                  ><span data-i18n="predictionHistory"
+                    ><span data-i18n="predictionHistory"
+                      ><span data-i18n="predictionHistory"
+                        >Lịch sử dự đoán</span
+                      ></span
+                    ></span
+                  ></span
+                ></span
+              ></span
+            >
           </a>
           {% if session.get('role') == 'user' %}
           <a
@@ -521,7 +647,9 @@
               data-icon="payments"
               >payments</span
             >
-            <span class="label-sm label-sm">Lịch sử thanh toán</span>
+            <span class="label-sm label-sm" data-i18n="payments"
+              >Lịch sử thanh toán</span
+            >
           </a>
           {% endif %}
           <a
@@ -533,7 +661,9 @@
               data-icon="bar_chart"
               >bar_chart</span
             >
-            <span class="label-sm label-sm font-semibold"
+            <span
+              class="label-sm label-sm font-semibold"
+              data-i18n="personalStats"
               >Thống kê cá nhân</span
             >
           </a>
@@ -546,7 +676,9 @@
               data-icon="upgrade"
               >upgrade</span
             >
-            <span class="label-sm label-sm"><span data-i18n="upgradePlan">Nâng cấp gói</span></span>
+            <span class="label-sm label-sm"
+              ><span data-i18n="upgradePlan">Nâng cấp gói</span></span
+            >
           </a>
           {% if session.get('role') == 'admin' %}
           <a
@@ -558,7 +690,9 @@
               data-icon="groups"
               >groups</span
             >
-            <span class="label-sm label-sm">Quản lý người dùng</span>
+            <span class="label-sm label-sm" data-i18n="manageUsers"
+              >Quản lý người dùng</span
+            >
           </a>
           <a
             class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
@@ -569,7 +703,9 @@
               data-icon="receipt_long"
               >receipt_long</span
             >
-            <span class="label-sm label-sm">Duyệt đơn</span>
+            <span class="label-sm label-sm" data-i18n="approveOrders"
+              >Duyệt đơn</span
+            >
           </a>
           {% endif %}
           <hr class="border-outline-variant/30 my-xs" />
@@ -582,21 +718,34 @@
               data-icon="settings"
               >settings</span
             >
-            <span class="label-sm"><span data-i18n="accountSettings">Cài đặt tài khoản</span></span>
+            <span class="label-sm"
+              ><span data-i18n="accountSettings">Cài đặt tài khoản</span></span
+            >
           </a>
-
         </div>
       </aside>
 
       <div class="col-span-1 flex flex-col">
         <!-- ── Page Header ── -->
-        <section class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-outline-variant/20 dark:border-slate-800 pb-5 mb-8" data-purpose="page-header">
+        <section
+          class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-outline-variant/20 dark:border-slate-800 pb-5 mb-8"
+          data-purpose="page-header"
+        >
           <div class="flex flex-col gap-2">
-            <h1 class="headline-lg font-semibold text-on-surface">
-              Thống kê nhận diện của bạn
+            <h1
+              class="headline-lg font-semibold text-on-surface"
+              data-i18n="statsTitle"
+            >
+              <span data-i18n="statsTitle">Thống kê nhận diện của bạn</span>
             </h1>
-            <p class="body-md text-on-surface-variant">
-              Tổng quan số lần dự đoán, độ tin cậy và top giống chó phổ biến.
+            <p
+              class="body-md text-on-surface-variant"
+              data-i18n="statsSubtitle"
+            >
+              <span data-i18n="statsSubtitle"
+                >Tổng quan số lần dự đoán, độ tin cậy và top giống chó phổ
+                biến.</span
+              >
             </p>
           </div>
           <div class="flex items-center gap-3">
@@ -604,8 +753,8 @@
               id="exportReportBtn"
               class="bg-surface-container-lowest dark:bg-slate-900 text-on-surface dark:text-slate-200 border border-outline-variant/60 dark:border-slate-800 hover:border-primary hover:text-primary dark:hover:text-blue-400 px-4 py-2.5 rounded-lg label-sm shadow-sm hover:shadow-md transition-all flex items-center gap-2 font-semibold"
             >
-              <span class="material-symbols-outlined text-[18px]">download</span>
-              Xuất báo cáo
+              <span class="material-symbols-outlined text-[18px]">download</span
+              ><span data-i18n="exportReport">Xuất báo cáo</span>
             </button>
           </div>
         </section>
@@ -619,14 +768,28 @@
             class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[140px]"
           >
             <div class="flex items-center justify-between">
-              <span class="label-sm text-on-surface-variant font-semibold uppercase tracking-wider">Tổng lượt nhận diện</span>
-              <div class="w-10 h-10 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center text-primary">
+              <span
+                class="label-sm text-on-surface-variant font-semibold uppercase tracking-wider"
+                data-i18n="totalScans"
+                >Tổng lượt nhận diện</span
+              >
+              <div
+                class="w-10 h-10 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center text-primary"
+              >
                 <span class="material-symbols-outlined">qr_code_scanner</span>
               </div>
             </div>
             <div class="mt-4 flex flex-col">
-              <span class="text-3xl font-bold text-on-surface tracking-tight" data-counter="{{ stats.total_predictions }}">0</span>
-              <span class="label-sm text-on-surface-variant/70 mt-1">Tổng số lần nhận diện</span>
+              <span
+                class="text-3xl font-bold text-on-surface tracking-tight"
+                data-counter="{{ stats.total_predictions }}"
+                >0</span
+              >
+              <span
+                class="label-sm text-on-surface-variant/70 mt-1"
+                data-i18n="totalScansLabel"
+                >Tổng số lần nhận diện</span
+              >
             </div>
           </div>
 
@@ -635,15 +798,30 @@
             class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[140px]"
           >
             <div class="flex items-center justify-between">
-              <span class="label-sm text-on-surface-variant font-semibold uppercase tracking-wider">Độ tin cậy TB</span>
-              <div class="w-10 h-10 rounded-lg bg-yellow-500/10 dark:bg-yellow-500/20 flex items-center justify-center text-yellow-600 dark:text-yellow-400">
+              <span
+                class="label-sm text-on-surface-variant font-semibold uppercase tracking-wider"
+                data-i18n="avgConfidence"
+                >Độ tin cậy TB</span
+              >
+              <div
+                class="w-10 h-10 rounded-lg bg-yellow-500/10 dark:bg-yellow-500/20 flex items-center justify-center text-yellow-600 dark:text-yellow-400"
+              >
                 <span class="material-symbols-outlined">analytics</span>
               </div>
             </div>
             {% set avg_pct = (stats.avg_confidence * 100)|round(1) %}
             <div class="mt-4 flex flex-col">
-              <span class="text-3xl font-bold text-on-surface tracking-tight" data-counter="{{ avg_pct }}" data-suffix="%">0%</span>
-              <span class="label-sm text-on-surface-variant/70 mt-1">Độ chính xác trung bình</span>
+              <span
+                class="text-3xl font-bold text-on-surface tracking-tight"
+                data-counter="{{ avg_pct }}"
+                data-suffix="%"
+                >0%</span
+              >
+              <span
+                class="label-sm text-on-surface-variant/70 mt-1"
+                data-i18n="avgAccuracy"
+                >Độ chính xác trung bình</span
+              >
             </div>
           </div>
 
@@ -652,14 +830,28 @@
             class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[140px]"
           >
             <div class="flex items-center justify-between">
-              <span class="label-sm text-on-surface-variant font-semibold uppercase tracking-wider">Giống đã khám phá</span>
-              <div class="w-10 h-10 rounded-lg bg-green-500/10 dark:bg-green-500/20 flex items-center justify-center text-green-600 dark:text-green-400">
+              <span
+                class="label-sm text-on-surface-variant font-semibold uppercase tracking-wider"
+                data-i18n="breedsExplored"
+                >Giống đã khám phá</span
+              >
+              <div
+                class="w-10 h-10 rounded-lg bg-green-500/10 dark:bg-green-500/20 flex items-center justify-center text-green-600 dark:text-green-400"
+              >
                 <span class="material-symbols-outlined">pets</span>
               </div>
             </div>
             <div class="mt-4 flex flex-col">
-              <span class="text-3xl font-bold text-on-surface tracking-tight" data-counter="{{ unique_breed_count }}">0</span>
-              <span class="label-sm text-on-surface-variant/70 mt-1">Giống chó khác nhau</span>
+              <span
+                class="text-3xl font-bold text-on-surface tracking-tight"
+                data-counter="{{ unique_breed_count }}"
+                >0</span
+              >
+              <span
+                class="label-sm text-on-surface-variant/70 mt-1"
+                data-i18n="uniqueBreeds"
+                >Giống chó khác nhau</span
+              >
             </div>
           </div>
 
@@ -668,14 +860,28 @@
             class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[140px]"
           >
             <div class="flex items-center justify-between">
-              <span class="label-sm text-on-surface-variant font-semibold uppercase tracking-wider">Hoạt động gần đây</span>
-              <div class="w-10 h-10 rounded-lg bg-purple-500/10 dark:bg-purple-500/20 flex items-center justify-center text-purple-600 dark:text-purple-400">
+              <span
+                class="label-sm text-on-surface-variant font-semibold uppercase tracking-wider"
+                data-i18n="recentActivity"
+                >Hoạt động gần đây</span
+              >
+              <div
+                class="w-10 h-10 rounded-lg bg-purple-500/10 dark:bg-purple-500/20 flex items-center justify-center text-purple-600 dark:text-purple-400"
+              >
                 <span class="material-symbols-outlined">update</span>
               </div>
             </div>
             <div class="mt-4 flex flex-col">
-              <span class="text-3xl font-bold text-on-surface tracking-tight" data-counter="{{ recent_predictions|length }}">0</span>
-              <span class="label-sm text-on-surface-variant/70 mt-1">Lượt nhận diện gần nhất</span>
+              <span
+                class="text-3xl font-bold text-on-surface tracking-tight"
+                data-counter="{{ recent_predictions|length }}"
+                >0</span
+              >
+              <span
+                class="label-sm text-on-surface-variant/70 mt-1"
+                data-i18n="recentActivityLabel"
+                >Lượt nhận diện gần nhất</span
+              >
             </div>
           </div>
         </section>
@@ -683,44 +889,90 @@
         <!-- Section: Charts and Analytics -->
         <section class="mb-10 flex flex-col gap-6">
           <div class="flex items-center justify-between">
-            <h2 class="headline-md font-semibold text-on-surface">
-              Biểu đồ hoạt động
+            <h2
+              class="headline-md font-semibold text-on-surface"
+              data-i18n="activityCharts"
+            >
+              <span data-i18n="activityCharts">Biểu đồ hoạt động</span>
             </h2>
             <!-- Time-range filter -->
-            <div class="flex items-center gap-1.5 bg-surface-container rounded-xl p-1 border border-outline-variant/20">
-              <a href="?days=7"
+            <div
+              class="flex items-center gap-1.5 bg-surface-container rounded-xl p-1 border border-outline-variant/20"
+            >
+              <a
+                href="?days=7"
                 class="time-filter-btn {{ 'active' if selected_days == '7' else '' }} px-3 py-1.5 rounded-lg label-sm font-semibold transition-all"
-              >7 ngày</a>
-              <a href="?days=30"
+                data-i18n="days7"
+                ><span data-i18n="homePricing7Days">7 ngày</span></a
+              >
+              <a
+                href="?days=30"
                 class="time-filter-btn {{ 'active' if selected_days == '30' else '' }} px-3 py-1.5 rounded-lg label-sm font-semibold transition-all"
-              >30 ngày</a>
-              <a href="?days=0"
+                data-i18n="days30"
+                ><span data-i18n="homePricing30Days">30 ngày</span></a
+              >
+              <a
+                href="?days=0"
                 class="time-filter-btn {{ 'active' if selected_days == '0' else '' }} px-3 py-1.5 rounded-lg label-sm font-semibold transition-all"
-              >Tất cả</a>
+                data-i18n="all"
+                ><span data-i18n="all">Tất cả</span></a
+              >
             </div>
           </div>
 
           <!-- Line Chart – Xu hướng nhận diện -->
-          <div class="chart-card bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-xl p-6 shadow-sm">
+          <div
+            class="chart-card bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-xl p-6 shadow-sm"
+          >
             <div class="flex items-center justify-between mb-4">
               <div>
-                <h3 class="text-lg font-bold text-on-surface">Xu hướng nhận diện</h3>
-                <p class="text-xs text-on-surface-variant mt-0.5">Số lượng ảnh đã nhận diện mỗi ngày</p>
+                <h3
+                  class="text-lg font-bold text-on-surface"
+                  data-i18n="trendTitle"
+                >
+                  <span data-i18n="trendTitle">Xu hướng nhận diện</span>
+                </h3>
+                <p
+                  class="text-xs text-on-surface-variant mt-0.5"
+                  data-i18n="predTrendSubtitle"
+                >
+                  <span data-i18n="predTrendSubtitle"
+                    >Số lượng ảnh đã nhận diện mỗi ngày</span
+                  >
+                </p>
               </div>
-              <div class="text-primary bg-primary/10 dark:bg-primary/20 px-3 py-1 rounded-lg text-xs font-semibold">
-                {% if selected_days == '7' %}7 ngày qua{% elif selected_days == '30' %}30 ngày qua{% else %}Tất cả{% endif %}
+              <div
+                class="text-primary bg-primary/10 dark:bg-primary/20 px-3 py-1 rounded-lg text-xs font-semibold"
+              >
+                {% if selected_days == '7' %}7 ngày qua{% elif selected_days ==
+                '30' %}30 ngày qua{% else %}Tất cả{% endif %}
               </div>
             </div>
             {% if daily_counts %}
-            <div class="chart-container" style="position: relative; height: 320px;">
-              <canvas id="trendChart"
-                      data-labels='{{ daily_counts | map(attribute="date") | list | tojson | safe }}'
-                      data-values='{{ daily_counts | map(attribute="count") | list | tojson | safe }}'></canvas>
+            <div
+              class="chart-container"
+              style="position: relative; height: 320px"
+            >
+              <canvas
+                id="trendChart"
+                data-labels='{{ daily_counts | map(attribute="date") | list | tojson | safe }}'
+                data-values='{{ daily_counts | map(attribute="count") | list | tojson | safe }}'
+              ></canvas>
             </div>
             {% else %}
             <div class="flex flex-col items-center justify-center py-10 gap-3">
-              <span class="material-symbols-outlined text-[40px] text-slate-300 dark:text-slate-600">bar_chart</span>
-              <p class="label-sm text-on-surface-variant">Chưa có dữ liệu trong khoảng thời gian này.</p>
+              <span
+                class="material-symbols-outlined text-[40px] text-slate-300 dark:text-slate-600"
+                >bar_chart</span
+              >
+              <p
+                class="label-sm text-on-surface-variant"
+                data-i18n="noDataInRange"
+              >
+                <span data-i18n="noDataInRange"
+                  >Chưa có dữ liệu trong khoảng thời gian này.</span
+                >
+              </p>
             </div>
             {% endif %}
           </div>
@@ -728,69 +980,159 @@
           <!-- Row 2: Top Breeds + Confidence Distribution -->
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <!-- Top 5 giống phổ biến -->
-            <div class="chart-card bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-xl p-6 shadow-sm">
+            <div
+              class="chart-card bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-xl p-6 shadow-sm"
+            >
               <div class="mb-4">
-                <h3 class="text-lg font-bold text-on-surface">Top 5 giống phổ biến nhất</h3>
-                <p class="text-xs text-on-surface-variant mt-0.5">Các giống chó được nhận diện nhiều nhất</p>
+                <h3
+                  class="text-lg font-bold text-on-surface"
+                  data-i18n="top5Breeds"
+                >
+                  <span data-i18n="top5Breeds">Top 5 giống phổ biến nhất</span>
+                </h3>
+                <p
+                  class="text-xs text-on-surface-variant mt-0.5"
+                  data-i18n="top5BreedsSubtitle"
+                >
+                  <span data-i18n="top5BreedsSubtitle"
+                    >Các giống chó được nhận diện nhiều nhất</span
+                  >
+                </p>
               </div>
-              {% if stats.top_breeds %}
-              {% set max_count = stats.top_breeds[0].count %}
+              {% if stats.top_breeds %} {% set max_count =
+              stats.top_breeds[0].count %}
               <div>
-                {% for item in stats.top_breeds %}
-                {% set rank = loop.index %}
-                {% set pct = ((item.count / max_count) * 100)|round|int if max_count > 0 else 0 %}
+                {% for item in stats.top_breeds %} {% set rank = loop.index %}
+                {% set pct = ((item.count / max_count) * 100)|round|int if
+                max_count > 0 else 0 %}
                 <div class="breed-row">
                   <div class="flex items-center gap-3 mb-2">
-                    <span class="rank-badge rank-badge--{{ rank }}">{{ rank }}</span>
-                    <span class="body-md font-semibold text-on-surface flex-1 truncate" title="{{ item.breed }}">{{ item.breed }}</span>
-                    <span class="label-sm text-on-surface-variant font-bold tabular-nums">{{ item.count }} lần</span>
+                    <span class="rank-badge rank-badge--{{ rank }}"
+                      >{{ rank }}</span
+                    >
+                    <span
+                      class="body-md font-semibold text-on-surface flex-1 truncate"
+                      title="{{ item.breed }}"
+                      >{{ item.breed }}</span
+                    >
+                    <span
+                      class="label-sm text-on-surface-variant font-bold tabular-nums"
+                      >{{ item.count }} lần</span
+                    >
                   </div>
                   <div class="progress-track">
-                    <div class="progress-fill" style="width: 0%" data-width="{{ pct }}"></div>
+                    <div
+                      class="progress-fill"
+                      style="width: 0%"
+                      data-width="{{ pct }}"
+                    ></div>
                   </div>
                 </div>
                 {% endfor %}
               </div>
               {% else %}
-              <div class="flex flex-col items-center justify-center py-10 gap-3">
-                <span class="material-symbols-outlined text-[40px] text-slate-300 dark:text-slate-600">emoji_events</span>
-                <p class="label-sm text-on-surface-variant text-center">Chưa có đủ dữ liệu để hiển thị top giống.</p>
-                <a href="{{ url_for('predict.upload_page') }}" class="bg-primary text-on-primary px-4 py-2 rounded-lg label-sm font-semibold hover:opacity-90 transition-opacity">
-                  Nhận diện ngay
-                </a>
+              <div
+                class="flex flex-col items-center justify-center py-10 gap-3"
+              >
+                <span
+                  class="material-symbols-outlined text-[40px] text-slate-300 dark:text-slate-600"
+                  >emoji_events</span
+                >
+                <p
+                  class="label-sm text-on-surface-variant text-center"
+                  data-i18n="noTopBreedData"
+                >
+                  <span data-i18n="noTopBreedData"
+                    >Chưa có đủ dữ liệu để hiển thị top giống.</span
+                  >
+                </p>
+                <a
+                  href="{{ url_for('predict.upload_page') }}"
+                  class="bg-primary text-on-primary px-4 py-2 rounded-lg label-sm font-semibold hover:opacity-90 transition-opacity"
+                  data-i18n="identifyNow"
+                  ><span data-i18n="identifyNow">Nhận diện ngay</span></a
+                >
               </div>
               {% endif %}
             </div>
 
             <!-- Phân bố độ tin cậy -->
-            <div class="chart-card bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-xl p-6 shadow-sm">
+            <div
+              class="chart-card bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-xl p-6 shadow-sm"
+            >
               <div class="mb-4">
-                <h3 class="text-lg font-bold text-on-surface">Phân bố độ tin cậy</h3>
-                <p class="text-xs text-on-surface-variant mt-0.5">Mức độ tin cậy của thuật toán phân loại</p>
+                <h3
+                  class="text-lg font-bold text-on-surface"
+                  data-i18n="confidenceDist"
+                >
+                  <span data-i18n="confidenceDist">Phân bố độ tin cậy</span>
+                </h3>
+                <p
+                  class="text-xs text-on-surface-variant mt-0.5"
+                  data-i18n="confidenceDistSubtitle"
+                >
+                  <span data-i18n="confidenceDistSubtitle"
+                    >Mức độ tin cậy của thuật toán phân loại</span
+                  >
+                </p>
               </div>
-              <div class="chart-container" style="position: relative; height: 260px;">
-                <canvas id="confBarChart"
-                        data-values='{{ confidence_dist | tojson | safe }}'></canvas>
+              <div
+                class="chart-container"
+                style="position: relative; height: 260px"
+              >
+                <canvas
+                  id="confBarChart"
+                  data-values="{{ confidence_dist | tojson | safe }}"
+                ></canvas>
               </div>
             </div>
           </div>
 
           <!-- Donut chart: breed distribution -->
-          <div class="chart-card bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-xl p-6 shadow-sm">
+          <div
+            class="chart-card bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-xl p-6 shadow-sm"
+          >
             <div class="mb-4">
-              <h3 class="text-lg font-bold text-on-surface">Phân bố giống chó</h3>
-              <p class="text-xs text-on-surface-variant mt-0.5">Tỉ lệ các giống chó được nhận diện</p>
+              <h3
+                class="text-lg font-bold text-on-surface"
+                data-i18n="breedDistTitle"
+              >
+                <span data-i18n="breedDistTitle">Phân bố giống chó</span>
+              </h3>
+              <p
+                class="text-xs text-on-surface-variant mt-0.5"
+                data-i18n="breedDistDesc"
+              >
+                <span data-i18n="breedDistDesc"
+                  >Tỉ lệ các giống chó được nhận diện</span
+                >
+              </p>
             </div>
             {% if stats.top_breeds %}
-            <div class="chart-container" style="position: relative; height: 260px;">
-              <canvas id="breedDonutChart"
-                      data-labels='{{ stats.top_breeds | map(attribute="breed") | list | tojson | safe }}'
-                      data-values='{{ stats.top_breeds | map(attribute="count") | list | tojson | safe }}'></canvas>
+            <div
+              class="chart-container"
+              style="position: relative; height: 260px"
+            >
+              <canvas
+                id="breedDonutChart"
+                data-labels='{{ stats.top_breeds | map(attribute="breed") | list | tojson | safe }}'
+                data-values='{{ stats.top_breeds | map(attribute="count") | list | tojson | safe }}'
+              ></canvas>
             </div>
             {% else %}
-            <div class="flex flex-col items-center justify-center h-[260px] gap-2">
-              <span class="material-symbols-outlined text-[36px] text-slate-300 dark:text-slate-600">donut_large</span>
-              <p class="label-sm text-on-surface-variant">Chưa có dữ liệu</p>
+            <div
+              class="flex flex-col items-center justify-center h-[260px] gap-2"
+            >
+              <span
+                class="material-symbols-outlined text-[36px] text-slate-300 dark:text-slate-600"
+                >donut_large</span
+              >
+              <p
+                class="label-sm text-on-surface-variant"
+                data-i18n="noDataChart"
+              >
+                <span data-i18n="noDataChart">Chưa có dữ liệu</span>
+              </p>
             </div>
             {% endif %}
           </div>
@@ -799,29 +1141,32 @@
         <!-- Kết quả gần đây -->
         <section>
           <div class="flex items-center justify-between mb-4">
-            <h2 class="headline-md font-semibold text-on-surface">
-              Kết quả gần đây
+            <h2
+              class="headline-md font-semibold text-on-surface"
+              data-i18n="recentResults"
+            >
+              <span data-i18n="recentResults">Kết quả gần đây</span>
             </h2>
             <a
               class="text-primary font-semibold label-sm hover:underline"
               href="{{ url_for('history.history') }}"
+              data-i18n="viewAll"
+              ><span data-i18n="viewAll">Xem tất cả</span></a
             >
-              Xem tất cả
-            </a>
           </div>
-          <div class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-xl shadow-sm overflow-hidden">
+          <div
+            class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-xl shadow-sm overflow-hidden"
+          >
             {% if recent_predictions %}
             <div class="divide-y divide-outline-variant/10">
-              {% for p in recent_predictions[:5] %}
-              {% set conf_pct = (p.confidence * 100)|round|int %}
-              {% if conf_pct >= 70 %}
-                {% set pill_cls = 'confidence-high' %}
-              {% elif conf_pct >= 30 %}
-                {% set pill_cls = 'confidence-mid' %}
-              {% else %}
-                {% set pill_cls = 'confidence-low' %}
-              {% endif %}
-              <div class="activity-item p-4 flex items-center justify-between gap-4">
+              {% for p in recent_predictions[:5] %} {% set conf_pct =
+              (p.confidence * 100)|round|int %} {% if conf_pct >= 70 %} {% set
+              pill_cls = 'confidence-high' %} {% elif conf_pct >= 30 %} {% set
+              pill_cls = 'confidence-mid' %} {% else %} {% set pill_cls =
+              'confidence-low' %} {% endif %}
+              <div
+                class="activity-item p-4 flex items-center justify-between gap-4"
+              >
                 <div class="flex items-center gap-3.5 min-w-0">
                   {% if p.image_path %}
                   <img
@@ -831,31 +1176,65 @@
                     onerror="this.src='{{ default_logo }}'"
                   />
                   {% else %}
-                  <div class="activity-thumb bg-surface-container flex items-center justify-center">
-                    <span class="material-symbols-outlined text-outline text-[24px]">pets</span>
+                  <div
+                    class="activity-thumb bg-surface-container flex items-center justify-center"
+                  >
+                    <span
+                      class="material-symbols-outlined text-outline text-[24px]"
+                      >pets</span
+                    >
                   </div>
                   {% endif %}
                   <div class="min-w-0">
-                    <h4 class="font-semibold text-on-surface body-md truncate">{{ p.breed or 'Không xác định' }}</h4>
-                    <p class="label-sm text-on-surface-variant flex items-center gap-1 mt-0.5">
-                      <span class="material-symbols-outlined text-[13px]">schedule</span>
-                      {{ p.created_at.strftime('%d/%m/%Y %H:%M') if p.created_at else '' }}
+                    <h4 class="font-semibold text-on-surface body-md truncate">
+                      {{ p.breed or 'Không xác định' }}
+                    </h4>
+                    <p
+                      class="label-sm text-on-surface-variant flex items-center gap-1 mt-0.5"
+                    >
+                      <span class="material-symbols-outlined text-[13px]"
+                        >schedule</span
+                      >
+                      {{ p.created_at.strftime('%d/%m/%Y %H:%M') if p.created_at
+                      else '' }}
                     </p>
                   </div>
                 </div>
-                <div class="confidence-pill {{ pill_cls }}">{{ conf_pct }}%</div>
+                <div class="confidence-pill {{ pill_cls }}">
+                  {{ conf_pct }}%
+                </div>
               </div>
               {% endfor %}
             </div>
             {% else %}
             <div class="flex flex-col items-center justify-center py-14 gap-3">
-              <span class="material-symbols-outlined text-[48px] text-slate-300 dark:text-slate-600">history</span>
-              <p class="body-md font-semibold text-on-surface-variant">Chưa có hoạt động nào!</p>
-              <p class="label-sm text-on-surface-variant text-center max-w-xs">Hãy tải ảnh thú cưng lên để bắt đầu nhận diện giống chó.</p>
-              <a href="{{ url_for('predict.upload_page') }}" class="bg-primary text-on-primary px-5 py-2.5 rounded-lg label-sm font-semibold hover:opacity-90 transition-opacity flex items-center gap-2 mt-1">
-                <span class="material-symbols-outlined text-[18px]">upload_file</span>
-                Nhận diện ngay
-              </a>
+              <span
+                class="material-symbols-outlined text-[48px] text-slate-300 dark:text-slate-600"
+                >history</span
+              >
+              <p
+                class="body-md font-semibold text-on-surface-variant"
+                data-i18n="noActivity"
+              >
+                <span data-i18n="noActivity">Chưa có hoạt động nào!</span>
+              </p>
+              <p
+                class="label-sm text-on-surface-variant text-center max-w-xs"
+                data-i18n="noActivityDesc"
+              >
+                <span data-i18n="noActivityDesc"
+                  >Hãy tải ảnh thú cưng lên để bắt đầu nhận diện giống
+                  chó.</span
+                >
+              </p>
+              <a
+                href="{{ url_for('predict.upload_page') }}"
+                class="bg-primary text-on-primary px-5 py-2.5 rounded-lg label-sm font-semibold hover:opacity-90 transition-opacity flex items-center gap-2 mt-1"
+              >
+                <span class="material-symbols-outlined text-[18px]"
+                  >upload_file</span
+                ><span data-i18n="identifyNow">Nhận diện ngay</span></a
+              >
             </div>
             {% endif %}
           </div>
@@ -881,67 +1260,97 @@
                 >
               </span>
             </div>
-            <p class="body-md text-on-surface-variant max-w-sm">
-              Ứng dụng nhận diện giống chó bằng AI dành cho người yêu thú cưng.
-              Kết quả chính xác, nhanh chóng.
+            <p
+              class="body-md text-on-surface-variant max-w-sm"
+              data-i18n="footerDesc"
+            >
+              <span data-i18n="footerDesc"
+                >Ứng dụng nhận diện giống chó bằng AI dành cho người yêu thú
+                cưng. Kết quả chính xác, nhanh chóng.</span
+              >
             </p>
           </div>
           <div class="lg:col-span-6 grid grid-cols-2 md:grid-cols-2 gap-8">
             <div class="space-y-6">
-              <h4 class="label-sm text-primary uppercase tracking-widest"><span data-i18n="aboutPetAI">Về PetAI</span></h4>
+              <h4 class="label-sm text-primary uppercase tracking-widest">
+                <span data-i18n="aboutPetAI">Về PetAI</span>
+              </h4>
               <ul class="space-y-4">
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                    target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.privacy_policy') }}"
-                     data-i18n="privacy">Chính sách quyền riêng tư</a
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href="{{ url_for('legal.privacy_policy') }}"
+                    data-i18n="privacy"
+                    ><span data-i18n="privacy"
+                      >Chính sách quyền riêng tư</span
+                    ></a
                   >
                 </li>
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                    target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.terms_of_service') }}"
-                     data-i18n="terms">Điều khoản sử dụng</a
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href="{{ url_for('legal.terms_of_service') }}"
+                    data-i18n="terms"
+                    ><span data-i18n="terms">Điều khoản sử dụng</span></a
                   >
                 </li>
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                    target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.data_deletion') }}"
-                     data-i18n="dataDeletion">Chính sách xóa dữ liệu</a
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href="{{ url_for('legal.data_deletion') }}"
+                    data-i18n="dataDeletion"
+                    ><span data-i18n="dataDeletion"
+                      >Chính sách xóa dữ liệu</span
+                    ></a
                   >
                 </li>
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                    target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.support') }}"
-                     data-i18n="support">Hỗ trợ</a
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href="{{ url_for('legal.support') }}"
+                    data-i18n="support"
+                    ><span data-i18n="homeStatsSupport">HỖ TRỢ</span></a
                   >
                 </li>
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                    target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.contact') }}"
-                     data-i18n="contact">Liên hệ</a
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href="{{ url_for('legal.contact') }}"
+                    data-i18n="contact"
+                    ><span data-i18n="contact">Liên hệ</span></a
                   >
                 </li>
               </ul>
             </div>
             <div class="space-y-6">
-              <h4 class="label-sm text-primary uppercase tracking-widest"><span data-i18n="connect">Kết nối</span></h4>
+              <h4 class="label-sm text-primary uppercase tracking-widest">
+                <span data-i18n="connect">Kết nối</span>
+              </h4>
               <ul class="space-y-4">
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
                     href="{{ url_for('predict.upload_page') }}"
-                     data-i18n="identifyNow">Nhận diện ngay</a
+                    data-i18n="identifyNow"
+                    ><span data-i18n="identifyNow">Nhận diện ngay</span></a
                   >
                 </li>
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
                     href="{{ url_for('history.history') }}"
-                     data-i18n="collection">Bộ sưu tập</a
+                    data-i18n="collection"
+                    ><span data-i18n="collection">Bộ sưu tập</span></a
                   >
                 </li>
               </ul>
@@ -952,17 +1361,33 @@
           <div
             class="flex flex-col md:flex-row justify-between items-center gap-4"
           >
-            <p class="label-sm text-on-surface-variant/70 dark:text-slate-400"><span data-i18n="copyright">Bản quyền © 2026 PetAI. Mọi quyền được bảo lưu</span></p>
+            <p class="label-sm text-on-surface-variant/70 dark:text-slate-400">
+              <span data-i18n="copyright"
+                >Bản quyền © 2026 PetAI. Mọi quyền được bảo lưu</span
+              >
+            </p>
             <div class="flex gap-6">
+              <a class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
+
+                target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.user_guide') }}"
+
+                data-i18n="footerUserGuide"><span data-i18n="footerUserGuide">HƯỚNG DẪN SỬ DỤNG</span></a>
+
               <a
                 class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
-                target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.terms_of_service') }}"
-                >ĐIỀU KHOẢN</a
+                target="_blank"
+                rel="noopener noreferrer"
+                href="{{ url_for('legal.terms_of_service') }}"
+                data-i18n="footerTerms"
+                ><span data-i18n="footerTerms">ĐIỀU KHOẢN</span></a
               >
               <a
                 class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
-                target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.privacy_policy') }}"
-                >BẢO MẬT</a
+                target="_blank"
+                rel="noopener noreferrer"
+                href="{{ url_for('legal.privacy_policy') }}"
+                data-i18n="footerPrivacy"
+                ><span data-i18n="footerPrivacy">BẢO MẬT</span></a
               >
             </div>
           </div>
@@ -985,9 +1410,7 @@
           const target = parseFloat(el.getAttribute("data-counter"));
           const suffix = el.getAttribute("data-suffix") || "";
           const isFloat = String(target).includes(".");
-          const decimals = isFloat
-            ? String(target).split(".")[1].length
-            : 0;
+          const decimals = isFloat ? String(target).split(".")[1].length : 0;
           let start = null;
 
           function step(ts) {
@@ -995,8 +1418,7 @@
             const progress = Math.min((ts - start) / DURATION, 1);
             const value = easeOutExpo(progress) * target;
             el.textContent =
-              (isFloat ? value.toFixed(decimals) : Math.round(value)) +
-              suffix;
+              (isFloat ? value.toFixed(decimals) : Math.round(value)) + suffix;
             if (progress < 1) requestAnimationFrame(step);
           }
           requestAnimationFrame(step);
@@ -1013,7 +1435,7 @@
                 }
               });
             },
-            { threshold: 0.3 }
+            { threshold: 0.3 },
           );
           els.forEach((el) => observer.observe(el));
         } else {
@@ -1021,7 +1443,9 @@
         }
 
         /* Animate progress bars when visible */
-        const progressBars = document.querySelectorAll(".progress-fill[data-width]");
+        const progressBars = document.querySelectorAll(
+          ".progress-fill[data-width]",
+        );
         if (progressBars.length) {
           if ("IntersectionObserver" in window) {
             const progressObserver = new IntersectionObserver(
@@ -1034,7 +1458,7 @@
                   }
                 });
               },
-              { threshold: 0.1 }
+              { threshold: 0.1 },
             );
             progressBars.forEach((el) => progressObserver.observe(el));
           } else {
@@ -1057,24 +1481,33 @@
           exportBtn.addEventListener("click", function () {
             // Get stats values from cards
             const stats = document.querySelectorAll("[data-counter]");
-            const totalPredictions = stats[0] ? (stats[0].getAttribute("data-counter") || "0") : "0";
-            const avgConfidence = stats[1] ? (stats[1].getAttribute("data-counter") || "0") : "0";
-            const uniqueBreeds = stats[2] ? (stats[2].getAttribute("data-counter") || "0") : "0";
-            const recentActivity = stats[3] ? (stats[3].getAttribute("data-counter") || "0") : "0";
-            
+            const totalPredictions = stats[0]
+              ? stats[0].getAttribute("data-counter") || "0"
+              : "0";
+            const avgConfidence = stats[1]
+              ? stats[1].getAttribute("data-counter") || "0"
+              : "0";
+            const uniqueBreeds = stats[2]
+              ? stats[2].getAttribute("data-counter") || "0"
+              : "0";
+            const recentActivity = stats[3]
+              ? stats[3].getAttribute("data-counter") || "0"
+              : "0";
+
             let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
             csvContent += "BÁO CÁO THỐNG KÊ NHẬN DIỆN PETAI\n";
-            csvContent += "Thời gian xuất: ," + new Date().toLocaleString("vi-VN") + "\n\n";
+            csvContent +=
+              "Thời gian xuất: ," + new Date().toLocaleString("vi-VN") + "\n\n";
             csvContent += "CHỈ SỐ TỔNG QUAN\n";
             csvContent += "Tổng lượt nhận diện," + totalPredictions + "\n";
             csvContent += "Độ tin cậy trung bình," + avgConfidence + "%\n";
             csvContent += "Số giống đã khám phá," + uniqueBreeds + "\n";
             csvContent += "Lượt nhận diện gần nhất," + recentActivity + "\n\n";
-            
+
             // Add top breeds if available
             csvContent += "DANH SÁCH GIỐNG CHÓ PHỔ BIẾN NHẤT\n";
             csvContent += "Hạng,Giống chó,Số lần nhận diện\n";
-            
+
             const topBreedsEl = document.getElementById("topBreedsData");
             let topBreeds = [];
             if (topBreedsEl) {
@@ -1082,19 +1515,25 @@
                 topBreeds = JSON.parse(topBreedsEl.textContent || "[]");
               } catch (e) {}
             }
-            
+
             if (topBreeds && topBreeds.length > 0) {
               topBreeds.forEach((item, index) => {
-                csvContent += (index + 1) + ',"' + item.breed + '",' + item.count + "\n";
+                csvContent +=
+                  index + 1 + ',"' + item.breed + '",' + item.count + "\n";
               });
             } else {
               csvContent += ",Chưa có dữ liệu,\n";
             }
-            
+
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
             link.setAttribute("href", encodedUri);
-            link.setAttribute("download", "BaoCaoThongKe_PetAI_" + new Date().toISOString().slice(0, 10) + ".csv");
+            link.setAttribute(
+              "download",
+              "BaoCaoThongKe_PetAI_" +
+                new Date().toISOString().slice(0, 10) +
+                ".csv",
+            );
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -1104,175 +1543,234 @@
     </script>
 
     <script>
-    /* ══════════ Chart.js – Data from Jinja2 ══════════ */
-    (function() {
-      /* Detect dark mode */
-      const isDark = document.documentElement.classList.contains('dark');
-      const gridColor  = isDark ? 'rgba(148,163,184,0.12)' : 'rgba(15,23,42,0.07)';
-      const textColor  = isDark ? '#94a3b8' : '#64748b';
-      const tooltipBg  = isDark ? '#1e293b' : '#ffffff';
-      const tooltipText = isDark ? '#e2e8f0' : '#0f172a';
+      /* ══════════ Chart.js – Data from Jinja2 ══════════ */
+      (function () {
+        /* Detect dark mode */
+        const isDark = document.documentElement.classList.contains("dark");
+        const gridColor = isDark
+          ? "rgba(148,163,184,0.12)"
+          : "rgba(15,23,42,0.07)";
+        const textColor = isDark ? "#94a3b8" : "#64748b";
+        const tooltipBg = isDark ? "#1e293b" : "#ffffff";
+        const tooltipText = isDark ? "#e2e8f0" : "#0f172a";
 
-      Chart.defaults.color = textColor;
-      Chart.defaults.font.family = 'Inter, sans-serif';
-      Chart.defaults.font.size   = 12;
+        Chart.defaults.color = textColor;
+        Chart.defaults.font.family = "Inter, sans-serif";
+        Chart.defaults.font.size = 12;
 
-      /* ── 1. Line / Area chart – Trend ── */
-      const trendEl = document.getElementById('trendChart');
-      if (trendEl) {
-        const trendLabels = JSON.parse(trendEl.dataset.labels || '[]');
-        const trendData   = JSON.parse(trendEl.dataset.values || '[]');
-        new Chart(trendEl, {
-          type: 'line',
-          data: {
-            labels: trendLabels,
-            datasets: [{
-              label: 'Lượt nhận diện',
-              data: trendData,
-              fill: true,
-              tension: 0.42,
-              borderColor: '#2563eb',
-              borderWidth: 2.5,
-              backgroundColor: isDark
-                ? 'rgba(37,99,235,0.13)'
-                : 'rgba(37,99,235,0.08)',
-              pointBackgroundColor: '#2563eb',
-              pointBorderColor: isDark ? '#1e293b' : '#fff',
-              pointRadius: 4,
-              pointHoverRadius: 6,
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            interaction: { mode: 'index', intersect: false },
-            plugins: {
-              legend: { display: false },
-              tooltip: {
-                backgroundColor: tooltipBg,
-                titleColor: tooltipText,
-                bodyColor: tooltipText,
-                borderColor: gridColor,
-                borderWidth: 1,
-                padding: 10,
-                callbacks: {
-                  label: function(ctx) { return " " + ctx.parsed.y + " lượt"; }
-                }
-              }
+        /* ── 1. Line / Area chart – Trend ── */
+        const trendEl = document.getElementById("trendChart");
+        if (trendEl) {
+          const trendLabels = JSON.parse(trendEl.dataset.labels || "[]");
+          const trendData = JSON.parse(trendEl.dataset.values || "[]");
+          new Chart(trendEl, {
+            type: "line",
+            data: {
+              labels: trendLabels,
+              datasets: [
+                {
+                  label:
+                    typeof window.PetAI_i18n !== "undefined"
+                      ? window.PetAI_i18n.t("scansCount")
+                      : "Lượt nhận diện",
+                  data: trendData,
+                  fill: true,
+                  tension: 0.42,
+                  borderColor: "#2563eb",
+                  borderWidth: 2.5,
+                  backgroundColor: isDark
+                    ? "rgba(37,99,235,0.13)"
+                    : "rgba(37,99,235,0.08)",
+                  pointBackgroundColor: "#2563eb",
+                  pointBorderColor: isDark ? "#1e293b" : "#fff",
+                  pointRadius: 4,
+                  pointHoverRadius: 6,
+                },
+              ],
             },
-            scales: {
-              x: {
-                grid: { color: gridColor },
-                ticks: { maxTicksLimit: 8 }
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              interaction: { mode: "index", intersect: false },
+              plugins: {
+                legend: { display: false },
+                tooltip: {
+                  backgroundColor: tooltipBg,
+                  titleColor: tooltipText,
+                  bodyColor: tooltipText,
+                  borderColor: gridColor,
+                  borderWidth: 1,
+                  padding: 10,
+                  callbacks: {
+                    label: function (ctx) {
+                      return (
+                        " " +
+                        ctx.parsed.y +
+                        " " +
+                        (typeof window.PetAI_i18n !== "undefined"
+                          ? window.PetAI_i18n.t("scansUnit")
+                          : "lượt")
+                      );
+                    },
+                  },
+                },
               },
-              y: {
-                grid: { color: gridColor },
-                beginAtZero: true,
-                ticks: { precision: 0 }
-              }
-            }
-          }
-        });
-      }
-
-      /* ── 2. Donut – Breed distribution ── */
-      const donutEl = document.getElementById('breedDonutChart');
-      if (donutEl) {
-        const breedLabels = JSON.parse(donutEl.dataset.labels || '[]');
-        const breedCounts = JSON.parse(donutEl.dataset.values || '[]');
-        const donutColors  = ['#2563eb','#f59e0b','#ea580c','#6366f1','#10b981'];
-        const donutDark    = ['#60a5fa','#fbbf24','#fb923c','#a5b4fc','#34d399'];
-        new Chart(donutEl, {
-          type: 'doughnut',
-          data: {
-            labels: breedLabels,
-            datasets: [{
-              data: breedCounts,
-              backgroundColor: isDark ? donutDark : donutColors,
-              borderColor: isDark ? '#0f172a' : '#ffffff',
-              borderWidth: 3,
-              hoverOffset: 8,
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            cutout: '65%',
-            plugins: {
-              legend: {
-                position: 'bottom',
-                labels: {
-                  boxWidth: 10, boxHeight: 10, borderRadius: 4,
-                  padding: 8, font: { size: 11 },
-                  maxLength: 16,
-                }
+              scales: {
+                x: {
+                  grid: { color: gridColor },
+                  ticks: { maxTicksLimit: 8 },
+                },
+                y: {
+                  grid: { color: gridColor },
+                  beginAtZero: true,
+                  ticks: { precision: 0 },
+                },
               },
-              tooltip: {
-                backgroundColor: tooltipBg,
-                titleColor: tooltipText,
-                bodyColor: tooltipText,
-                borderColor: gridColor,
-                borderWidth: 1,
-                padding: 10,
-                callbacks: {
-                  label: function(ctx) { return " " + ctx.label + ": " + ctx.parsed + " lần"; }
-                }
-              }
-            }
-          }
-        });
-      }
-
-      /* ── 3. Bar – Confidence distribution ── */
-      const barEl = document.getElementById('confBarChart');
-      if (barEl) {
-        const confDist  = JSON.parse(barEl.dataset.values || '[]');
-        const barColors = isDark
-          ? ['#f87171','#fbbf24','#60a5fa','#34d399','#a78bfa']
-          : ['#ef4444','#f59e0b','#2563eb','#10b981','#8b5cf6'];
-        new Chart(barEl, {
-          type: 'bar',
-          data: {
-            labels: ['0–20%','20–40%','40–60%','60–80%','80–100%'],
-            datasets: [{
-              label: 'Số lượt',
-              data: confDist,
-              backgroundColor: barColors,
-              borderRadius: 6,
-              borderSkipped: false,
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              legend: { display: false },
-              tooltip: {
-                backgroundColor: tooltipBg,
-                titleColor: tooltipText,
-                bodyColor: tooltipText,
-                borderColor: gridColor,
-                borderWidth: 1,
-                padding: 10,
-                callbacks: {
-                  label: function(ctx) { return " " + ctx.parsed.y + " lượt"; }
-                }
-              }
             },
-            scales: {
-              x: { grid: { display: false } },
-              y: {
-                grid: { color: gridColor },
-                beginAtZero: true,
-                ticks: { precision: 0 }
-              }
-            }
-          }
-        });
-      }
-    })();
+          });
+        }
+
+        /* ── 2. Donut – Breed distribution ── */
+        const donutEl = document.getElementById("breedDonutChart");
+        if (donutEl) {
+          const breedLabels = JSON.parse(donutEl.dataset.labels || "[]");
+          const breedCounts = JSON.parse(donutEl.dataset.values || "[]");
+          const donutColors = [
+            "#2563eb",
+            "#f59e0b",
+            "#ea580c",
+            "#6366f1",
+            "#10b981",
+          ];
+          const donutDark = [
+            "#60a5fa",
+            "#fbbf24",
+            "#fb923c",
+            "#a5b4fc",
+            "#34d399",
+          ];
+          new Chart(donutEl, {
+            type: "doughnut",
+            data: {
+              labels: breedLabels,
+              datasets: [
+                {
+                  data: breedCounts,
+                  backgroundColor: isDark ? donutDark : donutColors,
+                  borderColor: isDark ? "#0f172a" : "#ffffff",
+                  borderWidth: 3,
+                  hoverOffset: 8,
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              cutout: "65%",
+              plugins: {
+                legend: {
+                  position: "bottom",
+                  labels: {
+                    boxWidth: 10,
+                    boxHeight: 10,
+                    borderRadius: 4,
+                    padding: 8,
+                    font: { size: 11 },
+                    maxLength: 16,
+                  },
+                },
+                tooltip: {
+                  backgroundColor: tooltipBg,
+                  titleColor: tooltipText,
+                  bodyColor: tooltipText,
+                  borderColor: gridColor,
+                  borderWidth: 1,
+                  padding: 10,
+                  callbacks: {
+                    label: function (ctx) {
+                      return (
+                        " " +
+                        ctx.label +
+                        ": " +
+                        ctx.parsed +
+                        " " +
+                        (typeof window.PetAI_i18n !== "undefined"
+                          ? window.PetAI_i18n.t("timesCount")
+                          : "lần")
+                      );
+                    },
+                  },
+                },
+              },
+            },
+          });
+        }
+
+        /* ── 3. Bar – Confidence distribution ── */
+        const barEl = document.getElementById("confBarChart");
+        if (barEl) {
+          const confDist = JSON.parse(barEl.dataset.values || "[]");
+          const barColors = isDark
+            ? ["#f87171", "#fbbf24", "#60a5fa", "#34d399", "#a78bfa"]
+            : ["#ef4444", "#f59e0b", "#2563eb", "#10b981", "#8b5cf6"];
+          new Chart(barEl, {
+            type: "bar",
+            data: {
+              labels: ["0–20%", "20–40%", "40–60%", "60–80%", "80–100%"],
+              datasets: [
+                {
+                  label:
+                    typeof window.PetAI_i18n !== "undefined"
+                      ? window.PetAI_i18n.t("scansCount")
+                      : "Số lượt",
+                  data: confDist,
+                  backgroundColor: barColors,
+                  borderRadius: 6,
+                  borderSkipped: false,
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: { display: false },
+                tooltip: {
+                  backgroundColor: tooltipBg,
+                  titleColor: tooltipText,
+                  bodyColor: tooltipText,
+                  borderColor: gridColor,
+                  borderWidth: 1,
+                  padding: 10,
+                  callbacks: {
+                    label: function (ctx) {
+                      return (
+                        " " +
+                        ctx.parsed.y +
+                        " " +
+                        (typeof window.PetAI_i18n !== "undefined"
+                          ? window.PetAI_i18n.t("scansUnit")
+                          : "lượt")
+                      );
+                    },
+                  },
+                },
+              },
+              scales: {
+                x: { grid: { display: false } },
+                y: {
+                  grid: { color: gridColor },
+                  beginAtZero: true,
+                  ticks: { precision: 0 },
+                },
+              },
+            },
+          });
+        }
+      })();
     </script>
     <script src="{{ url_for('static', filename='js/toasts.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
   </body>
 </html>

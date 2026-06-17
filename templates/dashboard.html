@@ -1,1686 +1,2649 @@
 <!doctype html>
 
-<html class="{{ 'dark' if ui_theme == 'dark' else 'light' }}" lang="vi" data-theme="{{ ui_theme or 'light' }}">
-
-<head>
-  <meta charset="utf-8" />
-  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-  <script>
-    (function () {
-      const root = document.documentElement;
-      const themeStorageKey =
-        "{{ 'theme:' ~ session.get('user_id') if session.get('user_id') else '' }}";
-      const serverTheme = "{{ ui_theme or 'light' }}";
-      if (themeStorageKey) {
+<html class="{{ 'dark' if ui_theme == 'dark' else 'light' }}{{ ' i18n-loading' if ui_language == 'en' else '' }}" lang="{{ ui_language or 'vi' }}" data-theme="{{ ui_theme or 'light' }}">
+  <head>
+    <script>
+      (function () {
+        var savedLang = "vi";
         try {
-          localStorage.setItem(themeStorageKey, serverTheme);
-        } catch (e) { }
-      }
-      const storedTheme = (function () {
-        if (!themeStorageKey) return null;
-        try {
-          return localStorage.getItem(themeStorageKey);
-        } catch (e) {
-          return null;
+          savedLang = localStorage.getItem("siteLanguage") || "vi";
+        } catch (e) {}
+        document.documentElement.setAttribute("data-user-lang", savedLang);
+        if (savedLang === "en") {
+          document.documentElement.classList.add("i18n-loading");
         }
       })();
-      const preferredTheme = storedTheme || serverTheme;
-
-      function resolveTheme(theme) {
-        if (theme !== "auto") return theme;
-        try {
-          return window.matchMedia("(prefers-color-scheme: dark)").matches
-            ? "dark"
-            : "light";
-        } catch (e) {
-          return "light";
+    </script>
+    <style>
+      html.i18n-loading body {
+        visibility: hidden !important;
+      }
+    </style>
+    <noscript>
+      <style>
+        html.i18n-loading body {
+          visibility: visible !important;
         }
-      }
-
-      function applyTheme(theme) {
-        const resolved = resolveTheme(theme);
-        root.classList.toggle("dark", resolved === "dark");
-        root.classList.toggle("light", resolved !== "dark");
-        root.setAttribute("data-theme", resolved);
-      }
-
-      applyTheme(preferredTheme);
-
-      if (preferredTheme === "auto") {
-        try {
-          const mql = window.matchMedia("(prefers-color-scheme: dark)");
-          const handler = function () {
-            applyTheme("auto");
-          };
-          if (mql.addEventListener) {
-            mql.addEventListener("change", handler);
-          } else if (mql.addListener) {
-            mql.addListener(handler);
+      </style>
+    </noscript>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <script>
+      (function () {
+        const root = document.documentElement;
+        const themeStorageKey =
+          "{{ 'theme:' ~ session.get('user_id') if session.get('user_id') else '' }}";
+        const serverTheme = "{{ ui_theme or 'light' }}";
+        if (themeStorageKey) {
+          try {
+            localStorage.setItem(themeStorageKey, serverTheme);
+          } catch (e) {}
+        }
+        const storedTheme = (function () {
+          if (!themeStorageKey) return null;
+          try {
+            return localStorage.getItem(themeStorageKey);
+          } catch (e) {
+            return null;
           }
-        } catch (e) { }
-      }
+        })();
+        const preferredTheme = storedTheme || serverTheme;
 
-      try {
-        const isCollapsed = localStorage.getItem("sidebar-collapsed") === "true";
-        if (isCollapsed && window.innerWidth >= 768) {
-          root.classList.add("sidebar-collapsed");
+        function resolveTheme(theme) {
+          if (theme !== "auto") return theme;
+          try {
+            return window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+          } catch (e) {
+            return "light";
+          }
         }
-      } catch (e) { }
-    })();
-  </script>
-  <title>Bảng điều khiển - PetAI</title>
-  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/typography.css') }}" />
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/theme-dark.css') }}" />
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/toasts.css') }}" />
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile-header-fix.css') }}" />
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin-dashboard-content.css') }}" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-    rel="stylesheet" />
-  <script id="tailwind-config">
-    tailwind.config = {
-      darkMode: "class",
-      theme: {
-        extend: {
-          colors: {
-            "on-tertiary-fixed": "#360f00",
-            "secondary-fixed-dim": "#ffb95f",
-            "surface-container": "#e5eeff",
-            "on-primary-fixed": "#00174b",
-            error: "#ba1a1a",
-            "secondary-container": "#fea619",
-            primary: "#004ac6",
-            "tertiary-container": "#bc4800",
-            "surface-tint": "#0053db",
-            "on-secondary": "#ffffff",
-            "surface-variant": "#d3e4fe",
-            "on-secondary-container": "#684000",
-            "tertiary-fixed-dim": "#ffb596",
-            "surface-dim": "#cbdbf5",
-            outline: "#737686",
-            "inverse-on-surface": "#eaf1ff",
-            "on-error": "#ffffff",
-            "secondary-fixed": "#ffddb8",
-            "on-primary": "#ffffff",
-            "on-primary-container": "#eeefff",
-            "surface-container-highest": "#d3e4fe",
-            "on-surface": "#0b1c30",
-            "surface-container-lowest": "#ffffff",
-            "on-primary-fixed-variant": "#003ea8",
-            "outline-variant": "#c3c6d7",
-            "primary-fixed": "#dbe1ff",
-            "inverse-primary": "#b4c5ff",
-            "on-error-container": "#93000a",
-            "on-tertiary": "#ffffff",
-            surface: "#f8f9ff",
-            "primary-fixed-dim": "#b4c5ff",
-            "on-background": "#0b1c30",
-            "surface-bright": "#f8f9ff",
-            "inverse-surface": "#213145",
-            "on-tertiary-fixed-variant": "#7d2d00",
-            "on-surface-variant": "#434655",
-            "tertiary-fixed": "#ffdbcd",
-            "surface-container-high": "#dce9ff",
-            "on-secondary-fixed": "#2a1700",
-            "on-tertiary-container": "#ffede6",
-            secondary: "#855300",
-            tertiary: "#943700",
-            background: "#f8f9ff",
-            "primary-container": "#2563eb",
-            "surface-container-low": "#eff4ff",
-            "on-secondary-fixed-variant": "#653e00",
-            "error-container": "#ffdad6",
-          },
-          borderRadius: {
-            DEFAULT: "0.25rem",
-            lg: "0.5rem",
-            xl: "0.75rem",
-            full: "9999px",
-          },
-          spacing: {
-            md: "24px",
-            base: "8px",
-            sm: "12px",
-            margin: "32px",
-            lg: "48px",
-            xl: "80px",
-            gutter: "24px",
-            xs: "4px",
-          },
-          fontFamily: {
-            "headline-md": ["Inter"],
-            "headline-lg": ["Inter"],
-            "display-xl": ["Inter"],
-            "body-md": ["Inter"],
-            "label-sm": ["Inter"],
-            "body-lg": ["Inter"],
-          },
-          fontSize: {
-            "headline-md": [
-              "24px",
-              { lineHeight: "32px", fontWeight: "600" },
-            ],
-            "headline-lg": [
-              "36px",
-              {
-                lineHeight: "44px",
-                letterSpacing: "-0.01em",
-                fontWeight: "600",
-              },
-            ],
-            "display-xl": [
-              "60px",
-              {
-                lineHeight: "72px",
-                letterSpacing: "-0.02em",
-                fontWeight: "700",
-              },
-            ],
-            "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
-            "label-sm": ["14px", { lineHeight: "20px", fontWeight: "500" }],
-            "body-lg": ["18px", { lineHeight: "28px", fontWeight: "400" }],
+
+        function applyTheme(theme) {
+          const resolved = resolveTheme(theme);
+          root.classList.toggle("dark", resolved === "dark");
+          root.classList.toggle("light", resolved !== "dark");
+          root.setAttribute("data-theme", resolved);
+        }
+
+        applyTheme(preferredTheme);
+
+        if (preferredTheme === "auto") {
+          try {
+            const mql = window.matchMedia("(prefers-color-scheme: dark)");
+            const handler = function () {
+              applyTheme("auto");
+            };
+            if (mql.addEventListener) {
+              mql.addEventListener("change", handler);
+            } else if (mql.addListener) {
+              mql.addListener(handler);
+            }
+          } catch (e) {}
+        }
+
+        try {
+          const isCollapsed =
+            localStorage.getItem("sidebar-collapsed") === "true";
+          if (isCollapsed && window.innerWidth >= 768) {
+            root.classList.add("sidebar-collapsed");
+          }
+        } catch (e) {}
+      })();
+    </script>
+    <title data-i18n="dashboardTitle">{{ 'Dashboard - PetAI' if ui_language == 'en' else 'Bảng điều khiển - PetAI' }}</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/typography.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/theme-dark.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/toasts.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/mobile-header-fix.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/admin-dashboard-content.css') }}"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-tertiary-fixed": "#360f00",
+              "secondary-fixed-dim": "#ffb95f",
+              "surface-container": "#e5eeff",
+              "on-primary-fixed": "#00174b",
+              error: "#ba1a1a",
+              "secondary-container": "#fea619",
+              primary: "#004ac6",
+              "tertiary-container": "#bc4800",
+              "surface-tint": "#0053db",
+              "on-secondary": "#ffffff",
+              "surface-variant": "#d3e4fe",
+              "on-secondary-container": "#684000",
+              "tertiary-fixed-dim": "#ffb596",
+              "surface-dim": "#cbdbf5",
+              outline: "#737686",
+              "inverse-on-surface": "#eaf1ff",
+              "on-error": "#ffffff",
+              "secondary-fixed": "#ffddb8",
+              "on-primary": "#ffffff",
+              "on-primary-container": "#eeefff",
+              "surface-container-highest": "#d3e4fe",
+              "on-surface": "#0b1c30",
+              "surface-container-lowest": "#ffffff",
+              "on-primary-fixed-variant": "#003ea8",
+              "outline-variant": "#c3c6d7",
+              "primary-fixed": "#dbe1ff",
+              "inverse-primary": "#b4c5ff",
+              "on-error-container": "#93000a",
+              "on-tertiary": "#ffffff",
+              surface: "#f8f9ff",
+              "primary-fixed-dim": "#b4c5ff",
+              "on-background": "#0b1c30",
+              "surface-bright": "#f8f9ff",
+              "inverse-surface": "#213145",
+              "on-tertiary-fixed-variant": "#7d2d00",
+              "on-surface-variant": "#434655",
+              "tertiary-fixed": "#ffdbcd",
+              "surface-container-high": "#dce9ff",
+              "on-secondary-fixed": "#2a1700",
+              "on-tertiary-container": "#ffede6",
+              secondary: "#855300",
+              tertiary: "#943700",
+              background: "#f8f9ff",
+              "primary-container": "#2563eb",
+              "surface-container-low": "#eff4ff",
+              "on-secondary-fixed-variant": "#653e00",
+              "error-container": "#ffdad6",
+            },
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px",
+            },
+            spacing: {
+              md: "24px",
+              base: "8px",
+              sm: "12px",
+              margin: "32px",
+              lg: "48px",
+              xl: "80px",
+              gutter: "24px",
+              xs: "4px",
+            },
+            fontFamily: {
+              "headline-md": ["Inter"],
+              "headline-lg": ["Inter"],
+              "display-xl": ["Inter"],
+              "body-md": ["Inter"],
+              "label-sm": ["Inter"],
+              "body-lg": ["Inter"],
+            },
+            fontSize: {
+              "headline-md": [
+                "24px",
+                { lineHeight: "32px", fontWeight: "600" },
+              ],
+              "headline-lg": [
+                "36px",
+                {
+                  lineHeight: "44px",
+                  letterSpacing: "-0.01em",
+                  fontWeight: "600",
+                },
+              ],
+              "display-xl": [
+                "60px",
+                {
+                  lineHeight: "72px",
+                  letterSpacing: "-0.02em",
+                  fontWeight: "700",
+                },
+              ],
+              "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+              "label-sm": ["14px", { lineHeight: "20px", fontWeight: "500" }],
+              "body-lg": ["18px", { lineHeight: "28px", fontWeight: "400" }],
+            },
           },
         },
-      },
-    };
-  </script>
-  <style>
-    .material-symbols-outlined {
-      font-variation-settings:
-        "FILL" 0,
-        "wght" 400,
-        "GRAD" 0,
-        "opsz" 24;
-    }
-  </style>
-  <style>
-    /* Ensure rounded-xl is available and enforce dashboard grid token */
-    
+      };
+    </script>
+    <style>
+      .material-symbols-outlined {
+        font-variation-settings:
+          "FILL" 0,
+          "wght" 400,
+          "GRAD" 0,
+          "opsz" 24;
+      }
+    </style>
+    <style>
+      /* Ensure rounded-xl is available and enforce dashboard grid token */
 
-    .dashboard-grid>* {
-      border: 1px solid rgba(226, 232, 240, 1);
-      /* border-slate-100 */
-      box-shadow:
-        0 1px 2px rgba(15, 23, 42, 0.03),
-        0 6px 12px rgba(148, 163, 184, 0.06);
-      /* soft shadow-sm */
-      border-radius: 12px;
-      background-clip: padding-box;
-    }
-    .dark .dashboard-grid>* {
-      border-color: rgba(30, 41, 59, 1); /* border-slate-800 */
-    }
-  </style>
-</head>
+      .dashboard-grid > * {
+        border: 1px solid rgba(226, 232, 240, 1);
+        /* border-slate-100 */
+        box-shadow:
+          0 1px 2px rgba(15, 23, 42, 0.03),
+          0 6px 12px rgba(148, 163, 184, 0.06);
+        /* soft shadow-sm */
+        border-radius: 12px;
+        background-clip: padding-box;
+      }
+      .dark .dashboard-grid > * {
+        border-color: rgba(30, 41, 59, 1); /* border-slate-800 */
+      }
+    </style>
+  </head>
 
-<body class="bg-background text-on-background body-md antialiased min-h-screen flex flex-col">
-  {% include '_toasts.html' %}
-  <div class="sidebar-overlay" id="sidebarOverlay"></div>
-  {% set display_role = session.get('role') or 'Thanh vien' %}
-  {% set display_plan = current_plan or 'free' %}
-  <nav
-    class="bg-white/80 dark:bg-slate-950/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-200 dark:border-slate-800 shadow-sm font-['Inter'] antialiased nav-reduce-height">
-    <div class="flex items-center justify-between px-4 md:px-6 h-16 w-full">
-      <div class="flex items-center gap-gutter">
-        <a href="{{ url_for('home.index') }}" class="inline-flex items-center gap-0">
-          <img alt="PetAI New Logo" class="w-auto h-10 md:h-24" src="{{ url_for('static', filename='logo.png') }}" />
-          <span class="ml-0 text-lg md:text-2xl font-semibold text-primary">PetAI</span>
-        </a>
-        <button class="menu-toggle ml-2" id="menuToggle" type="button" aria-label="Mở menu" aria-expanded="false">
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
-      </div>
-      <div class="hidden md:flex flex-1 items-center justify-end gap-margin mr-gutter [&>a]:px-0.5 [&>a]:body-md">
-        <a class="text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400 px-2 py-2 pb-1 font-semibold rounded-lg transition-all"
-          href="{{ url_for('dashboard.dashboard') }}">Bảng điều khiển</a>
-        <a class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
-          href="{{ url_for('history.history') }}">Lịch sử</a>
-        <a class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
-          href="{{ url_for('statistics.statistics') }}">Thống kê</a>
-        <a class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
-          href="{{ url_for('predict.upgrade') }}">Nâng cấp</a>
-        {% if session.get('role') == 'user' %}
-        <a class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
-          href="{{ url_for('predict.my_payments') }}">Lịch sử thanh toán</a>
-        {% endif %} {% if session.get('role') == 'admin' %}
-        <a class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
-          href="{{ url_for('users.list_users') }}">Quản lý người dùng</a>
-        <a class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
-          href="{{ url_for('users.confirmations_list') }}">Duyệt đơn</a>
-        {% endif %}
-      </div>
-      <div class="flex items-center gap-md">
-        <a class="hidden md:inline-flex bg-primary text-on-primary px-4 py-2 rounded-lg label-sm hover:opacity-90 active:scale-95 duration-150 transition-all"
-          href="{{ url_for('predict.upload_page') }}">Nhận diện</a>
-        <div class="language-switcher mr-2" id="languageSwitcher">
-          <button class="language-button" id="languageButton" type="button" aria-haspopup="true" aria-expanded="false">
-            <span class="language-flag">🇻🇳</span>
-            <span class="language-current">VN</span>
-            <span class="language-arrow">▼</span>
+  <body
+    class="bg-background text-on-background body-md antialiased min-h-screen flex flex-col"
+  >
+    {% include '_toasts.html' %}
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    {% set display_role = session.get('role') or 'Thanh vien' %} {% set
+    display_plan = current_plan or 'free' %}
+    <nav
+      class="bg-white/80 dark:bg-slate-950/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-200 dark:border-slate-800 shadow-sm font-['Inter'] antialiased nav-reduce-height"
+    >
+      <div class="flex items-center justify-between px-4 md:px-6 h-16 w-full">
+        <div class="flex items-center gap-gutter">
+          <a
+            href="{{ url_for('home.index') }}"
+            class="inline-flex items-center gap-0"
+          >
+            <img
+              alt="PetAI New Logo"
+              class="w-auto h-10 md:h-24"
+              src="{{ url_for('static', filename='logo.png') }}"
+            />
+            <span class="ml-0 text-lg md:text-2xl font-semibold text-primary"
+              >PetAI</span
+            >
+          </a>
+          <button
+            class="menu-toggle ml-2"
+            id="menuToggle"
+            type="button"
+            aria-label="Mở menu"
+            aria-expanded="false"
+            data-i18n-aria="openMenu"
+          >
+            <span></span>
+            <span></span>
+            <span></span>
           </button>
-          <div class="language-menu" id="languageMenu">
-            <button class="language-option active" type="button" data-lang="vi">
-              <span class="language-check">✓</span>
-              <span class="language-flag">🇻🇳</span>
-              <span>Tiếng Việt</span>
-            </button>
-            <button class="language-option" type="button" data-lang="en">
-              <span class="language-check"></span>
-              <span class="language-flag">🇺🇸</span>
-              <span>English</span>
-            </button>
-          </div>
         </div>
-        <div class="relative cursor-pointer avatar-wrapper">
-          <img alt="Ảnh đại diện" class="w-9 h-9 rounded-full border-2 border-primary/20 p-0.5"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuABdf7zKSVKEqdGUUjqEkF9ftdFTrLW87Tb24r2IiZiv_JP0LrItrCxl23SH-gYj2Mqtkma0ak9DZbUtKM5nW747pmivDYGVbYhNr1PZbxbFuOrZdGJvnbhdSurFLfL3BcmhN2p1h9wv_6geT-x8eoTG1TDoLL40P8wDiaymvRT--SA4jYjU9A77WIji5FmOi99mPDXw7xS6dUyUNJYU2gHLk4-smzFrCuBbQbgtpATDvNo6hq3YR-cfSaNblImtCnDXIb8np7J4HA" />
-
-          <div
-            class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white dark:border-slate-900 rounded-full">
+        <div
+          class="hidden md:flex flex-1 items-center justify-end gap-margin mr-gutter [&>a]:px-0.5 [&>a]:body-md"
+        >
+          <a
+            class="text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400 px-2 py-2 pb-1 font-semibold rounded-lg transition-all"
+            href="{{ url_for('dashboard.dashboard') }}"
+            data-i18n="dashboard"
+            ><span data-i18n="dashboard">Bảng điều khiển</span></a
+          >
+          <a
+            class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
+            href="{{ url_for('history.history') }}"
+            data-i18n="history"
+            ><span data-i18n="history">Lịch sử</span></a
+          >
+          <a
+            class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
+            href="{{ url_for('statistics.statistics') }}"
+            data-i18n="statistics"
+            ><span data-i18n="statistics">Thống kê</span></a
+          >
+          <a
+            class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
+            href="{{ url_for('predict.upgrade') }}"
+            data-i18n="upgrade"
+            ><span data-i18n="upgrade">Nâng cấp</span></a
+          >
+          {% if session.get('role') == 'user' %}
+          <a
+            class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
+            href="{{ url_for('predict.my_payments') }}"
+            data-i18n="payments"
+            ><span data-i18n="payments">Lịch sử thanh toán</span></a
+          >
+          {% endif %} {% if session.get('role') == 'admin' %}
+          <a
+            class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
+            href="{{ url_for('users.list_users') }}"
+            data-i18n="manageUsers"
+            ><span data-i18n="manageUsers">Quản lý người dùng</span></a
+          >
+          <a
+            class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
+            href="{{ url_for('users.confirmations_list') }}"
+            data-i18n="approveOrders"
+            ><span data-i18n="approveOrders">Duyệt đơn</span></a
+          >
+          {% endif %}
+        </div>
+        <div class="flex items-center gap-md">
+          <a
+            class="hidden md:inline-flex bg-primary text-on-primary px-4 py-2 rounded-lg label-sm hover:opacity-90 active:scale-95 duration-150 transition-all"
+            href="{{ url_for('predict.upload_page') }}"
+            data-i18n="predict"
+            ><span data-i18n="predict">Nhận diện</span></a
+          >
+          <div class="language-switcher mr-2" id="languageSwitcher">
+            <button
+              class="language-button"
+              id="languageButton"
+              type="button"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              <span class="language-flag" data-i18n="languageFlag">🇻🇳</span>
+              <span class="language-current" data-i18n="shortLabel">VN</span>
+              <span class="language-arrow">▼</span>
+            </button>
+            <div class="language-menu" id="languageMenu">
+              <button
+                class="language-option active"
+                type="button"
+                data-lang="vi"
+              >
+                <span class="language-check">✓</span>
+                <span class="language-flag" data-i18n="languageFlag">🇻🇳</span>
+                <span data-i18n="languageLabel">Tiếng Việt</span>
+              </button>
+              <button class="language-option" type="button" data-lang="en">
+                <span class="language-check"></span>
+                <span class="language-flag">🇺🇸</span>
+                <span>English</span>
+              </button>
+            </div>
           </div>
-          <div
-            class="absolute right-0 top-full w-52 bg-white dark:bg-slate-900 rounded-lg shadow-xl border border-slate-200 dark:border-slate-800 py-2 hidden avatar-dropdown-menu z-50">
-            <div class="px-4 pb-2">
-              <div class="label-sm text-slate-500 dark:text-slate-400">
-                Vai trò:
-                <span class="font-semibold text-slate-800 dark:text-slate-200">{{ display_role|upper }}</span>
-              </div>
-              <div class="label-sm text-slate-500 dark:text-slate-400">
-                Gói:
-                <span class="font-semibold text-slate-800 dark:text-slate-200">{{ display_plan|upper }}</span>
-              </div>
-            </div> <a
-              class="flex items-center gap-2 px-4 py-2 body-md text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors font-semibold"
-              href="{{ url_for('settings.settings') }}">
-              <span class="material-symbols-outlined text-[18px]">settings</span>
-              <span data-i18n="personalInfo">Thông tin cá nhân</span>
-            </a>
+          <div class="relative cursor-pointer avatar-wrapper">
+            <img
+              alt="Avatar"
+              data-i18n-title="avatarAlt"
+              class="w-9 h-9 rounded-full border-2 border-primary/20 p-0.5"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuABdf7zKSVKEqdGUUjqEkF9ftdFTrLW87Tb24r2IiZiv_JP0LrItrCxl23SH-gYj2Mqtkma0ak9DZbUtKM5nW747pmivDYGVbYhNr1PZbxbFuOrZdGJvnbhdSurFLfL3BcmhN2p1h9wv_6geT-x8eoTG1TDoLL40P8wDiaymvRT--SA4jYjU9A77WIji5FmOi99mPDXw7xS6dUyUNJYU2gHLk4-smzFrCuBbQbgtpATDvNo6hq3YR-cfSaNblImtCnDXIb8np7J4HA"
+            />
 
-            <div class="h-px bg-slate-200 dark:bg-slate-800 my-1"></div>
-            <a class="flex items-center gap-2 px-4 py-2 body-md text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors font-semibold"
-              href="{{ url_for('logout.logout') }}">
-              <span class="material-symbols-outlined text-[18px]">logout</span>
-              Đăng xuất
-            </a>
+            <div
+              class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white dark:border-slate-900 rounded-full"
+            ></div>
+            <div
+              class="absolute right-0 top-full w-52 bg-white dark:bg-slate-900 rounded-lg shadow-xl border border-slate-200 dark:border-slate-800 py-2 hidden avatar-dropdown-menu z-50"
+            >
+              <div class="px-4 pb-2">
+                <div class="label-sm text-slate-500 dark:text-slate-400">
+                  <span data-i18n="role">Vai trò:</span
+                  ><span
+                    class="font-semibold text-slate-800 dark:text-slate-200"
+                    >{{ display_role|upper }}</span
+                  >
+                </div>
+                <div class="label-sm text-slate-500 dark:text-slate-400">
+                  <span data-i18n="plan">Gói:</span
+                  ><span
+                    class="font-semibold text-slate-800 dark:text-slate-200"
+                    >{{ display_plan|upper }}</span
+                  >
+                </div>
+              </div>
+              <a
+                class="flex items-center gap-2 px-4 py-2 body-md text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors font-semibold"
+                href="{{ url_for('settings.settings') }}"
+              >
+                <span class="material-symbols-outlined text-[18px]"
+                  >settings</span
+                >
+                <span data-i18n="personalInfo">Thông tin cá nhân</span>
+              </a>
+
+              <div class="h-px bg-slate-200 dark:bg-slate-800 my-1"></div>
+              <a
+                class="flex items-center gap-2 px-4 py-2 body-md text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors font-semibold"
+                href="{{ url_for('logout.logout') }}"
+              >
+                <span class="material-symbols-outlined text-[18px]"
+                  >logout</span
+                >
+                <span data-i18n="logout">Đăng xuất</span>
+              </a>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </nav>
+    </nav>
 
-  <main class="flex-grow w-full px-4 md:px-6 py-margin grid grid-cols-1 md:grid-cols-[230px_minmax(0,1fr)] gap-gutter">
-    <aside class="sidebar col-span-1" id="sidebar">
-      <div
-        class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] py-sm px-2 flex flex-col gap-sm sticky top-24 border border-outline-variant/30">
-        <h3 class="label-sm text-on-surface-variant uppercase tracking-wider mb-xs px-1.5">
-          Truy cập nhanh
-        </h3>
-        <a class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-primary bg-primary-fixed/50 transition-colors group"
-          href="{{ url_for('predict.upload_page') }}">
-          <span class="material-symbols-outlined text-primary group-hover:scale-105 transition-transform"
-            data-icon="upload_file" data-weight="fill"
-            style="font-variation-settings: &quot;FILL&quot; 1">upload_file</span>
-          <span class="label-sm font-semibold">Tải ảnh &amp; Phân tích</span>
-        </a>
-        <a class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
-          href="{{ url_for('history.history') }}">
-          <span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
-            data-icon="history">history</span>
-          <span class="label-sm">Lịch sử dự đoán</span>
-        </a>
-        {% if session.get('role') == 'user' %}
-        <a class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
-          href="{{ url_for('predict.my_payments') }}">
-          <span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
-            data-icon="payments">payments</span>
-          <span class="label-sm">Lịch sử thanh toán</span>
-        </a>
-        {% endif %}
-        <a class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
-          href="{{ url_for('statistics.statistics') }}">
-          <span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
-            data-icon="bar_chart">bar_chart</span>
-          <span class="label-sm">Thống kê cá nhân</span>
-        </a>
-        <a class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
-          href="{{ url_for('predict.upgrade') }}">
-          <span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
-            data-icon="upgrade">upgrade</span>
-          <span class="label-sm">Nâng cấp gói</span>
-        </a>
-        {% if session.get('role') == 'admin' %}
-        <a class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
-          href="{{ url_for('users.list_users') }}">
-          <span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
-            data-icon="groups">groups</span>
-          <span class="label-sm">Quản lý người dùng</span>
-        </a>
-        <a class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
-          href="{{ url_for('users.confirmations_list') }}">
-          <span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
-            data-icon="receipt_long">receipt_long</span>
-          <span class="label-sm">Duyệt đơn</span>
-        </a>
-        {% endif %}
-        <hr class="border-outline-variant/30 my-xs" />
-        <a class="flex items-center gap-sm py-1.5 px-1.5 rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
-          href="{{ url_for('settings.settings') }}">
-          <span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
-            data-icon="settings">settings</span>
-          <span class="label-sm"><span data-i18n="accountSettings">Cài đặt tài khoản</span></span>
-        </a>
-
-      </div>
-    </aside>
-
-    <div class="col-span-1 flex flex-col">
-      <section class="mb-8">
-        <div class="flex flex-col gap-2">
-          <h1 class="headline-lg font-semibold text-on-surface">
-            Xin chào {{ session.get('fullname') or session.get('username') or
-            'bạn' }}
-          </h1>
-          <p class="body-md text-on-surface-variant">
-            Theo dõi nhanh hoạt động nhận diện, lịch sử và hiệu suất dự đoán
-            của bạn.
-          </p>
-        </div>
-        <div class="mt-4 flex flex-wrap gap-3">
-          <a class="bg-primary text-on-primary px-4 py-2 rounded-lg label-sm shadow-sm hover:shadow-md transition-all flex items-center gap-2"
-            href="{{ url_for('predict.upload_page') }}">
-            <span class="material-symbols-outlined text-[18px]">add_a_photo</span>
-            Tải ảnh mới
+    <main
+      class="flex-grow w-full px-4 md:px-6 py-margin grid grid-cols-1 md:grid-cols-[230px_minmax(0,1fr)] gap-gutter"
+    >
+      <aside class="sidebar col-span-1" id="sidebar">
+        <div
+          class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] py-sm px-2 flex flex-col gap-sm sticky top-24 border border-outline-variant/30"
+        >
+          <h3
+            class="label-sm text-on-surface-variant uppercase tracking-wider mb-xs px-1.5"
+            data-i18n="quickAccess"
+          >
+            <span data-i18n="quickAccess">Truy cập nhanh</span>
+          </h3>
+          <a
+            class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-primary bg-primary-fixed/50 transition-colors group"
+            href="{{ url_for('predict.upload_page') }}"
+          >
+            <span
+              class="material-symbols-outlined text-primary group-hover:scale-105 transition-transform"
+              data-icon="upload_file"
+              data-weight="fill"
+              style="font-variation-settings: &quot;FILL&quot; 1"
+              >upload_file</span
+            >
+            <span class="label-sm font-semibold" data-i18n="uploadAnalyze"
+              >Tải ảnh & Phân tích</span
+            >
           </a>
-          <a class="bg-surface-container-lowest text-on-surface px-4 py-2 rounded-lg label-sm border border-outline-variant hover:border-primary hover:text-primary transition-colors flex items-center gap-2"
-            href="{{ url_for('history.history') }}">
-            <span class="material-symbols-outlined text-[18px]">manage_search</span>
-            Xem lịch sử
+          <a
+            class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
+            href="{{ url_for('history.history') }}"
+          >
+            <span
+              class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
+              data-icon="history"
+              >history</span
+            >
+            <span class="label-sm"
+              ><span data-i18n="predictionHistory"
+                ><span data-i18n="predictionHistory"
+                  ><span data-i18n="predictionHistory"
+                    ><span data-i18n="predictionHistory"
+                      ><span data-i18n="predictionHistory"
+                        >Lịch sử dự đoán</span
+                      ></span
+                    ></span
+                  ></span
+                ></span
+              ></span
+            >
+          </a>
+          {% if session.get('role') == 'user' %}
+          <a
+            class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
+            href="{{ url_for('predict.my_payments') }}"
+          >
+            <span
+              class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
+              data-icon="payments"
+              >payments</span
+            >
+            <span class="label-sm" data-i18n="payments"
+              >Lịch sử thanh toán</span
+            >
+          </a>
+          {% endif %}
+          <a
+            class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
+            href="{{ url_for('statistics.statistics') }}"
+          >
+            <span
+              class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
+              data-icon="bar_chart"
+              >bar_chart</span
+            >
+            <span class="label-sm" data-i18n="personalStats"
+              >Thống kê cá nhân</span
+            >
+          </a>
+          <a
+            class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
+            href="{{ url_for('predict.upgrade') }}"
+          >
+            <span
+              class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
+              data-icon="upgrade"
+              >upgrade</span
+            >
+            <span class="label-sm" data-i18n="upgradePlan">Nâng cấp gói</span>
+          </a>
+          {% if session.get('role') == 'admin' %}
+          <a
+            class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
+            href="{{ url_for('users.list_users') }}"
+          >
+            <span
+              class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
+              data-icon="groups"
+              >groups</span
+            >
+            <span class="label-sm" data-i18n="manageUsers"
+              >Quản lý người dùng</span
+            >
+          </a>
+          <a
+            class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
+            href="{{ url_for('users.confirmations_list') }}"
+          >
+            <span
+              class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
+              data-icon="receipt_long"
+              >receipt_long</span
+            >
+            <span class="label-sm" data-i18n="approveOrders">Duyệt đơn</span>
+          </a>
+          {% endif %}
+          <hr class="border-outline-variant/30 my-xs" />
+          <a
+            class="flex items-center gap-sm py-1.5 px-1.5 rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
+            href="{{ url_for('settings.settings') }}"
+          >
+            <span
+              class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
+              data-icon="settings"
+              >settings</span
+            >
+            <span class="label-sm"
+              ><span data-i18n="accountSettings">Cài đặt tài khoản</span></span
+            >
           </a>
         </div>
-      </section>
+      </aside>
 
-      {% if is_admin %}
-      <!-- Admin Dashboard Stat Cards (Global metrics) -->
-      <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-        <!-- Card 1: Tổng doanh thu (VND) -->
-        <div
-          class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[140px]">
-          <div class="flex items-center justify-between">
-            <span class="label-sm text-on-surface-variant font-semibold uppercase tracking-wider">Tổng doanh thu</span>
-            <div
-              class="w-10 h-10 rounded-lg bg-green-500/10 dark:bg-green-500/20 flex items-center justify-center text-green-600 dark:text-green-400">
-              <span class="material-symbols-outlined">payments</span>
-            </div>
-          </div>
-          <div class="mt-4 flex flex-col">
-            <span class="text-3xl font-bold text-on-surface tracking-tight" data-counter="{{ total_revenue }}"
-              data-suffix="đ" data-use-commas="true">
-              0đ
-            </span>
-            <span class="label-sm text-on-surface-variant/70 mt-2 flex items-center justify-between">
-              <span>Từ các gói đã thanh toán</span>
-              <span class="text-xs text-emerald-600 dark:text-emerald-400 font-semibold bg-emerald-500/10 dark:bg-emerald-500/20 px-2 py-0.5 rounded flex items-center gap-0.5" title="Doanh thu được ghi nhận trong tháng này">
-                <span class="material-symbols-outlined text-[13px] font-bold">trending_up</span>
-                +{{ '{:,}'.format(revenue_this_month).replace(',', '.') }}đ tháng này
-              </span>
-            </span>
-          </div>
-        </div>
-
-        <!-- Card 2: Tổng số người dùng -->
-        <div
-          class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[140px]">
-          <div class="flex items-center justify-between">
-            <span class="label-sm text-on-surface-variant font-semibold uppercase tracking-wider">Tổng người dùng</span>
-            <div
-              class="w-10 h-10 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center text-primary">
-              <span class="material-symbols-outlined">groups</span>
-            </div>
-          </div>
-          <div class="mt-4 flex flex-col">
-            <span class="text-3xl font-bold text-on-surface tracking-tight" data-counter="{{ total_users }}">
-              0
-            </span>
-            <span class="label-sm text-on-surface-variant/70 mt-2 flex items-center justify-between">
-              <span>Tài khoản đã đăng ký</span>
-              <span class="text-xs text-blue-600 dark:text-blue-400 font-semibold bg-blue-500/10 dark:bg-blue-500/20 px-2 py-0.5 rounded flex items-center gap-0.5" title="Số tài khoản mới đăng ký trong 7 ngày qua">
-                <span class="material-symbols-outlined text-[13px] font-bold">person_add</span>
-                +{{ new_users_this_week }} mới tuần này
-              </span>
-            </span>
-          </div>
-        </div>
-
-        <!-- Card 3: Đơn hàng chờ duyệt -->
-        <a class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[140px] hover:border-yellow-500/50 transition-colors group"
-          href="{{ url_for('users.confirmations_list') }}">
-          <div class="flex items-center justify-between">
-            <span class="label-sm text-on-surface-variant font-semibold uppercase tracking-wider">Đơn chờ duyệt</span>
-            <div
-              class="w-10 h-10 rounded-lg bg-yellow-500/10 dark:bg-yellow-500/20 flex items-center justify-center text-yellow-650 dark:text-yellow-400">
-              <span class="material-symbols-outlined">pending_actions</span>
-            </div>
-          </div>
-          <div class="mt-4 flex flex-col">
-            <span class="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-2">
-              <span data-counter="{{ pending_orders_count }}">0</span>
-              {% if pending_orders_count > 0 %}
-              <span class="flex h-2.5 w-2.5 relative">
-                <span
-                  class="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
-                <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-yellow-500"></span>
-              </span>
-              {% endif %}
-            </span>
-            <div class="label-sm text-on-surface-variant/70 mt-2 flex items-center justify-between">
-              <span class="text-primary group-hover:underline flex items-center gap-0.5">
-                Xem danh sách chờ duyệt <span class="material-symbols-outlined text-[14px]">chevron_right</span>
-              </span>
-              {% if new_orders_today > 0 %}
-              <span class="text-xs text-amber-600 dark:text-amber-400 font-semibold bg-amber-500/10 dark:bg-amber-500/20 px-2 py-0.5 rounded flex items-center gap-0.5" title="Các đơn hàng mới tạo ngày hôm nay">
-                <span class="material-symbols-outlined text-[13px] font-bold">notifications_active</span>
-                +{{ new_orders_today }} hôm nay
-              </span>
-              {% endif %}
-            </div>
-          </div>
-        </a>
-
-        <!-- Card 4: Tổng dự đoán hệ thống -->
-        <div
-          class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[140px]">
-          <div class="flex items-center justify-between">
-            <span class="label-sm text-on-surface-variant font-semibold uppercase tracking-wider">Tổng dự đoán hệ
-              thống</span>
-            <div
-              class="w-10 h-10 rounded-lg bg-purple-500/10 dark:bg-purple-500/20 flex items-center justify-center text-purple-600 dark:text-purple-400">
-              <span class="material-symbols-outlined">analytics</span>
-            </div>
-          </div>
-          <div class="mt-4 flex flex-col">
-            <span class="text-3xl font-bold text-on-surface tracking-tight" data-counter="{{ total_all_time }}">
-              0
-            </span>
-            <span class="label-sm text-on-surface-variant/70 mt-2 flex items-center justify-between">
-              <span>Toàn bộ lượt quét của hệ thống</span>
-              <span class="text-xs text-purple-600 dark:text-purple-400 font-semibold bg-purple-500/10 dark:bg-purple-500/20 px-2 py-0.5 rounded flex items-center gap-0.5" title="Số lượt dự đoán thực hiện hôm nay">
-                <span class="material-symbols-outlined text-[13px] font-bold">monitoring</span>
-                +{{ predictions_today }} hôm nay
-              </span>
-            </span>
-          </div>
-        </div>
-      </section>
-      {% else %}
-      <!-- Regular User Dashboard Stat Cards (Personal metrics) -->
-      <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-        <!-- Card 1: Tổng dự đoán cá nhân -->
-        <div
-          class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[140px]">
-          <div class="flex items-center justify-between">
-            <span class="label-sm text-on-surface-variant font-semibold uppercase tracking-wider">Tổng dự đoán</span>
-            <div
-              class="w-10 h-10 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center text-primary">
-              <span class="material-symbols-outlined">analytics</span>
-            </div>
-          </div>
-          <div class="mt-4 flex flex-col">
-            <span class="text-3xl font-bold text-on-surface tracking-tight" data-counter="{{ total_all_time }}">
-              0
-            </span>
-            <span class="label-sm text-on-surface-variant/70 mt-1">Lượt quét của riêng bạn</span>
-          </div>
-        </div>
-
-        <!-- Card 2: Độ tin cậy trung bình cá nhân -->
-        <div
-          class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[140px]">
-          <div class="flex items-center justify-between">
-            <span class="label-sm text-on-surface-variant font-semibold uppercase tracking-wider">Độ tin cậy TB</span>
-            <div
-              class="w-10 h-10 rounded-lg bg-yellow-500/10 dark:bg-yellow-500/20 flex items-center justify-center text-yellow-650 dark:text-yellow-400">
-              <span class="material-symbols-outlined">bolt</span>
-            </div>
-          </div>
-          <div class="mt-4 flex flex-col">
-            <span class="text-3xl font-bold text-on-surface tracking-tight"
-              data-counter="{{ ((avg_confidence or 0) * 100)|round(1) }}" data-suffix="%">
-              0%
-            </span>
-            <span class="label-sm text-on-surface-variant/70 mt-1">Độ chính xác trung bình</span>
-          </div>
-        </div>
-
-        <!-- Card 3: Số giống đã nhận diện cá nhân -->
-        <div
-          class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[140px]">
-          <div class="flex items-center justify-between">
-            <span class="label-sm text-on-surface-variant font-semibold uppercase tracking-wider">Giống đã phân
-              tích</span>
-            <div
-              class="w-10 h-10 rounded-lg bg-green-500/10 dark:bg-green-500/20 flex items-center justify-center text-green-600 dark:text-green-400">
-              <span class="material-symbols-outlined">pets</span>
-            </div>
-          </div>
-          <div class="mt-4 flex flex-col">
-            <span class="text-3xl font-bold text-on-surface tracking-tight" data-counter="{{ unique_breeds }}">
-              0
-            </span>
-            <span class="label-sm text-on-surface-variant/70 mt-1">Giống chó khác nhau bạn nhận diện</span>
-          </div>
-        </div>
-
-        <!-- Card 4: Xem báo cáo chi tiết cá nhân -->
-        <a class="stat-card group p-6 bg-gradient-to-br from-primary to-blue-700 dark:from-primary/90 dark:to-blue-850 rounded-xl flex flex-col justify-between text-white shadow-sm hover:shadow-md transition-all min-h-[140px]"
-          href="{{ url_for('statistics.statistics') }}">
-          <div class="flex items-center justify-between">
-            <span class="label-sm font-semibold uppercase tracking-wider opacity-90">Xem báo cáo</span>
-            <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
-          </div>
-          <div class="mt-4">
-            <p class="text-xl font-bold leading-tight">Thống kê chi tiết</p>
-            <p class="label-sm opacity-80 leading-relaxed mt-1">
-              Phân tích sâu về lịch sử quét của bạn
+      <div class="col-span-1 flex flex-col">
+        <section class="mb-8">
+          <div class="flex flex-col gap-2">
+            <h1 class="headline-lg font-semibold text-on-surface">
+              <span data-i18n="welcomePrefix">Xin chào</span>
+              <span data-i18n-auto
+                >{{ session.get('fullname') or session.get('username') or 'bạn'
+                }}</span
+              >
+            </h1>
+            <p
+              class="body-md text-on-surface-variant"
+              data-i18n="dashWelcomeDesc"
+            >
+              <span data-i18n="dashWelcomeDesc"
+                >Theo dõi nhanh hoạt động nhận diện, lịch sử và hiệu suất dự
+                đoán của bạn.</span
+              >
             </p>
           </div>
-        </a>
-      </section>
-      {% endif %}
-
-      {% if is_admin %}
-      <!-- ===== Admin: Financial Analytics Section ===== -->
-      <section class="mb-10 flex flex-col gap-6">
-        <div class="flex items-center justify-between">
-          <div>
-            <h2 class="headline-md font-semibold text-on-surface">Phân tích Tài chính</h2>
-            <p class="text-xs text-on-surface-variant mt-0.5">Doanh thu & phân bổ gói dịch vụ</p>
+          <div class="mt-4 flex flex-wrap gap-3">
+            <a
+              class="bg-primary text-on-primary px-4 py-2 rounded-lg label-sm shadow-sm hover:shadow-md transition-all flex items-center gap-2"
+              href="{{ url_for('predict.upload_page') }}"
+            >
+              <span class="material-symbols-outlined text-[18px]"
+                >add_a_photo</span
+              ><span data-i18n="uploadNew">Tải ảnh mới</span></a
+            >
+            <a
+              class="bg-surface-container-lowest text-on-surface px-4 py-2 rounded-lg label-sm border border-outline-variant hover:border-primary hover:text-primary transition-colors flex items-center gap-2"
+              href="{{ url_for('history.history') }}"
+            >
+              <span class="material-symbols-outlined text-[18px]"
+                >manage_search</span
+              ><span data-i18n="viewHistory">Xem lịch sử</span></a
+            >
           </div>
-          <span class="text-xs text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30 px-3 py-1 rounded-full flex items-center gap-1.5 font-semibold border border-emerald-200 dark:border-emerald-800">
-            <span class="material-symbols-outlined text-[14px]">monitoring</span>
-            Financial Analytics
-          </span>
-        </div>
+        </section>
 
-        <!-- Revenue Trend Line Chart -->
-        <div class="chart-card bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-xl p-6 shadow-sm">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
+        {% if is_admin %}
+        <!-- Admin Dashboard Stat Cards (Global metrics) -->
+        <section
+          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10"
+        >
+          <!-- Card 1: Tổng doanh thu (VND) -->
+          <div
+            class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[140px]"
+          >
+            <div class="flex items-center justify-between">
+              <span
+                class="label-sm text-on-surface-variant font-semibold uppercase tracking-wider"
+                data-i18n="totalRevenue"
+                >Tổng doanh thu</span
+              >
+              <div
+                class="w-10 h-10 rounded-lg bg-green-500/10 dark:bg-green-500/20 flex items-center justify-center text-green-600 dark:text-green-400"
+              >
+                <span class="material-symbols-outlined">payments</span>
+              </div>
+            </div>
+            <div class="mt-4 flex flex-col">
+              <span
+                class="text-3xl font-bold text-on-surface tracking-tight"
+                data-counter="{{ total_revenue }}"
+                data-suffix="đ"
+                data-use-commas="true"
+                data-i18n="planFreePrice"
+                >0đ</span
+              >
+              <span
+                class="label-sm text-on-surface-variant/70 mt-2 flex items-center justify-between"
+              >
+                <span data-i18n="revenueFromPaid"
+                  >Từ các gói đã thanh toán</span
+                >
+                <span
+                  class="text-xs text-emerald-600 dark:text-emerald-400 font-semibold bg-emerald-500/10 dark:bg-emerald-500/20 px-2 py-0.5 rounded flex items-center gap-0.5"
+                  title="Doanh thu được ghi nhận trong tháng này"
+                  data-i18n-title="revenueThisMonthTooltip"
+                >
+                  <span class="material-symbols-outlined text-[13px] font-bold"
+                    >trending_up</span
+                  >
+                  +{{ '{:,}'.format(revenue_this_month).replace(',', '.') }}đ
+                  <span data-i18n="thisMonth">tháng này</span>
+                </span>
+              </span>
+            </div>
+          </div>
+
+          <!-- Card 2: Tổng số người dùng -->
+          <div
+            class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[140px]"
+          >
+            <div class="flex items-center justify-between">
+              <span
+                class="label-sm text-on-surface-variant font-semibold uppercase tracking-wider"
+                data-i18n="totalUsers"
+                >Tổng người dùng</span
+              >
+              <div
+                class="w-10 h-10 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center text-primary"
+              >
+                <span class="material-symbols-outlined">groups</span>
+              </div>
+            </div>
+            <div class="mt-4 flex flex-col">
+              <span
+                class="text-3xl font-bold text-on-surface tracking-tight"
+                data-counter="{{ total_users }}"
+              >
+                0
+              </span>
+              <span
+                class="label-sm text-on-surface-variant/70 mt-2 flex items-center justify-between"
+              >
+                <span data-i18n="registeredAccounts">Tài khoản đã đăng ký</span>
+                <span
+                  class="text-xs text-blue-600 dark:text-blue-400 font-semibold bg-blue-500/10 dark:bg-blue-500/20 px-2 py-0.5 rounded flex items-center gap-0.5"
+                  title="Số tài khoản mới đăng ký trong 7 ngày qua"
+                  data-i18n-title="newUsersThisWeekTooltip"
+                >
+                  <span class="material-symbols-outlined text-[13px] font-bold"
+                    >person_add</span
+                  >
+                  +{{ new_users_this_week }}
+                  <span data-i18n="newThisWeek">mới tuần này</span>
+                </span>
+              </span>
+            </div>
+          </div>
+
+          <!-- Card 3: Đơn hàng chờ duyệt -->
+          <a
+            class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[140px] hover:border-yellow-500/50 transition-colors group"
+            href="{{ url_for('users.confirmations_list') }}"
+          >
+            <div class="flex items-center justify-between">
+              <span
+                class="label-sm text-on-surface-variant font-semibold uppercase tracking-wider"
+                data-i18n="pendingOrders"
+                >Đơn chờ duyệt</span
+              >
+              <div
+                class="w-10 h-10 rounded-lg bg-yellow-500/10 dark:bg-yellow-500/20 flex items-center justify-center text-yellow-650 dark:text-yellow-400"
+              >
+                <span class="material-symbols-outlined">pending_actions</span>
+              </div>
+            </div>
+            <div class="mt-4 flex flex-col">
+              <span
+                class="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-2"
+              >
+                <span data-counter="{{ pending_orders_count }}">0</span>
+                {% if pending_orders_count > 0 %}
+                <span class="flex h-2.5 w-2.5 relative">
+                  <span
+                    class="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"
+                  ></span>
+                  <span
+                    class="relative inline-flex rounded-full h-2.5 w-2.5 bg-yellow-500"
+                  ></span>
+                </span>
+                {% endif %}
+              </span>
+              <div
+                class="label-sm text-on-surface-variant/70 mt-2 flex items-center justify-between"
+              >
+                <span
+                  class="text-primary group-hover:underline flex items-center gap-0.5"
+                  ><span data-i18n="viewPendingList"
+                    >Xem danh sách chờ duyệt</span
+                  ><span class="material-symbols-outlined text-[14px]"
+                    >chevron_right</span
+                  >
+                </span>
+                {% if new_orders_today > 0 %}
+                <span
+                  class="text-xs text-amber-600 dark:text-amber-400 font-semibold bg-amber-500/10 dark:bg-amber-500/20 px-2 py-0.5 rounded flex items-center gap-0.5"
+                  title="Các đơn hàng mới tạo ngày hôm nay"
+                  data-i18n-title="newOrdersTodayTooltip"
+                >
+                  <span class="material-symbols-outlined text-[13px] font-bold"
+                    >notifications_active</span
+                  >
+                  +{{ new_orders_today }}
+                  <span data-i18n="todayCount">hôm nay</span>
+                </span>
+                {% endif %}
+              </div>
+            </div>
+          </a>
+
+          <!-- Card 4: Tổng dự đoán hệ thống -->
+          <div
+            class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[140px]"
+          >
+            <div class="flex items-center justify-between">
+              <span
+                class="label-sm text-on-surface-variant font-semibold uppercase tracking-wider"
+                data-i18n="totalSystemPredictions"
+                >Tổng dự đoán hệ thống</span
+              >
+              <div
+                class="w-10 h-10 rounded-lg bg-purple-500/10 dark:bg-purple-500/20 flex items-center justify-center text-purple-600 dark:text-purple-400"
+              >
+                <span class="material-symbols-outlined">analytics</span>
+              </div>
+            </div>
+            <div class="mt-4 flex flex-col">
+              <span
+                class="text-3xl font-bold text-on-surface tracking-tight"
+                data-counter="{{ total_all_time }}"
+              >
+                0
+              </span>
+              <span
+                class="label-sm text-on-surface-variant/70 mt-2 flex items-center justify-between"
+              >
+                <span data-i18n="allSystemScans"
+                  >Toàn bộ lượt quét của hệ thống</span
+                >
+                <span
+                  class="text-xs text-purple-600 dark:text-purple-400 font-semibold bg-purple-500/10 dark:bg-purple-500/20 px-2 py-0.5 rounded flex items-center gap-0.5"
+                  title="Số lượt dự đoán thực hiện hôm nay"
+                  data-i18n-title="predictionsTodayTooltip"
+                >
+                  <span class="material-symbols-outlined text-[13px] font-bold"
+                    >monitoring</span
+                  >
+                  +{{ predictions_today }}
+                  <span data-i18n="todayCount">hôm nay</span>
+                </span>
+              </span>
+            </div>
+          </div>
+        </section>
+        {% else %}
+        <!-- Regular User Dashboard Stat Cards (Personal metrics) -->
+        <section
+          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10"
+        >
+          <!-- Card 1: Tổng dự đoán cá nhân -->
+          <div
+            class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[140px]"
+          >
+            <div class="flex items-center justify-between">
+              <span
+                class="label-sm text-on-surface-variant font-semibold uppercase tracking-wider"
+                data-i18n="totalPredictions"
+                >Tổng dự đoán</span
+              >
+              <div
+                class="w-10 h-10 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center text-primary"
+              >
+                <span class="material-symbols-outlined">analytics</span>
+              </div>
+            </div>
+            <div class="mt-4 flex flex-col">
+              <span
+                class="text-3xl font-bold text-on-surface tracking-tight"
+                data-counter="{{ total_all_time }}"
+              >
+                0
+              </span>
+              <span
+                class="label-sm text-on-surface-variant/70 mt-1"
+                data-i18n="yourScans"
+                >Lượt quét của riêng bạn</span
+              >
+            </div>
+          </div>
+
+          <!-- Card 2: Độ tin cậy trung bình cá nhân -->
+          <div
+            class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[140px]"
+          >
+            <div class="flex items-center justify-between">
+              <span
+                class="label-sm text-on-surface-variant font-semibold uppercase tracking-wider"
+                data-i18n="avgConfidence"
+                >Độ tin cậy TB</span
+              >
+              <div
+                class="w-10 h-10 rounded-lg bg-yellow-500/10 dark:bg-yellow-500/20 flex items-center justify-center text-yellow-650 dark:text-yellow-400"
+              >
+                <span class="material-symbols-outlined">bolt</span>
+              </div>
+            </div>
+            <div class="mt-4 flex flex-col">
+              <span
+                class="text-3xl font-bold text-on-surface tracking-tight"
+                data-counter="{{ ((avg_confidence or 0) * 100)|round(1) }}"
+                data-suffix="%"
+              >
+                0%
+              </span>
+              <span
+                class="label-sm text-on-surface-variant/70 mt-1"
+                data-i18n="avgAccuracy"
+                >Độ chính xác trung bình</span
+              >
+            </div>
+          </div>
+
+          <!-- Card 3: Số giống đã nhận diện cá nhân -->
+          <div
+            class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[140px]"
+          >
+            <div class="flex items-center justify-between">
+              <span
+                class="label-sm text-on-surface-variant font-semibold uppercase tracking-wider"
+                data-i18n="breedsAnalyzed"
+                >Giống đã phân tích</span
+              >
+              <div
+                class="w-10 h-10 rounded-lg bg-green-500/10 dark:bg-green-500/20 flex items-center justify-center text-green-600 dark:text-green-400"
+              >
+                <span class="material-symbols-outlined">pets</span>
+              </div>
+            </div>
+            <div class="mt-4 flex flex-col">
+              <span
+                class="text-3xl font-bold text-on-surface tracking-tight"
+                data-counter="{{ unique_breeds }}"
+              >
+                0
+              </span>
+              <span
+                class="label-sm text-on-surface-variant/70 mt-1"
+                data-i18n="uniqueBreedsFound"
+                >Giống chó khác nhau bạn nhận diện</span
+              >
+            </div>
+          </div>
+
+          <!-- Card 4: Xem báo cáo chi tiết cá nhân -->
+          <a
+            class="stat-card group p-6 bg-gradient-to-br from-primary to-blue-700 dark:from-primary/90 dark:to-blue-850 rounded-xl flex flex-col justify-between text-white shadow-sm hover:shadow-md transition-all min-h-[140px]"
+            href="{{ url_for('statistics.statistics') }}"
+          >
+            <div class="flex items-center justify-between">
+              <span
+                class="label-sm font-semibold uppercase tracking-wider opacity-90"
+                data-i18n="viewReport"
+                >Xem báo cáo</span
+              >
+              <span
+                class="material-symbols-outlined group-hover:translate-x-1 transition-transform"
+                >arrow_forward</span
+              >
+            </div>
+            <div class="mt-4">
+              <p
+                class="text-xl font-bold leading-tight"
+                data-i18n="detailedStats"
+              >
+                <span data-i18n="detailedStats">Thống kê chi tiết</span>
+              </p>
+              <p
+                class="label-sm opacity-80 leading-relaxed mt-1"
+                data-i18n="deepAnalysis"
+              >
+                <span data-i18n="deepAnalysis"
+                  >Phân tích sâu về lịch sử quét của bạn</span
+                >
+              </p>
+            </div>
+          </a>
+        </section>
+        {% endif %} {% if is_admin %}
+        <!-- ===== Admin: Financial Analytics Section ===== -->
+        <section class="mb-10 flex flex-col gap-6">
+          <div class="flex items-center justify-between">
             <div>
-              <h3 class="text-lg font-bold text-on-surface">Xu hướng Doanh thu</h3>
-              <p class="text-xs text-on-surface-variant mt-0.5" id="revenueTrendSubtitle">Tổng tiền từ đơn đã thanh toán (VND)</p>
-            </div>
-            <!-- Period Tabs Wrapper to contain Popover absolutely -->
-            <div class="relative">
-              <div class="flex items-center gap-1 p-1 bg-surface-container-low dark:bg-slate-800 rounded-lg" id="revenuePeriodTabs">
-                <button type="button" data-period="7days"
-                  class="rev-tab px-3 py-1.5 rounded-md label-sm font-semibold transition-all bg-primary text-white shadow-sm">
-                  7 ngày
-                </button>
-                <button type="button" data-period="30days"
-                  class="rev-tab px-3 py-1.5 rounded-md label-sm font-medium transition-all text-on-surface-variant hover:bg-surface-container-high">
-                  30 ngày
-                </button>
-                <button type="button" data-period="90days"
-                  class="rev-tab px-3 py-1.5 rounded-md label-sm font-medium transition-all text-on-surface-variant hover:bg-surface-container-high">
-                  90 ngày
-                </button>
-                <button type="button" data-period="12months"
-                  class="rev-tab px-3 py-1.5 rounded-md label-sm font-medium transition-all text-on-surface-variant hover:bg-surface-container-high">
-                  12 tháng
-                </button>
-                <button type="button" data-period="custom" id="revenueCustomBtn"
-                  class="rev-tab px-3 py-1.5 rounded-md label-sm font-medium transition-all text-on-surface-variant hover:bg-surface-container-high flex items-center gap-1.5">
-                  <span class="material-symbols-outlined text-[16px]">calendar_today</span>
-                  <span>Tùy chọn</span>
-                </button>
-              </div>
-
-              <!-- Custom Date Range Popover for Revenue -->
-              <div id="revenueCustomPopover" class="hidden absolute right-0 top-full mt-2 p-4 bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-xl shadow-lg z-50 min-w-[280px] flex flex-col gap-3">
-                <div class="text-sm font-bold text-on-surface">Chọn khoảng thời gian</div>
-                <div class="grid grid-cols-2 gap-2">
-                  <div class="flex flex-col gap-1">
-                    <label class="text-[10px] uppercase font-semibold text-on-surface-variant">Từ ngày</label>
-                    <input type="date" id="revenueStartDate" class="px-2 py-1.5 rounded-md border border-outline-variant bg-surface-container-low dark:bg-slate-800 text-on-surface text-xs focus:outline-none focus:border-primary">
-                  </div>
-                  <div class="flex flex-col gap-1">
-                    <label class="text-[10px] uppercase font-semibold text-on-surface-variant">Đến ngày</label>
-                    <input type="date" id="revenueEndDate" class="px-2 py-1.5 rounded-md border border-outline-variant bg-surface-container-low dark:bg-slate-800 text-on-surface text-xs focus:outline-none focus:border-primary">
-                  </div>
-                </div>
-                <button type="button" id="applyRevenueCustom" class="w-full py-1.5 bg-primary text-white rounded-md text-xs font-semibold hover:bg-primary/95 transition-all shadow-sm">
-                  Áp dụng
-                </button>
-              </div>
-            </div>
-          </div>
-          <div class="chart-container" style="position:relative;height:300px;">
-            <canvas id="revenueTrendChart"></canvas>
-          </div>
-        </div>
-
-        <!-- Subscription Distribution -->
-        <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
-          <!-- Doughnut: subscription split -->
-          <div class="lg:col-span-2 chart-card bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-xl p-6 shadow-sm">
-            <div class="mb-4">
-              <h3 class="text-lg font-bold text-on-surface">Phân bổ Gói đăng ký</h3>
-              <p class="text-xs text-on-surface-variant mt-0.5">Tỷ lệ người dùng theo từng gói</p>
-            </div>
-            <div class="chart-container" style="position:relative;height:240px;">
-              <canvas id="subscriptionChart"></canvas>
-            </div>
-          </div>
-
-          <!-- Plan breakdown legend/table -->
-          <div class="lg:col-span-3 chart-card bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-xl p-6 shadow-sm flex flex-col justify-center">
-            <h3 class="text-lg font-bold text-on-surface mb-4">Chi tiết gói dịch vụ</h3>
-            <div class="space-y-3" id="subscriptionBreakdown">
-              <!-- Filled by JS -->
-            </div>
-          </div>
-        </div>
-      </section>
-      {% endif %}
-
-      <!-- Section: Charts and Analytics -->
-      <section class="mb-10 flex flex-col gap-6">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <h2 class="headline-md font-semibold text-on-surface">
-            Biểu đồ hoạt động
-          </h2>
-          <div class="flex items-center flex-wrap gap-2">
-            <!-- Timeframe selector Wrapper to contain Popover absolutely -->
-            <div class="relative">
-              <div class="flex items-center gap-1 p-1 bg-surface-container-low dark:bg-slate-800 rounded-lg" id="activityPeriodTabs">
-                <button type="button" data-period="7days"
-                  class="act-tab px-3 py-1.5 rounded-md label-sm font-semibold transition-all bg-primary text-white shadow-sm">
-                  7 ngày
-                </button>
-                <button type="button" data-period="30days"
-                  class="act-tab px-3 py-1.5 rounded-md label-sm font-medium transition-all text-on-surface-variant hover:bg-surface-container-high">
-                  30 ngày
-                </button>
-                <button type="button" data-period="90days"
-                  class="act-tab px-3 py-1.5 rounded-md label-sm font-medium transition-all text-on-surface-variant hover:bg-surface-container-high">
-                  90 ngày
-                </button>
-                <button type="button" data-period="12months"
-                  class="act-tab px-3 py-1.5 rounded-md label-sm font-medium transition-all text-on-surface-variant hover:bg-surface-container-high">
-                  12 tháng
-                </button>
-                <button type="button" data-period="custom" id="activityCustomBtn"
-                  class="act-tab px-3 py-1.5 rounded-md label-sm font-medium transition-all text-on-surface-variant hover:bg-surface-container-high flex items-center gap-1.5">
-                  <span class="material-symbols-outlined text-[16px]">calendar_today</span>
-                  <span>Tùy chọn</span>
-                </button>
-              </div>
-
-              <!-- Custom Date Range Popover for Activity -->
-              <div id="activityCustomPopover" class="hidden absolute right-0 top-full mt-2 p-4 bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-xl shadow-lg z-50 min-w-[280px] flex flex-col gap-3">
-                <div class="text-sm font-bold text-on-surface">Chọn khoảng thời gian</div>
-                <div class="grid grid-cols-2 gap-2">
-                  <div class="flex flex-col gap-1">
-                    <label class="text-[10px] uppercase font-semibold text-on-surface-variant">Từ ngày</label>
-                    <input type="date" id="activityStartDate" class="px-2 py-1.5 rounded-md border border-outline-variant bg-surface-container-low dark:bg-slate-800 text-on-surface text-xs focus:outline-none focus:border-primary">
-                  </div>
-                  <div class="flex flex-col gap-1">
-                    <label class="text-[10px] uppercase font-semibold text-on-surface-variant">Đến ngày</label>
-                    <input type="date" id="activityEndDate" class="px-2 py-1.5 rounded-md border border-outline-variant bg-surface-container-low dark:bg-slate-800 text-on-surface text-xs focus:outline-none focus:border-primary">
-                  </div>
-                </div>
-                <button type="button" id="applyActivityCustom" class="w-full py-1.5 bg-primary text-white rounded-md text-xs font-semibold hover:bg-primary/95 transition-all shadow-sm">
-                  Áp dụng
-                </button>
-              </div>
+              <h2
+                class="headline-md font-semibold text-on-surface"
+                data-i18n="financialAnalytics"
+              >
+                <span data-i18n="financialAnalytics">Phân tích Tài chính</span>
+              </h2>
+              <p
+                class="text-xs text-on-surface-variant mt-0.5"
+                data-i18n="revenueAndPlans"
+              >
+                <span data-i18n="revenueAndPlans"
+                  >Doanh thu & phân bổ gói dịch vụ</span
+                >
+              </p>
             </div>
             <span
-              class="text-xs text-on-surface-variant/70 bg-surface-container/50 dark:bg-slate-800 px-3 py-1.5 rounded-lg flex items-center gap-1.5 font-medium">
-              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              Cập nhật trực tiếp
+              class="text-xs text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30 px-3 py-1 rounded-full flex items-center gap-1.5 font-semibold border border-emerald-200 dark:border-emerald-800"
+            >
+              <span class="material-symbols-outlined text-[14px]"
+                >monitoring</span
+              >
+              Financial Analytics
             </span>
           </div>
-        </div>
 
-        <!-- Row 1: Line Chart (Daily Predictions Trend) -->
-        <div
-          class="chart-card bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-xl p-6 shadow-sm">
-          <div class="flex items-center justify-between mb-4">
-            <div>
-              <h3 class="text-lg font-bold text-on-surface" id="predictionTrendTitle">Xu hướng dự đoán 7 ngày gần đây</h3>
-              <p class="text-xs text-on-surface-variant mt-0.5" id="predictionTrendSubtitle">Số lượng ảnh đã nhận diện mỗi ngày</p>
-            </div>
-            <div class="text-primary bg-primary/10 dark:bg-primary/20 px-3 py-1 rounded-lg text-xs font-semibold" id="predictionTrendBadge">
-              7 ngày qua
-            </div>
-          </div>
-          <div class="chart-container" style="position: relative; height: 320px;">
-            <canvas id="dailyPredictionsChart"></canvas>
-          </div>
-        </div>
-
-        <!-- Row 2: Two columns for Doughnut and Bar charts -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <!-- Doughnut Chart: Top Breeds -->
+          <!-- Revenue Trend Line Chart -->
           <div
-            class="chart-card bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-xl p-6 shadow-sm">
-            <div class="mb-4">
-              <h3 class="text-lg font-bold text-on-surface">Top 5 giống phổ biến nhất</h3>
-              <p class="text-xs text-on-surface-variant mt-0.5">Các giống chó được nhận diện nhiều nhất</p>
+            class="chart-card bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-xl p-6 shadow-sm"
+          >
+            <div
+              class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5"
+            >
+              <div>
+                <h3
+                  class="text-lg font-bold text-on-surface"
+                  data-i18n="revenueTrend"
+                >
+                  <span data-i18n="revenueTrend">Xu hướng Doanh thu</span>
+                </h3>
+                <p
+                  class="text-xs text-on-surface-variant mt-0.5"
+                  id="revenueTrendSubtitle"
+                  data-i18n="revenueTrendSubtitle"
+                >
+                  <span data-i18n="revenueTrendSubtitle"
+                    >Tổng tiền từ đơn đã thanh toán (VND)</span
+                  >
+                </p>
+              </div>
+              <!-- Period Tabs Wrapper to contain Popover absolutely -->
+              <div class="relative">
+                <div
+                  class="flex items-center gap-1 p-1 bg-surface-container-low dark:bg-slate-800 rounded-lg"
+                  id="revenuePeriodTabs"
+                >
+                  <button
+                    type="button"
+                    data-period="7days"
+                    class="rev-tab px-3 py-1.5 rounded-md label-sm font-semibold transition-all bg-primary text-white shadow-sm"
+                    data-i18n="days7"
+                  >
+                    <span data-i18n="homePricing7Days">7 ngày</span>
+                  </button>
+                  <button
+                    type="button"
+                    data-period="30days"
+                    class="rev-tab px-3 py-1.5 rounded-md label-sm font-medium transition-all text-on-surface-variant hover:bg-surface-container-high"
+                    data-i18n="days30"
+                  >
+                    <span data-i18n="homePricing30Days">30 ngày</span>
+                  </button>
+                  <button
+                    type="button"
+                    data-period="90days"
+                    class="rev-tab px-3 py-1.5 rounded-md label-sm font-medium transition-all text-on-surface-variant hover:bg-surface-container-high"
+                    data-i18n="days90"
+                  >
+                    <span data-i18n="homePricing90Days">90 ngày</span>
+                  </button>
+                  <button
+                    type="button"
+                    data-period="12months"
+                    class="rev-tab px-3 py-1.5 rounded-md label-sm font-medium transition-all text-on-surface-variant hover:bg-surface-container-high"
+                    data-i18n="months12"
+                  >
+                    <span data-i18n="months12">12 tháng</span>
+                  </button>
+                  <button
+                    type="button"
+                    data-period="custom"
+                    id="revenueCustomBtn"
+                    class="rev-tab px-3 py-1.5 rounded-md label-sm font-medium transition-all text-on-surface-variant hover:bg-surface-container-high flex items-center gap-1.5"
+                  >
+                    <span class="material-symbols-outlined text-[16px]"
+                      >calendar_today</span
+                    >
+                    <span data-i18n="custom">Tùy chọn</span>
+                  </button>
+                </div>
+
+                <!-- Custom Date Range Popover for Revenue -->
+                <div
+                  id="revenueCustomPopover"
+                  class="hidden absolute right-0 top-full mt-2 p-4 bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-xl shadow-lg z-50 min-w-[280px] flex flex-col gap-3"
+                >
+                  <div
+                    class="text-sm font-bold text-on-surface"
+                    data-i18n="selectDateRange"
+                  >
+                    <span data-i18n="selectDateRange"
+                      >Chọn khoảng thời gian</span
+                    >
+                  </div>
+                  <div class="grid grid-cols-2 gap-2">
+                    <div class="flex flex-col gap-1">
+                      <label
+                        class="text-[10px] uppercase font-semibold text-on-surface-variant"
+                        data-i18n="fromDate"
+                        ><span data-i18n="fromDate">Từ ngày</span></label
+                      >
+                      <input
+                        type="date"
+                        id="revenueStartDate"
+                        class="px-2 py-1.5 rounded-md border border-outline-variant bg-surface-container-low dark:bg-slate-800 text-on-surface text-xs focus:outline-none focus:border-primary"
+                      />
+                    </div>
+                    <div class="flex flex-col gap-1">
+                      <label
+                        class="text-[10px] uppercase font-semibold text-on-surface-variant"
+                        data-i18n="toDate"
+                        ><span data-i18n="toDate">Đến ngày</span></label
+                      >
+                      <input
+                        type="date"
+                        id="revenueEndDate"
+                        class="px-2 py-1.5 rounded-md border border-outline-variant bg-surface-container-low dark:bg-slate-800 text-on-surface text-xs focus:outline-none focus:border-primary"
+                      />
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    id="applyRevenueCustom"
+                    class="w-full py-1.5 bg-primary text-white rounded-md text-xs font-semibold hover:bg-primary/95 transition-all shadow-sm"
+                    data-i18n="apply"
+                  >
+                    <span data-i18n="apply">Áp dụng</span>
+                  </button>
+                </div>
+              </div>
             </div>
-            <div class="chart-container" style="position: relative; height: 260px;">
-              <canvas id="topBreedsChart"></canvas>
+            <div
+              class="chart-container"
+              style="position: relative; height: 300px"
+            >
+              <canvas id="revenueTrendChart"></canvas>
             </div>
           </div>
 
-          <!-- Bar Chart: Confidence Distribution -->
-          <div
-            class="chart-card bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-xl p-6 shadow-sm">
-            <div class="mb-4">
-              <h3 class="text-lg font-bold text-on-surface">Phân bố độ tin cậy</h3>
-              <p class="text-xs text-on-surface-variant mt-0.5">Mức độ tin cậy của thuật toán phân loại</p>
-            </div>
-            <div class="chart-container" style="position: relative; height: 260px;">
-              <canvas id="confidenceDistChart"></canvas>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <div class="flex items-center justify-between mb-4">
-          <h2 class="headline-md font-semibold text-on-surface">
-            Kết quả gần đây
-          </h2>
-          <a class="text-primary font-semibold label-sm hover:underline" href="{{ url_for('history.history') }}">
-            Xem tất cả
-          </a>
-        </div>
-        <div
-          class="flex items-center gap-2 mb-8 p-1.5 bg-surface-container-low dark:bg-surface-container-high rounded-xl w-fit">
-          <a class="px-5 py-2 rounded-lg label-sm transition-all {% if active_range == 'today' %}bg-primary text-white shadow-sm font-semibold{% else %}text-on-surface-variant hover:bg-surface-container-high font-medium{% endif %}"
-            href="{{ url_for('dashboard.dashboard', range='today') }}">
-            Hôm nay
-          </a>
-          <a class="px-5 py-2 rounded-lg label-sm transition-all {% if active_range == 'yesterday' %}bg-primary text-white shadow-sm font-semibold{% else %}text-on-surface-variant hover:bg-surface-container-high font-medium{% endif %}"
-            href="{{ url_for('dashboard.dashboard', range='yesterday') }}">
-            Hôm qua
-          </a>
-          <a class="px-5 py-2 rounded-lg label-sm transition-all {% if active_range == '7days' %}bg-primary text-white shadow-sm font-semibold{% else %}text-on-surface-variant hover:bg-surface-container-high font-medium{% endif %}"
-            href="{{ url_for('dashboard.dashboard', range='7days') }}">
-            7 ngày gần đây
-          </a>
-        </div>
-        {% if recent_predictions and recent_predictions|length > 0 %}
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 dashboard-grid">
-          {% for pred in recent_predictions %}
-          <div
-            class="soft-panel bg-surface-container-lowest rounded-xl overflow-hidden group shadow-sm hover:shadow-md transition-all duration-300 border border-slate-100">
-            <div class="aspect-square relative overflow-hidden">
-              <img alt="Ảnh nhận diện"
-                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                src="/{{ pred.image_path }}" />
+          <!-- Subscription Distribution -->
+          <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+            <!-- Doughnut: subscription split -->
+            <div
+              class="lg:col-span-2 chart-card bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-xl p-6 shadow-sm"
+            >
+              <div class="mb-4">
+                <h3
+                  class="text-lg font-bold text-on-surface"
+                  data-i18n="subscriptionDistribution"
+                >
+                  <span data-i18n="subscriptionDistribution"
+                    >Phân bổ Gói đăng ký</span
+                  >
+                </h3>
+                <p
+                  class="text-xs text-on-surface-variant mt-0.5"
+                  data-i18n="subscriptionByUser"
+                >
+                  <span data-i18n="subscriptionByUser"
+                    >Tỷ lệ người dùng theo từng gói</span
+                  >
+                </p>
+              </div>
               <div
-                class="absolute top-3 right-3 px-2 py-1 bg-surface-container-lowest/90 backdrop-blur rounded-md label-sm font-bold text-primary shadow-sm uppercase tracking-tight">
-                {% if pred.confidence is not none %} {{
-                '%.1f'|format((pred.confidence or 0) * 100) }}% {% else %}
-                0.0% {% endif %}
+                class="chart-container"
+                style="position: relative; height: 240px"
+              >
+                <canvas id="subscriptionChart"></canvas>
               </div>
             </div>
-            <div class="p-5">
-              <h3 class="headline-md font-bold text-on-surface truncate">
-                {{ pred.breed or 'Chưa xác định' }}
+
+            <!-- Plan breakdown legend/table -->
+            <div
+              class="lg:col-span-3 chart-card bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-xl p-6 shadow-sm flex flex-col justify-center"
+            >
+              <h3
+                class="text-lg font-bold text-on-surface mb-4"
+                data-i18n="planDetails"
+              >
+                <span data-i18n="planDetails">Chi tiết gói dịch vụ</span>
               </h3>
-              <p class="label-sm text-on-surface-variant mt-1">
-                Dự đoán: {{ pred.breed or 'Chưa xác định' }}
-              </p>
-              <div class="mt-8 flex items-center justify-between border-t border-outline-variant/20 pt-4">
-                <span class="label-sm text-on-surface-variant uppercase font-medium">
-                  {{ pred.created_at.strftime('%d/%m/%Y %H:%M') if
-                  pred.created_at else '' }}
-                </span>
-                <span class="material-symbols-outlined text-[18px] text-primary">open_in_new</span>
+              <div class="space-y-3" id="subscriptionBreakdown">
+                <!-- Filled by JS -->
               </div>
             </div>
           </div>
-          {% endfor %}
-        </div>
-        {% if total_pages and total_pages > 1 %}
-        <div class="flex justify-center mt-8">
-          <nav aria-label="Pagination"
-            class="soft-panel inline-flex items-center gap-1 rounded-md bg-surface-container-lowest px-2 py-1">
-            <a aria-label="Trang truoc"
-              class="px-2 py-1 label-sm rounded-md {% if page <= 1 %}text-slate-500/40 pointer-events-none{% else %}text-on-surface-variant hover:text-primary hover:bg-surface-container-low{% endif %}"
-              href="{{ url_for('dashboard.dashboard', range=active_range, page=page-1) }}">
-              &lsaquo;
-            </a>
-            {% for p in range(1, total_pages + 1) %}
-            <a class="px-2.5 py-1 label-sm rounded-md {% if p == page %}bg-primary text-white font-semibold{% else %}text-on-surface-variant hover:text-primary hover:bg-surface-container-low{% endif %}"
-              href="{{ url_for('dashboard.dashboard', range=active_range, page=p) }}">
-              {{ p }}
-            </a>
-            {% endfor %}
-            <a aria-label="Trang sau"
-              class="px-2 py-1 label-sm rounded-md {% if page >= total_pages %}text-slate-500/40 pointer-events-none{% else %}text-on-surface-variant hover:text-primary hover:bg-surface-container-low{% endif %}"
-              href="{{ url_for('dashboard.dashboard', range=active_range, page=page+1) }}">
-              &rsaquo;
-            </a>
-          </nav>
-        </div>
-        {% endif %} {% else %}
-        <div class="soft-panel bg-surface-container-lowest rounded-xl p-6 text-on-surface-variant">
-          Bạn chưa có lịch sử nhận diện nào. Hãy bắt đầu bằng cách tải ảnh
-          mới.
-        </div>
+        </section>
         {% endif %}
-      </section>
-    </div>
-  </main>
 
-  <footer class="bg-surface-container-low border-t border-outline-variant/30 px-4 md:px-6 pt-6 pb-4">
-    <div class="footer-inner max-w-container-max mx-auto">
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-10">
-        <div class="lg:col-span-6 space-y-6">
-          <div class="headline-md font-bold tracking-tighter text-primary">
-            <span class="inline-flex items-center gap-0">
-              <img alt="PetAI New Logo" class="h-8 w-auto md:h-10" src="{{ url_for('static', filename='logo.png') }}" />
-              <span class="ml-0 text-sm md:text-lg font-semibold text-primary">PetAI</span>
-            </span>
+        <!-- Section: Charts and Analytics -->
+        <section class="mb-10 flex flex-col gap-6">
+          <div
+            class="flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+          >
+            <h2
+              class="headline-md font-semibold text-on-surface"
+              data-i18n="activityCharts"
+            >
+              <span data-i18n="activityCharts">Biểu đồ hoạt động</span>
+            </h2>
+            <div class="flex items-center flex-wrap gap-2">
+              <!-- Timeframe selector Wrapper to contain Popover absolutely -->
+              <div class="relative">
+                <div
+                  class="flex items-center gap-1 p-1 bg-surface-container-low dark:bg-slate-800 rounded-lg"
+                  id="activityPeriodTabs"
+                >
+                  <button
+                    type="button"
+                    data-period="7days"
+                    class="act-tab px-3 py-1.5 rounded-md label-sm font-semibold transition-all bg-primary text-white shadow-sm"
+                    data-i18n="days7"
+                  >
+                    <span data-i18n="homePricing7Days">7 ngày</span>
+                  </button>
+                  <button
+                    type="button"
+                    data-period="30days"
+                    class="act-tab px-3 py-1.5 rounded-md label-sm font-medium transition-all text-on-surface-variant hover:bg-surface-container-high"
+                    data-i18n="days30"
+                  >
+                    <span data-i18n="homePricing30Days">30 ngày</span>
+                  </button>
+                  <button
+                    type="button"
+                    data-period="90days"
+                    class="act-tab px-3 py-1.5 rounded-md label-sm font-medium transition-all text-on-surface-variant hover:bg-surface-container-high"
+                    data-i18n="days90"
+                  >
+                    <span data-i18n="homePricing90Days">90 ngày</span>
+                  </button>
+                  <button
+                    type="button"
+                    data-period="12months"
+                    class="act-tab px-3 py-1.5 rounded-md label-sm font-medium transition-all text-on-surface-variant hover:bg-surface-container-high"
+                    data-i18n="months12"
+                  >
+                    <span data-i18n="months12">12 tháng</span>
+                  </button>
+                  <button
+                    type="button"
+                    data-period="custom"
+                    id="activityCustomBtn"
+                    class="act-tab px-3 py-1.5 rounded-md label-sm font-medium transition-all text-on-surface-variant hover:bg-surface-container-high flex items-center gap-1.5"
+                  >
+                    <span class="material-symbols-outlined text-[16px]"
+                      >calendar_today</span
+                    >
+                    <span data-i18n="custom">Tùy chọn</span>
+                  </button>
+                </div>
+
+                <!-- Custom Date Range Popover for Activity -->
+                <div
+                  id="activityCustomPopover"
+                  class="hidden absolute right-0 top-full mt-2 p-4 bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-xl shadow-lg z-50 min-w-[280px] flex flex-col gap-3"
+                >
+                  <div
+                    class="text-sm font-bold text-on-surface"
+                    data-i18n="selectDateRange"
+                  >
+                    <span data-i18n="selectDateRange"
+                      >Chọn khoảng thời gian</span
+                    >
+                  </div>
+                  <div class="grid grid-cols-2 gap-2">
+                    <div class="flex flex-col gap-1">
+                      <label
+                        class="text-[10px] uppercase font-semibold text-on-surface-variant"
+                        data-i18n="fromDate"
+                        ><span data-i18n="fromDate">Từ ngày</span></label
+                      >
+                      <input
+                        type="date"
+                        id="activityStartDate"
+                        class="px-2 py-1.5 rounded-md border border-outline-variant bg-surface-container-low dark:bg-slate-800 text-on-surface text-xs focus:outline-none focus:border-primary"
+                      />
+                    </div>
+                    <div class="flex flex-col gap-1">
+                      <label
+                        class="text-[10px] uppercase font-semibold text-on-surface-variant"
+                        data-i18n="toDate"
+                        ><span data-i18n="toDate">Đến ngày</span></label
+                      >
+                      <input
+                        type="date"
+                        id="activityEndDate"
+                        class="px-2 py-1.5 rounded-md border border-outline-variant bg-surface-container-low dark:bg-slate-800 text-on-surface text-xs focus:outline-none focus:border-primary"
+                      />
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    id="applyActivityCustom"
+                    class="w-full py-1.5 bg-primary text-white rounded-md text-xs font-semibold hover:bg-primary/95 transition-all shadow-sm"
+                    data-i18n="apply"
+                  >
+                    <span data-i18n="apply">Áp dụng</span>
+                  </button>
+                </div>
+              </div>
+              <span
+                class="text-xs text-on-surface-variant/70 bg-surface-container/50 dark:bg-slate-800 px-3 py-1.5 rounded-lg flex items-center gap-1.5 font-medium"
+              >
+                <span
+                  class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"
+                ></span>
+                <span data-i18n="liveUpdate">Cập nhật trực tiếp</span>
+              </span>
+            </div>
           </div>
-          <p class="body-md text-on-surface-variant max-w-sm">
-            Ứng dụng nhận diện giống chó bằng AI dành cho người yêu thú cưng.
-            Kết quả chính xác, nhanh chóng.
-          </p>
+
+          <!-- Row 1: Line Chart (Daily Predictions Trend) -->
+          <div
+            class="chart-card bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-xl p-6 shadow-sm"
+          >
+            <div class="flex items-center justify-between mb-4">
+              <div>
+                <h3
+                  class="text-lg font-bold text-on-surface"
+                  id="predictionTrendTitle"
+                  data-i18n="predTrend7"
+                >
+                  <span data-i18n="predTrend7"
+                    >Xu hướng dự đoán 7 ngày gần đây</span
+                  >
+                </h3>
+                <p
+                  class="text-xs text-on-surface-variant mt-0.5"
+                  id="predictionTrendSubtitle"
+                  data-i18n="predTrendSubtitle"
+                >
+                  <span data-i18n="predTrendSubtitle"
+                    >Số lượng ảnh đã nhận diện mỗi ngày</span
+                  >
+                </p>
+              </div>
+              <div
+                class="text-primary bg-primary/10 dark:bg-primary/20 px-3 py-1 rounded-lg text-xs font-semibold"
+                id="predictionTrendBadge"
+                data-i18n="last7days"
+              >
+                <span data-i18n="last7days">7 ngày qua</span>
+              </div>
+            </div>
+            <div
+              class="chart-container"
+              style="position: relative; height: 320px"
+            >
+              <canvas id="dailyPredictionsChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Row 2: Two columns for Doughnut and Bar charts -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Doughnut Chart: Top Breeds -->
+            <div
+              class="chart-card bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-xl p-6 shadow-sm"
+            >
+              <div class="mb-4">
+                <h3
+                  class="text-lg font-bold text-on-surface"
+                  data-i18n="top5Breeds"
+                >
+                  <span data-i18n="top5Breeds">Top 5 giống phổ biến nhất</span>
+                </h3>
+                <p
+                  class="text-xs text-on-surface-variant mt-0.5"
+                  data-i18n="top5BreedsSubtitle"
+                >
+                  <span data-i18n="top5BreedsSubtitle"
+                    >Các giống chó được nhận diện nhiều nhất</span
+                  >
+                </p>
+              </div>
+              <div
+                class="chart-container"
+                style="position: relative; height: 260px"
+              >
+                <canvas id="topBreedsChart"></canvas>
+              </div>
+            </div>
+
+            <!-- Bar Chart: Confidence Distribution -->
+            <div
+              class="chart-card bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-xl p-6 shadow-sm"
+            >
+              <div class="mb-4">
+                <h3
+                  class="text-lg font-bold text-on-surface"
+                  data-i18n="confidenceDist"
+                >
+                  <span data-i18n="confidenceDist">Phân bố độ tin cậy</span>
+                </h3>
+                <p
+                  class="text-xs text-on-surface-variant mt-0.5"
+                  data-i18n="confidenceDistSubtitle"
+                >
+                  <span data-i18n="confidenceDistSubtitle"
+                    >Mức độ tin cậy của thuật toán phân loại</span
+                  >
+                </p>
+              </div>
+              <div
+                class="chart-container"
+                style="position: relative; height: 260px"
+              >
+                <canvas id="confidenceDistChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <div class="flex items-center justify-between mb-4">
+            <h2
+              class="headline-md font-semibold text-on-surface"
+              data-i18n="recentResults"
+            >
+              <span data-i18n="recentResults">Kết quả gần đây</span>
+            </h2>
+            <a
+              class="text-primary font-semibold label-sm hover:underline"
+              href="{{ url_for('history.history') }}"
+              data-i18n="viewAll"
+              ><span data-i18n="viewAll">Xem tất cả</span></a
+            >
+          </div>
+          <div
+            class="flex items-center gap-2 mb-8 p-1.5 bg-surface-container-low dark:bg-surface-container-high rounded-xl w-fit"
+          >
+            <a
+              class="px-5 py-2 rounded-lg label-sm transition-all {% if active_range == 'today' %}bg-primary text-white shadow-sm font-semibold{% else %}text-on-surface-variant hover:bg-surface-container-high font-medium{% endif %}"
+              href="{{ url_for('dashboard.dashboard', range='today') }}"
+              data-i18n="todayNew"
+              ><span data-i18n="todayNew">hôm nay</span></a
+            >
+            <a
+              class="px-5 py-2 rounded-lg label-sm transition-all {% if active_range == 'yesterday' %}bg-primary text-white shadow-sm font-semibold{% else %}text-on-surface-variant hover:bg-surface-container-high font-medium{% endif %}"
+              href="{{ url_for('dashboard.dashboard', range='yesterday') }}"
+              data-i18n="yesterday"
+              ><span data-i18n="yesterday">Hôm qua</span></a
+            >
+            <a
+              class="px-5 py-2 rounded-lg label-sm transition-all {% if active_range == '7days' %}bg-primary text-white shadow-sm font-semibold{% else %}text-on-surface-variant hover:bg-surface-container-high font-medium{% endif %}"
+              href="{{ url_for('dashboard.dashboard', range='7days') }}"
+              data-i18n="last7daysTab"
+              ><span data-i18n="last7daysTab">7 ngày gần đây</span></a
+            >
+          </div>
+          {% if recent_predictions and recent_predictions|length > 0 %}
+          <div
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 dashboard-grid"
+          >
+            {% for pred in recent_predictions %}
+            <div
+              class="soft-panel bg-surface-container-lowest rounded-xl overflow-hidden group shadow-sm hover:shadow-md transition-all duration-300 border border-slate-100"
+            >
+              <div class="aspect-square relative overflow-hidden">
+                <img
+                  alt="Pet image"
+                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  src="/{{ pred.image_path }}"
+                />
+                <div
+                  class="absolute top-3 right-3 px-2 py-1 bg-surface-container-lowest/90 backdrop-blur rounded-md label-sm font-bold text-primary shadow-sm uppercase tracking-tight"
+                >
+                  {% if pred.confidence is not none %} {{
+                  '%.1f'|format((pred.confidence or 0) * 100) }}% {% else %}
+                  0.0% {% endif %}
+                </div>
+              </div>
+              <div class="p-5">
+                <h3 class="headline-md font-bold text-on-surface truncate">
+                  <span data-i18n-breed="{{ pred.breed or '' }}"
+                    >{% if pred.breed %}{{ pred.breed }}{% else %}Chưa xác
+                    định{% endif %}</span
+                  >
+                </h3>
+                <p class="label-sm text-on-surface-variant mt-1">
+                  <span data-i18n="predictionLabel">Dự đoán:</span>
+                  <span data-i18n-breed="{{ pred.breed or '' }}"
+                    >{% if pred.breed %}{{ pred.breed }}{% else %}Chưa xác
+                    định{% endif %}</span
+                  >
+                </p>
+                <div
+                  class="mt-8 flex items-center justify-between border-t border-outline-variant/20 pt-4"
+                >
+                  <span
+                    class="label-sm text-on-surface-variant uppercase font-medium"
+                  >
+                    {{ pred.created_at.strftime('%d/%m/%Y %H:%M') if
+                    pred.created_at else '' }}
+                  </span>
+                  <span
+                    class="material-symbols-outlined text-[18px] text-primary"
+                    >open_in_new</span
+                  >
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          {% if total_pages and total_pages > 1 %}
+          <div class="flex justify-center mt-8">
+            <nav
+              aria-label="Pagination"
+              class="soft-panel inline-flex items-center gap-1 rounded-md bg-surface-container-lowest px-2 py-1"
+            >
+              <a
+                aria-label="Trang truoc"
+                data-i18n-aria="prevPage"
+                class="px-2 py-1 label-sm rounded-md {% if page <= 1 %}text-slate-500/40 pointer-events-none{% else %}text-on-surface-variant hover:text-primary hover:bg-surface-container-low{% endif %}"
+                href="{{ url_for('dashboard.dashboard', range=active_range, page=page-1) }}"
+              >
+                &lsaquo;
+              </a>
+              {% for p in range(1, total_pages + 1) %}
+              <a
+                class="px-2.5 py-1 label-sm rounded-md {% if p == page %}bg-primary text-white font-semibold{% else %}text-on-surface-variant hover:text-primary hover:bg-surface-container-low{% endif %}"
+                href="{{ url_for('dashboard.dashboard', range=active_range, page=p) }}"
+              >
+                {{ p }}
+              </a>
+              {% endfor %}
+              <a
+                aria-label="Trang sau"
+                data-i18n-aria="nextPage"
+                class="px-2 py-1 label-sm rounded-md {% if page >= total_pages %}text-slate-500/40 pointer-events-none{% else %}text-on-surface-variant hover:text-primary hover:bg-surface-container-low{% endif %}"
+                href="{{ url_for('dashboard.dashboard', range=active_range, page=page+1) }}"
+              >
+                &rsaquo;
+              </a>
+            </nav>
+          </div>
+          {% endif %} {% else %}
+          <div
+            class="soft-panel bg-surface-container-lowest rounded-xl p-6 text-on-surface-variant"
+            data-i18n="emptyDashboard"
+          >
+            <span data-i18n="emptyDashboard"
+              >Bạn chưa có lịch sử nhận diện nào. Hãy bắt đầu bằng cách tải ảnh
+              mới.</span
+            >
+          </div>
+          {% endif %}
+        </section>
+      </div>
+    </main>
+
+    <footer
+      class="bg-surface-container-low border-t border-outline-variant/30 px-4 md:px-6 pt-6 pb-4"
+    >
+      <div class="footer-inner max-w-container-max mx-auto">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-10">
+          <div class="lg:col-span-6 space-y-6">
+            <div class="headline-md font-bold tracking-tighter text-primary">
+              <span class="inline-flex items-center gap-0">
+                <img
+                  alt="PetAI New Logo"
+                  class="h-8 w-auto md:h-10"
+                  src="{{ url_for('static', filename='logo.png') }}"
+                />
+                <span class="ml-0 text-sm md:text-lg font-semibold text-primary"
+                  >PetAI</span
+                >
+              </span>
+            </div>
+            <p
+              class="body-md text-on-surface-variant max-w-sm"
+              data-i18n="footerDesc"
+            >
+              <span data-i18n="footerDesc"
+                >Ứng dụng nhận diện giống chó bằng AI dành cho người yêu thú
+                cưng. Kết quả chính xác, nhanh chóng.</span
+              >
+            </p>
+          </div>
+          <div class="lg:col-span-6 grid grid-cols-2 md:grid-cols-2 gap-8">
+            <div class="space-y-6">
+              <h4 class="label-sm text-primary uppercase tracking-widest">
+                <span data-i18n="aboutPetAI">Về PetAI</span>
+              </h4>
+              <ul class="space-y-4">
+                <li class="">
+                  <a
+                    class="text-on-surface-variant hover:text-primary transition-colors font-medium"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href="{{ url_for('legal.privacy_policy') }}"
+                    data-i18n="privacy"
+                    ><span data-i18n="privacy"
+                      >Chính sách quyền riêng tư</span
+                    ></a
+                  >
+                </li>
+                <li class="">
+                  <a
+                    class="text-on-surface-variant hover:text-primary transition-colors font-medium"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href="{{ url_for('legal.terms_of_service') }}"
+                    data-i18n="terms"
+                    ><span data-i18n="terms">Điều khoản sử dụng</span></a
+                  >
+                </li>
+                <li class="">
+                  <a
+                    class="text-on-surface-variant hover:text-primary transition-colors font-medium"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href="{{ url_for('legal.data_deletion') }}"
+                    data-i18n="dataDeletion"
+                    ><span data-i18n="dataDeletion"
+                      >Chính sách xóa dữ liệu</span
+                    ></a
+                  >
+                </li>
+                <li class="">
+                  <a
+                    class="text-on-surface-variant hover:text-primary transition-colors font-medium"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href="{{ url_for('legal.support') }}"
+                    data-i18n="support"
+                    ><span data-i18n="homeStatsSupport">HỖ TRỢ</span></a
+                  >
+                </li>
+                <li class="">
+                  <a
+                    class="text-on-surface-variant hover:text-primary transition-colors font-medium"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href="{{ url_for('legal.contact') }}"
+                    data-i18n="contact"
+                    ><span data-i18n="contact">Liên hệ</span></a
+                  >
+                </li>
+              </ul>
+            </div>
+            <div class="space-y-6">
+              <h4 class="label-sm text-primary uppercase tracking-widest">
+                <span data-i18n="connect">Kết nối</span>
+              </h4>
+              <ul class="space-y-4">
+                <li class="">
+                  <a
+                    class="text-on-surface-variant hover:text-primary transition-colors font-medium"
+                    href="{{ url_for('predict.upload_page') }}"
+                    data-i18n="identifyNow"
+                    ><span data-i18n="identifyNow">Nhận diện ngay</span></a
+                  >
+                </li>
+                <li class="">
+                  <a
+                    class="text-on-surface-variant hover:text-primary transition-colors font-medium"
+                    href="{{ url_for('history.history') }}"
+                    data-i18n="collection"
+                    ><span data-i18n="collection">Bộ sưu tập</span></a
+                  >
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
-        <div class="lg:col-span-6 grid grid-cols-2 md:grid-cols-2 gap-8">
-          <div class="space-y-6">
-            <h4 class="label-sm text-primary uppercase tracking-widest"><span data-i18n="aboutPetAI">Về PetAI</span>
-            </h4>
-            <ul class="space-y-4">
-              <li class="">
-                <a class="text-on-surface-variant hover:text-primary transition-colors font-medium" target="_blank"
-                  rel="noopener noreferrer" href="{{ url_for('legal.privacy_policy') }}" data-i18n="privacy">Chính sách
-                  quyền riêng tư</a>
-              </li>
-              <li class="">
-                <a class="text-on-surface-variant hover:text-primary transition-colors font-medium" target="_blank"
-                  rel="noopener noreferrer" href="{{ url_for('legal.terms_of_service') }}" data-i18n="terms">Điều khoản
-                  sử dụng</a>
-              </li>
-              <li class="">
-                <a class="text-on-surface-variant hover:text-primary transition-colors font-medium" target="_blank"
-                  rel="noopener noreferrer" href="{{ url_for('legal.data_deletion') }}" data-i18n="dataDeletion">Chính
-                  sách xóa dữ liệu</a>
-              </li>
-              <li class="">
-                <a class="text-on-surface-variant hover:text-primary transition-colors font-medium" target="_blank"
-                  rel="noopener noreferrer" href="{{ url_for('legal.support') }}" data-i18n="support">Hỗ trợ</a>
-              </li>
-              <li class="">
-                <a class="text-on-surface-variant hover:text-primary transition-colors font-medium" target="_blank"
-                  rel="noopener noreferrer" href="{{ url_for('legal.contact') }}" data-i18n="contact">Liên hệ</a>
-              </li>
-            </ul>
-          </div>
-          <div class="space-y-6">
-            <h4 class="label-sm text-primary uppercase tracking-widest"><span data-i18n="connect">Kết nối</span></h4>
-            <ul class="space-y-4">
-              <li class="">
-                <a class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                  href="{{ url_for('predict.upload_page') }}" data-i18n="identifyNow">Nhận diện ngay</a>
-              </li>
-              <li class="">
-                <a class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                  href="{{ url_for('history.history') }}" data-i18n="collection">Bộ sưu tập</a>
-              </li>
-            </ul>
+        <div class="border-t border-outline-variant/20 relative py-1">
+          <div
+            class="flex flex-col md:flex-row justify-between items-center gap-4"
+          >
+            <p class="label-sm text-on-surface-variant/70 dark:text-slate-400">
+              <span data-i18n="copyright"
+                >Bản quyền © 2026 PetAI. Mọi quyền được bảo lưu</span
+              >
+            </p>
+            <div class="flex gap-6">
+              <a class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
+
+                target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.user_guide') }}"
+
+                data-i18n="footerUserGuide"><span data-i18n="footerUserGuide">HƯỚNG DẪN SỬ DỤNG</span></a>
+
+              <a
+                class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
+                target="_blank"
+                rel="noopener noreferrer"
+                href="{{ url_for('legal.terms_of_service') }}"
+                data-i18n="footerTerms"
+                ><span data-i18n="footerTerms">ĐIỀU KHOẢN</span></a
+              >
+              <a
+                class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
+                target="_blank"
+                rel="noopener noreferrer"
+                href="{{ url_for('legal.privacy_policy') }}"
+                data-i18n="footerPrivacy"
+                ><span data-i18n="footerPrivacy">BẢO MẬT</span></a
+              >
+            </div>
           </div>
         </div>
       </div>
-      <div class="border-t border-outline-variant/20 relative py-1">
-        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-          <p class="label-sm text-on-surface-variant/70 dark:text-slate-400"><span data-i18n="copyright">Bản quyền ©
-              2026 PetAI. Mọi quyền được bảo lưu</span></p>
-          <div class="flex gap-6">
-            <a class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
-              target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.terms_of_service') }}">ĐIỀU KHOẢN</a>
-            <a class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
-              target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.privacy_policy') }}">BẢO MẬT</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </footer>
-  <script src="{{ url_for('static', filename='js/toasts.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
-  <!-- Pass dashboard stats safely to Javascript via data-attributes -->
-  <div id="dashboardStatsData" class="hidden"
-       data-is-admin="{{ 'true' if is_admin else 'false' }}"
-       
-       data-daily-labels-7='{{ chart_labels_7_json | safe }}'
-       data-daily-data-7='{{ chart_data_7_json | safe }}'
-       data-top-breeds-7='{{ top_breeds_7_json | safe }}'
-       data-top-breeds-counts-7='{{ top_breeds_counts_7_json | safe }}'
-       data-confidence-dist-7='{{ confidence_dist_7_json | safe }}'
-       
-       data-daily-labels-30='{{ chart_labels_30_json | safe }}'
-       data-daily-data-30='{{ chart_data_30_json | safe }}'
-       data-top-breeds-30='{{ top_breeds_30_json | safe }}'
-       data-top-breeds-counts-30='{{ top_breeds_counts_30_json | safe }}'
-       data-confidence-dist-30='{{ confidence_dist_30_json | safe }}'
-       
-       data-daily-labels-all='{{ chart_labels_all_json | safe }}'
-       data-daily-data-all='{{ chart_data_all_json | safe }}'
-       data-top-breeds-all='{{ top_breeds_all_json | safe }}'
-       data-top-breeds-counts-all='{{ top_breeds_counts_all_json | safe }}'
-       data-confidence-dist-all='{{ confidence_dist_all_json | safe }}'
-       
-       data-rev-daily-labels='{{ revenue_daily_labels_json | safe }}'
-       data-rev-daily-data='{{ revenue_daily_data_json | safe }}'
-       data-rev-monthly-labels='{{ revenue_monthly_labels_json | safe }}'
-       data-rev-monthly-data='{{ revenue_monthly_data_json | safe }}'
-       data-rev-yearly-labels='{{ revenue_yearly_labels_json | safe }}'
-       data-rev-yearly-data='{{ revenue_yearly_data_json | safe }}'
-       data-sub-labels='{{ subscription_labels_json | safe }}'
-       data-sub-data='{{ subscription_data_json | safe }}'>
-  </div>
+    </footer>
+    <script src="{{ url_for('static', filename='js/toasts.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <!-- Pass dashboard stats safely to Javascript via data-attributes -->
+    <div
+      id="dashboardStatsData"
+      class="hidden"
+      data-is-admin="{{ 'true' if is_admin else 'false' }}"
+      data-daily-labels-7="{{ chart_labels_7_json | safe }}"
+      data-daily-data-7="{{ chart_data_7_json | safe }}"
+      data-top-breeds-7="{{ top_breeds_7_json | safe }}"
+      data-top-breeds-counts-7="{{ top_breeds_counts_7_json | safe }}"
+      data-confidence-dist-7="{{ confidence_dist_7_json | safe }}"
+      data-daily-labels-30="{{ chart_labels_30_json | safe }}"
+      data-daily-data-30="{{ chart_data_30_json | safe }}"
+      data-top-breeds-30="{{ top_breeds_30_json | safe }}"
+      data-top-breeds-counts-30="{{ top_breeds_counts_30_json | safe }}"
+      data-confidence-dist-30="{{ confidence_dist_30_json | safe }}"
+      data-daily-labels-all="{{ chart_labels_all_json | safe }}"
+      data-daily-data-all="{{ chart_data_all_json | safe }}"
+      data-top-breeds-all="{{ top_breeds_all_json | safe }}"
+      data-top-breeds-counts-all="{{ top_breeds_counts_all_json | safe }}"
+      data-confidence-dist-all="{{ confidence_dist_all_json | safe }}"
+      data-rev-daily-labels="{{ revenue_daily_labels_json | safe }}"
+      data-rev-daily-data="{{ revenue_daily_data_json | safe }}"
+      data-rev-monthly-labels="{{ revenue_monthly_labels_json | safe }}"
+      data-rev-monthly-data="{{ revenue_monthly_data_json | safe }}"
+      data-rev-yearly-labels="{{ revenue_yearly_labels_json | safe }}"
+      data-rev-yearly-data="{{ revenue_yearly_data_json | safe }}"
+      data-sub-labels="{{ subscription_labels_json | safe }}"
+      data-sub-data="{{ subscription_data_json | safe }}"
+    ></div>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      // Detect dark mode from html class or attribute
-      const isDarkMode = document.documentElement.classList.contains("dark") ||
-        document.documentElement.getAttribute("data-theme") === "dark";
-      const gridColor = isDarkMode ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.05)";
-      const textColor = isDarkMode ? "#94a3b8" : "#64748b";
-      const primaryColor = "#004ac6";
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Detect dark mode from html class or attribute
+        const isDarkMode =
+          document.documentElement.classList.contains("dark") ||
+          document.documentElement.getAttribute("data-theme") === "dark";
+        const gridColor = isDarkMode
+          ? "rgba(255, 255, 255, 0.08)"
+          : "rgba(0, 0, 0, 0.05)";
+        const textColor = isDarkMode ? "#94a3b8" : "#64748b";
+        const primaryColor = "#004ac6";
 
-      // Read configuration and datasets from data attributes
-      const statsEl = document.getElementById("dashboardStatsData");
-      if (!statsEl) return;
+        // Read configuration and datasets from data attributes
+        const statsEl = document.getElementById("dashboardStatsData");
+        if (!statsEl) return;
 
-      const isAdmin = statsEl.dataset.isAdmin === "true";
+        const isAdmin = statsEl.dataset.isAdmin === "true";
 
-      const activityDatasets = {
-        '7': {
-          dailyLabels: JSON.parse(statsEl.dataset.dailyLabels7 || '[]'),
-          dailyData:   JSON.parse(statsEl.dataset.dailyData7 || '[]'),
-          topBreeds:   JSON.parse(statsEl.dataset.topBreeds7 || '[]'),
-          topBreedsCounts: JSON.parse(statsEl.dataset.topBreedsCounts7 || '[]'),
-          confidenceDist: JSON.parse(statsEl.dataset.confidenceDist7 || '[]')
-        },
-        '30': {
-          dailyLabels: JSON.parse(statsEl.dataset.dailyLabels30 || '[]'),
-          dailyData:   JSON.parse(statsEl.dataset.dailyData30 || '[]'),
-          topBreeds:   JSON.parse(statsEl.dataset.topBreeds30 || '[]'),
-          topBreedsCounts: JSON.parse(statsEl.dataset.topBreedsCounts30 || '[]'),
-          confidenceDist: JSON.parse(statsEl.dataset.confidenceDist30 || '[]')
-        },
-        'all': {
-          dailyLabels: JSON.parse(statsEl.dataset.dailyLabelsAll || '[]'),
-          dailyData:   JSON.parse(statsEl.dataset.dailyDataAll || '[]'),
-          topBreeds:   JSON.parse(statsEl.dataset.topBreedsAll || '[]'),
-          topBreedsCounts: JSON.parse(statsEl.dataset.topBreedsCountsAll || '[]'),
-          confidenceDist: JSON.parse(statsEl.dataset.confidenceDistAll || '[]')
-        }
-      };
+        const activityDatasets = {
+          7: {
+            dailyLabels: JSON.parse(statsEl.dataset.dailyLabels7 || "[]"),
+            dailyData: JSON.parse(statsEl.dataset.dailyData7 || "[]"),
+            topBreeds: JSON.parse(statsEl.dataset.topBreeds7 || "[]"),
+            topBreedsCounts: JSON.parse(
+              statsEl.dataset.topBreedsCounts7 || "[]",
+            ),
+            confidenceDist: JSON.parse(statsEl.dataset.confidenceDist7 || "[]"),
+          },
+          30: {
+            dailyLabels: JSON.parse(statsEl.dataset.dailyLabels30 || "[]"),
+            dailyData: JSON.parse(statsEl.dataset.dailyData30 || "[]"),
+            topBreeds: JSON.parse(statsEl.dataset.topBreeds30 || "[]"),
+            topBreedsCounts: JSON.parse(
+              statsEl.dataset.topBreedsCounts30 || "[]",
+            ),
+            confidenceDist: JSON.parse(
+              statsEl.dataset.confidenceDist30 || "[]",
+            ),
+          },
+          all: {
+            dailyLabels: JSON.parse(statsEl.dataset.dailyLabelsAll || "[]"),
+            dailyData: JSON.parse(statsEl.dataset.dailyDataAll || "[]"),
+            topBreeds: JSON.parse(statsEl.dataset.topBreedsAll || "[]"),
+            topBreedsCounts: JSON.parse(
+              statsEl.dataset.topBreedsCountsAll || "[]",
+            ),
+            confidenceDist: JSON.parse(
+              statsEl.dataset.confidenceDistAll || "[]",
+            ),
+          },
+        };
 
-      // ─── Admin Financial Analytics Charts ───────────────────────────
-      if (isAdmin) {
-        (function () {
-          const revDatasets = {
-            daily: {
-              labels: JSON.parse(statsEl.dataset.revDailyLabels || '[]'),
-              data:   JSON.parse(statsEl.dataset.revDailyData || '[]')
-            },
-            monthly: {
-              labels: JSON.parse(statsEl.dataset.revMonthlyLabels || '[]'),
-              data:   JSON.parse(statsEl.dataset.revMonthlyData || '[]')
-            },
-            yearly: {
-              labels: JSON.parse(statsEl.dataset.revYearlyLabels || '[]'),
-              data:   JSON.parse(statsEl.dataset.revYearlyData || '[]')
-            }
-          };
-          const subLabels = JSON.parse(statsEl.dataset.subLabels || '[]');
-          const subData   = JSON.parse(statsEl.dataset.subData || '[]');
-
-          const green600 = '#10b981';
-          const tooltipBg   = isDarkMode ? '#1e293b' : '#ffffff';
-          const tooltipTitle = isDarkMode ? '#ffffff' : '#0f172a';
-          const tooltipBody  = isDarkMode ? '#cbd5e1' : '#475569';
-          const tooltipBorder = isDarkMode ? '#334155' : '#e2e8f0';
-
-          function fmtVND(v) {
-            return Math.round(v).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + 'đ';
-          }
-
-          // ── Revenue Trend Line Chart ──
-          const ctxRev = document.getElementById('revenueTrendChart');
-          let revenueChart = null;
-          if (ctxRev) {
-            function buildRevenueDataset(period) {
-              const d = revDatasets[period];
-              return {
-                labels: d.labels,
-                datasets: [{
-                  label: 'Doanh thu',
-                  data: d.data,
-                  borderColor: green600,
-                  backgroundColor: isDarkMode ? 'rgba(16,185,129,0.12)' : 'rgba(16,185,129,0.06)',
-                  borderWidth: 3,
-                  fill: true,
-                  tension: 0.4,
-                  pointBackgroundColor: green600,
-                  pointBorderColor: isDarkMode ? '#0f172a' : '#fff',
-                  pointBorderWidth: 2,
-                  pointRadius: 4,
-                  pointHoverRadius: 7
-                }]
-              };
-            }
-
-            revenueChart = new Chart(ctxRev.getContext('2d'), {
-              type: 'line',
-              data: buildRevenueDataset('daily'),
-              options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                animation: { duration: 500 },
-                plugins: {
-                  legend: { display: false },
-                  tooltip: {
-                    padding: 12,
-                    backgroundColor: tooltipBg,
-                    titleColor: tooltipTitle,
-                    bodyColor: tooltipBody,
-                    borderColor: tooltipBorder,
-                    borderWidth: 1,
-                    displayColors: false,
-                    titleFont: { family: 'Inter', weight: 'bold' },
-                    bodyFont: { family: 'Inter' },
-                    callbacks: {
-                      label: ctx => 'Doanh thu: ' + fmtVND(ctx.parsed.y)
-                    }
-                  }
-                },
-                scales: {
-                  x: {
-                    grid: { display: false },
-                    ticks: { color: textColor, font: { family: 'Inter', size: 11 } }
-                  },
-                  y: {
-                    grid: { color: gridColor, drawBorder: false },
-                    ticks: {
-                      color: textColor,
-                      font: { family: 'Inter', size: 11 },
-                      callback: v => fmtVND(v)
-                    },
-                    beginAtZero: true
-                  }
-                }
-              }
-            });
-
-            // Period tab switching
-            document.querySelectorAll('.rev-tab').forEach(function(btn) {
-              btn.addEventListener('click', function(e) {
-                const period = this.getAttribute('data-period');
-                if (period === 'custom') {
-                  const popover = document.getElementById('revenueCustomPopover');
-                  if (popover) {
-                    popover.classList.toggle('hidden');
-                  }
-                  return;
-                }
-
-                // Hide custom popover
-                const popover = document.getElementById('revenueCustomPopover');
-                if (popover) popover.classList.add('hidden');
-
-                // Switch styles
-                document.querySelectorAll('.rev-tab').forEach(function(t) {
-                  t.classList.remove('bg-primary', 'text-white', 'shadow-sm', 'font-semibold');
-                  t.classList.add('text-on-surface-variant', 'font-medium');
-                });
-                this.classList.add('bg-primary', 'text-white', 'shadow-sm', 'font-semibold');
-                this.classList.remove('text-on-surface-variant', 'font-medium');
-
-                // Fetch dynamic data
-                fetch(`/dashboard/api/revenue-stats?period=${period}`)
-                  .then(res => res.json())
-                  .then(data => {
-                    if (revenueChart) {
-                      revenueChart.data.labels = data.labels;
-                      revenueChart.data.datasets[0].data = data.data;
-                      revenueChart.update();
-                    }
-                    const subtitle = document.getElementById('revenueTrendSubtitle');
-                    if (subtitle) {
-                      if (period === '7days') subtitle.textContent = "Tổng tiền từ đơn đã thanh toán (7 ngày gần đây)";
-                      else if (period === '30days') subtitle.textContent = "Tổng tiền từ đơn đã thanh toán (30 ngày gần đây)";
-                      else if (period === '90days') subtitle.textContent = "Tổng tiền từ đơn đã thanh toán (90 ngày gần đây)";
-                      else if (period === '12months') subtitle.textContent = "Tổng tiền từ đơn đã thanh toán (12 tháng gần đây)";
-                    }
-                  })
-                  .catch(err => console.error("Error fetching revenue stats:", err));
-              });
-            });
-
-            // Apply custom range button
-            const applyRevBtn = document.getElementById('applyRevenueCustom');
-            if (applyRevBtn) {
-              applyRevBtn.addEventListener('click', function() {
-                const start = document.getElementById('revenueStartDate').value;
-                const end = document.getElementById('revenueEndDate').value;
-                if (!start || !end) {
-                  alert("Vui lòng chọn đầy đủ ngày bắt đầu và ngày kết thúc!");
-                  return;
-                }
-                if (new Date(start) > new Date(end)) {
-                  alert("Ngày bắt đầu không được lớn hơn ngày kết thúc!");
-                  return;
-                }
-
-                // Fetch dynamic data
-                fetch(`/dashboard/api/revenue-stats?period=custom&startDate=${start}&endDate=${end}`)
-                  .then(res => res.json())
-                  .then(data => {
-                    if (revenueChart) {
-                      revenueChart.data.labels = data.labels;
-                      revenueChart.data.datasets[0].data = data.data;
-                      revenueChart.update();
-                    }
-                    const subtitle = document.getElementById('revenueTrendSubtitle');
-                    if (subtitle) {
-                      subtitle.textContent = `Tổng tiền từ đơn đã thanh toán (Từ ngày ${start.split('-').reverse().join('/')} đến ngày ${end.split('-').reverse().join('/')})`;
-                    }
-                    
-                    // Update active button styles
-                    document.querySelectorAll('.rev-tab').forEach(function(t) {
-                      t.classList.remove('bg-primary', 'text-white', 'shadow-sm', 'font-semibold');
-                      t.classList.add('text-on-surface-variant', 'font-medium');
-                    });
-                    const customBtn = document.getElementById('revenueCustomBtn');
-                    if (customBtn) {
-                      customBtn.classList.add('bg-primary', 'text-white', 'shadow-sm', 'font-semibold');
-                      customBtn.classList.remove('text-on-surface-variant', 'font-medium');
-                    }
-                    
-                    // Hide popover
-                    const popover = document.getElementById('revenueCustomPopover');
-                    if (popover) popover.classList.add('hidden');
-                  })
-                  .catch(err => console.error("Error fetching revenue stats:", err));
-              });
-            }
-          }
-
-          // ── Subscription Doughnut ──
-          const planColors = {
-            'Free':       '#94a3b8',
-            'Basic':      '#004ac6',
-            'Pro':        '#8b5cf6',
-            'Enterprise': '#f59e0b'
-          };
-          const fallbackColors = ['#004ac6','#8b5cf6','#10b981','#f59e0b','#ef4444','#94a3b8'];
-          const subColors = subLabels.map((l, i) => planColors[l] || fallbackColors[i % fallbackColors.length]);
-          const hasSubData = subData.length > 0 && subData.reduce((a,b) => a+b, 0) > 0;
-          const totalSubs = hasSubData ? subData.reduce((a,b) => a+b, 0) : 1;
-
-          const ctxSub = document.getElementById('subscriptionChart');
-          if (ctxSub) {
-            new Chart(ctxSub.getContext('2d'), {
-              type: 'doughnut',
-              data: {
-                labels: hasSubData ? subLabels : ['Chưa có dữ liệu'],
-                datasets: [{
-                  data: hasSubData ? subData : [1],
-                  backgroundColor: hasSubData ? subColors : [isDarkMode ? '#334155' : '#cbd5e1'],
-                  borderWidth: isDarkMode ? 2 : 1,
-                  borderColor: isDarkMode ? '#0f172a' : '#ffffff',
-                  hoverOffset: 6
-                }]
+        // ─── Admin Financial Analytics Charts ───────────────────────────
+        if (isAdmin) {
+          (function () {
+            const revDatasets = {
+              daily: {
+                labels: JSON.parse(statsEl.dataset.revDailyLabels || "[]"),
+                data: JSON.parse(statsEl.dataset.revDailyData || "[]"),
               },
-              options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                  legend: { display: false },
-                  tooltip: {
-                    enabled: hasSubData,
-                    padding: 12,
-                    backgroundColor: tooltipBg,
-                    titleColor: tooltipTitle,
-                    bodyColor: tooltipBody,
-                    borderColor: tooltipBorder,
-                    borderWidth: 1,
-                    titleFont: { family: 'Inter', weight: 'bold' },
-                    bodyFont: { family: 'Inter' },
-                    callbacks: {
-                      label: ctx => {
-                        const pct = ((ctx.parsed / totalSubs) * 100).toFixed(1);
-                        return `${ctx.label}: ${ctx.parsed} người dùng (${pct}%)`;
-                      }
-                    }
-                  }
-                },
-                cutout: '68%'
-              }
-            });
-          }
+              monthly: {
+                labels: JSON.parse(statsEl.dataset.revMonthlyLabels || "[]"),
+                data: JSON.parse(statsEl.dataset.revMonthlyData || "[]"),
+              },
+              yearly: {
+                labels: JSON.parse(statsEl.dataset.revYearlyLabels || "[]"),
+                data: JSON.parse(statsEl.dataset.revYearlyData || "[]"),
+              },
+            };
+            const subLabels = JSON.parse(statsEl.dataset.subLabels || "[]");
+            const subData = JSON.parse(statsEl.dataset.subData || "[]");
 
-          // ── Subscription breakdown sidebar ──
-          const breakdownEl = document.getElementById('subscriptionBreakdown');
-          if (breakdownEl && hasSubData) {
-            subLabels.forEach(function(label, i) {
-              const count = subData[i];
-              const pct = totalSubs > 0 ? ((count / totalSubs) * 100).toFixed(1) : '0.0';
-              const color = subColors[i] || '#94a3b8';
-              const row = document.createElement('div');
-              row.className = 'flex flex-col gap-1';
-              row.innerHTML = `
+            const green600 = "#10b981";
+            const tooltipBg = isDarkMode ? "#1e293b" : "#ffffff";
+            const tooltipTitle = isDarkMode ? "#ffffff" : "#0f172a";
+            const tooltipBody = isDarkMode ? "#cbd5e1" : "#475569";
+            const tooltipBorder = isDarkMode ? "#334155" : "#e2e8f0";
+
+            function fmtVND(v) {
+              const suffix =
+                typeof window.PetAI_i18n !== "undefined" &&
+                window.PetAI_i18n.getCurrentLang() === "en"
+                  ? " VND"
+                  : "đ";
+              return (
+                Math.round(v)
+                  .toString()
+                  .replace(/\B(?=(\d{3})+(?!\d))/g, ",") + suffix
+              );
+            }
+
+            // ── Revenue Trend Line Chart ──
+            const ctxRev = document.getElementById("revenueTrendChart");
+            let revenueChart = null;
+            if (ctxRev) {
+              function buildRevenueDataset(period) {
+                const d = revDatasets[period];
+                return {
+                  labels: d.labels,
+                  datasets: [
+                    {
+                      label:
+                        typeof window.PetAI_i18n !== "undefined"
+                          ? window.PetAI_i18n.t("totalRevenue")
+                          : "Doanh thu",
+                      data: d.data,
+                      borderColor: green600,
+                      backgroundColor: isDarkMode
+                        ? "rgba(16,185,129,0.12)"
+                        : "rgba(16,185,129,0.06)",
+                      borderWidth: 3,
+                      fill: true,
+                      tension: 0.4,
+                      pointBackgroundColor: green600,
+                      pointBorderColor: isDarkMode ? "#0f172a" : "#fff",
+                      pointBorderWidth: 2,
+                      pointRadius: 4,
+                      pointHoverRadius: 7,
+                    },
+                  ],
+                };
+              }
+
+              revenueChart = new Chart(ctxRev.getContext("2d"), {
+                type: "line",
+                data: buildRevenueDataset("daily"),
+                options: {
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  animation: { duration: 500 },
+                  plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                      padding: 12,
+                      backgroundColor: tooltipBg,
+                      titleColor: tooltipTitle,
+                      bodyColor: tooltipBody,
+                      borderColor: tooltipBorder,
+                      borderWidth: 1,
+                      displayColors: false,
+                      titleFont: { family: "Inter", weight: "bold" },
+                      bodyFont: { family: "Inter" },
+                      callbacks: {
+                        label: (ctx) => "Doanh thu: " + fmtVND(ctx.parsed.y),
+                      },
+                    },
+                  },
+                  scales: {
+                    x: {
+                      grid: { display: false },
+                      ticks: {
+                        color: textColor,
+                        font: { family: "Inter", size: 11 },
+                      },
+                    },
+                    y: {
+                      grid: { color: gridColor, drawBorder: false },
+                      ticks: {
+                        color: textColor,
+                        font: { family: "Inter", size: 11 },
+                        callback: (v) => fmtVND(v),
+                      },
+                      beginAtZero: true,
+                    },
+                  },
+                },
+              });
+
+              // Period tab switching
+              document.querySelectorAll(".rev-tab").forEach(function (btn) {
+                btn.addEventListener("click", function (e) {
+                  const period = this.getAttribute("data-period");
+                  if (period === "custom") {
+                    const popover = document.getElementById(
+                      "revenueCustomPopover",
+                    );
+                    if (popover) {
+                      popover.classList.toggle("hidden");
+                    }
+                    return;
+                  }
+
+                  // Hide custom popover
+                  const popover = document.getElementById(
+                    "revenueCustomPopover",
+                  );
+                  if (popover) popover.classList.add("hidden");
+
+                  // Switch styles
+                  document.querySelectorAll(".rev-tab").forEach(function (t) {
+                    t.classList.remove(
+                      "bg-primary",
+                      "text-white",
+                      "shadow-sm",
+                      "font-semibold",
+                    );
+                    t.classList.add("text-on-surface-variant", "font-medium");
+                  });
+                  this.classList.add(
+                    "bg-primary",
+                    "text-white",
+                    "shadow-sm",
+                    "font-semibold",
+                  );
+                  this.classList.remove(
+                    "text-on-surface-variant",
+                    "font-medium",
+                  );
+
+                  // Fetch dynamic data
+                  fetch(`/dashboard/api/revenue-stats?period=${period}`)
+                    .then((res) => res.json())
+                    .then((data) => {
+                      if (revenueChart) {
+                        revenueChart.data.labels = data.labels;
+                        revenueChart.data.datasets[0].data = data.data;
+                        revenueChart.update();
+                      }
+                      const subtitle = document.getElementById(
+                        "revenueTrendSubtitle",
+                      );
+                      if (subtitle) {
+                        const t_func =
+                          typeof window.PetAI_i18n !== "undefined"
+                            ? window.PetAI_i18n.t
+                            : function (x) {
+                                return x;
+                              };
+                        if (period === "7days")
+                          subtitle.textContent = t_func(
+                            "revenueTrendSubtitle7",
+                          );
+                        else if (period === "30days")
+                          subtitle.textContent = t_func(
+                            "revenueTrendSubtitle30",
+                          );
+                        else if (period === "90days")
+                          subtitle.textContent = t_func(
+                            "revenueTrendSubtitle90",
+                          );
+                        else if (period === "12months")
+                          subtitle.textContent = t_func(
+                            "revenueTrendSubtitle12",
+                          );
+                      }
+                    })
+                    .catch((err) =>
+                      console.error("Error fetching revenue stats:", err),
+                    );
+                });
+              });
+
+              // Apply custom range button
+              const applyRevBtn = document.getElementById("applyRevenueCustom");
+              if (applyRevBtn) {
+                applyRevBtn.addEventListener("click", function () {
+                  const start =
+                    document.getElementById("revenueStartDate").value;
+                  const end = document.getElementById("revenueEndDate").value;
+                  if (!start || !end) {
+                    alert(
+                      typeof window.PetAI_i18n !== "undefined"
+                        ? window.PetAI_i18n.t("pleaseSelectDates")
+                        : "Vui lòng chọn đầy đủ ngày bắt đầu và ngày kết thúc!",
+                    );
+                    return;
+                  }
+                  if (new Date(start) > new Date(end)) {
+                    alert(
+                      typeof window.PetAI_i18n !== "undefined"
+                        ? window.PetAI_i18n.t("startDateAfterEndDate")
+                        : "Ngày bắt đầu không được lớn hơn ngày kết thúc!",
+                    );
+                    return;
+                  }
+
+                  // Fetch dynamic data
+                  fetch(
+                    `/dashboard/api/revenue-stats?period=custom&startDate=${start}&endDate=${end}`,
+                  )
+                    .then((res) => res.json())
+                    .then((data) => {
+                      if (revenueChart) {
+                        revenueChart.data.labels = data.labels;
+                        revenueChart.data.datasets[0].data = data.data;
+                        revenueChart.update();
+                      }
+                      const subtitle = document.getElementById(
+                        "revenueTrendSubtitle",
+                      );
+                      if (subtitle) {
+                        subtitle.textContent = t_func("customRangeSubtitle")
+                          .replace(
+                            "{start}",
+                            start.split("-").reverse().join("/"),
+                          )
+                          .replace("{end}", end.split("-").reverse().join("/"));
+                      }
+
+                      // Update active button styles
+                      document
+                        .querySelectorAll(".rev-tab")
+                        .forEach(function (t) {
+                          t.classList.remove(
+                            "bg-primary",
+                            "text-white",
+                            "shadow-sm",
+                            "font-semibold",
+                          );
+                          t.classList.add(
+                            "text-on-surface-variant",
+                            "font-medium",
+                          );
+                        });
+                      const customBtn =
+                        document.getElementById("revenueCustomBtn");
+                      if (customBtn) {
+                        customBtn.classList.add(
+                          "bg-primary",
+                          "text-white",
+                          "shadow-sm",
+                          "font-semibold",
+                        );
+                        customBtn.classList.remove(
+                          "text-on-surface-variant",
+                          "font-medium",
+                        );
+                      }
+
+                      // Hide popover
+                      const popover = document.getElementById(
+                        "revenueCustomPopover",
+                      );
+                      if (popover) popover.classList.add("hidden");
+                    })
+                    .catch((err) =>
+                      console.error("Error fetching revenue stats:", err),
+                    );
+                });
+              }
+            }
+
+            // ── Subscription Doughnut ──
+            const planColors = {
+              Free: "#94a3b8",
+              Basic: "#004ac6",
+              Pro: "#8b5cf6",
+              Enterprise: "#f59e0b",
+            };
+            const fallbackColors = [
+              "#004ac6",
+              "#8b5cf6",
+              "#10b981",
+              "#f59e0b",
+              "#ef4444",
+              "#94a3b8",
+            ];
+            const subColors = subLabels.map(
+              (l, i) =>
+                planColors[l] || fallbackColors[i % fallbackColors.length],
+            );
+            const hasSubData =
+              subData.length > 0 && subData.reduce((a, b) => a + b, 0) > 0;
+            const totalSubs = hasSubData
+              ? subData.reduce((a, b) => a + b, 0)
+              : 1;
+
+            const ctxSub = document.getElementById("subscriptionChart");
+            if (ctxSub) {
+              new Chart(ctxSub.getContext("2d"), {
+                type: "doughnut",
+                data: {
+                  labels: hasSubData
+                    ? subLabels
+                    : [
+                        typeof window.PetAI_i18n !== "undefined"
+                          ? window.PetAI_i18n.t("noDataChart")
+                          : "Chưa có dữ liệu",
+                      ],
+                  datasets: [
+                    {
+                      data: hasSubData ? subData : [1],
+                      backgroundColor: hasSubData
+                        ? subColors
+                        : [isDarkMode ? "#334155" : "#cbd5e1"],
+                      borderWidth: isDarkMode ? 2 : 1,
+                      borderColor: isDarkMode ? "#0f172a" : "#ffffff",
+                      hoverOffset: 6,
+                    },
+                  ],
+                },
+                options: {
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                      enabled: hasSubData,
+                      padding: 12,
+                      backgroundColor: tooltipBg,
+                      titleColor: tooltipTitle,
+                      bodyColor: tooltipBody,
+                      borderColor: tooltipBorder,
+                      borderWidth: 1,
+                      titleFont: { family: "Inter", weight: "bold" },
+                      bodyFont: { family: "Inter" },
+                      callbacks: {
+                        label: (ctx) => {
+                          const pct = ((ctx.parsed / totalSubs) * 100).toFixed(
+                            1,
+                          );
+                          const userLabel =
+                            typeof window.PetAI_i18n !== "undefined"
+                              ? window.PetAI_i18n.t("usersText").toLowerCase()
+                              : "người dùng";
+                          return `${ctx.label}: ${ctx.parsed} ${userLabel} (${pct}%)`;
+                        },
+                      },
+                    },
+                  },
+                  cutout: "68%",
+                },
+              });
+            }
+
+            // ── Subscription breakdown sidebar ──
+            const breakdownEl = document.getElementById(
+              "subscriptionBreakdown",
+            );
+            if (breakdownEl && hasSubData) {
+              subLabels.forEach(function (label, i) {
+                const count = subData[i];
+                const pct =
+                  totalSubs > 0
+                    ? ((count / totalSubs) * 100).toFixed(1)
+                    : "0.0";
+                const color = subColors[i] || "#94a3b8";
+                const row = document.createElement("div");
+                row.className = "flex flex-col gap-1";
+                const userSuffix =
+                  typeof window.PetAI_i18n !== "undefined"
+                    ? window.PetAI_i18n.t("usersText").toLowerCase()
+                    : "người";
+                row.innerHTML = `
                 <div class="flex items-center justify-between">
                   <div class="flex items-center gap-2">
                     <span class="inline-block w-3 h-3 rounded-full flex-shrink-0" style="background:${color}"></span>
                     <span class="label-sm font-semibold text-on-surface">${label}</span>
                   </div>
                   <div class="flex items-center gap-3">
-                    <span class="label-sm font-bold text-on-surface">${count} <span class="font-normal text-on-surface-variant">người</span></span>
+                    <span class="label-sm font-bold text-on-surface">${count} <span class="font-normal text-on-surface-variant">${userSuffix}</span></span>
                     <span class="label-sm font-semibold text-on-surface-variant w-14 text-right">${pct}%</span>
                   </div>
                 </div>
                 <div class="h-2 rounded-full bg-surface-container-high dark:bg-slate-700 overflow-hidden">
                   <div class="h-full rounded-full transition-all duration-700" style="width:${pct}%;background:${color}"></div>
                 </div>`;
-              breakdownEl.appendChild(row);
+                breakdownEl.appendChild(row);
+              });
+            } else if (breakdownEl) {
+              const noDataMsg =
+                typeof window.PetAI_i18n !== "undefined"
+                  ? window.PetAI_i18n.t("noSubscriptionData")
+                  : "Chưa có dữ liệu gói đăng ký.";
+              breakdownEl.innerHTML = `<p class="text-on-surface-variant label-sm">${noDataMsg}</p>`;
+            }
+          })();
+        }
+
+        // ─── Activity / Prediction Charts ───────────────────────────────
+        let dailyChartInstance = null;
+        let topBreedsChartInstance = null;
+        let confidenceChartInstance = null;
+
+        const initData = activityDatasets["7"];
+
+        // Chart 1: Line Chart (Daily Predictions Trend)
+        const ctxDaily = document.getElementById("dailyPredictionsChart");
+        if (ctxDaily) {
+          dailyChartInstance = new Chart(ctxDaily.getContext("2d"), {
+            type: "line",
+            data: {
+              labels: initData.dailyLabels,
+              datasets: [
+                {
+                  label:
+                    typeof window.PetAI_i18n !== "undefined"
+                      ? window.PetAI_i18n.t("totalScans")
+                      : "Số lượt nhận diện",
+                  data: initData.dailyData,
+                  borderColor: primaryColor,
+                  backgroundColor: isDarkMode
+                    ? "rgba(0, 74, 198, 0.15)"
+                    : "rgba(0, 74, 198, 0.05)",
+                  borderWidth: 3,
+                  fill: true,
+                  tension: 0.4,
+                  pointBackgroundColor: primaryColor,
+                  pointBorderColor: isDarkMode ? "#0f172a" : "#fff",
+                  pointBorderWidth: 2,
+                  pointRadius: 4,
+                  pointHoverRadius: 6,
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: { display: false },
+                tooltip: {
+                  padding: 12,
+                  backgroundColor: isDarkMode ? "#1e293b" : "#ffffff",
+                  titleColor: isDarkMode ? "#ffffff" : "#0f172a",
+                  bodyColor: isDarkMode ? "#cbd5e1" : "#475569",
+                  borderColor: isDarkMode ? "#334155" : "#e2e8f0",
+                  borderWidth: 1,
+                  displayColors: false,
+                  titleFont: { family: "Inter", weight: "bold" },
+                  bodyFont: { family: "Inter" },
+                },
+              },
+              scales: {
+                x: {
+                  grid: { display: false },
+                  ticks: {
+                    color: textColor,
+                    font: { family: "Inter", size: 11 },
+                  },
+                },
+                y: {
+                  grid: { color: gridColor, drawBorder: false },
+                  ticks: {
+                    color: textColor,
+                    font: { family: "Inter", size: 11 },
+                    precision: 0,
+                  },
+                  beginAtZero: true,
+                },
+              },
+            },
+          });
+        }
+
+        // Chart 2: Doughnut Chart (Top Breeds)
+        const ctxTop = document.getElementById("topBreedsChart");
+        if (ctxTop) {
+          const colors = [
+            "#004ac6", // Primary
+            "#fea619", // Secondary
+            "#943700", // Tertiary
+            "#10b981", // Emerald
+            "#8b5cf6", // Purple
+          ];
+          const hasData = initData.topBreeds.length > 0;
+
+          topBreedsChartInstance = new Chart(ctxTop.getContext("2d"), {
+            type: "doughnut",
+            data: {
+              labels: hasData ? initData.topBreeds : ["Chưa có dữ liệu"],
+              datasets: [
+                {
+                  data: hasData ? initData.topBreedsCounts : [1],
+                  backgroundColor: hasData
+                    ? colors
+                    : [isDarkMode ? "#334155" : "#cbd5e1"],
+                  borderWidth: isDarkMode ? 2 : 1,
+                  borderColor: isDarkMode ? "#0f172a" : "#ffffff",
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: {
+                  position: "right",
+                  labels: {
+                    color: textColor,
+                    font: { family: "Inter", size: 12 },
+                    boxWidth: 12,
+                    padding: 15,
+                  },
+                },
+                tooltip: {
+                  enabled: hasData,
+                  padding: 12,
+                  backgroundColor: isDarkMode ? "#1e293b" : "#ffffff",
+                  titleColor: isDarkMode ? "#ffffff" : "#0f172a",
+                  bodyColor: isDarkMode ? "#cbd5e1" : "#475569",
+                  borderColor: isDarkMode ? "#334155" : "#e2e8f0",
+                  borderWidth: 1,
+                  titleFont: { family: "Inter", weight: "bold" },
+                  bodyFont: { family: "Inter" },
+                },
+              },
+              cutout: "70%",
+            },
+          });
+        }
+
+        // Chart 3: Bar Chart (Confidence Distribution)
+        const ctxConf = document.getElementById("confidenceDistChart");
+        if (ctxConf) {
+          confidenceChartInstance = new Chart(ctxConf.getContext("2d"), {
+            type: "bar",
+            data: {
+              labels: ["0-20%", "20-40%", "40-60%", "60-80%", "80-100%"],
+              datasets: [
+                {
+                  data: initData.confidenceDist,
+                  backgroundColor: "rgba(0, 74, 198, 0.75)",
+                  hoverBackgroundColor: primaryColor,
+                  borderRadius: 4,
+                  borderSkipped: false,
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: { display: false },
+                tooltip: {
+                  padding: 12,
+                  backgroundColor: isDarkMode ? "#1e293b" : "#ffffff",
+                  titleColor: isDarkMode ? "#ffffff" : "#0f172a",
+                  bodyColor: isDarkMode ? "#cbd5e1" : "#475569",
+                  borderColor: isDarkMode ? "#334155" : "#e2e8f0",
+                  borderWidth: 1,
+                  displayColors: false,
+                  titleFont: { family: "Inter", weight: "bold" },
+                  bodyFont: { family: "Inter" },
+                  callbacks: {
+                    label: function (context) {
+                      const labelText =
+                        typeof window.PetAI_i18n !== "undefined"
+                          ? window.PetAI_i18n.t("timesCount")
+                          : "Số lượt";
+                      return `${labelText}: ${context.parsed.y}`;
+                    },
+                  },
+                },
+              },
+              scales: {
+                x: {
+                  grid: { display: false },
+                  ticks: {
+                    color: textColor,
+                    font: { family: "Inter", size: 11 },
+                  },
+                },
+                y: {
+                  grid: { color: gridColor, drawBorder: false },
+                  ticks: {
+                    color: textColor,
+                    font: { family: "Inter", size: 11 },
+                    precision: 0,
+                  },
+                  beginAtZero: true,
+                },
+              },
+            },
+          });
+        }
+
+        // ── Function to switch timeframe for activity charts dynamically ──
+        function updateActivityChartsData(period, startDate, endDate) {
+          let url = `/dashboard/api/activity-stats?period=${period}`;
+          if (startDate && endDate) {
+            url += `&startDate=${startDate}&endDate=${endDate}`;
+          }
+
+          fetch(url)
+            .then((res) => res.json())
+            .then((d) => {
+              // 1. Line Chart
+              if (dailyChartInstance) {
+                dailyChartInstance.data.labels = d.dailyLabels;
+                dailyChartInstance.data.datasets[0].data = d.dailyData;
+                dailyChartInstance.update();
+              }
+
+              // Update titles, subtitles and badges dynamically
+              const trendTitle = document.getElementById(
+                "predictionTrendTitle",
+              );
+              const trendBadge = document.getElementById(
+                "predictionTrendBadge",
+              );
+              const trendSubtitle = document.getElementById(
+                "predictionTrendSubtitle",
+              );
+              if (trendTitle && trendBadge && trendSubtitle) {
+                const t_func2 =
+                  typeof window.PetAI_i18n !== "undefined"
+                    ? window.PetAI_i18n.t
+                    : function (x) {
+                        return x;
+                      };
+                if (period === "7days") {
+                  trendTitle.textContent = t_func2("predTrendTitle7");
+                  trendBadge.textContent = t_func2("last7days");
+                  trendSubtitle.textContent = t_func2(
+                    "predTrendSubtitleDefault",
+                  );
+                } else if (period === "30days") {
+                  trendTitle.textContent = t_func2("predTrendTitle30");
+                  trendBadge.textContent = t_func2("days30");
+                  trendSubtitle.textContent = t_func2(
+                    "predTrendSubtitleDefault",
+                  );
+                } else if (period === "90days") {
+                  trendTitle.textContent = t_func2("predTrendTitle90");
+                  trendBadge.textContent = t_func2("days90");
+                  trendSubtitle.textContent = t_func2(
+                    "predTrendSubtitleDefault",
+                  );
+                } else if (period === "12months") {
+                  trendTitle.textContent = t_func2("predTrendTitle12");
+                  trendBadge.textContent = t_func2("months12");
+                  trendSubtitle.textContent = t_func2("predTrendSubtitleMonth");
+                } else {
+                  trendTitle.textContent = t_func2("predTrendTitleCustom");
+                  trendBadge.textContent = t_func2("custom");
+                  trendSubtitle.textContent = t_func2("customRangeSubtitle")
+                    .replace(
+                      "{start}",
+                      startDate.split("-").reverse().join("/"),
+                    )
+                    .replace("{end}", endDate.split("-").reverse().join("/"));
+                }
+              }
+
+              // 2. Top Breeds Chart
+              if (topBreedsChartInstance) {
+                const hasData = d.topBreeds && d.topBreeds.length > 0;
+                topBreedsChartInstance.data.labels = hasData
+                  ? d.topBreeds
+                  : [
+                      typeof window.PetAI_i18n !== "undefined"
+                        ? window.PetAI_i18n.t("noDataChart")
+                        : "Chưa có dữ liệu",
+                    ];
+                topBreedsChartInstance.data.datasets[0].data = hasData
+                  ? d.topBreedsCounts
+                  : [1];
+                topBreedsChartInstance.data.datasets[0].backgroundColor =
+                  hasData
+                    ? ["#004ac6", "#fea619", "#943700", "#10b981", "#8b5cf6"]
+                    : [isDarkMode ? "#334155" : "#cbd5e1"];
+                topBreedsChartInstance.options.plugins.tooltip.enabled =
+                  hasData;
+                topBreedsChartInstance.update();
+              }
+
+              // 3. Confidence Distribution Chart
+              if (confidenceChartInstance) {
+                confidenceChartInstance.data.datasets[0].data =
+                  d.confidenceDist;
+                confidenceChartInstance.update();
+              }
+            })
+            .catch((err) =>
+              console.error("Error fetching activity stats:", err),
+            );
+        }
+
+        // Timeframe selector for activity charts
+        document.querySelectorAll(".act-tab").forEach(function (btn) {
+          btn.addEventListener("click", function (e) {
+            const period = this.getAttribute("data-period");
+            if (period === "custom") {
+              const popover = document.getElementById("activityCustomPopover");
+              if (popover) {
+                popover.classList.toggle("hidden");
+              }
+              return;
+            }
+
+            // Hide custom popover
+            const popover = document.getElementById("activityCustomPopover");
+            if (popover) popover.classList.add("hidden");
+
+            updateActivityChartsData(period);
+
+            // Update active tab styles
+            document.querySelectorAll(".act-tab").forEach(function (t) {
+              t.classList.remove(
+                "bg-primary",
+                "text-white",
+                "shadow-sm",
+                "font-semibold",
+              );
+              t.classList.add("text-on-surface-variant", "font-medium");
             });
-          } else if (breakdownEl) {
-            breakdownEl.innerHTML = '<p class="text-on-surface-variant label-sm">Chưa có dữ liệu gói đăng ký.</p>';
+            this.classList.add(
+              "bg-primary",
+              "text-white",
+              "shadow-sm",
+              "font-semibold",
+            );
+            this.classList.remove("text-on-surface-variant", "font-medium");
+          });
+        });
+
+        // Apply custom range button for activity
+        const applyActBtn = document.getElementById("applyActivityCustom");
+        if (applyActBtn) {
+          applyActBtn.addEventListener("click", function () {
+            const start = document.getElementById("activityStartDate").value;
+            const end = document.getElementById("activityEndDate").value;
+            if (!start || !end) {
+              alert(
+                typeof window.PetAI_i18n !== "undefined"
+                  ? window.PetAI_i18n.t("pleaseSelectDates")
+                  : "Vui lòng chọn đầy đủ ngày bắt đầu và ngày kết thúc!",
+              );
+              return;
+            }
+            if (new Date(start) > new Date(end)) {
+              alert(
+                typeof window.PetAI_i18n !== "undefined"
+                  ? window.PetAI_i18n.t("startDateAfterEndDate")
+                  : "Ngày bắt đầu không được lớn hơn ngày kết thúc!",
+              );
+              return;
+            }
+
+            updateActivityChartsData("custom", start, end);
+
+            // Update active styles
+            document.querySelectorAll(".act-tab").forEach(function (t) {
+              t.classList.remove(
+                "bg-primary",
+                "text-white",
+                "shadow-sm",
+                "font-semibold",
+              );
+              t.classList.add("text-on-surface-variant", "font-medium");
+            });
+            const customBtn = document.getElementById("activityCustomBtn");
+            if (customBtn) {
+              customBtn.classList.add(
+                "bg-primary",
+                "text-white",
+                "shadow-sm",
+                "font-semibold",
+              );
+              customBtn.classList.remove(
+                "text-on-surface-variant",
+                "font-medium",
+              );
+            }
+
+            // Hide popover
+            const popover = document.getElementById("activityCustomPopover");
+            if (popover) popover.classList.add("hidden");
+          });
+        }
+
+        // Close popovers on outside click
+        document.addEventListener("click", function (event) {
+          const revPopover = document.getElementById("revenueCustomPopover");
+          const revBtn = document.getElementById("revenueCustomBtn");
+          if (revPopover && !revPopover.classList.contains("hidden")) {
+            if (
+              !revPopover.contains(event.target) &&
+              !revBtn.contains(event.target)
+            ) {
+              revPopover.classList.add("hidden");
+            }
+          }
+          const actPopover = document.getElementById("activityCustomPopover");
+          const actBtn = document.getElementById("activityCustomBtn");
+          if (actPopover && !actPopover.classList.contains("hidden")) {
+            if (
+              !actPopover.contains(event.target) &&
+              !actBtn.contains(event.target)
+            ) {
+              actPopover.classList.add("hidden");
+            }
+          }
+        });
+        // ── Animated counter for stat cards ──
+        (function () {
+          const DURATION = 1200;
+          const els = document.querySelectorAll("[data-counter]");
+          if (!els.length) return;
+
+          function easeOutExpo(t) {
+            return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+          }
+
+          function formatNumber(num, isFloat, decimals, useCommas) {
+            let formatted = isFloat
+              ? num.toFixed(decimals)
+              : Math.round(num).toString();
+            if (useCommas) {
+              const parts = formatted.split(".");
+              parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+              formatted = parts.join(".");
+            }
+            return formatted;
+          }
+
+          function animateValue(el) {
+            const target = parseFloat(el.getAttribute("data-counter"));
+            const suffix = el.getAttribute("data-suffix") || "";
+            const useCommas = el.getAttribute("data-use-commas") === "true";
+            const isFloat = String(target).includes(".") && !useCommas;
+            const decimals = isFloat ? String(target).split(".")[1].length : 0;
+            let start = null;
+
+            function step(ts) {
+              if (!start) start = ts;
+              const progress = Math.min((ts - start) / DURATION, 1);
+              const value = easeOutExpo(progress) * target;
+              el.textContent =
+                formatNumber(value, isFloat, decimals, useCommas) + suffix;
+              if (progress < 1) requestAnimationFrame(step);
+            }
+            requestAnimationFrame(step);
+          }
+
+          if ("IntersectionObserver" in window) {
+            const observer = new IntersectionObserver(
+              (entries) => {
+                entries.forEach((e) => {
+                  if (e.isIntersecting) {
+                    animateValue(e.target);
+                    observer.unobserve(e.target);
+                  }
+                });
+              },
+              { threshold: 0.3 },
+            );
+            els.forEach((el) => observer.observe(el));
+          } else {
+            els.forEach(animateValue);
           }
         })();
-      }
-
-      // ─── Activity / Prediction Charts ───────────────────────────────
-      let dailyChartInstance = null;
-      let topBreedsChartInstance = null;
-      let confidenceChartInstance = null;
-
-      const initData = activityDatasets['7'];
-
-      // Chart 1: Line Chart (Daily Predictions Trend)
-      const ctxDaily = document.getElementById("dailyPredictionsChart");
-      if (ctxDaily) {
-        dailyChartInstance = new Chart(ctxDaily.getContext("2d"), {
-          type: "line",
-          data: {
-            labels: initData.dailyLabels,
-            datasets: [{
-              label: "Số lượt nhận diện",
-              data: initData.dailyData,
-              borderColor: primaryColor,
-              backgroundColor: isDarkMode ? "rgba(0, 74, 198, 0.15)" : "rgba(0, 74, 198, 0.05)",
-              borderWidth: 3,
-              fill: true,
-              tension: 0.4,
-              pointBackgroundColor: primaryColor,
-              pointBorderColor: isDarkMode ? "#0f172a" : "#fff",
-              pointBorderWidth: 2,
-              pointRadius: 4,
-              pointHoverRadius: 6
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              legend: { display: false },
-              tooltip: {
-                padding: 12,
-                backgroundColor: isDarkMode ? "#1e293b" : "#ffffff",
-                titleColor: isDarkMode ? "#ffffff" : "#0f172a",
-                bodyColor: isDarkMode ? "#cbd5e1" : "#475569",
-                borderColor: isDarkMode ? "#334155" : "#e2e8f0",
-                borderWidth: 1,
-                displayColors: false,
-                titleFont: { family: "Inter", weight: "bold" },
-                bodyFont: { family: "Inter" }
-              }
-            },
-            scales: {
-              x: {
-                grid: { display: false },
-                ticks: { color: textColor, font: { family: "Inter", size: 11 } }
-              },
-              y: {
-                grid: { color: gridColor, drawBorder: false },
-                ticks: {
-                  color: textColor,
-                  font: { family: "Inter", size: 11 },
-                  precision: 0
-                },
-                beginAtZero: true
-              }
-            }
-          }
-        });
-      }
-
-      // Chart 2: Doughnut Chart (Top Breeds)
-      const ctxTop = document.getElementById("topBreedsChart");
-      if (ctxTop) {
-        const colors = [
-          "#004ac6", // Primary
-          "#fea619", // Secondary
-          "#943700", // Tertiary
-          "#10b981", // Emerald
-          "#8b5cf6"  // Purple
-        ];
-        const hasData = initData.topBreeds.length > 0;
-
-        topBreedsChartInstance = new Chart(ctxTop.getContext("2d"), {
-          type: "doughnut",
-          data: {
-            labels: hasData ? initData.topBreeds : ["Chưa có dữ liệu"],
-            datasets: [{
-              data: hasData ? initData.topBreedsCounts : [1],
-              backgroundColor: hasData ? colors : [isDarkMode ? "#334155" : "#cbd5e1"],
-              borderWidth: isDarkMode ? 2 : 1,
-              borderColor: isDarkMode ? "#0f172a" : "#ffffff"
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              legend: {
-                position: "right",
-                labels: {
-                  color: textColor,
-                  font: { family: "Inter", size: 12 },
-                  boxWidth: 12,
-                  padding: 15
-                }
-              },
-              tooltip: {
-                enabled: hasData,
-                padding: 12,
-                backgroundColor: isDarkMode ? "#1e293b" : "#ffffff",
-                titleColor: isDarkMode ? "#ffffff" : "#0f172a",
-                bodyColor: isDarkMode ? "#cbd5e1" : "#475569",
-                borderColor: isDarkMode ? "#334155" : "#e2e8f0",
-                borderWidth: 1,
-                titleFont: { family: "Inter", weight: "bold" },
-                bodyFont: { family: "Inter" }
-              }
-            },
-            cutout: "70%"
-          }
-        });
-      }
-
-      // Chart 3: Bar Chart (Confidence Distribution)
-      const ctxConf = document.getElementById("confidenceDistChart");
-      if (ctxConf) {
-        confidenceChartInstance = new Chart(ctxConf.getContext("2d"), {
-          type: "bar",
-          data: {
-            labels: ["0-20%", "20-40%", "40-60%", "60-80%", "80-100%"],
-            datasets: [{
-              data: initData.confidenceDist,
-              backgroundColor: "rgba(0, 74, 198, 0.75)",
-              hoverBackgroundColor: primaryColor,
-              borderRadius: 4,
-              borderSkipped: false
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              legend: { display: false },
-              tooltip: {
-                padding: 12,
-                backgroundColor: isDarkMode ? "#1e293b" : "#ffffff",
-                titleColor: isDarkMode ? "#ffffff" : "#0f172a",
-                bodyColor: isDarkMode ? "#cbd5e1" : "#475569",
-                borderColor: isDarkMode ? "#334155" : "#e2e8f0",
-                borderWidth: 1,
-                displayColors: false,
-                titleFont: { family: "Inter", weight: "bold" },
-                bodyFont: { family: "Inter" },
-                callbacks: {
-                  label: function (context) {
-                    return `Số lượt: ${context.parsed.y}`;
-                  }
-                }
-              }
-            },
-            scales: {
-              x: {
-                grid: { display: false },
-                ticks: { color: textColor, font: { family: "Inter", size: 11 } }
-              },
-              y: {
-                grid: { color: gridColor, drawBorder: false },
-                ticks: {
-                  color: textColor,
-                  font: { family: "Inter", size: 11 },
-                  precision: 0
-                },
-                beginAtZero: true
-              }
-            }
-          }
-        });
-      }
-
-      // ── Function to switch timeframe for activity charts dynamically ──
-      function updateActivityChartsData(period, startDate, endDate) {
-        let url = `/dashboard/api/activity-stats?period=${period}`;
-        if (startDate && endDate) {
-          url += `&startDate=${startDate}&endDate=${endDate}`;
-        }
-        
-        fetch(url)
-          .then(res => res.json())
-          .then(d => {
-            // 1. Line Chart
-            if (dailyChartInstance) {
-              dailyChartInstance.data.labels = d.dailyLabels;
-              dailyChartInstance.data.datasets[0].data = d.dailyData;
-              dailyChartInstance.update();
-            }
-
-            // Update titles, subtitles and badges dynamically
-            const trendTitle = document.getElementById("predictionTrendTitle");
-            const trendBadge = document.getElementById("predictionTrendBadge");
-            const trendSubtitle = document.getElementById("predictionTrendSubtitle");
-            if (trendTitle && trendBadge && trendSubtitle) {
-              if (period === '7days') {
-                trendTitle.textContent = "Xu hướng dự đoán 7 ngày gần đây";
-                trendBadge.textContent = "7 ngày qua";
-                trendSubtitle.textContent = "Số lượng ảnh đã nhận diện mỗi ngày";
-              } else if (period === '30days') {
-                trendTitle.textContent = "Xu hướng dự đoán 30 ngày gần đây";
-                trendBadge.textContent = "30 ngày qua";
-                trendSubtitle.textContent = "Số lượng ảnh đã nhận diện mỗi ngày";
-              } else if (period === '90days') {
-                trendTitle.textContent = "Xu hướng dự đoán 90 ngày gần đây";
-                trendBadge.textContent = "90 ngày qua";
-                trendSubtitle.textContent = "Số lượng ảnh đã nhận diện mỗi ngày";
-              } else if (period === '12months') {
-                trendTitle.textContent = "Xu hướng dự đoán 12 tháng gần đây";
-                trendBadge.textContent = "12 tháng qua";
-                trendSubtitle.textContent = "Số lượng ảnh đã nhận diện theo tháng";
-              } else {
-                trendTitle.textContent = "Xu hướng dự đoán tùy chỉnh";
-                trendBadge.textContent = "Tùy chỉnh";
-                trendSubtitle.textContent = `Từ ngày ${startDate.split('-').reverse().join('/')} đến ngày ${endDate.split('-').reverse().join('/')}`;
-              }
-            }
-
-            // 2. Top Breeds Chart
-            if (topBreedsChartInstance) {
-              const hasData = d.topBreeds && d.topBreeds.length > 0;
-              topBreedsChartInstance.data.labels = hasData ? d.topBreeds : ["Chưa có dữ liệu"];
-              topBreedsChartInstance.data.datasets[0].data = hasData ? d.topBreedsCounts : [1];
-              topBreedsChartInstance.data.datasets[0].backgroundColor = hasData
-                ? ["#004ac6", "#fea619", "#943700", "#10b981", "#8b5cf6"]
-                : [isDarkMode ? "#334155" : "#cbd5e1"];
-              topBreedsChartInstance.options.plugins.tooltip.enabled = hasData;
-              topBreedsChartInstance.update();
-            }
-
-            // 3. Confidence Distribution Chart
-            if (confidenceChartInstance) {
-              confidenceChartInstance.data.datasets[0].data = d.confidenceDist;
-              confidenceChartInstance.update();
-            }
-          })
-          .catch(err => console.error("Error fetching activity stats:", err));
-      }
-
-      // Timeframe selector for activity charts
-      document.querySelectorAll('.act-tab').forEach(function(btn) {
-        btn.addEventListener('click', function(e) {
-          const period = this.getAttribute('data-period');
-          if (period === 'custom') {
-            const popover = document.getElementById('activityCustomPopover');
-            if (popover) {
-              popover.classList.toggle('hidden');
-            }
-            return;
-          }
-
-          // Hide custom popover
-          const popover = document.getElementById('activityCustomPopover');
-          if (popover) popover.classList.add('hidden');
-
-          updateActivityChartsData(period);
-
-          // Update active tab styles
-          document.querySelectorAll('.act-tab').forEach(function(t) {
-            t.classList.remove('bg-primary', 'text-white', 'shadow-sm', 'font-semibold');
-            t.classList.add('text-on-surface-variant', 'font-medium');
-          });
-          this.classList.add('bg-primary', 'text-white', 'shadow-sm', 'font-semibold');
-          this.classList.remove('text-on-surface-variant', 'font-medium');
-        });
       });
-
-      // Apply custom range button for activity
-      const applyActBtn = document.getElementById('applyActivityCustom');
-      if (applyActBtn) {
-        applyActBtn.addEventListener('click', function() {
-          const start = document.getElementById('activityStartDate').value;
-          const end = document.getElementById('activityEndDate').value;
-          if (!start || !end) {
-            alert("Vui lòng chọn đầy đủ ngày bắt đầu và ngày kết thúc!");
-            return;
-          }
-          if (new Date(start) > new Date(end)) {
-            alert("Ngày bắt đầu không được lớn hơn ngày kết thúc!");
-            return;
-          }
-
-          updateActivityChartsData('custom', start, end);
-
-          // Update active styles
-          document.querySelectorAll('.act-tab').forEach(function(t) {
-            t.classList.remove('bg-primary', 'text-white', 'shadow-sm', 'font-semibold');
-            t.classList.add('text-on-surface-variant', 'font-medium');
-          });
-          const customBtn = document.getElementById('activityCustomBtn');
-          if (customBtn) {
-            customBtn.classList.add('bg-primary', 'text-white', 'shadow-sm', 'font-semibold');
-            customBtn.classList.remove('text-on-surface-variant', 'font-medium');
-          }
-
-          // Hide popover
-          const popover = document.getElementById('activityCustomPopover');
-          if (popover) popover.classList.add('hidden');
-        });
-      }
-
-      // Close popovers on outside click
-      document.addEventListener('click', function(event) {
-        const revPopover = document.getElementById('revenueCustomPopover');
-        const revBtn = document.getElementById('revenueCustomBtn');
-        if (revPopover && !revPopover.classList.contains('hidden')) {
-          if (!revPopover.contains(event.target) && !revBtn.contains(event.target)) {
-            revPopover.classList.add('hidden');
-          }
-        }
-        const actPopover = document.getElementById('activityCustomPopover');
-        const actBtn = document.getElementById('activityCustomBtn');
-        if (actPopover && !actPopover.classList.contains('hidden')) {
-          if (!actPopover.contains(event.target) && !actBtn.contains(event.target)) {
-            actPopover.classList.add('hidden');
-          }
-        }
-      });
-      // ── Animated counter for stat cards ──
-      (function () {
-        const DURATION = 1200;
-        const els = document.querySelectorAll("[data-counter]");
-        if (!els.length) return;
-
-        function easeOutExpo(t) {
-          return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
-        }
-
-        function formatNumber(num, isFloat, decimals, useCommas) {
-          let formatted = isFloat ? num.toFixed(decimals) : Math.round(num).toString();
-          if (useCommas) {
-            const parts = formatted.split('.');
-            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-            formatted = parts.join('.');
-          }
-          return formatted;
-        }
-
-        function animateValue(el) {
-          const target = parseFloat(el.getAttribute("data-counter"));
-          const suffix = el.getAttribute("data-suffix") || "";
-          const useCommas = el.getAttribute("data-use-commas") === "true";
-          const isFloat = String(target).includes(".") && !useCommas;
-          const decimals = isFloat
-            ? String(target).split(".")[1].length
-            : 0;
-          let start = null;
-
-          function step(ts) {
-            if (!start) start = ts;
-            const progress = Math.min((ts - start) / DURATION, 1);
-            const value = easeOutExpo(progress) * target;
-            el.textContent = formatNumber(value, isFloat, decimals, useCommas) + suffix;
-            if (progress < 1) requestAnimationFrame(step);
-          }
-          requestAnimationFrame(step);
-        }
-
-        if ("IntersectionObserver" in window) {
-          const observer = new IntersectionObserver(
-            (entries) => {
-              entries.forEach((e) => {
-                if (e.isIntersecting) {
-                  animateValue(e.target);
-                  observer.unobserve(e.target);
-                }
-              });
-            },
-            { threshold: 0.3 }
-          );
-          els.forEach((el) => observer.observe(el));
-        } else {
-          els.forEach(animateValue);
-        }
-      })();
-    });
-  </script>
-</body>
-
+    </script>
+  </body>
 </html>

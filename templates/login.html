@@ -1,11 +1,31 @@
 <!doctype html>
 
-<html
-  class="{{ 'dark' if ui_theme == 'dark' else 'light' }}"
-  lang="vi"
-  data-theme="{{ ui_theme or 'light' }}"
->
+<html class="{{ 'dark' if ui_theme == 'dark' else 'light' }}{{ ' i18n-loading' if ui_language == 'en' else '' }}" lang="{{ ui_language or 'vi' }}" data-theme="{{ ui_theme or 'light' }}">
   <head>
+    <script>
+      (function () {
+        var savedLang = "vi";
+        try {
+          savedLang = localStorage.getItem("siteLanguage") || "vi";
+        } catch (e) {}
+        document.documentElement.setAttribute("data-user-lang", savedLang);
+        if (savedLang === "en") {
+          document.documentElement.classList.add("i18n-loading");
+        }
+      })();
+    </script>
+    <style>
+      html.i18n-loading body {
+        visibility: hidden !important;
+      }
+    </style>
+    <noscript>
+      <style>
+        html.i18n-loading body {
+          visibility: visible !important;
+        }
+      </style>
+    </noscript>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <script>
@@ -64,7 +84,7 @@
         }
       })();
     </script>
-    <title>Đăng nhập - PetAI</title>
+    <title data-i18n="loginPageTitle">{{ 'Login - PetAI' if ui_language == 'en' else 'Đăng nhập - PetAI' }}</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link
       rel="stylesheet"
@@ -199,7 +219,6 @@
       };
     </script>
     <style>
-      
       .material-symbols-outlined {
         font-variation-settings:
           "FILL" 0,
@@ -222,9 +241,9 @@
         >
           <div class="absolute inset-0 z-0">
             <img
-              alt="Chó Beagle nhìn thẳng vào ống kính với phông nền ấm"
+              alt="Beagle"
               class="w-full h-full object-cover"
-              data-alt="Chân dung cận cảnh chó Beagle với ánh sáng tự nhiên, hậu cảnh mờ"
+              data-alt="Beagle close-up portrait"
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5fynjldTqzOeKUmgn9EN68dTw34EIKyLxt0PGNI2uSCmNkUn8JDlAhjZyoP048x6EDyYnM_0Jxu33O7MS_gI_RF6IImVuYwRWgTjCL156CU6J85f0aL6HuMR8e2k_qBPQYK2szZ3gkqEFDv4n9urLGwtng38kqg1O51qQAH3yeu1YVZo92hbsFb-l9bFV08j0kq8N1c0NcNnhYmi1ojx6TC9Qd_d7t_P4EjdDxm3XYyi2dZA5QemVz0eRpMuvnPX21_SxBiYGfBM"
             />
             <div
@@ -247,12 +266,19 @@
                   >PetAI</span
                 >
               </div>
-              <h1 class="headline-lg mb-sm">
-                Nhận diện giống chó nhanh và chính xác
+              <h1 class="headline-lg mb-sm" data-i18n="loginLeftTitle">
+                <span data-i18n="loginLeftTitle"
+                  >Nhận diện giống chó nhanh và chính xác</span
+                >
               </h1>
-              <p class="body-md text-primary-fixed-dim">
-                Trợ lý thông minh giúp bạn nhận diện và hiểu hơn về thú cưng của
-                mình.
+              <p
+                class="body-md text-primary-fixed-dim"
+                data-i18n="loginLeftSubtitle"
+              >
+                <span data-i18n="loginLeftSubtitle"
+                  >Trợ lý thông minh giúp bạn nhận diện và hiểu hơn về thú cưng
+                  của mình.</span
+                >
               </p>
             </div>
             <div class="space-y-sm">
@@ -267,9 +293,21 @@
                   >analytics</span
                 >
                 <div>
-                  <h3 class="label-sm text-on-primary">Điểm tin cậy rõ ràng</h3>
-                  <p class="body-md text-primary-fixed-dim">
-                    Phân tích chi tiết từ AI
+                  <h3
+                    class="label-sm text-on-primary"
+                    data-i18n="loginFeature1Title"
+                  >
+                    <span data-i18n="loginFeature1Title"
+                      >Điểm tin cậy rõ ràng</span
+                    >
+                  </h3>
+                  <p
+                    class="body-md text-primary-fixed-dim"
+                    data-i18n="loginFeature1Desc"
+                  >
+                    <span data-i18n="loginFeature1Desc"
+                      >Phân tích chi tiết từ AI</span
+                    >
                   </p>
                 </div>
               </div>
@@ -284,9 +322,19 @@
                   >history</span
                 >
                 <div>
-                  <h3 class="label-sm text-on-primary">Lịch sử quét</h3>
-                  <p class="body-md text-primary-fixed-dim">
-                    Lưu lại các kết quả nhận diện
+                  <h3
+                    class="label-sm text-on-primary"
+                    data-i18n="loginFeature2Title"
+                  >
+                    <span data-i18n="loginFeature2Title">Lịch sử quét</span>
+                  </h3>
+                  <p
+                    class="body-md text-primary-fixed-dim"
+                    data-i18n="loginFeature2Desc"
+                  >
+                    <span data-i18n="loginFeature2Desc"
+                      >Lưu lại các kết quả nhận diện</span
+                    >
                   </p>
                 </div>
               </div>
@@ -306,9 +354,16 @@
           </div>
           <div class="w-full max-w-[400px] mx-auto flex flex-col gap-md">
             <div class="text-center mb-md">
-              <h2 class="headline-lg text-on-surface">Đăng nhập tài khoản</h2>
-              <p class="body-md text-on-surface-variant mt-xs">
-                Chào mừng bạn quay lại! Vui lòng nhập thông tin.
+              <h2 class="headline-lg text-on-surface" data-i18n="loginTitle">
+                <span data-i18n="loginTitle">Đăng nhập tài khoản</span>
+              </h2>
+              <p
+                class="body-md text-on-surface-variant mt-xs"
+                data-i18n="loginSubtitle"
+              >
+                <span data-i18n="loginSubtitle"
+                  >Chào mừng bạn quay lại! Vui lòng nhập thông tin.</span
+                >
               </p>
             </div>
             <form
@@ -324,14 +379,20 @@
                 value="{{ csrf_token() }}"
               />
               <div class="flex flex-col gap-xs">
-                <label class="label-sm text-on-surface" for="username"
-                  >Tên đăng nhập hoặc email</label
+                <label
+                  class="label-sm text-on-surface"
+                  for="username"
+                  data-i18n="usernameOrEmail"
+                  ><span data-i18n="usernameOrEmail"
+                    >Tên đăng nhập hoặc email</span
+                  ></label
                 >
                 <input
                   class="w-full px-4 py-3 rounded border border-outline-variant bg-surface-container-lowest text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all body-md"
                   id="username"
                   name="username"
                   placeholder="vd: username hoặc email@example.com"
+                  data-i18n-placeholder="usernamePlaceholder"
                   required
                   type="text"
                   autocomplete="username"
@@ -343,13 +404,17 @@
               </div>
               <div class="flex flex-col gap-xs">
                 <div class="flex justify-between items-center">
-                  <label class="label-sm text-on-surface" for="password"
-                    >Mật khẩu</label
+                  <label
+                    class="label-sm text-on-surface"
+                    for="password"
+                    data-i18n="passwordLabel"
+                    ><span data-i18n="passwordLabel">Mật khẩu</span></label
                   >
                   <a
                     class="label-sm text-primary hover:text-primary-container transition-colors"
                     href="{{ url_for('account.forgot') }}"
-                    >Quên mật khẩu?</a
+                    data-i18n="forgotPassword"
+                    ><span data-i18n="forgotPassword">Quên mật khẩu?</span></a
                   >
                 </div>
                 <div class="relative">
@@ -358,6 +423,7 @@
                     id="password"
                     name="password"
                     placeholder="Nhập mật khẩu"
+                    data-i18n-placeholder="passwordPlaceholder"
                     required
                     type="password"
                     autocomplete="current-password"
@@ -390,15 +456,18 @@
                 <label
                   class="ml-2 body-md text-on-surface-variant"
                   for="remember"
-                  >Ghi nhớ đăng nhập</label
+                  data-i18n="rememberLogin"
+                  ><span data-i18n="rememberLogin"
+                    >Ghi nhớ đăng nhập</span
+                  ></label
                 >
               </div>
               <button
                 class="w-full py-3 px-4 bg-primary text-on-primary label-sm rounded hover:bg-primary-container hover:-translate-y-[1px] transition-all shadow-sm active:scale-95 flex items-center justify-center gap-xs"
                 type="submit"
               >
-                Đăng nhập
-                <span
+                <span data-i18n="login">Đăng nhập</span
+                ><span
                   class="material-symbols-outlined text-[18px]"
                   data-icon="arrow_forward"
                   >arrow_forward</span
@@ -407,7 +476,9 @@
             </form>
             <div class="relative flex items-center py-sm">
               <div class="flex-grow border-t border-outline-variant"></div>
-              <span class="flex-shrink-0 mx-4 text-on-surface-variant body-md"
+              <span
+                class="flex-shrink-0 mx-4 text-on-surface-variant body-md"
+                data-i18n="orContinueWith"
                 >hoặc tiếp tục với</span
               >
               <div class="flex-grow border-t border-outline-variant"></div>
@@ -417,19 +488,21 @@
               href="{{ url_for('login_google') }}"
             >
               <img
-                alt="Logo Google"
+                alt="Google Logo"
                 class="w-5 h-5"
-                data-alt="Logo chữ G của Google"
+                data-alt="Google G Logo"
                 src="https://www.gstatic.com/images/branding/googleg/1x/googleg_standard_color_128dp.png"
-              />
-              Đăng nhập bằng Google
-            </a>
+              /><span data-i18n="loginWithGoogle"
+                >Đăng nhập bằng Google</span
+              ></a
+            >
             <p class="text-center body-md text-on-surface-variant mt-sm">
-              Chưa có tài khoản?
-              <a
+              <span data-i18n="noAccount">Chưa có tài khoản?</span
+              ><a
                 class="label-sm text-primary hover:text-primary-container transition-colors"
                 href="{{ url_for('register.register') }}"
-                >Đăng ký ngay</a
+                data-i18n="registerNow"
+                ><span data-i18n="registerNow">Đăng ký ngay</span></a
               >
             </p>
           </div>
@@ -454,71 +527,103 @@
                 >
               </span>
             </div>
-            <p class="body-md text-on-surface-variant max-w-sm">
-              Ứng dụng nhận diện giống chó bằng AI dành cho người yêu thú cưng.
-              Kết quả chính xác, nhanh chóng.
+            <p
+              class="body-md text-on-surface-variant max-w-sm"
+              data-i18n="footerDesc"
+            >
+              <span data-i18n="footerDesc"
+                >Ứng dụng nhận diện giống chó bằng AI dành cho người yêu thú
+                cưng. Kết quả chính xác, nhanh chóng.</span
+              >
             </p>
           </div>
           <div class="lg:col-span-6 grid grid-cols-2 md:grid-cols-2 gap-8">
             <div class="space-y-6">
-              <h4 class="label-sm text-primary uppercase tracking-widest">
-                Về PetAI
+              <h4
+                class="label-sm text-primary uppercase tracking-widest"
+                data-i18n="aboutPetAI"
+              >
+                <span data-i18n="aboutPetAI">Về PetAI</span>
               </h4>
               <ul class="space-y-4">
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                    target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.privacy_policy') }}"
-                    >Chính sách quyền riêng tư</a
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href="{{ url_for('legal.privacy_policy') }}"
+                    data-i18n="privacy"
+                    ><span data-i18n="privacy"
+                      >Chính sách quyền riêng tư</span
+                    ></a
                   >
                 </li>
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                    target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.terms_of_service') }}"
-                    >Điều khoản sử dụng</a
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href="{{ url_for('legal.terms_of_service') }}"
+                    data-i18n="terms"
+                    ><span data-i18n="terms">Điều khoản sử dụng</span></a
                   >
                 </li>
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                    target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.data_deletion') }}"
-                    >Chính sách xóa dữ liệu</a
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href="{{ url_for('legal.data_deletion') }}"
+                    data-i18n="dataDeletion"
+                    ><span data-i18n="dataDeletion"
+                      >Chính sách xóa dữ liệu</span
+                    ></a
                   >
                 </li>
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                    target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.support') }}"
-                    >Hỗ trợ</a
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href="{{ url_for('legal.support') }}"
+                    data-i18n="support"
+                    ><span data-i18n="homeStatsSupport">HỖ TRỢ</span></a
                   >
                 </li>
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                    target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.contact') }}"
-                    >Liên hệ</a
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href="{{ url_for('legal.contact') }}"
+                    data-i18n="contact"
+                    ><span data-i18n="contact">Liên hệ</span></a
                   >
                 </li>
               </ul>
             </div>
             <div class="space-y-6">
-              <h4 class="label-sm text-primary uppercase tracking-widest">
-                Kết nối
+              <h4
+                class="label-sm text-primary uppercase tracking-widest"
+                data-i18n="connect"
+              >
+                <span data-i18n="connect">Kết nối</span>
               </h4>
               <ul class="space-y-4">
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
                     href="{{ url_for('predict.upload_page') }}"
-                    >Nhận diện ngay</a
+                    data-i18n="identifyNow"
+                    ><span data-i18n="identifyNow">Nhận diện ngay</span></a
                   >
                 </li>
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
                     href="{{ url_for('history.history') }}"
-                    >Bộ sưu tập</a
+                    data-i18n="collection"
+                    ><span data-i18n="collection">Bộ sưu tập</span></a
                   >
                 </li>
               </ul>
@@ -529,19 +634,36 @@
           <div
             class="flex flex-col md:flex-row justify-between items-center gap-4"
           >
-            <p class="label-sm text-on-surface-variant/70 dark:text-slate-400">
-              Bản quyền © 2026 PetAI. Mọi quyền được bảo lưu
+            <p
+              class="label-sm text-on-surface-variant/70 dark:text-slate-400"
+              data-i18n="copyright"
+            >
+              <span data-i18n="copyright"
+                >Bản quyền © 2026 PetAI. Mọi quyền được bảo lưu</span
+              >
             </p>
             <div class="flex gap-6">
+              <a class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
+
+                target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.user_guide') }}"
+
+                data-i18n="footerUserGuide"><span data-i18n="footerUserGuide">HƯỚNG DẪN SỬ DỤNG</span></a>
+
               <a
                 class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
-                target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.terms_of_service') }}"
-                >ĐIỀU KHOẢN</a
+                target="_blank"
+                rel="noopener noreferrer"
+                href="{{ url_for('legal.terms_of_service') }}"
+                data-i18n="footerTerms"
+                ><span data-i18n="footerTerms">ĐIỀU KHOẢN</span></a
               >
               <a
                 class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
-                target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.privacy_policy') }}"
-                >BẢO MẬT</a
+                target="_blank"
+                rel="noopener noreferrer"
+                href="{{ url_for('legal.privacy_policy') }}"
+                data-i18n="footerPrivacy"
+                ><span data-i18n="footerPrivacy">BẢO MẬT</span></a
               >
             </div>
           </div>
@@ -601,5 +723,6 @@
       })();
     </script>
     <script src="{{ url_for('static', filename='js/toasts.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
   </body>
 </html>

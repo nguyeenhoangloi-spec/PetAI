@@ -1,11 +1,31 @@
 <!doctype html>
 
-<html
-  class="{{ 'dark' if ui_theme == 'dark' else 'light' }}"
-  lang="vi"
-  data-theme="{{ ui_theme or 'light' }}"
->
+<html class="{{ 'dark' if ui_theme == 'dark' else 'light' }}{{ ' i18n-loading' if ui_language == 'en' else '' }}" lang="{{ ui_language or 'vi' }}" data-theme="{{ ui_theme or 'light' }}">
   <head>
+    <script>
+      (function () {
+        var savedLang = "vi";
+        try {
+          savedLang = localStorage.getItem("siteLanguage") || "vi";
+        } catch (e) {}
+        document.documentElement.setAttribute("data-user-lang", savedLang);
+        if (savedLang === "en") {
+          document.documentElement.classList.add("i18n-loading");
+        }
+      })();
+    </script>
+    <style>
+      html.i18n-loading body {
+        visibility: hidden !important;
+      }
+    </style>
+    <noscript>
+      <style>
+        html.i18n-loading body {
+          visibility: visible !important;
+        }
+      </style>
+    </noscript>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <script>
@@ -64,7 +84,7 @@
         }
       })();
     </script>
-    <title>Tạo tài khoản - PetAI</title>
+    <title data-i18n="registerPageTitle">{{ 'Create Account - PetAI' if ui_language == 'en' else 'Tạo tài khoản - PetAI' }}</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link
       rel="stylesheet"
@@ -182,7 +202,6 @@
       };
     </script>
     <style>
-      
       .material-symbols-outlined {
         font-variation-settings:
           "FILL" 0,
@@ -230,12 +249,19 @@
                   >PetAI</span
                 >
               </div>
-              <h1 class="headline-lg mb-sm">
-                Tham gia cộng đồng yêu chó cùng AI
+              <h1 class="headline-lg mb-sm" data-i18n="regLeftTitle">
+                <span data-i18n="regLeftTitle"
+                  >Tham gia cộng đồng yêu chó cùng AI</span
+                >
               </h1>
-              <p class="body-md text-primary-fixed-dim">
-                Lưu lịch sử nhận diện, phân tích thói quen và nhận cảnh báo sức
-                khỏe thông minh cho cún cưng của bạn.
+              <p
+                class="body-md text-primary-fixed-dim"
+                data-i18n="regLeftSubtitle"
+              >
+                <span data-i18n="regLeftSubtitle"
+                  >Lưu lịch sử nhận diện, phân tích thói quen và nhận cảnh báo
+                  sức khỏe thông minh cho cún cưng của bạn.</span
+                >
               </p>
             </div>
             <div class="space-y-sm">
@@ -250,11 +276,21 @@
                   >stars</span
                 >
                 <div>
-                  <h3 class="label-sm text-on-primary">
-                    Chào mừng thành viên mới
+                  <h3
+                    class="label-sm text-on-primary"
+                    data-i18n="regFeature1Title"
+                  >
+                    <span data-i18n="regFeature1Title"
+                      >Chào mừng thành viên mới</span
+                    >
                   </h3>
-                  <p class="body-md text-primary-fixed-dim">
-                    Bắt đầu với gói Free ngay hôm nay
+                  <p
+                    class="body-md text-primary-fixed-dim"
+                    data-i18n="regFeature1Desc"
+                  >
+                    <span data-i18n="regFeature1Desc"
+                      >Bắt đầu với gói Free ngay hôm nay</span
+                    >
                   </p>
                 </div>
               </div>
@@ -269,9 +305,19 @@
                   >check_circle</span
                 >
                 <div>
-                  <h3 class="label-sm text-on-primary">10 lượt miễn phí</h3>
-                  <p class="body-md text-primary-fixed-dim">
-                    Mỗi tài khoản có sẵn lượt trải nghiệm ban đầu
+                  <h3
+                    class="label-sm text-on-primary"
+                    data-i18n="regFeature2Title"
+                  >
+                    <span data-i18n="regFeature2Title">10 lượt miễn phí</span>
+                  </h3>
+                  <p
+                    class="body-md text-primary-fixed-dim"
+                    data-i18n="regFeature2Desc"
+                  >
+                    <span data-i18n="regFeature2Desc"
+                      >Mỗi tài khoản có sẵn lượt trải nghiệm ban đầu</span
+                    >
                   </p>
                 </div>
               </div>
@@ -286,9 +332,19 @@
                   >shield</span
                 >
                 <div>
-                  <h3 class="label-sm text-on-primary">Bảo mật tài khoản</h3>
-                  <p class="body-md text-primary-fixed-dim">
-                    Thông tin cá nhân được bảo vệ an toàn
+                  <h3
+                    class="label-sm text-on-primary"
+                    data-i18n="regFeature3Title"
+                  >
+                    <span data-i18n="regFeature3Title">Bảo mật tài khoản</span>
+                  </h3>
+                  <p
+                    class="body-md text-primary-fixed-dim"
+                    data-i18n="regFeature3Desc"
+                  >
+                    <span data-i18n="regFeature3Desc"
+                      >Thông tin cá nhân được bảo vệ an toàn</span
+                    >
                   </p>
                 </div>
               </div>
@@ -308,9 +364,16 @@
           </div>
           <div class="w-full max-w-[400px] mx-auto flex flex-col gap-md">
             <div class="text-center mb-md">
-              <h2 class="headline-lg text-on-surface">Tạo tài khoản mới</h2>
-              <p class="body-md text-on-surface-variant mt-xs">
-                Điền thông tin bên dưới để bắt đầu nhận diện giống chó.
+              <h2 class="headline-lg text-on-surface" data-i18n="registerTitle">
+                <span data-i18n="registerTitle">Tạo tài khoản mới</span>
+              </h2>
+              <p
+                class="body-md text-on-surface-variant mt-xs"
+                data-i18n="registerSubtitle"
+              >
+                <span data-i18n="registerSubtitle"
+                  >Điền thông tin bên dưới để bắt đầu nhận diện giống chó.</span
+                >
               </p>
             </div>
             <form
@@ -330,7 +393,8 @@
                   <label
                     class="block label-sm text-on-surface mb-xs"
                     for="fullname"
-                    >Họ và tên</label
+                    data-i18n="fullnameLabel"
+                    ><span data-i18n="fullnameLabel">Họ và tên</span></label
                   >
                   <input
                     class="w-full h-11 px-sm rounded-xl border border-outline-variant bg-surface-container-lowest text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all body-md"
@@ -340,6 +404,7 @@
                     type="text"
                     autocomplete="name"
                     required
+                    data-i18n-placeholder="fullnamePlaceholder"
                   />
                   <small
                     class="label-sm text-error mt-xs"
@@ -350,7 +415,8 @@
                   <label
                     class="block label-sm text-on-surface mb-xs"
                     for="username"
-                    >Tên đăng nhập</label
+                    data-i18n="usernameLabel"
+                    ><span data-i18n="usernameLabel">Tên đăng nhập</span></label
                   >
                   <input
                     class="w-full h-11 px-sm rounded-xl border border-outline-variant bg-surface-container-lowest text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all body-md"
@@ -360,6 +426,7 @@
                     type="text"
                     autocomplete="username"
                     required
+                    data-i18n-placeholder="usernamePlaceholderReg"
                   />
                   <small
                     class="label-sm text-error mt-xs"
@@ -368,8 +435,11 @@
                 </div>
               </div>
               <div>
-                <label class="block label-sm text-on-surface mb-xs" for="email"
-                  >Email</label
+                <label
+                  class="block label-sm text-on-surface mb-xs"
+                  for="email"
+                  data-i18n="emailLabel"
+                  ><span data-i18n="emailLabel">Email</span></label
                 >
                 <input
                   class="w-full h-11 px-sm rounded-xl border border-outline-variant bg-surface-container-lowest text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all body-md"
@@ -390,7 +460,8 @@
                   <label
                     class="block label-sm text-on-surface mb-xs"
                     for="password"
-                    >Mật khẩu</label
+                    data-i18n="passwordLabel"
+                    ><span data-i18n="passwordLabel">Mật khẩu</span></label
                   >
                   <div class="relative">
                     <input
@@ -401,6 +472,7 @@
                       type="password"
                       autocomplete="new-password"
                       required
+                      data-i18n-placeholder="passwordPlaceholderReg"
                     />
                     <button
                       class="absolute right-3 top-1/2 -translate-y-1/2 text-outline hover:text-on-surface"
@@ -423,7 +495,10 @@
                   <label
                     class="block label-sm text-on-surface mb-xs"
                     for="confirmPassword"
-                    >Xác nhận mật khẩu</label
+                    data-i18n="confirmPassword"
+                    ><span data-i18n="confirmPassword"
+                      >Xác nhận mật khẩu</span
+                    ></label
                   >
                   <div class="relative">
                     <input
@@ -434,6 +509,7 @@
                       type="password"
                       autocomplete="new-password"
                       required
+                      data-i18n-placeholder="confirmPasswordPlaceholder"
                     />
                     <button
                       class="absolute right-3 top-1/2 -translate-y-1/2 text-outline hover:text-on-surface"
@@ -460,7 +536,9 @@
                   id="terms"
                   required
                 />
-                <span class="body-md text-on-surface-variant"
+                <span
+                  class="body-md text-on-surface-variant"
+                  data-i18n="agreeTerms"
                   >Tôi đồng ý với điều khoản dịch vụ và chính sách bảo
                   mật.</span
                 >
@@ -468,12 +546,15 @@
               <button
                 class="w-full h-11 bg-primary-container text-on-primary label-sm rounded-xl border border-slate-100 hover:bg-primary transition-colors hover:-translate-y-[1px] active:translate-y-0 shadow-sm flex justify-center items-center"
                 type="submit"
+                data-i18n="createAccount"
               >
-                Tạo tài khoản
+                <span data-i18n="createAccount">Tạo tài khoản</span>
               </button>
               <div class="relative flex items-center py-sm">
                 <div class="flex-grow border-t border-outline-variant/50"></div>
-                <span class="flex-shrink-0 mx-sm body-md text-outline body-md"
+                <span
+                  class="flex-shrink-0 mx-sm body-md text-outline body-md"
+                  data-i18n="orContinueWith"
                   >hoặc tiếp tục với</span
                 >
                 <div class="flex-grow border-t border-outline-variant/50"></div>
@@ -487,16 +568,18 @@
                   class="w-5 h-5"
                   data-alt="Logo chữ G của Google"
                   src="https://www.gstatic.com/images/branding/googleg/1x/googleg_standard_color_128dp.png"
-                />
-                Đăng ký bằng Google
-              </a>
+                /><span data-i18n="registerWithGoogle"
+                  >Đăng ký bằng Google</span
+                ></a
+              >
             </form>
             <p class="text-center body-md text-on-surface-variant mt-sm">
-              Đã có tài khoản?
-              <a
+              <span data-i18n="alreadyHaveAccount">Đã có tài khoản?</span
+              ><a
                 class="label-sm text-primary hover:text-primary-container transition-colors"
                 href="{{ url_for('login.login') }}"
-                >Đăng nhập ngay</a
+                data-i18n="loginNow"
+                ><span data-i18n="loginNow">Đăng nhập ngay</span></a
               >
             </p>
           </div>
@@ -521,71 +604,103 @@
                 >
               </span>
             </div>
-            <p class="body-md text-on-surface-variant max-w-sm">
-              Ứng dụng nhận diện giống chó bằng AI dành cho người yêu thú cưng.
-              Kết quả chính xác, nhanh chóng.
+            <p
+              class="body-md text-on-surface-variant max-w-sm"
+              data-i18n="footerDesc"
+            >
+              <span data-i18n="footerDesc"
+                >Ứng dụng nhận diện giống chó bằng AI dành cho người yêu thú
+                cưng. Kết quả chính xác, nhanh chóng.</span
+              >
             </p>
           </div>
           <div class="lg:col-span-6 grid grid-cols-2 md:grid-cols-2 gap-8">
             <div class="space-y-6">
-              <h4 class="label-sm text-primary uppercase tracking-widest">
-                Về PetAI
+              <h4
+                class="label-sm text-primary uppercase tracking-widest"
+                data-i18n="aboutPetAI"
+              >
+                <span data-i18n="aboutPetAI">Về PetAI</span>
               </h4>
               <ul class="space-y-4">
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                    target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.privacy_policy') }}"
-                    >Chính sách quyền riêng tư</a
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href="{{ url_for('legal.privacy_policy') }}"
+                    data-i18n="privacy"
+                    ><span data-i18n="privacy"
+                      >Chính sách quyền riêng tư</span
+                    ></a
                   >
                 </li>
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                    target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.terms_of_service') }}"
-                    >Điều khoản sử dụng</a
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href="{{ url_for('legal.terms_of_service') }}"
+                    data-i18n="terms"
+                    ><span data-i18n="terms">Điều khoản sử dụng</span></a
                   >
                 </li>
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                    target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.data_deletion') }}"
-                    >Chính sách xóa dữ liệu</a
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href="{{ url_for('legal.data_deletion') }}"
+                    data-i18n="dataDeletion"
+                    ><span data-i18n="dataDeletion"
+                      >Chính sách xóa dữ liệu</span
+                    ></a
                   >
                 </li>
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                    target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.support') }}"
-                    >Hỗ trợ</a
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href="{{ url_for('legal.support') }}"
+                    data-i18n="support"
+                    ><span data-i18n="homeStatsSupport">HỖ TRỢ</span></a
                   >
                 </li>
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                    target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.contact') }}"
-                    >Liên hệ</a
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href="{{ url_for('legal.contact') }}"
+                    data-i18n="contact"
+                    ><span data-i18n="contact">Liên hệ</span></a
                   >
                 </li>
               </ul>
             </div>
             <div class="space-y-6">
-              <h4 class="label-sm text-primary uppercase tracking-widest">
-                Kết nối
+              <h4
+                class="label-sm text-primary uppercase tracking-widest"
+                data-i18n="connect"
+              >
+                <span data-i18n="connect">Kết nối</span>
               </h4>
               <ul class="space-y-4">
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
                     href="{{ url_for('predict.upload_page') }}"
-                    >Nhận diện ngay</a
+                    data-i18n="identifyNow"
+                    ><span data-i18n="identifyNow">Nhận diện ngay</span></a
                   >
                 </li>
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
                     href="{{ url_for('history.history') }}"
-                    >Bộ sưu tập</a
+                    data-i18n="collection"
+                    ><span data-i18n="collection">Bộ sưu tập</span></a
                   >
                 </li>
               </ul>
@@ -596,19 +711,36 @@
           <div
             class="flex flex-col md:flex-row justify-between items-center gap-4"
           >
-            <p class="label-sm text-on-surface-variant/70 dark:text-slate-400">
-              Bản quyền © 2026 PetAI. Mọi quyền được bảo lưu
+            <p
+              class="label-sm text-on-surface-variant/70 dark:text-slate-400"
+              data-i18n="copyright"
+            >
+              <span data-i18n="copyright"
+                >Bản quyền © 2026 PetAI. Mọi quyền được bảo lưu</span
+              >
             </p>
             <div class="flex gap-6">
+              <a class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
+
+                target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.user_guide') }}"
+
+                data-i18n="footerUserGuide"><span data-i18n="footerUserGuide">HƯỚNG DẪN SỬ DỤNG</span></a>
+
               <a
                 class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
-                target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.terms_of_service') }}"
-                >ĐIỀU KHOẢN</a
+                target="_blank"
+                rel="noopener noreferrer"
+                href="{{ url_for('legal.terms_of_service') }}"
+                data-i18n="footerTerms"
+                ><span data-i18n="footerTerms">ĐIỀU KHOẢN</span></a
               >
               <a
                 class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
-                target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.privacy_policy') }}"
-                >BẢO MẬT</a
+                target="_blank"
+                rel="noopener noreferrer"
+                href="{{ url_for('legal.privacy_policy') }}"
+                data-i18n="footerPrivacy"
+                ><span data-i18n="footerPrivacy">BẢO MẬT</span></a
               >
             </div>
           </div>
@@ -666,7 +798,10 @@
 
           let ok = true;
           if ((fields.fullname.value || "").trim().length < 2) {
-            errors.fullname.textContent = "Họ tên cần ít nhất 2 ký tự.";
+            errors.fullname.textContent =
+              typeof window.PetAI_i18n !== "undefined"
+                ? window.PetAI_i18n.t("fullnameTooShort")
+                : "Họ tên cần ít nhất 2 ký tự.";
             ok = false;
           }
 
@@ -675,7 +810,10 @@
               (fields.email.value || "").trim(),
             )
           ) {
-            errors.email.textContent = "Email không hợp lệ.";
+            errors.email.textContent =
+              typeof window.PetAI_i18n !== "undefined"
+                ? window.PetAI_i18n.t("invalidEmail")
+                : "Email không hợp lệ.";
             ok = false;
           }
 
@@ -688,12 +826,18 @@
           }
 
           if ((fields.password.value || "").length < 6) {
-            errors.password.textContent = "Mật khẩu cần ít nhất 6 ký tự.";
+            errors.password.textContent =
+              typeof window.PetAI_i18n !== "undefined"
+                ? window.PetAI_i18n.t("passwordTooShort")
+                : "Mật khẩu cần ít nhất 6 ký tự.";
             ok = false;
           }
 
           if (fields.confirmPassword.value !== fields.password.value) {
-            errors.confirmPassword.textContent = "Mật khẩu xác nhận chưa khớp.";
+            errors.confirmPassword.textContent =
+              typeof window.PetAI_i18n !== "undefined"
+                ? window.PetAI_i18n.t("passwordMismatch")
+                : "Mật khẩu xác nhận chưa khớp.";
             ok = false;
           }
 
@@ -702,5 +846,6 @@
       })();
     </script>
     <script src="{{ url_for('static', filename='js/toasts.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
   </body>
 </html>

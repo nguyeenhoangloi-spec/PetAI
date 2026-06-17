@@ -32,3 +32,9 @@ def support():
 @legal_bp.route("/contact")
 def contact():
 	return render_template("contact.html")
+
+
+@legal_bp.route("/user-guide.html")
+@legal_bp.route("/user-guide")
+def user_guide():
+	return render_template("user-guide.html")

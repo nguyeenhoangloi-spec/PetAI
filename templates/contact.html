@@ -1,10 +1,34 @@
 <!doctype html>
 
-<html class="light" lang="vi">
+<html class="{{ 'dark' if ui_theme == 'dark' else 'light' }}{{ ' i18n-loading' if ui_language == 'en' else '' }}" lang="{{ ui_language or 'vi' }}" data-theme="{{ ui_theme or 'light' }}">
   <head>
+    <script>
+      (function () {
+        var savedLang = "vi";
+        try {
+          savedLang = localStorage.getItem("siteLanguage") || "vi";
+        } catch (e) {}
+        document.documentElement.setAttribute("data-user-lang", savedLang);
+        if (savedLang === "en") {
+          document.documentElement.classList.add("i18n-loading");
+        }
+      })();
+    </script>
+    <style>
+      html.i18n-loading body {
+        visibility: hidden !important;
+      }
+    </style>
+    <noscript>
+      <style>
+        html.i18n-loading body {
+          visibility: visible !important;
+        }
+      </style>
+    </noscript>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Liên hệ | PetAI</title>
+    <title data-i18n="contactPageTitle">{{ 'Contact | PetAI' if ui_language == 'en' else 'Liên hệ | PetAI' }}</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link
       rel="stylesheet"
@@ -50,7 +74,7 @@
         background: #f1f3fc;
         box-shadow: none;
       }
-      
+
       .home-rounded main a.rounded-xl,
       .home-rounded main a.rounded-lg,
       .home-rounded main a.rounded-full,
@@ -548,7 +572,10 @@
     >
       <div class="flex justify-between items-center w-full px-4 md:px-6 h-16">
         <div class="flex items-center gap-gutter">
-          <a href="{{ url_for('home.index') }}" class="inline-flex items-center gap-0">
+          <a
+            href="{{ url_for('home.index') }}"
+            class="inline-flex items-center gap-0"
+          >
             <img
               alt="PetAI New Logo"
               class="w-auto h-10 md:h-24"
@@ -561,44 +588,60 @@
         </div>
         {% if not session.get('user_id') %}
         <div class="hidden md:flex items-center gap-10">
-          <a class="body-md text-primary font-semibold" href="/#product"
-             data-i18n="product">Sản phẩm</a
+          <a
+            class="body-md text-primary font-semibold"
+            href="/#product"
+            data-i18n="product"
+            ><span data-i18n="product">Sản phẩm</span></a
           >
           <a
             class="body-md text-on-surface-variant hover:text-primary transition-colors duration-300"
             href="/#features"
-             data-i18n="features">Tính năng</a
+            data-i18n="features"
+            ><span data-i18n="features">Tính năng</span></a
           >
           <a
             class="body-md text-on-surface-variant hover:text-primary transition-colors duration-300"
             href="/#pricing"
-             data-i18n="pricing">Bảng giá</a
+            data-i18n="pricing"
+            ><span data-i18n="pricing">Bảng giá</span></a
           >
           <a
             class="body-md text-on-surface-variant hover:text-primary transition-colors duration-300"
             href="/#social-proof"
-             data-i18n="about">Giới thiệu</a
+            data-i18n="about"
+            ><span data-i18n="about">Giới thiệu</span></a
           >
         </div>
-        {% endif %}
-        {% if session.get('user_id') %}
+        {% endif %} {% if session.get('user_id') %}
         <div class="flex items-center gap-6">
           <a
             class="body-md text-on-surface-variant hover:text-primary transition-colors duration-300 font-semibold"
             href="{{ url_for('dashboard.dashboard') }}"
-            >Bảng điều khiển</a
+            data-i18n="dashboard"
+            ><span data-i18n="dashboard">Bảng điều khiển</span></a
           >
           <div class="language-switcher mr-2" id="languageSwitcher">
-            <button class="language-button" id="languageButton" type="button" aria-haspopup="true" aria-expanded="false">
-              <span class="language-flag">🇻🇳</span>
-              <span class="language-current">VN</span>
+            <button
+              class="language-button"
+              id="languageButton"
+              type="button"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              <span class="language-flag" data-i18n="languageFlag">🇻🇳</span>
+              <span class="language-current" data-i18n="shortLabel">VN</span>
               <span class="language-arrow">▼</span>
             </button>
             <div class="language-menu" id="languageMenu">
-              <button class="language-option active" type="button" data-lang="vi">
+              <button
+                class="language-option active"
+                type="button"
+                data-lang="vi"
+              >
                 <span class="language-check">✓</span>
-                <span class="language-flag">🇻🇳</span>
-                <span>Tiếng Việt</span>
+                <span class="language-flag" data-i18n="languageFlag">🇻🇳</span>
+                <span data-i18n="languageLabel">Tiếng Việt</span>
               </button>
               <button class="language-option" type="button" data-lang="en">
                 <span class="language-check"></span>
@@ -609,10 +652,11 @@
           </div>
           <div class="relative cursor-pointer avatar-wrapper">
             <img
-                alt="Ảnh đại diện"
-                class="w-9 h-9 rounded-full border-2 border-primary/20 p-0.5"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuABdf7zKSVKEqdGUUjqEkF9ftdFTrLW87Tb24r2IiZiv_JP0LrItrCxl23SH-gYj2Mqtkma0ak9DZbUtKM5nW747pmivDYGVbYhNr1PZbxbFuOrZdGJvnbhdSurFLfL3BcmhN2p1h9wv_6geT-x8eoTG1TDoLL40P8wDiaymvRT--SA4jYjU9A77WIji5FmOi99mPDXw7xS6dUyUNJYU2gHLk4-smzFrCuBbQbgtpATDvNo6hq3YR-cfSaNblImtCnDXIb8np7J4HA"
-              />
+              alt="Avatar"
+              data-i18n-title="avatarAlt"
+              class="w-9 h-9 rounded-full border-2 border-primary/20 p-0.5"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuABdf7zKSVKEqdGUUjqEkF9ftdFTrLW87Tb24r2IiZiv_JP0LrItrCxl23SH-gYj2Mqtkma0ak9DZbUtKM5nW747pmivDYGVbYhNr1PZbxbFuOrZdGJvnbhdSurFLfL3BcmhN2p1h9wv_6geT-x8eoTG1TDoLL40P8wDiaymvRT--SA4jYjU9A77WIji5FmOi99mPDXw7xS6dUyUNJYU2gHLk4-smzFrCuBbQbgtpATDvNo6hq3YR-cfSaNblImtCnDXIb8np7J4HA"
+            />
             <div
               class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white dark:border-slate-900 rounded-full"
             ></div>
@@ -621,15 +665,15 @@
             >
               <div class="px-4 pb-2">
                 <div class="label-sm text-slate-500 dark:text-slate-400">
-                  Vai trò:
-                  <span
+                  <span data-i18n="role">Vai trò:</span
+                  ><span
                     class="font-semibold text-slate-800 dark:text-slate-200"
                     >{{ (session.get('role') or 'USER')|upper }}</span
                   >
                 </div>
                 <div class="label-sm text-slate-500 dark:text-slate-400">
-                  Gói:
-                  <span
+                  <span data-i18n="plan">Gói:</span
+                  ><span
                     class="font-semibold text-slate-800 dark:text-slate-200"
                     >{{ (current_plan or 'FREE')|upper }}</span
                   >
@@ -650,27 +694,35 @@
                 class="flex items-center gap-2 px-4 py-2 body-md text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors font-semibold"
                 href="{{ url_for('logout.logout') }}"
               >
-                <span class="material-symbols-outlined text-[18px]"
-                  >logout</span
-                >
-                Đăng xuất
-              </a>
+                <span class="material-symbols-outlined text-[18px]">logout</span
+                ><span data-i18n="logout">Đăng xuất</span></a
+              >
             </div>
           </div>
         </div>
         {% else %}
         <div class="flex items-center gap-6">
           <div class="language-switcher mr-2" id="languageSwitcher">
-            <button class="language-button" id="languageButton" type="button" aria-haspopup="true" aria-expanded="false">
-              <span class="language-flag">🇻🇳</span>
-              <span class="language-current">VN</span>
+            <button
+              class="language-button"
+              id="languageButton"
+              type="button"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              <span class="language-flag" data-i18n="languageFlag">🇻🇳</span>
+              <span class="language-current" data-i18n="shortLabel">VN</span>
               <span class="language-arrow">▼</span>
             </button>
             <div class="language-menu" id="languageMenu">
-              <button class="language-option active" type="button" data-lang="vi">
+              <button
+                class="language-option active"
+                type="button"
+                data-lang="vi"
+              >
                 <span class="language-check">✓</span>
-                <span class="language-flag">🇻🇳</span>
-                <span>Tiếng Việt</span>
+                <span class="language-flag" data-i18n="languageFlag">🇻🇳</span>
+                <span data-i18n="languageLabel">Tiếng Việt</span>
               </button>
               <button class="language-option" type="button" data-lang="en">
                 <span class="language-check"></span>
@@ -681,13 +733,15 @@
           </div>
           <a
             class="label-sm text-on-surface-variant hover:text-primary font-semibold transition-colors duration-300"
-            href="{{ url_for('login.login') }}" data-i18n="login"
-            >Đăng nhập</a
+            href="{{ url_for('login.login') }}"
+            data-i18n="login"
+            ><span data-i18n="login">Đăng nhập</span></a
           >
           <a
             class="bg-primary text-on-primary px-6 py-2.5 rounded-full label-sm font-semibold hover:shadow-lg active:scale-95 transition-all"
-            href="{{ url_for('register.register') }}" data-i18n="register"
-            >Đăng ký</a
+            href="{{ url_for('register.register') }}"
+            data-i18n="register"
+            ><span data-i18n="register">Đăng ký</span></a
           >
         </div>
         {% endif %}
@@ -700,54 +754,123 @@
         <div
           class="glass-card p-gutter rounded-3xl bg-surface-container-low border border-outline-variant/30"
         >
-          <h1 class="headline-lg text-on-surface mb-6 font-bold">Liên hệ</h1>
+          <h1
+            class="headline-lg text-on-surface mb-6 font-bold"
+            data-i18n="contact"
+          >
+            <span data-i18n="contact">Liên hệ</span>
+          </h1>
           <div
             class="space-y-6 text-on-surface-variant body-md leading-relaxed"
           >
             <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
               <div class="space-y-6">
-                <h2 class="text-2xl font-bold text-primary">
-                  Thông tin liên lạc
+                <h2
+                  class="text-2xl font-bold text-primary"
+                  data-i18n="contactInfoTitle"
+                >
+                  <span data-i18n="contactInfoTitle">Thông tin liên lạc</span>
                 </h2>
-                <ul class="space-y-4">
-                  <li>
-                    <strong>Tên ứng dụng/website:</strong> [Tên app hoặc
-                    website]
-                  </li>
-                  <li>
-                    <strong>Tên nhà phát triển/công ty:</strong> [Tên cá nhân
-                    hoặc công ty]
-                  </li>
-                  <li>
-                    <strong>Email liên hệ:</strong>
-                    <a
-                      href="mailto:support@example.com"
-                      class="text-primary hover:underline font-medium"
-                      >support@example.com</a
-                    >
-                  </li>
-                  <li>
-                    <strong>Website:</strong>
-                    <a
-                      href="https://yourdomain.com"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      class="text-primary hover:underline font-medium"
-                      >https://yourdomain.com</a
-                    >
-                  </li>
-                  <li>
-                    <strong>Địa chỉ:</strong> [Nếu có thì ghi, nếu không thì ghi
-                    “Không áp dụng”]
-                  </li>
-                </ul>
+                
+                <div class="bg-white dark:bg-slate-900 border border-outline-variant/30 dark:border-slate-800 rounded-2xl p-6 text-on-surface shadow-sm relative overflow-hidden font-sans">
+                  <!-- Header of the Legal Card -->
+                  <div class="flex items-center gap-3 border-b border-outline-variant/30 dark:border-slate-800 pb-4 mb-6">
+                    <span class="material-symbols-outlined text-primary text-2xl select-none">account_balance</span>
+                    <h3 class="text-lg font-bold text-on-surface" data-i18n="legalInfoTitle">Thông tin pháp lý</h3>
+                  </div>
+
+                  <!-- Two columns grid -->
+                  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Left Column -->
+                    <div class="space-y-4">
+                      <!-- Tên công ty -->
+                      <div class="flex gap-3">
+                        <span class="material-symbols-outlined text-primary text-xl mt-0.5 select-none">business</span>
+                        <div>
+                          <div class="text-[11px] font-bold text-on-surface-variant/60 dark:text-slate-400 tracking-wider uppercase" data-i18n="companyNameLabel">TÊN CÔNG TY</div>
+                          <div class="text-sm font-semibold text-on-surface dark:text-slate-200 mt-0.5 leading-relaxed" data-i18n="devNamePlaceholder">CÔNG TY TNHH MỘT THÀNH VIÊN CÔNG NGHỆ KỸ THUẬT TIÊN PHONG</div>
+                        </div>
+                      </div>
+
+                      <!-- Mã số thuế -->
+                      <div class="flex gap-3">
+                        <span class="material-symbols-outlined text-primary text-xl mt-0.5 select-none">badge</span>
+                        <div>
+                          <div class="text-[11px] font-bold text-on-surface-variant/60 dark:text-slate-400 tracking-wider uppercase" data-i18n="taxIdLabel">MÃ SỐ THUẾ</div>
+                          <div class="text-sm font-semibold text-on-surface dark:text-slate-200 mt-0.5">1801526082</div>
+                        </div>
+                      </div>
+
+                      <!-- Người đại diện -->
+                      <div class="flex gap-3">
+                        <span class="material-symbols-outlined text-primary text-xl mt-0.5 select-none">person</span>
+                        <div>
+                          <div class="text-[11px] font-bold text-on-surface-variant/60 dark:text-slate-400 tracking-wider uppercase" data-i18n="representativeLabel">NGƯỜI ĐẠI DIỆN</div>
+                          <div class="text-sm font-semibold text-on-surface dark:text-slate-200 mt-0.5">NGÔ HỒ ANH KHÔI</div>
+                        </div>
+                      </div>
+
+                      <!-- Ngày cấp phép -->
+                      <div class="flex gap-3">
+                        <span class="material-symbols-outlined text-primary text-xl mt-0.5 select-none">calendar_month</span>
+                        <div>
+                          <div class="text-[11px] font-bold text-on-surface-variant/60 dark:text-slate-400 tracking-wider uppercase" data-i18n="licenseDateLabel">NGÀY CẤP PHÉP</div>
+                          <div class="text-sm font-semibold text-on-surface dark:text-slate-200 mt-0.5">05/04/2017</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Right Column -->
+                    <div class="space-y-4">
+                      <!-- Trụ sở chính -->
+                      <div class="flex gap-3">
+                        <span class="material-symbols-outlined text-primary text-xl mt-0.5 select-none">location_on</span>
+                        <div>
+                          <div class="text-[11px] font-bold text-on-surface-variant/60 dark:text-slate-400 tracking-wider uppercase" data-i18n="headquartersLabel">TRỤ SỞ CHÍNH</div>
+                          <div class="text-sm font-semibold text-on-surface dark:text-slate-200 mt-0.5 leading-relaxed" data-i18n="addressPlaceholder">P16, Đường số 8, KDC lô 49, Khu đô thị Nam Cần Thơ, P. Cái Răng, TP. Cần Thơ</div>
+                        </div>
+                      </div>
+
+                      <!-- Hotline -->
+                      <div class="flex gap-3">
+                        <span class="material-symbols-outlined text-primary text-xl mt-0.5 select-none">call</span>
+                        <div>
+                          <div class="text-[11px] font-bold text-on-surface-variant/60 dark:text-slate-400 tracking-wider uppercase" data-i18n="hotlineLabel">HOTLINE</div>
+                          <div class="text-sm font-semibold text-on-surface dark:text-slate-200 mt-0.5">
+                            <a href="tel:0916416409" class="hover:text-primary transition-colors text-primary font-medium">0916 416 409</a>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Email -->
+                      <div class="flex gap-3">
+                        <span class="material-symbols-outlined text-primary text-xl mt-0.5 select-none">mail</span>
+                        <div>
+                          <div class="text-[11px] font-bold text-on-surface-variant/60 dark:text-slate-400 tracking-wider uppercase" data-i18n="emailLabel">EMAIL</div>
+                          <div class="text-sm font-semibold text-on-surface dark:text-slate-200 mt-0.5">
+                            <a href="mailto:support@pet.ai" class="hover:text-primary transition-colors text-primary font-medium">support@pet.ai</a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
                 <div
                   class="bg-surface-container-low p-4 rounded-xl mt-6 border border-outline-variant/30"
                 >
-                  <p class="text-sm font-bold text-primary">
-                    Lưu ý thời gian xử lý:
+                  <p
+                    class="text-sm font-bold text-primary"
+                    data-i18n="processingTimeNote"
+                  >
+                    <span data-i18n="processingTimeNote"
+                      >Lưu ý thời gian xử lý:</span
+                    >
                   </p>
-                  <p class="text-sm text-on-surface-variant">
+                  <p
+                    class="text-sm text-on-surface-variant"
+                    data-i18n="responseTimeDesc"
+                  >
                     Thường trong 1-3 ngày làm việc. Cảm ơn sự hỗ trợ thiết thực
                     của bạn!
                   </p>
@@ -757,65 +880,87 @@
               <div
                 class="bg-white border border-outline-variant/30 rounded-2xl p-8 shadow-sm"
               >
-                <h2 class="text-2xl font-bold text-primary mb-6">
-                  Gửi tin nhắn trực tuyến
+                <h2
+                  class="text-2xl font-bold text-primary mb-6"
+                  data-i18n="sendMessageOnline"
+                >
+                  <span data-i18n="sendMessageOnline"
+                    >Gửi tin nhắn trực tuyến</span
+                  >
                 </h2>
                 <form
                   onsubmit="
                     event.preventDefault();
-                    alert('Bạn đã bấm Gửi thành công! (Dữ liệu Demo)');
+                    alert(
+                      typeof window.PetAI_i18n !== 'undefined'
+                        ? window.PetAI_i18n.t('msgSendSuccessDemo')
+                        : 'Bạn đã bấm Gửi thành công! (Dữ liệu Demo)',
+                    );
                   "
                   class="space-y-5"
                 >
                   <div>
-                    <label class="block text-sm font-bold text-on-surface mb-2"
-                      >Họ tên</label
+                    <label
+                      class="block text-sm font-bold text-on-surface mb-2"
+                      data-i18n="fullnameLabel"
+                      ><span data-i18n="fullnameLabel">Họ tên</span></label
                     >
                     <input
                       type="text"
                       required
                       class="w-full bg-surface-container-low border border-outline-variant/50 rounded-lg px-4 py-3 outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
                       placeholder="Tên của bạn..."
+                      data-i18n-placeholder="yourNamePlaceholder"
                     />
                   </div>
                   <div>
-                    <label class="block text-sm font-bold text-on-surface mb-2"
-                      >Email</label
+                    <label
+                      class="block text-sm font-bold text-on-surface mb-2"
+                      data-i18n="emailLabel"
+                      ><span data-i18n="emailLabel">Email</span></label
                     >
                     <input
                       type="email"
                       required
                       class="w-full bg-surface-container-low border border-outline-variant/50 rounded-lg px-4 py-3 outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
                       placeholder="Địa chỉ email..."
+                      data-i18n-placeholder="emailAddressPlaceholder"
                     />
                   </div>
                   <div>
-                    <label class="block text-sm font-bold text-on-surface mb-2"
-                      >Chủ đề</label
+                    <label
+                      class="block text-sm font-bold text-on-surface mb-2"
+                      data-i18n="themeLabel"
+                      ><span data-i18n="themeLabel">Chủ đề</span></label
                     >
                     <input
                       type="text"
                       required
                       class="w-full bg-surface-container-low border border-outline-variant/50 rounded-lg px-4 py-3 outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
                       placeholder="Bạn cần hỗ trợ gì?"
+                      data-i18n-placeholder="supportQuestionPlaceholder"
                     />
                   </div>
                   <div>
-                    <label class="block text-sm font-bold text-on-surface mb-2"
-                      >Nội dung</label
+                    <label
+                      class="block text-sm font-bold text-on-surface mb-2"
+                      data-i18n="memoLabel"
+                      ><span data-i18n="memoLabel">Nội dung</span></label
                     >
                     <textarea
                       rows="4"
                       required
                       class="w-full bg-surface-container-low border border-outline-variant/50 rounded-lg px-4 py-3 outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
                       placeholder="Ghi chú chi tiết thêm..."
+                      data-i18n-placeholder="additionalNotesPlaceholder"
                     ></textarea>
                   </div>
                   <button
                     type="submit"
                     class="w-full bg-primary text-on-primary font-bold py-3 px-4 rounded-xl transition-all hover:bg-primary/90 active:scale-95 shadow-md"
+                    data-i18n="submitForm"
                   >
-                    Gửi biểu mẫu
+                    <span data-i18n="submitForm">Gửi biểu mẫu</span>
                   </button>
                 </form>
               </div>
@@ -842,14 +987,21 @@
                 >
               </span>
             </div>
-            <p class="body-md text-on-surface-variant max-w-sm">
-              Ứng dụng nhận diện giống chó bằng AI dành cho người yêu thú cưng.
-              Kết quả chính xác, nhanh chóng.
+            <p
+              class="body-md text-on-surface-variant max-w-sm"
+              data-i18n="footerDesc"
+            >
+              <span data-i18n="footerDesc"
+                >Ứng dụng nhận diện giống chó bằng AI dành cho người yêu thú
+                cưng. Kết quả chính xác, nhanh chóng.</span
+              >
             </p>
           </div>
           <div class="lg:col-span-6 grid grid-cols-2 md:grid-cols-2 gap-8">
             <div class="space-y-6">
-              <h4 class="label-sm text-primary uppercase tracking-widest"><span data-i18n="aboutPetAI">Về PetAI</span></h4>
+              <h4 class="label-sm text-primary uppercase tracking-widest">
+                <span data-i18n="aboutPetAI">Về PetAI</span>
+              </h4>
               <ul class="space-y-4">
                 <li class="">
                   <a
@@ -857,7 +1009,10 @@
                     target="_blank"
                     rel="noopener noreferrer"
                     href="{{ url_for('legal.privacy_policy') }}"
-                     data-i18n="privacy">Chính sách quyền riêng tư</a
+                    data-i18n="privacy"
+                    ><span data-i18n="privacy"
+                      >Chính sách quyền riêng tư</span
+                    ></a
                   >
                 </li>
                 <li class="">
@@ -866,7 +1021,8 @@
                     target="_blank"
                     rel="noopener noreferrer"
                     href="{{ url_for('legal.terms_of_service') }}"
-                     data-i18n="terms">Điều khoản sử dụng</a
+                    data-i18n="terms"
+                    ><span data-i18n="terms">Điều khoản sử dụng</span></a
                   >
                 </li>
                 <li class="">
@@ -875,7 +1031,10 @@
                     target="_blank"
                     rel="noopener noreferrer"
                     href="{{ url_for('legal.data_deletion') }}"
-                     data-i18n="dataDeletion">Chính sách xóa dữ liệu</a
+                    data-i18n="dataDeletion"
+                    ><span data-i18n="dataDeletion"
+                      >Chính sách xóa dữ liệu</span
+                    ></a
                   >
                 </li>
                 <li class="">
@@ -884,7 +1043,8 @@
                     target="_blank"
                     rel="noopener noreferrer"
                     href="{{ url_for('legal.support') }}"
-                     data-i18n="support">Hỗ trợ</a
+                    data-i18n="support"
+                    ><span data-i18n="homeStatsSupport">HỖ TRỢ</span></a
                   >
                 </li>
                 <li class="">
@@ -893,26 +1053,31 @@
                     target="_blank"
                     rel="noopener noreferrer"
                     href="{{ url_for('legal.contact') }}"
-                     data-i18n="contact">Liên hệ</a
+                    data-i18n="contact"
+                    ><span data-i18n="contact">Liên hệ</span></a
                   >
                 </li>
               </ul>
             </div>
             <div class="space-y-6">
-              <h4 class="label-sm text-primary uppercase tracking-widest"><span data-i18n="connect">Kết nối</span></h4>
+              <h4 class="label-sm text-primary uppercase tracking-widest">
+                <span data-i18n="connect">Kết nối</span>
+              </h4>
               <ul class="space-y-4">
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
                     href="{{ url_for('predict.upload_page') }}"
-                     data-i18n="identifyNow">Nhận diện ngay</a
+                    data-i18n="identifyNow"
+                    ><span data-i18n="identifyNow">Nhận diện ngay</span></a
                   >
                 </li>
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
                     href="{{ url_for('history.history') }}"
-                     data-i18n="collection">Bộ sưu tập</a
+                    data-i18n="collection"
+                    ><span data-i18n="collection">Bộ sưu tập</span></a
                   >
                 </li>
               </ul>
@@ -923,21 +1088,33 @@
           <div
             class="flex flex-col md:flex-row justify-between items-center gap-4"
           >
-            <p class="label-sm text-on-surface-variant/70 dark:text-slate-400"><span data-i18n="copyright">Bản quyền © 2026 PetAI. Mọi quyền được bảo lưu</span></p>
+            <p class="label-sm text-on-surface-variant/70 dark:text-slate-400">
+              <span data-i18n="copyright"
+                >Bản quyền © 2026 PetAI. Mọi quyền được bảo lưu</span
+              >
+            </p>
             <div class="flex gap-6">
+              <a class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
+
+                target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.user_guide') }}"
+
+                data-i18n="footerUserGuide"><span data-i18n="footerUserGuide">HƯỚNG DẪN SỬ DỤNG</span></a>
+
               <a
                 class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
                 target="_blank"
                 rel="noopener noreferrer"
                 href="{{ url_for('legal.terms_of_service') }}"
-                >ĐIỀU KHOẢN</a
+                data-i18n="footerTerms"
+                ><span data-i18n="footerTerms">ĐIỀU KHOẢN</span></a
               >
               <a
                 class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
                 target="_blank"
                 rel="noopener noreferrer"
                 href="{{ url_for('legal.privacy_policy') }}"
-                >BẢO MẬT</a
+                data-i18n="footerPrivacy"
+                ><span data-i18n="footerPrivacy">BẢO MẬT</span></a
               >
             </div>
           </div>
@@ -976,6 +1153,7 @@
         });
       })();
     </script>
-      <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
   </body>
 </html>

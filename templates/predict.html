@@ -1,12 +1,37 @@
 <!doctype html>
-<html class="{{ 'dark' if ui_theme == 'dark' else 'light' }}" lang="{{ ui_language or 'vi' }}" data-theme="{{ ui_theme or 'light' }}">
+<html class="{{ 'dark' if ui_theme == 'dark' else 'light' }}{{ ' i18n-loading' if ui_language == 'en' else '' }}" lang="{{ ui_language or 'vi' }}" data-theme="{{ ui_theme or 'light' }}">
   <head>
+    <script>
+      (function () {
+        var savedLang = "vi";
+        try {
+          savedLang = localStorage.getItem("siteLanguage") || "vi";
+        } catch (e) {}
+        document.documentElement.setAttribute("data-user-lang", savedLang);
+        if (savedLang === "en") {
+          document.documentElement.classList.add("i18n-loading");
+        }
+      })();
+    </script>
+    <style>
+      html.i18n-loading body {
+        visibility: hidden !important;
+      }
+    </style>
+    <noscript>
+      <style>
+        html.i18n-loading body {
+          visibility: visible !important;
+        }
+      </style>
+    </noscript>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <script>
       (function () {
         const root = document.documentElement;
-        const themeStorageKey = "{{ 'theme:' ~ session.get('user_id') if session.get('user_id') else '' }}";
+        const themeStorageKey =
+          "{{ 'theme:' ~ session.get('user_id') if session.get('user_id') else '' }}";
         const serverTheme = "{{ ui_theme or 'light' }}";
         if (themeStorageKey) {
           try {
@@ -26,7 +51,9 @@
         function resolveTheme(theme) {
           if (theme !== "auto") return theme;
           try {
-            return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+            return window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
           } catch (e) {
             return "light";
           }
@@ -56,22 +83,32 @@
         }
 
         try {
-          const isCollapsed = localStorage.getItem("sidebar-collapsed") === "true";
+          const isCollapsed =
+            localStorage.getItem("sidebar-collapsed") === "true";
           if (isCollapsed && window.innerWidth >= 768) {
             root.classList.add("sidebar-collapsed");
           }
         } catch (e) {}
       })();
     </script>
-    <title>Kết quả dự đoán | PetAI</title>
+    <title data-i18n="predictResultPageTitle">{{ 'Prediction Result | PetAI' if ui_language == 'en' else 'Kết quả dự đoán | PetAI' }}</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='css/typography.css') }}"
     />
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/theme-dark.css') }}" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/toasts.css') }}" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile-header-fix.css') }}" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/theme-dark.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/toasts.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/mobile-header-fix.css') }}"
+    />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
@@ -205,50 +242,51 @@
   >
     {% include '_toasts.html' %}
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
-    {% set has_conf = result.breed_conf is defined and result.breed_conf is not none %} 
-    {% set conf_percent = (result.breed_conf * 100) if has_conf else 0 %} 
-    {% set conf_percent_clamped = 0 if conf_percent < 0 else (100 if conf_percent > 100 else conf_percent) %} 
-    {% set breed_name = result.breed if result.breed else 'Chưa xác định' %}
-    {% set primary_label = 'Giống dự đoán' %} 
-    {% if result.parts_info and result.parts_info.decision and result.parts_info.decision.is_hybrid_candidate %} 
-      {% set primary_label = 'Nghi lai' %} 
-    {% elif result.parts_info and result.parts_info.acceptance and result.parts_info.acceptance.level == 'reference' %} 
-      {% set primary_label = 'Giống tham khảo' %} 
-    {% endif %} 
-    {% set decision_label = 'Ứng viên thuần chủng' %} 
-    {% set decision_class = 'pure' %} 
-    {% if result.parts_info and result.parts_info.decision and result.parts_info.decision.is_hybrid_candidate %} 
-      {% set decision_label = 'Ứng viên nghi lai' %} 
-      {% set decision_class = 'hybrid' %} 
-    {% elif result.parts_info and result.parts_info.acceptance and not result.parts_info.acceptance.accepted %} 
-      {% set decision_label = 'Chưa đủ tin cậy' %} 
-      {% set decision_class = 'uncertain' %} 
-    {% endif %} 
-    {% set decision_reason = result.parts_info.decision.reason if result.parts_info and result.parts_info.decision and result.parts_info.decision.reason else 'Chưa có diễn giải chi tiết cho lần dự đoán này.' %} 
-    {% set top3_mode = 'softmax' %} 
-    {% if result.parts_info and result.parts_info.display and result.parts_info.display.top3_mode %} 
-      {% set top3_mode = result.parts_info.display.top3_mode %} 
-    {% endif %} 
-    {% set gradcam_items = [] %} 
-    {% set gradcam_mode = '' %} 
-    {% if result.parts_info and result.parts_info.gradcam_dynamic and result.parts_info.gradcam_dynamic['items'] %} 
-      {% set gradcam_items = result.parts_info.gradcam_dynamic['items'] %} 
-      {% set gradcam_mode = 'dynamic' %} 
-    {% elif result.parts_info and result.parts_info.gradcam and result.parts_info.gradcam['items'] %} 
-      {% set gradcam_items = result.parts_info.gradcam['items'] %} 
-      {% set gradcam_mode = 'reference' %} 
-    {% endif %} 
-    {% set display_role = session.get('role') or 'user' %} 
-    {% set display_plan = current_plan or 'free' %} 
-    {% set heatmap_overlays = ['bg-red-500/40', 'bg-orange-500/40', 'bg-yellow-500/40', 'bg-blue-500/40'] %} 
-    {% set heatmap_rings = ['ring-red-500/20', 'ring-orange-500/20', 'ring-yellow-500/20', 'ring-blue-500/20'] %}
+    {% set has_conf = result.breed_conf is defined and result.breed_conf is not
+    none %} {% set conf_percent = (result.breed_conf * 100) if has_conf else 0
+    %} {% set conf_percent_clamped = 0 if conf_percent < 0 else (100 if
+    conf_percent > 100 else conf_percent) %} {% set breed_name = result.breed if
+    result.breed else 'Chưa xác định' %} {% set primary_label = 'Giống dự đoán'
+    %} {% if result.parts_info and result.parts_info.decision and
+    result.parts_info.decision.is_hybrid_candidate %} {% set primary_label =
+    'Nghi lai' %} {% elif result.parts_info and result.parts_info.acceptance and
+    result.parts_info.acceptance.level == 'reference' %} {% set primary_label =
+    'Giống tham khảo' %} {% endif %} {% set decision_label = 'Ứng viên thuần
+    chủng' %} {% set decision_class = 'pure' %} {% if result.parts_info and
+    result.parts_info.decision and
+    result.parts_info.decision.is_hybrid_candidate %} {% set decision_label =
+    'Ứng viên nghi lai' %} {% set decision_class = 'hybrid' %} {% elif
+    result.parts_info and result.parts_info.acceptance and not
+    result.parts_info.acceptance.accepted %} {% set decision_label = 'Chưa đủ
+    tin cậy' %} {% set decision_class = 'uncertain' %} {% endif %} {% set
+    decision_reason = result.parts_info.decision.reason if result.parts_info and
+    result.parts_info.decision and result.parts_info.decision.reason else 'Chưa
+    có diễn giải chi tiết cho lần dự đoán này.' %} {% set top3_mode = 'softmax'
+    %} {% if result.parts_info and result.parts_info.display and
+    result.parts_info.display.top3_mode %} {% set top3_mode =
+    result.parts_info.display.top3_mode %} {% endif %} {% set gradcam_items = []
+    %} {% set gradcam_mode = '' %} {% if result.parts_info and
+    result.parts_info.gradcam_dynamic and
+    result.parts_info.gradcam_dynamic['items'] %} {% set gradcam_items =
+    result.parts_info.gradcam_dynamic['items'] %} {% set gradcam_mode =
+    'dynamic' %} {% elif result.parts_info and result.parts_info.gradcam and
+    result.parts_info.gradcam['items'] %} {% set gradcam_items =
+    result.parts_info.gradcam['items'] %} {% set gradcam_mode = 'reference' %}
+    {% endif %} {% set display_role = session.get('role') or 'user' %} {% set
+    display_plan = current_plan or 'free' %} {% set heatmap_overlays =
+    ['bg-red-500/40', 'bg-orange-500/40', 'bg-yellow-500/40', 'bg-blue-500/40']
+    %} {% set heatmap_rings = ['ring-red-500/20', 'ring-orange-500/20',
+    'ring-yellow-500/20', 'ring-blue-500/20'] %}
 
     <nav
       class="bg-white/80 dark:bg-slate-950/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-200 dark:border-slate-800 shadow-sm font-['Inter'] antialiased"
     >
       <div class="flex items-center justify-between px-4 md:px-6 h-16 w-full">
         <div class="flex items-center gap-gutter">
-          <a href="{{ url_for('home.index') }}" class="inline-flex items-center gap-0">
+          <a
+            href="{{ url_for('home.index') }}"
+            class="inline-flex items-center gap-0"
+          >
             <img
               alt="PetAI New Logo"
               class="w-auto h-10 md:h-24"
@@ -258,50 +296,65 @@
               >PetAI</span
             >
           </a>
-          <button class="menu-toggle ml-2" id="menuToggle" aria-label="Mở menu" aria-expanded="false" type="button">
+          <button
+            class="menu-toggle ml-2"
+            id="menuToggle"
+            aria-label="Mở menu"
+            aria-expanded="false"
+            type="button"
+            data-i18n-aria="openMenu"
+          >
             <span></span>
             <span></span>
             <span></span>
           </button>
         </div>
-        <div class="hidden md:flex flex-1 items-center justify-end gap-margin mr-gutter [&>a]:px-0.5 [&>a]:label-sm">
+        <div
+          class="hidden md:flex flex-1 items-center justify-end gap-margin mr-gutter [&>a]:px-0.5 [&>a]:label-sm"
+        >
           <a
             class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
             href="{{ url_for('dashboard.dashboard') }}"
-            >Bảng điều khiển</a
+            data-i18n="dashboard"
+            ><span data-i18n="dashboard">Bảng điều khiển</span></a
           >
           <a
             class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
             href="{{ url_for('history.history') }}"
-            >Lịch sử</a
+            data-i18n="history"
+            ><span data-i18n="history">Lịch sử</span></a
           >
           <a
             class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
             href="{{ url_for('statistics.statistics') }}"
-            >Thống kê</a
+            data-i18n="statistics"
+            ><span data-i18n="statistics">Thống kê</span></a
           >
           <a
             class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
             href="{{ url_for('predict.upgrade') }}"
-            >Nâng cấp</a
+            data-i18n="upgrade"
+            ><span data-i18n="upgrade">Nâng cấp</span></a
           >
           {% if session.get('role') == 'user' %}
           <a
             class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
             href="{{ url_for('predict.my_payments') }}"
-            >Lịch sử thanh toán</a
+            data-i18n="payments"
+            ><span data-i18n="payments">Lịch sử thanh toán</span></a
           >
-          {% endif %}
-          {% if session.get('role') == 'admin' %}
+          {% endif %} {% if session.get('role') == 'admin' %}
           <a
             class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
             href="{{ url_for('users.list_users') }}"
-            >Quản lý người dùng</a
+            data-i18n="manageUsers"
+            ><span data-i18n="manageUsers">Quản lý người dùng</span></a
           >
           <a
             class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
             href="{{ url_for('users.confirmations_list') }}"
-            >Duyệt đơn</a
+            data-i18n="approveOrders"
+            ><span data-i18n="approveOrders">Duyệt đơn</span></a
           >
           {% endif %}
         </div>
@@ -309,19 +362,30 @@
           <a
             class="hidden md:inline-flex bg-primary text-on-primary px-4 py-2 rounded-lg label-sm shadow-sm hover:shadow-md transition-all font-semibold"
             href="{{ url_for('predict.upload_page') }}"
-            >Nhận diện</a
+            data-i18n="predict"
+            ><span data-i18n="predict">Nhận diện</span></a
           >
           <div class="language-switcher mr-2" id="languageSwitcher">
-            <button class="language-button" id="languageButton" type="button" aria-haspopup="true" aria-expanded="false">
-              <span class="language-flag">🇻🇳</span>
-              <span class="language-current">VN</span>
+            <button
+              class="language-button"
+              id="languageButton"
+              type="button"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              <span class="language-flag" data-i18n="languageFlag">🇻🇳</span>
+              <span class="language-current" data-i18n="shortLabel">VN</span>
               <span class="language-arrow">▼</span>
             </button>
             <div class="language-menu" id="languageMenu">
-              <button class="language-option active" type="button" data-lang="vi">
+              <button
+                class="language-option active"
+                type="button"
+                data-lang="vi"
+              >
                 <span class="language-check">✓</span>
-                <span class="language-flag">🇻🇳</span>
-                <span>Tiếng Việt</span>
+                <span class="language-flag" data-i18n="languageFlag">🇻🇳</span>
+                <span data-i18n="languageLabel">Tiếng Việt</span>
               </button>
               <button class="language-option" type="button" data-lang="en">
                 <span class="language-check"></span>
@@ -332,7 +396,8 @@
           </div>
           <div class="relative cursor-pointer avatar-wrapper">
             <img
-              alt="Ảnh đại diện"
+              alt="Avatar"
+              data-i18n-title="avatarAlt"
               class="w-9 h-9 rounded-full border-2 border-primary/20 p-0.5"
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuDaAwfxOW9LtSPQ4CMpHh_MZj4C-a3XURpy47OidOmmzbKzNRwNeR_tNSBeoFDP9dSnziLwQG4nPJKCuKtkxq4tUiBuLpCheGH7nOKArEmnFQ4h-srxtCzJuuXVbqDrPzi3eC_u0b61szh9krSLnTZdWzIxOFW1KnH4UW0EOXfAcgwarik1GLH8h-BWePFrcuV4Rqrw4n-qitWuQZHLsuPlLkOkFrM2-JiKkgwvYbvQPfe-B0eq8WGpcNe8IDhIHexuKSNYw8k4GOw"
             />
@@ -344,15 +409,15 @@
             >
               <div class="px-4 pb-2">
                 <div class="label-sm text-slate-500 dark:text-slate-400">
-                  Vai trò:
-                  <span
+                  <span data-i18n="role">Vai trò:</span
+                  ><span
                     class="font-semibold text-slate-800 dark:text-slate-200"
                     >{{ display_role|upper }}</span
                   >
                 </div>
                 <div class="label-sm text-slate-500 dark:text-slate-400">
-                  Gói:
-                  <span
+                  <span data-i18n="plan">Gói:</span
+                  ><span
                     class="font-semibold text-slate-800 dark:text-slate-200"
                     >{{ display_plan|upper }}</span
                   >
@@ -372,11 +437,9 @@
                 class="flex items-center gap-2 px-4 py-2 body-md text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors font-semibold"
                 href="{{ url_for('logout.logout') }}"
               >
-                <span class="material-symbols-outlined text-[18px]"
-                  >logout</span
-                >
-                Đăng xuất
-              </a>
+                <span class="material-symbols-outlined text-[18px]">logout</span
+                ><span data-i18n="logout">Đăng xuất</span></a
+              >
             </div>
           </div>
         </div>
@@ -393,8 +456,9 @@
         >
           <h3
             class="label-sm text-on-surface-variant dark:text-slate-400 uppercase tracking-wider mb-xs px-1.5"
+            data-i18n="quickAccess"
           >
-            Truy cập nhanh
+            <span data-i18n="quickAccess">Truy cập nhanh</span>
           </h3>
           <a
             class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface dark:text-slate-300 hover:text-primary dark:hover:text-blue-400 hover:bg-surface-container dark:hover:bg-slate-800 transition-colors group"
@@ -405,7 +469,9 @@
               data-icon="upload_file"
               >upload_file</span
             >
-            <span class="label-sm">Tải ảnh &amp; Phân tích</span>
+            <span class="label-sm" data-i18n="uploadAnalyze"
+              >Tải ảnh & Phân tích</span
+            >
           </a>
           <a
             class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface dark:text-slate-300 hover:text-primary dark:hover:text-blue-400 hover:bg-surface-container dark:hover:bg-slate-800 transition-colors group"
@@ -416,7 +482,17 @@
               data-icon="history"
               >history</span
             >
-            <span class="label-sm">Lịch sử dự đoán</span>
+            <span class="label-sm"
+              ><span data-i18n="predictionHistory"
+                ><span data-i18n="predictionHistory"
+                  ><span data-i18n="predictionHistory"
+                    ><span data-i18n="predictionHistory"
+                      >Lịch sử dự đoán</span
+                    ></span
+                  ></span
+                ></span
+              ></span
+            >
           </a>
           {% if session.get('role') == 'user' %}
           <a
@@ -428,7 +504,9 @@
               data-icon="payments"
               >payments</span
             >
-            <span class="label-sm">Lịch sử thanh toán</span>
+            <span class="label-sm" data-i18n="payments"
+              >Lịch sử thanh toán</span
+            >
           </a>
           {% endif %}
           <a
@@ -440,7 +518,9 @@
               data-icon="bar_chart"
               >bar_chart</span
             >
-            <span class="label-sm">Thống kê cá nhân</span>
+            <span class="label-sm" data-i18n="personalStats"
+              >Thống kê cá nhân</span
+            >
           </a>
           <a
             class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface dark:text-slate-300 hover:text-primary dark:hover:text-blue-400 hover:bg-surface-container dark:hover:bg-slate-800 transition-colors group"
@@ -451,7 +531,7 @@
               data-icon="upgrade"
               >upgrade</span
             >
-            <span class="label-sm">Nâng cấp gói</span>
+            <span class="label-sm" data-i18n="upgradePlan">Nâng cấp gói</span>
           </a>
           {% if session.get('role') == 'admin' %}
           <a
@@ -463,7 +543,9 @@
               data-icon="groups"
               >groups</span
             >
-            <span class="label-sm">Quản lý người dùng</span>
+            <span class="label-sm" data-i18n="manageUsers"
+              >Quản lý người dùng</span
+            >
           </a>
           <a
             class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface dark:text-slate-300 hover:text-primary dark:hover:text-blue-400 hover:bg-surface-container dark:hover:bg-slate-800 transition-colors group"
@@ -474,7 +556,7 @@
               data-icon="receipt_long"
               >receipt_long</span
             >
-            <span class="label-sm">Duyệt đơn</span>
+            <span class="label-sm" data-i18n="approveOrders">Duyệt đơn</span>
           </a>
           {% endif %}
           <hr class="border-outline-variant/30 dark:border-slate-850 my-xs" />
@@ -487,7 +569,9 @@
               data-icon="settings"
               >settings</span
             >
-            <span class="label-sm"><span data-i18n="accountSettings">Cài đặt tài khoản</span></span>
+            <span class="label-sm"
+              ><span data-i18n="accountSettings">Cài đặt tài khoản</span></span
+            >
           </a>
         </div>
       </aside>
@@ -500,11 +584,22 @@
             data-purpose="page-header"
           >
             <div class="flex flex-col gap-2">
-              <h1 class="headline-lg font-semibold text-on-surface dark:text-slate-100">
-                Kết quả nhận diện giống chó
+              <h1
+                class="headline-lg font-semibold text-on-surface dark:text-slate-100"
+                data-i18n="predResultTitle"
+              >
+                <span data-i18n="predResultTitle"
+                  >Kết quả nhận diện giống chó</span
+                >
               </h1>
-              <p class="body-md text-on-surface-variant dark:text-slate-400">
-                Hệ thống AI đã hoàn tất phân tích hình ảnh với độ chính xác cao.
+              <p
+                class="body-md text-on-surface-variant dark:text-slate-400"
+                data-i18n="predResultDesc"
+              >
+                <span data-i18n="predResultDesc"
+                  >Hệ thống AI đã hoàn tất phân tích hình ảnh với độ chính xác
+                  cao.</span
+                >
               </p>
             </div>
             <div class="flex flex-wrap gap-3 mt-4 md:mt-0">
@@ -512,16 +607,20 @@
                 class="px-4 py-2.5 rounded-lg border border-outline-variant/40 dark:border-slate-700 label-sm font-semibold text-on-surface dark:text-slate-300 hover:bg-surface-container-low dark:hover:bg-slate-800 transition-colors flex items-center gap-2"
                 href="{{ url_for('dashboard.dashboard') }}"
               >
-                <span class="material-symbols-outlined text-[18px]">dashboard</span>
-                Về bảng điều khiển
-              </a>
+                <span class="material-symbols-outlined text-[18px]"
+                  >dashboard</span
+                ><span data-i18n="backToDashboard">Về bảng điều khiển</span></a
+              >
               <a
                 class="bg-primary hover:bg-primary/95 text-on-primary px-4 py-2.5 rounded-lg label-sm shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-2 font-semibold"
                 href="{{ url_for('predict.upload_page') }}"
               >
-                <span class="material-symbols-outlined text-[18px]">photo_camera</span>
-                Phân tích ảnh khác
-              </a>
+                <span class="material-symbols-outlined text-[18px]"
+                  >photo_camera</span
+                ><span data-i18n="analyzeAnotherImg"
+                  >Phân tích ảnh khác</span
+                ></a
+              >
             </div>
           </section>
 
@@ -534,7 +633,10 @@
               >
                 <span class="material-symbols-outlined">visibility</span>
               </div>
-              <h2 class="headline-md font-semibold text-on-surface dark:text-slate-100">
+              <h2
+                class="headline-md font-semibold text-on-surface dark:text-slate-100"
+                data-i18n="visualAIInsights"
+              >
                 Visual AI Insights
               </h2>
             </div>
@@ -549,16 +651,24 @@
                 >
                   <div class="flex items-center justify-between mb-4 px-2">
                     <div class="flex items-center gap-3">
-                      <span class="material-symbols-outlined text-primary dark:text-blue-400">analytics</span>
-                      <h3 class="font-semibold headline-md text-on-surface dark:text-slate-100">
-                        Phân tích vùng đối tượng chính
+                      <span
+                        class="material-symbols-outlined text-primary dark:text-blue-400"
+                        >analytics</span
+                      >
+                      <h3
+                        class="font-semibold headline-md text-on-surface dark:text-slate-100"
+                        data-i18n="mainObjectAnalysis"
+                      >
+                        <span data-i18n="mainObjectAnalysis"
+                          >Phân tích vùng đối tượng chính</span
+                        >
                       </h3>
                     </div>
                     <span
                       class="px-3 py-1 bg-primary/10 dark:bg-primary/20 text-primary dark:text-blue-400 label-sm font-bold rounded-full uppercase tracking-widest"
+                      data-i18n="analyzingText"
+                      >Đang phân tích</span
                     >
-                      Đang phân tích
-                    </span>
                   </div>
                   <div
                     class="relative rounded-xl overflow-hidden shadow-inner border border-outline-variant/20 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/40"
@@ -566,7 +676,7 @@
                     <img
                       class="w-full h-auto max-h-[700px] object-contain mx-auto"
                       src="/{{ image_path }}"
-                      alt="Ảnh đã tải lên"
+                      alt="Uploaded photo"
                     />
                     <div
                       class="absolute inset-0 flex items-center justify-center"
@@ -577,13 +687,21 @@
                         <div
                           class="absolute -top-10 left-0 bg-primary text-white label-sm px-3 py-1.5 font-bold uppercase tracking-widest rounded-t-lg shadow-lg flex items-center gap-2"
                         >
-                          <span class="material-symbols-outlined text-sm">check_circle</span>
-                          {% if result.parts_info and result.parts_info.decision and result.parts_info.decision.is_hybrid_candidate and result.parts_info.similarity_top3|length >= 2 %}
-                            Mix Lai: {{ result.parts_info.similarity_top3[0].breed }} × {{ result.parts_info.similarity_top3[1].breed }}
-                          {% else %}
-                            {{ breed_name }}
-                          {% endif %}
-                          {% if has_conf %}: {{ '%.1f'|format(conf_percent_clamped) }}%{% endif %}
+                          <span class="material-symbols-outlined text-sm"
+                            >check_circle</span
+                          >
+                          {% if result.parts_info and result.parts_info.decision
+                          and result.parts_info.decision.is_hybrid_candidate and
+                          result.parts_info.similarity_top3|length >= 2 %}
+                          <span data-i18n="mixLai">Mix Lai:</span> {{
+                          result.parts_info.similarity_top3[0].breed }} × {{
+                          result.parts_info.similarity_top3[1].breed }} {% else
+                          %}
+                          <span data-i18n-breed="{{ breed_name }}"
+                            >{{ breed_name }}</span
+                          >
+                          {% endif %} {% if has_conf %}: {{
+                          '%.1f'|format(conf_percent_clamped) }}%{% endif %}
                         </div>
                         <div
                           class="absolute inset-0 border border-white/30 rounded-lg pointer-events-none"
@@ -595,7 +713,9 @@
                         class="glass-card bg-white/80 dark:bg-slate-900/80 backdrop-blur-md px-4 py-2 rounded-lg flex items-center gap-2 label-sm font-medium text-slate-700 dark:text-slate-300 border border-outline-variant/30 dark:border-slate-800"
                       >
                         <div class="w-3 h-3 rounded-full bg-primary"></div>
-                        Nhận diện đối tượng chính
+                        <span data-i18n="mainObjectIdentify"
+                          >Nhận diện đối tượng chính</span
+                        >
                       </div>
                     </div>
                   </div>
@@ -611,32 +731,42 @@
                     <div>
                       <span
                         class="label-sm text-outline dark:text-slate-400 uppercase tracking-widest"
+                        data-i18n="bestPrediction"
+                        >Dự đoán tốt nhất</span
                       >
-                        Dự đoán tốt nhất
-                      </span>
                       <h2
                         class="headline-lg text-on-surface dark:text-slate-100 mt-1 leading-tight"
                       >
-                        {% if result.parts_info and result.parts_info.decision and result.parts_info.decision.is_hybrid_candidate and result.parts_info.similarity_top3|length >= 2 %}
-                          Mix Lai: {{ result.parts_info.similarity_top3[0].breed }} × {{ result.parts_info.similarity_top3[1].breed }}
-                        {% else %}
-                          {{ breed_name }}
-                          {% if primary_label and primary_label != 'Nghi lai' %}
-                          <span class="text-primary dark:text-blue-400 text-sm font-semibold">({{ primary_label }})</span>
-                          {% endif %}
-                        {% endif %}
+                        {% if result.parts_info and result.parts_info.decision
+                        and result.parts_info.decision.is_hybrid_candidate and
+                        result.parts_info.similarity_top3|length >= 2 %}
+                        <span data-i18n="mixLai">Mix Lai:</span> {{
+                        result.parts_info.similarity_top3[0].breed }} × {{
+                        result.parts_info.similarity_top3[1].breed }} {% else %}
+                        <span data-i18n-breed="{{ breed_name }}"
+                          >{{ breed_name }}</span
+                        >
+                        {% if primary_label and primary_label != 'Nghi lai' %}
+                        <span
+                          class="text-primary dark:text-blue-400 text-sm font-semibold"
+                          >(<span data-i18n-auto>{{ primary_label }}</span
+                          >)</span
+                        >
+                        {% endif %} {% endif %}
                       </h2>
                     </div>
                     <div class="flex flex-col items-end">
                       <div
                         class="headline-lg font-black text-primary dark:text-blue-400 leading-none"
                       >
-                        {% if has_conf %} {{ '%.1f'|format(conf_percent_clamped) }}%{% else %} -- {% endif %}
+                        {% if has_conf %} {{ '%.1f'|format(conf_percent_clamped)
+                        }}%{% else %} -- {% endif %}
                       </div>
                       <div
                         class="label-sm text-outline dark:text-slate-400 mt-1 font-bold"
+                        data-i18n="confidence"
                       >
-                        Độ tin cậy
+                        <span data-i18n="confidence">Độ tin cậy</span>
                       </div>
                     </div>
                   </div>
@@ -652,7 +782,9 @@
                   <div
                     class="p-3 bg-error-container/40 dark:bg-red-950/20 rounded-lg border border-error-container/60 dark:border-red-900/30 mb-4"
                   >
-                    <p class="body-md text-on-error-container dark:text-red-400">
+                    <p
+                      class="body-md text-on-error-container dark:text-red-400"
+                    >
                       {{ result.note }}
                     </p>
                   </div>
@@ -662,118 +794,201 @@
                   >
                     <p
                       class="body-md text-on-surface-variant dark:text-slate-300 leading-relaxed"
+                      data-i18n-auto
                     >
                       {{ decision_reason }}
                     </p>
-                    {% if result.parts_info and result.parts_info.decision and result.parts_info.decision.is_hybrid_candidate %}
-                    <p class="label-sm text-on-surface-variant dark:text-slate-400 mt-3">
-                      Đây là gợi ý ứng viên lai dựa trên tương đồng hình thái, không phải kết luận di truyền.
+                    {% if result.parts_info and result.parts_info.decision and
+                    result.parts_info.decision.is_hybrid_candidate %}
+                    <p
+                      class="label-sm text-on-surface-variant dark:text-slate-400 mt-3"
+                      data-i18n="hybridWarningText"
+                    >
+                      <span data-i18n="hybridWarningText"
+                        >Đây là gợi ý ứng viên lai dựa trên tương đồng hình
+                        thái, không phải kết luận di truyền.</span
+                      >
                     </p>
                     {% endif %}
                   </div>
-                  
-                  {% if result.parts_info and result.parts_info.decision and result.parts_info.decision.is_hybrid_candidate and result.parts_info.similarity_top3|length >= 2 %}
-                    {% set mix_breed1 = result.parts_info.similarity_top3[0] %}
-                    {% set mix_breed2 = result.parts_info.similarity_top3[1] %}
-                    {% set s1 = mix_breed1.score %}
-                    {% set s2 = mix_breed2.score %}
-                    {% set sum_s = s1 + s2 %}
-                    {% set p1 = ((s1 / sum_s) * 100)|round(1) if sum_s > 0 else 50.0 %}
-                    {% set p2 = 100.0 - p1 %}
-                    <div class="mt-4 p-5 bg-gradient-to-r from-blue-50/50 to-primary/5 dark:from-slate-800/40 dark:to-slate-900/40 rounded-xl border border-blue-100 dark:border-slate-850">
-                      <h4 class="text-xs font-semibold uppercase text-slate-500 dark:text-slate-400 tracking-wider mb-4 flex items-center gap-1.5">
-                        <span class="material-symbols-outlined text-[16px] text-primary dark:text-blue-400">analytics</span>
-                        Phân tích tỷ lệ lai dự tính
-                      </h4>
-                      
-                      <div class="space-y-4">
-                        <!-- Hybrid Mix Progress Bar -->
-                        <div class="w-full bg-slate-200 dark:bg-slate-800 h-6 rounded-full overflow-hidden flex relative">
-                          <div class="h-full bg-gradient-to-r from-primary to-blue-500 flex items-center px-3 text-white text-xs font-bold transition-all duration-500 confidence-fill" data-width="{{ p1 }}">
-                            {{ mix_breed1.breed }} ({{ p1 }}%)
+
+                  {% if result.parts_info and result.parts_info.decision and
+                  result.parts_info.decision.is_hybrid_candidate and
+                  result.parts_info.similarity_top3|length >= 2 %} {% set
+                  mix_breed1 = result.parts_info.similarity_top3[0] %} {% set
+                  mix_breed2 = result.parts_info.similarity_top3[1] %} {% set s1
+                  = mix_breed1.score %} {% set s2 = mix_breed2.score %} {% set
+                  sum_s = s1 + s2 %} {% set p1 = ((s1 / sum_s) * 100)|round(1)
+                  if sum_s > 0 else 50.0 %} {% set p2 = 100.0 - p1 %}
+                  <div
+                    class="mt-4 p-5 bg-gradient-to-r from-blue-50/50 to-primary/5 dark:from-slate-800/40 dark:to-slate-900/40 rounded-xl border border-blue-100 dark:border-slate-850"
+                  >
+                    <h4
+                      class="text-xs font-semibold uppercase text-slate-500 dark:text-slate-400 tracking-wider mb-4 flex items-center gap-1.5"
+                    >
+                      <span
+                        class="material-symbols-outlined text-[16px] text-primary dark:text-blue-400"
+                        >analytics</span
+                      ><span data-i18n="hybridRatioTitle"
+                        >Phân tích tỷ lệ lai dự tính</span
+                      >
+                    </h4>
+
+                    <div class="space-y-4">
+                      <!-- Hybrid Mix Progress Bar -->
+                      <div
+                        class="w-full bg-slate-200 dark:bg-slate-800 h-6 rounded-full overflow-hidden flex relative"
+                      >
+                        <div
+                          class="h-full bg-gradient-to-r from-primary to-blue-500 flex items-center px-3 text-white text-xs font-bold transition-all duration-500 confidence-fill"
+                          data-width="{{ p1 }}"
+                        >
+                          {{ mix_breed1.breed }} ({{ p1 }}%)
+                        </div>
+                        <div
+                          class="h-full bg-gradient-to-r from-yellow-500 to-orange-500 flex items-center justify-end px-3 text-white text-xs font-bold transition-all duration-500 confidence-fill"
+                          data-width="{{ p2 }}"
+                        >
+                          {{ mix_breed2.breed }} ({{ p2 }}%)
+                        </div>
+                      </div>
+
+                      <!-- Parent Breeds Breakdown -->
+                      <div class="grid grid-cols-2 gap-4 mt-2">
+                        <div
+                          class="bg-surface-container-low dark:bg-slate-950 p-4 rounded-xl border border-outline-variant/30 dark:border-slate-800 flex flex-col gap-1.5 shadow-sm"
+                        >
+                          <div class="flex items-center justify-between">
+                            <span
+                              class="text-[10px] font-semibold text-slate-450 dark:text-slate-500 uppercase"
+                              data-i18n="dominantGenExpected"
+                              >Gen trội dự kiến</span
+                            >
+                            <span
+                              class="text-xs font-black text-primary dark:text-blue-400"
+                              >{{ p1 }}%</span
+                            >
                           </div>
-                          <div class="h-full bg-gradient-to-r from-yellow-500 to-orange-500 flex items-center justify-end px-3 text-white text-xs font-bold transition-all duration-500 confidence-fill" data-width="{{ p2 }}">
-                            {{ mix_breed2.breed }} ({{ p2 }}%)
+                          <div
+                            class="text-sm font-bold text-slate-800 dark:text-slate-200"
+                          >
+                            {{ mix_breed1.breed }}
+                          </div>
+                          <div
+                            class="text-[11px] text-slate-400 dark:text-slate-500 font-mono"
+                          >
+                            <span data-i18n="similarityText">Độ tương đồng</span
+                            >: {{ '%.3f'|format(s1) }}
                           </div>
                         </div>
-                        
-                        <!-- Parent Breeds Breakdown -->
-                        <div class="grid grid-cols-2 gap-4 mt-2">
-                          <div class="bg-surface-container-low dark:bg-slate-950 p-4 rounded-xl border border-outline-variant/30 dark:border-slate-800 flex flex-col gap-1.5 shadow-sm">
-                            <div class="flex items-center justify-between">
-                              <span class="text-[10px] font-semibold text-slate-450 dark:text-slate-500 uppercase">Gen trội dự kiến</span>
-                              <span class="text-xs font-black text-primary dark:text-blue-400">{{ p1 }}%</span>
-                            </div>
-                            <div class="text-sm font-bold text-slate-800 dark:text-slate-200">{{ mix_breed1.breed }}</div>
-                            <div class="text-[11px] text-slate-400 dark:text-slate-500 font-mono">Độ tương đồng: {{ '%.3f'|format(s1) }}</div>
+
+                        <div
+                          class="bg-surface-container-low dark:bg-slate-950 p-4 rounded-xl border border-outline-variant/30 dark:border-slate-800 flex flex-col gap-1.5 shadow-sm"
+                        >
+                          <div class="flex items-center justify-between">
+                            <span
+                              class="text-[10px] font-semibold text-slate-450 dark:text-slate-500 uppercase"
+                              data-i18n="recessiveGenExpected"
+                              >Gen ẩn dự kiến</span
+                            >
+                            <span
+                              class="text-xs font-black text-yellow-600 dark:text-yellow-400"
+                              >{{ p2 }}%</span
+                            >
                           </div>
-                          
-                          <div class="bg-surface-container-low dark:bg-slate-950 p-4 rounded-xl border border-outline-variant/30 dark:border-slate-800 flex flex-col gap-1.5 shadow-sm">
-                            <div class="flex items-center justify-between">
-                              <span class="text-[10px] font-semibold text-slate-450 dark:text-slate-500 uppercase">Gen ẩn dự kiến</span>
-                              <span class="text-xs font-black text-yellow-600 dark:text-yellow-400">{{ p2 }}%</span>
-                            </div>
-                            <div class="text-sm font-bold text-slate-800 dark:text-slate-200">{{ mix_breed2.breed }}</div>
-                            <div class="text-[11px] text-slate-400 dark:text-slate-500 font-mono">Độ tương đồng: {{ '%.3f'|format(s2) }}</div>
+                          <div
+                            class="text-sm font-bold text-slate-800 dark:text-slate-200"
+                          >
+                            {{ mix_breed2.breed }}
+                          </div>
+                          <div
+                            class="text-[11px] text-slate-400 dark:text-slate-500 font-mono"
+                          >
+                            <span data-i18n="similarityText">Độ tương đồng</span
+                            >: {{ '%.3f'|format(s2) }}
                           </div>
                         </div>
                       </div>
                     </div>
+                  </div>
                   {% endif %}
                 </div>
 
-                {% if result.parts_info and (result.parts_info.top5 or result.parts_info.similarity_top3) %}
+                {% if result.parts_info and (result.parts_info.top5 or
+                result.parts_info.similarity_top3) %}
                 <div
                   class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-5 border border-outline-variant/30 dark:border-slate-800 shadow-sm"
                 >
                   <h3
                     class="font-semibold text-on-surface dark:text-slate-100 mb-6 flex items-center gap-2"
                   >
-                    <span class="material-symbols-outlined text-secondary-container dark:text-orange-400">schema</span>
-                    {% if top3_mode == 'similarity' %} Tương đồng hình thái (Top 3) {% else %} Top 3 xác suất softmax {% endif %}
+                    <span
+                      class="material-symbols-outlined text-secondary-container dark:text-orange-400"
+                      >schema</span
+                    >
+                    {% if top3_mode == 'similarity' %}
+                    <span data-i18n="similarityTop3"
+                      >Tương đồng hình thái (Top 3)</span
+                    >
+                    {% else %}
+                    <span data-i18n="top3Probability"
+                      >Top 3 xác suất softmax</span
+                    >
+                    {% endif %}
                   </h3>
                   <div class="space-y-6">
-                    {% if top3_mode == 'similarity' %} 
-                      {% for item in result.parts_info.similarity_top3[:3] %} 
-                      {% set sim_score = item.score or 0 %} 
-                      {% set sim_score_clamped = 0 if sim_score < 0 else (1 if sim_score > 1 else sim_score) %}
-                      <div class="space-y-2">
-                        <div class="flex justify-between label-sm">
-                          <span class="text-on-surface dark:text-slate-200 font-semibold">{{ item.breed }}</span>
-                          <span class="text-outline dark:text-slate-400 font-bold">{{ '%.1f'|format(sim_score_clamped * 100) }}%</span>
-                        </div>
-                        <div
-                          class="w-full bg-surface-container-low dark:bg-slate-800 h-2 rounded-full overflow-hidden"
+                    {% if top3_mode == 'similarity' %} {% for item in
+                    result.parts_info.similarity_top3[:3] %} {% set sim_score =
+                    item.score or 0 %} {% set sim_score_clamped = 0 if sim_score
+                    < 0 else (1 if sim_score > 1 else sim_score) %}
+                    <div class="space-y-2">
+                      <div class="flex justify-between label-sm">
+                        <span
+                          class="text-on-surface dark:text-slate-200 font-semibold"
+                          >{{ item.breed }}</span
                         >
-                          <div
-                            class="bg-outline dark:bg-slate-500 h-full rounded-full top5-fill"
-                            data-width="{{ (sim_score_clamped * 100)|int }}"
-                          ></div>
-                        </div>
-                      </div>
-                      {% endfor %} 
-                    {% else %} 
-                      {% for item in result.parts_info.top5[:3] %} 
-                      {% set score = item.score or 0 %}
-                      <div class="space-y-2">
-                        <div class="flex justify-between label-sm">
-                          <span class="text-on-surface dark:text-slate-200 font-semibold">{{ item.breed }}</span>
-                          <span class="text-outline dark:text-slate-400 font-bold">{{ '%.1f'|format(score * 100) }}%</span>
-                        </div>
-                        <div
-                          class="w-full bg-surface-container-low dark:bg-slate-800 h-2 rounded-full overflow-hidden"
+                        <span class="text-outline dark:text-slate-400 font-bold"
+                          >{{ '%.1f'|format(sim_score_clamped * 100) }}%</span
                         >
-                          <div
-                            class="bg-outline dark:bg-slate-500 h-full rounded-full top5-fill"
-                            data-width="{{ ((score * 100)|int) }}"
-                          ></div>
-                        </div>
                       </div>
-                      {% endfor %} 
-                    {% endif %}
+                      <div
+                        class="w-full bg-surface-container-low dark:bg-slate-800 h-2 rounded-full overflow-hidden"
+                      >
+                        <div
+                          class="bg-outline dark:bg-slate-500 h-full rounded-full top5-fill"
+                          data-width="{{ (sim_score_clamped * 100)|int }}"
+                        ></div>
+                      </div>
+                    </div>
+                    {% endfor %} {% else %} {% for item in
+                    result.parts_info.top5[:3] %} {% set score = item.score or 0
+                    %}
+                    <div class="space-y-2">
+                      <div class="flex justify-between label-sm">
+                        <span
+                          class="text-on-surface dark:text-slate-200 font-semibold"
+                          >{{ item.breed }}</span
+                        >
+                        <span class="text-outline dark:text-slate-400 font-bold"
+                          >{{ '%.1f'|format(score * 100) }}%</span
+                        >
+                      </div>
+                      <div
+                        class="w-full bg-surface-container-low dark:bg-slate-800 h-2 rounded-full overflow-hidden"
+                      >
+                        <div
+                          class="bg-outline dark:bg-slate-500 h-full rounded-full top5-fill"
+                          data-width="{{ ((score * 100)|int) }}"
+                        ></div>
+                      </div>
+                    </div>
+                    {% endfor %} {% endif %}
                   </div>
-                  {% if result.parts_info.display and result.parts_info.display.top3_note %}
-                  <p class="label-sm text-on-surface-variant dark:text-slate-400 mt-4">
+                  {% if result.parts_info.display and
+                  result.parts_info.display.top3_note %}
+                  <p
+                    class="label-sm text-on-surface-variant dark:text-slate-400 mt-4"
+                  >
                     {{ result.parts_info.display.top3_note }}
                   </p>
                   {% endif %}
@@ -792,20 +1007,40 @@
                   <h3
                     class="headline-md text-on-surface dark:text-slate-100 flex items-center gap-2"
                   >
-                    <span class="material-symbols-outlined text-tertiary dark:text-amber-500">grid_view</span>
-                    {% if gradcam_mode == 'dynamic' %} Grad-CAM động (Visual Proof) {% else %} Grad-CAM tham khảo (Visual Proof) {% endif %}
+                    <span
+                      class="material-symbols-outlined text-tertiary dark:text-amber-500"
+                      >grid_view</span
+                    >
+                    {% if gradcam_mode == 'dynamic' %}
+                    <span data-i18n="visualProofTitle"
+                      >Grad-CAM động (Visual Proof)</span
+                    >
+                    {% else %}
+                    <span data-i18n="visualProofRefTitle"
+                      >Grad-CAM tham khảo (Visual Proof)</span
+                    >
+                    {% endif %}
                   </h3>
                   <p class="body-md text-outline dark:text-slate-400 mt-1">
-                    {% if gradcam_mode == 'dynamic' %} Bản đồ nhiệt theo đúng ảnh bạn vừa tải lên. {% else %} Bản đồ nhiệt theo giống tham khảo. {% endif %}
+                    {% if gradcam_mode == 'dynamic' %}
+                    <span data-i18n="visualProofDesc"
+                      >Bản đồ nhiệt theo đúng ảnh bạn vừa tải lên.</span
+                    >
+                    {% else %}
+                    <span data-i18n="visualProofRefDesc"
+                      >Bản đồ nhiệt theo giống tham khảo.</span
+                    >
+                    {% endif %}
                   </p>
                 </div>
               </div>
               <div
                 class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter"
               >
-                {% for item in gradcam_items[:4] %} 
-                {% set overlay_class = heatmap_overlays[loop.index0 % (heatmap_overlays|length)] %} 
-                {% set ring_class = heatmap_rings[loop.index0 % (heatmap_rings|length)] %}
+                {% for item in gradcam_items[:4] %} {% set overlay_class =
+                heatmap_overlays[loop.index0 % (heatmap_overlays|length)] %} {%
+                set ring_class = heatmap_rings[loop.index0 %
+                (heatmap_rings|length)] %}
                 <div class="space-y-3 group">
                   <div
                     class="relative rounded-xl overflow-hidden aspect-square border border-outline-variant/30 dark:border-slate-800 bg-slate-50 dark:bg-slate-950"
@@ -829,11 +1064,18 @@
                     </div>
                   </div>
                   <div class="px-1">
-                    <h4 class="font-bold text-on-surface dark:text-slate-200 body-md">
+                    <h4
+                      class="font-bold text-on-surface dark:text-slate-200 body-md"
+                    >
                       {{ item.label or item.breed }}
                     </h4>
-                    <p class="label-sm text-outline dark:text-slate-400">
-                      Vùng nổi bật AI tập trung
+                    <p
+                      class="label-sm text-outline dark:text-slate-400"
+                      data-i18n="aiHighlightArea"
+                    >
+                      <span data-i18n="aiHighlightArea"
+                        >Vùng nổi bật AI tập trung</span
+                      >
                     </p>
                   </div>
                 </div>
@@ -852,43 +1094,60 @@
                 >
                   psychology
                 </span>
-                <h4 class="headline-md text-on-surface dark:text-slate-100">
-                  Phân tích Logic từ Model
+                <h4
+                  class="headline-md text-on-surface dark:text-slate-100"
+                  data-i18n="modelLogicAnalysis"
+                >
+                  <span data-i18n="modelLogicAnalysis"
+                    >Phân tích Logic từ Model</span
+                  >
                 </h4>
               </div>
               <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
                 <div class="md:col-span-2">
-                  <p class="body-md text-on-surface-variant dark:text-slate-350 leading-relaxed">
+                  <p
+                    class="body-md text-on-surface-variant dark:text-slate-350 leading-relaxed"
+                    data-i18n-auto
+                  >
                     {{ decision_reason }}
                   </p>
                   {% if result.parts_info and result.parts_info.acceptance %}
-                  <p class="label-sm text-on-surface-variant dark:text-slate-400 mt-3">
-                    {% if result.parts_info.decision and result.parts_info.decision.is_hybrid_candidate %} 
-                      Mức tin cậy đủ cho gợi ý ứng viên lai. 
-                    {% elif result.parts_info.acceptance.accepted %} 
-                      Mức tin cậy đủ để kết luận giống. 
-                    {% elif result.parts_info.acceptance.level == 'reference' %} 
-                      Mức tin cậy tham khảo, chưa đủ để kết luận giống. 
-                    {% endif %}
+                  <p
+                    class="label-sm text-on-surface-variant dark:text-slate-400 mt-3"
+                    data-i18n-auto
+                  >
+                    {% if result.parts_info.decision and
+                    result.parts_info.decision.is_hybrid_candidate %} Mức tin
+                    cậy đủ cho gợi ý ứng viên lai. {% elif
+                    result.parts_info.acceptance.accepted %} Mức tin cậy đủ để
+                    kết luận giống. {% elif result.parts_info.acceptance.level
+                    == 'reference' %} Mức tin cậy tham khảo, chưa đủ để kết luận
+                    giống. {% endif %}
                   </p>
                   {% endif %}
                 </div>
                 <div
                   class="flex flex-col justify-center items-center p-5 bg-surface-container-low dark:bg-slate-950 rounded-xl border border-outline-variant/30 dark:border-slate-800"
                 >
-                  <span class="label-sm text-outline dark:text-slate-450 font-bold uppercase mb-2">
-                    Kiến trúc mô hình
-                  </span>
-                  <div class="font-mono body-md text-primary dark:text-blue-400 font-bold">
+                  <span
+                    class="label-sm text-outline dark:text-slate-450 font-bold uppercase mb-2"
+                    data-i18n="modelArchitecture"
+                    >Kiến trúc mô hình</span
+                  >
+                  <div
+                    class="font-mono body-md text-primary dark:text-blue-400 font-bold"
+                  >
                     ResNet-101 Deep ConvNet
                   </div>
                   <div class="mt-2 flex items-center gap-2">
                     <div
                       class="w-2 h-2 rounded-full bg-green-500 animate-pulse"
                     ></div>
-                    <span class="label-sm text-green-600 dark:text-green-400 font-bold">
-                      Tối ưu suy luận
-                    </span>
+                    <span
+                      class="label-sm text-green-600 dark:text-green-400 font-bold"
+                      data-i18n="inferenceOptimization"
+                      >Tối ưu suy luận</span
+                    >
                   </div>
                 </div>
               </div>
@@ -916,67 +1175,97 @@
                 >
               </span>
             </div>
-            <p class="body-md text-on-surface-variant max-w-sm">
-              Ứng dụng nhận diện giống chó bằng AI dành cho người yêu thú cưng.
-              Kết quả chính xác, nhanh chóng.
+            <p
+              class="body-md text-on-surface-variant max-w-sm"
+              data-i18n="footerDesc"
+            >
+              <span data-i18n="footerDesc"
+                >Ứng dụng nhận diện giống chó bằng AI dành cho người yêu thú
+                cưng. Kết quả chính xác, nhanh chóng.</span
+              >
             </p>
           </div>
           <div class="lg:col-span-6 grid grid-cols-2 md:grid-cols-2 gap-8">
             <div class="space-y-6">
-              <h4 class="label-sm text-primary uppercase tracking-widest"><span data-i18n="aboutPetAI">Về PetAI</span></h4>
+              <h4 class="label-sm text-primary uppercase tracking-widest">
+                <span data-i18n="aboutPetAI">Về PetAI</span>
+              </h4>
               <ul class="space-y-4">
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                    target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.privacy_policy') }}"
-                     data-i18n="privacy">Chính sách quyền riêng tư</a
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href="{{ url_for('legal.privacy_policy') }}"
+                    data-i18n="privacy"
+                    ><span data-i18n="privacy"
+                      >Chính sách quyền riêng tư</span
+                    ></a
                   >
                 </li>
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                    target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.terms_of_service') }}"
-                     data-i18n="terms">Điều khoản sử dụng</a
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href="{{ url_for('legal.terms_of_service') }}"
+                    data-i18n="terms"
+                    ><span data-i18n="terms">Điều khoản sử dụng</span></a
                   >
                 </li>
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                    target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.data_deletion') }}"
-                     data-i18n="dataDeletion">Chính sách xóa dữ liệu</a
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href="{{ url_for('legal.data_deletion') }}"
+                    data-i18n="dataDeletion"
+                    ><span data-i18n="dataDeletion"
+                      >Chính sách xóa dữ liệu</span
+                    ></a
                   >
                 </li>
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                    target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.support') }}"
-                     data-i18n="support">Hỗ trợ</a
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href="{{ url_for('legal.support') }}"
+                    data-i18n="support"
+                    ><span data-i18n="homeStatsSupport">HỖ TRỢ</span></a
                   >
                 </li>
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                    target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.contact') }}"
-                     data-i18n="contact">Liên hệ</a
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href="{{ url_for('legal.contact') }}"
+                    data-i18n="contact"
+                    ><span data-i18n="contact">Liên hệ</span></a
                   >
                 </li>
               </ul>
             </div>
             <div class="space-y-6">
-              <h4 class="label-sm text-primary uppercase tracking-widest"><span data-i18n="connect">Kết nối</span></h4>
+              <h4 class="label-sm text-primary uppercase tracking-widest">
+                <span data-i18n="connect">Kết nối</span>
+              </h4>
               <ul class="space-y-4">
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
                     href="{{ url_for('predict.upload_page') }}"
-                     data-i18n="identifyNow">Nhận diện ngay</a
+                    data-i18n="identifyNow"
+                    ><span data-i18n="identifyNow">Nhận diện ngay</span></a
                   >
                 </li>
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
                     href="{{ url_for('history.history') }}"
-                     data-i18n="collection">Bộ sưu tập</a
+                    data-i18n="collection"
+                    ><span data-i18n="collection">Bộ sưu tập</span></a
                   >
                 </li>
               </ul>
@@ -987,17 +1276,33 @@
           <div
             class="flex flex-col md:flex-row justify-between items-center gap-4"
           >
-            <p class="label-sm text-on-surface-variant/70 dark:text-slate-400"><span data-i18n="copyright">Bản quyền © 2026 PetAI. Mọi quyền được bảo lưu</span></p>
+            <p class="label-sm text-on-surface-variant/70 dark:text-slate-400">
+              <span data-i18n="copyright"
+                >Bản quyền © 2026 PetAI. Mọi quyền được bảo lưu</span
+              >
+            </p>
             <div class="flex gap-6">
+              <a class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
+
+                target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.user_guide') }}"
+
+                data-i18n="footerUserGuide"><span data-i18n="footerUserGuide">HƯỚNG DẪN SỬ DỤNG</span></a>
+
               <a
                 class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
-                target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.terms_of_service') }}"
-                >ĐIỀU KHOẢN</a
+                target="_blank"
+                rel="noopener noreferrer"
+                href="{{ url_for('legal.terms_of_service') }}"
+                data-i18n="footerTerms"
+                ><span data-i18n="footerTerms">ĐIỀU KHOẢN</span></a
               >
               <a
                 class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
-                target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.privacy_policy') }}"
-                >BẢO MẬT</a
+                target="_blank"
+                rel="noopener noreferrer"
+                href="{{ url_for('legal.privacy_policy') }}"
+                data-i18n="footerPrivacy"
+                ><span data-i18n="footerPrivacy">BẢO MẬT</span></a
               >
             </div>
           </div>
@@ -1021,6 +1326,7 @@
       });
     </script>
     <script src="{{ url_for('static', filename='js/toasts.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
   </body>
 </html>

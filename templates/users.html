@@ -1,7 +1,31 @@
 <!doctype html>
 
-<html class="{{ 'dark' if ui_theme == 'dark' else 'light' }}" lang="vi" data-theme="{{ ui_theme or 'light' }}">
+<html class="{{ 'dark' if ui_theme == 'dark' else 'light' }}{{ ' i18n-loading' if ui_language == 'en' else '' }}" lang="{{ ui_language or 'vi' }}" data-theme="{{ ui_theme or 'light' }}">
   <head>
+    <script>
+      (function () {
+        var savedLang = "vi";
+        try {
+          savedLang = localStorage.getItem("siteLanguage") || "vi";
+        } catch (e) {}
+        document.documentElement.setAttribute("data-user-lang", savedLang);
+        if (savedLang === "en") {
+          document.documentElement.classList.add("i18n-loading");
+        }
+      })();
+    </script>
+    <style>
+      html.i18n-loading body {
+        visibility: hidden !important;
+      }
+    </style>
+    <noscript>
+      <style>
+        html.i18n-loading body {
+          visibility: visible !important;
+        }
+      </style>
+    </noscript>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <script>
@@ -64,7 +88,7 @@
         } catch (e) {}
       })();
     </script>
-    <title>Quản trị Người dùng - PetAI</title>
+    <title data-i18n="adminUsersPageTitle">{{ 'Admin User Management - PetAI' if ui_language == 'en' else 'Quản trị Người dùng - PetAI' }}</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link
       rel="stylesheet"
@@ -224,7 +248,7 @@
               >PetAI</span
             >
           </a>
-          <button class="menu-toggle ml-2" id="menuToggle" aria-label="Mở menu" aria-expanded="false" type="button">
+          <button class="menu-toggle ml-2" id="menuToggle" aria-label="Mở menu" aria-expanded="false" type="button" data-i18n-aria="openMenu">
             <span></span>
             <span></span>
             <span></span>
@@ -233,54 +257,47 @@
         <div class="hidden md:flex flex-1 items-center justify-end gap-margin mr-gutter [&>a]:px-0.5 [&>a]:label-sm">
           <a
             class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
-            href="{{ url_for('dashboard.dashboard') }}"
-            >Bảng điều khiển</a
+            href="{{ url_for('dashboard.dashboard') }}" data-i18n="dashboard"><span data-i18n="dashboard">Bảng điều khiển</span></a
           >
           <a
             class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
-            href="{{ url_for('history.history') }}"
-            >Lịch sử</a
+            href="{{ url_for('history.history') }}" data-i18n="history"><span data-i18n="history">Lịch sử</span></a
           >
           <a
             class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
-            href="{{ url_for('statistics.statistics') }}"
-            >Thống kê</a
+            href="{{ url_for('statistics.statistics') }}" data-i18n="statistics"><span data-i18n="statistics">Thống kê</span></a
           >
           <a
             class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
-            href="{{ url_for('predict.upgrade') }}"
-            >Nâng cấp</a
+            href="{{ url_for('predict.upgrade') }}" data-i18n="upgrade"><span data-i18n="upgrade">Nâng cấp</span></a
           >
           {% if session.get('role') == 'admin' %}
           <a
             class="text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400 px-2 py-2 pb-1 font-semibold rounded-lg transition-all"
-            href="{{ url_for('users.list_users') }}"
-            >Quản lý người dùng</a
+            href="{{ url_for('users.list_users') }}" data-i18n="manageUsers"><span data-i18n="manageUsers">Quản lý người dùng</span></a
           >
           <a
             class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
-            href="{{ url_for('users.confirmations_list') }}"
-            >Duyệt đơn</a
+            href="{{ url_for('users.confirmations_list') }}" data-i18n="approveOrders"><span data-i18n="approveOrders">Duyệt đơn</span></a
           >
           {% endif %}
         </div>
         <div class="flex items-center gap-md">
           <a
             class="hidden md:inline-flex bg-primary text-on-primary px-4 py-2 rounded-lg label-sm shadow-sm hover:shadow-md transition-all"
-            href="{{ url_for('predict.upload_page') }}"
-            >Nhận diện</a
+            href="{{ url_for('predict.upload_page') }}" data-i18n="predict"><span data-i18n="predict">Nhận diện</span></a
           >
           <div class="language-switcher mr-2" id="languageSwitcher">
               <button class="language-button" id="languageButton" type="button" aria-haspopup="true" aria-expanded="false">
-                <span class="language-flag">🇻🇳</span>
-                <span class="language-current">VN</span>
+                <span class="language-flag" data-i18n="languageFlag">🇻🇳</span>
+                <span class="language-current" data-i18n="shortLabel">VN</span>
                 <span class="language-arrow">▼</span>
               </button>
               <div class="language-menu" id="languageMenu">
                 <button class="language-option active" type="button" data-lang="vi">
                   <span class="language-check">✓</span>
-                  <span class="language-flag">🇻🇳</span>
-                  <span>Tiếng Việt</span>
+                  <span class="language-flag" data-i18n="languageFlag">🇻🇳</span>
+                  <span data-i18n="languageLabel">Tiếng Việt</span>
                 </button>
                 <button class="language-option" type="button" data-lang="en">
                   <span class="language-check"></span>
@@ -303,16 +320,12 @@
                 class="absolute right-0 top-full w-52 bg-white dark:bg-slate-900 rounded-lg shadow-xl border border-slate-200 dark:border-slate-800 py-2 hidden avatar-dropdown-menu z-50"
               >
                 <div class="px-4 pb-2">
-                  <div class="label-sm text-slate-500 dark:text-slate-400">
-                    Vai trò:
-                    <span
+                  <div class="label-sm text-slate-500 dark:text-slate-400"><span data-i18n="role">Vai trò:</span><span
                       class="font-semibold text-slate-800 dark:text-slate-200"
                       >{{ display_role|upper }}</span
                     >
                   </div>
-                  <div class="label-sm text-slate-500 dark:text-slate-400">
-                    Gói:
-                    <span
+                  <div class="label-sm text-slate-500 dark:text-slate-400"><span data-i18n="plan">Gói:</span><span
                       class="font-semibold text-slate-800 dark:text-slate-200"
                       >{{ display_plan|upper }}</span
                     >
@@ -334,9 +347,7 @@
                 >
                   <span class="material-symbols-outlined text-[18px]"
                     >logout</span
-                  >
-                  Đăng xuất
-                </a>
+                  ><span data-i18n="logout">Đăng xuất</span></a>
               </div>
             </div>
           </div>
@@ -352,10 +363,7 @@
           class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] py-sm px-2 flex flex-col gap-sm sticky top-24 border border-outline-variant/30"
         >
           <h3
-            class="label-sm text-on-surface-variant dark:text-slate-400 uppercase tracking-wider mb-xs px-1.5"
-          >
-            Truy cập nhanh
-          </h3>
+            class="label-sm text-on-surface-variant dark:text-slate-400 uppercase tracking-wider mb-xs px-1.5" data-i18n="quickAccess"><span data-i18n="quickAccess">Truy cập nhanh</span></h3>
           <a
             class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface dark:text-slate-300 hover:text-primary dark:hover:text-blue-400 hover:bg-surface-container dark:hover:bg-slate-800 transition-colors group"
             href="{{ url_for('predict.upload_page') }}"
@@ -367,8 +375,7 @@
               style="font-variation-settings: &quot;FILL&quot; 1"
               >upload_file</span
             >
-            <span class="label-sm"
-              >Tải ảnh &amp; Phân tích</span
+            <span class="label-sm" data-i18n="uploadAnalyze">Tải ảnh & Phân tích</span
             >
           </a>
           <a
@@ -380,7 +387,7 @@
               data-icon="history"
               >history</span
             >
-            <span class="label-sm">Lịch sử dự đoán</span>
+            <span class="label-sm"><span data-i18n="predictionHistory"><span data-i18n="predictionHistory"><span data-i18n="predictionHistory"><span data-i18n="predictionHistory">Lịch sử dự đoán</span></span></span></span></span>
           </a>
           <a
             class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface dark:text-slate-300 hover:text-primary dark:hover:text-blue-400 hover:bg-surface-container dark:hover:bg-slate-800 transition-colors group"
@@ -391,7 +398,7 @@
               data-icon="bar_chart"
               >bar_chart</span
             >
-            <span class="label-sm">Thống kê cá nhân</span>
+            <span class="label-sm" data-i18n="personalStats">Thống kê cá nhân</span>
           </a>
           <a
             class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface dark:text-slate-300 hover:text-primary dark:hover:text-blue-400 hover:bg-surface-container dark:hover:bg-slate-800 transition-colors group"
@@ -402,7 +409,7 @@
               data-icon="upgrade"
               >upgrade</span
             >
-            <span class="label-sm">Nâng cấp gói</span>
+            <span class="label-sm" data-i18n="upgradePlan">Nâng cấp gói</span>
           </a>
           {% if session.get('role') == 'admin' %}
           <a
@@ -414,8 +421,7 @@
               data-icon="groups"
               >groups</span
             >
-            <span class="label-sm font-semibold"
-              >Quản lý người dùng</span
+            <span class="label-sm font-semibold" data-i18n="manageUsers">Quản lý người dùng</span
             >
           </a>
           <a
@@ -427,7 +433,7 @@
               data-icon="receipt_long"
               >receipt_long</span
             >
-            <span class="label-sm">Duyệt đơn</span>
+            <span class="label-sm" data-i18n="approveOrders">Duyệt đơn</span>
           </a>
           {% endif %}
           <hr class="border-outline-variant/30 dark:border-slate-850 my-xs" />
@@ -460,21 +466,15 @@
             data-purpose="page-header"
           >
             <div class="flex flex-col gap-2">
-              <h1 class="headline-lg font-semibold text-on-surface dark:text-slate-100">
-                Danh sách người dùng
-              </h1>
-              <p class="body-md text-on-surface-variant dark:text-slate-400">
-                Quản lý trạng thái tài khoản, gói dịch vụ và quyền truy cập của hệ thống.
-              </p>
+              <h1 class="headline-lg font-semibold text-on-surface dark:text-slate-100" data-i18n="userListTitle"><span data-i18n="userListTitle">Danh sách người dùng</span></h1>
+              <p class="body-md text-on-surface-variant dark:text-slate-400" data-i18n="adminUsersDesc"><span data-i18n="adminUsersDesc">Quản lý trạng thái tài khoản, gói dịch vụ và quyền truy cập của hệ thống.</span></p>
             </div>
             <div class="mt-4 md:mt-0 md:flex-none">
               <a
                 class="bg-primary hover:bg-primary/95 text-on-primary px-4 py-2.5 rounded-lg label-sm shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-2 font-semibold"
                 href="{{ url_for('users.confirmations_list') }}"
               >
-                <span class="material-symbols-outlined text-[18px]">verified_user</span>
-                Duyệt đơn
-              </a>
+                <span class="material-symbols-outlined text-[18px]">verified_user</span><span data-i18n="approveOrders">Duyệt đơn</span></a>
             </div>
           </section>
 
@@ -485,56 +485,56 @@
             <!-- Card 1: Tổng người dùng -->
             <div class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[140px]">
               <div class="flex items-center justify-between">
-                <span class="label-sm text-on-surface-variant dark:text-slate-400 font-semibold uppercase tracking-wider">Tổng người dùng</span>
+                <span class="label-sm text-on-surface-variant dark:text-slate-400 font-semibold uppercase tracking-wider" data-i18n="totalUsers">Tổng người dùng</span>
                 <div class="w-10 h-10 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center text-primary">
                   <span class="material-symbols-outlined">groups</span>
                 </div>
               </div>
               <div class="mt-4 flex flex-col">
                 <span class="text-3xl font-bold text-on-surface dark:text-slate-105 tracking-tight" id="statTotal" data-counter="{{ total_users or 0 }}">0</span>
-                <span class="label-sm text-on-surface-variant/70 dark:text-slate-400/80 mt-1">Tài khoản đã đăng ký</span>
+                <span class="label-sm text-on-surface-variant/70 dark:text-slate-400/80 mt-1" data-i18n="registeredAccounts">Tài khoản đã đăng ký</span>
               </div>
             </div>
 
             <!-- Card 2: Tổng quản trị -->
             <div class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[140px]">
               <div class="flex items-center justify-between">
-                <span class="label-sm text-on-surface-variant dark:text-slate-400 font-semibold uppercase tracking-wider">Tổng quản trị</span>
+                <span class="label-sm text-on-surface-variant dark:text-slate-400 font-semibold uppercase tracking-wider" data-i18n="totalAdminsCard">Tổng quản trị</span>
                 <div class="w-10 h-10 rounded-lg bg-blue-500/10 dark:bg-blue-500/20 flex items-center justify-center text-blue-600 dark:text-blue-400">
                   <span class="material-symbols-outlined">admin_panel_settings</span>
                 </div>
               </div>
               <div class="mt-4 flex flex-col">
                 <span class="text-3xl font-bold text-on-surface dark:text-slate-105 tracking-tight" id="statAdmins" data-counter="{{ total_admins or 0 }}">0</span>
-                <span class="label-sm text-on-surface-variant/70 dark:text-slate-400/80 mt-1">Quản trị viên hệ thống</span>
+                <span class="label-sm text-on-surface-variant/70 dark:text-slate-400/80 mt-1" data-i18n="systemAdmins">Quản trị viên hệ thống</span>
               </div>
             </div>
 
             <!-- Card 3: Hoạt động -->
             <div class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[140px]">
               <div class="flex items-center justify-between">
-                <span class="label-sm text-on-surface-variant dark:text-slate-400 font-semibold uppercase tracking-wider">Hoạt động</span>
+                <span class="label-sm text-on-surface-variant dark:text-slate-400 font-semibold uppercase tracking-wider" data-i18n="activeLabel">Hoạt động</span>
                 <div class="w-10 h-10 rounded-lg bg-emerald-500/10 dark:bg-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
                   <span class="material-symbols-outlined">check_circle</span>
                 </div>
               </div>
               <div class="mt-4 flex flex-col">
                 <span class="text-3xl font-bold text-on-surface dark:text-slate-105 tracking-tight" id="statActive" data-counter="{{ total_active or 0 }}">0</span>
-                <span class="label-sm text-on-surface-variant/70 dark:text-slate-400/80 mt-1">Tài khoản hoạt động</span>
+                <span class="label-sm text-on-surface-variant/70 dark:text-slate-400/80 mt-1" data-i18n="activeAccounts">Tài khoản hoạt động</span>
               </div>
             </div>
 
             <!-- Card 4: Đã khóa -->
             <div class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[140px]">
               <div class="flex items-center justify-between">
-                <span class="label-sm text-on-surface-variant dark:text-slate-400 font-semibold uppercase tracking-wider">Đã khóa</span>
+                <span class="label-sm text-on-surface-variant dark:text-slate-400 font-semibold uppercase tracking-wider" data-i18n="lockedLabel">Đã khóa</span>
                 <div class="w-10 h-10 rounded-lg bg-red-500/10 dark:bg-red-500/20 flex items-center justify-center text-red-600 dark:text-red-400">
                   <span class="material-symbols-outlined">lock_open</span>
                 </div>
               </div>
               <div class="mt-4 flex flex-col">
                 <span class="text-3xl font-bold text-on-surface dark:text-slate-105 tracking-tight" id="statLocked" data-counter="{{ total_locked or 0 }}">0</span>
-                <span class="label-sm text-on-surface-variant/70 dark:text-slate-400/80 mt-1">Tài khoản bị khóa</span>
+                <span class="label-sm text-on-surface-variant/70 dark:text-slate-400/80 mt-1" data-i18n="lockedAccounts">Tài khoản bị khóa</span>
               </div>
             </div>
           </section>
@@ -548,16 +548,15 @@
                 id="usersSearch"
                 class="w-full pl-10 pr-4 py-2.5 bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/40 dark:border-slate-800 rounded-lg label-sm text-on-surface dark:text-slate-100 focus:ring-primary focus:border-primary dark:focus:ring-blue-500 dark:focus:border-blue-500 transition-colors"
                 placeholder="Tìm username/email/họ tên..."
-                type="text"
-              />
+                type="text" data-i18n-placeholder="searchUserPlaceholder" />
             </div>
             <div class="relative">
               <select
                 id="roleFilter"
                 class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/40 dark:border-slate-800 rounded-lg py-2.5 pl-3 pr-10 label-sm text-on-surface dark:text-slate-100 focus:ring-primary focus:border-primary dark:focus:ring-blue-500 dark:focus:border-blue-500 min-w-[150px] appearance-none bg-none cursor-pointer transition-colors"
               >
-                <option value="">Tất cả vai trò</option>
-                <option value="admin">Admin</option>
+                <option value="" data-i18n="allRoles"><span data-i18n="allRoles">Tất cả vai trò</span></option>
+                <option value="admin" data-i18n="filterAdmin"><span data-i18n="filterAdmin">Admin</span></option>
                 <option value="user">User</option>
               </select>
               <span class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-550 dark:text-slate-400">
@@ -569,9 +568,9 @@
                 id="statusFilter"
                 class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/40 dark:border-slate-800 rounded-lg py-2.5 pl-3 pr-10 label-sm text-on-surface dark:text-slate-100 focus:ring-primary focus:border-primary dark:focus:ring-blue-500 dark:focus:border-blue-500 min-w-[150px] appearance-none bg-none cursor-pointer transition-colors"
               >
-                <option value="">Tất cả trạng thái</option>
-                <option value="active">Hoạt động</option>
-                <option value="locked">Khóa</option>
+                <option value="" data-i18n="allStatuses"><span data-i18n="allStatuses">Tất cả trạng thái</span></option>
+                <option value="active" data-i18n="activeLabel"><span data-i18n="activeLabel">Hoạt động</span></option>
+                <option value="locked" data-i18n="statusLocked"><span data-i18n="statusLocked">Khóa</span></option>
               </select>
               <span class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-550 dark:text-slate-400">
                 <span class="material-symbols-outlined text-[16px]">expand_more</span>
@@ -582,9 +581,7 @@
               type="button"
               id="clearFilters"
             >
-              <span class="material-symbols-outlined text-[18px]">filter_alt_off</span>
-              Xoá lọc
-            </button>
+              <span class="material-symbols-outlined text-[18px]">filter_alt_off</span><span data-i18n="clearFilters">Xoá lọc</span></button>
           </section>
 
           <section
@@ -596,12 +593,12 @@
               <table class="w-full text-left border-collapse" id="usersTable">
                 <thead>
                   <tr class="bg-surface-container-low dark:bg-slate-800/40 border-b border-outline-variant/30 dark:border-slate-800">
-                    <th class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider">Người dùng</th>
-                    <th class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-center">Vai trò</th>
-                    <th class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-center">Trạng thái</th>
-                    <th class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-center">Ngày tạo</th>
-                    <th class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-center">Cấp gói</th>
-                    <th class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-right">Thao tác</th>
+                    <th class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider" data-i18n="filterUser"><span data-i18n="homeStatsUsers">NGƯỜI DÙNG</span></th>
+                    <th class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-center" data-i18n="userRole"><span data-i18n="userRole">Vai trò</span></th>
+                    <th class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-center" data-i18n="status"><span data-i18n="status">Trạng thái</span></th>
+                    <th class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-center" data-i18n="createdAtColHeader"><span data-i18n="createdAtColHeader">Ngày tạo</span></th>
+                    <th class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-center" data-i18n="planColHeader"><span data-i18n="planColHeader">Cấp gói</span></th>
+                    <th class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-right" data-i18n="actionColHeader"><span data-i18n="actionColHeader">Thao tác</span></th>
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-outline-variant/20 dark:divide-slate-800">
@@ -646,6 +643,7 @@
                     <td class="px-6 py-4 text-center">
                       <span
                         class="inline-flex items-center gap-1.5 px-3 py-1 label-sm font-medium rounded-full {{ 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400' if u.is_active else 'bg-rose-50 dark:bg-rose-950/30 text-rose-600 dark:text-rose-400' }}"
+                        data-i18n-auto
                       >
                         <span
                           class="w-1.5 h-1.5 rounded-full {{ 'bg-emerald-500' if u.is_active else 'bg-rose-500' }}"
@@ -671,12 +669,11 @@
                           <select
                             name="plan"
                             class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/40 dark:border-slate-800 rounded-lg py-1 pl-2.5 pr-7 label-sm font-semibold uppercase text-on-surface dark:text-slate-200 focus:ring-primary dark:focus:ring-blue-500 appearance-none bg-none cursor-pointer transition-colors"
-                            aria-label="Cấp gói"
-                          >
-                            <option value="free" {{ 'selected' if plan_val == 'free' else '' }}>FREE</option>
-                            <option value="basic" {{ 'selected' if plan_val == 'basic' else '' }}>BASIC</option>
+                            aria-label="Cấp gói" data-i18n-aria="planColHeader">
+                            <option value="free" {{ 'selected' if plan_val == 'free' else '' }} data-i18n="planFree"><span data-i18n="planFree">Free</span></option>
+                            <option value="basic" {{ 'selected' if plan_val == 'basic' else '' }} data-i18n="planBasic"><span data-i18n="planBasic">Basic</span></option>
                             <option value="pro" {{ 'selected' if plan_val == 'pro' else '' }}>PRO</option>
-                            <option value="enterprise" {{ 'selected' if plan_val == 'enterprise' else '' }}>ENTERPRISE</option>
+                            <option value="enterprise" {{ 'selected' if plan_val == 'enterprise' else '' }} data-i18n="planEnterprise"><span data-i18n="planEnterprise">Enterprise</span></option>
                           </select>
                           <span class="absolute right-1.5 flex items-center pointer-events-none text-slate-500">
                             <span class="material-symbols-outlined text-[16px]">expand_more</span>
@@ -686,8 +683,7 @@
                           class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-outline-variant/40 dark:border-slate-700 text-on-surface-variant dark:text-slate-400 hover:bg-surface-container-low dark:hover:bg-slate-800 transition-colors"
                           type="submit"
                           aria-label="Lưu gói"
-                          title="Cập nhật gói"
-                        >
+                          title="Cập nhật gói" data-i18n-title="updatePlanLabel" data-i18n-aria="savePlanLabel">
                           <span class="material-symbols-outlined text-[18px]">save</span>
                         </button>
                       </form>
@@ -696,9 +692,7 @@
                       <a
                         class="inline-flex items-center justify-center gap-1 rounded-lg border border-outline-variant/40 dark:border-slate-700 px-3 py-1.5 label-sm font-medium text-on-surface-variant dark:text-slate-300 hover:bg-surface-container-low dark:hover:bg-slate-800 transition-colors"
                         href="{{ url_for('users.user_detail_page', user_id=u.id) }}"
-                      >
-                        Chi tiết
-                        <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+                      ><span data-i18n="detailBtn">Chi tiết</span><span class="material-symbols-outlined text-[16px]">chevron_right</span>
                       </a>
                     </td>
                   </tr>
@@ -710,14 +704,13 @@
               class="px-6 py-4 flex items-center justify-between border-t border-outline-variant/20 dark:border-slate-800 bg-surface-container-low/60 dark:bg-slate-800/30"
               data-purpose="table-pagination"
             >
-              <span class="label-sm text-on-surface-variant dark:text-slate-400">Hiển thị {{ start_index }} - {{ end_index }} trên {{ total_users }} người dùng</span>
+              <span class="label-sm text-on-surface-variant dark:text-slate-400" data-i18n="showingUsers">Hiển thị {{ start_index }} - {{ end_index }} trên {{ total_users }} người dùng</span>
               <div class="flex items-center gap-1">
                 {% if page > 1 %}
                 <a
                   class="p-2 rounded border border-outline-variant/30 dark:border-slate-700 text-on-surface-variant dark:text-slate-400 hover:bg-surface-container-low dark:hover:bg-slate-800 transition-colors"
                   href="{{ url_for('users.list_users', page=page-1) }}"
-                  aria-label="Trang trước"
-                >
+                  aria-label="Trang trước" data-i18n-aria="prevPage">
                   <span class="material-symbols-outlined text-[18px]">chevron_left</span>
                 </a>
                 {% else %}
@@ -730,8 +723,7 @@
                 <a
                   class="p-2 rounded border border-outline-variant/30 dark:border-slate-700 text-on-surface-variant dark:text-slate-400 hover:bg-surface-container-low dark:hover:bg-slate-800 transition-colors"
                   href="{{ url_for('users.list_users', page=page+1) }}"
-                  aria-label="Trang sau"
-                >
+                  aria-label="Trang sau" data-i18n-aria="nextPage">
                   <span class="material-symbols-outlined text-[18px]">chevron_right</span>
                 </a>
                 {% else %}
@@ -742,7 +734,7 @@
               </div>
             </div>
             {% else %}
-            <div class="p-6 text-on-surface-variant">Chưa có dữ liệu người dùng.</div>
+            <div class="p-6 text-on-surface-variant" data-i18n="noUserData"><span data-i18n="noUserData">Chưa có dữ liệu người dùng.</span></div>
             {% endif %}
           </section>
         </div>
@@ -767,10 +759,7 @@
                 >
               </span>
             </div>
-            <p class="body-md text-on-surface-variant max-w-sm">
-              Ứng dụng nhận diện giống chó bằng AI dành cho người yêu thú cưng.
-              Kết quả chính xác, nhanh chóng.
-            </p>
+            <p class="body-md text-on-surface-variant max-w-sm" data-i18n="footerDesc"><span data-i18n="footerDesc">Ứng dụng nhận diện giống chó bằng AI dành cho người yêu thú cưng. Kết quả chính xác, nhanh chóng.</span></p>
           </div>
           <div class="lg:col-span-6 grid grid-cols-2 md:grid-cols-2 gap-8">
             <div class="space-y-6">
@@ -780,35 +769,35 @@
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
                     target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.privacy_policy') }}"
-                     data-i18n="privacy">Chính sách quyền riêng tư</a
+                     data-i18n="privacy"><span data-i18n="privacy">Chính sách quyền riêng tư</span></a
                   >
                 </li>
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
                     target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.terms_of_service') }}"
-                     data-i18n="terms">Điều khoản sử dụng</a
+                     data-i18n="terms"><span data-i18n="terms">Điều khoản sử dụng</span></a
                   >
                 </li>
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
                     target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.data_deletion') }}"
-                     data-i18n="dataDeletion">Chính sách xóa dữ liệu</a
+                     data-i18n="dataDeletion"><span data-i18n="dataDeletion">Chính sách xóa dữ liệu</span></a
                   >
                 </li>
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
                     target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.support') }}"
-                     data-i18n="support">Hỗ trợ</a
+                     data-i18n="support"><span data-i18n="homeStatsSupport">HỖ TRỢ</span></a
                   >
                 </li>
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
                     target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.contact') }}"
-                     data-i18n="contact">Liên hệ</a
+                     data-i18n="contact"><span data-i18n="contact">Liên hệ</span></a
                   >
                 </li>
               </ul>
@@ -820,14 +809,14 @@
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
                     href="{{ url_for('predict.upload_page') }}"
-                     data-i18n="identifyNow">Nhận diện ngay</a
+                     data-i18n="identifyNow"><span data-i18n="identifyNow">Nhận diện ngay</span></a
                   >
                 </li>
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
                     href="{{ url_for('history.history') }}"
-                     data-i18n="collection">Bộ sưu tập</a
+                     data-i18n="collection"><span data-i18n="collection">Bộ sưu tập</span></a
                   >
                 </li>
               </ul>
@@ -840,15 +829,19 @@
           >
             <p class="label-sm text-on-surface-variant/70 dark:text-slate-400"><span data-i18n="copyright">Bản quyền © 2026 PetAI. Mọi quyền được bảo lưu</span></p>
             <div class="flex gap-6">
+              <a class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
+
+                target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.user_guide') }}"
+
+                data-i18n="footerUserGuide"><span data-i18n="footerUserGuide">HƯỚNG DẪN SỬ DỤNG</span></a>
+
               <a
                 class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
-                target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.terms_of_service') }}"
-                >ĐIỀU KHOẢN</a
+                target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.terms_of_service') }}" data-i18n="footerTerms"><span data-i18n="footerTerms">ĐIỀU KHOẢN</span></a
               >
               <a
                 class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
-                target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.privacy_policy') }}"
-                >BẢO MẬT</a
+                target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.privacy_policy') }}" data-i18n="footerPrivacy"><span data-i18n="footerPrivacy">BẢO MẬT</span></a
               >
             </div>
           </div>
@@ -863,27 +856,17 @@
     >
       <div class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 dark:border-slate-800 rounded-xl max-w-md w-full p-6 shadow-xl">
         <h3 id="modalTitle" class="headline-md font-semibold text-on-surface dark:text-slate-100 flex items-center gap-2">
-          <span class="material-symbols-outlined text-amber-500 dark:text-amber-400">warning</span>
-          Xác nhận thao tác
-        </h3>
-        <p id="modalText" class="body-md text-on-surface-variant dark:text-slate-300 mt-3">
-          Bạn có chắc muốn thực hiện hành động này?
-        </p>
+          <span class="material-symbols-outlined text-amber-500 dark:text-amber-400">warning</span><span data-i18n="confirmActionTitle">Xác nhận thao tác</span></h3>
+        <p id="modalText" class="body-md text-on-surface-variant dark:text-slate-300 mt-3" data-i18n="confirmActionText"><span data-i18n="confirmActionText">Bạn có chắc muốn thực hiện hành động này?</span></p>
         <div class="mt-6 flex items-center justify-end gap-3">
           <button
             type="button"
             class="px-4 py-2 rounded-lg border border-outline-variant/40 dark:border-slate-700 label-sm font-semibold text-on-surface dark:text-slate-300 hover:bg-surface-container-low dark:hover:bg-slate-800 transition-colors"
-            id="modalCancel"
-          >
-            Huỷ
-          </button>
+            id="modalCancel" data-i18n="cancelBtn"><span data-i18n="cancelBtn">Huỷ</span></button>
           <button
             type="button"
             class="px-4 py-2 rounded-lg bg-primary hover:bg-primary/95 text-on-primary label-sm font-semibold hover:opacity-90 shadow-sm transition-colors"
-            id="modalOk"
-          >
-            Xác nhận
-          </button>
+            id="modalOk" data-i18n="confirm"><span data-i18n="confirm">Xác nhận</span></button>
         </div>
       </div>
     </div>
@@ -909,7 +892,7 @@
         let modalResolver = null;
 
         function openModal({ text }) {
-          modalText.textContent = text || "Bạn có chắc?";
+          modalText.textContent = text || (typeof window.PetAI_i18n !== 'undefined' ? window.PetAI_i18n.t("confirmActionText") : "Bạn có chắc?");
           modal.classList.remove("hidden");
           modal.classList.add("flex");
           modal.setAttribute("aria-hidden", "false");
@@ -1001,7 +984,7 @@
             const username = this.dataset.username || "user";
             const plan = this.querySelector('select[name="plan"]')?.value || "free";
             const answer = await openModal({
-              text: `Cấp gói ${plan.toUpperCase()} cho ${username}?`,
+              text: (typeof window.PetAI_i18n !== 'undefined' ? window.PetAI_i18n.t("confirmAssignPlanText").replace("{plan}", plan.toUpperCase()).replace("{username}", username) : `Cấp gói ${plan.toUpperCase()} cho ${username}?`),
             });
             if (answer.ok) this.submit();
           });
@@ -1038,6 +1021,7 @@
         });
       </script>
     <script src="{{ url_for('static', filename='js/toasts.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
   </body>
 </html>

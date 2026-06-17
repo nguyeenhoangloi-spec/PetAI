@@ -4,9 +4,11 @@ def register_context_processors(app):
     @app.context_processor
     def inject_ui_prefs():
         current_plan = None
-        ui_language = "vi"
+        from flask import session, request
+        ui_language = request.cookies.get("siteLanguage", "vi")
+        if ui_language not in {"vi", "en"}:
+            ui_language = "vi"
         ui_theme = "light"
-        from flask import session
 
         user_id_raw = session.get("user_id")
         if user_id_raw is not None:

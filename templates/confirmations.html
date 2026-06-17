@@ -1,13 +1,38 @@
 <!doctype html>
 
-<html class="{{ 'dark' if ui_theme == 'dark' else 'light' }}" lang="vi" data-theme="{{ ui_theme or 'light' }}">
+<html class="{{ 'dark' if ui_theme == 'dark' else 'light' }}{{ ' i18n-loading' if ui_language == 'en' else '' }}" lang="{{ ui_language or 'vi' }}" data-theme="{{ ui_theme or 'light' }}">
   <head>
+    <script>
+      (function () {
+        var savedLang = "vi";
+        try {
+          savedLang = localStorage.getItem("siteLanguage") || "vi";
+        } catch (e) {}
+        document.documentElement.setAttribute("data-user-lang", savedLang);
+        if (savedLang === "en") {
+          document.documentElement.classList.add("i18n-loading");
+        }
+      })();
+    </script>
+    <style>
+      html.i18n-loading body {
+        visibility: hidden !important;
+      }
+    </style>
+    <noscript>
+      <style>
+        html.i18n-loading body {
+          visibility: visible !important;
+        }
+      </style>
+    </noscript>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <script>
       (function () {
         const root = document.documentElement;
-        const themeStorageKey = "{{ 'theme:' ~ session.get('user_id') if session.get('user_id') else '' }}";
+        const themeStorageKey =
+          "{{ 'theme:' ~ session.get('user_id') if session.get('user_id') else '' }}";
         const serverTheme = "{{ ui_theme or 'light' }}";
         if (themeStorageKey) {
           try {
@@ -27,7 +52,9 @@
         function resolveTheme(theme) {
           if (theme !== "auto") return theme;
           try {
-            return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+            return window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
           } catch (e) {
             return "light";
           }
@@ -57,23 +84,36 @@
         }
 
         try {
-          const isCollapsed = localStorage.getItem("sidebar-collapsed") === "true";
+          const isCollapsed =
+            localStorage.getItem("sidebar-collapsed") === "true";
           if (isCollapsed && window.innerWidth >= 768) {
             root.classList.add("sidebar-collapsed");
           }
         } catch (e) {}
       })();
     </script>
-    <title>Quản trị Duyệt thanh toán - PetAI</title>
+    <title data-i18n="adminConfirmationsPageTitle">{{ 'Admin Payment Approval - PetAI' if ui_language == 'en' else 'Quản trị Duyệt thanh toán - PetAI' }}</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='css/typography.css') }}"
     />
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/theme-dark.css') }}" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/toasts.css') }}" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile-header-fix.css') }}" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin-dashboard-content.css') }}" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/theme-dark.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/toasts.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/mobile-header-fix.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/admin-dashboard-content.css') }}"
+    />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
@@ -204,17 +244,18 @@
   >
     {% include '_toasts.html' %}
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
-    {% set display_role = session.get('role') or 'user' %}
-    {% set display_plan = current_plan or 'free' %}
+    {% set display_role = session.get('role') or 'user' %} {% set display_plan =
+    current_plan or 'free' %}
 
     <nav
       class="bg-white/80 dark:bg-slate-950/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-200 dark:border-slate-800 shadow-sm font-['Inter'] antialiased"
     >
-      <div
-        class="flex items-center justify-between px-4 md:px-6 h-16 w-full"
-      >
+      <div class="flex items-center justify-between px-4 md:px-6 h-16 w-full">
         <div class="flex items-center gap-gutter">
-          <a href="{{ url_for('home.index') }}" class="inline-flex items-center gap-0">
+          <a
+            href="{{ url_for('home.index') }}"
+            class="inline-flex items-center gap-0"
+          >
             <img
               alt="PetAI New Logo"
               class="w-auto h-10 md:h-24"
@@ -224,43 +265,58 @@
               >PetAI</span
             >
           </a>
-          <button class="menu-toggle ml-2" id="menuToggle" aria-label="Mở menu" aria-expanded="false" type="button">
+          <button
+            class="menu-toggle ml-2"
+            id="menuToggle"
+            aria-label="Mở menu"
+            aria-expanded="false"
+            type="button"
+            data-i18n-aria="openMenu"
+          >
             <span></span>
             <span></span>
             <span></span>
           </button>
         </div>
-        <div class="hidden md:flex flex-1 items-center justify-end gap-margin mr-gutter [&>a]:px-0.5 [&>a]:label-sm">
+        <div
+          class="hidden md:flex flex-1 items-center justify-end gap-margin mr-gutter [&>a]:px-0.5 [&>a]:label-sm"
+        >
           <a
             class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
             href="{{ url_for('dashboard.dashboard') }}"
-            >Bảng điều khiển</a
+            data-i18n="dashboard"
+            ><span data-i18n="dashboard">Bảng điều khiển</span></a
           >
           <a
             class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
             href="{{ url_for('history.history') }}"
-            >Lịch sử</a
+            data-i18n="history"
+            ><span data-i18n="history">Lịch sử</span></a
           >
           <a
             class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
             href="{{ url_for('statistics.statistics') }}"
-            >Thống kê</a
+            data-i18n="statistics"
+            ><span data-i18n="statistics">Thống kê</span></a
           >
           <a
             class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
             href="{{ url_for('predict.upgrade') }}"
-            >Nâng cấp</a
+            data-i18n="upgrade"
+            ><span data-i18n="upgrade">Nâng cấp</span></a
           >
           {% if session.get('role') == 'admin' %}
           <a
             class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
             href="{{ url_for('users.list_users') }}"
-            >Quản lý người dùng</a
+            data-i18n="manageUsers"
+            ><span data-i18n="manageUsers">Quản lý người dùng</span></a
           >
           <a
             class="text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400 px-2 py-2 pb-1 font-semibold rounded-lg transition-all"
             href="{{ url_for('users.confirmations_list') }}"
-            >Duyệt đơn</a
+            data-i18n="approveOrders"
+            ><span data-i18n="approveOrders">Duyệt đơn</span></a
           >
           {% endif %}
         </div>
@@ -268,19 +324,30 @@
           <a
             class="hidden md:inline-flex bg-primary text-on-primary px-4 py-2 rounded-lg label-sm shadow-sm hover:shadow-md transition-all"
             href="{{ url_for('predict.upload_page') }}"
-            >Nhận diện</a
+            data-i18n="predict"
+            ><span data-i18n="predict">Nhận diện</span></a
           >
           <div class="language-switcher mr-2" id="languageSwitcher">
-            <button class="language-button" id="languageButton" type="button" aria-haspopup="true" aria-expanded="false">
-              <span class="language-flag">🇻🇳</span>
-              <span class="language-current">VN</span>
+            <button
+              class="language-button"
+              id="languageButton"
+              type="button"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              <span class="language-flag" data-i18n="languageFlag">🇻🇳</span>
+              <span class="language-current" data-i18n="shortLabel">VN</span>
               <span class="language-arrow">▼</span>
             </button>
             <div class="language-menu" id="languageMenu">
-              <button class="language-option active" type="button" data-lang="vi">
+              <button
+                class="language-option active"
+                type="button"
+                data-lang="vi"
+              >
                 <span class="language-check">✓</span>
-                <span class="language-flag">🇻🇳</span>
-                <span>Tiếng Việt</span>
+                <span class="language-flag" data-i18n="languageFlag">🇻🇳</span>
+                <span data-i18n="languageLabel">Tiếng Việt</span>
               </button>
               <button class="language-option" type="button" data-lang="en">
                 <span class="language-check"></span>
@@ -291,7 +358,8 @@
           </div>
           <div class="relative cursor-pointer avatar-wrapper">
             <img
-              alt="Ảnh đại diện"
+              alt="Avatar"
+              data-i18n-title="avatarAlt"
               class="w-9 h-9 rounded-full border-2 border-primary/20 p-0.5"
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuABdf7zKSVKEqdGUUjqEkF9ftdFTrLW87Tb24r2IiZiv_JP0LrItrCxl23SH-gYj2Mqtkma0ak9DZbUtKM5nW747pmivDYGVbYhNr1PZbxbFuOrZdGJvnbhdSurFLfL3BcmhN2p1h9wv_6geT-x8eoTG1TDoLL40P8wDiaymvRT--SA4jYjU9A77WIji5FmOi99mPDXw7xS6dUyUNJYU2gHLk4-smzFrCuBbQbgtpATDvNo6hq3YR-cfSaNblImtCnDXIb8np7J4HA"
             />
@@ -303,15 +371,15 @@
             >
               <div class="px-4 pb-2">
                 <div class="label-sm text-slate-500 dark:text-slate-400">
-                  Vai trò:
-                  <span
+                  <span data-i18n="role">Vai trò:</span
+                  ><span
                     class="font-semibold text-slate-800 dark:text-slate-200"
                     >{{ display_role|upper }}</span
                   >
                 </div>
                 <div class="label-sm text-slate-500 dark:text-slate-400">
-                  Gói:
-                  <span
+                  <span data-i18n="plan">Gói:</span
+                  ><span
                     class="font-semibold text-slate-800 dark:text-slate-200"
                     >{{ display_plan|upper }}</span
                   >
@@ -331,11 +399,9 @@
                 class="flex items-center gap-2 px-4 py-2 body-md text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors font-semibold"
                 href="{{ url_for('logout.logout') }}"
               >
-                <span class="material-symbols-outlined text-[18px]"
-                  >logout</span
-                >
-                Đăng xuất
-              </a>
+                <span class="material-symbols-outlined text-[18px]">logout</span
+                ><span data-i18n="logout">Đăng xuất</span></a
+              >
             </div>
           </div>
         </div>
@@ -352,8 +418,9 @@
         >
           <h3
             class="label-sm text-on-surface-variant dark:text-slate-400 uppercase tracking-wider mb-xs px-1.5"
+            data-i18n="quickAccess"
           >
-            Truy cập nhanh
+            <span data-i18n="quickAccess">Truy cập nhanh</span>
           </h3>
           <a
             class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface dark:text-slate-300 hover:text-primary dark:hover:text-blue-400 hover:bg-surface-container dark:hover:bg-slate-800 transition-colors group"
@@ -366,8 +433,8 @@
               style="font-variation-settings: &quot;FILL&quot; 1"
               >upload_file</span
             >
-            <span class="label-sm"
-              >Tải ảnh &amp; Phân tích</span
+            <span class="label-sm" data-i18n="uploadAnalyze"
+              >Tải ảnh & Phân tích</span
             >
           </a>
           <a
@@ -379,7 +446,19 @@
               data-icon="history"
               >history</span
             >
-            <span class="label-sm">Lịch sử dự đoán</span>
+            <span class="label-sm"
+              ><span data-i18n="predictionHistory"
+                ><span data-i18n="predictionHistory"
+                  ><span data-i18n="predictionHistory"
+                    ><span data-i18n="predictionHistory"
+                      ><span data-i18n="predictionHistory"
+                        >Lịch sử dự đoán</span
+                      ></span
+                    ></span
+                  ></span
+                ></span
+              ></span
+            >
           </a>
           <a
             class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface dark:text-slate-300 hover:text-primary dark:hover:text-blue-400 hover:bg-surface-container dark:hover:bg-slate-800 transition-colors group"
@@ -390,7 +469,9 @@
               data-icon="bar_chart"
               >bar_chart</span
             >
-            <span class="label-sm">Thống kê cá nhân</span>
+            <span class="label-sm" data-i18n="personalStats"
+              >Thống kê cá nhân</span
+            >
           </a>
           <a
             class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface dark:text-slate-300 hover:text-primary dark:hover:text-blue-400 hover:bg-surface-container dark:hover:bg-slate-800 transition-colors group"
@@ -401,7 +482,7 @@
               data-icon="upgrade"
               >upgrade</span
             >
-            <span class="label-sm">Nâng cấp gói</span>
+            <span class="label-sm" data-i18n="upgradePlan">Nâng cấp gói</span>
           </a>
           {% if session.get('role') == 'admin' %}
           <a
@@ -413,7 +494,9 @@
               data-icon="groups"
               >groups</span
             >
-            <span class="label-sm">Quản lý người dùng</span>
+            <span class="label-sm" data-i18n="manageUsers"
+              >Quản lý người dùng</span
+            >
           </a>
           <a
             class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-primary bg-primary-fixed/50 dark:bg-primary/20 transition-colors group"
@@ -424,7 +507,9 @@
               data-icon="receipt_long"
               >receipt_long</span
             >
-            <span class="label-sm font-semibold">Duyệt đơn</span>
+            <span class="label-sm font-semibold" data-i18n="approveOrders"
+              >Duyệt đơn</span
+            >
           </a>
           {% endif %}
           <hr class="border-outline-variant/30 dark:border-slate-850 my-xs" />
@@ -437,7 +522,9 @@
               data-icon="settings"
               >settings</span
             >
-            <span class="label-sm"><span data-i18n="accountSettings">Cài đặt tài khoản</span></span>
+            <span class="label-sm"
+              ><span data-i18n="accountSettings">Cài đặt tài khoản</span></span
+            >
           </a>
         </div>
       </aside>
@@ -450,11 +537,22 @@
             data-purpose="page-header"
           >
             <div class="flex flex-col gap-2">
-              <h1 class="headline-lg font-semibold text-on-surface dark:text-slate-100">
-                Duyệt đơn chuyển khoản
+              <h1
+                class="headline-lg font-semibold text-on-surface dark:text-slate-100"
+                data-i18n="approveBankTransfers"
+              >
+                <span data-i18n="approveBankTransfers"
+                  >Duyệt đơn chuyển khoản</span
+                >
               </h1>
-              <p class="body-md text-on-surface-variant dark:text-slate-400">
-                Hiển thị các đơn người dùng đã báo chuyển khoản để admin duyệt nâng cấp gói.
+              <p
+                class="body-md text-on-surface-variant dark:text-slate-400"
+                data-i18n="approveBankTransfersDesc"
+              >
+                <span data-i18n="approveBankTransfersDesc"
+                  >Hiển thị các đơn người dùng đã báo chuyển khoản để admin
+                  duyệt nâng cấp gói.</span
+                >
               </p>
             </div>
             <div class="mt-4 md:mt-0 md:flex-none">
@@ -462,9 +560,9 @@
                 class="bg-primary hover:bg-primary/95 text-on-primary px-4 py-2.5 rounded-lg label-sm shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-2 font-semibold"
                 href="{{ url_for('users.list_users') }}"
               >
-                <span class="material-symbols-outlined text-[18px]">groups</span>
-                Quản lý người dùng
-              </a>
+                <span class="material-symbols-outlined text-[18px]">groups</span
+                ><span data-i18n="manageUsers">Quản lý người dùng</span></a
+              >
             </div>
           </section>
 
@@ -474,80 +572,152 @@
             data-purpose="statistics-overview"
           >
             <!-- Card 1: Doanh thu đã xác nhận -->
-            <div class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[140px]">
+            <div
+              class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[140px]"
+            >
               <div class="flex items-center justify-between">
-                <span class="label-sm text-on-surface-variant dark:text-slate-400 font-semibold uppercase tracking-wider">Doanh thu đã xác nhận</span>
-                <div class="w-10 h-10 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center text-primary dark:text-blue-400">
+                <span
+                  class="label-sm text-on-surface-variant dark:text-slate-400 font-semibold uppercase tracking-wider"
+                  data-i18n="confirmedRevenue"
+                  >Doanh thu đã xác nhận</span
+                >
+                <div
+                  class="w-10 h-10 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center text-primary dark:text-blue-400"
+                >
                   <span class="material-symbols-outlined">payments</span>
                 </div>
               </div>
               <div class="mt-4 flex flex-col">
-                <span class="text-3xl font-bold text-on-surface dark:text-slate-105 tracking-tight" data-counter="{{ total_paid_amount or 0 }}" data-suffix="đ" data-use-commas="true">
-                  0đ
-                </span>
-                <span class="label-sm text-on-surface-variant/70 dark:text-slate-400/80 mt-1">Tổng doanh thu thực tế</span>
+                <span
+                  class="text-3xl font-bold text-on-surface dark:text-slate-105 tracking-tight"
+                  data-counter="{{ total_paid_amount or 0 }}"
+                  data-suffix="đ"
+                  data-use-commas="true"
+                  data-i18n="planFreePrice"
+                  >0đ</span
+                >
+                <span
+                  class="label-sm text-on-surface-variant/70 dark:text-slate-400/80 mt-1"
+                  data-i18n="totalRealRevenue"
+                  >Tổng doanh thu thực tế</span
+                >
               </div>
             </div>
 
             <!-- Card 2: Đơn đã thanh toán -->
-            <div class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[140px]">
+            <div
+              class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[140px]"
+            >
               <div class="flex items-center justify-between">
-                <span class="label-sm text-on-surface-variant dark:text-slate-400 font-semibold uppercase tracking-wider">Đơn đã thanh toán</span>
-                <div class="w-10 h-10 rounded-lg bg-emerald-500/10 dark:bg-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                <span
+                  class="label-sm text-on-surface-variant dark:text-slate-400 font-semibold uppercase tracking-wider"
+                  data-i18n="paidOrders"
+                  >Đơn đã thanh toán</span
+                >
+                <div
+                  class="w-10 h-10 rounded-lg bg-emerald-500/10 dark:bg-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400"
+                >
                   <span class="material-symbols-outlined">check_circle</span>
                 </div>
               </div>
               <div class="mt-4 flex flex-col">
-                <span class="text-3xl font-bold text-on-surface dark:text-slate-105 tracking-tight" data-counter="{{ total_paid_count or 0 }}">
+                <span
+                  class="text-3xl font-bold text-on-surface dark:text-slate-105 tracking-tight"
+                  data-counter="{{ total_paid_count or 0 }}"
+                >
                   0
                 </span>
-                <span class="label-sm text-on-surface-variant/70 dark:text-slate-400/80 mt-1">Các đơn đã được duyệt</span>
+                <span
+                  class="label-sm text-on-surface-variant/70 dark:text-slate-400/80 mt-1"
+                  data-i18n="approvedOrders"
+                  >Các đơn đã được duyệt</span
+                >
               </div>
             </div>
 
             <!-- Card 3: Thanh toán gần nhất -->
-            <div class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[140px]">
+            <div
+              class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[140px]"
+            >
               <div class="flex items-center justify-between">
-                <span class="label-sm text-on-surface-variant dark:text-slate-400 font-semibold uppercase tracking-wider">Thanh toán gần nhất</span>
-                <div class="w-10 h-10 rounded-lg bg-blue-500/10 dark:bg-blue-500/20 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                <span
+                  class="label-sm text-on-surface-variant dark:text-slate-400 font-semibold uppercase tracking-wider"
+                  data-i18n="latestPayment"
+                  >Thanh toán gần nhất</span
+                >
+                <div
+                  class="w-10 h-10 rounded-lg bg-blue-500/10 dark:bg-blue-500/20 flex items-center justify-center text-blue-600 dark:text-blue-400"
+                >
                   <span class="material-symbols-outlined">schedule</span>
                 </div>
               </div>
               <div class="mt-4 flex flex-col">
-                <span class="text-[22px] font-bold text-on-surface dark:text-slate-105 tracking-tight mt-1 pb-1">
-                  {{ latest_paid_at.strftime('%d/%m/%Y %H:%M') if latest_paid_at and latest_paid_at.strftime is defined else (latest_paid_at or '-') }}
+                <span
+                  class="text-[22px] font-bold text-on-surface dark:text-slate-105 tracking-tight mt-1 pb-1"
+                >
+                  {{ latest_paid_at.strftime('%d/%m/%Y %H:%M') if latest_paid_at
+                  and latest_paid_at.strftime is defined else (latest_paid_at or
+                  '-') }}
                 </span>
-                <span class="label-sm text-on-surface-variant/70 dark:text-slate-400/80 mt-2">Thời gian đơn cuối</span>
+                <span
+                  class="label-sm text-on-surface-variant/70 dark:text-slate-400/80 mt-2"
+                  data-i18n="lastOrderTime"
+                  >Thời gian đơn cuối</span
+                >
               </div>
             </div>
 
             <!-- Card 4: Đơn chờ duyệt -->
-            <div class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[140px]">
+            <div
+              class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[140px]"
+            >
               <div class="flex items-center justify-between">
-                <span class="label-sm text-on-surface-variant dark:text-slate-400 font-semibold uppercase tracking-wider">Đơn chờ duyệt</span>
-                <div class="w-10 h-10 rounded-lg bg-rose-500/10 dark:bg-rose-500/20 flex items-center justify-center text-rose-600 dark:text-rose-400">
+                <span
+                  class="label-sm text-on-surface-variant dark:text-slate-400 font-semibold uppercase tracking-wider"
+                  data-i18n="pendingOrders"
+                  >Đơn chờ duyệt</span
+                >
+                <div
+                  class="w-10 h-10 rounded-lg bg-rose-500/10 dark:bg-rose-500/20 flex items-center justify-center text-rose-600 dark:text-rose-400"
+                >
                   <span class="material-symbols-outlined">pending_actions</span>
                 </div>
               </div>
               <div class="mt-4 flex flex-col">
-                <span class="text-3xl font-bold text-on-surface dark:text-slate-105 tracking-tight" id="statPendingCount" data-counter="{{ total_orders or 0 }}">
+                <span
+                  class="text-3xl font-bold text-on-surface dark:text-slate-105 tracking-tight"
+                  id="statPendingCount"
+                  data-counter="{{ total_orders or 0 }}"
+                >
                   0
                 </span>
-                <span class="label-sm text-on-surface-variant/70 dark:text-slate-400/80 mt-1">Cần admin xử lý</span>
+                <span
+                  class="label-sm text-on-surface-variant/70 dark:text-slate-400/80 mt-1"
+                  data-i18n="needsAdminAction"
+                  >Cần admin xử lý</span
+                >
               </div>
             </div>
           </section>
 
           <!-- Search & Filter Controls -->
-          <section class="flex flex-wrap items-center gap-3" data-purpose="search-and-filters">
+          <section
+            class="flex flex-wrap items-center gap-3"
+            data-purpose="search-and-filters"
+          >
             <div class="relative flex-grow max-w-xl">
-              <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 dark:text-slate-500">
-                <span class="material-symbols-outlined text-[20px]">search</span>
+              <span
+                class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 dark:text-slate-500"
+              >
+                <span class="material-symbols-outlined text-[20px]"
+                  >search</span
+                >
               </span>
               <input
                 id="confirmationsSearch"
                 class="w-full pl-10 pr-4 py-2.5 bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/40 dark:border-slate-800 rounded-lg label-sm text-on-surface dark:text-slate-100 focus:ring-primary focus:border-primary dark:focus:ring-blue-500 dark:focus:border-blue-500 transition-colors"
                 placeholder="Tìm mã đơn/username/email/họ tên..."
+                data-i18n-placeholder="searchConfirmationsPlaceholder"
                 type="text"
               />
             </div>
@@ -556,13 +726,23 @@
                 id="planFilter"
                 class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/40 dark:border-slate-800 rounded-lg py-2.5 pl-3 pr-10 label-sm text-on-surface dark:text-slate-100 focus:ring-primary focus:border-primary dark:focus:ring-blue-500 dark:focus:border-blue-500 min-w-[150px] appearance-none bg-none cursor-pointer transition-colors"
               >
-                <option value="">Tất cả gói</option>
-                <option value="basic">BASIC</option>
+                <option value="" data-i18n="allPlans">
+                  <span data-i18n="allPlans">Tất cả gói</span>
+                </option>
+                <option value="basic" data-i18n="planBasic">
+                  <span data-i18n="planBasic">Basic</span>
+                </option>
                 <option value="pro">PRO</option>
-                <option value="enterprise">ENTERPRISE</option>
+                <option value="enterprise" data-i18n="planEnterprise">
+                  <span data-i18n="planEnterprise">Enterprise</span>
+                </option>
               </select>
-              <span class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-550 dark:text-slate-400">
-                <span class="material-symbols-outlined text-[16px]">expand_more</span>
+              <span
+                class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-550 dark:text-slate-400"
+              >
+                <span class="material-symbols-outlined text-[16px]"
+                  >expand_more</span
+                >
               </span>
             </div>
             <button
@@ -570,91 +750,170 @@
               type="button"
               id="clearFilters"
             >
-              <span class="material-symbols-outlined text-[18px]">filter_alt_off</span>
-              Xoá lọc
+              <span class="material-symbols-outlined text-[18px]"
+                >filter_alt_off</span
+              ><span data-i18n="clearFilters">Xoá lọc</span>
             </button>
           </section>
 
           <!-- Recent Paid Orders Table -->
           <section class="space-y-4" data-purpose="recent-payments-table">
-            <h2 class="headline-md font-bold text-on-surface dark:text-slate-100">
-              Đơn đã thanh toán gần đây
+            <h2
+              class="headline-md font-bold text-on-surface dark:text-slate-100"
+              data-i18n="recentPaidOrders"
+            >
+              <span data-i18n="recentPaidOrders"
+                >Đơn đã thanh toán gần đây</span
+              >
             </h2>
             <div
               class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl overflow-hidden border border-outline-variant/30 dark:border-slate-800 shadow-sm transition-all"
             >
               <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse" id="recentPaymentsTable">
+                <table
+                  class="w-full text-left border-collapse"
+                  id="recentPaymentsTable"
+                >
                   <thead>
-                    <tr class="bg-surface-container-low dark:bg-slate-800/40 border-b border-outline-variant/30 dark:border-slate-800">
-                      <th class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider">Mã đơn</th>
-                      <th class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider">Người dùng</th>
-                      <th class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-center">Gói</th>
-                      <th class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-center">Phương thức</th>
-                      <th class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-center">Số tiền</th>
-                      <th class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-right">Xác nhận lúc</th>
+                    <tr
+                      class="bg-surface-container-low dark:bg-slate-800/40 border-b border-outline-variant/30 dark:border-slate-800"
+                    >
+                      <th
+                        class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider"
+                        data-i18n="orderCode"
+                      >
+                        <span data-i18n="orderCode">Mã đơn</span>
+                      </th>
+                      <th
+                        class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider"
+                        data-i18n="filterUser"
+                      >
+                        <span data-i18n="homeStatsUsers">NGƯỜI DÙNG</span>
+                      </th>
+                      <th
+                        class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-center"
+                        data-i18n="planName"
+                      >
+                        <span data-i18n="planName">Gói</span>
+                      </th>
+                      <th
+                        class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-center"
+                        data-i18n="paymentMethodCol"
+                      >
+                        <span data-i18n="paymentMethodCol">Phương thức</span>
+                      </th>
+                      <th
+                        class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-center"
+                        data-i18n="amount"
+                      >
+                        <span data-i18n="amount">Số tiền</span>
+                      </th>
+                      <th
+                        class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-right"
+                        data-i18n="confirmedAt"
+                      >
+                        <span data-i18n="confirmedAt">Xác nhận lúc</span>
+                      </th>
                     </tr>
                   </thead>
-                  <tbody class="divide-y divide-outline-variant/20 dark:divide-slate-800">
-                    {% if recent_paid %}
-                      {% for o in recent_paid %}
-                      {% set display_name = o.fullname or o.username or o.email or 'U' %}
-                      {% set plan_val = (o.plan or 'free')|lower %}
-                      <tr class="hover:bg-primary/5 dark:hover:bg-slate-800/40 border-b border-outline-variant/10 dark:border-slate-800/60 transition-colors" data-plan="{{ plan_val }}">
-                        <td class="px-6 py-4 body-md font-semibold text-on-surface dark:text-slate-200">
-                          {{ o.order_id }}
-                        </td>
-                        <td class="px-6 py-4">
-                          <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-full bg-primary/10 dark:bg-primary/20 text-primary dark:text-blue-400 flex items-center justify-center label-sm font-bold">
-                              {{ (display_name[:1] if display_name else 'U')|upper }}
+                  <tbody
+                    class="divide-y divide-outline-variant/20 dark:divide-slate-800"
+                  >
+                    {% if recent_paid %} {% for o in recent_paid %} {% set
+                    display_name = o.fullname or o.username or o.email or 'U' %}
+                    {% set plan_val = (o.plan or 'free')|lower %}
+                    <tr
+                      class="hover:bg-primary/5 dark:hover:bg-slate-800/40 border-b border-outline-variant/10 dark:border-slate-800/60 transition-colors"
+                      data-plan="{{ plan_val }}"
+                    >
+                      <td
+                        class="px-6 py-4 body-md font-semibold text-on-surface dark:text-slate-200"
+                      >
+                        {{ o.order_id }}
+                      </td>
+                      <td class="px-6 py-4">
+                        <div class="flex items-center gap-3">
+                          <div
+                            class="w-8 h-8 rounded-full bg-primary/10 dark:bg-primary/20 text-primary dark:text-blue-400 flex items-center justify-center label-sm font-bold"
+                          >
+                            {{ (display_name[:1] if display_name else 'U')|upper
+                            }}
+                          </div>
+                          <div>
+                            <div
+                              class="body-md font-semibold text-on-surface dark:text-slate-200"
+                              data-i18n-auto
+                            >
+                              {{ o.fullname or o.username or 'Người dùng' }}
                             </div>
-                            <div>
-                              <div class="body-md font-semibold text-on-surface dark:text-slate-200">
-                                {{ o.fullname or o.username or 'Người dùng' }}
-                              </div>
-                              <div class="label-sm text-on-surface-variant dark:text-slate-400">
-                                {{ o.email or '-' }}
-                              </div>
+                            <div
+                              class="label-sm text-on-surface-variant dark:text-slate-400"
+                            >
+                              {{ o.email or '-' }}
                             </div>
                           </div>
-                        </td>
-                        <td class="px-6 py-4 text-center">
-                          {% if plan_val == 'enterprise' %}
-                          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full label-sm font-semibold bg-indigo-500/10 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20 uppercase">
-                            Enterprise
-                          </span>
-                          {% elif plan_val == 'pro' %}
-                          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full label-sm font-semibold bg-blue-500/10 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 border border-blue-500/20 uppercase">
-                            Pro
-                          </span>
-                          {% elif plan_val == 'basic' %}
-                          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full label-sm font-semibold bg-amber-500/10 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/20 uppercase">
-                            Basic
-                          </span>
-                          {% else %}
-                          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full label-sm font-semibold bg-slate-500/10 dark:bg-slate-500/20 text-slate-600 dark:text-slate-400 border border-slate-500/20 uppercase">
-                            {{ plan_val|upper }}
-                          </span>
-                          {% endif %}
-                        </td>
-                        <td class="px-6 py-4 text-center body-md text-on-surface-variant dark:text-slate-300">
-                          {{ o.payment_method or '-' }}
-                        </td>
-                        <td class="px-6 py-4 text-center body-md font-semibold text-on-surface dark:text-slate-200">
-                          {{ '{:,}'.format(o.amount_calc or o.amount_vnd or 0).replace(',', '.') }} VNĐ
-                        </td>
-                        <td class="px-6 py-4 text-right label-sm text-on-surface-variant dark:text-slate-400">
-                          {{ o.confirmed_at.strftime('%d/%m/%Y %H:%M') if o.confirmed_at and o.confirmed_at.strftime is defined else (o.confirmed_at or '-') }}
-                        </td>
-                      </tr>
-                      {% endfor %}
-                    {% else %}
-                      <tr>
-                        <td class="px-6 py-6 body-md text-on-surface-variant dark:text-slate-500 text-center" colspan="6">
-                          Chưa có đơn hàng nào đã thanh toán.
-                        </td>
-                      </tr>
+                        </div>
+                      </td>
+                      <td class="px-6 py-4 text-center">
+                        {% if plan_val == 'enterprise' %}
+                        <span
+                          class="inline-flex items-center px-2.5 py-0.5 rounded-full label-sm font-semibold bg-indigo-500/10 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20 uppercase"
+                          data-i18n="planEnterprise"
+                          >Enterprise</span
+                        >
+                        {% elif plan_val == 'pro' %}
+                        <span
+                          class="inline-flex items-center px-2.5 py-0.5 rounded-full label-sm font-semibold bg-blue-500/10 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 border border-blue-500/20 uppercase"
+                        >
+                          Pro
+                        </span>
+                        {% elif plan_val == 'basic' %}
+                        <span
+                          class="inline-flex items-center px-2.5 py-0.5 rounded-full label-sm font-semibold bg-amber-500/10 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/20 uppercase"
+                          data-i18n="planBasic"
+                          >Basic</span
+                        >
+                        {% else %}
+                        <span
+                          class="inline-flex items-center px-2.5 py-0.5 rounded-full label-sm font-semibold bg-slate-500/10 dark:bg-slate-500/20 text-slate-600 dark:text-slate-400 border border-slate-500/20 uppercase"
+                        >
+                          {{ plan_val|upper }}
+                        </span>
+                        {% endif %}
+                      </td>
+                      <td
+                        class="px-6 py-4 text-center body-md text-on-surface-variant dark:text-slate-300"
+                      >
+                        {{ o.payment_method or '-' }}
+                      </td>
+                      <td
+                        class="px-6 py-4 text-center body-md font-semibold text-on-surface dark:text-slate-200"
+                      >
+                        {{ '{:,}'.format(o.amount_calc or o.amount_vnd or
+                        0).replace(',', '.') }}<span data-i18n="currencySuffix">
+                          VNĐ</span
+                        >
+                      </td>
+                      <td
+                        class="px-6 py-4 text-right label-sm text-on-surface-variant dark:text-slate-400"
+                      >
+                        {{ o.confirmed_at.strftime('%d/%m/%Y %H:%M') if
+                        o.confirmed_at and o.confirmed_at.strftime is defined
+                        else (o.confirmed_at or '-') }}
+                      </td>
+                    </tr>
+                    {% endfor %} {% else %}
+                    <tr>
+                      <td
+                        class="px-6 py-6 body-md text-on-surface-variant dark:text-slate-500 text-center"
+                        colspan="6"
+                        data-i18n="noPaidOrders"
+                      >
+                        <span data-i18n="noPaidOrders"
+                          >Chưa có đơn hàng nào đã thanh toán.</span
+                        >
+                      </td>
+                    </tr>
                     {% endif %}
                   </tbody>
                 </table>
@@ -664,122 +923,229 @@
 
           <!-- Pending Approvals Table -->
           <section class="space-y-4" data-purpose="pending-approvals-table">
-            <h2 class="headline-md font-bold text-on-surface dark:text-slate-100">
-              Đơn chờ quản trị xác nhận
+            <h2
+              class="headline-md font-bold text-on-surface dark:text-slate-100"
+            >
+              <span data-i18n="pendingApprovalsTitle"
+                >Đơn chờ admin xác nhận</span
+              >
             </h2>
             <div
               class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl overflow-hidden border border-outline-variant/30 dark:border-slate-800 shadow-sm transition-all"
             >
               <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse" id="pendingOrdersTable">
+                <table
+                  class="w-full text-left border-collapse"
+                  id="pendingOrdersTable"
+                >
                   <thead>
-                    <tr class="bg-surface-container-low dark:bg-slate-800/40 border-b border-outline-variant/30 dark:border-slate-800">
-                      <th class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider">Mã đơn</th>
-                      <th class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider">Người dùng</th>
-                      <th class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-center">Gói</th>
-                      <th class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-center">Phương thức</th>
-                      <th class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-center">Số tiền</th>
-                      <th class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-center">Trạng thái</th>
-                      <th class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-center">Tạo lúc</th>
-                      <th class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-right">Thao tác</th>
+                    <tr
+                      class="bg-surface-container-low dark:bg-slate-800/40 border-b border-outline-variant/30 dark:border-slate-800"
+                    >
+                      <th
+                        class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider"
+                        data-i18n="orderCode"
+                      >
+                        <span data-i18n="orderCode">Mã đơn</span>
+                      </th>
+                      <th
+                        class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider"
+                        data-i18n="filterUser"
+                      >
+                        <span data-i18n="homeStatsUsers">NGƯỜI DÙNG</span>
+                      </th>
+                      <th
+                        class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-center"
+                        data-i18n="planName"
+                      >
+                        <span data-i18n="planName">Gói</span>
+                      </th>
+                      <th
+                        class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-center"
+                        data-i18n="paymentMethodCol"
+                      >
+                        <span data-i18n="paymentMethodCol">Phương thức</span>
+                      </th>
+                      <th
+                        class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-center"
+                        data-i18n="amount"
+                      >
+                        <span data-i18n="amount">Số tiền</span>
+                      </th>
+                      <th
+                        class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-center"
+                        data-i18n="status"
+                      >
+                        <span data-i18n="status">Trạng thái</span>
+                      </th>
+                      <th
+                        class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-center"
+                        data-i18n="createdAt"
+                      >
+                        <span data-i18n="createdAt">Tạo lúc</span>
+                      </th>
+                      <th
+                        class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-right"
+                        data-i18n="actionColHeader"
+                      >
+                        <span data-i18n="actionColHeader">Thao tác</span>
+                      </th>
                     </tr>
                   </thead>
-                  <tbody class="divide-y divide-outline-variant/20 dark:divide-slate-800">
-                    {% if orders and orders|length > 0 %}
-                      {% for o in orders %}
-                      {% set display_name = o.fullname or o.username or o.email or 'U' %}
-                      {% set plan_val = (o.plan or 'free')|lower %}
-                      <tr class="hover:bg-primary/5 dark:hover:bg-slate-800/40 border-b border-outline-variant/10 dark:border-slate-800/60 transition-colors" data-plan="{{ plan_val }}">
-                        <td class="px-6 py-4 body-md font-semibold text-on-surface dark:text-slate-200">
-                          {{ o.order_id }}
-                        </td>
-                        <td class="px-6 py-4">
-                          <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-full bg-primary/10 dark:bg-primary/20 text-primary dark:text-blue-400 flex items-center justify-center label-sm font-bold">
-                              {{ (display_name[:1] if display_name else 'U')|upper }}
+                  <tbody
+                    class="divide-y divide-outline-variant/20 dark:divide-slate-800"
+                  >
+                    {% if orders and orders|length > 0 %} {% for o in orders %}
+                    {% set display_name = o.fullname or o.username or o.email or
+                    'U' %} {% set plan_val = (o.plan or 'free')|lower %}
+                    <tr
+                      class="hover:bg-primary/5 dark:hover:bg-slate-800/40 border-b border-outline-variant/10 dark:border-slate-800/60 transition-colors"
+                      data-plan="{{ plan_val }}"
+                    >
+                      <td
+                        class="px-6 py-4 body-md font-semibold text-on-surface dark:text-slate-200"
+                      >
+                        {{ o.order_id }}
+                      </td>
+                      <td class="px-6 py-4">
+                        <div class="flex items-center gap-3">
+                          <div
+                            class="w-8 h-8 rounded-full bg-primary/10 dark:bg-primary/20 text-primary dark:text-blue-400 flex items-center justify-center label-sm font-bold"
+                          >
+                            {{ (display_name[:1] if display_name else 'U')|upper
+                            }}
+                          </div>
+                          <div>
+                            <div
+                              class="body-md font-semibold text-on-surface dark:text-slate-200"
+                              data-i18n-auto
+                            >
+                              {{ o.fullname or o.username or 'Người dùng' }}
                             </div>
-                            <div>
-                              <div class="body-md font-semibold text-on-surface dark:text-slate-200">
-                                {{ o.fullname or o.username or 'Người dùng' }}
-                              </div>
-                              <div class="label-sm text-on-surface-variant dark:text-slate-400">
-                                {{ o.email or '-' }}
-                              </div>
+                            <div
+                              class="label-sm text-on-surface-variant dark:text-slate-400"
+                            >
+                              {{ o.email or '-' }}
                             </div>
                           </div>
-                        </td>
-                        <td class="px-6 py-4 text-center">
-                          {% if plan_val == 'enterprise' %}
-                          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full label-sm font-semibold bg-indigo-500/10 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20 uppercase">
-                            Enterprise
-                          </span>
-                          {% elif plan_val == 'pro' %}
-                          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full label-sm font-semibold bg-blue-500/10 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 border border-blue-500/20 uppercase">
-                            Pro
-                          </span>
-                          {% elif plan_val == 'basic' %}
-                          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full label-sm font-semibold bg-amber-500/10 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/20 uppercase">
-                            Basic
-                          </span>
-                          {% else %}
-                          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full label-sm font-semibold bg-slate-500/10 dark:bg-slate-500/20 text-slate-600 dark:text-slate-400 border border-slate-500/20 uppercase">
-                            {{ plan_val|upper }}
-                          </span>
-                          {% endif %}
-                        </td>
-                        <td class="px-6 py-4 text-center body-md text-on-surface-variant dark:text-slate-300">
-                          {{ o.payment_method or '-' }}
-                        </td>
-                        <td class="px-6 py-4 text-center body-md font-semibold text-on-surface dark:text-slate-200">
-                          {{ '{:,}'.format(o.amount_calc or o.amount_vnd or 0).replace(',', '.') }} VNĐ
-                        </td>
-                        <td class="px-6 py-4 text-center">
-                          <span class="inline-flex items-center gap-1.5 px-3 py-1 label-sm font-medium rounded-full bg-amber-50 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400">
-                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-                            Đã báo chuyển
-                          </span>
-                        </td>
-                        <td class="px-6 py-4 text-center label-sm text-on-surface-variant dark:text-slate-400">
-                          {{ o.created_at.strftime('%d/%m/%Y %H:%M') if o.created_at and o.created_at.strftime is defined else (o.created_at or '-') }}
-                        </td>
-                        <td class="px-6 py-4 text-right">
-                          {% if allow_manual_confirm %}
-                          <form
-                            class="inline confirm-payment-form"
-                            method="post"
-                            action="{{ url_for('users.confirm_payment') }}"
-                            data-order-id="{{ o.order_id }}"
-                            data-user="{{ o.username or o.fullname or o.email or '' }}"
-                            data-plan="{{ (o.plan or 'free')|upper }}"
+                        </div>
+                      </td>
+                      <td class="px-6 py-4 text-center">
+                        {% if plan_val == 'enterprise' %}
+                        <span
+                          class="inline-flex items-center px-2.5 py-0.5 rounded-full label-sm font-semibold bg-indigo-500/10 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20 uppercase"
+                          data-i18n="planEnterprise"
+                          >Enterprise</span
+                        >
+                        {% elif plan_val == 'pro' %}
+                        <span
+                          class="inline-flex items-center px-2.5 py-0.5 rounded-full label-sm font-semibold bg-blue-500/10 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 border border-blue-500/20 uppercase"
+                        >
+                          Pro
+                        </span>
+                        {% elif plan_val == 'basic' %}
+                        <span
+                          class="inline-flex items-center px-2.5 py-0.5 rounded-full label-sm font-semibold bg-amber-500/10 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/20 uppercase"
+                          data-i18n="planBasic"
+                          >Basic</span
+                        >
+                        {% else %}
+                        <span
+                          class="inline-flex items-center px-2.5 py-0.5 rounded-full label-sm font-semibold bg-slate-500/10 dark:bg-slate-500/20 text-slate-600 dark:text-slate-400 border border-slate-500/20 uppercase"
+                        >
+                          {{ plan_val|upper }}
+                        </span>
+                        {% endif %}
+                      </td>
+                      <td
+                        class="px-6 py-4 text-center body-md text-on-surface-variant dark:text-slate-300"
+                      >
+                        {{ o.payment_method or '-' }}
+                      </td>
+                      <td
+                        class="px-6 py-4 text-center body-md font-semibold text-on-surface dark:text-slate-200"
+                      >
+                        {{ '{:,}'.format(o.amount_calc or o.amount_vnd or
+                        0).replace(',', '.') }}<span data-i18n="currencySuffix">
+                          VNĐ</span
+                        >
+                      </td>
+                      <td class="px-6 py-4 text-center">
+                        <span
+                          class="inline-flex items-center gap-1.5 px-3 py-1 label-sm font-medium rounded-full bg-amber-50 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400"
+                        >
+                          <span
+                            class="w-1.5 h-1.5 rounded-full bg-amber-500"
+                          ></span>
+                          <span data-i18n="reportedTransfer"
+                            >Đã báo chuyển</span
                           >
-                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-                            <input type="hidden" name="order_id" value="{{ o.order_id }}" />
-                            <input type="hidden" name="page" value="{{ page or 1 }}" />
-                            <button
-                              type="submit"
-                              class="bg-primary hover:bg-primary/95 text-on-primary px-4 py-2 rounded-lg label-sm shadow-sm hover:shadow-md transition-all font-semibold"
-                            >
-                              Xác nhận
-                            </button>
-                          </form>
-                          {% else %}
+                        </span>
+                      </td>
+                      <td
+                        class="px-6 py-4 text-center label-sm text-on-surface-variant dark:text-slate-400"
+                      >
+                        {{ o.created_at.strftime('%d/%m/%Y %H:%M') if
+                        o.created_at and o.created_at.strftime is defined else
+                        (o.created_at or '-') }}
+                      </td>
+                      <td class="px-6 py-4 text-right">
+                        {% if allow_manual_confirm %}
+                        <form
+                          class="inline confirm-payment-form"
+                          method="post"
+                          action="{{ url_for('users.confirm_payment') }}"
+                          data-order-id="{{ o.order_id }}"
+                          data-user="{{ o.username or o.fullname or o.email or '' }}"
+                          data-plan="{{ (o.plan or 'free')|upper }}"
+                        >
+                          <input
+                            type="hidden"
+                            name="csrf_token"
+                            value="{{ csrf_token() }}"
+                          />
+                          <input
+                            type="hidden"
+                            name="order_id"
+                            value="{{ o.order_id }}"
+                          />
+                          <input
+                            type="hidden"
+                            name="page"
+                            value="{{ page or 1 }}"
+                          />
                           <button
-                            class="bg-surface-container-low dark:bg-slate-800 text-on-surface-variant/40 dark:text-slate-500 px-4 py-2 rounded-lg label-sm cursor-not-allowed border border-outline-variant/20 dark:border-slate-700"
-                            type="button"
-                            disabled
+                            type="submit"
+                            class="bg-primary hover:bg-primary/95 text-on-primary px-4 py-2 rounded-lg label-sm shadow-sm hover:shadow-md transition-all font-semibold"
+                            data-i18n="confirm"
                           >
-                            Tự động
+                            <span data-i18n="confirm">Xác nhận</span>
                           </button>
-                          {% endif %}
-                        </td>
-                      </tr>
-                      {% endfor %}
-                    {% else %}
-                      <tr>
-                        <td class="px-6 py-6 body-md text-on-surface-variant dark:text-slate-500 text-center" colspan="8">
-                          Không có đơn chờ xác nhận.
-                        </td>
-                      </tr>
+                        </form>
+                        {% else %}
+                        <button
+                          class="bg-surface-container-low dark:bg-slate-800 text-on-surface-variant/40 dark:text-slate-500 px-4 py-2 rounded-lg label-sm cursor-not-allowed border border-outline-variant/20 dark:border-slate-700"
+                          type="button"
+                          disabled
+                          data-i18n="themeAuto"
+                        >
+                          <span data-i18n="themeAuto">Tự động</span>
+                        </button>
+                        {% endif %}
+                      </td>
+                    </tr>
+                    {% endfor %} {% else %}
+                    <tr>
+                      <td
+                        class="px-6 py-6 body-md text-on-surface-variant dark:text-slate-500 text-center"
+                        colspan="8"
+                        data-i18n="noPendingApprovals"
+                      >
+                        <span data-i18n="noPendingApprovals"
+                          >Không có đơn chờ xác nhận.</span
+                        >
+                      </td>
+                    </tr>
                     {% endif %}
                   </tbody>
                 </table>
@@ -791,8 +1157,16 @@
                 class="px-6 py-4 flex items-center justify-between border-t border-outline-variant/20 dark:border-slate-800 bg-surface-container-low/60 dark:bg-slate-800/30"
                 data-purpose="table-pagination"
               >
-                <span class="label-sm text-on-surface-variant dark:text-slate-400">
-                  Hiển thị {{ (page - 1) * per_page + 1 if total_orders > 0 else 0 }} - {{ page * per_page if page * per_page < total_orders else total_orders }} trên {{ total_orders }} đơn chờ xác nhận
+                <span
+                  class="label-sm text-on-surface-variant dark:text-slate-400"
+                >
+                  <span data-i18n="showingText">Hiển thị</span> {{ (page - 1) *
+                  per_page + 1 if total_orders > 0 else 0 }} - {{ page *
+                  per_page if page * per_page < total_orders else total_orders
+                  }} <span data-i18n="ofText">trên</span> {{ total_orders }}
+                  <span data-i18n="pendingConfirmOrdersText"
+                    >đơn chờ xác nhận</span
+                  >
                 </span>
                 <div class="flex items-center gap-1">
                   {% if page > 1 %}
@@ -800,16 +1174,25 @@
                     class="p-2 rounded border border-outline-variant/30 dark:border-slate-700 text-on-surface-variant dark:text-slate-400 hover:bg-surface-container-low dark:hover:bg-slate-800 transition-colors"
                     href="{{ url_for('users.confirmations_list', page=page-1) }}"
                     aria-label="Trang trước"
+                    data-i18n-aria="prevPage"
                   >
-                    <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+                    <span class="material-symbols-outlined text-[18px]"
+                      >chevron_left</span
+                    >
                   </a>
                   {% else %}
-                  <span class="p-2 rounded border border-outline-variant/30 dark:border-slate-800 text-on-surface-variant/40 dark:text-slate-600 cursor-not-allowed">
-                    <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+                  <span
+                    class="p-2 rounded border border-outline-variant/30 dark:border-slate-800 text-on-surface-variant/40 dark:text-slate-600 cursor-not-allowed"
+                  >
+                    <span class="material-symbols-outlined text-[18px]"
+                      >chevron_left</span
+                    >
                   </span>
                   {% endif %}
 
-                  <span class="px-3 h-8 inline-flex items-center rounded bg-primary text-white label-sm font-bold">
+                  <span
+                    class="px-3 h-8 inline-flex items-center rounded bg-primary text-white label-sm font-bold"
+                  >
                     {{ page }} / {{ total_pages }}
                   </span>
 
@@ -818,12 +1201,19 @@
                     class="p-2 rounded border border-outline-variant/30 dark:border-slate-700 text-on-surface-variant dark:text-slate-400 hover:bg-surface-container-low dark:hover:bg-slate-800 transition-colors"
                     href="{{ url_for('users.confirmations_list', page=page+1) }}"
                     aria-label="Trang sau"
+                    data-i18n-aria="nextPage"
                   >
-                    <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+                    <span class="material-symbols-outlined text-[18px]"
+                      >chevron_right</span
+                    >
                   </a>
                   {% else %}
-                  <span class="p-2 rounded border border-outline-variant/30 dark:border-slate-800 text-on-surface-variant/40 dark:text-slate-600 cursor-not-allowed">
-                    <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+                  <span
+                    class="p-2 rounded border border-outline-variant/30 dark:border-slate-800 text-on-surface-variant/40 dark:text-slate-600 cursor-not-allowed"
+                  >
+                    <span class="material-symbols-outlined text-[18px]"
+                      >chevron_right</span
+                    >
                   </span>
                   {% endif %}
                 </div>
@@ -853,67 +1243,97 @@
                 >
               </span>
             </div>
-            <p class="body-md text-on-surface-variant max-w-sm">
-              Ứng dụng nhận diện giống chó bằng AI dành cho người yêu thú cưng.
-              Kết quả chính xác, nhanh chóng.
+            <p
+              class="body-md text-on-surface-variant max-w-sm"
+              data-i18n="footerDesc"
+            >
+              <span data-i18n="footerDesc"
+                >Ứng dụng nhận diện giống chó bằng AI dành cho người yêu thú
+                cưng. Kết quả chính xác, nhanh chóng.</span
+              >
             </p>
           </div>
           <div class="lg:col-span-6 grid grid-cols-2 md:grid-cols-2 gap-8">
             <div class="space-y-6">
-              <h4 class="label-sm text-primary uppercase tracking-widest"><span data-i18n="aboutPetAI">Về PetAI</span></h4>
+              <h4 class="label-sm text-primary uppercase tracking-widest">
+                <span data-i18n="aboutPetAI">Về PetAI</span>
+              </h4>
               <ul class="space-y-4">
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                    target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.privacy_policy') }}"
-                     data-i18n="privacy">Chính sách quyền riêng tư</a
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href="{{ url_for('legal.privacy_policy') }}"
+                    data-i18n="privacy"
+                    ><span data-i18n="privacy"
+                      >Chính sách quyền riêng tư</span
+                    ></a
                   >
                 </li>
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                    target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.terms_of_service') }}"
-                     data-i18n="terms">Điều khoản sử dụng</a
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href="{{ url_for('legal.terms_of_service') }}"
+                    data-i18n="terms"
+                    ><span data-i18n="terms">Điều khoản sử dụng</span></a
                   >
                 </li>
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                    target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.data_deletion') }}"
-                     data-i18n="dataDeletion">Chính sách xóa dữ liệu</a
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href="{{ url_for('legal.data_deletion') }}"
+                    data-i18n="dataDeletion"
+                    ><span data-i18n="dataDeletion"
+                      >Chính sách xóa dữ liệu</span
+                    ></a
                   >
                 </li>
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                    target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.support') }}"
-                     data-i18n="support">Hỗ trợ</a
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href="{{ url_for('legal.support') }}"
+                    data-i18n="support"
+                    ><span data-i18n="homeStatsSupport">HỖ TRỢ</span></a
                   >
                 </li>
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                    target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.contact') }}"
-                     data-i18n="contact">Liên hệ</a
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href="{{ url_for('legal.contact') }}"
+                    data-i18n="contact"
+                    ><span data-i18n="contact">Liên hệ</span></a
                   >
                 </li>
               </ul>
             </div>
             <div class="space-y-6">
-              <h4 class="label-sm text-primary uppercase tracking-widest"><span data-i18n="connect">Kết nối</span></h4>
+              <h4 class="label-sm text-primary uppercase tracking-widest">
+                <span data-i18n="connect">Kết nối</span>
+              </h4>
               <ul class="space-y-4">
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
                     href="{{ url_for('predict.upload_page') }}"
-                     data-i18n="identifyNow">Nhận diện ngay</a
+                    data-i18n="identifyNow"
+                    ><span data-i18n="identifyNow">Nhận diện ngay</span></a
                   >
                 </li>
                 <li class="">
                   <a
                     class="text-on-surface-variant hover:text-primary transition-colors font-medium"
                     href="{{ url_for('history.history') }}"
-                     data-i18n="collection">Bộ sưu tập</a
+                    data-i18n="collection"
+                    ><span data-i18n="collection">Bộ sưu tập</span></a
                   >
                 </li>
               </ul>
@@ -924,17 +1344,33 @@
           <div
             class="flex flex-col md:flex-row justify-between items-center gap-4"
           >
-            <p class="label-sm text-on-surface-variant/70 dark:text-slate-400"><span data-i18n="copyright">Bản quyền © 2026 PetAI. Mọi quyền được bảo lưu</span></p>
+            <p class="label-sm text-on-surface-variant/70 dark:text-slate-400">
+              <span data-i18n="copyright"
+                >Bản quyền © 2026 PetAI. Mọi quyền được bảo lưu</span
+              >
+            </p>
             <div class="flex gap-6">
+              <a class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
+
+                target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.user_guide') }}"
+
+                data-i18n="footerUserGuide"><span data-i18n="footerUserGuide">HƯỚNG DẪN SỬ DỤNG</span></a>
+
               <a
                 class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
-                target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.terms_of_service') }}"
-                >ĐIỀU KHOẢN</a
+                target="_blank"
+                rel="noopener noreferrer"
+                href="{{ url_for('legal.terms_of_service') }}"
+                data-i18n="footerTerms"
+                ><span data-i18n="footerTerms">ĐIỀU KHOẢN</span></a
               >
               <a
                 class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
-                target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.privacy_policy') }}"
-                >BẢO MẬT</a
+                target="_blank"
+                rel="noopener noreferrer"
+                href="{{ url_for('legal.privacy_policy') }}"
+                data-i18n="footerPrivacy"
+                ><span data-i18n="footerPrivacy">BẢO MẬT</span></a
               >
             </div>
           </div>
@@ -948,28 +1384,43 @@
       id="confirmModal"
       aria-hidden="true"
     >
-      <div class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 dark:border-slate-800 rounded-xl max-w-md w-full p-6 shadow-xl">
-        <h3 id="modalTitle" class="headline-md font-semibold text-on-surface dark:text-slate-105 flex items-center gap-2">
-          <span class="material-symbols-outlined text-amber-500 dark:text-amber-400">warning</span>
-          Xác nhận thao tác
+      <div
+        class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 dark:border-slate-800 rounded-xl max-w-md w-full p-6 shadow-xl"
+      >
+        <h3
+          id="modalTitle"
+          class="headline-md font-semibold text-on-surface dark:text-slate-105 flex items-center gap-2"
+        >
+          <span
+            class="material-symbols-outlined text-amber-500 dark:text-amber-400"
+            >warning</span
+          ><span data-i18n="confirmActionTitle">Xác nhận thao tác</span>
         </h3>
-        <p id="modalText" class="body-md text-on-surface-variant dark:text-slate-300 mt-3">
-          Bạn có chắc muốn thực hiện hành động này?
+        <p
+          id="modalText"
+          class="body-md text-on-surface-variant dark:text-slate-300 mt-3"
+          data-i18n="confirmActionText"
+        >
+          <span data-i18n="confirmActionText"
+            >Bạn có chắc muốn thực hiện hành động này?</span
+          >
         </p>
         <div class="mt-6 flex items-center justify-end gap-3">
           <button
             type="button"
             class="px-4 py-2 rounded-lg border border-outline-variant/40 dark:border-slate-700 label-sm font-semibold text-on-surface dark:text-slate-300 hover:bg-surface-container-low dark:hover:bg-slate-800 transition-colors"
             id="modalCancel"
+            data-i18n="cancelBtn"
           >
-            Huỷ
+            <span data-i18n="cancelBtn">Huỷ</span>
           </button>
           <button
             type="button"
             class="px-4 py-2 rounded-lg bg-primary hover:bg-primary/95 text-on-primary label-sm font-semibold hover:opacity-90 shadow-sm transition-colors"
             id="modalOk"
+            data-i18n="confirm"
           >
-            Xác nhận
+            <span data-i18n="confirm">Xác nhận</span>
           </button>
         </div>
       </div>
@@ -992,7 +1443,11 @@
         let modalResolver = null;
 
         function openModal({ text }) {
-          modalText.textContent = text || "Bạn có chắc?";
+          modalText.textContent =
+            text ||
+            (typeof window.PetAI_i18n !== "undefined"
+              ? window.PetAI_i18n.t("confirmActionText")
+              : "Bạn có chắc?");
           modal.classList.remove("hidden");
           modal.classList.add("flex");
           modal.setAttribute("aria-hidden", "false");
@@ -1009,8 +1464,12 @@
           modalResolver = null;
         }
 
-        if (modalCancel) modalCancel.addEventListener("click", () => closeModal({ ok: false }));
-        if (modalOk) modalOk.addEventListener("click", () => closeModal({ ok: true }));
+        if (modalCancel)
+          modalCancel.addEventListener("click", () =>
+            closeModal({ ok: false }),
+          );
+        if (modalOk)
+          modalOk.addEventListener("click", () => closeModal({ ok: true }));
         if (modal) {
           modal.addEventListener("click", (e) => {
             if (e.target === modal) closeModal({ ok: false });
@@ -1064,7 +1523,13 @@
             const user = this.dataset.user || "";
             const plan = this.dataset.plan || "";
             const answer = await openModal({
-              text: `Xác nhận đã nhận tiền cho đơn ${orderId} (${user} - ${plan})?`,
+              text:
+                typeof window.PetAI_i18n !== "undefined"
+                  ? window.PetAI_i18n.t("confirmPaymentText")
+                      .replace("{orderId}", orderId)
+                      .replace("{user}", user)
+                      .replace("{plan}", plan)
+                  : `Xác nhận đã nhận tiền cho đơn ${orderId} (${user} - ${plan})?`,
             });
             if (answer.ok) this.submit();
           });
@@ -1081,11 +1546,13 @@
           }
 
           function formatNumber(num, isFloat, decimals, useCommas) {
-            let formatted = isFloat ? num.toFixed(decimals) : Math.round(num).toString();
+            let formatted = isFloat
+              ? num.toFixed(decimals)
+              : Math.round(num).toString();
             if (useCommas) {
-              const parts = formatted.split('.');
+              const parts = formatted.split(".");
               parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-              formatted = parts.join('.');
+              formatted = parts.join(".");
             }
             return formatted;
           }
@@ -1095,16 +1562,15 @@
             const suffix = el.getAttribute("data-suffix") || "";
             const useCommas = el.getAttribute("data-use-commas") === "true";
             const isFloat = String(target).includes(".") && !useCommas;
-            const decimals = isFloat
-              ? String(target).split(".")[1].length
-              : 0;
+            const decimals = isFloat ? String(target).split(".")[1].length : 0;
             let start = null;
 
             function step(ts) {
               if (!start) start = ts;
               const progress = Math.min((ts - start) / DURATION, 1);
               const value = easeOutExpo(progress) * target;
-              el.textContent = formatNumber(value, isFloat, decimals, useCommas) + suffix;
+              el.textContent =
+                formatNumber(value, isFloat, decimals, useCommas) + suffix;
               if (progress < 1) requestAnimationFrame(step);
             }
             requestAnimationFrame(step);
@@ -1120,7 +1586,7 @@
                   }
                 });
               },
-              { threshold: 0.3 }
+              { threshold: 0.3 },
             );
             els.forEach((el) => observer.observe(el));
           } else {
@@ -1160,6 +1626,7 @@
       });
     </script>
     <script src="{{ url_for('static', filename='js/toasts.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
   </body>
 </html>

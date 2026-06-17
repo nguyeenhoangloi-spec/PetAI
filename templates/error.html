@@ -1,9 +1,33 @@
 <!doctype html>
-<html lang="{{ ui_language or 'vi' }}">
+<html class="{{ 'dark' if ui_theme == 'dark' else 'light' }}{{ ' i18n-loading' if ui_language == 'en' else '' }}" lang="{{ ui_language or 'vi' }}" data-theme="{{ ui_theme or 'light' }}">
   <head>
+    <script>
+      (function () {
+        var savedLang = "vi";
+        try {
+          savedLang = localStorage.getItem("siteLanguage") || "vi";
+        } catch (e) {}
+        document.documentElement.setAttribute("data-user-lang", savedLang);
+        if (savedLang === "en") {
+          document.documentElement.classList.add("i18n-loading");
+        }
+      })();
+    </script>
+    <style>
+      html.i18n-loading body {
+        visibility: hidden !important;
+      }
+    </style>
+    <noscript>
+      <style>
+        html.i18n-loading body {
+          visibility: visible !important;
+        }
+      </style>
+    </noscript>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>PetAI - Lỗi {{ code }}</title>
+    <title data-i18n="petaiErrorTitle">{% if ui_language == 'en' %}PetAI - Error {{ code }}{% else %}PetAI - Lỗi {{ code }}{% endif %}</title>
     <link href="https://fonts.googleapis.com" rel="preconnect" />
     <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin />
     <link
@@ -174,8 +198,9 @@
         ></div>
         <div
           class="inline-flex items-center justify-center bg-error-container text-on-error-container px-sm py-xs rounded-full label-sm mb-md relative z-10"
+          data-i18n="errorCodeTitle"
         >
-          Lỗi {{ code }}
+          <span data-i18n="errorCodeTitle">Lỗi {{ code }}</span>
         </div>
         <div
           class="w-24 h-24 bg-surface-container flex items-center justify-center rounded-full mb-md relative z-10 text-primary-container"
@@ -188,13 +213,17 @@
         </div>
         <h1
           class="headline-lg text-on-surface mb-sm relative z-10"
+          data-i18n="errorTitle"
         >
-          Đã có sự cố
+          <span data-i18n="errorTitle">Đã có sự cố</span>
         </h1>
         <p
           class="body-md text-on-surface-variant mb-lg max-w-sm relative z-10"
+          data-i18n-auto
         >
-          {{ message or 'Chúng tôi đang gặp sự cố khi truy xuất dữ liệu. Tài nguyên bạn tìm kiếm có thể đã được chuyển hoặc tạm thời không khả dụng.' }}
+          {{ message or 'Chúng tôi đang gặp sự cố khi truy xuất dữ liệu. Tài
+          nguyên bạn tìm kiếm có thể đã được chuyển hoặc tạm thời không khả
+          dụng.' }}
         </p>
         <div
           class="w-full flex flex-col sm:flex-row items-center justify-center gap-sm relative z-10"
@@ -203,24 +232,28 @@
             class="w-full sm:w-auto bg-primary-container text-on-primary-container hover:bg-primary transition-colors px-md py-sm rounded-lg label-sm flex items-center justify-center gap-xs shadow-sm hover:-translate-y-[1px] duration-150"
             href="{{ url_for('home.index') }}"
           >
-            <span class="material-symbols-outlined text-[18px]">home</span>
-            Quay lại trang chủ
-          </a>
+            <span class="material-symbols-outlined text-[18px]">home</span
+            ><span data-i18n="backToHome">Quay lại trang chủ</span></a
+          >
           <a
             class="w-full sm:w-auto border border-outline text-on-surface hover:bg-surface-container-highest transition-colors px-md py-sm rounded-lg label-sm flex items-center justify-center gap-xs duration-150"
             href="{{ url_for('health.health') }}"
           >
             <span class="material-symbols-outlined text-[18px]">
-              monitoring
-            </span>
-            Kiểm tra hệ thống
-          </a>
+              monitoring </span
+            ><span data-i18n="checkSystem">Kiểm tra hệ thống</span></a
+          >
         </div>
       </div>
-      <p class="label-sm text-outline mt-margin text-center">
-        Nếu lỗi vẫn tiếp diễn, vui lòng thử lại sau.
+      <p
+        class="label-sm text-outline mt-margin text-center"
+        data-i18n="errorRetryLater"
+      >
+        <span data-i18n="errorRetryLater"
+          >Nếu lỗi vẫn tiếp diễn, vui lòng thử lại sau.</span
+        >
       </p>
     </main>
+    <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
   </body>
 </html>
-

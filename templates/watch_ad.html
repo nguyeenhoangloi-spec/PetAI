@@ -14,23 +14,17 @@
           type="button"
           id="watchAdClose"
           class="absolute top-4 right-4 text-on-surface-variant hover:text-on-surface transition-colors"
-          aria-label="Đóng"
-        >
+          aria-label="Đóng" data-i18n-aria="close">
           <span class="material-symbols-outlined">close</span>
         </button>
 
         <header class="text-center space-y-4 pt-4">
-          <h1 class="headline-lg text-on-background">
-            Xem quảng cáo để mở khóa lượt nhận diện
-          </h1>
+          <h1 class="headline-lg text-on-background" data-i18n="adUnlockTitle"><span data-i18n="adUnlockTitle">Xem quảng cáo để mở khóa lượt nhận diện</span></h1>
           <p class="body-md text-on-surface-variant max-w-2xl mx-auto">
             Bạn đã sử dụng hết 10 lượt miễn phí. Xem một đoạn quảng cáo
             ngắn để nhận thêm
-            <strong class="text-on-background font-semibold"
-              >3 lượt</strong
-            >
-            nhận diện AI. (Tối đa 3 lần).
-          </p>
+            <strong class="text-on-background font-semibold" data-i18n="threeScans"><span data-i18n="threeScans">3 lượt</span></strong
+            ><span data-i18n="adLimitLimitPrompt">nhận diện AI. (Tối đa 3 lần).</span></p>
         </header>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch mt-10">
@@ -40,10 +34,7 @@
             >
               <div class="flex items-center justify-between mb-4">
                 <span
-                  class="label-sm label-sm text-on-surface-variant uppercase tracking-wider"
-                >
-                  Đã nhận diện
-                </span>
+                  class="label-sm label-sm text-on-surface-variant uppercase tracking-wider" data-i18n="adScanned">Đã nhận diện</span>
                 <span class="material-symbols-outlined text-error"
                   >warning</span
                 >
@@ -70,12 +61,11 @@
                 class="bg-surface-container-lowest p-4 rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-outline-variant flex flex-col justify-center"
               >
                 <span class="label-sm label-sm text-on-surface-variant mb-1">
-                  Unlock còn
+                  <span data-i18n="adUnlockRemaining">Lần mở khóa còn lại</span>
                 </span>
                 <span class="headline-md text-primary">
                   {{ quota_info.ad_unlocks_remaining }}
-                  <span class="body-md text-on-surface-variant"
-                    >lần</span
+                  <span class="body-md text-on-surface-variant" data-i18n="timesCount">lần</span
                   >
                 </span>
               </div>
@@ -83,7 +73,7 @@
                 class="bg-surface-container-lowest p-4 rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-outline-variant flex flex-col justify-center"
               >
                 <span class="label-sm label-sm text-on-surface-variant mb-1">
-                  Ads đã xem
+                  <span data-i18n="adViewsUsed">Quảng cáo đã xem</span>
                 </span>
                 <span class="headline-md text-on-background">
                   {{ quota_info.ad_views_used }}
@@ -103,16 +93,12 @@
             >
               <div class="flex items-center gap-2 text-primary">
                 <span class="material-symbols-outlined">smart_display</span>
-                <span class="label-sm label-sm font-semibold">
-                  Nhà Tài Trợ PetAI
-                </span>
+                <span class="label-sm label-sm font-semibold" data-i18n="adSponsor">Nhà Tài Trợ PetAI</span>
               </div>
               <div
                 class="bg-surface-variant text-primary px-3 py-1 rounded-full label-sm label-sm flex items-center gap-1"
               >
-                <span class="material-symbols-outlined text-[16px]">timer</span>
-                Còn
-                <span id="watchAdCountdown">8</span>s
+                <span class="material-symbols-outlined text-[16px]">timer</span><span data-i18n="adRemaining">Còn</span><span id="watchAdCountdown">8</span>s
               </div>
             </div>
 
@@ -129,13 +115,8 @@
                   class="material-symbols-outlined text-on-primary text-[64px] animate-pulse"
                   >play_circle</span
                 >
-                <h3 class="headline-md text-on-primary">
-                  Đang phát quảng cáo mô phỏng
-                </h3>
-                <p class="body-md text-outline-variant max-w-sm">
-                  Vui lòng không đóng cửa sổ này. Lượt nhận diện sẽ được
-                  cộng vào tài khoản sau khi video kết thúc.
-                </p>
+                <h3 class="headline-md text-on-primary" data-i18n="adPlaying"><span data-i18n="adPlaying">Đang phát quảng cáo mô phỏng</span></h3>
+                <p class="body-md text-outline-variant max-w-sm" data-i18n="adWarningDesc"><span data-i18n="adWarningDesc">Vui lòng không đóng cửa sổ này. Lượt nhận diện sẽ được cộng vào tài khoản sau khi video kết thúc.</span></p>
               </div>
             </div>
 
@@ -160,26 +141,18 @@
             <button
               type="button"
               id="watchAdCancel"
-              class="px-8 py-3 rounded-lg border-2 border-outline-variant label-sm label-sm font-semibold text-on-surface hover:bg-surface-container transition-colors focus:ring-2 focus:ring-primary focus:outline-none"
-            >
-              Quay lại
-            </button>
+              class="px-8 py-3 rounded-lg border-2 border-outline-variant label-sm label-sm font-semibold text-on-surface hover:bg-surface-container transition-colors focus:ring-2 focus:ring-primary focus:outline-none" data-i18n="back"><span data-i18n="back">Quay lại</span></button>
             <button
               type="submit"
               id="watchAdCompleteBtn"
               class="px-8 py-3 rounded-lg bg-primary text-on-primary label-sm label-sm font-semibold border-2 border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
-              disabled
-            >
-              Tôi đã xem xong
-            </button>
+              disabled data-i18n="adWatchedComplete"><span data-i18n="adWatchedComplete">Tôi đã xem xong</span></button>
           </div>
           <div
             class="flex items-center gap-2 text-outline bg-surface-container-low px-4 py-2 rounded-lg border border-outline-variant/50"
           >
             <span class="material-symbols-outlined text-[18px]">info</span>
-            <p class="label-sm label-sm">
-              Nếu đã xem đủ 3 lần, bạn cần nâng cấp gói để tiếp tục.
-            </p>
+            <p class="label-sm label-sm" data-i18n="adLimitReachedDesc"><span data-i18n="adLimitReachedDesc">Nếu đã xem đủ 3 lần, bạn cần nâng cấp gói để tiếp tục.</span></p>
           </div>
         </form>
       </div>
