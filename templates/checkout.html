@@ -695,64 +695,16 @@
               </div>
               {% endif %}
 
-              <div
-                class="flex items-center gap-2 text-on-surface-variant mb-2"
-                id="paymentStatusWrap"
-              >
-                <span
-                  class="w-2 h-2 rounded-full bg-error animate-pulse"
-                  id="paymentStatusDot"
-                ></span>
-                <span
-                  class="label-sm font-medium italic"
-                  id="paymentStatusText"
-                >
-                  Đang chờ xác nhận từ ngân hàng...
-                </span>
-              </div>
-              <p
-                class="label-sm text-center text-on-surface-variant mb-6 hidden"
-                id="paymentPlanText"
-              ></p>
-
-              <div class="w-full">
-                {% if config.get('ALLOW_MANUAL_TRANSFER_CONFIRM', True) %}
-                <form
-                  method="post"
-                  action="{{ url_for('predict.confirm_transfer') }}"
-                  id="confirmTransferForm"
-                >
-                  <input
-                    type="hidden"
-                    name="csrf_token"
-                    value="{{ csrf_token() }}"
-                  />
-                  <input type="hidden" name="action" value="check" />
-                  <input type="hidden" name="order_id" value="{{ order_id }}" />
-                  <button
-                    type="submit"
-                    class="w-full px-4 py-2 bg-primary text-on-primary rounded-custom font-semibold flex items-center justify-center gap-2 hover:opacity-90 transition-all active:scale-[0.98] shadow-sm"
-                    id="confirmTransferBtn"
-                  >
-                    <span class="material-symbols-outlined">check_circle</span>
-                    Tôi đã chuyển tiền
-                  </button>
-                </form>
-                {% else %}
-                <button
-                  type="button"
-                  class="w-full px-4 py-2 bg-primary text-on-primary rounded-custom font-semibold flex items-center justify-center gap-2 transition-all active:scale-[0.98] shadow-sm opacity-60 cursor-not-allowed"
-                  id="exitAfterPaidBtn"
-                  disabled
-                >
-                  <span class="material-symbols-outlined">check_circle</span>
-                  Tôi đã chuyển tiền
-                </button>
-                <p class="mt-3 label-sm text-center text-on-surface-variant">
-                  Hệ thống sẽ tự xác nhận. Khi thanh toán thành công, nút sẽ
-                  sáng để bạn thoát.
+              <!-- Auto-checking Status Container -->
+              <div class="w-full flex flex-col items-center justify-center p-4 bg-amber-500/10 dark:bg-amber-500/5 rounded-xl border border-amber-500/20 text-center mb-6">
+                <div class="flex items-center gap-2 text-amber-600 dark:text-amber-400 mb-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-amber-500 animate-ping" id="paymentStatusDot"></span>
+                  <span class="label-sm font-bold uppercase tracking-wider" id="paymentStatusHeader">Đang kiểm tra</span>
+                </div>
+                <p class="body-md text-slate-700 dark:text-slate-300 font-medium" id="paymentStatusText">
+                  ⏳ Hệ thống đang tự động kiểm tra thanh toán...<br>
+                  Vui lòng không tắt trang cho đến khi giao dịch được xác nhận.
                 </p>
-                {% endif %}
               </div>
 
               <p class="mt-6 label-sm text-center text-on-surface-variant">
@@ -786,54 +738,202 @@
       </div>
     </main>
 
+    <!-- CSS block for invoice print styling -->
+    <style>
+      @media print {
+        body * {
+          visibility: hidden !important;
+        }
+        #invoiceModal, #invoiceModal * {
+          visibility: visible !important;
+        }
+        #invoiceModal {
+          position: fixed !important;
+          inset: 0 !important;
+          background: white !important;
+          color: black !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          z-index: 99999 !important;
+        }
+        #invoiceModalContainer {
+          border: none !important;
+          box-shadow: none !important;
+          transform: none !important;
+          max-width: 100% !important;
+          width: 100% !important;
+        }
+        #printInvoiceBtn, #closeInvoiceBtn, #closeInvoiceXBtn {
+          display: none !important;
+        }
+      }
+    </style>
+
+    <!-- Invoice Popup Modal Markup -->
+    <div id="invoiceModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm" role="dialog" aria-modal="true">
+      <div id="invoiceModalContainer" class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 w-full max-w-lg overflow-hidden transform transition-all duration-300 scale-95 opacity-0">
+        
+        <!-- Header -->
+        <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-950">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary text-2xl">receipt_long</span>
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Hóa Đơn Thanh Toán</h3>
+          </div>
+          <button id="closeInvoiceXBtn" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 focus:outline-none transition-colors" aria-label="Đóng">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+
+        <!-- Body -->
+        <div class="p-6 space-y-6 max-h-[70vh] overflow-y-auto">
+          <!-- Success Icon -->
+          <div class="flex flex-col items-center text-center">
+            <div class="w-12 h-12 rounded-full bg-emerald-100 dark:bg-emerald-950/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400 mb-2">
+              <span class="material-symbols-outlined text-3xl font-bold">check</span>
+            </div>
+            <h4 class="text-md font-bold text-slate-800 dark:text-slate-100">Thanh toán thành công!</h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Cảm ơn bạn đã sử dụng dịch vụ của PetAI</p>
+          </div>
+
+          <!-- Invoice Details Grid -->
+          <div class="border border-slate-100 dark:border-slate-800 rounded-xl p-4 bg-slate-50/50 dark:bg-slate-950/50 space-y-3">
+            <div class="flex justify-between items-center text-sm">
+              <span class="text-slate-500 dark:text-slate-400">Mã đơn hàng</span>
+              <span class="font-mono font-bold text-slate-800 dark:text-slate-200" id="invoiceOrderId">#ORDER_ID</span>
+            </div>
+            <div class="flex justify-between items-center text-sm">
+              <span class="text-slate-500 dark:text-slate-400">Gói dịch vụ</span>
+              <span class="font-bold text-primary dark:text-blue-400" id="invoicePlanName">PRO</span>
+            </div>
+            <div class="flex justify-between items-center text-sm">
+              <span class="text-slate-500 dark:text-slate-400">Phương thức</span>
+              <span class="font-semibold text-slate-800 dark:text-slate-200" id="invoiceMethod">Chuyển khoản QR</span>
+            </div>
+            <div class="flex justify-between items-center text-sm">
+              <span class="text-slate-500 dark:text-slate-400">Số tiền</span>
+              <span class="font-bold text-secondary text-base" id="invoiceAmount">5.000đ</span>
+            </div>
+            <div class="h-px bg-slate-200 dark:bg-slate-800 my-2"></div>
+            <div class="flex justify-between items-center text-sm">
+              <span class="text-slate-500 dark:text-slate-400">Khách hàng</span>
+              <span class="font-semibold text-slate-800 dark:text-slate-200" id="invoiceCustomerName">Nguyen Van A</span>
+            </div>
+            <div class="flex justify-between items-center text-sm">
+              <span class="text-slate-500 dark:text-slate-400">Email</span>
+              <span class="font-semibold text-slate-800 dark:text-slate-200 truncate max-w-[200px]" id="invoiceCustomerEmail">email@example.com</span>
+            </div>
+            <div class="flex justify-between items-center text-sm">
+              <span class="text-slate-500 dark:text-slate-400">Thời gian tạo</span>
+              <span class="font-semibold text-slate-800 dark:text-slate-200" id="invoiceCreatedAt">17/06/2026 12:00</span>
+            </div>
+            <div class="flex justify-between items-center text-sm">
+              <span class="text-slate-500 dark:text-slate-400">Thời gian xác nhận</span>
+              <span class="font-semibold text-slate-800 dark:text-slate-200" id="invoiceConfirmedAt">17/06/2026 12:05</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer buttons -->
+        <div class="px-6 py-4 border-t border-slate-200 dark:border-slate-800 flex justify-end gap-3 bg-slate-50 dark:bg-slate-950">
+          <button id="printInvoiceBtn" class="px-4 py-2 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 rounded-lg text-sm font-semibold flex items-center gap-1 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+            <span class="material-symbols-outlined text-[18px]">print</span>
+            In hóa đơn
+          </button>
+          <button id="closeInvoiceBtn" class="px-4 py-2 bg-primary text-on-primary rounded-lg text-sm font-semibold hover:opacity-95 transition-opacity">
+            Đóng
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Polling and Modal JS Logic -->
     <script>
       (function () {
-        const form = document.getElementById("confirmTransferForm");
-        const btn = document.getElementById("confirmTransferBtn");
-        if (form && btn) {
-          form.addEventListener("submit", function () {
-            btn.disabled = true;
-            btn.innerHTML = `<span class="inline-flex h-4 w-4 border-2 border-white/50 border-t-white rounded-full animate-spin"></span>Đang gửi xác nhận...`;
-          });
-        }
-
         const orderId = "{{ order_id }}";
         const statusDot = document.getElementById("paymentStatusDot");
         const statusText = document.getElementById("paymentStatusText");
-        const planText = document.getElementById("paymentPlanText");
-        const exitBtn = document.getElementById("exitAfterPaidBtn");
-        const exitUrl = "{{ url_for('predict.my_payments') }}";
+        const statusHeader = document.getElementById("paymentStatusHeader");
 
-        const normalizePlan = function (plan) {
-          if (!plan) return "";
-          return String(plan).toUpperCase();
+        const modal = document.getElementById("invoiceModal");
+        const container = document.getElementById("invoiceModalContainer");
+        const closeBtn = document.getElementById("closeInvoiceBtn");
+        const closeXBtn = document.getElementById("closeInvoiceXBtn");
+        const printBtn = document.getElementById("printInvoiceBtn");
+
+        window.showPaymentSuccessBill = function(data) {
+          if (!data) return;
+
+          document.getElementById("invoiceOrderId").textContent = "#" + (data.order_id || "");
+          document.getElementById("invoicePlanName").textContent = (data.order_plan || data.plan || "").toUpperCase();
+
+          let methodText = "Chuyển khoản QR";
+          const method = (data.payment_method || "").toLowerCase();
+          if (method !== "qr" && method !== "") {
+            methodText = method.toUpperCase();
+          }
+          document.getElementById("invoiceMethod").textContent = methodText;
+
+          const amount = data.amount_vnd || 0;
+          document.getElementById("invoiceAmount").textContent = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount).replace(/\s?₫/, 'đ');
+
+          const user = data.user || {};
+          document.getElementById("invoiceCustomerName").textContent = user.fullname || user.username || "Khách hàng";
+          document.getElementById("invoiceCustomerEmail").textContent = user.email || "-";
+
+          const formatDate = (dateStr) => {
+            if (!dateStr) return "-";
+            try {
+              const d = new Date(dateStr.replace(/-/g, "/"));
+              if (isNaN(d.getTime())) return dateStr;
+              return d.toLocaleDateString('vi-VN') + ' ' + d.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+            } catch (e) {
+              return dateStr;
+            }
+          };
+
+          document.getElementById("invoiceCreatedAt").textContent = formatDate(data.created_at);
+          document.getElementById("invoiceConfirmedAt").textContent = formatDate(data.confirmed_at);
+
+          modal.classList.remove("hidden");
+          modal.classList.add("flex");
+          void modal.offsetWidth; // Trigger reflow
+          container.classList.remove("scale-95", "opacity-0");
+          container.classList.add("scale-100", "opacity-100");
         };
 
-        const markPaid = function (plan) {
-          if (statusDot) {
-            statusDot.classList.remove("bg-error", "animate-pulse");
-            statusDot.classList.add("bg-emerald-500");
-          }
-          if (statusText) {
-            statusText.textContent = "Thanh toán thành công.";
-          }
-          if (planText) {
-            const planLabel = normalizePlan(plan || "free");
-            planText.textContent = "Gói đã kích hoạt: " + planLabel;
-            planText.classList.remove("hidden");
-          }
-          if (exitBtn) {
-            exitBtn.disabled = false;
-            exitBtn.classList.remove("opacity-60", "cursor-not-allowed");
-          }
+        window.hideInvoiceModal = function() {
+          container.classList.remove("scale-100", "opacity-100");
+          container.classList.add("scale-95", "opacity-0");
+          setTimeout(() => {
+            modal.classList.add("hidden");
+            modal.classList.remove("flex");
+            // Redirect to payments after showing and closing invoice
+            window.location.href = "{{ url_for('predict.my_payments') }}";
+          }, 150);
         };
 
-        if (exitBtn) {
-          exitBtn.addEventListener("click", function () {
-            if (exitBtn.disabled) return;
-            window.location.href = exitUrl;
+        if (closeBtn) closeBtn.addEventListener("click", hideInvoiceModal);
+        if (closeXBtn) closeXBtn.addEventListener("click", hideInvoiceModal);
+        if (printBtn) {
+          printBtn.addEventListener("click", function() {
+            window.print();
           });
         }
+
+        if (modal) {
+          modal.addEventListener("click", function(e) {
+            if (container && !container.contains(e.target)) {
+              hideInvoiceModal();
+            }
+          });
+        }
+
+        document.addEventListener("keydown", function(e) {
+          if (e.key === "Escape" && modal && !modal.classList.contains("hidden")) {
+            hideInvoiceModal();
+          }
+        });
 
         const checkStatus = async function () {
           try {
@@ -845,11 +945,33 @@
             if (!res.ok) return false;
             const data = await res.json();
             if (!data || !data.success) return false;
-            if ((data.status || "").toLowerCase() === "paid") {
-              markPaid(data.current_plan || data.order_plan || "free");
+            
+            const currentStatus = (data.status || "").toLowerCase();
+            
+            if (currentStatus === "paid") {
+              if (statusDot) {
+                statusDot.classList.remove("bg-amber-500", "animate-ping");
+                statusDot.classList.add("bg-emerald-500");
+              }
+              if (statusHeader) {
+                statusHeader.textContent = "THÀNH CÔNG";
+                statusHeader.className = "label-sm font-bold text-emerald-600 dark:text-emerald-400 mb-2";
+              }
+              if (statusText) {
+                statusText.innerHTML = "✅ Thanh toán thành công!<br>Hóa đơn của bạn đang được hiển thị.";
+              }
+              
+              // Open modal immediately
+              showPaymentSuccessBill(data);
               return true;
+            } else {
+              if (statusText) {
+                statusText.innerHTML = "⏳ Đang chờ thanh toán...<br>Hệ thống sẽ tự động kiểm tra lại sau vài giây.";
+              }
             }
-          } catch (e) {}
+          } catch (e) {
+            console.error("Lỗi khi kiểm tra trạng thái thanh toán:", e);
+          }
           return false;
         };
 

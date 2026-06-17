@@ -73,6 +73,7 @@
     </script>
     <title>Thống kê - PetAI</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='css/typography.css') }}"
@@ -96,6 +97,10 @@
     <link
       href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
       rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/admin-dashboard-content.css') }}"
     />
     <script id="tailwind-config">
       tailwind.config = {
@@ -212,27 +217,117 @@
           "GRAD" 0,
           "opsz" 24;
       }
-      .card-shadow {
-        box-shadow:
-          0 1px 3px 0 rgba(0, 0, 0, 0.05),
-          0 1px 2px 0 rgba(0, 0, 0, 0.03);
+
+      /* ── Time filter buttons ── */
+      .time-filter-btn {
+        color: #64748b;
+        background: transparent;
       }
-      .progress-bar-container {
-        height: 8px;
-        background-color: rgba(148, 163, 184, 0.18);
+      .time-filter-btn:hover {
+        background: rgba(37,99,235,0.06);
+        color: #2563eb;
+      }
+      .time-filter-btn.active {
+        background: #fff;
+        color: #2563eb;
+        font-weight: 700;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      }
+      html.dark .time-filter-btn.active {
+        background: rgba(37,99,235,0.18);
+        color: #93c5fd;
+      }
+      html.dark .time-filter-btn {
+        color: #94a3b8;
+      }
+
+      /* ── Stat card – đồng bộ với dashboard ── */
+      .stat-card {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+      }
+      .stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 24px -10px rgba(0, 74, 198, 0.15);
+        border-color: rgba(0, 74, 198, 0.3) !important;
+      }
+
+      /* ── Ranking badges ── */
+      .rank-badge {
+        width: 28px; height: 28px; border-radius: 8px;
+        display: inline-flex; align-items: center; justify-content: center;
+        font-size: 12px; font-weight: 800; flex-shrink: 0;
+        transition: transform 0.2s ease;
+      }
+      .rank-badge:hover { transform: scale(1.15); }
+      .rank-badge--1 { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #78350f; }
+      .rank-badge--2 { background: linear-gradient(135deg, #d1d5db, #9ca3af); color: #374151; }
+      .rank-badge--3 { background: linear-gradient(135deg, #fdba74, #f97316); color: #7c2d12; }
+      .rank-badge--4 { background: linear-gradient(135deg, #bfdbfe, #60a5fa); color: #1e3a5f; }
+      .rank-badge--5 { background: linear-gradient(135deg, #c7d2fe, #818cf8); color: #312e81; }
+
+      /* ── Progress bar ── */
+      .progress-track {
+        height: 6px;
+        background: rgba(148,163,184,0.12);
         border-radius: 9999px;
         overflow: hidden;
       }
-      .progress-bar-fill {
+      .progress-fill {
         height: 100%;
-        background-color: #1978e5;
         border-radius: 9999px;
+        background: linear-gradient(90deg, #2563eb, #3b82f6);
+        transition: width 0.8s cubic-bezier(.4,0,.2,1);
+      }
+
+      .breed-row {
+        padding: 10px 0;
+        border-bottom: 1px solid rgba(148,163,184,0.10);
+        transition: background 0.15s ease;
+      }
+      .breed-row:last-child { border-bottom: none; }
+      .breed-row:hover { background: rgba(37,99,235,0.03); border-radius: 8px; margin: 0 -8px; padding-left: 8px; padding-right: 8px; }
+
+      /* ── Activity item ── */
+      .activity-item {
+        transition: background 0.15s ease;
+      }
+      .activity-item:hover {
+        background: rgba(37,99,235,0.03);
+      }
+      .activity-thumb {
+        width: 44px; height: 44px; border-radius: 10px;
+        object-fit: cover;
+        border: 2px solid rgba(148,163,184,0.12);
+        transition: transform 0.2s ease, border-color 0.2s ease;
+      }
+      .activity-item:hover .activity-thumb {
+        transform: scale(1.05);
+        border-color: rgba(37,99,235,0.3);
+      }
+      .confidence-pill {
+        font-size: 12px; font-weight: 700; padding: 3px 10px;
+        border-radius: 9999px; min-width: 46px; text-align: center;
+      }
+      .confidence-high { background: rgba(34,197,94,0.12); color: #16a34a; border: 1px solid rgba(34,197,94,0.18); }
+      .confidence-mid  { background: rgba(245,158,11,0.12); color: #d97706; border: 1px solid rgba(245,158,11,0.18); }
+      .confidence-low  { background: rgba(239,68,68,0.12);  color: #dc2626; border: 1px solid rgba(239,68,68,0.18); }
+      html.dark .confidence-high { background: rgba(34,197,94,0.15); color: #4ade80; }
+      html.dark .confidence-mid  { background: rgba(245,158,11,0.15); color: #fbbf24; }
+      html.dark .confidence-low  { background: rgba(239,68,68,0.15); color: #f87171; }
+
+      /* ── Section icon ── */
+      .section-icon-dot {
+        width: 36px; height: 36px; border-radius: 10px;
+        display: inline-flex; align-items: center; justify-content: center;
       }
     </style>
   </head>
   <body
-    class="bg-background text-on-background body-md body-md antialiased min-h-screen flex flex-col"
+    class="bg-background text-on-background body-md antialiased min-h-screen flex flex-col"
   >
+    {% set default_logo = url_for('static', filename='logo.png') %}
     {% include '_toasts.html' %}
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
     {% set display_role = session.get('role') or 'user' %}
@@ -494,10 +589,9 @@
       </aside>
 
       <div class="col-span-1 flex flex-col">
-        <section
-          class="flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-8"
-        >
-          <div class="flex flex-col gap-2 flex-1 min-w-0">
+        <!-- ── Page Header ── -->
+        <section class="mb-8">
+          <div class="flex flex-col gap-2">
             <h1 class="headline-lg font-semibold text-on-surface">
               Thống kê nhận diện của bạn
             </h1>
@@ -505,344 +599,273 @@
               Tổng quan số lần dự đoán, độ tin cậy và top giống chó phổ biến.
             </p>
           </div>
-          <div class="mt-4 md:mt-0 md:flex-none">
+          <div class="mt-4 flex flex-wrap gap-3">
             <a
               class="bg-primary text-on-primary px-4 py-2 rounded-lg label-sm shadow-sm hover:shadow-md transition-all flex items-center gap-2"
+              href="{{ url_for('predict.upload_page') }}"
+            >
+              <span class="material-symbols-outlined text-[18px]">add_a_photo</span>
+              Tải ảnh mới
+            </a>
+            <a
+              class="bg-surface-container-lowest text-on-surface px-4 py-2 rounded-lg label-sm border border-outline-variant hover:border-primary hover:text-primary transition-colors flex items-center gap-2"
               href="{{ url_for('history.history') }}"
             >
-              <span class="material-symbols-outlined text-[18px]">history</span>
+              <span class="material-symbols-outlined text-[18px]">manage_search</span>
               Xem lịch sử
             </a>
           </div>
         </section>
 
+        <!-- ══════════ KPI Cards ══════════ -->
         <section
-          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch"
+          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10"
         >
-          <article
-            class="soft-panel bg-surface-container-lowest p-5 rounded-custom h-full border border-slate-100 shadow-sm"
+          <!-- Card 1 – Tổng lượt -->
+          <div
+            class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[140px]"
           >
-            <div class="flex justify-between items-start">
-              <div>
-                <p
-                  class="text-on-surface-variant label-sm font-medium uppercase tracking-wider"
-                >
-                  Tổng lượt nhận diện
-                </p>
-                <h3 class="text-3xl font-bold mt-2 text-on-surface">1506</h3>
+            <div class="flex items-center justify-between">
+              <span class="label-sm text-on-surface-variant font-semibold uppercase tracking-wider">Tổng lượt nhận diện</span>
+              <div class="w-10 h-10 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center text-primary">
+                <span class="material-symbols-outlined">qr_code_scanner</span>
               </div>
-              <span
-                class="material-symbols-outlined text-primary bg-primary-fixed/50 dark:bg-primary/20 p-2 rounded-md"
-              >
-                qr_code_scanner
-              </span>
             </div>
-          </article>
-          <article
-            class="soft-panel bg-surface-container-lowest p-5 rounded-custom h-full border border-slate-100 shadow-sm"
+            <div class="mt-4 flex flex-col">
+              <span class="text-3xl font-bold text-on-surface tracking-tight" data-counter="{{ stats.total_predictions }}">0</span>
+              <span class="label-sm text-on-surface-variant/70 mt-1">Tổng số lần nhận diện</span>
+            </div>
+          </div>
+
+          <!-- Card 2 – Độ tin cậy -->
+          <div
+            class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[140px]"
           >
-            <div class="flex justify-between items-start">
-              <div>
-                <p
-                  class="text-on-surface-variant label-sm font-medium uppercase tracking-wider"
-                >
-                  Độ tin cậy trung bình
-                </p>
-                <h3 class="text-3xl font-bold mt-2 text-on-surface">77.2%</h3>
+            <div class="flex items-center justify-between">
+              <span class="label-sm text-on-surface-variant font-semibold uppercase tracking-wider">Độ tin cậy TB</span>
+              <div class="w-10 h-10 rounded-lg bg-yellow-500/10 dark:bg-yellow-500/20 flex items-center justify-center text-yellow-600 dark:text-yellow-400">
+                <span class="material-symbols-outlined">analytics</span>
               </div>
-              <span
-                class="material-symbols-outlined text-amber-500 bg-amber-50 dark:bg-amber-900/30 p-2 rounded-md"
-              >
-                analytics
-              </span>
             </div>
-          </article>
-          <article
-            class="soft-panel bg-surface-container-lowest p-5 rounded-custom h-full border border-slate-100 shadow-sm"
+            {% set avg_pct = (stats.avg_confidence * 100)|round(1) %}
+            <div class="mt-4 flex flex-col">
+              <span class="text-3xl font-bold text-on-surface tracking-tight" data-counter="{{ avg_pct }}" data-suffix="%">0%</span>
+              <span class="label-sm text-on-surface-variant/70 mt-1">Độ chính xác trung bình</span>
+            </div>
+          </div>
+
+          <!-- Card 3 – Số giống duy nhất -->
+          <div
+            class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[140px]"
           >
-            <div class="flex justify-between items-start">
-              <div>
-                <p
-                  class="text-on-surface-variant label-sm font-medium uppercase tracking-wider"
-                >
-                  Số giống nổi bật
-                </p>
-                <h3 class="text-3xl font-bold mt-2 text-on-surface">5</h3>
+            <div class="flex items-center justify-between">
+              <span class="label-sm text-on-surface-variant font-semibold uppercase tracking-wider">Giống đã khám phá</span>
+              <div class="w-10 h-10 rounded-lg bg-green-500/10 dark:bg-green-500/20 flex items-center justify-center text-green-600 dark:text-green-400">
+                <span class="material-symbols-outlined">pets</span>
               </div>
-              <span
-                class="material-symbols-outlined text-orange-700 bg-orange-50 dark:bg-orange-900/30 p-2 rounded-md"
-              >
-                pets
-              </span>
             </div>
-          </article>
-          <article
-            class="soft-panel bg-surface-container-lowest p-5 rounded-custom h-full border border-slate-100 shadow-sm"
+            <div class="mt-4 flex flex-col">
+              <span class="text-3xl font-bold text-on-surface tracking-tight" data-counter="{{ unique_breed_count }}">0</span>
+              <span class="label-sm text-on-surface-variant/70 mt-1">Giống chó khác nhau</span>
+            </div>
+          </div>
+
+          <!-- Card 4 – Hoạt động gần đây -->
+          <div
+            class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[140px]"
           >
-            <div class="flex justify-between items-start">
-              <div>
-                <p
-                  class="text-on-surface-variant label-sm font-medium uppercase tracking-wider"
-                >
-                  Hoạt động gần đây
-                </p>
-                <h3 class="text-3xl font-bold mt-2 text-on-surface">10</h3>
+            <div class="flex items-center justify-between">
+              <span class="label-sm text-on-surface-variant font-semibold uppercase tracking-wider">Hoạt động gần đây</span>
+              <div class="w-10 h-10 rounded-lg bg-purple-500/10 dark:bg-purple-500/20 flex items-center justify-center text-purple-600 dark:text-purple-400">
+                <span class="material-symbols-outlined">update</span>
               </div>
-              <span
-                class="material-symbols-outlined text-indigo-600 bg-indigo-50 dark:bg-indigo-900/30 p-2 rounded-md"
-              >
-                update
-              </span>
             </div>
-          </article>
+            <div class="mt-4 flex flex-col">
+              <span class="text-3xl font-bold text-on-surface tracking-tight" data-counter="{{ recent_predictions|length }}">0</span>
+              <span class="label-sm text-on-surface-variant/70 mt-1">Lượt nhận diện gần nhất</span>
+            </div>
+          </div>
         </section>
 
-        <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-6">
-          <article
-            class="soft-panel lg:col-span-4 bg-surface-container-lowest rounded-custom p-6 border border-slate-100 shadow-sm"
-          >
-            <div class="flex items-center justify-between mb-8">
-              <h2 class="headline-md font-bold text-on-surface">
-                Top 5 giống phổ biến
-              </h2>
-              <span class="material-symbols-outlined text-primary"
-                >bar_chart</span
-              >
+        <!-- Section: Charts and Analytics -->
+        <section class="mb-10 flex flex-col gap-6">
+          <div class="flex items-center justify-between">
+            <h2 class="headline-md font-semibold text-on-surface">
+              Biểu đồ hoạt động
+            </h2>
+            <!-- Time-range filter -->
+            <div class="flex items-center gap-1.5 bg-surface-container rounded-xl p-1 border border-outline-variant/20">
+              <a href="?days=7"
+                class="time-filter-btn {{ 'active' if selected_days == '7' else '' }} px-3 py-1.5 rounded-lg label-sm font-semibold transition-all"
+              >7 ngày</a>
+              <a href="?days=30"
+                class="time-filter-btn {{ 'active' if selected_days == '30' else '' }} px-3 py-1.5 rounded-lg label-sm font-semibold transition-all"
+              >30 ngày</a>
+              <a href="?days=0"
+                class="time-filter-btn {{ 'active' if selected_days == '0' else '' }} px-3 py-1.5 rounded-lg label-sm font-semibold transition-all"
+              >Tất cả</a>
             </div>
-            <div class="space-y-7">
-              <div class="space-y-2">
-                <div class="flex justify-between body-md">
-                  <span class="font-semibold text-on-surface"
-                    >#1 Chó Corgi Cardigan</span
-                  >
-                  <span class="text-on-surface-variant">38 lần</span>
-                </div>
-                <div class="progress-bar-container">
-                  <div class="progress-bar-fill" style="width: 95%"></div>
-                </div>
-              </div>
-              <div class="space-y-2">
-                <div class="flex justify-between body-md">
-                  <span class="font-semibold text-on-surface"
-                    >#2 Chó Chihuahua</span
-                  >
-                  <span class="text-on-surface-variant">37 lần</span>
-                </div>
-                <div class="progress-bar-container">
-                  <div class="progress-bar-fill" style="width: 92%"></div>
-                </div>
-              </div>
-              <div class="space-y-2">
-                <div class="flex justify-between body-md">
-                  <span
-                    class="font-semibold text-on-surface label-sm truncate max-w-[200px]"
-                  >
-                    #3 Nghi lai: Chó Béc Giê Đức x Chó Sable Đen
-                  </span>
-                  <span class="text-on-surface-variant">28 lần</span>
-                </div>
-                <div class="progress-bar-container">
-                  <div class="progress-bar-fill" style="width: 70%"></div>
-                </div>
-              </div>
-              <div class="space-y-2">
-                <div class="flex justify-between body-md">
-                  <span class="font-semibold text-on-surface"
-                    >#4 Chó Samoyed</span
-                  >
-                  <span class="text-on-surface-variant">25 lần</span>
-                </div>
-                <div class="progress-bar-container">
-                  <div class="progress-bar-fill" style="width: 62%"></div>
-                </div>
-              </div>
-              <div class="space-y-2">
-                <div class="flex justify-between body-md">
-                  <span class="font-semibold text-on-surface"
-                    >#5 Chó Nhật Chin</span
-                  >
-                  <span class="text-on-surface-variant">24 lần</span>
-                </div>
-                <div class="progress-bar-container">
-                  <div class="progress-bar-fill" style="width: 60%"></div>
-                </div>
-              </div>
-            </div>
-          </article>
+          </div>
 
-          <article
-            class="soft-panel lg:col-span-8 bg-surface-container-lowest rounded-custom overflow-hidden flex flex-col border border-slate-100 shadow-sm"
-          >
-            <div
-              class="p-6 border-b border-outline-variant/20 flex items-center justify-between"
+          <!-- Line Chart – Xu hướng nhận diện -->
+          <div class="chart-card bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-xl p-6 shadow-sm">
+            <div class="flex items-center justify-between mb-4">
+              <div>
+                <h3 class="text-lg font-bold text-on-surface">Xu hướng nhận diện</h3>
+                <p class="text-xs text-on-surface-variant mt-0.5">Số lượng ảnh đã nhận diện mỗi ngày</p>
+              </div>
+              <div class="text-primary bg-primary/10 dark:bg-primary/20 px-3 py-1 rounded-lg text-xs font-semibold">
+                {% if selected_days == '7' %}7 ngày qua{% elif selected_days == '30' %}30 ngày qua{% else %}Tất cả{% endif %}
+              </div>
+            </div>
+            {% if daily_counts %}
+            <div class="chart-container" style="position: relative; height: 320px;">
+              <canvas id="trendChart"
+                      data-labels='{{ daily_counts | map(attribute="date") | list | tojson | safe }}'
+                      data-values='{{ daily_counts | map(attribute="count") | list | tojson | safe }}'></canvas>
+            </div>
+            {% else %}
+            <div class="flex flex-col items-center justify-center py-10 gap-3">
+              <span class="material-symbols-outlined text-[40px] text-slate-300 dark:text-slate-600">bar_chart</span>
+              <p class="label-sm text-on-surface-variant">Chưa có dữ liệu trong khoảng thời gian này.</p>
+            </div>
+            {% endif %}
+          </div>
+
+          <!-- Row 2: Top Breeds + Confidence Distribution -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Top 5 giống phổ biến -->
+            <div class="chart-card bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-xl p-6 shadow-sm">
+              <div class="mb-4">
+                <h3 class="text-lg font-bold text-on-surface">Top 5 giống phổ biến nhất</h3>
+                <p class="text-xs text-on-surface-variant mt-0.5">Các giống chó được nhận diện nhiều nhất</p>
+              </div>
+              {% if stats.top_breeds %}
+              {% set max_count = stats.top_breeds[0].count %}
+              <div>
+                {% for item in stats.top_breeds %}
+                {% set rank = loop.index %}
+                {% set pct = ((item.count / max_count) * 100)|round|int if max_count > 0 else 0 %}
+                <div class="breed-row">
+                  <div class="flex items-center gap-3 mb-2">
+                    <span class="rank-badge rank-badge--{{ rank }}">{{ rank }}</span>
+                    <span class="body-md font-semibold text-on-surface flex-1 truncate" title="{{ item.breed }}">{{ item.breed }}</span>
+                    <span class="label-sm text-on-surface-variant font-bold tabular-nums">{{ item.count }} lần</span>
+                  </div>
+                  <div class="progress-track">
+                    <div class="progress-fill" style="width: 0%" data-width="{{ pct }}"></div>
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+              {% else %}
+              <div class="flex flex-col items-center justify-center py-10 gap-3">
+                <span class="material-symbols-outlined text-[40px] text-slate-300 dark:text-slate-600">emoji_events</span>
+                <p class="label-sm text-on-surface-variant text-center">Chưa có đủ dữ liệu để hiển thị top giống.</p>
+                <a href="{{ url_for('predict.upload_page') }}" class="bg-primary text-on-primary px-4 py-2 rounded-lg label-sm font-semibold hover:opacity-90 transition-opacity">
+                  Nhận diện ngay
+                </a>
+              </div>
+              {% endif %}
+            </div>
+
+            <!-- Phân bố độ tin cậy -->
+            <div class="chart-card bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-xl p-6 shadow-sm">
+              <div class="mb-4">
+                <h3 class="text-lg font-bold text-on-surface">Phân bố độ tin cậy</h3>
+                <p class="text-xs text-on-surface-variant mt-0.5">Mức độ tin cậy của thuật toán phân loại</p>
+              </div>
+              <div class="chart-container" style="position: relative; height: 260px;">
+                <canvas id="confBarChart"
+                        data-values='{{ confidence_dist | tojson | safe }}'></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Donut chart: breed distribution -->
+          <div class="chart-card bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-xl p-6 shadow-sm">
+            <div class="mb-4">
+              <h3 class="text-lg font-bold text-on-surface">Phân bố giống chó</h3>
+              <p class="text-xs text-on-surface-variant mt-0.5">Tỉ lệ các giống chó được nhận diện</p>
+            </div>
+            {% if stats.top_breeds %}
+            <div class="chart-container" style="position: relative; height: 260px;">
+              <canvas id="breedDonutChart"
+                      data-labels='{{ stats.top_breeds | map(attribute="breed") | list | tojson | safe }}'
+                      data-values='{{ stats.top_breeds | map(attribute="count") | list | tojson | safe }}'></canvas>
+            </div>
+            {% else %}
+            <div class="flex flex-col items-center justify-center h-[260px] gap-2">
+              <span class="material-symbols-outlined text-[36px] text-slate-300 dark:text-slate-600">donut_large</span>
+              <p class="label-sm text-on-surface-variant">Chưa có dữ liệu</p>
+            </div>
+            {% endif %}
+          </div>
+        </section>
+
+        <!-- Kết quả gần đây -->
+        <section>
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="headline-md font-semibold text-on-surface">
+              Kết quả gần đây
+            </h2>
+            <a
+              class="text-primary font-semibold label-sm hover:underline"
+              href="{{ url_for('history.history') }}"
             >
-              <h2 class="headline-md font-bold text-on-surface">
-                Hoạt động gần đây
-              </h2>
-              <a
-                class="text-primary hover:underline body-md font-medium flex items-center gap-1"
-                href="{{ url_for('history.history') }}"
-              >
-                Xem tất cả
-                <span class="material-symbols-outlined text-[18px]"
-                  >arrow_forward</span
-                >
+              Xem tất cả
+            </a>
+          </div>
+          <div class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-xl shadow-sm overflow-hidden">
+            {% if recent_predictions %}
+            <div class="divide-y divide-outline-variant/10">
+              {% for p in recent_predictions[:5] %}
+              {% set conf_pct = (p.confidence * 100)|round|int %}
+              {% if conf_pct >= 70 %}
+                {% set pill_cls = 'confidence-high' %}
+              {% elif conf_pct >= 30 %}
+                {% set pill_cls = 'confidence-mid' %}
+              {% else %}
+                {% set pill_cls = 'confidence-low' %}
+              {% endif %}
+              <div class="activity-item p-4 flex items-center justify-between gap-4">
+                <div class="flex items-center gap-3.5 min-w-0">
+                  {% if p.image_path %}
+                  <img
+                    alt="{{ p.breed }}"
+                    class="activity-thumb"
+                    src="{{ url_for('static', filename=p.image_path) if not p.image_path.startswith('http') else p.image_path }}"
+                    onerror="this.src='{{ default_logo }}'"
+                  />
+                  {% else %}
+                  <div class="activity-thumb bg-surface-container flex items-center justify-center">
+                    <span class="material-symbols-outlined text-outline text-[24px]">pets</span>
+                  </div>
+                  {% endif %}
+                  <div class="min-w-0">
+                    <h4 class="font-semibold text-on-surface body-md truncate">{{ p.breed or 'Không xác định' }}</h4>
+                    <p class="label-sm text-on-surface-variant flex items-center gap-1 mt-0.5">
+                      <span class="material-symbols-outlined text-[13px]">schedule</span>
+                      {{ p.created_at.strftime('%d/%m/%Y %H:%M') if p.created_at else '' }}
+                    </p>
+                  </div>
+                </div>
+                <div class="confidence-pill {{ pill_cls }}">{{ conf_pct }}%</div>
+              </div>
+              {% endfor %}
+            </div>
+            {% else %}
+            <div class="flex flex-col items-center justify-center py-14 gap-3">
+              <span class="material-symbols-outlined text-[48px] text-slate-300 dark:text-slate-600">history</span>
+              <p class="body-md font-semibold text-on-surface-variant">Chưa có hoạt động nào!</p>
+              <p class="label-sm text-on-surface-variant text-center max-w-xs">Hãy tải ảnh thú cưng lên để bắt đầu nhận diện giống chó.</p>
+              <a href="{{ url_for('predict.upload_page') }}" class="bg-primary text-on-primary px-5 py-2.5 rounded-lg label-sm font-semibold hover:opacity-90 transition-opacity flex items-center gap-2 mt-1">
+                <span class="material-symbols-outlined text-[18px]">upload_file</span>
+                Nhận diện ngay
               </a>
             </div>
-            <div class="divide-y divide-outline-variant/15">
-              <div
-                class="p-4 flex items-center justify-between hover:bg-surface-container-low transition-colors"
-              >
-                <div class="flex items-center gap-4">
-                  <img
-                    alt="Chó cỏ Trung Quốc x Chó Bắc Kinh"
-                    class="w-12 h-12 rounded-md object-cover border border-outline-variant/20"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCN6EmsLSCS861TjuAmx0w7be9rIK9Ph9CoduzuyDxAw1NXbFWdDvLbk8nKk_GuTBVoE8VK69Si6sG_uRfO8RluqMw9UAcGPIddk8Fv6XXVqaSFIjePkH-17tBXXFMBn0vkQHqg3vd6_hIkmU8iWGuoF9NDZHIPabJyJ20M3riQDGuW8sMsmsuPujM9f1WU4bMV4Esi9v3HUbQxDZb8OcxXe8iCJDvl2ow3GObUN2pgGRGae8lxdz6yHz-sFaEcMIoIYuH-A0_b5QQ"
-                  />
-                  <div>
-                    <h4 class="font-semibold text-on-surface">
-                      Nghi lai: Chó cỏ Trung Quốc x Chó Bắc Kinh
-                    </h4>
-                    <p
-                      class="label-sm text-on-surface-variant flex items-center gap-1 mt-0.5"
-                    >
-                      <span class="material-symbols-outlined text-[14px]"
-                        >schedule</span
-                      >
-                      27/05/2026 21:28
-                    </p>
-                  </div>
-                </div>
-                <div class="flex items-center">
-                  <div
-                    class="bg-primary-fixed/60 dark:bg-primary/20 text-primary label-sm font-bold px-2 py-1 rounded-full border border-primary/10 min-w-[42px] text-center"
-                  >
-                    67%
-                  </div>
-                </div>
-              </div>
-              <div
-                class="p-4 flex items-center justify-between hover:bg-surface-container-low transition-colors"
-              >
-                <div class="flex items-center gap-4">
-                  <img
-                    alt="Chó Lhasa"
-                    class="w-12 h-12 rounded-md object-cover border border-outline-variant/20"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBO3Ab4JCTQykRc2uNThYKsepZ-m3PpVQRybXZRIXeAsWVyFSgJ_0j-QfW4yO7__d2YKDrAY4_ENvm4Cr8IkTGY1FulhjBrSF6qIDudH50QBJuvva3MjXVUwi0isVgUNyNcoZZ35GojQ4QpkUiGGyUTnK_WN8n6V-0s9fcV_oGOnMd1fq1MKGtXeTkq7OnrvJdvwl-T2Sh3rEgDH73yQP1NA-JJANtvvYnz60qocVsvSKn-QgG2KY4ZMI4i9hFPzds0zyIXJBflUwA"
-                  />
-                  <div>
-                    <h4 class="font-semibold text-on-surface">Chó Lhasa</h4>
-                    <p
-                      class="label-sm text-on-surface-variant flex items-center gap-1 mt-0.5"
-                    >
-                      <span class="material-symbols-outlined text-[14px]"
-                        >schedule</span
-                      >
-                      27/05/2026 17:20
-                    </p>
-                  </div>
-                </div>
-                <div class="flex items-center">
-                  <div
-                    class="bg-primary-fixed/60 dark:bg-primary/20 text-primary label-sm font-bold px-2 py-1 rounded-full border border-primary/10 min-w-[42px] text-center"
-                  >
-                    8%
-                  </div>
-                </div>
-              </div>
-              <div
-                class="p-4 flex items-center justify-between hover:bg-surface-container-low transition-colors"
-              >
-                <div class="flex items-center gap-4">
-                  <img
-                    alt="Chó Ngao Tây Tạng x Chó Leonberger"
-                    class="w-12 h-12 rounded-md object-cover border border-outline-variant/20"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuB0kQ8onyE-zjv1Dqa2HeRoVulgh1hTu4HraAAmITS_qD6ZmU5fFsd7ribWHyC7Iol3gCB9CNoVmdtUYeZzIT_iTXmHOahcOB4D-mvOdxqCtRKB6mCAUOd9aimxszIwb3EcNLPULSAtCVIBPP_8OS5s_jaI0EK5nJf2h3O1DPlI38yK-JQVeXcL7ceUjAyvdiReKBY6G4qiCENTcFTrfpotia9K0bKz9I8z4W4fdSfZvgY2_rQWbh2xZalG2L9ppzUyee7XDeY2Gqk"
-                  />
-                  <div>
-                    <h4 class="font-semibold text-on-surface">
-                      Nghi lai: Chó Ngao Tây Tạng x Chó Leonberger
-                    </h4>
-                    <p
-                      class="label-sm text-on-surface-variant flex items-center gap-1 mt-0.5"
-                    >
-                      <span class="material-symbols-outlined text-[14px]"
-                        >schedule</span
-                      >
-                      27/05/2026 17:19
-                    </p>
-                  </div>
-                </div>
-                <div class="flex items-center">
-                  <div
-                    class="bg-primary-fixed/60 dark:bg-primary/20 text-primary label-sm font-bold px-2 py-1 rounded-full border border-primary/10 min-w-[42px] text-center"
-                  >
-                    66%
-                  </div>
-                </div>
-              </div>
-              <div
-                class="p-4 flex items-center justify-between hover:bg-surface-container-low transition-colors"
-              >
-                <div class="flex items-center gap-4">
-                  <img
-                    alt="Chó Yorkshire Terrier x Chó Silky Terrier"
-                    class="w-12 h-12 rounded-md object-cover border border-outline-variant/20"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuAush9My2bjPdK317NGBt4VHG7wyAXJCiJwBPNjigHvey26BRt6tbqhsq6nfldrAuvY44xZv2xxMHhtVijjOfjtJ5fBlW21KmmLwH7lUd-OzpFwh3eA3pOhmcF42hca7h69sSLg0uIJz43qKv2G86M5zvg19fLKt5aNrbACUauvEaOZH-S3a8QcwRxUwtGgKAoXEDvUU1GVgvMaXveF5N93v9bXU_6I_q8wfM52tP9RoZU6Pb5_xQkfcOzRO_Mek5Q-VIbHmhEB9oA"
-                  />
-                  <div>
-                    <h4 class="font-semibold text-on-surface">
-                      Nghi lai: Chó Yorkshire Terrier x Chó Silky Terrier
-                    </h4>
-                    <p
-                      class="label-sm text-on-surface-variant flex items-center gap-1 mt-0.5"
-                    >
-                      <span class="material-symbols-outlined text-[14px]"
-                        >schedule</span
-                      >
-                      27/05/2026 17:19
-                    </p>
-                  </div>
-                </div>
-                <div class="flex items-center">
-                  <div
-                    class="bg-primary-fixed/60 dark:bg-primary/20 text-primary label-sm font-bold px-2 py-1 rounded-full border border-primary/10 min-w-[42px] text-center"
-                  >
-                    46%
-                  </div>
-                </div>
-              </div>
-              <div
-                class="p-4 flex items-center justify-between hover:bg-surface-container-low transition-colors"
-              >
-                <div class="flex items-center gap-4">
-                  <img
-                    alt="Chó Lhasa"
-                    class="w-12 h-12 rounded-md object-cover border border-outline-variant/20"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuAMgSAHpLHYeokUmsDzfLz2BRuIL3XoazE5G2hxuj3mtMYx12N_WrLJoG0IDOx-Eaur85IrEfSfdOH5AWSGGD-XUUWpHgWJZ6MqWJHIZQicss5fv7em6S43becQOaj08wvbTIczaiwNwf3IOPYBbs3JKfBFuvy5oxgYCwHLdtWrJ4Ieik9Z2-eiZHiBL389pNmXCS9o0e52odXalSg-Q9LKDx67XFyDOpio9ecZhu1t5h6kQAydSzPcLLWTdznPZGPdc6gIh4lwzaw"
-                  />
-                  <div>
-                    <h4 class="font-semibold text-on-surface">Chó Lhasa</h4>
-                    <p
-                      class="label-sm text-on-surface-variant flex items-center gap-1 mt-0.5"
-                    >
-                      <span class="material-symbols-outlined text-[14px]"
-                        >schedule</span
-                      >
-                      27/05/2026 17:19
-                    </p>
-                  </div>
-                </div>
-                <div class="flex items-center">
-                  <div
-                    class="bg-primary-fixed/60 dark:bg-primary/20 text-primary label-sm font-bold px-2 py-1 rounded-full border border-primary/10 min-w-[42px] text-center"
-                  >
-                    8%
-                  </div>
-                </div>
-              </div>
-            </div>
-          </article>
+            {% endif %}
+          </div>
         </section>
       </div>
     </main>
@@ -955,13 +978,249 @@
     </footer>
 
     <script>
+      /* ── Animated counter for stat cards ── */
       (function () {
-        document.querySelectorAll(".stats-bar[data-width]").forEach((el) => {
-          const raw = Number(el.getAttribute("data-width") || 0);
-          const pct = Math.max(0, Math.min(100, raw));
-          el.style.width = `${pct}%`;
-        });
+        const DURATION = 1200;
+        const els = document.querySelectorAll("[data-counter]");
+        if (!els.length) return;
+
+        function easeOutExpo(t) {
+          return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+        }
+
+        function animateValue(el) {
+          const target = parseFloat(el.getAttribute("data-counter"));
+          const suffix = el.getAttribute("data-suffix") || "";
+          const isFloat = String(target).includes(".");
+          const decimals = isFloat
+            ? String(target).split(".")[1].length
+            : 0;
+          let start = null;
+
+          function step(ts) {
+            if (!start) start = ts;
+            const progress = Math.min((ts - start) / DURATION, 1);
+            const value = easeOutExpo(progress) * target;
+            el.textContent =
+              (isFloat ? value.toFixed(decimals) : Math.round(value)) +
+              suffix;
+            if (progress < 1) requestAnimationFrame(step);
+          }
+          requestAnimationFrame(step);
+        }
+
+        /* Use IntersectionObserver so counters animate when visible */
+        if ("IntersectionObserver" in window) {
+          const observer = new IntersectionObserver(
+            (entries) => {
+              entries.forEach((e) => {
+                if (e.isIntersecting) {
+                  animateValue(e.target);
+                  observer.unobserve(e.target);
+                }
+              });
+            },
+            { threshold: 0.3 }
+          );
+          els.forEach((el) => observer.observe(el));
+        } else {
+          els.forEach(animateValue);
+        }
+
+        /* Animate progress bars when visible */
+        const progressBars = document.querySelectorAll(".progress-fill[data-width]");
+        if (progressBars.length) {
+          if ("IntersectionObserver" in window) {
+            const progressObserver = new IntersectionObserver(
+              (entries) => {
+                entries.forEach((e) => {
+                  if (e.isIntersecting) {
+                    const el = e.target;
+                    el.style.width = el.getAttribute("data-width") + "%";
+                    progressObserver.unobserve(el);
+                  }
+                });
+              },
+              { threshold: 0.1 }
+            );
+            progressBars.forEach((el) => progressObserver.observe(el));
+          } else {
+            progressBars.forEach((el) => {
+              el.style.width = el.getAttribute("data-width") + "%";
+            });
+          }
+        }
       })();
+    </script>
+
+    <script>
+    /* ══════════ Chart.js – Data from Jinja2 ══════════ */
+    (function() {
+      /* Detect dark mode */
+      const isDark = document.documentElement.classList.contains('dark');
+      const gridColor  = isDark ? 'rgba(148,163,184,0.12)' : 'rgba(15,23,42,0.07)';
+      const textColor  = isDark ? '#94a3b8' : '#64748b';
+      const tooltipBg  = isDark ? '#1e293b' : '#ffffff';
+      const tooltipText = isDark ? '#e2e8f0' : '#0f172a';
+
+      Chart.defaults.color = textColor;
+      Chart.defaults.font.family = 'Inter, sans-serif';
+      Chart.defaults.font.size   = 12;
+
+      /* ── 1. Line / Area chart – Trend ── */
+      const trendEl = document.getElementById('trendChart');
+      if (trendEl) {
+        const trendLabels = JSON.parse(trendEl.dataset.labels || '[]');
+        const trendData   = JSON.parse(trendEl.dataset.values || '[]');
+        new Chart(trendEl, {
+          type: 'line',
+          data: {
+            labels: trendLabels,
+            datasets: [{
+              label: 'Lượt nhận diện',
+              data: trendData,
+              fill: true,
+              tension: 0.42,
+              borderColor: '#2563eb',
+              borderWidth: 2.5,
+              backgroundColor: isDark
+                ? 'rgba(37,99,235,0.13)'
+                : 'rgba(37,99,235,0.08)',
+              pointBackgroundColor: '#2563eb',
+              pointBorderColor: isDark ? '#1e293b' : '#fff',
+              pointRadius: 4,
+              pointHoverRadius: 6,
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                backgroundColor: tooltipBg,
+                titleColor: tooltipText,
+                bodyColor: tooltipText,
+                borderColor: gridColor,
+                borderWidth: 1,
+                padding: 10,
+                callbacks: {
+                  label: ctx => ` ${ctx.parsed.y} lượt`
+                }
+              }
+            },
+            scales: {
+              x: {
+                grid: { color: gridColor },
+                ticks: { maxTicksLimit: 8 }
+              },
+              y: {
+                grid: { color: gridColor },
+                beginAtZero: true,
+                ticks: { precision: 0 }
+              }
+            }
+          }
+        });
+      }
+
+      /* ── 2. Donut – Breed distribution ── */
+      const donutEl = document.getElementById('breedDonutChart');
+      if (donutEl) {
+        const breedLabels = JSON.parse(donutEl.dataset.labels || '[]');
+        const breedCounts = JSON.parse(donutEl.dataset.values || '[]');
+        const donutColors  = ['#2563eb','#f59e0b','#ea580c','#6366f1','#10b981'];
+        const donutDark    = ['#60a5fa','#fbbf24','#fb923c','#a5b4fc','#34d399'];
+        new Chart(donutEl, {
+          type: 'doughnut',
+          data: {
+            labels: breedLabels,
+            datasets: [{
+              data: breedCounts,
+              backgroundColor: isDark ? donutDark : donutColors,
+              borderColor: isDark ? '#0f172a' : '#ffffff',
+              borderWidth: 3,
+              hoverOffset: 8,
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '65%',
+            plugins: {
+              legend: {
+                position: 'bottom',
+                labels: {
+                  boxWidth: 10, boxHeight: 10, borderRadius: 4,
+                  padding: 8, font: { size: 11 },
+                  maxLength: 16,
+                }
+              },
+              tooltip: {
+                backgroundColor: tooltipBg,
+                titleColor: tooltipText,
+                bodyColor: tooltipText,
+                borderColor: gridColor,
+                borderWidth: 1,
+                padding: 10,
+                callbacks: {
+                  label: ctx => ` ${ctx.label}: ${ctx.parsed} lần`
+                }
+              }
+            }
+          }
+        });
+      }
+
+      /* ── 3. Bar – Confidence distribution ── */
+      const barEl = document.getElementById('confBarChart');
+      if (barEl) {
+        const confDist  = JSON.parse(barEl.dataset.values || '[]');
+        const barColors = isDark
+          ? ['#f87171','#fbbf24','#60a5fa','#34d399','#a78bfa']
+          : ['#ef4444','#f59e0b','#2563eb','#10b981','#8b5cf6'];
+        new Chart(barEl, {
+          type: 'bar',
+          data: {
+            labels: ['0–20%','20–40%','40–60%','60–80%','80–100%'],
+            datasets: [{
+              label: 'Số lượt',
+              data: confDist,
+              backgroundColor: barColors,
+              borderRadius: 6,
+              borderSkipped: false,
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                backgroundColor: tooltipBg,
+                titleColor: tooltipText,
+                bodyColor: tooltipText,
+                borderColor: gridColor,
+                borderWidth: 1,
+                padding: 10,
+                callbacks: {
+                  label: ctx => ` ${ctx.parsed.y} lượt`
+                }
+              }
+            },
+            scales: {
+              x: { grid: { display: false } },
+              y: {
+                grid: { color: gridColor },
+                beginAtZero: true,
+                ticks: { precision: 0 }
+              }
+            }
+          }
+        });
+      }
+    })();
     </script>
     <script src="{{ url_for('static', filename='js/toasts.js') }}"></script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>

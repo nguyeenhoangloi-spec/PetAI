@@ -399,6 +399,14 @@ def payment_status():
 			except Exception:
 				confirmed_at_str = str(confirmed_at)
 
+		created_at = order.get("created_at")
+		created_at_str = None
+		if created_at:
+			try:
+				created_at_str = created_at.strftime("%Y-%m-%d %H:%M:%S")
+			except Exception:
+				created_at_str = str(created_at)
+
 		order_plan = (order.get("plan") or "free").lower()
 		quota = UserQuota.get_or_create(conn, user_id)
 		current_plan = (quota.get("plan") or "free").lower()
@@ -417,6 +425,17 @@ def payment_status():
 				except Exception:
 					pass
 
+		user_info = {}
+		with conn.cursor() as cur:
+			cur.execute("SELECT username, fullname, email FROM users WHERE id = %s", (user_id,))
+			user_row = cur.fetchone()
+			if user_row:
+				user_info = {
+					"username": user_row[0],
+					"fullname": user_row[1],
+					"email": user_row[2]
+				}
+
 		return jsonify(
 			{
 				"success": True,
@@ -425,6 +444,10 @@ def payment_status():
 				"order_plan": order_plan,
 				"current_plan": current_plan,
 				"confirmed_at": confirmed_at_str,
+				"created_at": created_at_str,
+				"amount_vnd": order.get("amount_vnd"),
+				"payment_method": order.get("payment_method"),
+				"user": user_info,
 			}
 		)
 	finally:
@@ -643,7 +666,71 @@ def my_payments():
 	except Exception:
 		pass
 
-	return render_template("payments_user.html", orders=orders, quota_info=quota_info)
+	# Check for automatic display of latest paid invoice in session
+	auto_show_invoice = None
+	try:
+		shown_invoices = session.get("shown_invoice_ids")
+		if not isinstance(shown_invoices, list):
+			shown_invoices = []
+		
+		# Find the latest paid order
+		latest_paid_order = next(
+			(o for o in orders if (o.get("status") or "").lower() == "paid"),
+			None
+		)
+		
+		if latest_paid_order:
+			ord_id = latest_paid_order.get("order_id")
+			if ord_id not in shown_invoices:
+				# Fetch user info for invoice
+				conn_usr = get_connection()
+				try:
+					with conn_usr.cursor() as cur:
+						cur.execute("SELECT username, fullname, email FROM users WHERE id = %s", (user_id,))
+						user_row = cur.fetchone()
+						u_info = {}
+						if user_row:
+							u_info = {
+								"username": user_row[0],
+								"fullname": user_row[1],
+								"email": user_row[2]
+							}
+					
+					confirmed_at = latest_paid_order.get("confirmed_at")
+					confirmed_at_str = None
+					if confirmed_at:
+						try:
+							confirmed_at_str = confirmed_at.strftime("%Y-%m-%d %H:%M:%S")
+						except Exception:
+							confirmed_at_str = str(confirmed_at)
+					
+					created_at = latest_paid_order.get("created_at")
+					created_at_str = None
+					if created_at:
+						try:
+							created_at_str = created_at.strftime("%Y-%m-%d %H:%M:%S")
+						except Exception:
+							created_at_str = str(created_at)
+
+					auto_show_invoice = {
+						"order_id": ord_id,
+						"status": "paid",
+						"order_plan": latest_paid_order.get("plan"),
+						"current_plan": quota_info.get("plan"),
+						"confirmed_at": confirmed_at_str,
+						"created_at": created_at_str,
+						"amount_vnd": latest_paid_order.get("amount_vnd"),
+						"payment_method": latest_paid_order.get("payment_method"),
+						"user": u_info,
+					}
+					shown_invoices.append(ord_id)
+					session["shown_invoice_ids"] = shown_invoices[-20:]
+				finally:
+					conn_usr.close()
+	except Exception as e:
+		print("Error building auto_show_invoice:", e)
+
+	return render_template("payments_user.html", orders=orders, quota_info=quota_info, auto_show_invoice=auto_show_invoice)
 
 
 def allowed_file(filename: str) -> bool:

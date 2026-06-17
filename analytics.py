@@ -16,14 +16,37 @@ def statistics():
         return redirect(url_for("login.login"))
 
     try:
+        # Lấy bộ lọc thời gian từ query param (?days=7 / 30 / 0=all)
+        selected_days = request.args.get("days", "30", type=str)
+        if selected_days not in ("7", "30", "0"):
+            selected_days = "30"
+
         conn = get_connection()
         user_id = int(user_id_any)
+
         stats = PredictionHistory.get_stats(conn, user_id)
         recent_predictions = PredictionHistory.get_by_user(conn, user_id, limit=10)
+
+        # Số giống chó duy nhất
+        unique_breed_count = PredictionHistory.get_unique_breed_count(conn, user_id)
+
+        # Daily counts cho Line chart (7 hoặc 30 ngày; 0 = lấy 90 ngày làm "all")
+        chart_days = int(selected_days) if selected_days != "0" else 90
+        daily_counts = PredictionHistory.get_daily_counts(conn, user_id, days=chart_days)
+
+        # Phân bố độ tin cậy cho Bar chart
+        confidence_dist = PredictionHistory.get_confidence_distribution(conn, user_id)
+
         conn.close()
 
         return render_template(
-            "statistics.html", stats=stats, recent_predictions=recent_predictions
+            "statistics.html",
+            stats=stats,
+            recent_predictions=recent_predictions,
+            unique_breed_count=unique_breed_count,
+            daily_counts=daily_counts,
+            confidence_dist=confidence_dist,
+            selected_days=selected_days,
         )
     except Exception as e:
         print(f"Error loading statistics: {e}")

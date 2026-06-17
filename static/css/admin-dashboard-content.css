@@ -1,0 +1,96 @@
+/* admin-dashboard-content.css */
+
+/* Custom stats cards styling */
+.stat-card {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 100% 0%, rgba(37, 99, 235, 0.05) 0%, transparent 70%);
+    z-index: 0;
+    pointer-events: none;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px -10px rgba(0, 74, 198, 0.15);
+    border-color: rgba(0, 74, 198, 0.3);
+}
+
+/* Charts container and grids */
+.chart-grid {
+    display: grid;
+    gap: 24px;
+}
+
+@media (min-width: 1024px) {
+    .chart-grid {
+        grid-template-columns: 2fr 1fr;
+    }
+    .chart-grid-three {
+        grid-template-columns: 2fr 1fr 1fr;
+    }
+}
+
+.chart-card {
+    background: var(--md-sys-color-surface-container-lowest, #ffffff);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.02);
+    border-radius: 12px;
+    padding: 24px;
+    transition: all 0.3s ease;
+}
+
+.dark .chart-card {
+    background: #0f172a;
+    border-color: rgba(51, 65, 85, 0.5);
+}
+
+.chart-card:hover {
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+}
+
+.chart-container {
+    position: relative;
+    width: 100%;
+    height: 320px;
+}
+
+/* Micro-animations and polished components */
+.pulse-badge {
+    position: relative;
+}
+
+.pulse-badge::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 8px;
+    height: 8px;
+    background-color: #10b981;
+    border-radius: 50%;
+    animation: badge-pulse 2s infinite;
+}
+
+@keyframes badge-pulse {
+    0% {
+        width: 8px;
+        height: 8px;
+        opacity: 1;
+    }
+    100% {
+        width: 24px;
+        height: 24px;
+        opacity: 0;
+    }
+}

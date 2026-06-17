@@ -102,109 +102,179 @@ class PredictionHistory:
     @staticmethod
     def get_by_user_in_range(
         conn,
-        user_id: int,
+        user_id: Optional[int],
         start_at: datetime,
         end_at: datetime,
         limit: Optional[int] = 50,
         offset: int = 0,
     ) -> List[Dict]:
-        """Lấy lịch sử nhận diện theo khoảng thời gian"""
+        """Lấy lịch sử nhận diện theo khoảng thời gian (cá nhân hoặc toàn hệ thống nếu user_id là None)"""
         with conn.cursor() as cur:
-            if limit is None:
-                cur.execute("""
-                    SELECT id, image_path, breed, confidence, species, created_at
-                    FROM prediction_history
-                    WHERE user_id = %s
-                      AND created_at >= %s
-                      AND created_at < %s
-                    ORDER BY created_at DESC
-                """, (user_id, start_at, end_at))
+            if user_id is not None:
+                if limit is None:
+                    cur.execute("""
+                        SELECT id, image_path, breed, confidence, species, created_at
+                        FROM prediction_history
+                        WHERE user_id = %s
+                          AND created_at >= %s
+                          AND created_at < %s
+                        ORDER BY created_at DESC
+                    """, (user_id, start_at, end_at))
+                else:
+                    cur.execute("""
+                        SELECT id, image_path, breed, confidence, species, created_at
+                        FROM prediction_history
+                        WHERE user_id = %s
+                          AND created_at >= %s
+                          AND created_at < %s
+                        ORDER BY created_at DESC
+                        LIMIT %s OFFSET %s
+                    """, (user_id, start_at, end_at, limit, offset))
+                rows = cur.fetchall()
+                return [{
+                    'id': row[0],
+                    'image_path': row[1],
+                    'breed': to_common_vietnamese_breed_name(row[2]),
+                    'confidence': row[3],
+                    'species': row[4],
+                    'created_at': row[5],
+                    'username': None
+                } for row in rows]
             else:
-                cur.execute("""
-                    SELECT id, image_path, breed, confidence, species, created_at
-                    FROM prediction_history
-                    WHERE user_id = %s
-                      AND created_at >= %s
-                      AND created_at < %s
-                    ORDER BY created_at DESC
-                    LIMIT %s OFFSET %s
-                """, (user_id, start_at, end_at, limit, offset))
-            rows = cur.fetchall()
-            return [{
-                'id': row[0],
-                'image_path': row[1],
-                'breed': to_common_vietnamese_breed_name(row[2]),
-                'confidence': row[3],
-                'species': row[4],
-                'created_at': row[5]
-            } for row in rows]
+                # Toàn hệ thống (Admin)
+                if limit is None:
+                    cur.execute("""
+                        SELECT ph.id, ph.image_path, ph.breed, ph.confidence, ph.species, ph.created_at, u.username
+                        FROM prediction_history ph
+                        LEFT JOIN users u ON ph.user_id = u.id
+                        WHERE ph.created_at >= %s
+                          AND ph.created_at < %s
+                        ORDER BY ph.created_at DESC
+                    """, (start_at, end_at))
+                else:
+                    cur.execute("""
+                        SELECT ph.id, ph.image_path, ph.breed, ph.confidence, ph.species, ph.created_at, u.username
+                        FROM prediction_history ph
+                        LEFT JOIN users u ON ph.user_id = u.id
+                        WHERE ph.created_at >= %s
+                          AND ph.created_at < %s
+                        ORDER BY ph.created_at DESC
+                        LIMIT %s OFFSET %s
+                    """, (start_at, end_at, limit, offset))
+                rows = cur.fetchall()
+                return [{
+                    'id': row[0],
+                    'image_path': row[1],
+                    'breed': to_common_vietnamese_breed_name(row[2]),
+                    'confidence': row[3],
+                    'species': row[4],
+                    'created_at': row[5],
+                    'username': row[6]
+                } for row in rows]
 
     @staticmethod
     def count_by_user_in_range(
         conn,
-        user_id: int,
+        user_id: Optional[int],
         start_at: datetime,
         end_at: datetime,
     ) -> int:
-        """Đếm số bản ghi trong khoảng thời gian"""
+        """Đếm số bản ghi trong khoảng thời gian (cá nhân hoặc toàn hệ thống nếu user_id là None)"""
         with conn.cursor() as cur:
-            cur.execute("""
-                SELECT COUNT(*)
-                FROM prediction_history
-                WHERE user_id = %s
-                  AND created_at >= %s
-                  AND created_at < %s
-            """, (user_id, start_at, end_at))
+            if user_id is not None:
+                cur.execute("""
+                    SELECT COUNT(*)
+                    FROM prediction_history
+                    WHERE user_id = %s
+                      AND created_at >= %s
+                      AND created_at < %s
+                """, (user_id, start_at, end_at))
+            else:
+                cur.execute("""
+                    SELECT COUNT(*)
+                    FROM prediction_history
+                    WHERE created_at >= %s
+                      AND created_at < %s
+                """, (start_at, end_at))
             return cur.fetchone()[0]
 
     @staticmethod
     def avg_confidence_by_user_in_range(
         conn,
-        user_id: int,
+        user_id: Optional[int],
         start_at: datetime,
         end_at: datetime,
     ) -> float:
-        """Tính độ tin cậy trung bình trong khoảng thời gian"""
+        """Tính độ tin cậy trung bình trong khoảng thời gian (cá nhân hoặc toàn hệ thống nếu user_id là None)"""
         with conn.cursor() as cur:
-            cur.execute("""
-                SELECT AVG(confidence)
-                FROM prediction_history
-                WHERE user_id = %s
-                  AND created_at >= %s
-                  AND created_at < %s
-                  AND confidence IS NOT NULL
-            """, (user_id, start_at, end_at))
+            if user_id is not None:
+                cur.execute("""
+                    SELECT AVG(confidence)
+                    FROM prediction_history
+                    WHERE user_id = %s
+                      AND created_at >= %s
+                      AND created_at < %s
+                      AND confidence IS NOT NULL
+                """, (user_id, start_at, end_at))
+            else:
+                cur.execute("""
+                    SELECT AVG(confidence)
+                    FROM prediction_history
+                    WHERE created_at >= %s
+                      AND created_at < %s
+                      AND confidence IS NOT NULL
+                """, (start_at, end_at))
             value = cur.fetchone()[0]
             return float(value or 0.0)
     
     @staticmethod
-    def count_by_user(conn, user_id: int) -> int:
-        """Đếm tổng số bản ghi lịch sử của user"""
+    def count_by_user(conn, user_id: Optional[int]) -> int:
+        """Đếm tổng số bản ghi lịch sử của user (hoặc toàn hệ thống nếu user_id là None)"""
         with conn.cursor() as cur:
-            cur.execute("""
-                SELECT COUNT(*) FROM prediction_history WHERE user_id = %s
-            """, (user_id,))
+            if user_id is not None:
+                cur.execute("""
+                    SELECT COUNT(*) FROM prediction_history WHERE user_id = %s
+                """, (user_id,))
+            else:
+                cur.execute("""
+                    SELECT COUNT(*) FROM prediction_history
+                """)
             return cur.fetchone()[0]
     
     @staticmethod
-    def get_stats(conn, user_id: int) -> Dict[str, Any]:
-        """Lấy thống kê cho user"""
+    def get_stats(conn, user_id: Optional[int], days: Optional[int] = None) -> Dict[str, Any]:
+        """Lấy thống kê cho user (hoặc toàn hệ thống nếu user_id là None) với tùy chọn số ngày gần đây"""
         with conn.cursor() as cur:
+            conds = []
+            params = []
+            if user_id is not None:
+                conds.append("user_id = %s")
+                params.append(user_id)
+            if days is not None:
+                conds.append("created_at >= DATE_SUB(CURDATE(), INTERVAL %s DAY)")
+                params.append(days)
+            
+            where_clause = " WHERE " + " AND ".join(conds) if conds else ""
+            
             # Tổng số lần nhận diện
-            cur.execute("""
-                SELECT COUNT(*) FROM prediction_history WHERE user_id = %s
-            """, (user_id,))
-            total_predictions = cur.fetchone()[0]
+            cur.execute("SELECT COUNT(*) FROM prediction_history" + where_clause, tuple(params))
+            total_predictions = cur.fetchone()[0] or 0
             
             # Top 5 giống phổ biến
-            cur.execute("""
+            top_breeds_conds = list(conds)
+            top_breeds_conds.append("breed IS NOT NULL")
+            top_breeds_where = " WHERE " + " AND ".join(top_breeds_conds)
+            top_breeds_params = list(params)
+            
+            cur.execute(f"""
                 SELECT breed, COUNT(*) as count
                 FROM prediction_history
-                WHERE user_id = %s AND breed IS NOT NULL
+                {top_breeds_where}
                 GROUP BY breed
                 ORDER BY count DESC
                 LIMIT 200
-            """, (user_id,))
+            """, tuple(top_breeds_params))
+            
             breed_counter: Dict[str, int] = {}
             for row in cur.fetchall():
                 breed = to_common_vietnamese_breed_name(row[0])
@@ -217,10 +287,12 @@ class PredictionHistory:
             ]
             
             # Độ tin cậy trung bình
-            cur.execute("""
-                SELECT AVG(confidence) FROM prediction_history 
-                WHERE user_id = %s AND confidence IS NOT NULL
-            """, (user_id,))
+            conf_conds = list(conds)
+            conf_conds.append("confidence IS NOT NULL")
+            conf_where = " WHERE " + " AND ".join(conf_conds)
+            conf_params = list(params)
+            
+            cur.execute("SELECT AVG(confidence) FROM prediction_history" + conf_where, tuple(conf_params))
             avg_confidence = cur.fetchone()[0] or 0.0
             
             return {
@@ -228,6 +300,104 @@ class PredictionHistory:
                 'top_breeds': top_breeds,
                 'avg_confidence': float(avg_confidence)
             }
+
+    @staticmethod
+    def get_daily_counts(conn, user_id: Optional[int], days: Optional[int] = 7) -> List[Dict[str, Any]]:
+        """Đếm số dự đoán theo từng ngày trong N ngày gần đây hoặc theo tháng nếu days là None"""
+        with conn.cursor() as cur:
+            if days is not None:
+                if user_id is not None:
+                    cur.execute("""
+                        SELECT DATE(created_at) AS day, COUNT(*) AS cnt
+                        FROM prediction_history
+                        WHERE user_id = %s
+                          AND created_at >= DATE_SUB(CURDATE(), INTERVAL %s DAY)
+                        GROUP BY DATE(created_at)
+                        ORDER BY day ASC
+                    """, (user_id, days))
+                else:
+                    cur.execute("""
+                        SELECT DATE(created_at) AS day, COUNT(*) AS cnt
+                        FROM prediction_history
+                        WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL %s DAY)
+                        GROUP BY DATE(created_at)
+                        ORDER BY day ASC
+                    """, (days,))
+                rows = cur.fetchall()
+                return [{'date': row[0].strftime('%d/%m') if row[0] else '', 'count': int(row[1] or 0)} for row in rows]
+            else:
+                # All time: group by month
+                if user_id is not None:
+                    cur.execute("""
+                        SELECT DATE_FORMAT(created_at, '%Y-%m') AS month, COUNT(*) AS cnt
+                        FROM prediction_history
+                        WHERE user_id = %s
+                        GROUP BY month
+                        ORDER BY month ASC
+                    """, (user_id,))
+                else:
+                    cur.execute("""
+                        SELECT DATE_FORMAT(created_at, '%Y-%m') AS month, COUNT(*) AS cnt
+                        FROM prediction_history
+                        GROUP BY month
+                        ORDER BY month ASC
+                    """)
+                rows = cur.fetchall()
+                formatted_rows = []
+                for row in rows:
+                    if not row[0]:
+                        continue
+                    parts = row[0].split('-')
+                    formatted_rows.append({'date': f"{parts[1]}/{parts[0][2:]}", 'count': int(row[1] or 0)})
+                return formatted_rows
+
+    @staticmethod
+    def get_confidence_distribution(conn, user_id: Optional[int], days: Optional[int] = None) -> List[int]:
+        """Phân bố độ tin cậy thành 5 nhóm: 0-20, 20-40, 40-60, 60-80, 80-100 (%) với bộ lọc ngày"""
+        with conn.cursor() as cur:
+            conds = ["confidence IS NOT NULL"]
+            params = []
+            if user_id is not None:
+                conds.append("user_id = %s")
+                params.append(user_id)
+            if days is not None:
+                conds.append("created_at >= DATE_SUB(CURDATE(), INTERVAL %s DAY)")
+                params.append(days)
+            
+            where_clause = " WHERE " + " AND ".join(conds)
+            
+            cur.execute(f"""
+                SELECT
+                    SUM(CASE WHEN confidence < 0.2 THEN 1 ELSE 0 END),
+                    SUM(CASE WHEN confidence >= 0.2 AND confidence < 0.4 THEN 1 ELSE 0 END),
+                    SUM(CASE WHEN confidence >= 0.4 AND confidence < 0.6 THEN 1 ELSE 0 END),
+                    SUM(CASE WHEN confidence >= 0.6 AND confidence < 0.8 THEN 1 ELSE 0 END),
+                    SUM(CASE WHEN confidence >= 0.8 THEN 1 ELSE 0 END)
+                FROM prediction_history
+                {where_clause}
+            """, tuple(params))
+            row = cur.fetchone()
+            if not row:
+                return [0, 0, 0, 0, 0]
+            return [int(v or 0) for v in row]
+
+    @staticmethod
+    def get_unique_breed_count(conn, user_id: Optional[int]) -> int:
+        """Đếm số giống chó duy nhất đã nhận diện (hoặc toàn hệ thống nếu user_id là None)"""
+        with conn.cursor() as cur:
+            if user_id is not None:
+                cur.execute("""
+                    SELECT COUNT(DISTINCT breed)
+                    FROM prediction_history
+                    WHERE user_id = %s AND breed IS NOT NULL AND breed != ''
+                """, (user_id,))
+            else:
+                cur.execute("""
+                    SELECT COUNT(DISTINCT breed)
+                    FROM prediction_history
+                    WHERE breed IS NOT NULL AND breed != ''
+                """)
+            return int(cur.fetchone()[0] or 0)
 
 
 class UserSettings:
