@@ -1,10 +1,6 @@
 <!doctype html>
 
-<html
-  class="{{ 'dark' if ui_theme == 'dark' else 'light' }}"
-  lang="vi"
-  data-theme="{{ ui_theme or 'light' }}"
->
+<html class="{{ 'dark' if ui_theme == 'dark' else 'light' }}" lang="vi" data-theme="{{ ui_theme or 'light' }}">
   <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
@@ -31,9 +27,7 @@
         function resolveTheme(theme) {
           if (theme !== "auto") return theme;
           try {
-            return window.matchMedia("(prefers-color-scheme: dark)").matches
-              ? "dark"
-              : "light";
+            return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
           } catch (e) {
             return "light";
           }
@@ -76,14 +70,8 @@
       rel="stylesheet"
       href="{{ url_for('static', filename='css/typography.css') }}"
     />
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='css/theme-dark.css') }}"
-    />
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='css/toasts.css') }}"
-    />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/theme-dark.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/toasts.css') }}" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile-header-fix.css') }}" />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
@@ -209,23 +197,26 @@
           "opsz" 24;
       }
       .is-dragover {
-        border-color: rgba(0, 74, 198, 0.6);
-        background-color: #dce9ff;
+        border-color: #004ac6 !important;
+        background-color: #dbe1ff/50 !important;
       }
     </style>
   </head>
   <body
-    class="bg-background text-on-background body-md body-md antialiased min-h-screen flex flex-col"
+    class="bg-background text-on-background body-md antialiased min-h-screen flex flex-col"
     data-watch-ad-open="{{ '1' if open_watch_ad else '0' }}"
   >
     {% include '_toasts.html' %}
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
-    {% set display_role = session.get('role') or 'user' %} {% set display_plan = current_plan or 'free' %}
+    {% set display_role = session.get('role') or 'user' %}
+    {% set display_plan = current_plan or 'free' %}
 
     <nav
       class="bg-white/80 dark:bg-slate-950/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-200 dark:border-slate-800 shadow-sm font-['Inter'] antialiased"
     >
-      <div class="flex items-center justify-between px-4 md:px-6 h-16 w-full">
+      <div
+        class="flex items-center justify-between px-4 md:px-6 h-16 w-full"
+      >
         <div class="flex items-center gap-gutter">
           <a href="{{ url_for('home.index') }}" class="inline-flex items-center gap-0">
             <img
@@ -237,47 +228,48 @@
               >PetAI</span
             >
           </a>
-          <button class="menu-toggle ml-2" id="menuToggle" type="button" aria-label="Mở menu" aria-expanded="false">
+          <button class="menu-toggle ml-2" id="menuToggle" aria-label="Mở menu" aria-expanded="false" type="button">
             <span></span>
             <span></span>
             <span></span>
           </button>
         </div>
-        <div class="hidden md:flex flex-1 items-center justify-end gap-margin mr-gutter [&>a]:px-0.5 [&>a]:body-md">
+        <div class="hidden md:flex flex-1 items-center justify-end gap-margin mr-gutter [&>a]:px-0.5 [&>a]:label-sm">
           <a
-            class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-3 py-2 border-b-2 border-transparent pb-1 font-semibold"
+            class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
             href="{{ url_for('dashboard.dashboard') }}"
             >Bảng điều khiển</a
           >
           <a
-            class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-3 py-2 border-b-2 border-transparent pb-1 font-semibold"
+            class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
             href="{{ url_for('history.history') }}"
             >Lịch sử</a
           >
           <a
-            class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-3 py-2 border-b-2 border-transparent pb-1 font-semibold"
+            class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
             href="{{ url_for('statistics.statistics') }}"
             >Thống kê</a
           >
           <a
-            class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-3 py-2 border-b-2 border-transparent pb-1 font-semibold"
+            class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
             href="{{ url_for('predict.upgrade') }}"
             >Nâng cấp</a
           >
           {% if session.get('role') == 'user' %}
           <a
-            class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-3 py-2 border-b-2 border-transparent pb-1 font-semibold"
+            class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
             href="{{ url_for('predict.my_payments') }}"
             >Lịch sử thanh toán</a
           >
-          {% endif %} {% if session.get('role') == 'admin' %}
+          {% endif %}
+          {% if session.get('role') == 'admin' %}
           <a
-            class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-3 py-2 border-b-2 border-transparent pb-1 font-semibold"
+            class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
             href="{{ url_for('users.list_users') }}"
             >Quản lý người dùng</a
           >
           <a
-            class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-3 py-2 border-b-2 border-transparent pb-1 font-semibold"
+            class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
             href="{{ url_for('users.confirmations_list') }}"
             >Duyệt đơn</a
           >
@@ -285,96 +277,97 @@
         </div>
         <div class="flex items-center gap-md">
           <a
-            class="hidden md:inline-flex bg-primary text-on-primary px-4 py-2 rounded-lg label-sm hover:opacity-90 active:scale-95 duration-150 transition-all"
+            class="hidden md:inline-flex bg-primary text-on-primary px-4 py-2 rounded-lg label-sm shadow-sm hover:shadow-md transition-all font-semibold"
             href="{{ url_for('predict.upload_page') }}"
             >Nhận diện</a
           >
           <div class="language-switcher mr-2" id="languageSwitcher">
-              <button class="language-button" id="languageButton" type="button" aria-haspopup="true" aria-expanded="false">
+            <button class="language-button" id="languageButton" type="button" aria-haspopup="true" aria-expanded="false">
+              <span class="language-flag">🇻🇳</span>
+              <span class="language-current">VN</span>
+              <span class="language-arrow">▼</span>
+            </button>
+            <div class="language-menu" id="languageMenu">
+              <button class="language-option active" type="button" data-lang="vi">
+                <span class="language-check">✓</span>
                 <span class="language-flag">🇻🇳</span>
-                <span class="language-current">VN</span>
-                <span class="language-arrow">▼</span>
+                <span>Tiếng Việt</span>
               </button>
-              <div class="language-menu" id="languageMenu">
-                <button class="language-option active" type="button" data-lang="vi">
-                  <span class="language-check">✓</span>
-                  <span class="language-flag">🇻🇳</span>
-                  <span>Tiếng Việt</span>
-                </button>
-                <button class="language-option" type="button" data-lang="en">
-                  <span class="language-check"></span>
-                  <span class="language-flag">🇺🇸</span>
-                  <span>English</span>
-                </button>
-              </div>
+              <button class="language-option" type="button" data-lang="en">
+                <span class="language-check"></span>
+                <span class="language-flag">🇺🇸</span>
+                <span>English</span>
+              </button>
             </div>
-            <div class="relative cursor-pointer avatar-wrapper">
-              <img
-                alt="Anh dai dien"
-                class="w-9 h-9 rounded-full border-2 border-primary/20 p-0.5"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuABdf7zKSVKEqdGUUjqEkF9ftdFTrLW87Tb24r2IiZiv_JP0LrItrCxl23SH-gYj2Mqtkma0ak9DZbUtKM5nW747pmivDYGVbYhNr1PZbxbFuOrZdGJvnbhdSurFLfL3BcmhN2p1h9wv_6geT-x8eoTG1TDoLL40P8wDiaymvRT--SA4jYjU9A77WIji5FmOi99mPDXw7xS6dUyUNJYU2gHLk4-smzFrCuBbQbgtpATDvNo6hq3YR-cfSaNblImtCnDXIb8np7J4HA"
-              />
-              <div
-                class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white dark:border-slate-900 rounded-full"
-              ></div>
-              <div
-                class="absolute right-0 top-full w-52 bg-white dark:bg-slate-900 rounded-lg shadow-xl border border-slate-200 dark:border-slate-800 py-2 hidden avatar-dropdown-menu z-50"
-              >
-                <div class="px-4 pb-2">
-                  <div class="label-sm text-slate-500 dark:text-slate-400">
-                    Vai trò:
-                    <span
-                      class="font-semibold text-slate-800 dark:text-slate-200"
-                      >{{ display_role|upper }}</span
-                    >
-                  </div>
-                  <div class="label-sm text-slate-500 dark:text-slate-400">
-                    Gói:
-                    <span
-                      class="font-semibold text-slate-800 dark:text-slate-200"
-                      >{{ display_plan|upper }}</span
-                    >
-                  </div>
-                </div>                <a
-                  class="flex items-center gap-2 px-4 py-2 body-md text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors font-semibold"
-                  href="{{ url_for('settings.settings') }}"
-                >
-                  <span class="material-symbols-outlined text-[18px]"
-                    >settings</span
+          </div>
+          <div class="relative cursor-pointer avatar-wrapper">
+            <img
+              alt="Ảnh đại diện"
+              class="w-9 h-9 rounded-full border-2 border-primary/20 p-0.5"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuDaAwfxOW9LtSPQ4CMpHh_MZj4C-a3XURpy47OidOmmzbKzNRwNeR_tNSBeoFDP9dSnziLwQG4nPJKCuKtkxq4tUiBuLpCheGH7nOKArEmnFQ4h-srxtCzJuuXVbqDrPzi3eC_u0b61szh9krSLnTZdWzIxOFW1KnH4UW0EOXfAcgwarik1GLH8h-BWePFrcuV4Rqrw4n-qitWuQZHLsuPlLkOkFrM2-JiKkgwvYbvQPfe-B0eq8WGpcNe8IDhIHexuKSNYw8k4GOw"
+            />
+            <div
+              class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white dark:border-slate-900 rounded-full"
+            ></div>
+            <div
+              class="absolute right-0 top-full w-52 bg-white dark:bg-slate-900 rounded-lg shadow-xl border border-slate-200 dark:border-slate-800 py-2 hidden avatar-dropdown-menu z-50"
+            >
+              <div class="px-4 pb-2">
+                <div class="label-sm text-slate-500 dark:text-slate-400">
+                  Vai trò:
+                  <span
+                    class="font-semibold text-slate-800 dark:text-slate-200"
+                    >{{ display_role|upper }}</span
                   >
-                  <span data-i18n="personalInfo">Thông tin cá nhân</span>
-                </a>
-
-                <div class="h-px bg-slate-200 dark:bg-slate-800 my-1"></div>
-                <a
-                  class="flex items-center gap-2 px-4 py-2 body-md text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors font-semibold"
-                  href="{{ url_for('logout.logout') }}"
-                >
-                  <span class="material-symbols-outlined text-[18px]"
-                    >logout</span
+                </div>
+                <div class="label-sm text-slate-500 dark:text-slate-400">
+                  Gói:
+                  <span
+                    class="font-semibold text-slate-800 dark:text-slate-200"
+                    >{{ display_plan|upper }}</span
                   >
-                  Đăng xuất
-                </a>
+                </div>
               </div>
+              <a
+                class="flex items-center gap-2 px-4 py-2 body-md text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors font-semibold"
+                href="{{ url_for('settings.settings') }}"
+              >
+                <span class="material-symbols-outlined text-[18px]"
+                  >settings</span
+                >
+                <span data-i18n="personalInfo">Thông tin cá nhân</span>
+              </a>
+              <div class="h-px bg-slate-200 dark:bg-slate-800 my-1"></div>
+              <a
+                class="flex items-center gap-2 px-4 py-2 body-md text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors font-semibold"
+                href="{{ url_for('logout.logout') }}"
+              >
+                <span class="material-symbols-outlined text-[18px]"
+                  >logout</span
+                >
+                Đăng xuất
+              </a>
             </div>
           </div>
         </div>
-      </nav>
+      </div>
+    </nav>
 
     <main
+      tabindex="-1"
       class="flex-grow w-full px-4 md:px-6 py-margin grid grid-cols-1 md:grid-cols-[230px_minmax(0,1fr)] gap-gutter"
     >
       <aside class="sidebar col-span-1" id="sidebar">
         <div
-          class="bg-surface-container-lowest rounded-xl shadow-sm py-sm px-2 flex flex-col gap-sm sticky top-24 border border-slate-100"
+          class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] py-sm px-2 flex flex-col gap-sm sticky top-24 border border-outline-variant/30"
         >
           <h3
-            class="label-sm label-sm text-on-surface-variant uppercase tracking-wider mb-xs px-1.5"
+            class="label-sm text-on-surface-variant dark:text-slate-400 uppercase tracking-wider mb-xs px-1.5"
           >
-            <span data-i18n="quickAccess">Truy cập nhanh</span>
+            Truy cập nhanh
           </h3>
           <a
-            class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-primary bg-primary-fixed/50 transition-colors group"
+            class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-primary bg-primary-fixed/50 dark:bg-primary/20 transition-colors group"
             href="{{ url_for('predict.upload_page') }}"
           >
             <span
@@ -384,12 +377,12 @@
               style="font-variation-settings: &quot;FILL&quot; 1"
               >upload_file</span
             >
-            <span class="label-sm label-sm font-semibold"
+            <span class="label-sm font-semibold"
               >Tải ảnh &amp; Phân tích</span
             >
           </a>
           <a
-            class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
+            class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface dark:text-slate-300 hover:text-primary dark:hover:text-blue-400 hover:bg-surface-container dark:hover:bg-slate-800 transition-colors group"
             href="{{ url_for('history.history') }}"
           >
             <span
@@ -397,11 +390,11 @@
               data-icon="history"
               >history</span
             >
-            <span class="label-sm label-sm"><span data-i18n="predictionHistory">Lịch sử dự đoán</span></span>
+            <span class="label-sm">Lịch sử dự đoán</span>
           </a>
           {% if session.get('role') == 'user' %}
           <a
-            class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
+            class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface dark:text-slate-300 hover:text-primary dark:hover:text-blue-400 hover:bg-surface-container dark:hover:bg-slate-800 transition-colors group"
             href="{{ url_for('predict.my_payments') }}"
           >
             <span
@@ -409,11 +402,11 @@
               data-icon="payments"
               >payments</span
             >
-            <span class="label-sm label-sm">Lịch sử thanh toán</span>
+            <span class="label-sm">Lịch sử thanh toán</span>
           </a>
           {% endif %}
           <a
-            class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
+            class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface dark:text-slate-300 hover:text-primary dark:hover:text-blue-400 hover:bg-surface-container dark:hover:bg-slate-800 transition-colors group"
             href="{{ url_for('statistics.statistics') }}"
           >
             <span
@@ -421,10 +414,10 @@
               data-icon="bar_chart"
               >bar_chart</span
             >
-            <span class="label-sm label-sm"><span data-i18n="personalStats">Thống kê cá nhân</span></span>
+            <span class="label-sm">Thống kê cá nhân</span>
           </a>
           <a
-            class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
+            class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface dark:text-slate-300 hover:text-primary dark:hover:text-blue-400 hover:bg-surface-container dark:hover:bg-slate-800 transition-colors group"
             href="{{ url_for('predict.upgrade') }}"
           >
             <span
@@ -432,11 +425,11 @@
               data-icon="upgrade"
               >upgrade</span
             >
-            <span class="label-sm label-sm"><span data-i18n="upgradePlan">Nâng cấp gói</span></span>
+            <span class="label-sm">Nâng cấp gói</span>
           </a>
           {% if session.get('role') == 'admin' %}
           <a
-            class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
+            class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface dark:text-slate-300 hover:text-primary dark:hover:text-blue-400 hover:bg-surface-container dark:hover:bg-slate-800 transition-colors group"
             href="{{ url_for('users.list_users') }}"
           >
             <span
@@ -444,10 +437,10 @@
               data-icon="groups"
               >groups</span
             >
-            <span class="label-sm label-sm">Quản lý người dùng</span>
+            <span class="label-sm">Quản lý người dùng</span>
           </a>
           <a
-            class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
+            class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface dark:text-slate-300 hover:text-primary dark:hover:text-blue-400 hover:bg-surface-container dark:hover:bg-slate-800 transition-colors group"
             href="{{ url_for('users.confirmations_list') }}"
           >
             <span
@@ -455,12 +448,12 @@
               data-icon="receipt_long"
               >receipt_long</span
             >
-            <span class="label-sm label-sm">Duyệt đơn</span>
+            <span class="label-sm">Duyệt đơn</span>
           </a>
           {% endif %}
-          <hr class="border-outline-variant/30 my-xs" />
+          <hr class="border-outline-variant/30 dark:border-slate-850 my-xs" />
           <a
-            class="flex items-center gap-sm py-1.5 px-1.5 rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
+            class="flex items-center gap-sm py-1.5 px-1.5 rounded-lg text-on-surface dark:text-slate-300 hover:text-primary dark:hover:text-blue-400 hover:bg-surface-container dark:hover:bg-slate-800 transition-colors group"
             href="{{ url_for('settings.settings') }}"
           >
             <span
@@ -470,32 +463,31 @@
             >
             <span class="label-sm"><span data-i18n="accountSettings">Cài đặt tài khoản</span></span>
           </a>
-
         </div>
       </aside>
 
       <div class="col-span-1 flex flex-col gap-gutter">
-        <section class="flex flex-col md:flex-row justify-between items-start md:items-center">
-          <div class="max-w-2xl flex flex-col gap-2">
-            <h1 class="headline-lg font-semibold text-on-surface">
+        <section
+          class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-outline-variant/20 dark:border-slate-800 pb-5"
+          data-purpose="page-header"
+        >
+          <div class="flex flex-col gap-2">
+            <h1 class="headline-lg font-semibold text-on-surface dark:text-slate-100">
               Tải ảnh để nhận diện giống chó
             </h1>
-            <p class="body-md text-on-surface-variant mt-0">
-              Kéo thả ảnh chó của bạn để AI phân tích và dự đoán giống
-              với độ tin cậy chi tiết.
+            <p class="body-md text-on-surface-variant dark:text-slate-400">
+              Kéo thả ảnh chó của bạn để AI phân tích và dự đoán giống với độ tin cậy chi tiết.
             </p>
           </div>
-          <a
-            class="bg-primary text-on-primary px-4 py-2 rounded-lg label-sm shadow-sm hover:shadow-md transition-all flex items-center gap-2 mt-4 md:mt-0"
-            href="{{ url_for('predict.upgrade') }}"
-          >
-            <span
-              class="material-symbols-outlined text-[18px]"
-              data-icon="workspace_premium"
-              >workspace_premium</span
+          <div class="mt-4 md:mt-0 md:flex-none">
+            <a
+              class="bg-primary hover:bg-primary/95 text-on-primary px-4 py-2.5 rounded-lg label-sm shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-2 font-semibold"
+              href="{{ url_for('predict.upgrade') }}"
             >
-            Nâng cấp gói
-          </a>
+              <span class="material-symbols-outlined text-[18px]">workspace_premium</span>
+              Nâng cấp gói
+            </a>
+          </div>
         </section>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
@@ -504,7 +496,7 @@
               action="{{ url_for('predict.upload') }}"
               method="post"
               enctype="multipart/form-data"
-              class="bg-surface-container-lowest rounded-xl border border-slate-100 p-5 shadow-sm"
+              class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl border border-outline-variant/30 dark:border-slate-800 p-6 shadow-sm"
               id="uploadForm"
             >
               <input
@@ -513,16 +505,16 @@
                 value="{{ csrf_token() }}"
               />
               <div class="flex items-center gap-sm mb-md">
-                <span class="material-symbols-outlined text-primary"
+                <span class="material-symbols-outlined text-primary dark:text-blue-400"
                   >cloud_upload</span
                 >
-                <h2 class="headline-md headline-md text-on-surface">
+                <h2 class="headline-md font-semibold text-on-surface dark:text-slate-200">
                   Khu vực tải ảnh
                 </h2>
               </div>
               <div
                 id="dropZone"
-                class="relative border-2 border-dashed border-primary/40 rounded-lg bg-surface-container-low hover:bg-surface-container-high transition-colors p-10 flex flex-col items-center justify-center text-center gap-3"
+                class="relative border-2 border-dashed border-primary/40 dark:border-slate-850 rounded-xl bg-surface-container-low dark:bg-slate-950/20 hover:bg-surface-container-high dark:hover:bg-slate-900/40 transition-colors duration-200 p-10 flex flex-col items-center justify-center text-center gap-3 cursor-pointer"
               >
                 <input
                   type="file"
@@ -534,44 +526,44 @@
                 />
                 <div id="dropState" class="flex flex-col items-center gap-3">
                   <div
-                    class="w-16 h-16 rounded-full bg-primary-container text-primary flex items-center justify-center"
+                    class="w-16 h-16 rounded-full bg-primary/10 dark:bg-primary/25 text-primary dark:text-blue-400 flex items-center justify-center shadow-sm"
                   >
                     <span class="material-symbols-outlined text-[32px]"
                       >cloud_upload</span
                     >
                   </div>
-                  <h3 class="headline-md headline-md text-on-surface">
+                  <h3 class="headline-md font-semibold text-on-surface dark:text-slate-200">
                     Kéo & thả ảnh vào đây
                   </h3>
-                  <p class="body-md text-on-surface-variant">
+                  <p class="body-md text-on-surface-variant dark:text-slate-400">
                     hoặc bấm để chọn ảnh từ máy tính
                   </p>
                   <span
-                    class="px-4 py-2 bg-surface-container rounded-full body-md text-on-surface-variant"
+                    class="px-4 py-2 bg-surface-container dark:bg-slate-800 rounded-full body-md text-on-surface-variant dark:text-slate-400"
                   >
                     Hỗ trợ JPG, JPEG, PNG • Tối đa 10MB
                   </span>
                 </div>
                 <div
                   id="previewState"
-                  class="hidden flex flex-col items-center gap-4"
+                  class="hidden flex flex-col items-center gap-4 w-full"
                 >
                   <img
                     id="imagePreview"
-                    class="w-full max-h-[360px] rounded-lg object-contain bg-surface"
+                    class="w-full max-h-[360px] rounded-lg object-contain bg-surface dark:bg-slate-950"
                     alt="Xem trước ảnh tải lên"
                   />
                   <div class="flex flex-wrap items-center gap-3">
                     <button
                       type="button"
-                      class="px-4 py-2 rounded-lg border border-outline-variant text-on-surface hover:bg-surface-container-low label-sm label-sm transition-colors"
+                      class="px-4 py-2 rounded-lg border border-outline-variant/40 dark:border-slate-700 text-on-surface dark:text-slate-300 hover:bg-surface-container-low dark:hover:bg-slate-800 label-sm transition-colors"
                       id="changeBtn"
                     >
                       Đổi ảnh
                     </button>
                     <button
                       type="submit"
-                      class="px-4 py-2 rounded-lg bg-primary text-on-primary label-sm label-sm hover:opacity-90 transition-opacity flex items-center gap-2"
+                      class="px-4 py-2 rounded-lg bg-primary hover:bg-primary/95 text-on-primary label-sm hover:opacity-90 shadow-sm transition-all flex items-center gap-2 font-semibold"
                       id="analyzeBtn"
                     >
                       <span class="material-symbols-outlined text-[18px]"
@@ -587,143 +579,146 @@
 
           <div class="lg:col-span-4 flex flex-col gap-gutter">
             <section
-              class="bg-surface-container-lowest rounded-xl border border-slate-100 p-5 shadow-sm"
+              class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl border border-outline-variant/30 dark:border-slate-800 p-5 shadow-sm"
             >
-              <div class="flex items-center justify-between mb-sm">
-                <div
-                  class="hidden md:flex items-center gap-margin [&>a]:px-0.5 [&>a]:body-md"
-                >
-                  </p>
-                  <div class="headline-md font-semibold text-on-surface">
-                    {{ (quota_info.plan if quota_info else display_plan)|upper
-                    }}
+              <div class="flex items-center justify-between mb-sm border-b border-outline-variant/20 dark:border-slate-800 pb-3">
+                <div class="flex items-center gap-2">
+                  <span class="material-symbols-outlined text-primary dark:text-blue-400">workspace_premium</span>
+                  <div class="headline-md font-semibold text-on-surface dark:text-slate-200">
+                    Gói: {{ (quota_info.plan if quota_info else display_plan)|upper }}
                   </div>
                 </div>
                 <span
-                  class="px-3 py-1 bg-surface-container-low text-primary rounded-full label-sm font-semibold"
+                  class="px-3 py-1 bg-primary/10 dark:bg-primary/20 text-primary dark:text-blue-400 rounded-full label-sm font-semibold"
                   >Hạn mức</span
                 >
               </div>
 
-              {% if quota_info %} {% if quota_info.plan == 'free' %}
-              <div class="space-y-3">
-                <div
-                  class="flex items-center justify-between p-3 bg-surface-container-low rounded-lg border border-outline-variant/30"
-                >
-                  <div class="flex items-center gap-2">
-                    <span
-                      class="material-symbols-outlined text-primary text-[18px]"
-                      >electric_bolt</span
-                    >
-                    <span class="body-md text-on-surface-variant"
-                      >Lượt miễn phí còn lại</span
+              {% if quota_info %}
+                {% if quota_info.plan == 'free' %}
+                <div class="space-y-3 mt-4">
+                  <div
+                    class="flex items-center justify-between p-3 bg-surface-container-low dark:bg-slate-950/40 rounded-lg border border-outline-variant/30 dark:border-slate-800"
+                  >
+                    <div class="flex items-center gap-2">
+                      <span
+                        class="material-symbols-outlined text-primary dark:text-blue-400 text-[18px]"
+                        >electric_bolt</span
+                      >
+                      <span class="body-md text-on-surface-variant dark:text-slate-400"
+                        >Lượt miễn phí còn lại</span
+                      >
+                    </div>
+                    <span class="headline-md font-bold text-primary dark:text-blue-400"
+                      >{{ quota_info.remaining_free }}</span
                     >
                   </div>
-                  <span class="headline-md headline-md text-primary"
-                    >{{ quota_info.remaining_free }}</span
+                  <div
+                    class="flex items-center justify-between p-3 bg-secondary-container/10 dark:bg-orange-500/10 rounded-lg border border-secondary-container/30 dark:border-orange-500/20"
                   >
-                </div>
-                <div
-                  class="flex items-center justify-between p-3 bg-secondary-container/10 rounded-lg border border-secondary-container/30"
-                >
-                  <div class="flex items-center gap-2">
-                    <span
-                      class="material-symbols-outlined text-secondary text-[18px]"
-                      >play_circle</span
-                    >
-                    <span class="body-md text-on-surface-variant"
-                      >Mở khóa từ quảng cáo</span
+                    <div class="flex items-center gap-2">
+                      <span
+                        class="material-symbols-outlined text-secondary dark:text-amber-400 text-[18px]"
+                        >play_circle</span
+                      >
+                      <span class="body-md text-on-surface-variant dark:text-slate-400"
+                        >Mở khóa từ quảng cáo</span
+                      >
+                    </div>
+                    <span class="headline-md font-bold text-secondary dark:text-amber-400"
+                      >{{ quota_info.ad_unlocks_remaining }}</span
                     >
                   </div>
-                  <span class="headline-md headline-md text-secondary"
-                    >{{ quota_info.ad_unlocks_remaining }}</span
+                  <div
+                    class="flex items-center justify-between p-3 bg-surface-container-low dark:bg-slate-950/40 rounded-lg border border-outline-variant/30 dark:border-slate-800"
                   >
-                </div>
-                <div
-                  class="flex items-center justify-between p-3 bg-surface-container-low rounded-lg border border-outline-variant/30"
-                >
-                  <div class="flex items-center gap-2">
-                    <span
-                      class="material-symbols-outlined text-outline text-[18px]"
-                      >visibility</span
-                    >
-                    <span class="body-md text-on-surface-variant"
-                      >Quảng cáo đã xem</span
+                    <div class="flex items-center gap-2">
+                      <span
+                        class="material-symbols-outlined text-outline dark:text-slate-500 text-[18px]"
+                        >visibility</span
+                      >
+                      <span class="body-md text-on-surface-variant dark:text-slate-400"
+                        >Quảng cáo đã xem</span
+                      >
+                    </div>
+                    <span class="body-md font-semibold text-on-surface dark:text-slate-200"
+                      >{{ quota_info.ad_views_used }}/{{ quota_info.ad_views_limit
+                      }}</span
                     >
                   </div>
-                  <span class="body-md text-on-surface"
-                    >{{ quota_info.ad_views_used }}/{{ quota_info.ad_views_limit
-                    }}</span
-                  >
                 </div>
-              </div>
-              {% if quota_info.remaining_free <= 0 %}
-              <a
-                class="mt-md w-full inline-flex items-center justify-center gap-2 py-2.5 bg-inverse-surface text-inverse-on-surface rounded-lg label-sm label-sm hover:bg-on-background transition-colors"
-                href="{{ url_for('predict.watch_ad') }}"
-                data-watch-ad-trigger
-                aria-haspopup="dialog"
-                aria-controls="watchAdModal"
-              >
-                <span class="material-symbols-outlined text-[18px]"
-                  >smart_display</span
+                {% if quota_info.remaining_free <= 0 %}
+                <a
+                  class="mt-md w-full inline-flex items-center justify-center gap-2 py-2.5 bg-inverse-surface dark:bg-slate-800 text-inverse-on-surface dark:text-slate-200 rounded-lg label-sm font-semibold hover:bg-on-background dark:hover:bg-slate-700 transition-colors"
+                  href="{{ url_for('predict.watch_ad') }}"
+                  data-watch-ad-trigger
+                  aria-haspopup="dialog"
+                  aria-controls="watchAdModal"
                 >
-                Xem quảng cáo để thêm lượt
-              </a>
-              {% endif %} {% else %}
-              <div
-                class="p-3 bg-primary-fixed/40 rounded-lg border border-primary/20"
-              >
-                <div class="body-md text-on-surface-variant">
-                  Bạn đang dùng gói trả phí
+                  <span class="material-symbols-outlined text-[18px]"
+                    >smart_display</span
+                  >
+                  Xem quảng cáo để thêm lượt
+                </a>
+                {% endif %}
+                {% else %}
+                <div
+                  class="p-4 bg-primary/5 dark:bg-blue-950/30 rounded-lg border border-primary/20 dark:border-blue-900/40 mt-4 flex items-center justify-between"
+                >
+                  <div class="flex flex-col gap-0.5">
+                    <div class="body-md font-semibold text-on-surface dark:text-slate-200">
+                      Gói trả phí của bạn
+                    </div>
+                    <div class="label-sm text-on-surface-variant dark:text-slate-400">
+                      Không giới hạn lượt nhận diện
+                    </div>
+                  </div>
+                  <span class="material-symbols-outlined text-primary dark:text-blue-400 text-[24px]">verified</span>
                 </div>
-                <div class="label-sm label-sm text-on-surface mt-1">
-                  Không giới hạn
+                {% endif %}
+              {% else %}
+                <div class="body-md text-on-surface-variant dark:text-slate-450 mt-4">
+                  Đang tải thông tin...
                 </div>
-              </div>
-              {% endif %} {% else %}
-              <div class="body-md text-on-surface-variant">
-                Đang tải thông tin
-              </div>
               {% endif %}
             </section>
 
             <aside
-              class="bg-surface-container-lowest rounded-xl border border-slate-100 p-5 shadow-sm"
+              class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl border border-outline-variant/30 dark:border-slate-800 p-5 shadow-sm"
             >
               <h3
-                class="headline-md headline-md font-semibold text-on-background mb-4 flex items-center gap-2"
+                class="headline-md font-semibold text-on-background dark:text-slate-100 mb-4 flex items-center gap-2"
               >
-                <span class="material-symbols-outlined text-primary"
+                <span class="material-symbols-outlined text-primary dark:text-blue-400"
                   >auto_awesome</span
                 >
                 Trải nghiệm dự đoán
               </h3>
-              <ul class="flex flex-col gap-3 body-md text-on-surface-variant">
+              <ul class="flex flex-col gap-3 body-md text-on-surface-variant dark:text-slate-400">
                 <li class="flex items-start gap-2">
                   <span
-                    class="material-symbols-outlined text-primary text-[18px]"
+                    class="material-symbols-outlined text-primary dark:text-blue-400 text-[18px]"
                     >check</span
                   >
                   Nhận diện giống chó với độ tin cậy %
                 </li>
                 <li class="flex items-start gap-2">
                   <span
-                    class="material-symbols-outlined text-primary text-[18px]"
+                    class="material-symbols-outlined text-primary dark:text-blue-400 text-[18px]"
                     >check</span
                   >
                   Hỗ trợ ảnh có bounding box YOLO
                 </li>
                 <li class="flex items-start gap-2">
                   <span
-                    class="material-symbols-outlined text-primary text-[18px]"
+                    class="material-symbols-outlined text-primary dark:text-blue-400 text-[18px]"
                     >check</span
                   >
                   Lưu lịch sử dự đoán tự động
                 </li>
                 <li class="flex items-start gap-2">
                   <span
-                    class="material-symbols-outlined text-primary text-[18px]"
+                    class="material-symbols-outlined text-primary dark:text-blue-400 text-[18px]"
                     >check</span
                   >
                   Tối ưu cho cả Mobile/Tablet/Desktop
@@ -735,8 +730,9 @@
       </div>
     </main>
 
-    {% if quota_info and quota_info.plan == 'free' %} {% include 'watch_ad.html'
-    %} {% endif %}
+    {% if quota_info and quota_info.plan == 'free' %}
+      {% include 'watch_ad.html' %}
+    {% endif %}
 
     <footer
       class="bg-surface-container-low border-t border-outline-variant/30 px-4 md:px-6 pt-6 pb-4"
@@ -1069,7 +1065,3 @@
     </script>
   </body>
 </html>
-
-
-
-

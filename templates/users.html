@@ -73,6 +73,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/theme-dark.css') }}" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/toasts.css') }}" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile-header-fix.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin-dashboard-content.css') }}" />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
@@ -490,7 +491,7 @@
                 </div>
               </div>
               <div class="mt-4 flex flex-col">
-                <span class="text-3xl font-bold text-on-surface dark:text-slate-105 tracking-tight" id="statTotal">0</span>
+                <span class="text-3xl font-bold text-on-surface dark:text-slate-105 tracking-tight" id="statTotal" data-counter="{{ total_users or 0 }}">0</span>
                 <span class="label-sm text-on-surface-variant/70 dark:text-slate-400/80 mt-1">Tài khoản đã đăng ký</span>
               </div>
             </div>
@@ -504,7 +505,7 @@
                 </div>
               </div>
               <div class="mt-4 flex flex-col">
-                <span class="text-3xl font-bold text-on-surface dark:text-slate-105 tracking-tight" id="statAdmins">0</span>
+                <span class="text-3xl font-bold text-on-surface dark:text-slate-105 tracking-tight" id="statAdmins" data-counter="{{ total_admins or 0 }}">0</span>
                 <span class="label-sm text-on-surface-variant/70 dark:text-slate-400/80 mt-1">Quản trị viên hệ thống</span>
               </div>
             </div>
@@ -518,7 +519,7 @@
                 </div>
               </div>
               <div class="mt-4 flex flex-col">
-                <span class="text-3xl font-bold text-on-surface dark:text-slate-105 tracking-tight" id="statActive">0</span>
+                <span class="text-3xl font-bold text-on-surface dark:text-slate-105 tracking-tight" id="statActive" data-counter="{{ total_active or 0 }}">0</span>
                 <span class="label-sm text-on-surface-variant/70 dark:text-slate-400/80 mt-1">Tài khoản hoạt động</span>
               </div>
             </div>
@@ -532,7 +533,7 @@
                 </div>
               </div>
               <div class="mt-4 flex flex-col">
-                <span class="text-3xl font-bold text-on-surface dark:text-slate-105 tracking-tight" id="statLocked">0</span>
+                <span class="text-3xl font-bold text-on-surface dark:text-slate-105 tracking-tight" id="statLocked" data-counter="{{ total_locked or 0 }}">0</span>
                 <span class="label-sm text-on-surface-variant/70 dark:text-slate-400/80 mt-1">Tài khoản bị khóa</span>
               </div>
             </div>
@@ -939,11 +940,32 @@
         }
 
         function updateStats() {
-          const all = rows();
-          statTotal.textContent = all.length;
-          statAdmins.textContent = all.filter((r) => (r.dataset.role || "").toLowerCase() === "admin").length;
-          statActive.textContent = all.filter((r) => r.dataset.active === "1").length;
-          statLocked.textContent = all.filter((r) => r.dataset.active === "0").length;
+          const animConfig = [
+            { el: statTotal },
+            { el: statAdmins },
+            { el: statActive },
+            { el: statLocked }
+          ];
+
+          const DURATION = 1200;
+          function easeOutExpo(t) {
+            return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+          }
+
+          animConfig.forEach(({ el }) => {
+            if (!el) return;
+            const val = parseFloat(el.getAttribute("data-counter") || "0");
+            let start = null;
+
+            function step(ts) {
+              if (!start) start = ts;
+              const progress = Math.min((ts - start) / DURATION, 1);
+              const currentVal = easeOutExpo(progress) * val;
+              el.textContent = Math.round(currentVal);
+              if (progress < 1) requestAnimationFrame(step);
+            }
+            requestAnimationFrame(step);
+          });
         }
 
         function applyFilters() {

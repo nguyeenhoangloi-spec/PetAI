@@ -1,17 +1,12 @@
 <!doctype html>
-<html
-  class="{{ 'dark' if ui_theme == 'dark' else 'light' }}"
-  lang="{{ ui_language or 'vi' }}"
-  data-theme="{{ ui_theme or 'light' }}"
->
+<html class="{{ 'dark' if ui_theme == 'dark' else 'light' }}" lang="{{ ui_language or 'vi' }}" data-theme="{{ ui_theme or 'light' }}">
   <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <script>
       (function () {
         const root = document.documentElement;
-        const themeStorageKey =
-          "{{ 'theme:' ~ session.get('user_id') if session.get('user_id') else '' }}";
+        const themeStorageKey = "{{ 'theme:' ~ session.get('user_id') if session.get('user_id') else '' }}";
         const serverTheme = "{{ ui_theme or 'light' }}";
         if (themeStorageKey) {
           try {
@@ -31,9 +26,7 @@
         function resolveTheme(theme) {
           if (theme !== "auto") return theme;
           try {
-            return window.matchMedia("(prefers-color-scheme: dark)").matches
-              ? "dark"
-              : "light";
+            return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
           } catch (e) {
             return "light";
           }
@@ -76,20 +69,11 @@
       rel="stylesheet"
       href="{{ url_for('static', filename='css/typography.css') }}"
     />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/theme-dark.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/toasts.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile-header-fix.css') }}" />
     <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='css/theme-dark.css') }}"
-    />
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='css/toasts.css') }}"
-    />
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='css/mobile-header-fix.css') }}"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;500;600;700;800;900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
     <link
@@ -102,53 +86,53 @@
         theme: {
           extend: {
             colors: {
-              "secondary-fixed": "#ffddb8",
-              "on-primary-container": "#eeefff",
-              "error-container": "#ffdad6",
-              "on-surface": "#0b1c30",
-              "primary-container": "#2563eb",
-              "surface-container-low": "#eff4ff",
-              error: "#ba1a1a",
-              "on-secondary-fixed": "#2a1700",
+              "on-tertiary-fixed": "#360f00",
               "secondary-fixed-dim": "#ffb95f",
-              "surface-tint": "#0053db",
-              "surface-dim": "#cbdbf5",
-              "on-error-container": "#93000a",
               "surface-container": "#e5eeff",
-              "inverse-on-surface": "#eaf1ff",
-              "on-secondary": "#ffffff",
+              "on-primary-fixed": "#00174b",
+              error: "#ba1a1a",
               "secondary-container": "#fea619",
-              "surface-container-highest": "#d3e4fe",
-              "surface-container-high": "#dce9ff",
-              outline: "#737686",
-              secondary: "#855300",
-              "primary-fixed": "#dbe1ff",
+              primary: "#004ac6",
               "tertiary-container": "#bc4800",
+              "surface-tint": "#0053db",
+              "on-secondary": "#ffffff",
+              "surface-variant": "#d3e4fe",
+              "on-secondary-container": "#684000",
+              "tertiary-fixed-dim": "#ffb596",
+              "surface-dim": "#cbdbf5",
+              outline: "#737686",
+              "inverse-on-surface": "#eaf1ff",
+              "on-error": "#ffffff",
+              "secondary-fixed": "#ffddb8",
+              "on-primary": "#ffffff",
+              "on-primary-container": "#eeefff",
+              "surface-container-highest": "#d3e4fe",
+              "on-surface": "#0b1c30",
               "surface-container-lowest": "#ffffff",
+              "on-primary-fixed-variant": "#003ea8",
+              "outline-variant": "#c3c6d7",
+              "primary-fixed": "#dbe1ff",
               "inverse-primary": "#b4c5ff",
-              surface: "#f8f9ff",
+              "on-error-container": "#93000a",
               "on-tertiary": "#ffffff",
+              surface: "#f8f9ff",
+              "primary-fixed-dim": "#b4c5ff",
+              "on-background": "#0b1c30",
+              "surface-bright": "#f8f9ff",
+              "inverse-surface": "#213145",
+              "on-tertiary-fixed-variant": "#7d2d00",
               "on-surface-variant": "#434655",
               "tertiary-fixed": "#ffdbcd",
-              "on-error": "#ffffff",
-              background: "#f8f9ff",
-              "on-tertiary-fixed-variant": "#7d2d00",
-              "surface-bright": "#f8f9ff",
-              "on-tertiary-fixed": "#360f00",
-              tertiary: "#943700",
-              "outline-variant": "#c3c6d7",
-              "primary-fixed-dim": "#b4c5ff",
+              "surface-container-high": "#dce9ff",
+              "on-secondary-fixed": "#2a1700",
               "on-tertiary-container": "#ffede6",
+              secondary: "#855300",
+              tertiary: "#943700",
+              background: "#f8f9ff",
+              "primary-container": "#2563eb",
+              "surface-container-low": "#eff4ff",
               "on-secondary-fixed-variant": "#653e00",
-              "on-primary-fixed": "#00174b",
-              "on-secondary-container": "#684000",
-              "on-primary-fixed-variant": "#003ea8",
-              primary: "#004ac6",
-              "tertiary-fixed-dim": "#ffb596",
-              "surface-variant": "#d3e4fe",
-              "on-background": "#0b1c30",
-              "on-primary": "#ffffff",
-              "inverse-surface": "#213145",
+              "error-container": "#ffdad6",
             },
             borderRadius: {
               DEFAULT: "0.25rem",
@@ -157,19 +141,19 @@
               full: "9999px",
             },
             spacing: {
+              md: "24px",
+              base: "8px",
+              sm: "12px",
+              margin: "32px",
+              lg: "48px",
+              xl: "80px",
               gutter: "24px",
               xs: "4px",
-              lg: "48px",
-              sm: "12px",
-              md: "24px",
-              margin: "32px",
-              xl: "80px",
-              base: "8px",
             },
             fontFamily: {
               "headline-md": ["Inter"],
-              "display-xl": ["Inter"],
               "headline-lg": ["Inter"],
+              "display-xl": ["Inter"],
               "body-md": ["Inter"],
               "label-sm": ["Inter"],
               "body-lg": ["Inter"],
@@ -179,20 +163,20 @@
                 "24px",
                 { lineHeight: "32px", fontWeight: "600" },
               ],
-              "display-xl": [
-                "60px",
-                {
-                  lineHeight: "72px",
-                  letterSpacing: "-0.02em",
-                  fontWeight: "700",
-                },
-              ],
               "headline-lg": [
                 "36px",
                 {
                   lineHeight: "44px",
                   letterSpacing: "-0.01em",
                   fontWeight: "600",
+                },
+              ],
+              "display-xl": [
+                "60px",
+                {
+                  lineHeight: "72px",
+                  letterSpacing: "-0.02em",
+                  fontWeight: "700",
                 },
               ],
               "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
@@ -204,10 +188,6 @@
       };
     </script>
     <style>
-      body {
-        font-family: "Inter", sans-serif;
-      }
-
       .material-symbols-outlined {
         font-variation-settings:
           "FILL" 0,
@@ -215,59 +195,53 @@
           "GRAD" 0,
           "opsz" 24;
       }
-
-      .glass-card {
-        background: rgba(255, 255, 255, 0.8);
-        backdrop-filter: blur(12px);
-        border: 1px solid rgba(226, 232, 240, 0.8);
-      }
-
       .ai-overlay-label {
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
       }
     </style>
   </head>
   <body
-    class="bg-background text-on-background body-md body-md antialiased min-h-screen flex flex-col"
+    class="bg-background text-on-background body-md antialiased min-h-screen flex flex-col"
   >
     {% include '_toasts.html' %}
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
-    {% set has_conf = result.breed_conf is defined
-    and result.breed_conf is not none %} {% set conf_percent =
-    (result.breed_conf * 100) if has_conf else 0 %} {% set conf_percent_clamped
-    = 0 if conf_percent < 0 else (100 if conf_percent > 100 else conf_percent)
-    %} {% set breed_name = result.breed if result.breed else 'Chưa xác định' %}
-    {% set primary_label = 'Giống dự đoán' %} {% if result.parts_info and
-    result.parts_info.decision and
-    result.parts_info.decision.is_hybrid_candidate %} {% set primary_label =
-    'Nghi lai' %} {% elif result.parts_info and result.parts_info.acceptance and
-    result.parts_info.acceptance.level == 'reference' %} {% set primary_label =
-    'Giống tham khảo' %} {% endif %} {% set decision_label = 'Ứng viên thuần
-    chủng' %} {% set decision_class = 'pure' %} {% if result.parts_info and
-    result.parts_info.decision and
-    result.parts_info.decision.is_hybrid_candidate %} {% set decision_label =
-    'Ứng viên nghi lai' %} {% set decision_class = 'hybrid' %} {% elif
-    result.parts_info and result.parts_info.acceptance and not
-    result.parts_info.acceptance.accepted %} {% set decision_label = 'Chưa đủ
-    tin cậy' %} {% set decision_class = 'uncertain' %} {% endif %} {% set
-    decision_reason = result.parts_info.decision.reason if result.parts_info and
-    result.parts_info.decision and result.parts_info.decision.reason else 'Chưa
-    có diễn giải chi tiết cho lần dự đoán này.' %} {% set top3_mode = 'softmax'
-    %} {% if result.parts_info and result.parts_info.display and
-    result.parts_info.display.top3_mode %} {% set top3_mode =
-    result.parts_info.display.top3_mode %} {% endif %} {% set gradcam_items = []
-    %} {% set gradcam_mode = '' %} {% if result.parts_info and
-    result.parts_info.gradcam_dynamic and
-    result.parts_info.gradcam_dynamic['items'] %} {% set gradcam_items =
-    result.parts_info.gradcam_dynamic['items'] %} {% set gradcam_mode =
-    'dynamic' %} {% elif result.parts_info and result.parts_info.gradcam and
-    result.parts_info.gradcam['items'] %} {% set gradcam_items =
-    result.parts_info.gradcam['items'] %} {% set gradcam_mode = 'reference' %}
-    {% endif %} {% set display_role = session.get('role') or 'user' %} {% set
-    display_plan = current_plan or 'free' %} {% set heatmap_overlays =
-    ['bg-red-500/40', 'bg-orange-500/40', 'bg-yellow-500/40', 'bg-blue-500/40']
-    %} {% set heatmap_rings = ['ring-red-500/20', 'ring-orange-500/20',
-    'ring-yellow-500/20', 'ring-blue-500/20'] %}
+    {% set has_conf = result.breed_conf is defined and result.breed_conf is not none %} 
+    {% set conf_percent = (result.breed_conf * 100) if has_conf else 0 %} 
+    {% set conf_percent_clamped = 0 if conf_percent < 0 else (100 if conf_percent > 100 else conf_percent) %} 
+    {% set breed_name = result.breed if result.breed else 'Chưa xác định' %}
+    {% set primary_label = 'Giống dự đoán' %} 
+    {% if result.parts_info and result.parts_info.decision and result.parts_info.decision.is_hybrid_candidate %} 
+      {% set primary_label = 'Nghi lai' %} 
+    {% elif result.parts_info and result.parts_info.acceptance and result.parts_info.acceptance.level == 'reference' %} 
+      {% set primary_label = 'Giống tham khảo' %} 
+    {% endif %} 
+    {% set decision_label = 'Ứng viên thuần chủng' %} 
+    {% set decision_class = 'pure' %} 
+    {% if result.parts_info and result.parts_info.decision and result.parts_info.decision.is_hybrid_candidate %} 
+      {% set decision_label = 'Ứng viên nghi lai' %} 
+      {% set decision_class = 'hybrid' %} 
+    {% elif result.parts_info and result.parts_info.acceptance and not result.parts_info.acceptance.accepted %} 
+      {% set decision_label = 'Chưa đủ tin cậy' %} 
+      {% set decision_class = 'uncertain' %} 
+    {% endif %} 
+    {% set decision_reason = result.parts_info.decision.reason if result.parts_info and result.parts_info.decision and result.parts_info.decision.reason else 'Chưa có diễn giải chi tiết cho lần dự đoán này.' %} 
+    {% set top3_mode = 'softmax' %} 
+    {% if result.parts_info and result.parts_info.display and result.parts_info.display.top3_mode %} 
+      {% set top3_mode = result.parts_info.display.top3_mode %} 
+    {% endif %} 
+    {% set gradcam_items = [] %} 
+    {% set gradcam_mode = '' %} 
+    {% if result.parts_info and result.parts_info.gradcam_dynamic and result.parts_info.gradcam_dynamic['items'] %} 
+      {% set gradcam_items = result.parts_info.gradcam_dynamic['items'] %} 
+      {% set gradcam_mode = 'dynamic' %} 
+    {% elif result.parts_info and result.parts_info.gradcam and result.parts_info.gradcam['items'] %} 
+      {% set gradcam_items = result.parts_info.gradcam['items'] %} 
+      {% set gradcam_mode = 'reference' %} 
+    {% endif %} 
+    {% set display_role = session.get('role') or 'user' %} 
+    {% set display_plan = current_plan or 'free' %} 
+    {% set heatmap_overlays = ['bg-red-500/40', 'bg-orange-500/40', 'bg-yellow-500/40', 'bg-blue-500/40'] %} 
+    {% set heatmap_rings = ['ring-red-500/20', 'ring-orange-500/20', 'ring-yellow-500/20', 'ring-blue-500/20'] %}
 
     <nav
       class="bg-white/80 dark:bg-slate-950/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-200 dark:border-slate-800 shadow-sm font-['Inter'] antialiased"
@@ -290,9 +264,7 @@
             <span></span>
           </button>
         </div>
-        <div
-          class="hidden md:flex flex-1 items-center justify-end gap-margin mr-gutter [&>a]:px-0.5 [&>a]:body-md"
-        >
+        <div class="hidden md:flex flex-1 items-center justify-end gap-margin mr-gutter [&>a]:px-0.5 [&>a]:label-sm">
           <a
             class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
             href="{{ url_for('dashboard.dashboard') }}"
@@ -319,7 +291,8 @@
             href="{{ url_for('predict.my_payments') }}"
             >Lịch sử thanh toán</a
           >
-          {% endif %} {% if session.get('role') == 'admin' %}
+          {% endif %}
+          {% if session.get('role') == 'admin' %}
           <a
             class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
             href="{{ url_for('users.list_users') }}"
@@ -334,112 +307,108 @@
         </div>
         <div class="flex items-center gap-md">
           <a
-            class="hidden md:inline-flex bg-primary text-on-primary px-4 py-2 rounded-lg label-sm hover:opacity-90 active:scale-95 duration-150 transition-all"
+            class="hidden md:inline-flex bg-primary text-on-primary px-4 py-2 rounded-lg label-sm shadow-sm hover:shadow-md transition-all font-semibold"
             href="{{ url_for('predict.upload_page') }}"
             >Nhận diện</a
           >
           <div class="language-switcher mr-2" id="languageSwitcher">
-              <button class="language-button" id="languageButton" type="button" aria-haspopup="true" aria-expanded="false">
+            <button class="language-button" id="languageButton" type="button" aria-haspopup="true" aria-expanded="false">
+              <span class="language-flag">🇻🇳</span>
+              <span class="language-current">VN</span>
+              <span class="language-arrow">▼</span>
+            </button>
+            <div class="language-menu" id="languageMenu">
+              <button class="language-option active" type="button" data-lang="vi">
+                <span class="language-check">✓</span>
                 <span class="language-flag">🇻🇳</span>
-                <span class="language-current">VN</span>
-                <span class="language-arrow">▼</span>
+                <span>Tiếng Việt</span>
               </button>
-              <div class="language-menu" id="languageMenu">
-                <button class="language-option active" type="button" data-lang="vi">
-                  <span class="language-check">✓</span>
-                  <span class="language-flag">🇻🇳</span>
-                  <span>Tiếng Việt</span>
-                </button>
-                <button class="language-option" type="button" data-lang="en">
-                  <span class="language-check"></span>
-                  <span class="language-flag">🇺🇸</span>
-                  <span>English</span>
-                </button>
-              </div>
+              <button class="language-option" type="button" data-lang="en">
+                <span class="language-check"></span>
+                <span class="language-flag">🇺🇸</span>
+                <span>English</span>
+              </button>
             </div>
-            <div class="relative cursor-pointer avatar-wrapper">
-                              <img
-                alt="Ảnh đại diện"
-                class="w-9 h-9 rounded-full border-2 border-primary/20 p-0.5"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDaAwfxOW9LtSPQ4CMpHh_MZj4C-a3XURpy47OidOmmzbKzNRwNeR_tNSBeoFDP9dSnziLwQG4nPJKCuKtkxq4tUiBuLpCheGH7nOKArEmnFQ4h-srxtCzJuuXVbqDrPzi3eC_u0b61szh9krSLnTZdWzIxOFW1KnH4UW0EOXfAcgwarik1GLH8h-BWePFrcuV4Rqrw4n-qitWuQZHLsuPlLkOkFrM2-JiKkgwvYbvQPfe-B0eq8WGpcNe8IDhIHexuKSNYw8k4GOw"
-              />
-
-              <div
-                class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white dark:border-slate-900 rounded-full"
-              ></div>
-              <div
-                class="absolute right-0 top-full w-52 bg-white dark:bg-slate-900 rounded-lg shadow-xl border border-slate-200 dark:border-slate-800 py-2 hidden avatar-dropdown-menu z-50"
-              >
-                <div class="px-4 pb-2">
-                  <div class="label-sm text-slate-500 dark:text-slate-400">
-                    Vai trò:
-                    <span
-                      class="font-semibold text-slate-800 dark:text-slate-200"
-                      >{{ display_role|upper }}</span
-                    >
-                  </div>
-                  <div class="label-sm text-slate-500 dark:text-slate-400">
-                    Gói:
-                    <span
-                      class="font-semibold text-slate-800 dark:text-slate-200"
-                      >{{ display_plan|upper }}</span
-                    >
-                  </div>
-                </div>                <a
-                  class="flex items-center gap-2 px-4 py-2 body-md text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors font-semibold"
-                  href="{{ url_for('settings.settings') }}"
-                >
-                  <span class="material-symbols-outlined text-[18px]"
-                    >settings</span
+          </div>
+          <div class="relative cursor-pointer avatar-wrapper">
+            <img
+              alt="Ảnh đại diện"
+              class="w-9 h-9 rounded-full border-2 border-primary/20 p-0.5"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuDaAwfxOW9LtSPQ4CMpHh_MZj4C-a3XURpy47OidOmmzbKzNRwNeR_tNSBeoFDP9dSnziLwQG4nPJKCuKtkxq4tUiBuLpCheGH7nOKArEmnFQ4h-srxtCzJuuXVbqDrPzi3eC_u0b61szh9krSLnTZdWzIxOFW1KnH4UW0EOXfAcgwarik1GLH8h-BWePFrcuV4Rqrw4n-qitWuQZHLsuPlLkOkFrM2-JiKkgwvYbvQPfe-B0eq8WGpcNe8IDhIHexuKSNYw8k4GOw"
+            />
+            <div
+              class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white dark:border-slate-900 rounded-full"
+            ></div>
+            <div
+              class="absolute right-0 top-full w-52 bg-white dark:bg-slate-900 rounded-lg shadow-xl border border-slate-200 dark:border-slate-800 py-2 hidden avatar-dropdown-menu z-50"
+            >
+              <div class="px-4 pb-2">
+                <div class="label-sm text-slate-500 dark:text-slate-400">
+                  Vai trò:
+                  <span
+                    class="font-semibold text-slate-800 dark:text-slate-200"
+                    >{{ display_role|upper }}</span
                   >
-                  <span data-i18n="personalInfo">Thông tin cá nhân</span>
-                </a>
-
-                <div class="h-px bg-slate-200 dark:bg-slate-800 my-1"></div>
-                <a
-                  class="flex items-center gap-2 px-4 py-2 body-md text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors font-semibold"
-                  href="{{ url_for('logout.logout') }}"
-                >
-                  <span class="material-symbols-outlined text-[18px]"
-                    >logout</span
+                </div>
+                <div class="label-sm text-slate-500 dark:text-slate-400">
+                  Gói:
+                  <span
+                    class="font-semibold text-slate-800 dark:text-slate-200"
+                    >{{ display_plan|upper }}</span
                   >
-                  Đăng xuất
-                </a>
+                </div>
               </div>
+              <a
+                class="flex items-center gap-2 px-4 py-2 body-md text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors font-semibold"
+                href="{{ url_for('settings.settings') }}"
+              >
+                <span class="material-symbols-outlined text-[18px]"
+                  >settings</span
+                >
+                <span data-i18n="personalInfo">Thông tin cá nhân</span>
+              </a>
+              <div class="h-px bg-slate-200 dark:bg-slate-800 my-1"></div>
+              <a
+                class="flex items-center gap-2 px-4 py-2 body-md text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors font-semibold"
+                href="{{ url_for('logout.logout') }}"
+              >
+                <span class="material-symbols-outlined text-[18px]"
+                  >logout</span
+                >
+                Đăng xuất
+              </a>
             </div>
           </div>
         </div>
-      </nav>
+      </div>
+    </nav>
 
     <main
+      tabindex="-1"
       class="flex-grow w-full px-4 md:px-6 py-margin grid grid-cols-1 md:grid-cols-[230px_minmax(0,1fr)] gap-gutter"
     >
       <aside class="sidebar col-span-1" id="sidebar">
         <div
-          class="soft-panel bg-surface-container-lowest rounded-xl py-sm px-2 flex flex-col gap-sm sticky top-24 border border-slate-100 shadow-sm"
+          class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] py-sm px-2 flex flex-col gap-sm sticky top-24 border border-outline-variant/30"
         >
           <h3
-            class="label-sm label-sm text-on-surface-variant uppercase tracking-wider mb-xs px-1.5"
+            class="label-sm text-on-surface-variant dark:text-slate-400 uppercase tracking-wider mb-xs px-1.5"
           >
-            <span data-i18n="quickAccess">Truy cập nhanh</span>
+            Truy cập nhanh
           </h3>
           <a
-            class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-primary bg-primary-fixed/50 transition-colors group"
+            class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface dark:text-slate-300 hover:text-primary dark:hover:text-blue-400 hover:bg-surface-container dark:hover:bg-slate-800 transition-colors group"
             href="{{ url_for('predict.upload_page') }}"
           >
             <span
-              class="material-symbols-outlined text-primary group-hover:scale-105 transition-transform"
+              class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
               data-icon="upload_file"
-              data-weight="fill"
-              style="font-variation-settings: &quot;FILL&quot; 1"
               >upload_file</span
             >
-            <span class="label-sm label-sm font-semibold"
-              >Tải ảnh &amp; Phân tích</span
-            >
+            <span class="label-sm">Tải ảnh &amp; Phân tích</span>
           </a>
           <a
-            class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
+            class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface dark:text-slate-300 hover:text-primary dark:hover:text-blue-400 hover:bg-surface-container dark:hover:bg-slate-800 transition-colors group"
             href="{{ url_for('history.history') }}"
           >
             <span
@@ -447,10 +416,23 @@
               data-icon="history"
               >history</span
             >
-            <span class="label-sm label-sm"><span data-i18n="predictionHistory">Lịch sử dự đoán</span></span>
+            <span class="label-sm">Lịch sử dự đoán</span>
           </a>
+          {% if session.get('role') == 'user' %}
           <a
-            class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
+            class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface dark:text-slate-300 hover:text-primary dark:hover:text-blue-400 hover:bg-surface-container dark:hover:bg-slate-800 transition-colors group"
+            href="{{ url_for('predict.my_payments') }}"
+          >
+            <span
+              class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
+              data-icon="payments"
+              >payments</span
+            >
+            <span class="label-sm">Lịch sử thanh toán</span>
+          </a>
+          {% endif %}
+          <a
+            class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface dark:text-slate-300 hover:text-primary dark:hover:text-blue-400 hover:bg-surface-container dark:hover:bg-slate-800 transition-colors group"
             href="{{ url_for('statistics.statistics') }}"
           >
             <span
@@ -458,10 +440,10 @@
               data-icon="bar_chart"
               >bar_chart</span
             >
-            <span class="label-sm label-sm"><span data-i18n="personalStats">Thống kê cá nhân</span></span>
+            <span class="label-sm">Thống kê cá nhân</span>
           </a>
           <a
-            class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
+            class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface dark:text-slate-300 hover:text-primary dark:hover:text-blue-400 hover:bg-surface-container dark:hover:bg-slate-800 transition-colors group"
             href="{{ url_for('predict.upgrade') }}"
           >
             <span
@@ -469,11 +451,11 @@
               data-icon="upgrade"
               >upgrade</span
             >
-            <span class="label-sm label-sm"><span data-i18n="upgradePlan">Nâng cấp gói</span></span>
+            <span class="label-sm">Nâng cấp gói</span>
           </a>
           {% if session.get('role') == 'admin' %}
           <a
-            class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
+            class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface dark:text-slate-300 hover:text-primary dark:hover:text-blue-400 hover:bg-surface-container dark:hover:bg-slate-800 transition-colors group"
             href="{{ url_for('users.list_users') }}"
           >
             <span
@@ -481,10 +463,10 @@
               data-icon="groups"
               >groups</span
             >
-            <span class="label-sm label-sm">Quản lý người dùng</span>
+            <span class="label-sm">Quản lý người dùng</span>
           </a>
           <a
-            class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
+            class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface dark:text-slate-300 hover:text-primary dark:hover:text-blue-400 hover:bg-surface-container dark:hover:bg-slate-800 transition-colors group"
             href="{{ url_for('users.confirmations_list') }}"
           >
             <span
@@ -492,12 +474,12 @@
               data-icon="receipt_long"
               >receipt_long</span
             >
-            <span class="label-sm label-sm">Duyệt đơn</span>
+            <span class="label-sm">Duyệt đơn</span>
           </a>
           {% endif %}
-          <hr class="border-outline-variant/30 my-xs" />
+          <hr class="border-outline-variant/30 dark:border-slate-850 my-xs" />
           <a
-            class="flex items-center gap-sm py-1.5 px-1.5 rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
+            class="flex items-center gap-sm py-1.5 px-1.5 rounded-lg text-on-surface dark:text-slate-300 hover:text-primary dark:hover:text-blue-400 hover:bg-surface-container dark:hover:bg-slate-800 transition-colors group"
             href="{{ url_for('settings.settings') }}"
           >
             <span
@@ -507,55 +489,52 @@
             >
             <span class="label-sm"><span data-i18n="accountSettings">Cài đặt tài khoản</span></span>
           </a>
-
         </div>
       </aside>
 
       <div class="col-span-1 flex flex-col gap-gutter">
         <div class="w-full space-y-md">
-          <div
-            class="flex flex-col md:flex-row md:items-end justify-between gap-md mb-2"
+          <!-- Page Header -->
+          <section
+            class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-outline-variant/20 dark:border-slate-800 pb-5"
+            data-purpose="page-header"
           >
             <div class="flex flex-col gap-2">
-              <h1 class="headline-lg font-semibold text-on-surface">
+              <h1 class="headline-lg font-semibold text-on-surface dark:text-slate-100">
                 Kết quả nhận diện giống chó
               </h1>
-              <p class="body-md text-on-surface-variant">
+              <p class="body-md text-on-surface-variant dark:text-slate-400">
                 Hệ thống AI đã hoàn tất phân tích hình ảnh với độ chính xác cao.
               </p>
             </div>
             <div class="flex flex-wrap gap-3 mt-4 md:mt-0">
               <a
-                class="bg-surface-container-lowest text-on-surface px-4 py-2 rounded-lg label-sm border border-outline-variant hover:border-primary hover:text-primary transition-colors flex items-center gap-2"
+                class="px-4 py-2.5 rounded-lg border border-outline-variant/40 dark:border-slate-700 label-sm font-semibold text-on-surface dark:text-slate-300 hover:bg-surface-container-low dark:hover:bg-slate-800 transition-colors flex items-center gap-2"
                 href="{{ url_for('dashboard.dashboard') }}"
               >
-                <span class="material-symbols-outlined text-[18px]"
-                  >dashboard</span
-                >
+                <span class="material-symbols-outlined text-[18px]">dashboard</span>
                 Về bảng điều khiển
               </a>
               <a
-                class="bg-primary text-on-primary px-4 py-2 rounded-lg label-sm shadow-sm hover:shadow-md transition-all flex items-center gap-2"
+                class="bg-primary hover:bg-primary/95 text-on-primary px-4 py-2.5 rounded-lg label-sm shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-2 font-semibold"
                 href="{{ url_for('predict.upload_page') }}"
               >
-                <span class="material-symbols-outlined text-[18px]"
-                  >photo_camera</span
-                >
+                <span class="material-symbols-outlined text-[18px]">photo_camera</span>
                 Phân tích ảnh khác
               </a>
             </div>
-          </div>
+          </section>
 
           <section class="space-y-gutter">
             <div
-              class="flex items-center gap-3 border-b border-outline-variant/30 pb-4"
+              class="flex items-center gap-3 border-b border-outline-variant/20 dark:border-slate-800 pb-4"
             >
               <div
-                class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary"
+                class="w-10 h-10 rounded-full bg-primary/10 dark:bg-primary/20 flex items-center justify-center text-primary dark:text-blue-400"
               >
                 <span class="material-symbols-outlined">visibility</span>
               </div>
-              <h2 class="headline-md headline-md text-on-surface">
+              <h2 class="headline-md font-semibold text-on-surface dark:text-slate-100">
                 Visual AI Insights
               </h2>
             </div>
@@ -563,27 +542,26 @@
             <div
               class="grid grid-cols-1 xl:grid-cols-12 gap-gutter items-start"
             >
+              <!-- Image view card -->
               <div class="xl:col-span-8">
                 <div
-                  class="glass-card rounded-xl p-5 bg-white border border-slate-100 shadow-sm"
+                  class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-5 border border-outline-variant/30 dark:border-slate-800 shadow-sm"
                 >
                   <div class="flex items-center justify-between mb-4 px-2">
                     <div class="flex items-center gap-3">
-                      <span class="material-symbols-outlined text-primary"
-                        >analytics</span
-                      >
-                      <h3 class="font-semibold headline-md">
+                      <span class="material-symbols-outlined text-primary dark:text-blue-400">analytics</span>
+                      <h3 class="font-semibold headline-md text-on-surface dark:text-slate-100">
                         Phân tích vùng đối tượng chính
                       </h3>
                     </div>
                     <span
-                      class="px-3 py-1 bg-primary/10 text-primary label-sm font-bold rounded-full uppercase tracking-widest"
+                      class="px-3 py-1 bg-primary/10 dark:bg-primary/20 text-primary dark:text-blue-400 label-sm font-bold rounded-full uppercase tracking-widest"
                     >
                       Đang phân tích
                     </span>
                   </div>
                   <div
-                    class="relative rounded-xl overflow-hidden shadow-inner border border-slate-100 bg-slate-50"
+                    class="relative rounded-xl overflow-hidden shadow-inner border border-outline-variant/20 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/40"
                   >
                     <img
                       class="w-full h-auto max-h-[700px] object-contain mx-auto"
@@ -599,9 +577,7 @@
                         <div
                           class="absolute -top-10 left-0 bg-primary text-white label-sm px-3 py-1.5 font-bold uppercase tracking-widest rounded-t-lg shadow-lg flex items-center gap-2"
                         >
-                          <span class="material-symbols-outlined text-sm"
-                            >check_circle</span
-                          >
+                          <span class="material-symbols-outlined text-sm">check_circle</span>
                           {% if result.parts_info and result.parts_info.decision and result.parts_info.decision.is_hybrid_candidate and result.parts_info.similarity_top3|length >= 2 %}
                             Mix Lai: {{ result.parts_info.similarity_top3[0].breed }} × {{ result.parts_info.similarity_top3[1].breed }}
                           {% else %}
@@ -616,7 +592,7 @@
                     </div>
                     <div class="absolute bottom-4 right-4 flex flex-col gap-2">
                       <div
-                        class="glass-card px-4 py-2 rounded-lg flex items-center gap-2 label-sm font-medium text-slate-700"
+                        class="glass-card bg-white/80 dark:bg-slate-900/80 backdrop-blur-md px-4 py-2 rounded-lg flex items-center gap-2 label-sm font-medium text-slate-700 dark:text-slate-300 border border-outline-variant/30 dark:border-slate-800"
                       >
                         <div class="w-3 h-3 rounded-full bg-primary"></div>
                         Nhận diện đối tượng chính
@@ -626,46 +602,46 @@
                 </div>
               </div>
 
+              <!-- Top Breed Card -->
               <div class="xl:col-span-4 space-y-gutter">
                 <div
-                  class="glass-card rounded-xl p-5 border border-slate-100 shadow-sm border-t-4 border-t-primary"
+                  class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-5 border border-outline-variant/30 dark:border-slate-800 shadow-sm border-t-4 border-t-primary"
                 >
                   <div class="flex justify-between items-start mb-4">
                     <div>
                       <span
-                        class="label-sm label-sm text-outline uppercase tracking-widest"
+                        class="label-sm text-outline dark:text-slate-400 uppercase tracking-widest"
                       >
                         Dự đoán tốt nhất
                       </span>
                       <h2
-                        class="headline-lg headline-lg text-on-surface mt-1 leading-tight"
+                        class="headline-lg text-on-surface dark:text-slate-100 mt-1 leading-tight"
                       >
                         {% if result.parts_info and result.parts_info.decision and result.parts_info.decision.is_hybrid_candidate and result.parts_info.similarity_top3|length >= 2 %}
                           Mix Lai: {{ result.parts_info.similarity_top3[0].breed }} × {{ result.parts_info.similarity_top3[1].breed }}
                         {% else %}
                           {{ breed_name }}
                           {% if primary_label and primary_label != 'Nghi lai' %}
-                          <span class="text-primary text-sm font-semibold">({{ primary_label }})</span>
+                          <span class="text-primary dark:text-blue-400 text-sm font-semibold">({{ primary_label }})</span>
                           {% endif %}
                         {% endif %}
                       </h2>
                     </div>
                     <div class="flex flex-col items-end">
                       <div
-                        class="headline-lg font-black text-primary leading-none"
+                        class="headline-lg font-black text-primary dark:text-blue-400 leading-none"
                       >
-                        {% if has_conf %} {{ '%.1f'|format(conf_percent_clamped)
-                        }}%{% else %} -- {% endif %}
+                        {% if has_conf %} {{ '%.1f'|format(conf_percent_clamped) }}%{% else %} -- {% endif %}
                       </div>
                       <div
-                        class="label-sm label-sm text-outline mt-1 font-bold"
+                        class="label-sm text-outline dark:text-slate-400 mt-1 font-bold"
                       >
                         Độ tin cậy
                       </div>
                     </div>
                   </div>
                   <div
-                    class="w-full bg-surface-container-highest h-3 rounded-full overflow-hidden mb-6"
+                    class="w-full bg-surface-container-highest dark:bg-slate-800 h-3 rounded-full overflow-hidden mb-6"
                   >
                     <div
                       class="bg-primary h-full rounded-full shadow-[0_0_12px_rgba(37,99,235,0.4)] confidence-fill"
@@ -674,26 +650,24 @@
                   </div>
                   {% if result.note %}
                   <div
-                    class="p-3 bg-error-container/40 rounded-lg border border-error-container/60 mb-4"
+                    class="p-3 bg-error-container/40 dark:bg-red-950/20 rounded-lg border border-error-container/60 dark:border-red-900/30 mb-4"
                   >
-                    <p class="body-md body-md text-on-error-container">
+                    <p class="body-md text-on-error-container dark:text-red-400">
                       {{ result.note }}
                     </p>
                   </div>
                   {% endif %}
                   <div
-                    class="p-5 bg-primary/5 rounded-xl border border-primary/10"
+                    class="p-5 bg-primary/5 dark:bg-blue-950/20 rounded-xl border border-primary/10 dark:border-blue-900/20"
                   >
                     <p
-                      class="body-md body-md text-on-surface-variant leading-relaxed"
+                      class="body-md text-on-surface-variant dark:text-slate-300 leading-relaxed"
                     >
                       {{ decision_reason }}
                     </p>
-                    {% if result.parts_info and result.parts_info.decision and
-                    result.parts_info.decision.is_hybrid_candidate %}
-                    <p class="label-sm label-sm text-on-surface-variant mt-3">
-                      Đây là gợi ý ứng viên lai dựa trên tương đồng hình thái,
-                      không phải kết luận di truyền.
+                    {% if result.parts_info and result.parts_info.decision and result.parts_info.decision.is_hybrid_candidate %}
+                    <p class="label-sm text-on-surface-variant dark:text-slate-400 mt-3">
+                      Đây là gợi ý ứng viên lai dựa trên tương đồng hình thái, không phải kết luận di truyền.
                     </p>
                     {% endif %}
                   </div>
@@ -708,7 +682,7 @@
                     {% set p2 = 100.0 - p1 %}
                     <div class="mt-4 p-5 bg-gradient-to-r from-blue-50/50 to-primary/5 dark:from-slate-800/40 dark:to-slate-900/40 rounded-xl border border-blue-100 dark:border-slate-850">
                       <h4 class="text-xs font-semibold uppercase text-slate-500 dark:text-slate-400 tracking-wider mb-4 flex items-center gap-1.5">
-                        <span class="material-symbols-outlined text-[16px] text-primary">analytics</span>
+                        <span class="material-symbols-outlined text-[16px] text-primary dark:text-blue-400">analytics</span>
                         Phân tích tỷ lệ lai dự tính
                       </h4>
                       
@@ -725,19 +699,19 @@
                         
                         <!-- Parent Breeds Breakdown -->
                         <div class="grid grid-cols-2 gap-4 mt-2">
-                          <div class="bg-white dark:bg-slate-950 p-4 rounded-xl border border-slate-100 dark:border-slate-850 flex flex-col gap-1.5 shadow-sm">
+                          <div class="bg-surface-container-low dark:bg-slate-950 p-4 rounded-xl border border-outline-variant/30 dark:border-slate-800 flex flex-col gap-1.5 shadow-sm">
                             <div class="flex items-center justify-between">
-                              <span class="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase">Gen trội dự kiến</span>
-                              <span class="text-xs font-black text-primary">{{ p1 }}%</span>
+                              <span class="text-[10px] font-semibold text-slate-450 dark:text-slate-500 uppercase">Gen trội dự kiến</span>
+                              <span class="text-xs font-black text-primary dark:text-blue-400">{{ p1 }}%</span>
                             </div>
                             <div class="text-sm font-bold text-slate-800 dark:text-slate-200">{{ mix_breed1.breed }}</div>
                             <div class="text-[11px] text-slate-400 dark:text-slate-500 font-mono">Độ tương đồng: {{ '%.3f'|format(s1) }}</div>
                           </div>
                           
-                          <div class="bg-white dark:bg-slate-950 p-4 rounded-xl border border-slate-100 dark:border-slate-850 flex flex-col gap-1.5 shadow-sm">
+                          <div class="bg-surface-container-low dark:bg-slate-950 p-4 rounded-xl border border-outline-variant/30 dark:border-slate-800 flex flex-col gap-1.5 shadow-sm">
                             <div class="flex items-center justify-between">
-                              <span class="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase">Gen ẩn dự kiến</span>
-                              <span class="text-xs font-black text-yellow-550 dark:text-yellow-400">{{ p2 }}%</span>
+                              <span class="text-[10px] font-semibold text-slate-450 dark:text-slate-500 uppercase">Gen ẩn dự kiến</span>
+                              <span class="text-xs font-black text-yellow-600 dark:text-yellow-400">{{ p2 }}%</span>
                             </div>
                             <div class="text-sm font-bold text-slate-800 dark:text-slate-200">{{ mix_breed2.breed }}</div>
                             <div class="text-[11px] text-slate-400 dark:text-slate-500 font-mono">Độ tương đồng: {{ '%.3f'|format(s2) }}</div>
@@ -748,70 +722,58 @@
                   {% endif %}
                 </div>
 
-                {% if result.parts_info and (result.parts_info.top5 or
-                result.parts_info.similarity_top3) %}
+                {% if result.parts_info and (result.parts_info.top5 or result.parts_info.similarity_top3) %}
                 <div
-                  class="glass-card rounded-xl p-5 border border-slate-100 shadow-sm"
+                  class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-5 border border-outline-variant/30 dark:border-slate-800 shadow-sm"
                 >
                   <h3
-                    class="font-semibold text-on-surface mb-6 flex items-center gap-2"
+                    class="font-semibold text-on-surface dark:text-slate-100 mb-6 flex items-center gap-2"
                   >
-                    <span
-                      class="material-symbols-outlined text-secondary-container"
-                      >schema</span
-                    >
-                    {% if top3_mode == 'similarity' %} Tương đồng hình thái (Top
-                    3) {% else %} Top 3 xác suất softmax {% endif %}
+                    <span class="material-symbols-outlined text-secondary-container dark:text-orange-400">schema</span>
+                    {% if top3_mode == 'similarity' %} Tương đồng hình thái (Top 3) {% else %} Top 3 xác suất softmax {% endif %}
                   </h3>
                   <div class="space-y-6">
-                    {% if top3_mode == 'similarity' %} {% for item in
-                    result.parts_info.similarity_top3[:3] %} {% set sim_score =
-                    item.score or 0 %} {% set sim_score_clamped = 0 if sim_score
-                    < 0 else (1 if sim_score > 1 else sim_score) %}
-                    <div class="space-y-2">
-                      <div class="flex justify-between label-sm label-sm">
-                        <span class="text-on-surface font-semibold"
-                          >{{ item.breed }}</span
-                        >
-                        <span class="text-outline font-bold"
-                          >{{ '%.1f'|format(sim_score_clamped * 100) }}%</span
-                        >
-                      </div>
-                      <div
-                        class="w-full bg-slate-100 h-2 rounded-full overflow-hidden"
-                      >
+                    {% if top3_mode == 'similarity' %} 
+                      {% for item in result.parts_info.similarity_top3[:3] %} 
+                      {% set sim_score = item.score or 0 %} 
+                      {% set sim_score_clamped = 0 if sim_score < 0 else (1 if sim_score > 1 else sim_score) %}
+                      <div class="space-y-2">
+                        <div class="flex justify-between label-sm">
+                          <span class="text-on-surface dark:text-slate-200 font-semibold">{{ item.breed }}</span>
+                          <span class="text-outline dark:text-slate-400 font-bold">{{ '%.1f'|format(sim_score_clamped * 100) }}%</span>
+                        </div>
                         <div
-                          class="bg-slate-400 h-full rounded-full top5-fill"
-                          data-width="{{ (sim_score_clamped * 100)|int }}"
-                        ></div>
-                      </div>
-                    </div>
-                    {% endfor %} {% else %} {% for item in
-                    result.parts_info.top5[:3] %} {% set score = item.score or 0
-                    %}
-                    <div class="space-y-2">
-                      <div class="flex justify-between label-sm label-sm">
-                        <span class="text-on-surface font-semibold"
-                          >{{ item.breed }}</span
+                          class="w-full bg-surface-container-low dark:bg-slate-800 h-2 rounded-full overflow-hidden"
                         >
-                        <span class="text-outline font-bold"
-                          >{{ '%.1f'|format(score * 100) }}%</span
-                        >
+                          <div
+                            class="bg-outline dark:bg-slate-500 h-full rounded-full top5-fill"
+                            data-width="{{ (sim_score_clamped * 100)|int }}"
+                          ></div>
+                        </div>
                       </div>
-                      <div
-                        class="w-full bg-slate-100 h-2 rounded-full overflow-hidden"
-                      >
+                      {% endfor %} 
+                    {% else %} 
+                      {% for item in result.parts_info.top5[:3] %} 
+                      {% set score = item.score or 0 %}
+                      <div class="space-y-2">
+                        <div class="flex justify-between label-sm">
+                          <span class="text-on-surface dark:text-slate-200 font-semibold">{{ item.breed }}</span>
+                          <span class="text-outline dark:text-slate-400 font-bold">{{ '%.1f'|format(score * 100) }}%</span>
+                        </div>
                         <div
-                          class="bg-slate-400 h-full rounded-full top5-fill"
-                          data-width="{{ ((score * 100)|int) }}"
-                        ></div>
+                          class="w-full bg-surface-container-low dark:bg-slate-800 h-2 rounded-full overflow-hidden"
+                        >
+                          <div
+                            class="bg-outline dark:bg-slate-500 h-full rounded-full top5-fill"
+                            data-width="{{ ((score * 100)|int) }}"
+                          ></div>
+                        </div>
                       </div>
-                    </div>
-                    {% endfor %} {% endif %}
+                      {% endfor %} 
+                    {% endif %}
                   </div>
-                  {% if result.parts_info.display and
-                  result.parts_info.display.top3_note %}
-                  <p class="label-sm label-sm text-on-surface-variant mt-4">
+                  {% if result.parts_info.display and result.parts_info.display.top3_note %}
+                  <p class="label-sm text-on-surface-variant dark:text-slate-400 mt-4">
                     {{ result.parts_info.display.top3_note }}
                   </p>
                   {% endif %}
@@ -820,39 +782,33 @@
               </div>
             </div>
 
+            <!-- GradCAM visualization -->
             {% if gradcam_items %}
             <div
-              class="glass-card rounded-xl p-5 border border-slate-100 shadow-sm"
+              class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-5 border border-outline-variant/30 dark:border-slate-800 shadow-sm"
             >
               <div class="flex items-center justify-between mb-8">
                 <div>
                   <h3
-                    class="headline-md headline-md text-on-surface flex items-center gap-2"
+                    class="headline-md text-on-surface dark:text-slate-100 flex items-center gap-2"
                   >
-                    <span class="material-symbols-outlined text-tertiary"
-                      >grid_view</span
-                    >
-                    {% if gradcam_mode == 'dynamic' %} Grad-CAM động (Visual
-                    Proof) {% else %} Grad-CAM tham khảo (Visual Proof) {% endif
-                    %}
+                    <span class="material-symbols-outlined text-tertiary dark:text-amber-500">grid_view</span>
+                    {% if gradcam_mode == 'dynamic' %} Grad-CAM động (Visual Proof) {% else %} Grad-CAM tham khảo (Visual Proof) {% endif %}
                   </h3>
-                  <p class="body-md text-outline mt-1">
-                    {% if gradcam_mode == 'dynamic' %} Bản đồ nhiệt theo đúng
-                    ảnh bạn vừa tải lên. {% else %} Bản đồ nhiệt theo giống tham
-                    khảo. {% endif %}
+                  <p class="body-md text-outline dark:text-slate-400 mt-1">
+                    {% if gradcam_mode == 'dynamic' %} Bản đồ nhiệt theo đúng ảnh bạn vừa tải lên. {% else %} Bản đồ nhiệt theo giống tham khảo. {% endif %}
                   </p>
                 </div>
               </div>
               <div
                 class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter"
               >
-                {% for item in gradcam_items[:4] %} {% set overlay_class =
-                heatmap_overlays[loop.index0 % (heatmap_overlays|length)] %} {%
-                set ring_class = heatmap_rings[loop.index0 %
-                (heatmap_rings|length)] %}
+                {% for item in gradcam_items[:4] %} 
+                {% set overlay_class = heatmap_overlays[loop.index0 % (heatmap_overlays|length)] %} 
+                {% set ring_class = heatmap_rings[loop.index0 % (heatmap_rings|length)] %}
                 <div class="space-y-3 group">
                   <div
-                    class="relative rounded-xl overflow-hidden aspect-square border border-slate-200"
+                    class="relative rounded-xl overflow-hidden aspect-square border border-outline-variant/30 dark:border-slate-800 bg-slate-50 dark:bg-slate-950"
                   >
                     <img
                       class="w-full h-full object-cover"
@@ -873,10 +829,10 @@
                     </div>
                   </div>
                   <div class="px-1">
-                    <h4 class="font-bold text-on-surface body-md">
+                    <h4 class="font-bold text-on-surface dark:text-slate-200 body-md">
                       {{ item.label or item.breed }}
                     </h4>
-                    <p class="label-sm text-outline">
+                    <p class="label-sm text-outline dark:text-slate-400">
                       Vùng nổi bật AI tập trung
                     </p>
                   </div>
@@ -886,50 +842,51 @@
             </div>
             {% endif %}
 
+            <!-- Logical diagnosis explanation -->
             <div
-              class="soft-panel glass-card rounded-xl p-5 border border-slate-100 shadow-sm"
+              class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-5 border border-outline-variant/30 dark:border-slate-800 shadow-sm"
             >
               <div class="flex items-center gap-3 mb-4">
                 <span
-                  class="material-symbols-outlined text-primary p-2 bg-primary/10 rounded-lg"
+                  class="material-symbols-outlined text-primary dark:text-blue-400 p-2 bg-primary/10 dark:bg-primary/20 rounded-lg"
                 >
                   psychology
                 </span>
-                <h4 class="headline-md headline-md text-on-surface">
+                <h4 class="headline-md text-on-surface dark:text-slate-100">
                   Phân tích Logic từ Model
                 </h4>
               </div>
               <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
                 <div class="md:col-span-2">
-                  <p class="body-md text-on-surface-variant leading-relaxed">
+                  <p class="body-md text-on-surface-variant dark:text-slate-350 leading-relaxed">
                     {{ decision_reason }}
                   </p>
                   {% if result.parts_info and result.parts_info.acceptance %}
-                  <p class="label-sm label-sm text-on-surface-variant mt-3">
-                    {% if result.parts_info.decision and
-                    result.parts_info.decision.is_hybrid_candidate %} Mức tin
-                    cậy đủ cho gợi ý ứng viên lai. {% elif
-                    result.parts_info.acceptance.accepted %} Mức tin cậy đủ để
-                    kết luận giống. {% elif result.parts_info.acceptance.level
-                    == 'reference' %} Mức tin cậy tham khảo, chưa đủ để kết luận
-                    giống. {% endif %}
+                  <p class="label-sm text-on-surface-variant dark:text-slate-400 mt-3">
+                    {% if result.parts_info.decision and result.parts_info.decision.is_hybrid_candidate %} 
+                      Mức tin cậy đủ cho gợi ý ứng viên lai. 
+                    {% elif result.parts_info.acceptance.accepted %} 
+                      Mức tin cậy đủ để kết luận giống. 
+                    {% elif result.parts_info.acceptance.level == 'reference' %} 
+                      Mức tin cậy tham khảo, chưa đủ để kết luận giống. 
+                    {% endif %}
                   </p>
                   {% endif %}
                 </div>
                 <div
-                  class="flex flex-col justify-center items-center p-5 bg-slate-50 rounded-xl border border-slate-200/50"
+                  class="flex flex-col justify-center items-center p-5 bg-surface-container-low dark:bg-slate-950 rounded-xl border border-outline-variant/30 dark:border-slate-800"
                 >
-                  <span class="label-sm text-outline font-bold uppercase mb-2">
+                  <span class="label-sm text-outline dark:text-slate-450 font-bold uppercase mb-2">
                     Kiến trúc mô hình
                   </span>
-                  <div class="font-mono body-md text-primary font-bold">
+                  <div class="font-mono body-md text-primary dark:text-blue-400 font-bold">
                     ResNet-101 Deep ConvNet
                   </div>
                   <div class="mt-2 flex items-center gap-2">
                     <div
                       class="w-2 h-2 rounded-full bg-green-500 animate-pulse"
                     ></div>
-                    <span class="label-sm text-green-600 font-bold">
+                    <span class="label-sm text-green-600 dark:text-green-400 font-bold">
                       Tối ưu suy luận
                     </span>
                   </div>

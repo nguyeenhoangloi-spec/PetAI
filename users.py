@@ -60,13 +60,29 @@ def list_users():
         page = 1
     per_page = 10
     total_users = 0
+    total_admins = 0
+    total_active = 0
+    total_locked = 0
     total_pages = 0
     try:
         conn = get_connection()
         with conn.cursor(DictCursor) as cur:
-            cur.execute("SELECT COUNT(*) AS total FROM users")
-            row = cur.fetchone() or {}
-            total_users = int(row.get("total") or 0)
+            cur.execute(
+                """
+                SELECT 
+                    COUNT(*) AS total,
+                    SUM(CASE WHEN role = 'admin' THEN 1 ELSE 0 END) AS total_admins,
+                    SUM(CASE WHEN is_active = 1 THEN 1 ELSE 0 END) AS total_active,
+                    SUM(CASE WHEN is_active = 0 THEN 1 ELSE 0 END) AS total_locked
+                FROM users
+                """
+            )
+            stats_row = cur.fetchone() or {}
+            total_users = int(stats_row.get("total") or 0)
+            total_admins = int(stats_row.get("total_admins") or 0)
+            total_active = int(stats_row.get("total_active") or 0)
+            total_locked = int(stats_row.get("total_locked") or 0)
+
             total_pages = (total_users + per_page - 1) // per_page
             if total_pages > 0 and page > total_pages:
                 page = total_pages
@@ -101,6 +117,9 @@ def list_users():
         page=page,
         per_page=per_page,
         total_users=total_users,
+        total_admins=total_admins,
+        total_active=total_active,
+        total_locked=total_locked,
         total_pages=total_pages,
         start_index=start_index,
         end_index=end_index,

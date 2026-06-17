@@ -1,1073 +1,1072 @@
 <!doctype html>
 
-<html
-  class="{{ 'dark' if ui_theme == 'dark' else 'light' }}"
-  lang="vi"
-  data-theme="{{ ui_theme or 'light' }}"
->
-  <head>
-    <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <script>
-      (function () {
-        const root = document.documentElement;
-        const themeStorageKey =
-          "{{ 'theme:' ~ session.get('user_id') if session.get('user_id') else '' }}";
-        const serverTheme = "{{ ui_theme or 'light' }}";
-        if (themeStorageKey) {
-          try {
-            localStorage.setItem(themeStorageKey, serverTheme);
-          } catch (e) {}
+<html class="{{ 'dark' if ui_theme == 'dark' else 'light' }}" lang="vi" data-theme="{{ ui_theme or 'light' }}">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <script>
+    (function () {
+      const root = document.documentElement;
+      const themeStorageKey =
+        "{{ 'theme:' ~ session.get('user_id') if session.get('user_id') else '' }}";
+      const serverTheme = "{{ ui_theme or 'light' }}";
+      if (themeStorageKey) {
+        try {
+          localStorage.setItem(themeStorageKey, serverTheme);
+        } catch (e) { }
+      }
+      const storedTheme = (function () {
+        if (!themeStorageKey) return null;
+        try {
+          return localStorage.getItem(themeStorageKey);
+        } catch (e) {
+          return null;
         }
-        const storedTheme = (function () {
-          if (!themeStorageKey) return null;
-          try {
-            return localStorage.getItem(themeStorageKey);
-          } catch (e) {
-            return null;
+      })();
+
+      // ── Animated counter for stat cards ──
+      document.addEventListener("DOMContentLoaded", function () {
+        (function () {
+          const DURATION = 1200;
+          const els = document.querySelectorAll("[data-counter]");
+          if (!els.length) return;
+
+          function easeOutExpo(t) {
+            return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+          }
+
+          function formatNumber(num, isFloat, decimals, useCommas) {
+            let formatted = isFloat ? num.toFixed(decimals) : Math.round(num).toString();
+            if (useCommas) {
+              const parts = formatted.split('.');
+              parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+              formatted = parts.join('.');
+            }
+            return formatted;
+          }
+
+          function animateValue(el) {
+            const target = parseFloat(el.getAttribute("data-counter"));
+            const suffix = el.getAttribute("data-suffix") || "";
+            const useCommas = el.getAttribute("data-use-commas") === "true";
+            const isFloat = String(target).includes(".") && !useCommas;
+            const decimals = isFloat
+              ? String(target).split(".")[1].length
+              : 0;
+            let start = null;
+
+            function step(ts) {
+              if (!start) start = ts;
+              const progress = Math.min((ts - start) / DURATION, 1);
+              const value = easeOutExpo(progress) * target;
+              el.textContent = formatNumber(value, isFloat, decimals, useCommas) + suffix;
+              if (progress < 1) requestAnimationFrame(step);
+            }
+            requestAnimationFrame(step);
+          }
+
+          if ("IntersectionObserver" in window) {
+            const observer = new IntersectionObserver(
+              (entries) => {
+                entries.forEach((e) => {
+                  if (e.isIntersecting) {
+                    animateValue(e.target);
+                    observer.unobserve(e.target);
+                  }
+                });
+              },
+              { threshold: 0.3 }
+            );
+            els.forEach((el) => observer.observe(el));
+          } else {
+            els.forEach(animateValue);
           }
         })();
-        const preferredTheme = storedTheme || serverTheme;
+      });
+      const preferredTheme = storedTheme || serverTheme;
 
-        function resolveTheme(theme) {
-          if (theme !== "auto") return theme;
-          try {
-            return window.matchMedia("(prefers-color-scheme: dark)").matches
-              ? "dark"
-              : "light";
-          } catch (e) {
-            return "light";
-          }
-        }
-
-        function applyTheme(theme) {
-          const resolved = resolveTheme(theme);
-          root.classList.toggle("dark", resolved === "dark");
-          root.classList.toggle("light", resolved !== "dark");
-          root.setAttribute("data-theme", resolved);
-        }
-
-        applyTheme(preferredTheme);
-
-        if (preferredTheme === "auto") {
-          try {
-            const mql = window.matchMedia("(prefers-color-scheme: dark)");
-            const handler = function () {
-              applyTheme("auto");
-            };
-            if (mql.addEventListener) {
-              mql.addEventListener("change", handler);
-            } else if (mql.addListener) {
-              mql.addListener(handler);
-            }
-          } catch (e) {}
-        }
-
+      function resolveTheme(theme) {
+        if (theme !== "auto") return theme;
         try {
-          const isCollapsed = localStorage.getItem("sidebar-collapsed") === "true";
-          if (isCollapsed && window.innerWidth >= 768) {
-            root.classList.add("sidebar-collapsed");
+          return window.matchMedia("(prefers-color-scheme: dark)").matches
+            ? "dark"
+            : "light";
+        } catch (e) {
+          return "light";
+        }
+      }
+
+      function applyTheme(theme) {
+        const resolved = resolveTheme(theme);
+        root.classList.toggle("dark", resolved === "dark");
+        root.classList.toggle("light", resolved !== "dark");
+        root.setAttribute("data-theme", resolved);
+      }
+
+      applyTheme(preferredTheme);
+
+      if (preferredTheme === "auto") {
+        try {
+          const mql = window.matchMedia("(prefers-color-scheme: dark)");
+          const handler = function () {
+            applyTheme("auto");
+          };
+          if (mql.addEventListener) {
+            mql.addEventListener("change", handler);
+          } else if (mql.addListener) {
+            mql.addListener(handler);
           }
-        } catch (e) {}
-      })();
-    </script>
-    <title>Lịch sử - PetAI</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='css/typography.css') }}"
-    />
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='css/theme-dark.css') }}"
-    />
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='css/toasts.css') }}"
-    />
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='css/mobile-header-fix.css') }}"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-      rel="stylesheet"
-    />
-    <script id="tailwind-config">
-      tailwind.config = {
-        darkMode: "class",
-        theme: {
-          extend: {
-            colors: {
-              "on-tertiary-fixed": "#360f00",
-              "secondary-fixed-dim": "#ffb95f",
-              "surface-container": "#e5eeff",
-              "on-primary-fixed": "#00174b",
-              error: "#ba1a1a",
-              "secondary-container": "#fea619",
-              primary: "#004ac6",
-              "tertiary-container": "#bc4800",
-              "surface-tint": "#0053db",
-              "on-secondary": "#ffffff",
-              "surface-variant": "#d3e4fe",
-              "on-secondary-container": "#684000",
-              "tertiary-fixed-dim": "#ffb596",
-              "surface-dim": "#cbdbf5",
-              outline: "#737686",
-              "inverse-on-surface": "#eaf1ff",
-              "on-error": "#ffffff",
-              "secondary-fixed": "#ffddb8",
-              "on-primary": "#ffffff",
-              "on-primary-container": "#eeefff",
-              "surface-container-highest": "#d3e4fe",
-              "on-surface": "#0b1c30",
-              "surface-container-lowest": "#ffffff",
-              "on-primary-fixed-variant": "#003ea8",
-              "outline-variant": "#c3c6d7",
-              "primary-fixed": "#dbe1ff",
-              "inverse-primary": "#b4c5ff",
-              "on-error-container": "#93000a",
-              "on-tertiary": "#ffffff",
-              surface: "#f8f9ff",
-              "primary-fixed-dim": "#b4c5ff",
-              "on-background": "#0b1c30",
-              "surface-bright": "#f8f9ff",
-              "inverse-surface": "#213145",
-              "on-tertiary-fixed-variant": "#7d2d00",
-              "on-surface-variant": "#434655",
-              "tertiary-fixed": "#ffdbcd",
-              "surface-container-high": "#dce9ff",
-              "on-secondary-fixed": "#2a1700",
-              "on-tertiary-container": "#ffede6",
-              secondary: "#855300",
-              tertiary: "#943700",
-              background: "#f8f9ff",
-              "primary-container": "#2563eb",
-              "surface-container-low": "#eff4ff",
-              "on-secondary-fixed-variant": "#653e00",
-              "error-container": "#ffdad6",
-            },
-            borderRadius: {
-              DEFAULT: "0.25rem",
-              lg: "0.5rem",
-              xl: "0.75rem",
-              full: "9999px",
-            },
-            spacing: {
-              md: "24px",
-              base: "8px",
-              sm: "12px",
-              margin: "32px",
-              lg: "48px",
-              xl: "80px",
-              gutter: "24px",
-              xs: "4px",
-            },
-            fontFamily: {
-              "headline-md": ["Inter"],
-              "headline-lg": ["Inter"],
-              "display-xl": ["Inter"],
-              "body-md": ["Inter"],
-              "label-sm": ["Inter"],
-              "body-lg": ["Inter"],
-            },
-            fontSize: {
-              "headline-md": [
-                "24px",
-                { lineHeight: "32px", fontWeight: "600" },
-              ],
-              "headline-lg": [
-                "36px",
-                {
-                  lineHeight: "44px",
-                  letterSpacing: "-0.01em",
-                  fontWeight: "600",
-                },
-              ],
-              "display-xl": [
-                "60px",
-                {
-                  lineHeight: "72px",
-                  letterSpacing: "-0.02em",
-                  fontWeight: "700",
-                },
-              ],
-              "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
-              "label-sm": ["14px", { lineHeight: "20px", fontWeight: "500" }],
-              "body-lg": ["18px", { lineHeight: "28px", fontWeight: "400" }],
-            },
+        } catch (e) { }
+      }
+
+      try {
+        const isCollapsed = localStorage.getItem("sidebar-collapsed") === "true";
+        if (isCollapsed && window.innerWidth >= 768) {
+          root.classList.add("sidebar-collapsed");
+        }
+      } catch (e) { }
+    })();
+  </script>
+  <title>Lịch sử - PetAI</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/typography.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/theme-dark.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/toasts.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile-header-fix.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin-dashboard-content.css') }}" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet" />
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "on-tertiary-fixed": "#360f00",
+            "secondary-fixed-dim": "#ffb95f",
+            "surface-container": "#e5eeff",
+            "on-primary-fixed": "#00174b",
+            error: "#ba1a1a",
+            "secondary-container": "#fea619",
+            primary: "#004ac6",
+            "tertiary-container": "#bc4800",
+            "surface-tint": "#0053db",
+            "on-secondary": "#ffffff",
+            "surface-variant": "#d3e4fe",
+            "on-secondary-container": "#684000",
+            "tertiary-fixed-dim": "#ffb596",
+            "surface-dim": "#cbdbf5",
+            outline: "#737686",
+            "inverse-on-surface": "#eaf1ff",
+            "on-error": "#ffffff",
+            "secondary-fixed": "#ffddb8",
+            "on-primary": "#ffffff",
+            "on-primary-container": "#eeefff",
+            "surface-container-highest": "#d3e4fe",
+            "on-surface": "#0b1c30",
+            "surface-container-lowest": "#ffffff",
+            "on-primary-fixed-variant": "#003ea8",
+            "outline-variant": "#c3c6d7",
+            "primary-fixed": "#dbe1ff",
+            "inverse-primary": "#b4c5ff",
+            "on-error-container": "#93000a",
+            "on-tertiary": "#ffffff",
+            surface: "#f8f9ff",
+            "primary-fixed-dim": "#b4c5ff",
+            "on-background": "#0b1c30",
+            "surface-bright": "#f8f9ff",
+            "inverse-surface": "#213145",
+            "on-tertiary-fixed-variant": "#7d2d00",
+            "on-surface-variant": "#434655",
+            "tertiary-fixed": "#ffdbcd",
+            "surface-container-high": "#dce9ff",
+            "on-secondary-fixed": "#2a1700",
+            "on-tertiary-container": "#ffede6",
+            secondary: "#855300",
+            tertiary: "#943700",
+            background: "#f8f9ff",
+            "primary-container": "#2563eb",
+            "surface-container-low": "#eff4ff",
+            "on-secondary-fixed-variant": "#653e00",
+            "error-container": "#ffdad6",
+          },
+          borderRadius: {
+            DEFAULT: "0.25rem",
+            lg: "0.5rem",
+            xl: "0.75rem",
+            full: "9999px",
+          },
+          spacing: {
+            md: "24px",
+            base: "8px",
+            sm: "12px",
+            margin: "32px",
+            lg: "48px",
+            xl: "80px",
+            gutter: "24px",
+            xs: "4px",
+          },
+          fontFamily: {
+            "headline-md": ["Inter"],
+            "headline-lg": ["Inter"],
+            "display-xl": ["Inter"],
+            "body-md": ["Inter"],
+            "label-sm": ["Inter"],
+            "body-lg": ["Inter"],
+          },
+          fontSize: {
+            "headline-md": [
+              "24px",
+              { lineHeight: "32px", fontWeight: "600" },
+            ],
+            "headline-lg": [
+              "36px",
+              {
+                lineHeight: "44px",
+                letterSpacing: "-0.01em",
+                fontWeight: "600",
+              },
+            ],
+            "display-xl": [
+              "60px",
+              {
+                lineHeight: "72px",
+                letterSpacing: "-0.02em",
+                fontWeight: "700",
+              },
+            ],
+            "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+            "label-sm": ["14px", { lineHeight: "20px", fontWeight: "500" }],
+            "body-lg": ["18px", { lineHeight: "28px", fontWeight: "400" }],
           },
         },
-      };
-    </script>
-    <style>
-      .material-symbols-outlined {
-        font-variation-settings:
-          "FILL" 0,
-          "wght" 400,
-          "GRAD" 0,
-          "opsz" 24;
-      }
-    </style>
-    <style>
-      /* Ensure rounded-xl and history grid tokens */
-      
-      .history-grid > * {
-        border: 1px solid rgba(226, 232, 240, 1); /* border-slate-100 */
-        box-shadow:
-          0 1px 2px rgba(15, 23, 42, 0.03),
-          0 6px 12px rgba(148, 163, 184, 0.06);
-        border-radius: 12px;
-        background-clip: padding-box;
-      }
-      .dark .history-grid > * {
-        border-color: rgba(30, 41, 59, 1); /* border-slate-800 */
-      }
-    </style>
-  </head>
-  <body
-    class="bg-background text-on-background body-md antialiased min-h-screen flex flex-col"
-  >
-    {% include '_toasts.html' %}
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
-    {% set display_role = session.get('role') or 'user' %}
-    {% set display_plan = current_plan or 'free' %}
+      },
+    };
+  </script>
+  <style>
+    .material-symbols-outlined {
+      font-variation-settings:
+        "FILL" 0,
+        "wght" 400,
+        "GRAD" 0,
+        "opsz" 24;
+    }
+  </style>
+  <style>
+    /* Ensure rounded-xl and history grid tokens */
 
-    <nav
-      class="bg-white/80 dark:bg-slate-950/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-200 dark:border-slate-800 shadow-sm font-['Inter'] antialiased"
-    >
-      <div class="flex items-center justify-between px-4 md:px-6 h-16 w-full">
-        <div class="flex items-center gap-gutter">
-          <a href="{{ url_for('home.index') }}" class="inline-flex items-center gap-0">
-            <img
-              alt="PetAI New Logo"
-              class="w-auto h-10 md:h-24"
-              src="{{ url_for('static', filename='logo.png') }}"
-            />
-            <span class="ml-0 text-lg md:text-2xl font-semibold text-primary"
-              >PetAI</span
-            >
-          </a>
-          <button class="menu-toggle ml-2" id="menuToggle" type="button" aria-label="Mở menu" aria-expanded="false">
-            <span></span>
-            <span></span>
-            <span></span>
+    .history-grid>* {
+      border: 1px solid rgba(226, 232, 240, 1);
+      /* border-slate-100 */
+      box-shadow:
+        0 1px 2px rgba(15, 23, 42, 0.03),
+        0 6px 12px rgba(148, 163, 184, 0.06);
+      border-radius: 12px;
+      background-clip: padding-box;
+    }
+
+    .dark .history-grid>* {
+      border-color: rgba(30, 41, 59, 1);
+      /* border-slate-800 */
+    }
+  </style>
+</head>
+
+<body class="bg-background text-on-background body-md antialiased min-h-screen flex flex-col">
+  {% include '_toasts.html' %}
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  {% set display_role = session.get('role') or 'user' %}
+  {% set display_plan = current_plan or 'free' %}
+
+  <nav
+    class="bg-white/80 dark:bg-slate-950/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-200 dark:border-slate-800 shadow-sm font-['Inter'] antialiased">
+    <div class="flex items-center justify-between px-4 md:px-6 h-16 w-full">
+      <div class="flex items-center gap-gutter">
+        <a href="{{ url_for('home.index') }}" class="inline-flex items-center gap-0">
+          <img alt="PetAI New Logo" class="w-auto h-10 md:h-24" src="{{ url_for('static', filename='logo.png') }}" />
+          <span class="ml-0 text-lg md:text-2xl font-semibold text-primary">PetAI</span>
+        </a>
+        <button class="menu-toggle ml-2" id="menuToggle" type="button" aria-label="Mở menu" aria-expanded="false">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+      <div class="hidden md:flex flex-1 items-center justify-end gap-margin mr-gutter [&>a]:px-0.5 [&>a]:body-md">
+        <a class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
+          href="{{ url_for('dashboard.dashboard') }}">Bảng điều khiển</a>
+        <a class="text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400 px-2 py-2 pb-1 font-semibold rounded-lg transition-all"
+          href="{{ url_for('history.history') }}">Lịch sử</a>
+        <a class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
+          href="{{ url_for('statistics.statistics') }}">Thống kê</a>
+        <a class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
+          href="{{ url_for('predict.upgrade') }}">Nâng cấp</a>
+        {% if session.get('role') == 'user' %}
+        <a class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
+          href="{{ url_for('predict.my_payments') }}">Lịch sử thanh toán</a>
+        {% endif %} {% if session.get('role') == 'admin' %}
+        <a class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
+          href="{{ url_for('users.list_users') }}">Quản lý người dùng</a>
+        <a class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
+          href="{{ url_for('users.confirmations_list') }}">Duyệt đơn</a>
+        {% endif %}
+      </div>
+      <div class="flex items-center gap-md">
+        <a class="hidden md:inline-flex bg-primary text-on-primary px-4 py-2 rounded-lg label-sm hover:opacity-90 active:scale-95 duration-150 transition-all"
+          href="{{ url_for('predict.upload_page') }}">Nhận diện</a>
+        <div class="language-switcher mr-2" id="languageSwitcher">
+          <button class="language-button" id="languageButton" type="button" aria-haspopup="true" aria-expanded="false">
+            <span class="language-flag">🇻🇳</span>
+            <span class="language-current">VN</span>
+            <span class="language-arrow">▼</span>
           </button>
-        </div>
-        <div
-          class="hidden md:flex flex-1 items-center justify-end gap-margin mr-gutter [&>a]:px-0.5 [&>a]:body-md"
-        >
-          <a
-            class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
-            href="{{ url_for('dashboard.dashboard') }}"
-            >Bảng điều khiển</a
-          >
-          <a
-            class="text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400 px-2 py-2 pb-1 font-semibold rounded-lg transition-all"
-            href="{{ url_for('history.history') }}"
-            >Lịch sử</a
-          >
-          <a
-            class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
-            href="{{ url_for('statistics.statistics') }}"
-            >Thống kê</a
-          >
-          <a
-            class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
-            href="{{ url_for('predict.upgrade') }}"
-            >Nâng cấp</a
-          >
-          {% if session.get('role') == 'user' %}
-          <a
-            class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
-            href="{{ url_for('predict.my_payments') }}"
-            >Lịch sử thanh toán</a
-          >
-          {% endif %} {% if session.get('role') == 'admin' %}
-          <a
-            class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
-            href="{{ url_for('users.list_users') }}"
-            >Quản lý người dùng</a
-          >
-          <a
-            class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all px-2 py-2 border-b-2 border-transparent pb-1 font-semibold"
-            href="{{ url_for('users.confirmations_list') }}"
-            >Duyệt đơn</a
-          >
-          {% endif %}
-        </div>
-        <div class="flex items-center gap-md">
-          <a
-            class="hidden md:inline-flex bg-primary text-on-primary px-4 py-2 rounded-lg label-sm hover:opacity-90 active:scale-95 duration-150 transition-all"
-            href="{{ url_for('predict.upload_page') }}"
-            >Nhận diện</a
-          >
-          <div class="language-switcher mr-2" id="languageSwitcher">
-              <button class="language-button" id="languageButton" type="button" aria-haspopup="true" aria-expanded="false">
-                <span class="language-flag">🇻🇳</span>
-                <span class="language-current">VN</span>
-                <span class="language-arrow">▼</span>
-              </button>
-              <div class="language-menu" id="languageMenu">
-                <button class="language-option active" type="button" data-lang="vi">
-                  <span class="language-check">✓</span>
-                  <span class="language-flag">🇻🇳</span>
-                  <span>Tiếng Việt</span>
-                </button>
-                <button class="language-option" type="button" data-lang="en">
-                  <span class="language-check"></span>
-                  <span class="language-flag">🇺🇸</span>
-                  <span>English</span>
-                </button>
-              </div>
-            </div>
-            <div class="relative cursor-pointer avatar-wrapper">
-              <img
-                alt="Anh dai dien"
-                class="w-9 h-9 rounded-full border-2 border-primary/20 p-0.5"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuABdf7zKSVKEqdGUUjqEkF9ftdFTrLW87Tb24r2IiZiv_JP0LrItrCxl23SH-gYj2Mqtkma0ak9DZbUtKM5nW747pmivDYGVbYhNr1PZbxbFuOrZdGJvnbhdSurFLfL3BcmhN2p1h9wv_6geT-x8eoTG1TDoLL40P8wDiaymvRT--SA4jYjU9A77WIji5FmOi99mPDXw7xS6dUyUNJYU2gHLk4-smzFrCuBbQbgtpATDvNo6hq3YR-cfSaNblImtCnDXIb8np7J4HA"
-              />
-              <div
-                class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white dark:border-slate-900 rounded-full"
-              ></div>
-              <div
-                class="absolute right-0 top-full w-52 bg-white dark:bg-slate-900 rounded-lg shadow-xl border border-slate-200 dark:border-slate-800 py-2 hidden avatar-dropdown-menu z-50"
-              >
-                <div class="px-4 pb-2">
-                  <div class="label-sm text-slate-500 dark:text-slate-400">
-                    Vai trò:
-                    <span
-                      class="font-semibold text-slate-800 dark:text-slate-200"
-                      >{{ display_role|upper }}</span
-                    >
-                  </div>
-                  <div class="label-sm text-slate-500 dark:text-slate-400">
-                    Gói:
-                    <span
-                      class="font-semibold text-slate-800 dark:text-slate-200"
-                      >{{ display_plan|upper }}</span
-                    >
-                  </div>
-                </div>                <a
-                  class="flex items-center gap-2 px-4 py-2 body-md text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors font-semibold"
-                  href="{{ url_for('settings.settings') }}"
-                >
-                  <span class="material-symbols-outlined text-[18px]"
-                    >settings</span
-                  >
-                  <span data-i18n="personalInfo">Thông tin cá nhân</span>
-                </a>
-
-                <div class="h-px bg-slate-200 dark:bg-slate-800 my-1"></div>
-                <a
-                  class="flex items-center gap-2 px-4 py-2 body-md text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors font-semibold"
-                  href="{{ url_for('logout.logout') }}"
-                >
-                  <span class="material-symbols-outlined text-[18px]"
-                    >logout</span
-                  >
-                  Đăng xuất
-                </a>
-              </div>
-            </div>
+          <div class="language-menu" id="languageMenu">
+            <button class="language-option active" type="button" data-lang="vi">
+              <span class="language-check">✓</span>
+              <span class="language-flag">🇻🇳</span>
+              <span>Tiếng Việt</span>
+            </button>
+            <button class="language-option" type="button" data-lang="en">
+              <span class="language-check"></span>
+              <span class="language-flag">🇺🇸</span>
+              <span>English</span>
+            </button>
           </div>
         </div>
-      </nav>
+        <div class="relative cursor-pointer avatar-wrapper">
+          <img alt="Anh dai dien" class="w-9 h-9 rounded-full border-2 border-primary/20 p-0.5"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuABdf7zKSVKEqdGUUjqEkF9ftdFTrLW87Tb24r2IiZiv_JP0LrItrCxl23SH-gYj2Mqtkma0ak9DZbUtKM5nW747pmivDYGVbYhNr1PZbxbFuOrZdGJvnbhdSurFLfL3BcmhN2p1h9wv_6geT-x8eoTG1TDoLL40P8wDiaymvRT--SA4jYjU9A77WIji5FmOi99mPDXw7xS6dUyUNJYU2gHLk4-smzFrCuBbQbgtpATDvNo6hq3YR-cfSaNblImtCnDXIb8np7J4HA" />
+          <div
+            class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white dark:border-slate-900 rounded-full">
+          </div>
+          <div
+            class="absolute right-0 top-full w-52 bg-white dark:bg-slate-900 rounded-lg shadow-xl border border-slate-200 dark:border-slate-800 py-2 hidden avatar-dropdown-menu z-50">
+            <div class="px-4 pb-2">
+              <div class="label-sm text-slate-500 dark:text-slate-400">
+                Vai trò:
+                <span class="font-semibold text-slate-800 dark:text-slate-200">{{ display_role|upper }}</span>
+              </div>
+              <div class="label-sm text-slate-500 dark:text-slate-400">
+                Gói:
+                <span class="font-semibold text-slate-800 dark:text-slate-200">{{ display_plan|upper }}</span>
+              </div>
+            </div> <a
+              class="flex items-center gap-2 px-4 py-2 body-md text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors font-semibold"
+              href="{{ url_for('settings.settings') }}">
+              <span class="material-symbols-outlined text-[18px]">settings</span>
+              <span data-i18n="personalInfo">Thông tin cá nhân</span>
+            </a>
 
-    <main
-      tabindex="-1"
-      class="flex-grow w-full px-4 md:px-6 py-margin grid grid-cols-1 md:grid-cols-[230px_minmax(0,1fr)] gap-gutter"
-    >
-      <aside class="sidebar col-span-1" id="sidebar">
-        <div
-          class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] py-sm px-2 flex flex-col gap-sm sticky top-24 border border-outline-variant/30"
-        >
-          <h3
-            class="label-sm label-sm text-on-surface-variant uppercase tracking-wider mb-xs px-1.5"
-          >
-            <span data-i18n="quickAccess">Truy cập nhanh</span>
-          </h3>
-          <a
-            class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
-            href="{{ url_for('predict.upload_page') }}"
-          >
-            <span
-              class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
-              data-icon="upload_file"
-              data-weight="fill"
-              style="font-variation-settings: &quot;FILL&quot; 1"
-              >upload_file</span
-            >
-            <span class="label-sm label-sm">Tải ảnh &amp; Phân tích</span>
-          </a>
-          <a
-            class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-primary bg-primary-fixed/50 transition-colors group"
-            href="{{ url_for('history.history') }}"
-          >
-            <span
-              class="material-symbols-outlined text-primary group-hover:scale-105 transition-transform"
-              data-icon="history"
-              >history</span
-            >
-            <span class="label-sm label-sm font-semibold">Lịch sử dự đoán</span>
-          </a>
-          {% if session.get('role') == 'user' %}
-          <a
-            class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
-            href="{{ url_for('predict.my_payments') }}"
-          >
-            <span
-              class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
-              data-icon="payments"
-              >payments</span
-            >
-            <span class="label-sm label-sm">Lịch sử thanh toán</span>
-          </a>
-          {% endif %}
-          <a
-            class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
-            href="{{ url_for('statistics.statistics') }}"
-          >
-            <span
-              class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
-              data-icon="bar_chart"
-              >bar_chart</span
-            >
-            <span class="label-sm label-sm"><span data-i18n="personalStats">Thống kê cá nhân</span></span>
-          </a>
-          <a
-            class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
-            href="{{ url_for('predict.upgrade') }}"
-          >
-            <span
-              class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
-              data-icon="upgrade"
-              >upgrade</span
-            >
-            <span class="label-sm label-sm"><span data-i18n="upgradePlan">Nâng cấp gói</span></span>
-          </a>
-          {% if session.get('role') == 'admin' %}
-          <a
-            class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
-            href="{{ url_for('users.list_users') }}"
-          >
-            <span
-              class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
-              data-icon="groups"
-              >groups</span
-            >
-            <span class="label-sm label-sm">Quản lý người dùng</span>
-          </a>
-          <a
-            class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
-            href="{{ url_for('users.confirmations_list') }}"
-          >
-            <span
-              class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
-              data-icon="receipt_long"
-              >receipt_long</span
-            >
-            <span class="label-sm label-sm">Duyệt đơn</span>
-          </a>
-          {% endif %}
-          <hr class="border-outline-variant/30 my-xs" />
-          <a
-            class="flex items-center gap-sm py-1.5 px-1.5 rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
-            href="{{ url_for('settings.settings') }}"
-          >
-            <span
-              class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
-              data-icon="settings"
-              >settings</span
-            >
-            <span class="label-sm"><span data-i18n="accountSettings">Cài đặt tài khoản</span></span>
-          </a>
-
+            <div class="h-px bg-slate-200 dark:bg-slate-800 my-1"></div>
+            <a class="flex items-center gap-2 px-4 py-2 body-md text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors font-semibold"
+              href="{{ url_for('logout.logout') }}">
+              <span class="material-symbols-outlined text-[18px]">logout</span>
+              Đăng xuất
+            </a>
+          </div>
         </div>
-      </aside>
+      </div>
+    </div>
+  </nav>
 
-      <div class="col-span-1 flex flex-col gap-8">
-        <div class="space-y-6">
-          <section
-            class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-outline-variant/20 dark:border-slate-800 pb-5"
-            data-purpose="page-header"
-          >
-            <div class="flex flex-col gap-2">
-              <h1 class="headline-lg font-semibold text-on-surface dark:text-slate-100">
-                Lịch sử nhận diện
-              </h1>
-              <p class="body-md text-on-surface-variant dark:text-slate-400">
-                Bạn có tổng cộng {{ total_records }} bản ghi dự đoán.
-              </p>
-            </div>
-            <div class="mt-4 md:mt-0 md:flex-none">
-              <a
-                class="bg-primary hover:bg-primary/95 text-on-primary px-4 py-2.5 rounded-lg label-sm shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-2 font-semibold"
-                href="{{ url_for('predict.upload_page') }}"
-              >
-                <span class="material-symbols-outlined text-[18px]">add_a_photo</span>
-                Nhận diện mới
-              </a>
-            </div>
-          </section>
+  <main tabindex="-1"
+    class="flex-grow w-full px-4 md:px-6 py-margin grid grid-cols-1 md:grid-cols-[230px_minmax(0,1fr)] gap-gutter">
+    <aside class="sidebar col-span-1" id="sidebar">
+      <div
+        class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] py-sm px-2 flex flex-col gap-sm sticky top-24 border border-outline-variant/30">
+        <h3 class="label-sm label-sm text-on-surface-variant uppercase tracking-wider mb-xs px-1.5">
+          <span data-i18n="quickAccess">Truy cập nhanh</span>
+        </h3>
+        <a class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
+          href="{{ url_for('predict.upload_page') }}">
+          <span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
+            data-icon="upload_file" data-weight="fill"
+            style="font-variation-settings: &quot;FILL&quot; 1">upload_file</span>
+          <span class="label-sm label-sm">Tải ảnh &amp; Phân tích</span>
+        </a>
+        <a class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-primary bg-primary-fixed/50 transition-colors group"
+          href="{{ url_for('history.history') }}">
+          <span class="material-symbols-outlined text-primary group-hover:scale-105 transition-transform"
+            data-icon="history">history</span>
+          <span class="label-sm label-sm font-semibold">Lịch sử dự đoán</span>
+        </a>
+        {% if session.get('role') == 'user' %}
+        <a class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
+          href="{{ url_for('predict.my_payments') }}">
+          <span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
+            data-icon="payments">payments</span>
+          <span class="label-sm label-sm">Lịch sử thanh toán</span>
+        </a>
+        {% endif %}
+        <a class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
+          href="{{ url_for('statistics.statistics') }}">
+          <span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
+            data-icon="bar_chart">bar_chart</span>
+          <span class="label-sm label-sm"><span data-i18n="personalStats">Thống kê cá nhân</span></span>
+        </a>
+        <a class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
+          href="{{ url_for('predict.upgrade') }}">
+          <span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
+            data-icon="upgrade">upgrade</span>
+          <span class="label-sm label-sm"><span data-i18n="upgradePlan">Nâng cấp gói</span></span>
+        </a>
+        {% if session.get('role') == 'admin' %}
+        <a class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
+          href="{{ url_for('users.list_users') }}">
+          <span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
+            data-icon="groups">groups</span>
+          <span class="label-sm label-sm">Quản lý người dùng</span>
+        </a>
+        <a class="flex items-center gap-sm py-1.5 px-2 rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
+          href="{{ url_for('users.confirmations_list') }}">
+          <span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
+            data-icon="receipt_long">receipt_long</span>
+          <span class="label-sm label-sm">Duyệt đơn</span>
+        </a>
+        {% endif %}
+        <hr class="border-outline-variant/30 my-xs" />
+        <a class="flex items-center gap-sm py-1.5 px-1.5 rounded-lg text-on-surface hover:text-primary hover:bg-surface-container transition-colors group"
+          href="{{ url_for('settings.settings') }}">
+          <span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors"
+            data-icon="settings">settings</span>
+          <span class="label-sm"><span data-i18n="accountSettings">Cài đặt tài khoản</span></span>
+        </a>
 
-          <!-- Statistics Grid Overview -->
-          <section
-            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
-            data-purpose="statistics-overview"
-          >
-            <!-- Card 1: Tổng nhận diện -->
-            <div class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 dark:border-slate-800 shadow-sm min-h-[140px]">
-              <div class="flex items-center justify-between">
-                <span class="label-sm text-on-surface-variant dark:text-slate-400 font-semibold uppercase tracking-wider">Tổng nhận diện</span>
-                <div class="w-10 h-10 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center text-primary">
-                  <span class="material-symbols-outlined">history</span>
-                </div>
-              </div>
-              <div class="mt-4 flex flex-col">
-                <span class="text-3xl font-bold text-on-surface dark:text-slate-100 tracking-tight">{{ total_records_all or 0 }}</span>
-                <span class="label-sm text-on-surface-variant/70 dark:text-slate-400/80 mt-1">Lượt phân tích ảnh</span>
+      </div>
+    </aside>
+
+    <div class="col-span-1 flex flex-col gap-8">
+      <div class="space-y-6">
+        <section
+          class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-outline-variant/20 dark:border-slate-800 pb-5"
+          data-purpose="page-header">
+          <div class="flex flex-col gap-2">
+            <h1 class="headline-lg font-semibold text-on-surface dark:text-slate-100">
+              Lịch sử nhận diện
+            </h1>
+            <p class="body-md text-on-surface-variant dark:text-slate-400">
+              Bạn có tổng cộng <span id="total-records-count">{{ total_records }}</span> bản ghi dự đoán.
+            </p>
+          </div>
+          <div class="mt-4 md:mt-0 md:flex-none">
+            <a class="bg-primary hover:bg-primary/95 text-on-primary px-4 py-2.5 rounded-lg label-sm shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-2 font-semibold"
+              href="{{ url_for('predict.upload_page') }}">
+              <span class="material-symbols-outlined text-[18px]">add_a_photo</span>
+              Nhận diện mới
+            </a>
+          </div>
+        </section>
+
+        <!-- Statistics Grid Overview -->
+        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" data-purpose="statistics-overview">
+          <!-- Card 1: Tổng nhận diện -->
+          <div
+            class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 dark:border-slate-800 shadow-sm min-h-[140px]">
+            <div class="flex items-center justify-between">
+              <span
+                class="label-sm text-on-surface-variant dark:text-slate-400 font-semibold uppercase tracking-wider">Tổng
+                nhận diện</span>
+              <div
+                class="w-10 h-10 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center text-primary">
+                <span class="material-symbols-outlined">history</span>
               </div>
             </div>
+            <div class="mt-4 flex flex-col">
+              <span class="text-3xl font-bold text-on-surface dark:text-slate-100 tracking-tight" data-counter="{{ total_records_all or 0 }}">0</span>
+              <span class="label-sm text-on-surface-variant/70 dark:text-slate-400/80 mt-1">Lượt phân tích ảnh</span>
+            </div>
+          </div>
 
-            <!-- Card 2: Chó thuần chủng -->
-            <div class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 dark:border-slate-800 shadow-sm min-h-[140px]">
-              <div class="flex items-center justify-between">
-                <span class="label-sm text-on-surface-variant dark:text-slate-400 font-semibold uppercase tracking-wider">Chó thuần chủng</span>
-                <div class="w-10 h-10 rounded-lg bg-emerald-500/10 dark:bg-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
-                  <span class="material-symbols-outlined">verified</span>
-                </div>
-              </div>
-              <div class="mt-4 flex flex-col">
-                <span class="text-3xl font-bold text-on-surface dark:text-slate-100 tracking-tight">{{ pure_count or 0 }}</span>
-                <span class="label-sm text-on-surface-variant/70 dark:text-slate-400/80 mt-1">Giống thuần chủng</span>
+          <!-- Card 2: Chó thuần -->
+          <div
+            class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 dark:border-slate-800 shadow-sm min-h-[140px]">
+            <div class="flex items-center justify-between">
+              <span
+                class="label-sm text-on-surface-variant dark:text-slate-400 font-semibold uppercase tracking-wider">Chó
+                thuần</span>
+              <div
+                class="w-10 h-10 rounded-lg bg-emerald-500/10 dark:bg-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                <span class="material-symbols-outlined">verified</span>
               </div>
             </div>
+            <div class="mt-4 flex flex-col">
+              <span class="text-3xl font-bold text-on-surface dark:text-slate-100 tracking-tight" data-counter="{{ pure_count or 0 }}">0</span>
+              <span class="label-sm text-on-surface-variant/70 dark:text-slate-400/80 mt-1">Giống thuần</span>
+            </div>
+          </div>
 
-            <!-- Card 3: Chó lai -->
-            <div class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 dark:border-slate-800 shadow-sm min-h-[140px]">
-              <div class="flex items-center justify-between">
-                <span class="label-sm text-on-surface-variant dark:text-slate-400 font-semibold uppercase tracking-wider">Chó lai</span>
-                <div class="w-10 h-10 rounded-lg bg-amber-500/10 dark:bg-amber-500/20 flex items-center justify-center text-amber-600 dark:text-amber-400">
-                  <span class="material-symbols-outlined">call_split</span>
-                </div>
-              </div>
-              <div class="mt-4 flex flex-col">
-                <span class="text-3xl font-bold text-on-surface dark:text-slate-100 tracking-tight">{{ hybrid_count or 0 }}</span>
-                <span class="label-sm text-on-surface-variant/70 dark:text-slate-400/80 mt-1">Giống nghi lai phối</span>
+          <!-- Card 3: Chó lai -->
+          <div
+            class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 dark:border-slate-800 shadow-sm min-h-[140px]">
+            <div class="flex items-center justify-between">
+              <span
+                class="label-sm text-on-surface-variant dark:text-slate-400 font-semibold uppercase tracking-wider">Chó
+                lai</span>
+              <div
+                class="w-10 h-10 rounded-lg bg-amber-500/10 dark:bg-amber-500/20 flex items-center justify-center text-amber-600 dark:text-amber-400">
+                <span class="material-symbols-outlined">call_split</span>
               </div>
             </div>
+            <div class="mt-4 flex flex-col">
+              <span class="text-3xl font-bold text-on-surface dark:text-slate-100 tracking-tight" data-counter="{{ hybrid_count or 0 }}">0</span>
+              <span class="label-sm text-on-surface-variant/70 dark:text-slate-400/80 mt-1">Giống nghi lai phối</span>
+            </div>
+          </div>
 
-            <!-- Card 4: Độ tin cậy TB -->
-            <div class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 dark:border-slate-800 shadow-sm min-h-[140px]">
-              <div class="flex items-center justify-between">
-                <span class="label-sm text-on-surface-variant dark:text-slate-400 font-semibold uppercase tracking-wider">Độ tin cậy TB</span>
-                <div class="w-10 h-10 rounded-lg bg-blue-500/10 dark:bg-blue-500/20 flex items-center justify-center text-blue-600 dark:text-blue-400">
-                  <span class="material-symbols-outlined">speed</span>
-                </div>
-              </div>
-              <div class="mt-4 flex flex-col">
-                <span class="text-3xl font-bold text-on-surface dark:text-slate-100 tracking-tight">{% if avg_conf %}{{ '%.1f'|format(avg_conf) }}{% else %}0.0{% endif %}%</span>
-                <span class="label-sm text-on-surface-variant/70 dark:text-slate-400/80 mt-1">Độ chính xác trung bình</span>
+          <!-- Card 4: Độ tin cậy TB -->
+          <div
+            class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 dark:border-slate-800 shadow-sm min-h-[140px]">
+            <div class="flex items-center justify-between">
+              <span
+                class="label-sm text-on-surface-variant dark:text-slate-400 font-semibold uppercase tracking-wider">Độ
+                tin cậy TB</span>
+              <div
+                class="w-10 h-10 rounded-lg bg-blue-500/10 dark:bg-blue-500/20 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                <span class="material-symbols-outlined">speed</span>
               </div>
             </div>
-          </section>
+            <div class="mt-4 flex flex-col">
+              <span class="text-3xl font-bold text-on-surface dark:text-slate-100 tracking-tight" data-counter="{{ ((avg_conf or 0))|round(1) }}" data-suffix="%">0.0%</span>
+              <span class="label-sm text-on-surface-variant/70 dark:text-slate-400/80 mt-1">Độ chính xác trung
+                bình</span>
+            </div>
+          </div>
+        </section>
 
-          <section class="flex flex-col md:flex-row md:items-center md:justify-between gap-4" data-purpose="search-and-filters">
+        <div id="history-pjax-container" class="space-y-6 transition-all duration-300">
+          <section class="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-3.5"
+            data-purpose="search-and-filters">
             <!-- Segmented Tab Selection Bar -->
-            <div class="flex items-center gap-1.5 p-1 bg-surface-container-low dark:bg-slate-900 rounded-xl w-fit border border-outline-variant/40 dark:border-slate-800">
-              <a class="px-5 py-2 rounded-lg label-sm transition-all duration-200 {% if selected_type == 'all' or not selected_type %}bg-primary text-white shadow-sm font-semibold{% else %}text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-slate-800 font-medium{% endif %}"
+            <div
+              class="flex items-center gap-1 p-1 bg-slate-100/80 dark:bg-slate-900/80 backdrop-blur-md rounded-xl w-fit border border-slate-200 dark:border-slate-800 shadow-sm self-end sm:self-auto">
+              <a class="px-4 py-2 rounded-lg text-xs font-semibold tracking-wide transition-all duration-200 {% if selected_type == 'all' or not selected_type %}bg-primary text-white shadow-sm{% else %}text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/60{% endif %}"
                 href="{{ url_for('history.history', type='all', q=search_query) }}">
                 Tất cả
               </a>
-              <a class="px-5 py-2 rounded-lg label-sm transition-all duration-200 {% if selected_type == 'pure' %}bg-primary text-white shadow-sm font-semibold{% else %}text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-slate-800 font-medium{% endif %}"
+              <a class="px-4 py-2 rounded-lg text-xs font-semibold tracking-wide transition-all duration-200 {% if selected_type == 'pure' %}bg-primary text-white shadow-sm{% else %}text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/60{% endif %}"
                 href="{{ url_for('history.history', type='pure', q=search_query) }}">
-                Chó thuần chủng
+                Chó thuần
               </a>
-              <a class="px-5 py-2 rounded-lg label-sm transition-all duration-200 {% if selected_type == 'hybrid' %}bg-primary text-white shadow-sm font-semibold{% else %}text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-slate-800 font-medium{% endif %}"
+              <a class="px-4 py-2 rounded-lg text-xs font-semibold tracking-wide transition-all duration-200 {% if selected_type == 'hybrid' %}bg-primary text-white shadow-sm{% else %}text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/60{% endif %}"
                 href="{{ url_for('history.history', type='hybrid', q=search_query) }}">
                 Chó lai
               </a>
             </div>
 
             <!-- Search Input Form -->
-            <form method="GET" action="{{ url_for('history.history') }}" class="flex items-center gap-2 w-full md:w-auto">
+            <form method="GET" action="{{ url_for('history.history') }}"
+              class="flex items-center gap-2 w-full sm:w-auto justify-end self-end sm:self-auto">
               <input type="hidden" name="type" value="{{ selected_type or 'all' }}" />
-              
-              <div class="relative w-full md:w-64">
+
+              <div class="relative w-full sm:w-64">
                 <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 dark:text-slate-500">
                   <span class="material-symbols-outlined text-[20px]">search</span>
                 </span>
-                <input
-                  name="q"
-                  value="{{ search_query or '' }}"
-                  class="w-full pl-10 pr-4 py-2.5 bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/40 dark:border-slate-800 rounded-lg label-sm text-on-surface dark:text-slate-100 focus:ring-primary focus:border-primary dark:focus:ring-blue-500 dark:focus:border-blue-500 transition-colors"
-                  placeholder="Tìm kiếm giống..."
-                  type="text"
-                />
+                <input name="q" value="{{ search_query or '' }}"
+                  class="w-full pl-10 pr-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-xs font-medium text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-primary/10 focus:border-primary dark:focus:ring-blue-500/10 dark:focus:border-blue-500 transition-all shadow-sm"
+                  placeholder="Tìm kiếm giống..." type="text" />
               </div>
-              
+
               {% if search_query %}
-              <a
-                href="{{ url_for('history.history', type=selected_type) }}"
-                class="p-2.5 bg-surface-container-low hover:bg-surface-container dark:bg-slate-800 dark:hover:bg-slate-700 text-on-surface-variant dark:text-slate-300 rounded-lg transition-colors border border-outline-variant/40 dark:border-slate-750 flex items-center justify-center"
-                title="Xoá tìm kiếm"
-              >
+              <a href="{{ url_for('history.history', type=selected_type) }}"
+                class="p-2 bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 rounded-lg transition-colors border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-center"
+                title="Xoá tìm kiếm">
                 <span class="material-symbols-outlined text-[18px]">close</span>
               </a>
               {% endif %}
             </form>
           </section>
 
-        {% if predictions and predictions|length > 0 %}
-        <section
-          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 history-grid"
-        >
-          {% for pred in predictions %} {% set conf_pct = ((pred.confidence or
-          0) * 100) %}
-          {% set formatted_date = pred.created_at.strftime('%d/%m/%Y %H:%M') if pred.created_at else '' %}
-          <article
-            class="soft-panel bg-surface-container-lowest dark:bg-slate-900 rounded-xl overflow-hidden group shadow-sm hover:shadow-md transition-all duration-300 border border-slate-100 dark:border-slate-800 flex flex-col"
-          >
-            <div class="aspect-square relative overflow-hidden">
-              <img
-                alt="Ảnh nhận diện"
-                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                src="/{{ pred.image_path }}"
-              />
-              <div
-                class="absolute top-3 right-3 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-2.5 py-1 rounded-full text-xs font-bold text-slate-800 dark:text-slate-200 border border-slate-200/50 dark:border-slate-800 shadow-sm flex items-center gap-1.5 z-10"
-              >
-                <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
-                {% if pred.confidence is not none %}{{ '%.1f'|format(conf_pct) }}%{% else %}0%{% endif %}
-              </div>
-              
-              <!-- Hover Details Overlay -->
-              <div class="absolute inset-0 bg-slate-950/40 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center z-20">
-                <button 
-                  onclick="openDetailModal('{{ pred.image_path }}', '{{ pred.breed|escape }}', '{{ conf_pct|round(1) }}', '{{ pred.species|escape }}', '{{ formatted_date }}')"
-                  class="px-4 py-2 bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-bold rounded-lg text-xs shadow-md hover:scale-105 active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer"
-                >
-                  <span class="material-symbols-outlined text-[14px]">visibility</span>
-                  Xem chi tiết
-                </button>
-              </div>
-            </div>
-            <div class="p-4 flex flex-col justify-between flex-grow h-[140px]">
-              <div>
-                <h2
-                  class="body-md font-bold text-slate-900 dark:text-white leading-tight mb-1 truncate"
-                  title="{{ pred.breed or 'Chưa xác định' }}"
-                >
-                  {{ pred.breed or 'Chưa xác định' }}
-                </h2>
-                <div class="flex items-center text-slate-500 dark:text-slate-400 text-xs font-semibold">
-                  <span class="material-symbols-outlined text-[14px] mr-1"
-                    >pets</span
-                  >
-                  <span>{{ pred.species or 'Chó' }}</span>
+          {% if predictions and predictions|length > 0 %}
+          <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 history-grid">
+            {% for pred in predictions %} {% set conf_pct = ((pred.confidence or
+            0) * 100) %}
+            {% set formatted_date = pred.created_at.strftime('%d/%m/%Y %H:%M') if pred.created_at else '' %}
+            <article
+              class="soft-panel bg-surface-container-lowest dark:bg-slate-900 rounded-xl overflow-hidden group shadow-sm hover:shadow-md transition-all duration-300 border border-slate-100 dark:border-slate-800 flex flex-col">
+              <div class="aspect-square relative overflow-hidden">
+                <img alt="Ảnh nhận diện"
+                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  src="/{{ pred.image_path }}" />
+                <div
+                  class="absolute top-3 right-3 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-2.5 py-1 rounded-full text-xs font-bold text-slate-800 dark:text-slate-200 border border-slate-200/50 dark:border-slate-800 shadow-sm flex items-center gap-1.5 z-10">
+                  <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+                  {% if pred.confidence is not none %}{{ '%.1f'|format(conf_pct) }}%{% else %}0%{% endif %}
                 </div>
-              </div>
-              <div class="mt-auto w-full">
-                <div class="h-1 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden mb-3">
-                  <div
-                    class="h-full bg-primary history-fill"
-                    data-width="{{ conf_pct|round(1) }}"
-                  ></div>
-                </div>
-                <div class="flex items-center text-slate-400 dark:text-slate-500 text-xs">
-                  <span class="material-symbols-outlined text-[14px] mr-1"
-                    >schedule</span
-                  >
-                  <span>{{ formatted_date }}</span>
-                </div>
-              </div>
-            </div>
-          </article>
-          {% endfor %}
-        </section>
 
-        {% if total_pages and total_pages > 1 %}
-        <div class="mt-10 flex items-center justify-center">
-          <nav
-            aria-label="Phân trang lịch sử"
-            class="inline-flex -space-x-px rounded-md shadow-sm"
-          >
-            {% if page > 1 %}
-            <a
-              class="relative inline-flex items-center rounded-l-lg px-3 py-2 text-slate-500 ring-1 ring-inset ring-slate-300 hover:bg-slate-50"
-              href="{{ url_for('history.history', page=page-1, type=selected_type, q=search_query) }}"
-            >
-              <span class="material-symbols-outlined text-[18px]"
-                >chevron_left</span
-              >
-            </a>
-            {% else %}
-            <span
-              class="relative inline-flex items-center rounded-l-lg px-3 py-2 text-slate-300 ring-1 ring-inset ring-slate-300 cursor-not-allowed"
-            >
-              <span class="material-symbols-outlined text-[18px]"
-                >chevron_left</span
-              >
-            </span>
-            {% endif %} {% for p in range(1, total_pages + 1) %} {% if p == page
-            %}
-            <span
-              class="relative inline-flex items-center px-4 py-2 body-md font-semibold text-white bg-primary"
-            >
-              {{ p }}
-            </span>
-            {% elif p == 1 or p == total_pages or (p >= page - 1 and p <= page +
-            1) %}
-            <a
-              class="relative inline-flex items-center px-4 py-2 body-md font-semibold text-slate-700 ring-1 ring-inset ring-slate-300 hover:bg-slate-50"
-              href="{{ url_for('history.history', page=p, type=selected_type, q=search_query) }}"
-            >
-              {{ p }}
-            </a>
-            {% elif p == page - 2 or p == page + 2 %}
-            <span
-              class="relative inline-flex items-center px-4 py-2 body-md font-semibold text-slate-400 ring-1 ring-inset ring-slate-300"
-            >
-              …
-            </span>
-            {% endif %} {% endfor %} {% if page < total_pages %}
-            <a
-              class="relative inline-flex items-center rounded-r-lg px-3 py-2 text-slate-500 ring-1 ring-inset ring-slate-300 hover:bg-slate-50"
-              href="{{ url_for('history.history', page=page+1, type=selected_type, q=search_query) }}"
-            >
-              <span class="material-symbols-outlined text-[18px]"
-                >chevron_right</span
-              >
-            </a>
-            {% else %}
-            <span
-              class="relative inline-flex items-center rounded-r-lg px-3 py-2 text-slate-300 ring-1 ring-inset ring-slate-300 cursor-not-allowed"
-            >
-              <span class="material-symbols-outlined text-[18px]"
-                >chevron_right</span
-              >
-            </span>
-            {% endif %}
-          </nav>
-        </div>
-        {% endif %} {% else %}
-        <section
-          class="soft-panel bg-white rounded-xl p-6 text-slate-500 border border-slate-100 shadow-sm"
-        >
-          <div class="flex items-center gap-2 mb-2">
-            <span class="material-symbols-outlined">inbox</span>
-            <h3 class="body-md font-semibold text-slate-900">
-              Chưa có lịch sử nhận diện
-            </h3>
-          </div>
-          <p class="body-md text-slate-500 mb-4">
-            Hãy tải ảnh đầu tiên để bắt đầu hành trình dự đoán giống chó.
-          </p>
-          <a
-            class="inline-flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg body-md font-medium hover:opacity-90 transition-colors"
-            href="{{ url_for('predict.upload_page') }}"
-          >
-            <span class="material-symbols-outlined text-[18px]"
-              >add_a_photo</span
-            >
-            Bắt đầu ngay
-          </a>
-        </section>
-        {% endif %}
-          </div>
-        </div>
-      </main>
+                <!-- Hover Details Overlay -->
+                <div
+                  class="absolute inset-0 bg-slate-950/40 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center z-20">
+                  <button
+                    onclick="openDetailModal('{{ pred.image_path }}', '{{ pred.breed|escape }}', '{{ conf_pct|round(1) }}', '{{ pred.species|escape }}', '{{ formatted_date }}')"
+                    class="px-4 py-2 bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-bold rounded-lg text-xs shadow-md hover:scale-105 active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer">
+                    <span class="material-symbols-outlined text-[14px]">visibility</span>
+                    Xem chi tiết
+                  </button>
+                </div>
+              </div>
+              <div class="p-4 flex flex-col justify-between flex-grow h-[140px]">
+                <div>
+                  <h2 class="body-md font-bold text-slate-900 dark:text-white leading-tight mb-1 truncate"
+                    title="{{ pred.breed or 'Chưa xác định' }}">
+                    {{ pred.breed or 'Chưa xác định' }}
+                  </h2>
+                  <div class="flex items-center text-slate-500 dark:text-slate-400 text-xs font-semibold">
+                    <span class="material-symbols-outlined text-[14px] mr-1">pets</span>
+                    <span>{{ pred.species or 'Chó' }}</span>
+                  </div>
+                </div>
+                <div class="mt-auto w-full">
+                  <div class="h-1 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden mb-3">
+                    <div class="h-full bg-primary history-fill" data-width="{{ conf_pct|round(1) }}"></div>
+                  </div>
+                  <div class="flex items-center text-slate-400 dark:text-slate-500 text-xs">
+                    <span class="material-symbols-outlined text-[14px] mr-1">schedule</span>
+                    <span>{{ formatted_date }}</span>
+                  </div>
+                </div>
+              </div>
+            </article>
+            {% endfor %}
+          </section>
 
-    <footer
-      class="bg-surface-container-low border-t border-outline-variant/30 px-4 md:px-6 pt-6 pb-4"
-    >
-      <div class="footer-inner max-w-container-max mx-auto">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-10">
-          <div class="lg:col-span-6 space-y-6">
-            <div class="headline-md font-bold tracking-tighter text-primary">
-              <span class="inline-flex items-center gap-0">
-                <img
-                  alt="PetAI New Logo"
-                  class="h-8 w-auto md:h-10"
-                  src="{{ url_for('static', filename='logo.png') }}"
-                />
-                <span class="ml-0 text-sm md:text-lg font-semibold text-primary"
-                  >PetAI</span
-                >
+          {% if total_pages and total_pages > 1 %}
+          <div class="mt-10 flex items-center justify-center">
+            <nav aria-label="Phân trang lịch sử" class="inline-flex -space-x-px rounded-md shadow-sm">
+              {% if page > 1 %}
+              <a class="relative inline-flex items-center rounded-l-lg px-3 py-2 text-slate-500 ring-1 ring-inset ring-slate-300 hover:bg-slate-50"
+                href="{{ url_for('history.history', page=page-1, type=selected_type, q=search_query) }}">
+                <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+              </a>
+              {% else %}
+              <span
+                class="relative inline-flex items-center rounded-l-lg px-3 py-2 text-slate-300 ring-1 ring-inset ring-slate-300 cursor-not-allowed">
+                <span class="material-symbols-outlined text-[18px]">chevron_left</span>
               </span>
+              {% endif %} {% for p in range(1, total_pages + 1) %} {% if p == page
+              %}
+              <span class="relative inline-flex items-center px-4 py-2 body-md font-semibold text-white bg-primary">
+                {{ p }}
+              </span>
+              {% elif p == 1 or p == total_pages or (p >= page - 1 and p <= page + 1) %} <a
+                class="relative inline-flex items-center px-4 py-2 body-md font-semibold text-slate-700 ring-1 ring-inset ring-slate-300 hover:bg-slate-50"
+                href="{{ url_for('history.history', page=p, type=selected_type, q=search_query) }}">
+                {{ p }}
+                </a>
+                {% elif p == page - 2 or p == page + 2 %}
+                <span
+                  class="relative inline-flex items-center px-4 py-2 body-md font-semibold text-slate-400 ring-1 ring-inset ring-slate-300">
+                  …
+                </span>
+                {% endif %} {% endfor %} {% if page < total_pages %} <a
+                  class="relative inline-flex items-center rounded-r-lg px-3 py-2 text-slate-500 ring-1 ring-inset ring-slate-300 hover:bg-slate-50"
+                  href="{{ url_for('history.history', page=page+1, type=selected_type, q=search_query) }}">
+                  <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+                  </a>
+                  {% else %}
+                  <span
+                    class="relative inline-flex items-center rounded-r-lg px-3 py-2 text-slate-300 ring-1 ring-inset ring-slate-300 cursor-not-allowed">
+                    <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+                  </span>
+                  {% endif %}
+            </nav>
+          </div>
+          {% endif %} {% else %}
+          <section class="soft-panel bg-white rounded-xl p-6 text-slate-500 border border-slate-100 shadow-sm">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="material-symbols-outlined">inbox</span>
+              <h3 class="body-md font-semibold text-slate-900">
+                Chưa có lịch sử nhận diện
+              </h3>
             </div>
-            <p class="body-md text-on-surface-variant max-w-sm">
-              Ứng dụng nhận diện giống chó bằng AI dành cho người yêu thú cưng.
-              Kết quả chính xác, nhanh chóng.
+            <p class="body-md text-slate-500 mb-4">
+              Hãy tải ảnh đầu tiên để bắt đầu hành trình dự đoán giống chó.
             </p>
-          </div>
-          <div class="lg:col-span-6 grid grid-cols-2 md:grid-cols-2 gap-8">
-            <div class="space-y-6">
-              <h4 class="label-sm text-primary uppercase tracking-widest"><span data-i18n="aboutPetAI">Về PetAI</span></h4>
-              <ul class="space-y-4">
-                <li class="">
-                  <a
-                    class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                    target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.privacy_policy') }}"
-                     data-i18n="privacy">Chính sách quyền riêng tư</a
-                  >
-                </li>
-                <li class="">
-                  <a
-                    class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                    target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.terms_of_service') }}"
-                     data-i18n="terms">Điều khoản sử dụng</a
-                  >
-                </li>
-                <li class="">
-                  <a
-                    class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                    target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.data_deletion') }}"
-                     data-i18n="dataDeletion">Chính sách xóa dữ liệu</a
-                  >
-                </li>
-                <li class="">
-                  <a
-                    class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                    target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.support') }}"
-                     data-i18n="support">Hỗ trợ</a
-                  >
-                </li>
-                <li class="">
-                  <a
-                    class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                    target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.contact') }}"
-                     data-i18n="contact">Liên hệ</a
-                  >
-                </li>
-              </ul>
-            </div>
-            <div class="space-y-6">
-              <h4 class="label-sm text-primary uppercase tracking-widest"><span data-i18n="connect">Kết nối</span></h4>
-              <ul class="space-y-4">
-                <li class="">
-                  <a
-                    class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                    href="{{ url_for('predict.upload_page') }}"
-                     data-i18n="identifyNow">Nhận diện ngay</a
-                  >
-                </li>
-                <li class="">
-                  <a
-                    class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                    href="{{ url_for('history.history') }}"
-                     data-i18n="collection">Bộ sưu tập</a
-                  >
-                </li>
-              </ul>
-            </div>
-          </div>
+            <a class="inline-flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg body-md font-medium hover:opacity-90 transition-colors"
+              href="{{ url_for('predict.upload_page') }}">
+              <span class="material-symbols-outlined text-[18px]">add_a_photo</span>
+              Bắt đầu ngay
+            </a>
+          </section>
+          {% endif %}
         </div>
-        <div class="border-t border-outline-variant/20 relative py-1">
-          <div
-            class="flex flex-col md:flex-row justify-between items-center gap-4"
-          >
-            <p class="label-sm text-on-surface-variant/70 dark:text-slate-400"><span data-i18n="copyright">Bản quyền © 2026 PetAI. Mọi quyền được bảo lưu</span></p>
-            <div class="flex gap-6">
-              <a
-                class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
-                target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.terms_of_service') }}"
-                >ĐIỀU KHOẢN</a
-              >
-              <a
-                class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
-                target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.privacy_policy') }}"
-                >BẢO MẬT</a
-              >
-            </div>
-          </div>
-        </div>
-      </div>
-    </footer>
-
-    <!-- Modal Detail Popup -->
-    <div id="detailModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm transition-all duration-300">
-      <div class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl max-w-2xl w-full border border-outline-variant/30 dark:border-slate-800 overflow-hidden shadow-2xl transition-transform transform scale-95 duration-300 flex flex-col md:flex-row md:h-[420px]">
-        
-        <!-- Image Panel -->
-        <div class="w-full md:w-1/2 bg-slate-950 flex items-center justify-center relative min-h-[250px] md:min-h-0">
-          <img id="modalImage" class="w-full h-full object-cover absolute inset-0" src="" alt="Ảnh nhận diện">
-          <!-- Species Badge -->
-          <div class="absolute bottom-4 left-4 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full text-white text-xs font-semibold flex items-center gap-1.5 z-10 border border-white/10">
-            <span class="material-symbols-outlined text-[14px]">pets</span>
-            <span id="modalSpecies">Chó</span>
-          </div>
-        </div>
-        
-        <!-- Info Panel -->
-        <div class="w-full md:w-1/2 p-6 flex flex-col justify-between text-slate-800 dark:text-slate-100">
-          <div>
-            <div class="flex items-center justify-between mb-4">
-              <!-- Type Badge -->
-              <span id="modalTypeBadge" class="px-2.5 py-1 rounded-full text-xs font-bold"></span>
-              <!-- Close Button -->
-              <button onclick="closeModal()" class="w-8 h-8 rounded-full bg-surface-container-low dark:bg-slate-800 hover:bg-surface-container-high dark:hover:bg-slate-700 flex items-center justify-center text-on-surface-variant transition-colors cursor-pointer">
-                <span class="material-symbols-outlined text-[20px]">close</span>
-              </button>
-            </div>
-            
-            <h3 id="modalBreed" class="text-xl font-bold text-slate-900 dark:text-white leading-snug mb-3"></h3>
-            
-            <!-- Parent mix info (Only shown for hybrid) -->
-            <div id="modalHybridInfo" class="mb-4 hidden p-3 rounded-xl bg-surface-container-low dark:bg-slate-800/50 border border-outline-variant/20 dark:border-slate-800">
-              <span class="text-xs font-semibold text-slate-500 dark:text-slate-400 block mb-1.5">Tỷ lệ lai dự kiến</span>
-              <div class="flex items-center justify-between text-sm mb-1">
-                <span id="modalParent1" class="font-medium text-slate-800 dark:text-slate-200"></span>
-                <span class="text-xs text-slate-550 font-bold">50%</span>
-              </div>
-              <div class="flex items-center justify-between text-sm">
-                <span id="modalParent2" class="font-medium text-slate-800 dark:text-slate-200"></span>
-                <span class="text-xs text-slate-550 font-bold">50%</span>
-              </div>
-            </div>
-            
-            <div class="space-y-4">
-              <!-- Confidence slider/gauge -->
-              <div>
-                <div class="flex items-center justify-between label-sm mb-1.5">
-                  <span class="text-slate-550 dark:text-slate-400 font-semibold">Độ tin cậy</span>
-                  <span id="modalConfText" class="font-bold text-primary dark:text-blue-400"></span>
-                </div>
-                <div class="h-2 rounded-full bg-surface-container-low dark:bg-slate-850 overflow-hidden">
-                  <div id="modalConfBar" class="h-full bg-gradient-to-r from-primary/80 to-primary dark:from-blue-500/80 dark:to-blue-400 rounded-full transition-all duration-505" style="width: 0%"></div>
-                </div>
-              </div>
-              
-              <!-- Date and Time -->
-              <div class="flex items-center gap-2 text-slate-500 dark:text-slate-400 text-xs">
-                <span class="material-symbols-outlined text-[16px]">schedule</span>
-                <span>Thời gian nhận diện:</span>
-                <span id="modalDate" class="font-medium text-slate-700 dark:text-slate-300"></span>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Footer Button -->
-          <div class="mt-6">
-            <button onclick="closeModal()" class="w-full py-2.5 bg-primary hover:bg-primary/95 text-on-primary font-semibold rounded-xl text-sm transition-colors cursor-pointer shadow-sm hover:shadow-md flex items-center justify-center gap-2">
-              Đóng cửa sổ
-            </button>
-          </div>
-        </div>
-        
       </div>
     </div>
+  </main>
 
-    <script>
-      (function () {
-        document.querySelectorAll(".history-fill[data-width]").forEach((el) => {
-          const raw = Number(el.getAttribute("data-width") || 0);
-          const pct = Math.max(0, Math.min(100, raw));
-          el.style.width = `${pct}%`;
-        });
-      })();
+  <footer class="bg-surface-container-low border-t border-outline-variant/30 px-4 md:px-6 pt-6 pb-4">
+    <div class="footer-inner max-w-container-max mx-auto">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-10">
+        <div class="lg:col-span-6 space-y-6">
+          <div class="headline-md font-bold tracking-tighter text-primary">
+            <span class="inline-flex items-center gap-0">
+              <img alt="PetAI New Logo" class="h-8 w-auto md:h-10" src="{{ url_for('static', filename='logo.png') }}" />
+              <span class="ml-0 text-sm md:text-lg font-semibold text-primary">PetAI</span>
+            </span>
+          </div>
+          <p class="body-md text-on-surface-variant max-w-sm">
+            Ứng dụng nhận diện giống chó bằng AI dành cho người yêu thú cưng.
+            Kết quả chính xác, nhanh chóng.
+          </p>
+        </div>
+        <div class="lg:col-span-6 grid grid-cols-2 md:grid-cols-2 gap-8">
+          <div class="space-y-6">
+            <h4 class="label-sm text-primary uppercase tracking-widest"><span data-i18n="aboutPetAI">Về PetAI</span>
+            </h4>
+            <ul class="space-y-4">
+              <li class="">
+                <a class="text-on-surface-variant hover:text-primary transition-colors font-medium" target="_blank"
+                  rel="noopener noreferrer" href="{{ url_for('legal.privacy_policy') }}" data-i18n="privacy">Chính sách
+                  quyền riêng tư</a>
+              </li>
+              <li class="">
+                <a class="text-on-surface-variant hover:text-primary transition-colors font-medium" target="_blank"
+                  rel="noopener noreferrer" href="{{ url_for('legal.terms_of_service') }}" data-i18n="terms">Điều khoản
+                  sử dụng</a>
+              </li>
+              <li class="">
+                <a class="text-on-surface-variant hover:text-primary transition-colors font-medium" target="_blank"
+                  rel="noopener noreferrer" href="{{ url_for('legal.data_deletion') }}" data-i18n="dataDeletion">Chính
+                  sách xóa dữ liệu</a>
+              </li>
+              <li class="">
+                <a class="text-on-surface-variant hover:text-primary transition-colors font-medium" target="_blank"
+                  rel="noopener noreferrer" href="{{ url_for('legal.support') }}" data-i18n="support">Hỗ trợ</a>
+              </li>
+              <li class="">
+                <a class="text-on-surface-variant hover:text-primary transition-colors font-medium" target="_blank"
+                  rel="noopener noreferrer" href="{{ url_for('legal.contact') }}" data-i18n="contact">Liên hệ</a>
+              </li>
+            </ul>
+          </div>
+          <div class="space-y-6">
+            <h4 class="label-sm text-primary uppercase tracking-widest"><span data-i18n="connect">Kết nối</span></h4>
+            <ul class="space-y-4">
+              <li class="">
+                <a class="text-on-surface-variant hover:text-primary transition-colors font-medium"
+                  href="{{ url_for('predict.upload_page') }}" data-i18n="identifyNow">Nhận diện ngay</a>
+              </li>
+              <li class="">
+                <a class="text-on-surface-variant hover:text-primary transition-colors font-medium"
+                  href="{{ url_for('history.history') }}" data-i18n="collection">Bộ sưu tập</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="border-t border-outline-variant/20 relative py-1">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+          <p class="label-sm text-on-surface-variant/70 dark:text-slate-400"><span data-i18n="copyright">Bản quyền ©
+              2026 PetAI. Mọi quyền được bảo lưu</span></p>
+          <div class="flex gap-6">
+            <a class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
+              target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.terms_of_service') }}">ĐIỀU KHOẢN</a>
+            <a class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
+              target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.privacy_policy') }}">BẢO MẬT</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
 
-      function openDetailModal(imagePath, breed, confidence, species, date) {
-        const modal = document.getElementById('detailModal');
-        const modalImage = document.getElementById('modalImage');
-        const modalBreed = document.getElementById('modalBreed');
-        const modalSpecies = document.getElementById('modalSpecies');
-        const modalTypeBadge = document.getElementById('modalTypeBadge');
-        const modalConfText = document.getElementById('modalConfText');
-        const modalConfBar = document.getElementById('modalConfBar');
-        const modalDate = document.getElementById('modalDate');
-        const modalHybridInfo = document.getElementById('modalHybridInfo');
-        const modalParent1 = document.getElementById('modalParent1');
-        const modalParent2 = document.getElementById('modalParent2');
-        
-        // Set basic data
-        modalImage.src = '/' + imagePath;
-        modalBreed.innerText = breed;
-        modalSpecies.innerText = species || 'Chó';
-        modalConfText.innerText = confidence + '%';
-        modalConfBar.style.width = confidence + '%';
-        modalDate.innerText = date;
-        
-        // Set type badge & check for hybrid
-        if (breed.startsWith('Nghi lai:')) {
-          // Hybrid
-          modalTypeBadge.innerText = 'Chó lai';
-          modalTypeBadge.className = 'px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 dark:bg-amber-950/50 dark:text-amber-400 border border-amber-200 dark:border-amber-900/30';
-          
-          // Parse parents
-          const parentPart = breed.replace('Nghi lai:', '').trim();
-          const parents = parentPart.split('x');
-          if (parents.length >= 2) {
-            modalParent1.innerText = parents[0].trim();
-            modalParent2.innerText = parents[1].trim();
-            modalHybridInfo.classList.remove('hidden');
-          } else {
-            modalHybridInfo.classList.add('hidden');
-          }
-        } else {
-          // Purebred
-          modalTypeBadge.innerText = 'Chó thuần chủng';
-          modalTypeBadge.className = 'px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900/30';
-          modalHybridInfo.classList.add('hidden');
-        }
-        
-        // Show modal
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-        setTimeout(() => {
-          modal.querySelector('.max-w-2xl').classList.remove('scale-95');
-          modal.querySelector('.max-w-2xl').classList.add('scale-100');
-        }, 10);
-      }
+  <!-- Modal Detail Popup -->
+  <div id="detailModal"
+    class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm transition-all duration-300">
+    <div
+      class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl max-w-2xl w-full border border-outline-variant/30 dark:border-slate-800 overflow-hidden shadow-2xl transition-transform transform scale-95 duration-300 flex flex-col md:flex-row md:h-[420px]">
 
-      function closeModal() {
-        const modal = document.getElementById('detailModal');
-        modal.querySelector('.max-w-2xl').classList.remove('scale-100');
-        modal.querySelector('.max-w-2xl').classList.add('scale-95');
-        setTimeout(() => {
-          modal.classList.remove('flex');
-          modal.classList.add('hidden');
-        }, 150);
-      }
+      <!-- Image Panel -->
+      <div class="w-full md:w-1/2 bg-slate-950 flex items-center justify-center relative min-h-[250px] md:min-h-0">
+        <img id="modalImage" class="w-full h-full object-cover absolute inset-0" src="" alt="Ảnh nhận diện">
+        <!-- Species Badge -->
+        <div
+          class="absolute bottom-4 left-4 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full text-white text-xs font-semibold flex items-center gap-1.5 z-10 border border-white/10">
+          <span class="material-symbols-outlined text-[14px]">pets</span>
+          <span id="modalSpecies">Chó</span>
+        </div>
+      </div>
 
-      // Close on click outside
-      window.addEventListener('click', function(e) {
-        const modal = document.getElementById('detailModal');
-        if (e.target === modal) {
-          closeModal();
-        }
+      <!-- Info Panel -->
+      <div class="w-full md:w-1/2 p-6 flex flex-col justify-between text-slate-800 dark:text-slate-100">
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <!-- Type Badge -->
+            <span id="modalTypeBadge" class="px-2.5 py-1 rounded-full text-xs font-bold"></span>
+            <!-- Close Button -->
+            <button onclick="closeModal()"
+              class="w-8 h-8 rounded-full bg-surface-container-low dark:bg-slate-800 hover:bg-surface-container-high dark:hover:bg-slate-700 flex items-center justify-center text-on-surface-variant transition-colors cursor-pointer">
+              <span class="material-symbols-outlined text-[20px]">close</span>
+            </button>
+          </div>
+
+          <h3 id="modalBreed" class="text-xl font-bold text-slate-900 dark:text-white leading-snug mb-3"></h3>
+
+          <!-- Parent mix info (Only shown for hybrid) -->
+          <div id="modalHybridInfo"
+            class="mb-4 hidden p-3 rounded-xl bg-surface-container-low dark:bg-slate-800/50 border border-outline-variant/20 dark:border-slate-800">
+            <span class="text-xs font-semibold text-slate-500 dark:text-slate-400 block mb-1.5">Tỷ lệ lai dự kiến</span>
+            <div class="flex items-center justify-between text-sm mb-1">
+              <span id="modalParent1" class="font-medium text-slate-800 dark:text-slate-200"></span>
+              <span class="text-xs text-slate-550 font-bold">50%</span>
+            </div>
+            <div class="flex items-center justify-between text-sm">
+              <span id="modalParent2" class="font-medium text-slate-800 dark:text-slate-200"></span>
+              <span class="text-xs text-slate-550 font-bold">50%</span>
+            </div>
+          </div>
+
+          <div class="space-y-4">
+            <!-- Confidence slider/gauge -->
+            <div>
+              <div class="flex items-center justify-between label-sm mb-1.5">
+                <span class="text-slate-550 dark:text-slate-400 font-semibold">Độ tin cậy</span>
+                <span id="modalConfText" class="font-bold text-primary dark:text-blue-400"></span>
+              </div>
+              <div class="h-2 rounded-full bg-surface-container-low dark:bg-slate-850 overflow-hidden">
+                <div id="modalConfBar"
+                  class="h-full bg-gradient-to-r from-primary/80 to-primary dark:from-blue-500/80 dark:to-blue-400 rounded-full transition-all duration-505"
+                  style="width: 0%"></div>
+              </div>
+            </div>
+
+            <!-- Date and Time -->
+            <div class="flex items-center gap-2 text-slate-500 dark:text-slate-400 text-xs">
+              <span class="material-symbols-outlined text-[16px]">schedule</span>
+              <span>Thời gian nhận diện:</span>
+              <span id="modalDate" class="font-medium text-slate-700 dark:text-slate-300"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer Button -->
+        <div class="mt-6">
+          <button onclick="closeModal()"
+            class="w-full py-2.5 bg-primary hover:bg-primary/95 text-on-primary font-semibold rounded-xl text-sm transition-colors cursor-pointer shadow-sm hover:shadow-md flex items-center justify-center gap-2">
+            Đóng cửa sổ
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      document.querySelectorAll(".history-fill[data-width]").forEach((el) => {
+        const raw = Number(el.getAttribute("data-width") || 0);
+        const pct = Math.max(0, Math.min(100, raw));
+        el.style.width = `${pct}%`;
       });
+    })();
 
-      // Ensure pagination navigation doesn't leave sidebar scrolled out of view.
-      document.addEventListener('DOMContentLoaded', function () {
+    // PJAX Smooth transitions for tab selections, search, and pagination
+    (function () {
+      const container = document.getElementById("history-pjax-container");
+      if (!container) return;
+
+      function rebindListeners() {
+        // Intercept links inside the pjax container
+        container.querySelectorAll("a").forEach(link => {
+          if (link.hasAttribute("onclick") || link.getAttribute("target") === "_blank") return;
+          const href = link.getAttribute("href");
+          if (!href || href.startsWith("#") || href.startsWith("javascript:")) return;
+
+          link.addEventListener("click", function (e) {
+            e.preventDefault();
+            navigateTo(href);
+          });
+        });
+
+        // Intercept search form submission
+        const form = container.querySelector("form");
+        if (form) {
+          form.addEventListener("submit", function (e) {
+            e.preventDefault();
+            const formData = new FormData(form);
+            const params = new URLSearchParams();
+            for (const [key, val] of formData.entries()) {
+              if (val) params.set(key, val);
+            }
+            const action = form.getAttribute("action") || window.location.pathname;
+            const targetUrl = action + "?" + params.toString();
+            navigateTo(targetUrl);
+          });
+
+          // Intercept clear search button click
+          const clearSearchBtn = form.querySelector("a");
+          if (clearSearchBtn) {
+            clearSearchBtn.addEventListener("click", function (e) {
+              const href = clearSearchBtn.getAttribute("href");
+              if (href) {
+                e.preventDefault();
+                navigateTo(href);
+              }
+            });
+          }
+        }
+      }
+
+      async function navigateTo(url, push = true) {
+        container.classList.add("opacity-40", "transition-opacity", "duration-200");
         try {
-          var params = new URLSearchParams(window.location.search || '');
-          if (params.has('page')) {
-            if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+          const res = await fetch(url, { headers: { "X-Requested-With": "XMLHttpRequest" } });
+          if (!res.ok) throw new Error("Load failed");
+          const htmlText = await res.text();
+
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(htmlText, "text/html");
+          const newContainer = doc.getElementById("history-pjax-container");
+          const newTotalCount = doc.getElementById("total-records-count");
+
+          if (newContainer) {
+            container.innerHTML = newContainer.innerHTML;
+            if (push) {
+              history.pushState({ pjax: true }, "", url);
+            }
+
+            // Update total count in header
+            const totalCountEl = document.getElementById("total-records-count");
+            if (totalCountEl && newTotalCount) {
+              totalCountEl.textContent = newTotalCount.textContent;
+            }
+
+            // Re-animate progress bars
+            document.querySelectorAll(".history-fill[data-width]").forEach((el) => {
+              const raw = Number(el.getAttribute("data-width") || 0);
+              const pct = Math.max(0, Math.min(100, raw));
+              el.style.width = `${pct}%`;
+            });
+
+            rebindListeners();
+
+            // Scroll main into view smoothly
             var mainEl = document.querySelector('main');
             if (mainEl) {
-              mainEl.setAttribute('tabindex', '-1');
-              mainEl.style.outline = 'none';
-              mainEl.style.boxShadow = 'none';
-              try {
-                mainEl.focus({preventScroll: true});
-              } catch (e) {
-                try { mainEl.focus(); } catch (e) {}
-              }
-              mainEl.scrollIntoView({behavior: 'auto', block: 'start'});
+              mainEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
+          } else {
+            window.location.href = url;
           }
-        } catch (e) {
-          // ignore
+        } catch (err) {
+          console.error("PJAX load error, loading via page reload:", err);
+          window.location.href = url;
+        } finally {
+          container.classList.remove("opacity-40");
+        }
+      }
+
+      // Popstate handler for back/forward browser buttons
+      window.addEventListener("popstate", function (e) {
+        if (e.state && e.state.pjax) {
+          navigateTo(window.location.href, false);
+        } else {
+          window.location.reload();
         }
       });
-    </script>
-    <script src="{{ url_for('static', filename='js/toasts.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
-  </body>
+
+      // Initialize PJAX listening
+      rebindListeners();
+    })();
+
+    function openDetailModal(imagePath, breed, confidence, species, date) {
+      const modal = document.getElementById('detailModal');
+      const modalImage = document.getElementById('modalImage');
+      const modalBreed = document.getElementById('modalBreed');
+      const modalSpecies = document.getElementById('modalSpecies');
+      const modalTypeBadge = document.getElementById('modalTypeBadge');
+      const modalConfText = document.getElementById('modalConfText');
+      const modalConfBar = document.getElementById('modalConfBar');
+      const modalDate = document.getElementById('modalDate');
+      const modalHybridInfo = document.getElementById('modalHybridInfo');
+      const modalParent1 = document.getElementById('modalParent1');
+      const modalParent2 = document.getElementById('modalParent2');
+
+      // Set basic data
+      modalImage.src = '/' + imagePath;
+      modalBreed.innerText = breed;
+      modalSpecies.innerText = species || 'Chó';
+      modalConfText.innerText = confidence + '%';
+      modalConfBar.style.width = confidence + '%';
+      modalDate.innerText = date;
+
+      // Set type badge & check for hybrid
+      if (breed.startsWith('Nghi lai:')) {
+        // Hybrid
+        modalTypeBadge.innerText = 'Chó lai';
+        modalTypeBadge.className = 'px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 dark:bg-amber-950/50 dark:text-amber-400 border border-amber-200 dark:border-amber-900/30';
+
+        // Parse parents
+        const parentPart = breed.replace('Nghi lai:', '').trim();
+        const parents = parentPart.split('x');
+        if (parents.length >= 2) {
+          modalParent1.innerText = parents[0].trim();
+          modalParent2.innerText = parents[1].trim();
+          modalHybridInfo.classList.remove('hidden');
+        } else {
+          modalHybridInfo.classList.add('hidden');
+        }
+      } else {
+        // Purebred
+        modalTypeBadge.innerText = 'Chó thuần';
+        modalTypeBadge.className = 'px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-400 border border-emerald-250 dark:border-emerald-900/30';
+        modalHybridInfo.classList.add('hidden');
+      }
+
+      // Show modal
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      setTimeout(() => {
+        modal.querySelector('.max-w-2xl').classList.remove('scale-95');
+        modal.querySelector('.max-w-2xl').classList.add('scale-100');
+      }, 10);
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('detailModal');
+      modal.querySelector('.max-w-2xl').classList.remove('scale-100');
+      modal.querySelector('.max-w-2xl').classList.add('scale-95');
+      setTimeout(() => {
+        modal.classList.remove('flex');
+        modal.classList.add('hidden');
+      }, 150);
+    }
+
+    // Close on click outside
+    window.addEventListener('click', function (e) {
+      const modal = document.getElementById('detailModal');
+      if (e.target === modal) {
+        closeModal();
+      }
+    });
+
+    // Ensure pagination navigation doesn't leave sidebar scrolled out of view.
+    document.addEventListener('DOMContentLoaded', function () {
+      try {
+        var params = new URLSearchParams(window.location.search || '');
+        if (params.has('page')) {
+          if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+          var mainEl = document.querySelector('main');
+          if (mainEl) {
+            mainEl.setAttribute('tabindex', '-1');
+            mainEl.style.outline = 'none';
+            mainEl.style.boxShadow = 'none';
+            try {
+              mainEl.focus({ preventScroll: true });
+            } catch (e) {
+              try { mainEl.focus(); } catch (e) { }
+            }
+            mainEl.scrollIntoView({ behavior: 'auto', block: 'start' });
+          }
+        }
+      } catch (e) {
+        // ignore
+      }
+    });
+  </script>
+  <script src="{{ url_for('static', filename='js/toasts.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+
 </html>
