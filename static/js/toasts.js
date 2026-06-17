@@ -45,6 +45,14 @@
   }
 
   function getTitleMap(stack) {
+    if (window.PetAI_i18n && typeof window.PetAI_i18n.t === "function") {
+      return {
+        success: window.PetAI_i18n.t("success"),
+        error: window.PetAI_i18n.t("error"),
+        warning: window.PetAI_i18n.t("warning") || "Warning",
+        info: window.PetAI_i18n.t("info") || "Info",
+      };
+    }
     return {
       success: stack?.dataset.titleSuccess || "Success",
       error: stack?.dataset.titleError || "Error",
@@ -122,7 +130,15 @@
     closeBtn.type = "button";
     closeBtn.className = "toast__close";
     closeBtn.setAttribute("data-toast-close", "true");
-    closeBtn.setAttribute("aria-label", stack?.dataset.closeLabel || "Close");
+    
+    const getCloseLabel = () => {
+      if (window.PetAI_i18n && typeof window.PetAI_i18n.t === "function") {
+        return window.PetAI_i18n.t("close");
+      }
+      return stack?.dataset.closeLabel || "Close";
+    };
+    closeBtn.setAttribute("aria-label", getCloseLabel());
+    
     const closeIcon = document.createElement("span");
     closeIcon.className = "material-symbols-outlined";
     closeIcon.textContent = "close";
