@@ -255,13 +255,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // --- Avatar Dropdown Click Toggle ---
   document.querySelectorAll(".avatar-wrapper").forEach(function (wrapper) {
-    var avatarImg = wrapper.querySelector("img");
     var dropdownMenu = wrapper.querySelector(".avatar-dropdown-menu");
-    if (!avatarImg || !dropdownMenu) return;
+    if (!dropdownMenu) return;
 
-    avatarImg.style.cursor = "pointer";
+    wrapper.style.cursor = "pointer";
 
-    avatarImg.addEventListener("click", function (e) {
+    wrapper.addEventListener("click", function (e) {
+      if (e.target.closest(".avatar-dropdown-menu")) return;
       e.preventDefault();
       e.stopPropagation();
       // Close all other avatar dropdowns first

@@ -10,7 +10,7 @@ history_bp = Blueprint("history", __name__)
 
 @history_bp.route("/")
 def history():
-    """Trang lịch sử nhận diện với phân trang"""
+    """Trang lịch sử nhận diện với phân trang và bộ lọc"""
     if not session.get("user_id"):
         flash("Vui lòng đăng nhập để xem lịch sử.", "warning")
         return redirect(url_for("login.login"))
@@ -23,14 +23,29 @@ def history():
             return redirect(url_for("login.login"))
         user_id = int(user_id_any)
         
+        # Bộ lọc loại giống: all, pure, hybrid
+        breed_type = request.args.get('type', 'all')
+        if breed_type not in ('all', 'pure', 'hybrid'):
+            breed_type = 'all'
+            
+        # Tìm kiếm theo tên giống chó
+        search_query = request.args.get('q', '').strip()
+            
         # Phân trang
         page = request.args.get('page', 1, type=int)
         per_page = 30
         offset = (page - 1) * per_page
         
-        # Lấy tổng số bản ghi và dữ liệu trang hiện tại
-        total_records = PredictionHistory.count_by_user(conn, user_id)
-        predictions = PredictionHistory.get_by_user(conn, user_id, limit=per_page, offset=offset)
+        # Lấy tổng số bản ghi và dữ liệu trang hiện tại theo bộ lọc và tìm kiếm
+        total_records = PredictionHistory.count_by_user(conn, user_id, breed_type=breed_type, search_query=search_query)
+        predictions = PredictionHistory.get_by_user(conn, user_id, limit=per_page, offset=offset, breed_type=breed_type, search_query=search_query)
+        
+        # Thống kê tổng hợp (tất cả thời gian) cho phần Grid thống kê ở đầu trang
+        total_records_all = PredictionHistory.count_by_user(conn, user_id)
+        pure_count = PredictionHistory.count_by_user(conn, user_id, breed_type='pure')
+        hybrid_count = PredictionHistory.count_by_user(conn, user_id, breed_type='hybrid')
+        stats_all = PredictionHistory.get_stats(conn, user_id)
+        avg_conf = stats_all.get('avg_confidence', 0.0) * 100
         
         # Tính tổng số trang
         import math
@@ -42,7 +57,13 @@ def history():
                              predictions=predictions,
                              page=page,
                              total_pages=total_pages,
-                             total_records=total_records)
+                             total_records=total_records,
+                             selected_type=breed_type,
+                             search_query=search_query,
+                             total_records_all=total_records_all,
+                             pure_count=pure_count,
+                             hybrid_count=hybrid_count,
+                             avg_conf=avg_conf)
     except Exception as e:
         print(f"Error loading history: {e}")
         flash("Không thể tải lịch sử. Vui lòng thử lại.", "error")

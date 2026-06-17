@@ -19,7 +19,20 @@ def register_context_processors(app):
                 conn = get_connection()
                 try:
                     quota = UserQuota.get_or_create(conn, user_id)
-                    current_plan = (quota or {}).get("plan") or "free"
+                    plan = (quota or {}).get("plan") or "free"
+                    expire = (quota or {}).get("plan_expire")
+                    paid_uses = (quota or {}).get("paid_uses_remaining")
+                    
+                    from datetime import datetime
+                    now = datetime.now()
+                    is_active = (plan != "free" and (expire is None or expire > now))
+                    is_out_of_uses = (paid_uses is not None and int(paid_uses) <= 0)
+                    
+                    if plan != "free" and (not is_active or is_out_of_uses):
+                        current_plan = "free"
+                    else:
+                        current_plan = plan
+
                     user_settings = UserSettings.get_or_create(conn, user_id)
                     theme_raw = (user_settings or {}).get("theme")
                     if isinstance(theme_raw, str) and theme_raw.strip().lower() in {"light", "dark", "auto"}:

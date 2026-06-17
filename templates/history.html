@@ -214,22 +214,23 @@
       }
     </style>
     <style>
-      /* Ensure rounded-custom and history grid tokens */
-      .rounded-custom {
-        border-radius: 4px;
-      }
+      /* Ensure rounded-xl and history grid tokens */
+      
       .history-grid > * {
         border: 1px solid rgba(226, 232, 240, 1); /* border-slate-100 */
         box-shadow:
           0 1px 2px rgba(15, 23, 42, 0.03),
           0 6px 12px rgba(148, 163, 184, 0.06);
-        border-radius: 4px;
+        border-radius: 12px;
         background-clip: padding-box;
+      }
+      .dark .history-grid > * {
+        border-color: rgba(30, 41, 59, 1); /* border-slate-800 */
       }
     </style>
   </head>
   <body
-    class="bg-background text-on-background body-md body-md antialiased min-h-screen flex flex-col"
+    class="bg-background text-on-background body-md antialiased min-h-screen flex flex-col"
   >
     {% include '_toasts.html' %}
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
@@ -378,11 +379,12 @@
       </nav>
 
     <main
+      tabindex="-1"
       class="flex-grow w-full px-4 md:px-6 py-margin grid grid-cols-1 md:grid-cols-[230px_minmax(0,1fr)] gap-gutter"
     >
       <aside class="sidebar col-span-1" id="sidebar">
         <div
-          class="bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] py-sm px-2 flex flex-col gap-sm sticky top-24 border border-surface-container-highest/50"
+          class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] py-sm px-2 flex flex-col gap-sm sticky top-24 border border-outline-variant/30"
         >
           <h3
             class="label-sm label-sm text-on-surface-variant uppercase tracking-wider mb-xs px-1.5"
@@ -488,30 +490,138 @@
         </div>
       </aside>
 
-      <div class="col-span-1 flex flex-col">
-        <section class="mb-8">
-          <div
-            class="flex flex-col md:flex-row md:items-center md:justify-between gap-4"
+      <div class="col-span-1 flex flex-col gap-8">
+        <div class="space-y-6">
+          <section
+            class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-outline-variant/20 dark:border-slate-800 pb-5"
+            data-purpose="page-header"
           >
             <div class="flex flex-col gap-2">
-              <h1 class="headline-lg font-semibold text-on-surface">
+              <h1 class="headline-lg font-semibold text-on-surface dark:text-slate-100">
                 Lịch sử nhận diện
               </h1>
-              <p class="body-md text-on-surface-variant">
+              <p class="body-md text-on-surface-variant dark:text-slate-400">
                 Bạn có tổng cộng {{ total_records }} bản ghi dự đoán.
               </p>
             </div>
-            <a
-              class="bg-primary text-on-primary px-4 py-2 rounded-lg label-sm shadow-sm hover:shadow-md transition-all flex items-center gap-2"
-              href="{{ url_for('predict.upload_page') }}"
-            >
-              <span class="material-symbols-outlined text-[18px]"
-                >add_a_photo</span
+            <div class="mt-4 md:mt-0 md:flex-none">
+              <a
+                class="bg-primary hover:bg-primary/95 text-on-primary px-4 py-2.5 rounded-lg label-sm shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-2 font-semibold"
+                href="{{ url_for('predict.upload_page') }}"
               >
-              Nhận diện mới
-            </a>
-          </div>
-        </section>
+                <span class="material-symbols-outlined text-[18px]">add_a_photo</span>
+                Nhận diện mới
+              </a>
+            </div>
+          </section>
+
+          <!-- Statistics Grid Overview -->
+          <section
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+            data-purpose="statistics-overview"
+          >
+            <!-- Card 1: Tổng nhận diện -->
+            <div class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 dark:border-slate-800 shadow-sm min-h-[140px]">
+              <div class="flex items-center justify-between">
+                <span class="label-sm text-on-surface-variant dark:text-slate-400 font-semibold uppercase tracking-wider">Tổng nhận diện</span>
+                <div class="w-10 h-10 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center text-primary">
+                  <span class="material-symbols-outlined">history</span>
+                </div>
+              </div>
+              <div class="mt-4 flex flex-col">
+                <span class="text-3xl font-bold text-on-surface dark:text-slate-100 tracking-tight">{{ total_records_all or 0 }}</span>
+                <span class="label-sm text-on-surface-variant/70 dark:text-slate-400/80 mt-1">Lượt phân tích ảnh</span>
+              </div>
+            </div>
+
+            <!-- Card 2: Chó thuần chủng -->
+            <div class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 dark:border-slate-800 shadow-sm min-h-[140px]">
+              <div class="flex items-center justify-between">
+                <span class="label-sm text-on-surface-variant dark:text-slate-400 font-semibold uppercase tracking-wider">Chó thuần chủng</span>
+                <div class="w-10 h-10 rounded-lg bg-emerald-500/10 dark:bg-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                  <span class="material-symbols-outlined">verified</span>
+                </div>
+              </div>
+              <div class="mt-4 flex flex-col">
+                <span class="text-3xl font-bold text-on-surface dark:text-slate-100 tracking-tight">{{ pure_count or 0 }}</span>
+                <span class="label-sm text-on-surface-variant/70 dark:text-slate-400/80 mt-1">Giống thuần chủng</span>
+              </div>
+            </div>
+
+            <!-- Card 3: Chó lai -->
+            <div class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 dark:border-slate-800 shadow-sm min-h-[140px]">
+              <div class="flex items-center justify-between">
+                <span class="label-sm text-on-surface-variant dark:text-slate-400 font-semibold uppercase tracking-wider">Chó lai</span>
+                <div class="w-10 h-10 rounded-lg bg-amber-500/10 dark:bg-amber-500/20 flex items-center justify-center text-amber-600 dark:text-amber-400">
+                  <span class="material-symbols-outlined">call_split</span>
+                </div>
+              </div>
+              <div class="mt-4 flex flex-col">
+                <span class="text-3xl font-bold text-on-surface dark:text-slate-100 tracking-tight">{{ hybrid_count or 0 }}</span>
+                <span class="label-sm text-on-surface-variant/70 dark:text-slate-400/80 mt-1">Giống nghi lai phối</span>
+              </div>
+            </div>
+
+            <!-- Card 4: Độ tin cậy TB -->
+            <div class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 dark:border-slate-800 shadow-sm min-h-[140px]">
+              <div class="flex items-center justify-between">
+                <span class="label-sm text-on-surface-variant dark:text-slate-400 font-semibold uppercase tracking-wider">Độ tin cậy TB</span>
+                <div class="w-10 h-10 rounded-lg bg-blue-500/10 dark:bg-blue-500/20 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                  <span class="material-symbols-outlined">speed</span>
+                </div>
+              </div>
+              <div class="mt-4 flex flex-col">
+                <span class="text-3xl font-bold text-on-surface dark:text-slate-100 tracking-tight">{% if avg_conf %}{{ '%.1f'|format(avg_conf) }}{% else %}0.0{% endif %}%</span>
+                <span class="label-sm text-on-surface-variant/70 dark:text-slate-400/80 mt-1">Độ chính xác trung bình</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="flex flex-col md:flex-row md:items-center md:justify-between gap-4" data-purpose="search-and-filters">
+            <!-- Segmented Tab Selection Bar -->
+            <div class="flex items-center gap-1.5 p-1 bg-surface-container-low dark:bg-slate-900 rounded-xl w-fit border border-outline-variant/40 dark:border-slate-800">
+              <a class="px-5 py-2 rounded-lg label-sm transition-all duration-200 {% if selected_type == 'all' or not selected_type %}bg-primary text-white shadow-sm font-semibold{% else %}text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-slate-800 font-medium{% endif %}"
+                href="{{ url_for('history.history', type='all', q=search_query) }}">
+                Tất cả
+              </a>
+              <a class="px-5 py-2 rounded-lg label-sm transition-all duration-200 {% if selected_type == 'pure' %}bg-primary text-white shadow-sm font-semibold{% else %}text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-slate-800 font-medium{% endif %}"
+                href="{{ url_for('history.history', type='pure', q=search_query) }}">
+                Chó thuần chủng
+              </a>
+              <a class="px-5 py-2 rounded-lg label-sm transition-all duration-200 {% if selected_type == 'hybrid' %}bg-primary text-white shadow-sm font-semibold{% else %}text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-slate-800 font-medium{% endif %}"
+                href="{{ url_for('history.history', type='hybrid', q=search_query) }}">
+                Chó lai
+              </a>
+            </div>
+
+            <!-- Search Input Form -->
+            <form method="GET" action="{{ url_for('history.history') }}" class="flex items-center gap-2 w-full md:w-auto">
+              <input type="hidden" name="type" value="{{ selected_type or 'all' }}" />
+              
+              <div class="relative w-full md:w-64">
+                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 dark:text-slate-500">
+                  <span class="material-symbols-outlined text-[20px]">search</span>
+                </span>
+                <input
+                  name="q"
+                  value="{{ search_query or '' }}"
+                  class="w-full pl-10 pr-4 py-2.5 bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/40 dark:border-slate-800 rounded-lg label-sm text-on-surface dark:text-slate-100 focus:ring-primary focus:border-primary dark:focus:ring-blue-500 dark:focus:border-blue-500 transition-colors"
+                  placeholder="Tìm kiếm giống..."
+                  type="text"
+                />
+              </div>
+              
+              {% if search_query %}
+              <a
+                href="{{ url_for('history.history', type=selected_type) }}"
+                class="p-2.5 bg-surface-container-low hover:bg-surface-container dark:bg-slate-800 dark:hover:bg-slate-700 text-on-surface-variant dark:text-slate-300 rounded-lg transition-colors border border-outline-variant/40 dark:border-slate-750 flex items-center justify-center"
+                title="Xoá tìm kiếm"
+              >
+                <span class="material-symbols-outlined text-[18px]">close</span>
+              </a>
+              {% endif %}
+            </form>
+          </section>
 
         {% if predictions and predictions|length > 0 %}
         <section
@@ -519,48 +629,61 @@
         >
           {% for pred in predictions %} {% set conf_pct = ((pred.confidence or
           0) * 100) %}
+          {% set formatted_date = pred.created_at.strftime('%d/%m/%Y %H:%M') if pred.created_at else '' %}
           <article
-            class="soft-panel bg-white rounded-custom overflow-hidden flex flex-col border border-slate-100 shadow-sm"
+            class="soft-panel bg-surface-container-lowest dark:bg-slate-900 rounded-xl overflow-hidden group shadow-sm hover:shadow-md transition-all duration-300 border border-slate-100 dark:border-slate-800 flex flex-col"
           >
-            <div class="relative h-48 w-full">
+            <div class="aspect-square relative overflow-hidden">
               <img
                 alt="Ảnh nhận diện"
-                class="w-full h-full object-cover"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 src="/{{ pred.image_path }}"
               />
               <div
-                class="absolute top-3 right-3 bg-white/90 backdrop-blur px-2 py-1 rounded label-sm font-bold text-slate-800 border border-white/50 shadow-sm flex items-center gap-1"
+                class="absolute top-3 right-3 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-2.5 py-1 rounded-full text-xs font-bold text-slate-800 dark:text-slate-200 border border-slate-200/50 dark:border-slate-800 shadow-sm flex items-center gap-1.5 z-10"
               >
-                <span class="w-2 h-2 rounded-full bg-primary"></span>
-                {% if pred.confidence is not none %} {{ '%.1f'|format(conf_pct)
-                }}% {% else %} 0.0% {% endif %}
+                <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+                {% if pred.confidence is not none %}{{ '%.1f'|format(conf_pct) }}%{% else %}0%{% endif %}
+              </div>
+              
+              <!-- Hover Details Overlay -->
+              <div class="absolute inset-0 bg-slate-950/40 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center z-20">
+                <button 
+                  onclick="openDetailModal('{{ pred.image_path }}', '{{ pred.breed|escape }}', '{{ conf_pct|round(1) }}', '{{ pred.species|escape }}', '{{ formatted_date }}')"
+                  class="px-4 py-2 bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-bold rounded-lg text-xs shadow-md hover:scale-105 active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer"
+                >
+                  <span class="material-symbols-outlined text-[14px]">visibility</span>
+                  Xem chi tiết
+                </button>
               </div>
             </div>
-            <div class="p-4 flex flex-col flex-grow">
-              <h2
-                class="body-md font-semibold text-slate-900 leading-tight mb-1 truncate"
-              >
-                {{ pred.breed or 'Chưa xác định' }}
-              </h2>
-              <div class="flex items-center text-slate-500 label-sm mb-4">
-                <span class="material-symbols-outlined text-[14px] mr-1"
-                  >pets</span
+            <div class="p-4 flex flex-col justify-between flex-grow h-[140px]">
+              <div>
+                <h2
+                  class="body-md font-bold text-slate-900 dark:text-white leading-tight mb-1 truncate"
+                  title="{{ pred.breed or 'Chưa xác định' }}"
                 >
-                <span>{{ pred.species or 'Chó' }}</span>
+                  {{ pred.breed or 'Chưa xác định' }}
+                </h2>
+                <div class="flex items-center text-slate-500 dark:text-slate-400 text-xs font-semibold">
+                  <span class="material-symbols-outlined text-[14px] mr-1"
+                    >pets</span
+                  >
+                  <span>{{ pred.species or 'Chó' }}</span>
+                </div>
               </div>
-              <div class="mt-auto">
-                <div class="h-1 rounded-full bg-slate-200 overflow-hidden mb-3">
+              <div class="mt-auto w-full">
+                <div class="h-1 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden mb-3">
                   <div
                     class="h-full bg-primary history-fill"
                     data-width="{{ conf_pct|round(1) }}"
                   ></div>
                 </div>
-                <div class="flex items-center text-slate-400 label-sm">
+                <div class="flex items-center text-slate-400 dark:text-slate-500 text-xs">
                   <span class="material-symbols-outlined text-[14px] mr-1"
                     >schedule</span
                   >
-                  {{ pred.created_at.strftime('%d/%m/%Y %H:%M') if
-                  pred.created_at else '' }}
+                  <span>{{ formatted_date }}</span>
                 </div>
               </div>
             </div>
@@ -577,7 +700,7 @@
             {% if page > 1 %}
             <a
               class="relative inline-flex items-center rounded-l-lg px-3 py-2 text-slate-500 ring-1 ring-inset ring-slate-300 hover:bg-slate-50"
-              href="{{ url_for('history.history', page=page-1) }}"
+              href="{{ url_for('history.history', page=page-1, type=selected_type, q=search_query) }}"
             >
               <span class="material-symbols-outlined text-[18px]"
                 >chevron_left</span
@@ -602,7 +725,7 @@
             1) %}
             <a
               class="relative inline-flex items-center px-4 py-2 body-md font-semibold text-slate-700 ring-1 ring-inset ring-slate-300 hover:bg-slate-50"
-              href="{{ url_for('history.history', page=p) }}"
+              href="{{ url_for('history.history', page=p, type=selected_type, q=search_query) }}"
             >
               {{ p }}
             </a>
@@ -615,7 +738,7 @@
             {% endif %} {% endfor %} {% if page < total_pages %}
             <a
               class="relative inline-flex items-center rounded-r-lg px-3 py-2 text-slate-500 ring-1 ring-inset ring-slate-300 hover:bg-slate-50"
-              href="{{ url_for('history.history', page=page+1) }}"
+              href="{{ url_for('history.history', page=page+1, type=selected_type, q=search_query) }}"
             >
               <span class="material-symbols-outlined text-[18px]"
                 >chevron_right</span
@@ -634,7 +757,7 @@
         </div>
         {% endif %} {% else %}
         <section
-          class="soft-panel bg-white rounded-custom p-6 text-slate-500 border border-slate-100 shadow-sm"
+          class="soft-panel bg-white rounded-xl p-6 text-slate-500 border border-slate-100 shadow-sm"
         >
           <div class="flex items-center gap-2 mb-2">
             <span class="material-symbols-outlined">inbox</span>
@@ -656,8 +779,9 @@
           </a>
         </section>
         {% endif %}
-      </div>
-    </main>
+          </div>
+        </div>
+      </main>
 
     <footer
       class="bg-surface-container-low border-t border-outline-variant/30 px-4 md:px-6 pt-6 pb-4"
@@ -765,6 +889,80 @@
         </div>
       </div>
     </footer>
+
+    <!-- Modal Detail Popup -->
+    <div id="detailModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm transition-all duration-300">
+      <div class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl max-w-2xl w-full border border-outline-variant/30 dark:border-slate-800 overflow-hidden shadow-2xl transition-transform transform scale-95 duration-300 flex flex-col md:flex-row md:h-[420px]">
+        
+        <!-- Image Panel -->
+        <div class="w-full md:w-1/2 bg-slate-950 flex items-center justify-center relative min-h-[250px] md:min-h-0">
+          <img id="modalImage" class="w-full h-full object-cover absolute inset-0" src="" alt="Ảnh nhận diện">
+          <!-- Species Badge -->
+          <div class="absolute bottom-4 left-4 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full text-white text-xs font-semibold flex items-center gap-1.5 z-10 border border-white/10">
+            <span class="material-symbols-outlined text-[14px]">pets</span>
+            <span id="modalSpecies">Chó</span>
+          </div>
+        </div>
+        
+        <!-- Info Panel -->
+        <div class="w-full md:w-1/2 p-6 flex flex-col justify-between text-slate-800 dark:text-slate-100">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <!-- Type Badge -->
+              <span id="modalTypeBadge" class="px-2.5 py-1 rounded-full text-xs font-bold"></span>
+              <!-- Close Button -->
+              <button onclick="closeModal()" class="w-8 h-8 rounded-full bg-surface-container-low dark:bg-slate-800 hover:bg-surface-container-high dark:hover:bg-slate-700 flex items-center justify-center text-on-surface-variant transition-colors cursor-pointer">
+                <span class="material-symbols-outlined text-[20px]">close</span>
+              </button>
+            </div>
+            
+            <h3 id="modalBreed" class="text-xl font-bold text-slate-900 dark:text-white leading-snug mb-3"></h3>
+            
+            <!-- Parent mix info (Only shown for hybrid) -->
+            <div id="modalHybridInfo" class="mb-4 hidden p-3 rounded-xl bg-surface-container-low dark:bg-slate-800/50 border border-outline-variant/20 dark:border-slate-800">
+              <span class="text-xs font-semibold text-slate-500 dark:text-slate-400 block mb-1.5">Tỷ lệ lai dự kiến</span>
+              <div class="flex items-center justify-between text-sm mb-1">
+                <span id="modalParent1" class="font-medium text-slate-800 dark:text-slate-200"></span>
+                <span class="text-xs text-slate-550 font-bold">50%</span>
+              </div>
+              <div class="flex items-center justify-between text-sm">
+                <span id="modalParent2" class="font-medium text-slate-800 dark:text-slate-200"></span>
+                <span class="text-xs text-slate-550 font-bold">50%</span>
+              </div>
+            </div>
+            
+            <div class="space-y-4">
+              <!-- Confidence slider/gauge -->
+              <div>
+                <div class="flex items-center justify-between label-sm mb-1.5">
+                  <span class="text-slate-550 dark:text-slate-400 font-semibold">Độ tin cậy</span>
+                  <span id="modalConfText" class="font-bold text-primary dark:text-blue-400"></span>
+                </div>
+                <div class="h-2 rounded-full bg-surface-container-low dark:bg-slate-850 overflow-hidden">
+                  <div id="modalConfBar" class="h-full bg-gradient-to-r from-primary/80 to-primary dark:from-blue-500/80 dark:to-blue-400 rounded-full transition-all duration-505" style="width: 0%"></div>
+                </div>
+              </div>
+              
+              <!-- Date and Time -->
+              <div class="flex items-center gap-2 text-slate-500 dark:text-slate-400 text-xs">
+                <span class="material-symbols-outlined text-[16px]">schedule</span>
+                <span>Thời gian nhận diện:</span>
+                <span id="modalDate" class="font-medium text-slate-700 dark:text-slate-300"></span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Footer Button -->
+          <div class="mt-6">
+            <button onclick="closeModal()" class="w-full py-2.5 bg-primary hover:bg-primary/95 text-on-primary font-semibold rounded-xl text-sm transition-colors cursor-pointer shadow-sm hover:shadow-md flex items-center justify-center gap-2">
+              Đóng cửa sổ
+            </button>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+
     <script>
       (function () {
         document.querySelectorAll(".history-fill[data-width]").forEach((el) => {
@@ -773,6 +971,101 @@
           el.style.width = `${pct}%`;
         });
       })();
+
+      function openDetailModal(imagePath, breed, confidence, species, date) {
+        const modal = document.getElementById('detailModal');
+        const modalImage = document.getElementById('modalImage');
+        const modalBreed = document.getElementById('modalBreed');
+        const modalSpecies = document.getElementById('modalSpecies');
+        const modalTypeBadge = document.getElementById('modalTypeBadge');
+        const modalConfText = document.getElementById('modalConfText');
+        const modalConfBar = document.getElementById('modalConfBar');
+        const modalDate = document.getElementById('modalDate');
+        const modalHybridInfo = document.getElementById('modalHybridInfo');
+        const modalParent1 = document.getElementById('modalParent1');
+        const modalParent2 = document.getElementById('modalParent2');
+        
+        // Set basic data
+        modalImage.src = '/' + imagePath;
+        modalBreed.innerText = breed;
+        modalSpecies.innerText = species || 'Chó';
+        modalConfText.innerText = confidence + '%';
+        modalConfBar.style.width = confidence + '%';
+        modalDate.innerText = date;
+        
+        // Set type badge & check for hybrid
+        if (breed.startsWith('Nghi lai:')) {
+          // Hybrid
+          modalTypeBadge.innerText = 'Chó lai';
+          modalTypeBadge.className = 'px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 dark:bg-amber-950/50 dark:text-amber-400 border border-amber-200 dark:border-amber-900/30';
+          
+          // Parse parents
+          const parentPart = breed.replace('Nghi lai:', '').trim();
+          const parents = parentPart.split('x');
+          if (parents.length >= 2) {
+            modalParent1.innerText = parents[0].trim();
+            modalParent2.innerText = parents[1].trim();
+            modalHybridInfo.classList.remove('hidden');
+          } else {
+            modalHybridInfo.classList.add('hidden');
+          }
+        } else {
+          // Purebred
+          modalTypeBadge.innerText = 'Chó thuần chủng';
+          modalTypeBadge.className = 'px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900/30';
+          modalHybridInfo.classList.add('hidden');
+        }
+        
+        // Show modal
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        setTimeout(() => {
+          modal.querySelector('.max-w-2xl').classList.remove('scale-95');
+          modal.querySelector('.max-w-2xl').classList.add('scale-100');
+        }, 10);
+      }
+
+      function closeModal() {
+        const modal = document.getElementById('detailModal');
+        modal.querySelector('.max-w-2xl').classList.remove('scale-100');
+        modal.querySelector('.max-w-2xl').classList.add('scale-95');
+        setTimeout(() => {
+          modal.classList.remove('flex');
+          modal.classList.add('hidden');
+        }, 150);
+      }
+
+      // Close on click outside
+      window.addEventListener('click', function(e) {
+        const modal = document.getElementById('detailModal');
+        if (e.target === modal) {
+          closeModal();
+        }
+      });
+
+      // Ensure pagination navigation doesn't leave sidebar scrolled out of view.
+      document.addEventListener('DOMContentLoaded', function () {
+        try {
+          var params = new URLSearchParams(window.location.search || '');
+          if (params.has('page')) {
+            if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+            var mainEl = document.querySelector('main');
+            if (mainEl) {
+              mainEl.setAttribute('tabindex', '-1');
+              mainEl.style.outline = 'none';
+              mainEl.style.boxShadow = 'none';
+              try {
+                mainEl.focus({preventScroll: true});
+              } catch (e) {
+                try { mainEl.focus(); } catch (e) {}
+              }
+              mainEl.scrollIntoView({behavior: 'auto', block: 'start'});
+            }
+          }
+        } catch (e) {
+          // ignore
+        }
+      });
     </script>
     <script src="{{ url_for('static', filename='js/toasts.js') }}"></script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>

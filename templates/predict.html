@@ -416,7 +416,7 @@
     >
       <aside class="sidebar col-span-1" id="sidebar">
         <div
-          class="soft-panel bg-surface-container-lowest rounded-custom py-sm px-2 flex flex-col gap-sm sticky top-24 border border-slate-100 shadow-sm"
+          class="soft-panel bg-surface-container-lowest rounded-xl py-sm px-2 flex flex-col gap-sm sticky top-24 border border-slate-100 shadow-sm"
         >
           <h3
             class="label-sm label-sm text-on-surface-variant uppercase tracking-wider mb-xs px-1.5"
@@ -565,7 +565,7 @@
             >
               <div class="xl:col-span-8">
                 <div
-                  class="glass-card rounded-custom p-5 bg-white border border-slate-100 shadow-sm"
+                  class="glass-card rounded-xl p-5 bg-white border border-slate-100 shadow-sm"
                 >
                   <div class="flex items-center justify-between mb-4 px-2">
                     <div class="flex items-center gap-3">
@@ -583,7 +583,7 @@
                     </span>
                   </div>
                   <div
-                    class="relative rounded-custom overflow-hidden shadow-inner border border-slate-100 bg-slate-50"
+                    class="relative rounded-xl overflow-hidden shadow-inner border border-slate-100 bg-slate-50"
                   >
                     <img
                       class="w-full h-auto max-h-[700px] object-contain mx-auto"
@@ -602,8 +602,12 @@
                           <span class="material-symbols-outlined text-sm"
                             >check_circle</span
                           >
-                          {{ breed_name }}{% if has_conf %}: {{
-                          '%.1f'|format(conf_percent_clamped) }}%{% endif %}
+                          {% if result.parts_info and result.parts_info.decision and result.parts_info.decision.is_hybrid_candidate and result.parts_info.similarity_top3|length >= 2 %}
+                            Mix Lai: {{ result.parts_info.similarity_top3[0].breed }} × {{ result.parts_info.similarity_top3[1].breed }}
+                          {% else %}
+                            {{ breed_name }}
+                          {% endif %}
+                          {% if has_conf %}: {{ '%.1f'|format(conf_percent_clamped) }}%{% endif %}
                         </div>
                         <div
                           class="absolute inset-0 border border-white/30 rounded-lg pointer-events-none"
@@ -624,7 +628,7 @@
 
               <div class="xl:col-span-4 space-y-gutter">
                 <div
-                  class="glass-card rounded-custom p-5 border border-slate-100 shadow-sm border-t-4 border-t-primary"
+                  class="glass-card rounded-xl p-5 border border-slate-100 shadow-sm border-t-4 border-t-primary"
                 >
                   <div class="flex justify-between items-start mb-4">
                     <div>
@@ -636,10 +640,13 @@
                       <h2
                         class="headline-lg headline-lg text-on-surface mt-1 leading-tight"
                       >
-                        {{ breed_name }} {% if primary_label %}
-                        <span class="text-primary-container"
-                          >({{ primary_label }})</span
-                        >
+                        {% if result.parts_info and result.parts_info.decision and result.parts_info.decision.is_hybrid_candidate and result.parts_info.similarity_top3|length >= 2 %}
+                          Mix Lai: {{ result.parts_info.similarity_top3[0].breed }} × {{ result.parts_info.similarity_top3[1].breed }}
+                        {% else %}
+                          {{ breed_name }}
+                          {% if primary_label and primary_label != 'Nghi lai' %}
+                          <span class="text-primary text-sm font-semibold">({{ primary_label }})</span>
+                          {% endif %}
                         {% endif %}
                       </h2>
                     </div>
@@ -675,7 +682,7 @@
                   </div>
                   {% endif %}
                   <div
-                    class="p-5 bg-primary/5 rounded-custom border border-primary/10"
+                    class="p-5 bg-primary/5 rounded-xl border border-primary/10"
                   >
                     <p
                       class="body-md body-md text-on-surface-variant leading-relaxed"
@@ -690,12 +697,61 @@
                     </p>
                     {% endif %}
                   </div>
+                  
+                  {% if result.parts_info and result.parts_info.decision and result.parts_info.decision.is_hybrid_candidate and result.parts_info.similarity_top3|length >= 2 %}
+                    {% set mix_breed1 = result.parts_info.similarity_top3[0] %}
+                    {% set mix_breed2 = result.parts_info.similarity_top3[1] %}
+                    {% set s1 = mix_breed1.score %}
+                    {% set s2 = mix_breed2.score %}
+                    {% set sum_s = s1 + s2 %}
+                    {% set p1 = ((s1 / sum_s) * 100)|round(1) if sum_s > 0 else 50.0 %}
+                    {% set p2 = 100.0 - p1 %}
+                    <div class="mt-4 p-5 bg-gradient-to-r from-blue-50/50 to-primary/5 dark:from-slate-800/40 dark:to-slate-900/40 rounded-xl border border-blue-100 dark:border-slate-850">
+                      <h4 class="text-xs font-semibold uppercase text-slate-500 dark:text-slate-400 tracking-wider mb-4 flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-[16px] text-primary">analytics</span>
+                        Phân tích tỷ lệ lai dự tính
+                      </h4>
+                      
+                      <div class="space-y-4">
+                        <!-- Hybrid Mix Progress Bar -->
+                        <div class="w-full bg-slate-200 dark:bg-slate-800 h-6 rounded-full overflow-hidden flex relative">
+                          <div class="h-full bg-gradient-to-r from-primary to-blue-500 flex items-center px-3 text-white text-xs font-bold transition-all duration-500 confidence-fill" data-width="{{ p1 }}">
+                            {{ mix_breed1.breed }} ({{ p1 }}%)
+                          </div>
+                          <div class="h-full bg-gradient-to-r from-yellow-500 to-orange-500 flex items-center justify-end px-3 text-white text-xs font-bold transition-all duration-500 confidence-fill" data-width="{{ p2 }}">
+                            {{ mix_breed2.breed }} ({{ p2 }}%)
+                          </div>
+                        </div>
+                        
+                        <!-- Parent Breeds Breakdown -->
+                        <div class="grid grid-cols-2 gap-4 mt-2">
+                          <div class="bg-white dark:bg-slate-950 p-4 rounded-xl border border-slate-100 dark:border-slate-850 flex flex-col gap-1.5 shadow-sm">
+                            <div class="flex items-center justify-between">
+                              <span class="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase">Gen trội dự kiến</span>
+                              <span class="text-xs font-black text-primary">{{ p1 }}%</span>
+                            </div>
+                            <div class="text-sm font-bold text-slate-800 dark:text-slate-200">{{ mix_breed1.breed }}</div>
+                            <div class="text-[11px] text-slate-400 dark:text-slate-500 font-mono">Độ tương đồng: {{ '%.3f'|format(s1) }}</div>
+                          </div>
+                          
+                          <div class="bg-white dark:bg-slate-950 p-4 rounded-xl border border-slate-100 dark:border-slate-850 flex flex-col gap-1.5 shadow-sm">
+                            <div class="flex items-center justify-between">
+                              <span class="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase">Gen ẩn dự kiến</span>
+                              <span class="text-xs font-black text-yellow-550 dark:text-yellow-400">{{ p2 }}%</span>
+                            </div>
+                            <div class="text-sm font-bold text-slate-800 dark:text-slate-200">{{ mix_breed2.breed }}</div>
+                            <div class="text-[11px] text-slate-400 dark:text-slate-500 font-mono">Độ tương đồng: {{ '%.3f'|format(s2) }}</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  {% endif %}
                 </div>
 
                 {% if result.parts_info and (result.parts_info.top5 or
                 result.parts_info.similarity_top3) %}
                 <div
-                  class="glass-card rounded-custom p-5 border border-slate-100 shadow-sm"
+                  class="glass-card rounded-xl p-5 border border-slate-100 shadow-sm"
                 >
                   <h3
                     class="font-semibold text-on-surface mb-6 flex items-center gap-2"
@@ -766,7 +822,7 @@
 
             {% if gradcam_items %}
             <div
-              class="glass-card rounded-custom p-5 border border-slate-100 shadow-sm"
+              class="glass-card rounded-xl p-5 border border-slate-100 shadow-sm"
             >
               <div class="flex items-center justify-between mb-8">
                 <div>
@@ -796,7 +852,7 @@
                 (heatmap_rings|length)] %}
                 <div class="space-y-3 group">
                   <div
-                    class="relative rounded-custom overflow-hidden aspect-square border border-slate-200"
+                    class="relative rounded-xl overflow-hidden aspect-square border border-slate-200"
                   >
                     <img
                       class="w-full h-full object-cover"
@@ -831,7 +887,7 @@
             {% endif %}
 
             <div
-              class="soft-panel glass-card rounded-custom p-5 border border-slate-100 shadow-sm"
+              class="soft-panel glass-card rounded-xl p-5 border border-slate-100 shadow-sm"
             >
               <div class="flex items-center gap-3 mb-4">
                 <span
@@ -861,7 +917,7 @@
                   {% endif %}
                 </div>
                 <div
-                  class="flex flex-col justify-center items-center p-5 bg-slate-50 rounded-custom border border-slate-200/50"
+                  class="flex flex-col justify-center items-center p-5 bg-slate-50 rounded-xl border border-slate-200/50"
                 >
                   <span class="label-sm text-outline font-bold uppercase mb-2">
                     Kiến trúc mô hình

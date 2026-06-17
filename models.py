@@ -79,16 +79,28 @@ class PredictionHistory:
             return int(cur.lastrowid)
     
     @staticmethod
-    def get_by_user(conn, user_id: int, limit: int = 50, offset: int = 0) -> List[Dict]:
-        """Lấy lịch sử nhận diện của user với phân trang"""
+    def get_by_user(conn, user_id: int, limit: int = 50, offset: int = 0, breed_type: str = "all", search_query: str = "") -> List[Dict]:
+        """Lấy lịch sử nhận diện của user với phân trang, bộ lọc loại giống và tìm kiếm"""
         with conn.cursor() as cur:
-            cur.execute("""
+            query = """
                 SELECT id, image_path, breed, confidence, species, created_at
                 FROM prediction_history
                 WHERE user_id = %s
-                ORDER BY created_at DESC
-                LIMIT %s OFFSET %s
-            """, (user_id, limit, offset))
+            """
+            params = [user_id]
+            if breed_type == "hybrid":
+                query += " AND breed LIKE 'Nghi lai:%%'"
+            elif breed_type == "pure":
+                query += " AND breed NOT LIKE 'Nghi lai:%%'"
+            
+            if search_query:
+                query += " AND breed LIKE %s"
+                params.append(f"%{search_query}%")
+            
+            query += " ORDER BY created_at DESC LIMIT %s OFFSET %s"
+            params.extend([limit, offset])
+            
+            cur.execute(query, tuple(params))
             rows = cur.fetchall()
             return [{
                 'id': row[0],
@@ -228,17 +240,26 @@ class PredictionHistory:
             return float(value or 0.0)
     
     @staticmethod
-    def count_by_user(conn, user_id: Optional[int]) -> int:
-        """Đếm tổng số bản ghi lịch sử của user (hoặc toàn hệ thống nếu user_id là None)"""
+    def count_by_user(conn, user_id: Optional[int], breed_type: str = "all", search_query: str = "") -> int:
+        """Đếm tổng số bản ghi lịch sử của user (hoặc toàn hệ thống nếu user_id là None) với bộ lọc và tìm kiếm"""
         with conn.cursor() as cur:
             if user_id is not None:
-                cur.execute("""
-                    SELECT COUNT(*) FROM prediction_history WHERE user_id = %s
-                """, (user_id,))
+                query = "SELECT COUNT(*) FROM prediction_history WHERE user_id = %s"
+                params = [user_id]
             else:
-                cur.execute("""
-                    SELECT COUNT(*) FROM prediction_history
-                """)
+                query = "SELECT COUNT(*) FROM prediction_history WHERE 1=1"
+                params = []
+            
+            if breed_type == "hybrid":
+                query += " AND breed LIKE 'Nghi lai:%%'"
+            elif breed_type == "pure":
+                query += " AND breed NOT LIKE 'Nghi lai:%%'"
+                
+            if search_query:
+                query += " AND breed LIKE %s"
+                params.append(f"%{search_query}%")
+                
+            cur.execute(query, tuple(params))
             return cur.fetchone()[0]
     
     @staticmethod

@@ -196,10 +196,8 @@
     }
   </style>
   <style>
-    /* Ensure rounded-custom is available and enforce dashboard grid token */
-    .rounded-custom {
-      border-radius: 4px;
-    }
+    /* Ensure rounded-xl is available and enforce dashboard grid token */
+    
 
     .dashboard-grid>* {
       border: 1px solid rgba(226, 232, 240, 1);
@@ -208,8 +206,11 @@
         0 1px 2px rgba(15, 23, 42, 0.03),
         0 6px 12px rgba(148, 163, 184, 0.06);
       /* soft shadow-sm */
-      border-radius: 4px;
+      border-radius: 12px;
       background-clip: padding-box;
+    }
+    .dark .dashboard-grid>* {
+      border-color: rgba(30, 41, 59, 1); /* border-slate-800 */
     }
   </style>
 </head>
@@ -314,7 +315,7 @@
   <main class="flex-grow w-full px-4 md:px-6 py-margin grid grid-cols-1 md:grid-cols-[230px_minmax(0,1fr)] gap-gutter">
     <aside class="sidebar col-span-1" id="sidebar">
       <div
-        class="bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] py-sm px-2 flex flex-col gap-sm sticky top-24 border border-surface-container-highest/50">
+        class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] py-sm px-2 flex flex-col gap-sm sticky top-24 border border-outline-variant/30">
         <h3 class="label-sm text-on-surface-variant uppercase tracking-wider mb-xs px-1.5">
           Truy cập nhanh
         </h3>
@@ -791,7 +792,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 dashboard-grid">
           {% for pred in recent_predictions %}
           <div
-            class="soft-panel bg-surface-container-lowest rounded-custom overflow-hidden group shadow-sm hover:shadow-md transition-all duration-300 border border-slate-100">
+            class="soft-panel bg-surface-container-lowest rounded-xl overflow-hidden group shadow-sm hover:shadow-md transition-all duration-300 border border-slate-100">
             <div class="aspect-square relative overflow-hidden">
               <img alt="Ảnh nhận diện"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
