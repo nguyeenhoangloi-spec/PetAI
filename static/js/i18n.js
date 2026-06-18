@@ -1757,8 +1757,8 @@
       /* ── Sidebar ── */
       quickAccess: "Quick Access",
       uploadAnalyze: "Upload & Analyze",
-      predictionHistory: "Identification History",
-      personalStats: "Personal Statistics",
+      predictionHistory: "Scan History",
+      personalStats: "Statistics",
       upgradePlan: "Upgrade Plan",
       personalInfo: "Personal Info",
       accountSettings: "Account Settings",
@@ -3237,6 +3237,9 @@
       console.error("i18n initialization error:", err);
     } finally {
       document.documentElement.classList.remove("i18n-loading");
+      try {
+        document.documentElement.classList.remove("preload");
+      } catch (e) {}
     }
 
     try {

@@ -353,7 +353,7 @@ body > nav img[alt="PetAI New Logo"] {
   flex-direction: column !important;
   padding: 0 !important;
   margin: 0 !important;
-  transform: translateX(-100%);
+  transform: translateX(0);
   transition: transform 280ms ease-in-out, background-color 280ms ease-in-out, border-color 280ms ease-in-out !important;
 }
 
@@ -694,4 +694,9 @@ html.dark .sidebar-user-card .user-role {
 
 .sidebar-user-card .logout-btn-link:hover {
   color: #ef4444 !important;
+}
+
+/* Disable transitions during page load to prevent layout shifts/flicker */
+.preload, .preload * {
+  transition: none !important;
 }

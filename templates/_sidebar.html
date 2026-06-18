@@ -2,6 +2,15 @@
 {% set display_role = session.get('role') or 'user' %}
 {% set display_plan = current_plan or 'free' %}
 
+<script>
+  document.documentElement.classList.add("preload");
+  window.addEventListener("DOMContentLoaded", function() {
+    setTimeout(function() {
+      document.documentElement.classList.remove("preload");
+    }, 150);
+  });
+</script>
+
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-wrapper">
 
