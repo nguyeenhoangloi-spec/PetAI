@@ -180,6 +180,7 @@
       payments: "Lịch sử thanh toán",
       manageUsers: "Quản lý người dùng",
       approveOrders: "Duyệt đơn",
+      adminGroupTitle: "QUẢN TRỊ VIÊN",
 
       /* ── Sidebar ── */
       quickAccess: "Truy cập nhanh",
@@ -1751,6 +1752,7 @@
       payments: "Payment History",
       manageUsers: "Manage Users",
       approveOrders: "Approve Orders",
+      adminGroupTitle: "ADMINISTRATOR",
 
       /* ── Sidebar ── */
       quickAccess: "Quick Access",

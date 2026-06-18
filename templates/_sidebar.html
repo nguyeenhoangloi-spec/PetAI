@@ -61,6 +61,8 @@
         </a>
         
         {% if session.get('role') == 'admin' %}
+        <hr class="sidebar-divider" />
+        <div class="sidebar-group-title" data-i18n="adminGroupTitle">QUẢN TRỊ VIÊN</div>
         <a class="sidebar-menu-item {% if active_page == 'users' %}active{% endif %}" href="{{ url_for('users.list_users') }}">
           <span class="material-symbols-outlined" {% if active_page == 'users' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>groups</span>
           <span data-i18n="manageUsers">Quản lý người dùng</span>
