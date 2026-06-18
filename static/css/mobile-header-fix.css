@@ -3,9 +3,11 @@
   .nav-reduce-height {
     height: 48px !important;
   }
+
   .nav-logo-sm {
     height: 40px !important;
   }
+
   .nav-compact-btn {
     padding-left: 12px !important;
     padding-right: 12px !important;
@@ -13,23 +15,29 @@
     padding-bottom: 6px !important;
     font-size: 14px !important;
   }
+
   .nav-reduce-gap {
     gap: 8px !important;
   }
+
   main.pt-safe {
     padding-top: 56px !important;
   }
+
   /* also apply fixes by selector so existing templates work without extra classes */
-  body > nav > div {
+  body>nav>div {
     height: 48px !important;
   }
-  body > nav img.h-16 {
+
+  body>nav img.h-16 {
     height: 40px !important;
   }
-  body > nav .gap-md {
+
+  body>nav .gap-md {
     gap: 8px !important;
   }
-  body > nav a.bg-primary {
+
+  body>nav a.bg-primary {
     padding-left: 12px !important;
     padding-right: 12px !important;
     padding-top: 6px !important;
@@ -55,7 +63,8 @@
   padding: 8px;
   border-radius: 8px;
   transition: background-color 0.2s ease;
-  color: var(--on-surface, #0b1c30); /* Match text color */
+  color: var(--on-surface, #0b1c30);
+  /* Match text color */
 }
 
 /* Dark mode compatibility */
@@ -64,10 +73,13 @@
 }
 
 .menu-toggle:hover {
-  background-color: rgba(0, 74, 198, 0.08); /* light theme hover */
+  background-color: rgba(0, 74, 198, 0.08);
+  /* light theme hover */
 }
+
 .dark .menu-toggle:hover {
-  background-color: rgba(255, 255, 255, 0.08); /* dark theme hover */
+  background-color: rgba(255, 255, 255, 0.08);
+  /* dark theme hover */
 }
 
 .menu-toggle span {
@@ -89,7 +101,8 @@
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.3s ease, visibility 0.3s ease;
-  z-index: 40; /* under nav/sidebar but above content */
+  z-index: 40;
+  /* under nav/sidebar but above content */
 }
 
 .sidebar-overlay.active {
@@ -114,7 +127,7 @@
     grid-template-columns: 0px minmax(0, 1fr) !important;
     gap: 0 !important;
   }
-  
+
   .sidebar-collapsed .sidebar,
   main.sidebar-collapsed .sidebar {
     width: 0 !important;
@@ -138,7 +151,8 @@
     height: 100vh;
     width: 280px;
     transform: translateX(-100%);
-    z-index: 999; /* overlay is below this */
+    z-index: 999;
+    /* overlay is below this */
     background-color: var(--surface-container-lowest, #ffffff);
     box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
     padding: 16px !important;
@@ -146,16 +160,17 @@
   }
 
   .dark .sidebar {
-    background-color: #0b1329 !important; /* Slate/dark background matching dark theme */
+    background-color: #0b1329 !important;
+    /* Slate/dark background matching dark theme */
     border-right: 1px solid #1e293b;
   }
 
   .sidebar.active {
     transform: translateX(0);
   }
-  
+
   /* Make sure the sticky positioning does not interfere with fixed full-height menu on mobile */
-  .sidebar > div {
+  .sidebar>div {
     position: static !important;
     box-shadow: none !important;
     border: none !important;
@@ -308,11 +323,12 @@
 }
 
 /* Global navbar logo height constraint to prevent layout overflows */
-body > nav img[alt="PetAI New Logo"] {
+body>nav img[alt="PetAI New Logo"] {
   height: 48px !important;
 }
+
 @media (max-width: 640px) {
-  body > nav img[alt="PetAI New Logo"] {
+  body>nav img[alt="PetAI New Logo"] {
     height: 40px !important;
   }
 }
@@ -324,15 +340,19 @@ body > nav img[alt="PetAI New Logo"] {
 :root {
   --sb-width: 270px;
   --sb-bg-light: #ffffff;
-  --sb-bg-dark: #0f172a; /* Slate 900 for dark mode */
+  --sb-bg-dark: #0f172a;
+  /* Slate 900 for dark mode */
   --sb-border-light: rgba(0, 0, 0, 0.06);
   --sb-border-dark: rgba(255, 255, 255, 0.08);
   --sb-shadow: 2px 0 12px rgba(0, 0, 0, 0.02);
-  --sb-item-active-bg-light: #EEF4FF; /* soft light blue active bg */
+  --sb-item-active-bg-light: #EEF4FF;
+  /* soft light blue active bg */
   --sb-item-active-text-light: #2563eb;
-  --sb-item-active-bg-dark: rgba(37, 99, 235, 0.15); /* transparent blue active bg dark */
+  --sb-item-active-bg-dark: rgba(37, 99, 235, 0.15);
+  /* transparent blue active bg dark */
   --sb-item-active-text-dark: #3b82f6;
-  --sb-item-hover-bg-light: #F9FAFB; /* modern hover light bg */
+  --sb-item-hover-bg-light: #F9FAFB;
+  /* modern hover light bg */
   --sb-item-hover-bg-dark: rgba(255, 255, 255, 0.05);
   --sb-card-bg-light: transparent;
   --sb-card-bg-dark: transparent;
@@ -495,6 +515,7 @@ html.dark .sidebar-divider {
 
 
 @media (min-width: 768px) {
+
   html:has(#sidebar) main,
   html:has(#sidebar) footer {
     transition: margin-left 280ms ease-in-out, width 280ms ease-in-out !important;
@@ -503,12 +524,14 @@ html.dark .sidebar-divider {
   html:has(#sidebar):not(.sidebar-collapsed) .sidebar {
     transform: translateX(0) !important;
   }
+
   html:has(#sidebar):not(.sidebar-collapsed) main {
     margin-left: var(--sb-width) !important;
     width: calc(100% - var(--sb-width)) !important;
     grid-template-columns: 1fr !important;
     gap: 0 !important;
   }
+
   html:has(#sidebar):not(.sidebar-collapsed) footer {
     margin-left: var(--sb-width) !important;
     width: calc(100% - var(--sb-width)) !important;
@@ -517,12 +540,14 @@ html.dark .sidebar-divider {
   html:has(#sidebar).sidebar-collapsed .sidebar {
     transform: translateX(-100%) !important;
   }
+
   html:has(#sidebar).sidebar-collapsed main {
     margin-left: 0 !important;
     width: 100% !important;
     grid-template-columns: 1fr !important;
     gap: 0 !important;
   }
+
   html:has(#sidebar).sidebar-collapsed footer {
     margin-left: 0 !important;
     width: 100% !important;
@@ -536,7 +561,7 @@ html.dark .sidebar-divider {
     box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15) !important;
     z-index: 999 !important;
   }
-  
+
   .sidebar.active {
     transform: translateX(0) !important;
   }
@@ -548,7 +573,7 @@ html.dark .sidebar-divider {
     width: 100% !important;
   }
 
-  .sidebar > div {
+  .sidebar>div {
     position: static !important;
     box-shadow: none !important;
     border: none !important;
@@ -562,7 +587,7 @@ html.dark .sidebar-divider {
   backdrop-filter: none !important;
 }
 
-body:has(#sidebar) > nav a[href*="upload_page"] {
+body:has(#sidebar)>nav a[href*="upload_page"] {
   display: none !important;
 }
 
@@ -571,20 +596,20 @@ body:has(#sidebar) > nav a[href*="upload_page"] {
    ========================================================== */
 
 /* Order elements in Header: ☰ button first, Logo PetAI second */
-body:has(#sidebar) > nav .flex.items-center.gap-gutter {
+body:has(#sidebar)>nav .flex.items-center.gap-gutter {
   display: flex !important;
   align-items: center !important;
   gap: 12px !important;
 }
 
-body:has(#sidebar) > nav .menu-toggle {
+body:has(#sidebar)>nav .menu-toggle {
   order: -2 !important;
   margin-left: 0 !important;
   margin-right: 0 !important;
   position: relative !important;
 }
 
-body:has(#sidebar) > nav a:has(img[alt="PetAI New Logo"]) {
+body:has(#sidebar)>nav a:has(img[alt="PetAI New Logo"]) {
   order: -1 !important;
   margin-left: 0 !important;
   display: inline-flex !important;
@@ -593,9 +618,10 @@ body:has(#sidebar) > nav a:has(img[alt="PetAI New Logo"]) {
 
 /* Bring Header Navbar on top of Sidebar on mobile so menu toggle ☰ remains visible */
 @media (max-width: 767px) {
-  body:has(#sidebar) > nav {
+  body:has(#sidebar)>nav {
     z-index: 1001 !important;
   }
+
   body:has(#sidebar) .sidebar {
     z-index: 1000 !important;
   }
@@ -605,9 +631,11 @@ body:has(#sidebar) > nav a:has(img[alt="PetAI New Logo"]) {
 @media (min-width: 768px) {
   .sidebar {
     position: fixed !important;
-    top: 64px !important; /* Align exactly below sticky header */
+    top: 64px !important;
+    /* Align exactly below sticky header */
     left: 0 !important;
-    height: calc(100vh - 64px) !important; /* Full-height dashboard sidebar */
+    height: calc(100vh - 64px) !important;
+    /* Full-height dashboard sidebar */
     bottom: 0 !important;
     width: var(--sb-width) !important;
     z-index: 100 !important;
@@ -697,6 +725,53 @@ html.dark .sidebar-user-card .user-role {
 }
 
 /* Disable transitions during page load to prevent layout shifts/flicker */
-.preload, .preload * {
+.preload,
+.preload * {
   transition: none !important;
+}
+
+/* Override high-specificity transition rules during page load */
+html.preload:has(#sidebar) .sidebar,
+html.preload:has(#sidebar) main,
+html.preload:has(#sidebar) footer {
+  transition: none !important;
+}
+
+/* Prevent FOUC (Flash of Unstyled Content) and enable smooth fade-in on main content */
+main>div:not(.sidebar) {
+  opacity: 0;
+}
+
+html.ready main>div:not(.sidebar) {
+  opacity: 1;
+  transition: opacity 0.2s ease-in-out !important;
+}
+
+/* Override the template-level i18n-loading style so the sidebar and navbar stay visible in English mode */
+html.i18n-loading body {
+  visibility: visible !important;
+}
+
+html.i18n-loading main>div:not(.sidebar) {
+  visibility: hidden !important;
+}
+
+/* Enable smooth Cross-Document View Transitions */
+@view-transition {
+  navigation: auto;
+}
+
+/* Keep sidebar and top navbar persistent across page transitions */
+.sidebar {
+  view-transition-name: main-sidebar;
+}
+
+body>nav {
+  view-transition-name: main-navbar;
+}
+
+/* Subtle loading indicator during PJAX fetch — no opacity flash */
+html.pjax-loading main>div:not(.sidebar) {
+  opacity: 0.6;
+  transition: opacity 0.15s ease-out !important;
 }

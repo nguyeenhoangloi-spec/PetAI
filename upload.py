@@ -1017,23 +1017,46 @@ def upload():
 		if not is_dog_enough:
 			# Không chắc chắn là chó nhưng vẫn trả kết quả (kèm cảnh báo).
 			note = None
-			if best_dog_conf is not None:
-				dog_pct = int(round(float(best_dog_conf or 0.0) * 100))
-				note = (
-					f"Độ tin cậy CHÓ từ YOLO chỉ {dog_pct}% (< {int(DOG_THRESHOLD*100)}%). "
-					"Kết quả giống dưới đây chỉ mang tính tham khảo."
-				)
-			elif breed_model_ready and not breed_is_unknown:
-				breed_pct = int(round(float(breed_conf_fallback or 0.0) * 100))
-				note = (
-					f"AI giống đang nghiêng về chó ({breed_pct}%) nhưng chưa đủ ngưỡng xác nhận. "
-					"Kết quả dưới đây chỉ mang tính tham khảo."
-				)
+			ui_lang = request.cookies.get("siteLanguage", "vi")
+			if ui_lang not in {"vi", "en"}:
+				ui_lang = "vi"
+
+			if ui_lang == "en":
+				if best_dog_conf is not None:
+					dog_pct = int(round(float(best_dog_conf or 0.0) * 100))
+					note = (
+						f"YOLO dog confidence is only {dog_pct}% (< {int(DOG_THRESHOLD*100)}%). "
+						"Breed results below are for reference only."
+					)
+				elif breed_model_ready and not breed_is_unknown:
+					breed_pct = int(round(float(breed_conf_fallback or 0.0) * 100))
+					note = (
+						f"AI is leaning towards dog ({breed_pct}%) but verification threshold is not met. "
+						"Results below are for reference only."
+					)
+				else:
+					note = (
+						"This photo is not confidently identified as a DOG. "
+						"Breed results below are for reference only."
+					)
 			else:
-				note = (
-					"Ảnh này chưa được nhận diện chắc chắn là CHÓ. "
-					"Kết quả giống dưới đây chỉ mang tính tham khảo."
-				)
+				if best_dog_conf is not None:
+					dog_pct = int(round(float(best_dog_conf or 0.0) * 100))
+					note = (
+						f"Độ tin cậy CHÓ từ YOLO chỉ {dog_pct}% (< {int(DOG_THRESHOLD*100)}%). "
+						"Kết quả giống dưới đây chỉ mang tính tham khảo."
+					)
+				elif breed_model_ready and not breed_is_unknown:
+					breed_pct = int(round(float(breed_conf_fallback or 0.0) * 100))
+					note = (
+						f"AI giống đang nghiêng về chó ({breed_pct}%) nhưng chưa đủ ngưỡng xác nhận. "
+						"Kết quả dưới đây chỉ mang tính tham khảo."
+					)
+				else:
+					note = (
+						"Ảnh này chưa được nhận diện chắc chắn là CHÓ. "
+						"Kết quả giống dưới đây chỉ mang tính tham khảo."
+					)
 			flash(note, "warning")
 			if isinstance(result, dict) and note:
 				existing_note = str(result.get("note") or "").strip()

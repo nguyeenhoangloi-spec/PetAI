@@ -1,9 +1,14 @@
 <!doctype html>
 
-<html class="{{ 'dark' if ui_theme == 'dark' else 'light' }}{{ ' i18n-loading' if ui_language == 'en' else '' }}" lang="{{ ui_language or 'vi' }}" data-theme="{{ ui_theme or 'light' }}">
+<html
+  class="{{ 'dark' if ui_theme == 'dark' else 'light' }}{{ ' i18n-loading' if ui_language == 'en' else '' }}"
+  lang="{{ ui_language or 'vi' }}"
+  data-theme="{{ ui_theme or 'light' }}"
+>
   <head>
     <script>
       (function () {
+        document.documentElement.classList.add("preload");
         var savedLang = "vi";
         try {
           savedLang = localStorage.getItem("siteLanguage") || "vi";
@@ -92,8 +97,11 @@
         } catch (e) {}
       })();
     </script>
-    <title data-i18n="dashboardTitle">{{ 'Dashboard - PetAI' if ui_language == 'en' else 'Bảng điều khiển - PetAI' }}</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <title data-i18n="dashboardTitle">
+      {{ 'Dashboard - PetAI' if ui_language == 'en' else 'Bảng điều khiển -
+      PetAI' }}
+    </title>
+    <script src="{{ url_for('static', filename='js/tailwindcss.js') }}"></script>
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='css/typography.css') }}"
@@ -114,7 +122,7 @@
       rel="stylesheet"
       href="{{ url_for('static', filename='css/admin-dashboard-content.css') }}"
     />
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{ url_for('static', filename='js/chart.umd.min.js') }}"></script>
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
@@ -252,8 +260,10 @@
         border-radius: 12px;
         background-clip: padding-box;
       }
+
       .dark .dashboard-grid > * {
-        border-color: rgba(30, 41, 59, 1); /* border-slate-800 */
+        border-color: rgba(30, 41, 59, 1);
+        /* border-slate-800 */
       }
     </style>
   </head>
@@ -283,20 +293,8 @@
               >PetAI</span
             >
           </a>
-          <button
-            class="menu-toggle ml-2"
-            id="menuToggle"
-            type="button"
-            aria-label="Mở menu"
-            aria-expanded="false"
-            data-i18n-aria="openMenu"
-          >
-            <span></span>
-            <span></span>
-            <span></span>
-          </button>
         </div>
-        
+
         <div class="flex items-center gap-md">
           <a
             class="hidden md:inline-flex bg-primary text-on-primary px-4 py-2 rounded-lg label-sm hover:opacity-90 active:scale-95 duration-150 transition-all"
@@ -305,12 +303,24 @@
             ><span data-i18n="predict">Nhận diện</span></a
           >
           <div class="language-switcher mr-2" id="languageSwitcher">
-            <button class="language-button" id="languageButton" type="button" aria-haspopup="true" aria-expanded="false">
-      <span class="language-flag" data-i18n="languageFlag">🇻🇳</span>
-      <span class="language-current" data-i18n="languageLabel">Tiếng Việt</span>
-    </button>
+            <button
+              class="language-button"
+              id="languageButton"
+              type="button"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              <span class="language-flag" data-i18n="languageFlag">🇻🇳</span>
+              <span class="language-current" data-i18n="languageLabel"
+                >Tiếng Việt</span
+              >
+            </button>
             <div class="language-menu" id="languageMenu">
-              <button class="language-option active" type="button" data-lang="vi">
+              <button
+                class="language-option active"
+                type="button"
+                data-lang="vi"
+              >
                 <span class="language-check">✓</span>
                 <span class="language-flag" data-i18n="languageFlag">🇻🇳</span>
                 <span data-i18n="languageLabel">Tiếng Việt</span>
@@ -381,10 +391,9 @@
     <main
       class="flex-grow w-full px-4 md:px-6 py-margin grid grid-cols-1 md:grid-cols-[230px_minmax(0,1fr)] gap-gutter"
     >
-      {% set active_page = 'dashboard' %}
-      {% include '_sidebar.html' %}
+      {% set active_page = 'dashboard' %} {% include '_sidebar.html' %}
 
-      <div class="col-span-1 flex flex-col">
+      <div class="col-span-1 flex flex-col min-w-0">
         <section class="mb-8">
           <div class="flex flex-col gap-2">
             <h1 class="headline-lg font-semibold text-on-surface">
@@ -455,7 +464,7 @@
                 >0đ</span
               >
               <span
-                class="label-sm text-on-surface-variant/70 mt-2 flex items-center justify-between"
+                class="label-sm text-on-surface-variant/70 mt-2 flex flex-wrap items-center justify-between gap-1.5"
               >
                 <span data-i18n="revenueFromPaid"
                   >Từ các gói đã thanh toán</span
@@ -499,7 +508,7 @@
                 0
               </span>
               <span
-                class="label-sm text-on-surface-variant/70 mt-2 flex items-center justify-between"
+                class="label-sm text-on-surface-variant/70 mt-2 flex flex-wrap items-center justify-between gap-1.5"
               >
                 <span data-i18n="registeredAccounts">Tài khoản đã đăng ký</span>
                 <span
@@ -551,7 +560,7 @@
                 {% endif %}
               </span>
               <div
-                class="label-sm text-on-surface-variant/70 mt-2 flex items-center justify-between"
+                class="label-sm text-on-surface-variant/70 mt-2 flex flex-wrap items-center justify-between gap-1.5"
               >
                 <span
                   class="text-primary group-hover:underline flex items-center gap-0.5"
@@ -602,7 +611,7 @@
                 0
               </span>
               <span
-                class="label-sm text-on-surface-variant/70 mt-2 flex items-center justify-between"
+                class="label-sm text-on-surface-variant/70 mt-2 flex flex-wrap items-center justify-between gap-1.5"
               >
                 <span data-i18n="allSystemScans"
                   >Toàn bộ lượt quét của hệ thống</span
@@ -812,7 +821,7 @@
               <!-- Period Tabs Wrapper to contain Popover absolutely -->
               <div class="relative">
                 <div
-                  class="flex items-center gap-1 p-1 bg-surface-container-low dark:bg-slate-800 rounded-lg"
+                  class="flex flex-wrap items-center gap-1 p-1 bg-surface-container-low dark:bg-slate-800 rounded-lg"
                   id="revenuePeriodTabs"
                 >
                   <button
@@ -983,7 +992,7 @@
               <!-- Timeframe selector Wrapper to contain Popover absolutely -->
               <div class="relative">
                 <div
-                  class="flex items-center gap-1 p-1 bg-surface-container-low dark:bg-slate-800 rounded-lg"
+                  class="flex flex-wrap items-center gap-1 p-1 bg-surface-container-low dark:bg-slate-800 rounded-lg"
                   id="activityPeriodTabs"
                 >
                   <button
@@ -1327,6 +1336,36 @@
           </div>
           {% endif %}
         </section>
+
+        <!-- Pass dashboard stats safely to Javascript via data-attributes -->
+        <div
+          id="dashboardStatsData"
+          class="hidden"
+          data-is-admin="{{ 'true' if is_admin else 'false' }}"
+          data-daily-labels7="{{ chart_labels_7_json }}"
+          data-daily-data7="{{ chart_data_7_json }}"
+          data-top-breeds7="{{ top_breeds_7_json }}"
+          data-top-breeds-counts7="{{ top_breeds_counts_7_json }}"
+          data-confidence-dist7="{{ confidence_dist_7_json }}"
+          data-daily-labels30="{{ chart_labels_30_json }}"
+          data-daily-data30="{{ chart_data_30_json }}"
+          data-top-breeds30="{{ top_breeds_30_json }}"
+          data-top-breeds-counts30="{{ top_breeds_counts_30_json }}"
+          data-confidence-dist30="{{ confidence_dist_30_json }}"
+          data-daily-labels-all="{{ chart_labels_all_json }}"
+          data-daily-data-all="{{ chart_data_all_json }}"
+          data-top-breeds-all="{{ top_breeds_all_json }}"
+          data-top-breeds-counts-all="{{ top_breeds_counts_all_json }}"
+          data-confidence-dist-all="{{ confidence_dist_all_json }}"
+          data-rev-daily-labels="{{ revenue_daily_labels_json }}"
+          data-rev-daily-data="{{ revenue_daily_data_json }}"
+          data-rev-monthly-labels="{{ revenue_monthly_labels_json }}"
+          data-rev-monthly-data="{{ revenue_monthly_data_json }}"
+          data-rev-yearly-labels="{{ revenue_yearly_labels_json }}"
+          data-rev-yearly-data="{{ revenue_yearly_data_json }}"
+          data-sub-labels="{{ subscription_labels_json }}"
+          data-sub-data="{{ subscription_data_json }}"
+        ></div>
       </div>
     </main>
 
@@ -1455,11 +1494,14 @@
               >
             </p>
             <div class="flex gap-6">
-              <a class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
-
-                target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.user_guide') }}"
-
-                data-i18n="footerUserGuide"><span data-i18n="footerUserGuide">HƯỚNG DẪN SỬ DỤNG</span></a>
+              <a
+                class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
+                target="_blank"
+                rel="noopener noreferrer"
+                href="{{ url_for('legal.user_guide') }}"
+                data-i18n="footerUserGuide"
+                ><span data-i18n="footerUserGuide">HƯỚNG DẪN SỬ DỤNG</span></a
+              >
 
               <a
                 class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
@@ -1485,35 +1527,6 @@
     <script src="{{ url_for('static', filename='js/toasts.js') }}"></script>
     <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
-    <!-- Pass dashboard stats safely to Javascript via data-attributes -->
-    <div
-      id="dashboardStatsData"
-      class="hidden"
-      data-is-admin="{{ 'true' if is_admin else 'false' }}"
-      data-daily-labels-7="{{ chart_labels_7_json }}"
-      data-daily-data-7="{{ chart_data_7_json }}"
-      data-top-breeds-7="{{ top_breeds_7_json }}"
-      data-top-breeds-counts-7="{{ top_breeds_counts_7_json }}"
-      data-confidence-dist-7="{{ confidence_dist_7_json }}"
-      data-daily-labels-30="{{ chart_labels_30_json }}"
-      data-daily-data-30="{{ chart_data_30_json }}"
-      data-top-breeds-30="{{ top_breeds_30_json }}"
-      data-top-breeds-counts-30="{{ top_breeds_counts_30_json }}"
-      data-confidence-dist-30="{{ confidence_dist_30_json }}"
-      data-daily-labels-all="{{ chart_labels_all_json }}"
-      data-daily-data-all="{{ chart_data_all_json }}"
-      data-top-breeds-all="{{ top_breeds_all_json }}"
-      data-top-breeds-counts-all="{{ top_breeds_counts_all_json }}"
-      data-confidence-dist-all="{{ confidence_dist_all_json }}"
-      data-rev-daily-labels="{{ revenue_daily_labels_json }}"
-      data-rev-daily-data="{{ revenue_daily_data_json }}"
-      data-rev-monthly-labels="{{ revenue_monthly_labels_json }}"
-      data-rev-monthly-data="{{ revenue_monthly_data_json }}"
-      data-rev-yearly-labels="{{ revenue_yearly_labels_json }}"
-      data-rev-yearly-data="{{ revenue_yearly_data_json }}"
-      data-sub-labels="{{ subscription_labels_json }}"
-      data-sub-data="{{ subscription_data_json }}"
-    ></div>
 
     <script>
       document.addEventListener("DOMContentLoaded", function () {
@@ -1534,7 +1547,7 @@
         const isAdmin = statsEl.dataset.isAdmin === "true";
 
         const activityDatasets = {
-          7: {
+          "7days": {
             dailyLabels: JSON.parse(statsEl.dataset.dailyLabels7 || "[]"),
             dailyData: JSON.parse(statsEl.dataset.dailyData7 || "[]"),
             topBreeds: JSON.parse(statsEl.dataset.topBreeds7 || "[]"),
@@ -1543,7 +1556,7 @@
             ),
             confidenceDist: JSON.parse(statsEl.dataset.confidenceDist7 || "[]"),
           },
-          30: {
+          "30days": {
             dailyLabels: JSON.parse(statsEl.dataset.dailyLabels30 || "[]"),
             dailyData: JSON.parse(statsEl.dataset.dailyData30 || "[]"),
             topBreeds: JSON.parse(statsEl.dataset.topBreeds30 || "[]"),
@@ -1658,7 +1671,13 @@
                       titleFont: { family: "Inter", weight: "bold" },
                       bodyFont: { family: "Inter" },
                       callbacks: {
-                        label: (ctx) => "Doanh thu: " + fmtVND(ctx.parsed.y),
+                        label: (ctx) => {
+                          const labelText =
+                            typeof window.PetAI_i18n !== "undefined"
+                              ? window.PetAI_i18n.t("revenue")
+                              : "Doanh thu";
+                          return labelText + ": " + fmtVND(ctx.parsed.y);
+                        },
                       },
                     },
                   },
@@ -1806,7 +1825,13 @@
                         "revenueTrendSubtitle",
                       );
                       if (subtitle) {
-                        subtitle.textContent = t_func("customRangeSubtitle")
+                        const t_func_rev =
+                          typeof window.PetAI_i18n !== "undefined"
+                            ? window.PetAI_i18n.t
+                            : function (x) {
+                                return x;
+                              };
+                        subtitle.textContent = t_func_rev("customRangeSubtitle")
                           .replace(
                             "{start}",
                             start.split("-").reverse().join("/"),
@@ -1989,7 +2014,7 @@
         let topBreedsChartInstance = null;
         let confidenceChartInstance = null;
 
-        const initData = activityDatasets["7"];
+        const initData = activityDatasets["7days"];
 
         // Chart 1: Line Chart (Daily Predictions Trend)
         const ctxDaily = document.getElementById("dailyPredictionsChart");
@@ -2070,11 +2095,23 @@
             "#8b5cf6", // Purple
           ];
           const hasData = initData.topBreeds.length > 0;
+          let topBreedsLabels = hasData
+            ? initData.topBreeds
+            : [
+                typeof window.PetAI_i18n !== "undefined"
+                  ? window.PetAI_i18n.t("noDataChart")
+                  : "Chưa có dữ liệu",
+              ];
+          if (hasData && typeof window.PetAI_i18n !== "undefined" && window.PetAI_i18n.getCurrentLang() === "en") {
+            topBreedsLabels = topBreedsLabels.map(function (label) {
+              return window.PetAI_i18n.translateBreed(label);
+            });
+          }
 
           topBreedsChartInstance = new Chart(ctxTop.getContext("2d"), {
             type: "doughnut",
             data: {
-              labels: hasData ? initData.topBreeds : ["Chưa có dữ liệu"],
+              labels: topBreedsLabels,
               datasets: [
                 {
                   data: hasData ? initData.topBreedsCounts : [1],
@@ -2114,6 +2151,7 @@
               cutout: "70%",
             },
           });
+          topBreedsChartInstance.originalLabels = initData.topBreeds || [];
         }
 
         // Chart 3: Bar Chart (Confidence Distribution)
@@ -2252,13 +2290,20 @@
               // 2. Top Breeds Chart
               if (topBreedsChartInstance) {
                 const hasData = d.topBreeds && d.topBreeds.length > 0;
-                topBreedsChartInstance.data.labels = hasData
+                topBreedsChartInstance.originalLabels = d.topBreeds || [];
+                let topBreedsLabels = hasData
                   ? d.topBreeds
                   : [
                       typeof window.PetAI_i18n !== "undefined"
                         ? window.PetAI_i18n.t("noDataChart")
                         : "Chưa có dữ liệu",
                     ];
+                if (hasData && typeof window.PetAI_i18n !== "undefined" && window.PetAI_i18n.getCurrentLang() === "en") {
+                  topBreedsLabels = topBreedsLabels.map(function (label) {
+                    return window.PetAI_i18n.translateBreed(label);
+                  });
+                }
+                topBreedsChartInstance.data.labels = topBreedsLabels;
                 topBreedsChartInstance.data.datasets[0].data = hasData
                   ? d.topBreedsCounts
                   : [1];
@@ -2457,6 +2502,47 @@
             els.forEach(animateValue);
           }
         })();
+
+        document.addEventListener("i18nChanged", function (e) {
+          const lang = e.detail.lang;
+          
+          if (revenueChart) {
+            revenueChart.data.datasets[0].label =
+              typeof window.PetAI_i18n !== "undefined"
+                ? window.PetAI_i18n.t("totalRevenue")
+                : (lang === "en" ? "Total Revenue" : "Doanh thu");
+            revenueChart.update();
+          }
+
+          if (dailyChartInstance) {
+            dailyChartInstance.data.datasets[0].label =
+              typeof window.PetAI_i18n !== "undefined"
+                ? window.PetAI_i18n.t("totalScans")
+                : (lang === "en" ? "Total Scans" : "Số lượt nhận diện");
+            dailyChartInstance.update();
+          }
+
+          if (topBreedsChartInstance) {
+            const originalLabels = topBreedsChartInstance.originalLabels || [];
+            const hasData = originalLabels.length > 0;
+            let displayLabels = hasData
+              ? originalLabels
+              : [
+                  typeof window.PetAI_i18n !== "undefined"
+                    ? window.PetAI_i18n.t("noDataChart")
+                    : (lang === "en" ? "No data" : "Chưa có dữ liệu")
+                ];
+            
+            if (hasData && lang === "en" && typeof window.PetAI_i18n !== "undefined") {
+              topBreedsChartInstance.data.labels = displayLabels.map(function (label) {
+                return window.PetAI_i18n.translateBreed(label);
+              });
+            } else {
+              topBreedsChartInstance.data.labels = displayLabels;
+            }
+            topBreedsChartInstance.update();
+          }
+        });
       });
     </script>
   </body>

@@ -1220,7 +1220,7 @@
       assignPlanHeader: "Cấp gói",
       adminUserDetailPageTitle: "Quản trị Người dùng #{{ user.id }} - PetAI",
       sensitiveAreaTitle: "Khu vực nhạy cảm",
-      quotaSettingsTitle: "Gói dịch vụ &amp; Hạn mức sử dụng",
+      quotaSettingsTitle: "Gói dịch vụ & Hạn mức sử dụng",
       remainingSuffix: "lại",
       userIdLabel: "Mã số tài khoản (User ID)",
       orUsernameToConfirm: "hoặc tên đăng nhập để xác nhận",
@@ -1406,7 +1406,7 @@
         ". Nâng cấp để tăng lượt nhận diện và trải nghiệm mượt mà không quảng cáo.\n                {% else %}\n                  Tài khoản của bạn đang sử dụng gói",
       upgradePromptSuffix:
         ". Bạn có thể nâng cấp hoặc gia hạn bên dưới.\n                {% endif %}",
-      choosePlanPay: "Chọn gói &amp; Thanh toán",
+      choosePlanPay: "Chọn gói & Thanh toán",
       freePlanActive: "Gói FREE đang hoạt động",
       scansUnit: "nhận diện",
       basicPlanActive: "Gói Basic đang hoạt động",
@@ -1450,7 +1450,7 @@
       adminUserDetailPageTitle: "Quản trị Người dùng #{{ user.id }} - PetAI",
       sensitiveAreaTitle: "Khu vực nhạy cảm",
       deleteUserBtn: "Xoá người dùng",
-      quotaSettingsTitle: "Gói dịch vụ &amp; Hạn mức sử dụng",
+      quotaSettingsTitle: "Gói dịch vụ & Hạn mức sử dụng",
       remainingSuffix: "lại",
       assignPlanBtn: "Cấp gói mới",
       accountDetailsTitle: "Thông tin chi tiết tài khoản",
@@ -1490,10 +1490,13 @@
         "Xóa người dùng {username}? Hành động không thể hoàn tác.",
       msgSendSuccessDemo: "Bạn đã bấm Gửi thành công! (Dữ liệu Demo)",
       reasonPurebredDominant: "Ứng viên thuần chủng/chiếm ưu thế.",
+      reasonPurebredMorphology: "Ứng viên thuần chủng/chiếm ưu thế theo tương đồng hình thái.",
       reasonHybridCandidate: "Ứng viên nghi lai.",
       reasonHybridClose: "Ứng viên nghi lai (Top-1 và Top-2 rất sát nhau).",
       reasonBreedShownTop1: "Giống hiển thị theo Top-1 dự đoán.",
       reasonNoDetail: "Chưa có diễn giải chi tiết cho lần dự đoán này.",
+      top3NoteSoftmax: "Top 3 theo xác suất softmax.",
+      top3NoteSimilarity: "Top 3 theo tương đồng hình thái (similarity).",
       notConfigured: "Chưa cấu hình",
       noSubscriptionData: "Chưa có dữ liệu gói đăng ký.",
       userGuidePageTitle: "Hướng dẫn sử dụng | PetAI",
@@ -1576,6 +1579,7 @@
       guideContactPhone: "Hotline: 0916 416 409",
       guideContactAddress: "Địa chỉ: P16, Đường số 8, KDC lô 49, Khu đô thị Nam Cần Thơ, P. Cái Răng, TP. Cần Thơ",
       currencySuffix: "đ",
+      speciesDog: "Chó",
     },
 
     en: {
@@ -2885,11 +2889,14 @@
         "Delete user {username}? This action cannot be undone.",
       msgSendSuccessDemo: "You have submitted successfully! (Demo Data)",
       reasonPurebredDominant: "Purebred/dominant candidate.",
+      reasonPurebredMorphology: "Purebred/dominant candidate based on morphological similarity.",
       reasonHybridCandidate: "Crossbreed/hybrid candidate.",
       reasonHybridClose:
         "Crossbreed/hybrid candidate (Top-1 and Top-2 are very close).",
       reasonBreedShownTop1: "Breed displayed based on Top-1 prediction.",
       reasonNoDetail: "No detailed explanation available for this prediction.",
+      top3NoteSoftmax: "Top 3 by softmax probability.",
+      top3NoteSimilarity: "Top 3 by morphological similarity.",
       notConfigured: "Not configured",
       noSubscriptionData: "No subscription plan data available.",
       userGuidePageTitle: "User Guide | PetAI",
@@ -2972,12 +2979,307 @@
       guideContactPhone: "Hotline: 0916 416 409",
       guideContactAddress: "Address: P16, Street 8, Lot 49 residential area, Nam Can Tho Urban Area, Cai Rang District, Can Tho City, Vietnam",
       currencySuffix: " VND",
+      speciesDog: "Dog",
     },
   };
 
   var STORAGE_KEY = "siteLanguage";
   var DEFAULT_LANG = "vi";
   var currentLang = DEFAULT_LANG;
+
+  var VI_TO_EN_BREEDS = {
+    "Không xác định": "Not determined",
+    "Chó Không xác định": "Unknown",
+    "Shiba": "Shiba Dog",
+    "Chó Shiba": "Shiba Dog",
+    "Bulldog Pháp": "French Bulldog",
+    "Chó Bulldog Pháp": "French Bulldog",
+    "Husky Siberia": "Siberian Husky",
+    "Chó Husky Siberia": "Siberian Husky",
+    "Alaska Malamute": "Malamute",
+    "Chó Alaska Malamute": "Malamute",
+    "Phốc sóc": "Pomeranian",
+    "Corgi Pembroke": "Pembroke",
+    "Chó Corgi Pembroke": "Pembroke",
+    "Corgi Cardigan": "Cardigan",
+    "Chó Corgi Cardigan": "Cardigan",
+    "Béc-giê Đức": "German Shepherd",
+    "Labrador": "Labrador Retriever",
+    "Chó Labrador": "Labrador Retriever",
+    "Golden": "Golden Retriever",
+    "Chó Golden": "Golden Retriever",
+    "Chihuahua": "Chihuahua",
+    "Chó Chihuahua": "Chihuahua",
+    "Pug": "Pug",
+    "Chó Pug": "Pug",
+    "Shih Tzu": "Shih Tzu",
+    "Chó Shih Tzu": "Shih Tzu",
+    "Maltese": "Maltese Dog",
+    "Chó Maltese": "Maltese Dog",
+    "Bắc Kinh": "Pekinese",
+    "Chó Bắc Kinh": "Pekinese",
+    "Papillon": "Papillon",
+    "Chó Papillon": "Papillon",
+    "Phốc hươu": "Miniature Pinscher",
+    "Boston Terrier": "Boston Bull",
+    "Chó Boston Terrier": "Boston Bull",
+    "Boxer": "Boxer",
+    "Chó Boxer": "Boxer",
+    "Bichon Frise": "Bichon Frise",
+    "Chó Bichon Frise": "Bichon Frise",
+    "Chow Chow": "Chow",
+    "Chó Chow Chow": "Chow",
+    "Rottweiler": "Rottweiler",
+    "Chó Rottweiler": "Rottweiler",
+    "Doberman": "Doberman",
+    "Chó Doberman": "Doberman",
+    "Saint Bernard": "Saint Bernard",
+    "Chó Saint Bernard": "Saint Bernard",
+    "Samoyed": "Samoyed",
+    "Chó Samoyed": "Samoyed",
+    "Ngao Tây Tạng": "Tibetan Mastiff",
+    "Ngao Đức": "Great Dane",
+    "Great Pyrenees": "Great Pyrenees",
+    "Chó Great Pyrenees": "Great Pyrenees",
+    "Bullmastiff": "Bull Mastiff",
+    "Chó Bullmastiff": "Bull Mastiff",
+    "Poodle Mini": "Miniature Poodle",
+    "Chó Poodle Mini": "Miniature Poodle",
+    "Poodle Toy": "Toy Poodle",
+    "Chó Poodle Toy": "Toy Poodle",
+    "Poodle Standard": "Standard Poodle",
+    "Chó Poodle Standard": "Standard Poodle",
+    "Schnauzer Mini": "Miniature Schnauzer",
+    "Chó Schnauzer Mini": "Miniature Schnauzer",
+    "Schnauzer Standard": "Standard Schnauzer",
+    "Chó Schnauzer Standard": "Standard Schnauzer",
+    "Schnauzer Giant": "Giant Schnauzer",
+    "Chó Schnauzer Giant": "Giant Schnauzer",
+    "Westie": "West Highland White Terrier",
+    "Chó Westie": "West Highland White Terrier",
+    "Amstaff": "American Staffordshire Terrier",
+    "Chó Amstaff": "American Staffordshire Terrier",
+    "Staffordshire Bull Terrier": "Staffordshire Bullterrier",
+    "Chó Staffordshire Bull Terrier": "Staffordshire Bullterrier",
+    "Scottie": "Scotch Terrier",
+    "Chó Scottie": "Scotch Terrier",
+    "Yorkshire Terrier": "Yorkshire Terrier",
+    "Chó Yorkshire Terrier": "Yorkshire Terrier",
+    "Basset Hound": "Basset",
+    "Chó Basset Hound": "Basset",
+    "Beagle": "Beagle",
+    "Chó Beagle": "Beagle",
+    "Cocker": "Cocker Spaniel",
+    "Chó Cocker": "Cocker Spaniel",
+    "Cavalier King Charles (Blenheim)": "Blenheim Spaniel",
+    "Chó Cavalier King Charles (Blenheim)": "Blenheim Spaniel",
+    "Springer Anh": "English Springer",
+    "Chó Springer Anh": "English Springer",
+    "Springer xứ Wales": "Welsh Springer Spaniel",
+    "Chó Springer xứ Wales": "Welsh Springer Spaniel",
+    "Irish Setter": "Irish Setter",
+    "Chó Irish Setter": "Irish Setter",
+    "Setter Anh": "English Setter",
+    "Chó Setter Anh": "English Setter",
+    "Irish Terrier": "Irish Terrier",
+    "Chó Irish Terrier": "Irish Terrier",
+    "Gordon Setter": "Gordon Setter",
+    "Chó Gordon Setter": "Gordon Setter",
+    "Pointer Đức": "German Short Haired Pointer",
+    "Chó Pointer Đức": "German Short Haired Pointer",
+    "Chesapeake Retriever": "Chesapeake Bay Retriever",
+    "Chó Chesapeake Retriever": "Chesapeake Bay Retriever",
+    "Curly-coated Retriever": "Curly Coated Retriever",
+    "Chó Curly-coated Retriever": "Curly Coated Retriever",
+    "Flat-coated Retriever": "Flat Coated Retriever",
+    "Chó Flat-coated Retriever": "Flat Coated Retriever",
+    "Sheltie": "Shetland Sheepdog",
+    "Chó Sheltie": "Shetland Sheepdog",
+    "Border Collie": "Border Collie",
+    "Chó Border Collie": "Border Collie",
+    "Bobtail": "Old English Sheepdog",
+    "Chó Bobtail": "Old English Sheepdog",
+    "Béc-giê Bỉ Malinois": "Malinois",
+    "Béc-giê Bỉ Groenendael": "Groenendael",
+    "Cane Corso": "Cane Corso",
+    "Chó Cane Corso": "Cane Corso",
+    "Fila Brasileiro": "Fila Brasileiro",
+    "Chó Fila Brasileiro": "Fila Brasileiro",
+    "Chó mào Trung Quốc": "Chinese Crested Dog",
+    "Chó cỏ Trung Quốc": "Chinese Rural Dog",
+    "Mexican Hairless": "Mexican Hairless",
+    "Chó Mexican Hairless": "Mexican Hairless",
+    "Chó ta Việt Nam": "Vietnamese Native Dog",
+    "Chó Bắc Hà": "Bac Ha Dog",
+    "Chó H'Mông cộc đuôi": "Hmong Bobtail Dog",
+    "Teddy": "Teddy",
+    "Chó Teddy": "Teddy",
+    "Black and Tan Coonhound": "Black and Tan Coonhound",
+    "Chó Black and Tan Coonhound": "Black and Tan Coonhound",
+    "Bluetick Coonhound": "Bluetick",
+    "Chó Bluetick Coonhound": "Bluetick",
+    "Redbone Coonhound": "Redbone",
+    "Chó Redbone Coonhound": "Redbone",
+    "Treeing Walker Coonhound": "Walker Hound",
+    "Chó Treeing Walker Coonhound": "Walker Hound",
+    "Airedale Terrier": "Airedale",
+    "Chó Airedale Terrier": "Airedale",
+    "Border Terrier": "Border Terrier",
+    "Chó Border Terrier": "Border Terrier",
+    "Norwich Terrier": "Norwich Terrier",
+    "Chó Norwich Terrier": "Norwich Terrier",
+    "Norfolk Terrier": "Norfolk Terrier",
+    "Chó Norfolk Terrier": "Norfolk Terrier",
+    "Lakeland Terrier": "Lakeland Terrier",
+    "Chó Lakeland Terrier": "Lakeland Terrier",
+    "Bedlington Terrier": "Bedlington Terrier",
+    "Chó Bedlington Terrier": "Bedlington Terrier",
+    "Sealyham Terrier": "Sealyham Terrier",
+    "Chó Sealyham Terrier": "Sealyham Terrier",
+    "Silky Terrier": "Silky Terrier",
+    "Chó Silky Terrier": "Silky Terrier",
+    "Toy Terrier": "Toy Terrier",
+    "Chó Toy Terrier": "Toy Terrier",
+    "Kerry Blue Terrier": "Kerry Blue Terrier",
+    "Chó Kerry Blue Terrier": "Kerry Blue Terrier",
+    "Wire Fox Terrier": "Wire Haired Fox Terrier",
+    "Chó Wire Fox Terrier": "Wire Haired Fox Terrier",
+    "Wheaten Terrier": "Soft Coated Wheaten Terrier",
+    "Chó Wheaten Terrier": "Soft Coated Wheaten Terrier",
+    "Elkhound Na Uy": "Norwegian Elkhound",
+    "Chó Elkhound Na Uy": "Norwegian Elkhound",
+    "Ridgeback Rhodesia": "Rhodesian Ridgeback",
+    "Chó Ridgeback Rhodesia": "Rhodesian Ridgeback",
+    "Irish Wolfhound": "Irish Wolfhound",
+    "Chó Irish Wolfhound": "Irish Wolfhound",
+    "Deerhound Scotland": "Scottish Deerhound",
+    "Chó Deerhound Scotland": "Scottish Deerhound",
+    "Greyhound Ý": "Italian Greyhound",
+    "Chó Greyhound Ý": "Italian Greyhound",
+    "Whippet": "Whippet",
+    "Chó Whippet": "Whippet",
+    "Borzoi": "Borzoi",
+    "Chó Borzoi": "Borzoi",
+    "Afghan Hound": "Afghan Hound",
+    "Chó Afghan Hound": "Afghan Hound",
+    "Saluki": "Saluki",
+    "Chó Saluki": "Saluki",
+    "Ibizan Hound": "Ibizan Hound",
+    "Chó Ibizan Hound": "Ibizan Hound",
+    "Vizsla": "Vizsla",
+    "Chó Vizsla": "Vizsla",
+    "Weimaraner": "Weimaraner",
+    "Chó Weimaraner": "Weimaraner",
+    "Otterhound": "Otterhound",
+    "Chó Otterhound": "Otterhound",
+    "Bloodhound": "Bloodhound",
+    "Chó Bloodhound": "Bloodhound",
+    "Foxhound Anh": "English Foxhound",
+    "Chó Foxhound Anh": "English Foxhound",
+    "Chin Nhật": "Japanese Spaniel",
+    "Chó Chin Nhật": "Japanese Spaniel",
+    "Spitz Nhật": "Japanese Spitz",
+    "Chó Spitz Nhật": "Japanese Spitz",
+    "Eskimo Mỹ": "Eskimo Dog",
+    "Chó Eskimo Mỹ": "Eskimo Dog",
+    "Keeshond": "Keeshond",
+    "Chó Keeshond": "Keeshond",
+    "Newfoundland": "Newfoundland",
+    "Chó Newfoundland": "Newfoundland",
+    "Bernese Mountain Dog": "Bernese Mountain Dog",
+    "Chó Bernese Mountain Dog": "Bernese Mountain Dog",
+    "Greater Swiss Mountain Dog": "Greater Swiss Mountain Dog",
+    "Chó Greater Swiss Mountain Dog": "Greater Swiss Mountain Dog",
+    "Entlebucher": "Entlebucher",
+    "Chó Entlebucher": "Entlebucher",
+    "Appenzeller": "Appenzeller",
+    "Chó Appenzeller": "Appenzeller",
+    "Kuvasz": "Kuvasz",
+    "Chó Kuvasz": "Kuvasz",
+    "Komondor": "Komondor",
+    "Chó Komondor": "Komondor",
+    "Leonberger": "Leonberg",
+    "Chó Leonberger": "Leonberg",
+    "Lhasa": "Lhasa",
+    "Chó Lhasa": "Lhasa",
+    "Dandie Dinmont Terrier": "Dandie Dinmont",
+    "Chó Dandie Dinmont Terrier": "Dandie Dinmont",
+    "Schipperke": "Schipperke",
+    "Chó Schipperke": "Schipperke",
+    "Affenpinscher": "Affenpinscher",
+    "Chó Affenpinscher": "Affenpinscher",
+    "Basenji": "Basenji",
+    "Chó Basenji": "Basenji",
+    "Dhole": "Dhole",
+    "Chó Dhole": "Dhole",
+    "Dingo": "Dingo",
+    "Chó Dingo": "Dingo",
+    "Chó hoang châu Phi": "African Hunting Dog",
+    "Briard": "Briard",
+    "Chó Briard": "Briard",
+    "Collie": "Collie",
+    "Chó Collie": "Collie",
+    "Shepherd Úc": "Australian Shepherd",
+    "Chó Shepherd Úc": "Australian Shepherd",
+    "Terrier Úc": "Australian Terrier",
+    "Chó Terrier Úc": "Australian Terrier",
+    "Bouvier des Flandres": "Bouvier des Flandres",
+    "Chó Bouvier des Flandres": "Bouvier des Flandres",
+    "Brussels Griffon": "Brabancon Griffon",
+    "Chó Brussels Griffon": "Brabancon Griffon",
+    "Kelpie": "Kelpie",
+    "Chó Kelpie": "Kelpie",
+    "Clumber Spaniel": "Clumber",
+    "Chó Clumber Spaniel": "Clumber",
+    "Irish Water Spaniel": "Irish Water Spaniel",
+    "Chó Irish Water Spaniel": "Irish Water Spaniel",
+    "Brittany Spaniel": "Brittany Spaniel",
+    "Chó Brittany Spaniel": "Brittany Spaniel",
+    "Sussex Spaniel": "Sussex Spaniel",
+    "Chó Sussex Spaniel": "Sussex Spaniel",
+    "Terrier Tây Tạng": "Tibetan Terrier",
+    "Chó Terrier Tây Tạng": "Tibetan Terrier",
+    "Cairn Terrier": "Cairn",
+    "Chó Cairn Terrier": "Cairn",
+    "Chưa xác định": "Not determined"
+  };
+
+  function translateBreedViToEn(viName) {
+    if (!viName) return "Not determined";
+    viName = viName.trim();
+    if (viName.startsWith("Nghi lai:")) {
+      var inner = viName.replace("Nghi lai:", "").trim();
+      var parts = inner.split("x");
+      var translatedParts = parts.map(function (p) {
+        return translateBreedViToEn(p.trim());
+      });
+      return "Crossbreed: " + translatedParts.join(" x ");
+    }
+    if (VI_TO_EN_BREEDS[viName] !== undefined) {
+      return VI_TO_EN_BREEDS[viName];
+    }
+    
+    // Try without "Chó " or "chó " prefix
+    var cleanName = viName;
+    if (cleanName.toLowerCase().startsWith("chó ")) {
+      cleanName = cleanName.substring(4).trim();
+    }
+    if (VI_TO_EN_BREEDS[cleanName] !== undefined) {
+      return VI_TO_EN_BREEDS[cleanName];
+    }
+    
+    // Case-insensitive fallback lookup
+    var lowerVi = viName.toLowerCase();
+    var lowerClean = cleanName.toLowerCase();
+    for (var key in VI_TO_EN_BREEDS) {
+      var lowerKey = key.toLowerCase();
+      if (lowerKey === lowerVi || lowerKey === lowerClean || 
+          lowerKey === "chó " + lowerClean || lowerKey === "chó " + lowerVi) {
+        return VI_TO_EN_BREEDS[key];
+      }
+    }
+    return viName;
+  }
 
   function getSavedLang() {
     try {
@@ -3082,17 +3384,38 @@
 
     // Translate dynamic breed names (like crossbreed prefixes)
     document.querySelectorAll("[data-i18n-breed]").forEach(function (el) {
-      var breed = el.getAttribute("data-i18n-breed");
-      if (!breed) {
-        el.textContent = dict["notDetermined"] || "Not determined";
-        return;
-      }
+      var vi = el.getAttribute("data-i18n-breed") || el.getAttribute("data-i18n-breed-vi");
+      var en = el.getAttribute("data-i18n-breed-en");
       if (lang === "en") {
-        el.textContent = breed
-          .replace("Nghi lai:", "Crossbreed:")
-          .replace("Chưa xác định", "Not determined");
+        el.textContent = en || translateBreedViToEn(vi);
       } else {
-        el.textContent = breed;
+        el.textContent = vi || "Chưa xác định";
+      }
+    });
+
+    // Auto-translate warning notes containing dynamic percentage numbers or breed names
+    document.querySelectorAll(".p-3.bg-error-container\\/40 p, .warning-note").forEach(function (el) {
+      var original = el.getAttribute("data-original-text") || el.textContent.trim();
+      if (!el.getAttribute("data-original-text")) {
+        el.setAttribute("data-original-text", original);
+      }
+      var text = original;
+      if (lang === "en") {
+        if (text.startsWith("Ứng viên thuần chủng/chiếm ưu thế:")) {
+          var breedVi = text.replace("Ứng viên thuần chủng/chiếm ưu thế:", "").replace(".", "").trim();
+          var breedEn = translateBreedViToEn(breedVi);
+          text = "Purebred/dominant candidate: " + breedEn + ".";
+        } else {
+          text = text
+            .replace("Độ tin cậy CHÓ từ YOLO chỉ", "YOLO dog confidence is only")
+            .replace("Kết quả giống dưới đây chỉ mang tính tham khảo.", "Breed results below are for reference only.")
+            .replace("AI giống đang nghiêng về chó", "AI is leaning towards dog")
+            .replace("nhưng chưa đủ ngưỡng xác nhận.", "but verification threshold is not met.")
+            .replace("Ảnh này chưa được nhận diện chắc chắn là CHÓ.", "This photo is not confidently identified as a DOG.");
+        }
+        el.textContent = text;
+      } else {
+        el.textContent = original;
       }
     });
   }
@@ -3237,6 +3560,7 @@
       console.error("i18n initialization error:", err);
     } finally {
       document.documentElement.classList.remove("i18n-loading");
+      document.documentElement.classList.add("ready");
       try {
         document.documentElement.classList.remove("preload");
       } catch (e) {}
@@ -3249,6 +3573,47 @@
     } catch (e) {}
   }
 
+  // Apply translations to any DOM subtree (works on detached/off-DOM elements too)
+  function applyToElement(root, lang) {
+    var dict = TRANSLATIONS[lang];
+    if (!dict || !root) return;
+
+    root.querySelectorAll("[data-i18n]").forEach(function (el) {
+      var key = el.getAttribute("data-i18n");
+      if (dict[key] !== undefined) el.textContent = dict[key];
+    });
+
+    root.querySelectorAll("[data-i18n-placeholder]").forEach(function (el) {
+      var key = el.getAttribute("data-i18n-placeholder");
+      if (dict[key] !== undefined) el.setAttribute("placeholder", dict[key]);
+    });
+
+    root.querySelectorAll("[data-i18n-aria]").forEach(function (el) {
+      var key = el.getAttribute("data-i18n-aria");
+      if (dict[key] !== undefined) el.setAttribute("aria-label", dict[key]);
+    });
+
+    root.querySelectorAll("[data-i18n-title]").forEach(function (el) {
+      var key = el.getAttribute("data-i18n-title");
+      if (dict[key] !== undefined) el.setAttribute("title", dict[key]);
+    });
+
+    root.querySelectorAll("[data-i18n-html]").forEach(function (el) {
+      var key = el.getAttribute("data-i18n-html");
+      if (dict[key] !== undefined) el.innerHTML = dict[key];
+    });
+
+    root.querySelectorAll("[data-i18n-breed]").forEach(function (el) {
+      var vi = el.getAttribute("data-i18n-breed") || el.getAttribute("data-i18n-breed-vi");
+      var en = el.getAttribute("data-i18n-breed-en");
+      if (lang === "en") {
+        el.textContent = en || translateBreedViToEn(vi);
+      } else {
+        el.textContent = vi || "Chưa xác định";
+      }
+    });
+  }
+
   window.PetAI_i18n = {
     t: t,
     setLanguage: setLanguage,
@@ -3258,6 +3623,8 @@
     getTranslations: function () {
       return TRANSLATIONS;
     },
+    applyToElement: applyToElement,
+    translateBreed: translateBreedViToEn,
   };
 
   if (document.readyState === "loading") {

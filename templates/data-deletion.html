@@ -32,7 +32,9 @@
   <meta content="width=device-width, initial-scale=1.0" name="viewport" />
   <title data-i18n="dataDeletionPolicyPageTitle">{{ 'Data Deletion Policy | PetAI' if ui_language == 'en' else 'Chính
     sách xóa dữ liệu | PetAI' }}</title>
-  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script src="{{ url_for('static', filename='js/tailwindcss.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/chart.umd.min.js') }}"></script>
+
   <link rel="stylesheet" href="{{ url_for('static', filename='css/typography.css') }}" />
   <link rel="stylesheet" href="{{ url_for('static', filename='css/theme-dark.css') }}" />
   <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile-header-fix.css') }}" />

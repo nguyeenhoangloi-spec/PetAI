@@ -4,6 +4,7 @@
   <head>
     <script>
       (function () {
+        document.documentElement.classList.add("preload");
         var savedLang = "vi";
         try {
           savedLang = localStorage.getItem("siteLanguage") || "vi";
@@ -248,11 +249,6 @@
               >PetAI</span
             >
           </a>
-          <button class="menu-toggle ml-2" id="menuToggle" aria-label="Mở menu" aria-expanded="false" type="button" data-i18n-aria="openMenu">
-            <span></span>
-            <span></span>
-            <span></span>
-          </button>
         </div>
         
         <div class="flex items-center gap-md">
@@ -537,6 +533,36 @@
             </div>
           </div>
         </div>
+
+        <div
+          class="fixed inset-0 z-[1050] hidden items-center justify-center bg-slate-950/60 backdrop-blur-sm p-4"
+          id="confirmModal"
+          aria-hidden="true"
+        >
+          <div class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 dark:border-slate-800 rounded-xl max-w-md w-full p-6 shadow-xl">
+            <h3 id="modalTitle" class="headline-md font-semibold text-on-surface dark:text-slate-100 flex items-center gap-2">
+              <span class="material-symbols-outlined text-amber-500 dark:text-amber-400">warning</span><span data-i18n="confirm">Xác nhận</span></h3>
+            <p id="modalText" class="body-md text-on-surface-variant dark:text-slate-300 mt-2" data-i18n="confirmDialogText"><span data-i18n="confirmDialogText">Bạn có chắc?</span></p>
+            <div id="modalInputWrap" class="hidden mt-3">
+              <label class="body-md text-on-surface-variant dark:text-slate-400" for="modalConfirmInput"><span data-i18n="enterWord">Nhập</span><code class="text-rose-500 font-semibold dark:text-rose-400 bg-rose-500/10 px-1 py-0.5 rounded">DELETE</code><span data-i18n="confirmInputPlaceholderSuffix">hoặc tên đăng nhập để xác nhận</span></label>
+              <input
+                id="modalConfirmInput"
+                type="text"
+                class="mt-2 w-full bg-surface-container-lowest dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-800 rounded-lg px-3 py-2 label-sm text-on-surface dark:text-slate-100 focus:ring-primary focus:border-primary dark:focus:ring-blue-500 transition-colors"
+                placeholder="DELETE hoặc username" data-i18n-placeholder="deleteOrUsernamePlaceholder" />
+            </div>
+            <div class="mt-6 flex items-center justify-end gap-3">
+              <button
+                class="px-4 py-2 rounded-lg border border-outline-variant/45 dark:border-slate-700 text-on-surface dark:text-slate-300 label-sm font-semibold hover:bg-surface-container-low dark:hover:bg-slate-800 transition-colors"
+                type="button"
+                id="modalCancel" data-i18n="cancel"><span data-i18n="cancel">Huỷ</span></button>
+              <button
+                class="px-4 py-2 rounded-lg bg-primary hover:bg-primary/95 text-on-primary label-sm font-semibold shadow-sm hover:shadow-md transition-colors"
+                type="button"
+                id="modalOk" data-i18n="confirm"><span data-i18n="confirm">Xác nhận</span></button>
+            </div>
+          </div>
+        </div>
       </div>
     </main>
 
@@ -648,35 +674,7 @@
       </div>
     </footer>
 
-    <div
-      class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/60 backdrop-blur-sm p-4"
-      id="confirmModal"
-      aria-hidden="true"
-    >
-      <div class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 dark:border-slate-800 rounded-xl max-w-md w-full p-6 shadow-xl">
-        <h3 id="modalTitle" class="headline-md font-semibold text-on-surface dark:text-slate-100 flex items-center gap-2">
-          <span class="material-symbols-outlined text-amber-500 dark:text-amber-400">warning</span><span data-i18n="confirm">Xác nhận</span></h3>
-        <p id="modalText" class="body-md text-on-surface-variant dark:text-slate-300 mt-2" data-i18n="confirmDialogText"><span data-i18n="confirmDialogText">Bạn có chắc?</span></p>
-        <div id="modalInputWrap" class="hidden mt-3">
-          <label class="body-md text-on-surface-variant dark:text-slate-400" for="modalConfirmInput"><span data-i18n="enterWord">Nhập</span><code class="text-rose-500 font-semibold dark:text-rose-400 bg-rose-500/10 px-1 py-0.5 rounded">DELETE</code><span data-i18n="confirmInputPlaceholderSuffix">hoặc tên đăng nhập để xác nhận</span></label>
-          <input
-            id="modalConfirmInput"
-            type="text"
-            class="mt-2 w-full bg-surface-container-lowest dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-800 rounded-lg px-3 py-2 label-sm text-on-surface dark:text-slate-100 focus:ring-primary focus:border-primary dark:focus:ring-blue-500 transition-colors"
-            placeholder="DELETE hoặc username" data-i18n-placeholder="deleteOrUsernamePlaceholder" />
-        </div>
-        <div class="mt-6 flex items-center justify-end gap-3">
-          <button
-            class="px-4 py-2 rounded-lg border border-outline-variant/45 dark:border-slate-700 text-on-surface dark:text-slate-300 label-sm font-semibold hover:bg-surface-container-low dark:hover:bg-slate-800 transition-colors"
-            type="button"
-            id="modalCancel" data-i18n="cancelBtn"><span data-i18n="cancelBtn">Huỷ</span></button>
-          <button
-            class="px-4 py-2 rounded-lg bg-primary hover:bg-primary/95 text-on-primary label-sm font-semibold shadow-sm hover:shadow-md transition-colors"
-            type="button"
-            id="modalOk" data-i18n="confirm"><span data-i18n="confirm">Xác nhận</span></button>
-        </div>
-      </div>
-    </div>
+
 
     <script src="{{ url_for('static', filename='js/toasts.js') }}"></script>
     <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>

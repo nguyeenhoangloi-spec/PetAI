@@ -1,99 +1,99 @@
 <!doctype html>
 
-<html class="{{ 'dark' if ui_theme == 'dark' else 'light' }}{{ ' i18n-loading' if ui_language == 'en' else '' }}" lang="{{ ui_language or 'vi' }}" data-theme="{{ ui_theme or 'light' }}">
+<html
+  class="{{ 'dark' if ui_theme == 'dark' else 'light' }}{{ ' i18n-loading' if ui_language == 'en' else '' }}"
+  lang="{{ ui_language or 'vi' }}"
+  data-theme="{{ ui_theme or 'light' }}"
+>
   <head>
     <script>
-      (function () {
-        var savedLang = "vi";
-        try {
-          savedLang = localStorage.getItem("siteLanguage") || "vi";
-        } catch (e) {}
-        document.documentElement.setAttribute("data-user-lang", savedLang);
-        if (savedLang === "en") {
-          document.documentElement.classList.add("i18n-loading");
-        }
-      })();
-    </script>
-    <style>
-      html.i18n-loading body {
-        visibility: hidden !important;
-      }
-    </style>
-    <noscript>
-      <style>
+        (function () {
+          var savedLang = "vi";
+          try {
+
         html.i18n-loading body {
-          visibility: visible !important;
+          visibility: hidden !important;
         }
       </style>
-    </noscript>
-    <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <script>
-      (function () {
-        const root = document.documentElement;
-        const themeStorageKey =
-          "{{ 'theme:' ~ session.get('user_id') if session.get('user_id') else '' }}";
-        const serverTheme = "{{ ui_theme or 'light' }}";
-        if (themeStorageKey) {
-          try {
-            localStorage.setItem(themeStorageKey, serverTheme);
-          } catch (e) {}
-        }
-        const storedTheme = (function () {
-          if (!themeStorageKey) return null;
-          try {
-            return localStorage.getItem(themeStorageKey);
-          } catch (e) {
-            return null;
+      <noscript>
+        <style>
+          html.i18n-loading body {
+            visibility: visible !important;
           }
-        })();
-        const preferredTheme = storedTheme || serverTheme;
-
-        function resolveTheme(theme) {
-          if (theme !== "auto") return theme;
-          try {
-            return window.matchMedia("(prefers-color-scheme: dark)").matches
-              ? "dark"
-              : "light";
-          } catch (e) {
-            return "light";
+        </style>
+      </noscript>
+      <meta charset="utf-8" />
+      <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+      <script>
+        (function () {
+          const root = document.documentElement;
+          const themeStorageKey =
+            "{{ 'theme:' ~ session.get('user_id') if session.get('user_id') else '' }}";
+          const serverTheme = "{{ ui_theme or 'light' }}";
+          if (themeStorageKey) {
+            try {
+              localStorage.setItem(themeStorageKey, serverTheme);
+            } catch (e) {}
           }
-        }
+          const storedTheme = (function () {
+            if (!themeStorageKey) return null;
+            try {
+              return localStorage.getItem(themeStorageKey);
+            } catch (e) {
+              return null;
+            }
+          })();
+          const preferredTheme = storedTheme || serverTheme;
 
-        function applyTheme(theme) {
-          const resolved = resolveTheme(theme);
-          root.classList.toggle("dark", resolved === "dark");
-          root.classList.toggle("light", resolved !== "dark");
-          root.setAttribute("data-theme", resolved);
-        }
+          function resolveTheme(theme) {
+            if (theme !== "auto") return theme;
+            try {
+              return window.matchMedia("(prefers-color-scheme: dark)").matches
+                ? "dark"
+                : "light";
+            } catch (e) {
+              return "light";
+            }
+          }
 
-        applyTheme(preferredTheme);
+          function applyTheme(theme) {
+            const resolved = resolveTheme(theme);
+            root.classList.toggle("dark", resolved === "dark");
+            root.classList.toggle("light", resolved !== "dark");
+            root.setAttribute("data-theme", resolved);
+          }
 
-        if (preferredTheme === "auto") {
+          applyTheme(preferredTheme);
+
+          if (preferredTheme === "auto") {
+            try {
+              const mql = window.matchMedia("(prefers-color-scheme: dark)");
+              const handler = function () {
+                applyTheme("auto");
+              };
+              if (mql.addEventListener) {
+                mql.addEventListener("change", handler);
+              } else if (mql.addListener) {
+                mql.addListener(handler);
+              }
+            } catch (e) {}
+          }
+
           try {
-            const mql = window.matchMedia("(prefers-color-scheme: dark)");
-            const handler = function () {
-              applyTheme("auto");
-            };
-            if (mql.addEventListener) {
-              mql.addEventListener("change", handler);
-            } else if (mql.addListener) {
-              mql.addListener(handler);
+            const isCollapsed =
+              localStorage.getItem("sidebar-collapsed") === "true";
+            if (isCollapsed && window.innerWidth >= 768) {
+              root.classList.add("sidebar-collapsed");
             }
           } catch (e) {}
-        }
-
-        try {
-          const isCollapsed =
-            localStorage.getItem("sidebar-collapsed") === "true";
-          if (isCollapsed && window.innerWidth >= 768) {
-            root.classList.add("sidebar-collapsed");
-          }
-        } catch (e) {}
-      })();
+        })();
     </script>
-    <title data-i18n="upgradePageTitle">{{ 'Upgrade Plan - PetAI' if ui_language == 'en' else 'Nâng cấp gói - PetAI' }}</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <title data-i18n="upgradePageTitle">
+      {{ 'Upgrade Plan - PetAI' if ui_language == 'en' else 'Nâng cấp gói -
+      PetAI' }}
+    </title>
+    <script src="{{ url_for('static', filename='js/tailwindcss.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/chart.umd.min.js') }}"></script>
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='css/typography.css') }}"
@@ -281,20 +281,8 @@
               >PetAI</span
             >
           </a>
-          <button
-            class="menu-toggle ml-2"
-            id="menuToggle"
-            aria-label="Mở menu"
-            aria-expanded="false"
-            type="button"
-            data-i18n-aria="openMenu"
-          >
-            <span></span>
-            <span></span>
-            <span></span>
-          </button>
         </div>
-        
+
         <div class="flex items-center gap-md">
           <a
             class="hidden md:inline-flex bg-primary text-on-primary px-4 py-2 rounded-lg label-sm hover:opacity-90 active:scale-95 duration-150 transition-all"
@@ -303,12 +291,24 @@
             ><span data-i18n="predict">Nhận diện</span></a
           >
           <div class="language-switcher mr-2" id="languageSwitcher">
-            <button class="language-button" id="languageButton" type="button" aria-haspopup="true" aria-expanded="false">
-      <span class="language-flag" data-i18n="languageFlag">🇻🇳</span>
-      <span class="language-current" data-i18n="languageLabel">Tiếng Việt</span>
-    </button>
+            <button
+              class="language-button"
+              id="languageButton"
+              type="button"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              <span class="language-flag" data-i18n="languageFlag">🇻🇳</span>
+              <span class="language-current" data-i18n="languageLabel"
+                >Tiếng Việt</span
+              >
+            </button>
             <div class="language-menu" id="languageMenu">
-              <button class="language-option active" type="button" data-lang="vi">
+              <button
+                class="language-option active"
+                type="button"
+                data-lang="vi"
+              >
                 <span class="language-check">✓</span>
                 <span class="language-flag" data-i18n="languageFlag">🇻🇳</span>
                 <span data-i18n="languageLabel">Tiếng Việt</span>
@@ -376,8 +376,7 @@
     <main
       class="flex-grow w-full px-4 md:px-6 py-margin grid grid-cols-1 md:grid-cols-[230px_minmax(0,1fr)] gap-gutter"
     >
-      {% set active_page = 'upgrade' %}
-      {% include '_sidebar.html' %}
+      {% set active_page = 'upgrade' %} {% include '_sidebar.html' %}
 
       <div class="col-span-1 flex flex-col gap-8">
         <style>
@@ -1178,7 +1177,7 @@
                       >
                         <option
                           value="pro"
-                          {% if current_plan == "pro" %}selected{% elif current_plan == "enterprise" %}disabled{% endif %}
+                          {% if current_plan == 'pro' %}selected{% elif current_plan == 'enterprise' %}disabled{% endif %}
                           data-i18n="optPro"
                         >
                           <span data-i18n="optPro"
@@ -1188,7 +1187,7 @@
                         </option>
                         <option
                           value="basic"
-                          {% if current_plan == "basic" %}selected{% elif current_plan in ['pro', 'enterprise'] %}disabled{% endif %}
+                          {% if current_plan == 'basic' %}selected{% elif current_plan in ['pro', 'enterprise'] %}disabled{% endif %}
                           data-i18n="optBasic"
                         >
                           <span data-i18n="optBasic"
@@ -1197,7 +1196,7 @@
                         </option>
                         <option
                           value="enterprise"
-                          {% if current_plan == "enterprise" %}selected{% endif %}
+                          {% if current_plan == 'enterprise' %}selected{% endif %}
                           data-i18n="optEnterprise"
                         >
                           <span data-i18n="optEnterprise"
@@ -1227,10 +1226,9 @@
                       >info</span
                     >
                     <span data-i18n-html="gatewayInfo"
-                      >Cổng
-                      <strong>VietQR tự động</strong>. Bạn chỉ cần quét mã QR được hiển thị và chuyển đúng số
-                      tiền cùng nội dung chuyển khoản để hệ thống tự động
-                      duyệt.</span
+                      >Cổng <strong>VietQR tự động</strong>. Bạn chỉ cần quét mã
+                      QR được hiển thị và chuyển đúng số tiền cùng nội dung
+                      chuyển khoản để hệ thống tự động duyệt.</span
                     >
                   </div>
                 </div>
@@ -1485,11 +1483,14 @@
               >
             </p>
             <div class="flex gap-6">
-              <a class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
-
-                target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.user_guide') }}"
-
-                data-i18n="footerUserGuide"><span data-i18n="footerUserGuide">HƯỚNG DẪN SỬ DỤNG</span></a>
+              <a
+                class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
+                target="_blank"
+                rel="noopener noreferrer"
+                href="{{ url_for('legal.user_guide') }}"
+                data-i18n="footerUserGuide"
+                ><span data-i18n="footerUserGuide">HƯỚNG DẪN SỬ DỤNG</span></a
+              >
 
               <a
                 class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"

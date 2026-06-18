@@ -1,9 +1,14 @@
 <!doctype html>
 
-<html class="{{ 'dark' if ui_theme == 'dark' else 'light' }}{{ ' i18n-loading' if ui_language == 'en' else '' }}" lang="{{ ui_language or 'vi' }}" data-theme="{{ ui_theme or 'light' }}">
+<html
+  class="{{ 'dark' if ui_theme == 'dark' else 'light' }}{{ ' i18n-loading' if ui_language == 'en' else '' }}"
+  lang="{{ ui_language or 'vi' }}"
+  data-theme="{{ ui_theme or 'light' }}"
+>
   <head>
     <script>
       (function () {
+        document.documentElement.classList.add("preload");
         var savedLang = "vi";
         try {
           savedLang = localStorage.getItem("siteLanguage") || "vi";
@@ -92,9 +97,11 @@
         } catch (e) {}
       })();
     </script>
-    <title data-i18n="statisticsPageTitle">{{ 'Statistics - PetAI' if ui_language == 'en' else 'Thống kê - PetAI' }}</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    <title data-i18n="statisticsPageTitle">
+      {{ 'Statistics - PetAI' if ui_language == 'en' else 'Thống kê - PetAI' }}
+    </title>
+    <script src="{{ url_for('static', filename='js/tailwindcss.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/chart.umd.min.js') }}"></script>
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='css/typography.css') }}"
@@ -244,20 +251,24 @@
         color: #64748b;
         background: transparent;
       }
+
       .time-filter-btn:hover {
         background: rgba(37, 99, 235, 0.06);
         color: #2563eb;
       }
+
       .time-filter-btn.active {
         background: #fff;
         color: #2563eb;
         font-weight: 700;
         box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
       }
+
       html.dark .time-filter-btn.active {
         background: rgba(37, 99, 235, 0.18);
         color: #93c5fd;
       }
+
       html.dark .time-filter-btn {
         color: #94a3b8;
       }
@@ -268,6 +279,7 @@
         position: relative;
         overflow: hidden;
       }
+
       .stat-card:hover {
         transform: translateY(-4px);
         box-shadow: 0 12px 24px -10px rgba(0, 74, 198, 0.15);
@@ -287,25 +299,31 @@
         flex-shrink: 0;
         transition: transform 0.2s ease;
       }
+
       .rank-badge:hover {
         transform: scale(1.15);
       }
+
       .rank-badge--1 {
         background: linear-gradient(135deg, #fbbf24, #f59e0b);
         color: #78350f;
       }
+
       .rank-badge--2 {
         background: linear-gradient(135deg, #d1d5db, #9ca3af);
         color: #374151;
       }
+
       .rank-badge--3 {
         background: linear-gradient(135deg, #fdba74, #f97316);
         color: #7c2d12;
       }
+
       .rank-badge--4 {
         background: linear-gradient(135deg, #bfdbfe, #60a5fa);
         color: #1e3a5f;
       }
+
       .rank-badge--5 {
         background: linear-gradient(135deg, #c7d2fe, #818cf8);
         color: #312e81;
@@ -318,6 +336,7 @@
         border-radius: 9999px;
         overflow: hidden;
       }
+
       .progress-fill {
         height: 100%;
         border-radius: 9999px;
@@ -330,9 +349,11 @@
         border-bottom: 1px solid rgba(148, 163, 184, 0.1);
         transition: background 0.15s ease;
       }
+
       .breed-row:last-child {
         border-bottom: none;
       }
+
       .breed-row:hover {
         background: rgba(37, 99, 235, 0.03);
         border-radius: 8px;
@@ -345,9 +366,11 @@
       .activity-item {
         transition: background 0.15s ease;
       }
+
       .activity-item:hover {
         background: rgba(37, 99, 235, 0.03);
       }
+
       .activity-thumb {
         width: 44px;
         height: 44px;
@@ -358,10 +381,12 @@
           transform 0.2s ease,
           border-color 0.2s ease;
       }
+
       .activity-item:hover .activity-thumb {
         transform: scale(1.05);
         border-color: rgba(37, 99, 235, 0.3);
       }
+
       .confidence-pill {
         font-size: 12px;
         font-weight: 700;
@@ -370,29 +395,35 @@
         min-width: 46px;
         text-align: center;
       }
+
       .confidence-high {
         background: rgba(34, 197, 94, 0.12);
         color: #16a34a;
         border: 1px solid rgba(34, 197, 94, 0.18);
       }
+
       .confidence-mid {
         background: rgba(245, 158, 11, 0.12);
         color: #d97706;
         border: 1px solid rgba(245, 158, 11, 0.18);
       }
+
       .confidence-low {
         background: rgba(239, 68, 68, 0.12);
         color: #dc2626;
         border: 1px solid rgba(239, 68, 68, 0.18);
       }
+
       html.dark .confidence-high {
         background: rgba(34, 197, 94, 0.15);
         color: #4ade80;
       }
+
       html.dark .confidence-mid {
         background: rgba(245, 158, 11, 0.15);
         color: #fbbf24;
       }
+
       html.dark .confidence-low {
         background: rgba(239, 68, 68, 0.15);
         color: #f87171;
@@ -409,6 +440,7 @@
       }
     </style>
   </head>
+
   <body
     class="bg-background text-on-background body-md antialiased min-h-screen flex flex-col"
   >
@@ -436,20 +468,8 @@
               >PetAI</span
             >
           </a>
-          <button
-            class="menu-toggle ml-2"
-            id="menuToggle"
-            type="button"
-            aria-label="Mở menu"
-            aria-expanded="false"
-            data-i18n-aria="openMenu"
-          >
-            <span></span>
-            <span></span>
-            <span></span>
-          </button>
         </div>
-        
+
         <div class="flex items-center gap-md">
           <a
             class="hidden md:inline-flex bg-primary text-on-primary px-4 py-2 rounded-lg label-sm hover:opacity-90 active:scale-95 duration-150 transition-all"
@@ -458,12 +478,24 @@
             ><span data-i18n="predict">Nhận diện</span></a
           >
           <div class="language-switcher mr-2" id="languageSwitcher">
-            <button class="language-button" id="languageButton" type="button" aria-haspopup="true" aria-expanded="false">
-      <span class="language-flag" data-i18n="languageFlag">🇻🇳</span>
-      <span class="language-current" data-i18n="languageLabel">Tiếng Việt</span>
-    </button>
+            <button
+              class="language-button"
+              id="languageButton"
+              type="button"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              <span class="language-flag" data-i18n="languageFlag">🇻🇳</span>
+              <span class="language-current" data-i18n="languageLabel"
+                >Tiếng Việt</span
+              >
+            </button>
             <div class="language-menu" id="languageMenu">
-              <button class="language-option active" type="button" data-lang="vi">
+              <button
+                class="language-option active"
+                type="button"
+                data-lang="vi"
+              >
                 <span class="language-check">✓</span>
                 <span class="language-flag" data-i18n="languageFlag">🇻🇳</span>
                 <span data-i18n="languageLabel">Tiếng Việt</span>
@@ -531,10 +563,9 @@
     <main
       class="flex-grow w-full px-4 md:px-6 py-margin grid grid-cols-1 md:grid-cols-[230px_minmax(0,1fr)] gap-gutter"
     >
-      {% set active_page = 'statistics' %}
-      {% include '_sidebar.html' %}
+      {% set active_page = 'statistics' %} {% include '_sidebar.html' %}
 
-      <div class="col-span-1 flex flex-col">
+      <div class="col-span-1 flex flex-col min-w-0">
         <!-- ── Page Header ── -->
         <section
           class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-outline-variant/20 dark:border-slate-800 pb-5 mb-8"
@@ -764,8 +795,8 @@
             >
               <canvas
                 id="trendChart"
-                data-labels="{{ daily_counts | map(attribute='date') | list | tojson | forceescape }}"
-                data-values="{{ daily_counts | map(attribute='count') | list | tojson | forceescape }}"
+                data-labels="{{ daily_counts | map(attribute='date') | list | tojson | forceescape | safe }}"
+                data-values="{{ daily_counts | map(attribute='count') | list | tojson | forceescape | safe }}"
               ></canvas>
             </div>
             {% else %}
@@ -822,6 +853,7 @@
                     <span
                       class="body-md font-semibold text-on-surface flex-1 truncate"
                       title="{{ item.breed }}"
+                      data-i18n-breed="{{ item.breed or '' }}"
                       >{{ item.breed }}</span
                     >
                     <span
@@ -891,7 +923,7 @@
               >
                 <canvas
                   id="confBarChart"
-                  data-values="{{ confidence_dist | tojson | forceescape }}"
+                  data-values="{{ confidence_dist | tojson | forceescape | safe }}"
                 ></canvas>
               </div>
             </div>
@@ -924,8 +956,8 @@
             >
               <canvas
                 id="breedDonutChart"
-                data-labels="{{ stats.top_breeds | map(attribute='breed') | list | tojson | forceescape }}"
-                data-values="{{ stats.top_breeds | map(attribute='count') | list | tojson | forceescape }}"
+                data-labels="{{ stats.top_breeds | map(attribute='breed') | list | tojson | forceescape | safe }}"
+                data-values="{{ stats.top_breeds | map(attribute='count') | list | tojson | forceescape | safe }}"
               ></canvas>
             </div>
             {% else %}
@@ -981,7 +1013,7 @@
                   <img
                     alt="{{ p.breed }}"
                     class="activity-thumb"
-                    src="{{ url_for('static', filename=p.image_path) if not p.image_path.startswith('http') else p.image_path }}"
+                    src="{{ p.image_path if p.image_path.startswith('http') else '/' ~ p.image_path }}"
                     onerror="this.src='{{ default_logo }}'"
                   />
                   {% else %}
@@ -995,8 +1027,8 @@
                   </div>
                   {% endif %}
                   <div class="min-w-0">
-                    <h4 class="font-semibold text-on-surface body-md truncate">
-                      {{ p.breed or 'Không xác định' }}
+                    <h4 class="font-semibold text-on-surface body-md truncate" data-i18n-breed="{{ p.breed or '' }}">
+                      {{ p.breed or 'Chưa xác định' }}
                     </h4>
                     <p
                       class="label-sm text-on-surface-variant flex items-center gap-1 mt-0.5"
@@ -1048,6 +1080,10 @@
             {% endif %}
           </div>
         </section>
+
+        <script id="topBreedsData" type="application/json">
+          {{ (stats.top_breeds or []) | tojson | safe }}
+        </script>
       </div>
     </main>
 
@@ -1176,11 +1212,14 @@
               >
             </p>
             <div class="flex gap-6">
-              <a class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
-
-                target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.user_guide') }}"
-
-                data-i18n="footerUserGuide"><span data-i18n="footerUserGuide">HƯỚNG DẪN SỬ DỤNG</span></a>
+              <a
+                class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
+                target="_blank"
+                rel="noopener noreferrer"
+                href="{{ url_for('legal.user_guide') }}"
+                data-i18n="footerUserGuide"
+                ><span data-i18n="footerUserGuide">HƯỚNG DẪN SỬ DỤNG</span></a
+              >
 
               <a
                 class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
@@ -1279,12 +1318,8 @@
       })();
     </script>
 
-    <script id="topBreedsData" type="application/json">
-      {{ (stats.top_breeds or []) | tojson | safe }}
-    </script>
-
     <script>
-      document.addEventListener("DOMContentLoaded", function () {
+      (function () {
         const exportBtn = document.getElementById("exportReportBtn");
         if (exportBtn) {
           exportBtn.addEventListener("click", function () {
@@ -1348,7 +1383,7 @@
             document.body.removeChild(link);
           });
         }
-      });
+      })();
     </script>
 
     <script>
@@ -1367,215 +1402,270 @@
         Chart.defaults.font.family = "Inter, sans-serif";
         Chart.defaults.font.size = 12;
 
-        /* ── 1. Line / Area chart – Trend ── */
+        let trendChartInstance = null;
+        let breedDonutChartInstance = null;
+        let confBarChartInstance = null;
+
         const trendEl = document.getElementById("trendChart");
-        if (trendEl) {
-          const trendLabels = JSON.parse(trendEl.dataset.labels || "[]");
-          const trendData = JSON.parse(trendEl.dataset.values || "[]");
-          new Chart(trendEl, {
-            type: "line",
-            data: {
-              labels: trendLabels,
-              datasets: [
-                {
-                  label:
-                    typeof window.PetAI_i18n !== "undefined"
-                      ? window.PetAI_i18n.t("scansCount")
-                      : "Lượt nhận diện",
-                  data: trendData,
-                  fill: true,
-                  tension: 0.42,
-                  borderColor: "#2563eb",
-                  borderWidth: 2.5,
-                  backgroundColor: isDark
-                    ? "rgba(37,99,235,0.13)"
-                    : "rgba(37,99,235,0.08)",
-                  pointBackgroundColor: "#2563eb",
-                  pointBorderColor: isDark ? "#1e293b" : "#fff",
-                  pointRadius: 4,
-                  pointHoverRadius: 6,
-                },
-              ],
-            },
-            options: {
-              responsive: true,
-              maintainAspectRatio: false,
-              interaction: { mode: "index", intersect: false },
-              plugins: {
-                legend: { display: false },
-                tooltip: {
-                  backgroundColor: tooltipBg,
-                  titleColor: tooltipText,
-                  bodyColor: tooltipText,
-                  borderColor: gridColor,
-                  borderWidth: 1,
-                  padding: 10,
-                  callbacks: {
-                    label: function (ctx) {
-                      return (
-                        " " +
-                        ctx.parsed.y +
-                        " " +
-                        (typeof window.PetAI_i18n !== "undefined"
-                          ? window.PetAI_i18n.t("scansUnit")
-                          : "lượt")
-                      );
-                    },
-                  },
-                },
-              },
-              scales: {
-                x: {
-                  grid: { color: gridColor },
-                  ticks: { maxTicksLimit: 8 },
-                },
-                y: {
-                  grid: { color: gridColor },
-                  beginAtZero: true,
-                  ticks: { precision: 0 },
-                },
-              },
-            },
-          });
-        }
-
-        /* ── 2. Donut – Breed distribution ── */
         const donutEl = document.getElementById("breedDonutChart");
-        if (donutEl) {
-          const breedLabels = JSON.parse(donutEl.dataset.labels || "[]");
-          const breedCounts = JSON.parse(donutEl.dataset.values || "[]");
-          const donutColors = [
-            "#2563eb",
-            "#f59e0b",
-            "#ea580c",
-            "#6366f1",
-            "#10b981",
-          ];
-          const donutDark = [
-            "#60a5fa",
-            "#fbbf24",
-            "#fb923c",
-            "#a5b4fc",
-            "#34d399",
-          ];
-          new Chart(donutEl, {
-            type: "doughnut",
-            data: {
-              labels: breedLabels,
-              datasets: [
-                {
-                  data: breedCounts,
-                  backgroundColor: isDark ? donutDark : donutColors,
-                  borderColor: isDark ? "#0f172a" : "#ffffff",
-                  borderWidth: 3,
-                  hoverOffset: 8,
-                },
-              ],
-            },
-            options: {
-              responsive: true,
-              maintainAspectRatio: false,
-              cutout: "65%",
-              plugins: {
-                legend: {
-                  position: "bottom",
-                  labels: {
-                    boxWidth: 10,
-                    boxHeight: 10,
-                    borderRadius: 4,
-                    padding: 8,
-                    font: { size: 11 },
-                    maxLength: 16,
+        const barEl = document.getElementById("confBarChart");
+
+        function initCharts() {
+          /* ── 1. Line / Area chart – Trend ── */
+          if (trendEl && !trendChartInstance) {
+            const trendLabels = JSON.parse(trendEl.dataset.labels || "[]");
+            const trendData = JSON.parse(trendEl.dataset.values || "[]");
+            trendChartInstance = new Chart(trendEl, {
+              type: "line",
+              data: {
+                labels: trendLabels,
+                datasets: [
+                  {
+                    label:
+                      typeof window.PetAI_i18n !== "undefined"
+                        ? window.PetAI_i18n.t("scansCount")
+                        : "Lượt nhận diện",
+                    data: trendData,
+                    fill: true,
+                    tension: 0.42,
+                    borderColor: "#2563eb",
+                    borderWidth: 2.5,
+                    backgroundColor: isDark
+                      ? "rgba(37,99,235,0.13)"
+                      : "rgba(37,99,235,0.08)",
+                    pointBackgroundColor: "#2563eb",
+                    pointBorderColor: isDark ? "#1e293b" : "#fff",
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
+                  },
+                ],
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: { mode: "index", intersect: false },
+                plugins: {
+                  legend: { display: false },
+                  tooltip: {
+                    backgroundColor: tooltipBg,
+                    titleColor: tooltipText,
+                    bodyColor: tooltipText,
+                    borderColor: gridColor,
+                    borderWidth: 1,
+                    padding: 10,
+                    callbacks: {
+                      label: function (ctx) {
+                        return (
+                          " " +
+                          ctx.parsed.y +
+                          " " +
+                          (typeof window.PetAI_i18n !== "undefined"
+                            ? window.PetAI_i18n.t("scansUnit")
+                            : "lượt")
+                        );
+                      },
+                    },
                   },
                 },
-                tooltip: {
-                  backgroundColor: tooltipBg,
-                  titleColor: tooltipText,
-                  bodyColor: tooltipText,
-                  borderColor: gridColor,
-                  borderWidth: 1,
-                  padding: 10,
-                  callbacks: {
-                    label: function (ctx) {
-                      return (
-                        " " +
-                        ctx.label +
-                        ": " +
-                        ctx.parsed +
-                        " " +
-                        (typeof window.PetAI_i18n !== "undefined"
-                          ? window.PetAI_i18n.t("timesCount")
-                          : "lần")
-                      );
+                scales: {
+                  x: {
+                    grid: { color: gridColor },
+                    ticks: { maxTicksLimit: 8 },
+                  },
+                  y: {
+                    grid: { color: gridColor },
+                    beginAtZero: true,
+                    ticks: { precision: 0 },
+                  },
+                },
+              },
+            });
+          }
+
+          /* ── 2. Donut – Breed distribution ── */
+          if (donutEl && !breedDonutChartInstance) {
+            let breedLabels = JSON.parse(donutEl.dataset.labels || "[]");
+            if (typeof window.PetAI_i18n !== "undefined" && window.PetAI_i18n.getCurrentLang() === "en") {
+              breedLabels = breedLabels.map(function (label) {
+                return window.PetAI_i18n.translateBreed(label);
+              });
+            }
+            const breedCounts = JSON.parse(donutEl.dataset.values || "[]");
+            const donutColors = [
+              "#2563eb",
+              "#f59e0b",
+              "#ea580c",
+              "#6366f1",
+              "#10b981",
+            ];
+            const donutDark = [
+              "#60a5fa",
+              "#fbbf24",
+              "#fb923c",
+              "#a5b4fc",
+              "#34d399",
+            ];
+            breedDonutChartInstance = new Chart(donutEl, {
+              type: "doughnut",
+              data: {
+                labels: breedLabels,
+                datasets: [
+                  {
+                    data: breedCounts,
+                    backgroundColor: isDark ? donutDark : donutColors,
+                    borderColor: isDark ? "#0f172a" : "#ffffff",
+                    borderWidth: 3,
+                    hoverOffset: 8,
+                  },
+                ],
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: "65%",
+                plugins: {
+                  legend: {
+                    position: "bottom",
+                    labels: {
+                      boxWidth: 10,
+                      boxHeight: 10,
+                      borderRadius: 4,
+                      padding: 8,
+                      font: { size: 11 },
+                      maxLength: 16,
+                    },
+                  },
+                  tooltip: {
+                    backgroundColor: tooltipBg,
+                    titleColor: tooltipText,
+                    bodyColor: tooltipText,
+                    borderColor: gridColor,
+                    borderWidth: 1,
+                    padding: 10,
+                    callbacks: {
+                      label: function (ctx) {
+                        return (
+                          " " +
+                          ctx.label +
+                          ": " +
+                          ctx.parsed +
+                          " " +
+                          (typeof window.PetAI_i18n !== "undefined"
+                            ? window.PetAI_i18n.t("timesCount")
+                            : "lần")
+                        );
+                      },
                     },
                   },
                 },
               },
-            },
-          });
+            });
+          }
+
+          /* ── 3. Bar – Confidence distribution ── */
+          if (barEl && !confBarChartInstance) {
+            const confDist = JSON.parse(barEl.dataset.values || "[]");
+            const barColors = isDark
+              ? ["#f87171", "#fbbf24", "#60a5fa", "#34d399", "#a78bfa"]
+              : ["#ef4444", "#f59e0b", "#2563eb", "#10b981", "#8b5cf6"];
+            confBarChartInstance = new Chart(barEl, {
+              type: "bar",
+              data: {
+                labels: ["0–20%", "20–40%", "40–60%", "60–80%", "80–100%"],
+                datasets: [
+                  {
+                    label:
+                      typeof window.PetAI_i18n !== "undefined"
+                        ? window.PetAI_i18n.t("scansCount")
+                        : "Số lượt",
+                    data: confDist,
+                    backgroundColor: barColors,
+                    borderRadius: 6,
+                    borderSkipped: false,
+                  },
+                ],
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                  legend: { display: false },
+                  tooltip: {
+                    backgroundColor: tooltipBg,
+                    titleColor: tooltipText,
+                    bodyColor: tooltipText,
+                    borderColor: gridColor,
+                    borderWidth: 1,
+                    padding: 10,
+                    callbacks: {
+                      label: function (ctx) {
+                        return (
+                          " " +
+                          ctx.parsed.y +
+                          " " +
+                          (typeof window.PetAI_i18n !== "undefined"
+                            ? window.PetAI_i18n.t("scansUnit")
+                            : "lượt")
+                        );
+                      },
+                    },
+                  },
+                },
+                scales: {
+                  x: { grid: { display: false } },
+                  y: {
+                    grid: { color: gridColor },
+                    beginAtZero: true,
+                    ticks: { precision: 0 },
+                  },
+                },
+              },
+            });
+          }
         }
 
-        /* ── 3. Bar – Confidence distribution ── */
-        const barEl = document.getElementById("confBarChart");
-        if (barEl) {
-          const confDist = JSON.parse(barEl.dataset.values || "[]");
-          const barColors = isDark
-            ? ["#f87171", "#fbbf24", "#60a5fa", "#34d399", "#a78bfa"]
-            : ["#ef4444", "#f59e0b", "#2563eb", "#10b981", "#8b5cf6"];
-          new Chart(barEl, {
-            type: "bar",
-            data: {
-              labels: ["0–20%", "20–40%", "40–60%", "60–80%", "80–100%"],
-              datasets: [
-                {
-                  label:
-                    typeof window.PetAI_i18n !== "undefined"
-                      ? window.PetAI_i18n.t("scansCount")
-                      : "Số lượt",
-                  data: confDist,
-                  backgroundColor: barColors,
-                  borderRadius: 6,
-                  borderSkipped: false,
-                },
-              ],
-            },
-            options: {
-              responsive: true,
-              maintainAspectRatio: false,
-              plugins: {
-                legend: { display: false },
-                tooltip: {
-                  backgroundColor: tooltipBg,
-                  titleColor: tooltipText,
-                  bodyColor: tooltipText,
-                  borderColor: gridColor,
-                  borderWidth: 1,
-                  padding: 10,
-                  callbacks: {
-                    label: function (ctx) {
-                      return (
-                        " " +
-                        ctx.parsed.y +
-                        " " +
-                        (typeof window.PetAI_i18n !== "undefined"
-                          ? window.PetAI_i18n.t("scansUnit")
-                          : "lượt")
-                      );
-                    },
-                  },
-                },
-              },
-              scales: {
-                x: { grid: { display: false } },
-                y: {
-                  grid: { color: gridColor },
-                  beginAtZero: true,
-                  ticks: { precision: 0 },
-                },
-              },
-            },
-          });
+        // Initialize when i18n is ready, or immediately if already loaded
+        if (typeof window.PetAI_i18n !== "undefined") {
+          initCharts();
+        } else {
+          document.addEventListener("i18nReady", initCharts);
         }
+
+        // Listen for language changes dynamically
+        document.addEventListener("i18nChanged", function (e) {
+          const lang = e.detail.lang;
+          
+          // Update Trend Chart dataset label
+          if (trendChartInstance) {
+            trendChartInstance.data.datasets[0].label = 
+              typeof window.PetAI_i18n !== "undefined"
+                ? window.PetAI_i18n.t("scansCount")
+                : (lang === "en" ? "Scans" : "Lượt nhận diện");
+            trendChartInstance.update();
+          }
+
+          // Update Donut Chart labels
+          if (breedDonutChartInstance && donutEl) {
+            let originalLabels = JSON.parse(donutEl.dataset.labels || "[]");
+            if (lang === "en") {
+              breedDonutChartInstance.data.labels = originalLabels.map(function (label) {
+                return window.PetAI_i18n.translateBreed(label);
+              });
+            } else {
+              breedDonutChartInstance.data.labels = originalLabels;
+            }
+            breedDonutChartInstance.update();
+          }
+
+          // Update Confidence Bar Chart dataset label
+          if (confBarChartInstance) {
+            confBarChartInstance.data.datasets[0].label = 
+              typeof window.PetAI_i18n !== "undefined"
+                ? window.PetAI_i18n.t("scansCount")
+                : (lang === "en" ? "Scans" : "Số lượt");
+            confBarChartInstance.update();
+          }
+        });
       })();
     </script>
     <script src="{{ url_for('static', filename='js/toasts.js') }}"></script>

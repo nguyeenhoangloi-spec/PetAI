@@ -617,41 +617,45 @@ class ImagePredictor:
 			# Attach Grad-CAM heatmaps if precomputed assets exist.
 			grad_items: List[Dict[str, str]] = []
 			if self.gradcam_dir and os.path.isdir(self.gradcam_dir) and len(self.classes) > 0:
-				def _add_grad(label: str, class_en: str) -> None:
+				def _add_grad(label: str, label_en: str, class_en: str) -> None:
 					fname = self._gradcam_filename(class_en)
 					if not fname:
 						return
 					if os.path.exists(os.path.join(self.gradcam_dir, fname)):
 						grad_items.append({
 							"label": label,
+							"label_en": label_en,
 							"breed": self._to_vi_breed_name(class_en),
+							"breed_en": normalize_breed_label(class_en),
 							"filename": fname,
 						})
 
 				# Show one explanation mode at a time to avoid user confusion.
 				if decision.get("is_hybrid_candidate") and len(sim_top_idx) >= 2:
-					_add_grad("Top-1(sim)", self.classes[int(sim_top_idx[0])])
-					_add_grad("Top-2(sim)", self.classes[int(sim_top_idx[1])])
+					_add_grad("Top-1(sim)", "Top-1(sim)", self.classes[int(sim_top_idx[0])])
+					_add_grad("Top-2(sim)", "Top-2(sim)", self.classes[int(sim_top_idx[1])])
 				else:
 					if len(top_idx) > 0:
 						main_label = "Top-1 (kết luận)" if is_breed_confident else "Top-1 (tham khảo)"
-						_add_grad(main_label, self.classes[int(top_idx[0])])
+						main_label_en = "Top-1 (Conclude)" if is_breed_confident else "Top-1 (Reference)"
+						_add_grad(main_label, main_label_en, self.classes[int(top_idx[0])])
 
 			parts_info["gradcam"]["items"] = grad_items
 
 			# Dynamic Grad-CAM overlays for the current uploaded image.
 			dynamic_items: List[Dict[str, str]] = []
-			dynamic_candidates: List[tuple[str, int]] = []
+			dynamic_candidates: List[tuple[str, str, int]] = []
 			if decision.get("is_hybrid_candidate") and len(sim_top_idx) >= 2:
-				dynamic_candidates.append(("Top-1(sim)", int(sim_top_idx[0])))
-				dynamic_candidates.append(("Top-2(sim)", int(sim_top_idx[1])))
+				dynamic_candidates.append(("Top-1(sim)", "Top-1(sim)", int(sim_top_idx[0])))
+				dynamic_candidates.append(("Top-2(sim)", "Top-2(sim)", int(sim_top_idx[1])))
 			else:
 				if len(top_idx) > 0:
 					main_label = "Top-1 (kết luận)" if is_breed_confident else "Top-1 (tham khảo)"
-					dynamic_candidates.append((main_label, int(top_idx[0])))
+					main_label_en = "Top-1 (Conclude)" if is_breed_confident else "Top-1 (Reference)"
+					dynamic_candidates.append((main_label, main_label_en, int(top_idx[0])))
 
 			seen_dynamic: set[int] = set()
-			for label, class_idx in dynamic_candidates:
+			for label, label_en, class_idx in dynamic_candidates:
 				if class_idx in seen_dynamic:
 					continue
 				seen_dynamic.add(class_idx)
@@ -659,7 +663,9 @@ class ImagePredictor:
 				if overlay_data:
 					dynamic_items.append({
 						"label": label,
+						"label_en": label_en,
 						"breed": self._to_vi_breed_name(self.classes[class_idx]),
+						"breed_en": normalize_breed_label(self.classes[class_idx]),
 						"image_data": overlay_data,
 					})
 
@@ -671,13 +677,18 @@ class ImagePredictor:
 				hybrid_conf = max(top_score, max(0.0, min(1.0, mean_top2_score)))
 
 			hybrid_label = None
+			hybrid_label_en = None
 			if decision.get("is_hybrid_candidate") and len(sim_top_idx) >= 2:
 				sim_top1_vi = self._to_vi_breed_name(self.classes[int(sim_top_idx[0])])
 				sim_top2_vi = self._to_vi_breed_name(self.classes[int(sim_top_idx[1])])
 				hybrid_label = f"Nghi lai: {sim_top1_vi} x {sim_top2_vi}"
+				sim_top1_en = normalize_breed_label(self.classes[int(sim_top_idx[0])])
+				sim_top2_en = normalize_breed_label(self.classes[int(sim_top_idx[1])])
+				hybrid_label_en = f"Crossbreed: {sim_top1_en} x {sim_top2_en}"
 
 			# Keep the final displayed label consistent with the hybrid decision.
 			final_breed = hybrid_label or top_breed
+			final_breed_en = hybrid_label_en or top_breed_en
 			if is_breed_reference:
 				note = ""
 				logger.info(
@@ -693,6 +704,7 @@ class ImagePredictor:
 				# If the image already passed dog-gate, prefer showing Top-1 breed
 				# instead of returning an empty/unknown breed to end users.
 				final_breed = top_breed
+				final_breed_en = top_breed_en
 				decision["is_hybrid_candidate"] = False
 				decision["reason"] = "Giống hiển thị theo Top-1 dự đoán."
 				note = ""
@@ -701,7 +713,7 @@ class ImagePredictor:
 				"image_path": image_path,
 				"species": "Dog",
 				"breed": final_breed,
-				"breed_en": top_breed_en,
+				"breed_en": final_breed_en,
 				"breed_conf": max(0.0, min(1.0, hybrid_conf if decision.get("is_hybrid_candidate") else top_score)),
 				"parts_info": parts_info,
 				"model_ready": True,

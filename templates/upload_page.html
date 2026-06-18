@@ -1,6 +1,10 @@
 <!doctype html>
 
-<html class="{{ 'dark' if ui_theme == 'dark' else 'light' }}{{ ' i18n-loading' if ui_language == 'en' else '' }}" lang="{{ ui_language or 'vi' }}" data-theme="{{ ui_theme or 'light' }}">
+<html
+  class="{{ 'dark' if ui_theme == 'dark' else 'light' }}{{ ' i18n-loading' if ui_language == 'en' else '' }}"
+  lang="{{ ui_language or 'vi' }}"
+  data-theme="{{ ui_theme or 'light' }}"
+>
   <head>
     <script>
       (function () {
@@ -92,8 +96,12 @@
         } catch (e) {}
       })();
     </script>
-    <title data-i18n="uploadPageTitle">{{ 'Upload & Analyze - PetAI' if ui_language == 'en' else 'Tải ảnh & Phân tích - PetAI' }}</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <title data-i18n="uploadPageTitle">
+      {{ 'Upload & Analyze - PetAI' if ui_language == 'en' else 'Tải ảnh & Phân
+      tích - PetAI' }}
+    </title>
+    <script src="{{ url_for('static', filename='js/tailwindcss.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/chart.umd.min.js') }}"></script>
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='css/typography.css') }}"
@@ -266,20 +274,8 @@
               >PetAI</span
             >
           </a>
-          <button
-            class="menu-toggle ml-2"
-            id="menuToggle"
-            aria-label="Mở menu"
-            aria-expanded="false"
-            type="button"
-            data-i18n-aria="openMenu"
-          >
-            <span></span>
-            <span></span>
-            <span></span>
-          </button>
         </div>
-        
+
         <div class="flex items-center gap-md">
           <a
             class="hidden md:inline-flex bg-primary text-on-primary px-4 py-2 rounded-lg label-sm shadow-sm hover:shadow-md transition-all font-semibold"
@@ -288,12 +284,24 @@
             ><span data-i18n="predict">Nhận diện</span></a
           >
           <div class="language-switcher mr-2" id="languageSwitcher">
-            <button class="language-button" id="languageButton" type="button" aria-haspopup="true" aria-expanded="false">
-      <span class="language-flag" data-i18n="languageFlag">🇻🇳</span>
-      <span class="language-current" data-i18n="languageLabel">Tiếng Việt</span>
-    </button>
+            <button
+              class="language-button"
+              id="languageButton"
+              type="button"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              <span class="language-flag" data-i18n="languageFlag">🇻🇳</span>
+              <span class="language-current" data-i18n="languageLabel"
+                >Tiếng Việt</span
+              >
+            </button>
             <div class="language-menu" id="languageMenu">
-              <button class="language-option active" type="button" data-lang="vi">
+              <button
+                class="language-option active"
+                type="button"
+                data-lang="vi"
+              >
                 <span class="language-check">✓</span>
                 <span class="language-flag" data-i18n="languageFlag">🇻🇳</span>
                 <span data-i18n="languageLabel">Tiếng Việt</span>
@@ -360,8 +368,7 @@
       tabindex="-1"
       class="flex-grow w-full px-4 md:px-6 py-margin grid grid-cols-1 md:grid-cols-[230px_minmax(0,1fr)] gap-gutter"
     >
-      {% set active_page = 'upload' %}
-      {% include '_sidebar.html' %}
+      {% set active_page = 'upload' %} {% include '_sidebar.html' %}
 
       <div class="col-span-1 flex flex-col gap-gutter">
         <section
@@ -817,11 +824,14 @@
               >
             </p>
             <div class="flex gap-6">
-              <a class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
-
-                target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.user_guide') }}"
-
-                data-i18n="footerUserGuide"><span data-i18n="footerUserGuide">HƯỚNG DẪN SỬ DỤNG</span></a>
+              <a
+                class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
+                target="_blank"
+                rel="noopener noreferrer"
+                href="{{ url_for('legal.user_guide') }}"
+                data-i18n="footerUserGuide"
+                ><span data-i18n="footerUserGuide">HƯỚNG DẪN SỬ DỤNG</span></a
+              >
 
               <a
                 class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"

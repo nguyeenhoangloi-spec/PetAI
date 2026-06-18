@@ -93,7 +93,9 @@
       })();
     </script>
     <title data-i18n="checkoutPageTitle">{{ 'Checkout - PetAI' if ui_language == 'en' else 'Thanh toán - PetAI' }}</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="{{ url_for('static', filename='js/tailwindcss.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/chart.umd.min.js') }}"></script>
+
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='css/typography.css') }}"
@@ -261,18 +263,6 @@
               >PetAI</span
             >
           </a>
-          <button
-            class="menu-toggle ml-2"
-            id="menuToggle"
-            aria-label="Mở menu"
-            aria-expanded="false"
-            type="button"
-            data-i18n-aria="openMenu"
-          >
-            <span></span>
-            <span></span>
-            <span></span>
-          </button>
         </div>
         
         <div class="flex items-center gap-md">
@@ -760,7 +750,7 @@
     <!-- Invoice Popup Modal Markup -->
     <div
       id="invoiceModal"
-      class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
+      class="fixed inset-0 z-[1050] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
       role="dialog"
       aria-modal="true"
     >
@@ -796,18 +786,6 @@
         <!-- Body -->
         <div class="p-6 space-y-6 max-h-[70vh] overflow-y-auto">
           <!-- Success Icon -->
-          <div class="flex flex-col items-center text-center">
-            <div
-              class="w-12 h-12 rounded-full bg-emerald-100 dark:bg-emerald-950/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400 mb-2"
-            >
-              <span class="material-symbols-outlined text-3xl font-bold"
-                >check</span
-              >
-            </div>
-            <h4
-              class="text-md font-bold text-slate-800 dark:text-slate-100"
-              data-i18n="invoiceSuccess"
-            >
               <span data-i18n="invoiceSuccess">Thanh toán thành công!</span>
             </h4>
             <p

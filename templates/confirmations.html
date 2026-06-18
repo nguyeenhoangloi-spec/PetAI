@@ -1,6 +1,10 @@
 <!doctype html>
 
-<html class="{{ 'dark' if ui_theme == 'dark' else 'light' }}{{ ' i18n-loading' if ui_language == 'en' else '' }}" lang="{{ ui_language or 'vi' }}" data-theme="{{ ui_theme or 'light' }}">
+<html
+  class="{{ 'dark' if ui_theme == 'dark' else 'light' }}{{ ' i18n-loading' if ui_language == 'en' else '' }}"
+  lang="{{ ui_language or 'vi' }}"
+  data-theme="{{ ui_theme or 'light' }}"
+>
   <head>
     <script>
       (function () {
@@ -92,8 +96,13 @@
         } catch (e) {}
       })();
     </script>
-    <title data-i18n="adminConfirmationsPageTitle">{{ 'Admin Payment Approval - PetAI' if ui_language == 'en' else 'Quản trị Duyệt thanh toán - PetAI' }}</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <title data-i18n="adminConfirmationsPageTitle">
+      {{ 'Admin Payment Approval - PetAI' if ui_language == 'en' else 'Quản trị
+      Duyệt thanh toán - PetAI' }}
+    </title>
+    <script src="{{ url_for('static', filename='js/tailwindcss.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/chart.umd.min.js') }}"></script>
+
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='css/typography.css') }}"
@@ -239,6 +248,7 @@
       }
     </style>
   </head>
+
   <body
     class="bg-background text-on-background body-md antialiased min-h-screen flex flex-col"
   >
@@ -265,20 +275,8 @@
               >PetAI</span
             >
           </a>
-          <button
-            class="menu-toggle ml-2"
-            id="menuToggle"
-            aria-label="Mở menu"
-            aria-expanded="false"
-            type="button"
-            data-i18n-aria="openMenu"
-          >
-            <span></span>
-            <span></span>
-            <span></span>
-          </button>
         </div>
-        
+
         <div class="flex items-center gap-md">
           <a
             class="hidden md:inline-flex bg-primary text-on-primary px-4 py-2 rounded-lg label-sm shadow-sm hover:shadow-md transition-all"
@@ -287,12 +285,24 @@
             ><span data-i18n="predict">Nhận diện</span></a
           >
           <div class="language-switcher mr-2" id="languageSwitcher">
-            <button class="language-button" id="languageButton" type="button" aria-haspopup="true" aria-expanded="false">
-      <span class="language-flag" data-i18n="languageFlag">🇻🇳</span>
-      <span class="language-current" data-i18n="languageLabel">Tiếng Việt</span>
-    </button>
+            <button
+              class="language-button"
+              id="languageButton"
+              type="button"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              <span class="language-flag" data-i18n="languageFlag">🇻🇳</span>
+              <span class="language-current" data-i18n="languageLabel"
+                >Tiếng Việt</span
+              >
+            </button>
             <div class="language-menu" id="languageMenu">
-              <button class="language-option active" type="button" data-lang="vi">
+              <button
+                class="language-option active"
+                type="button"
+                data-lang="vi"
+              >
                 <span class="language-check">✓</span>
                 <span class="language-flag" data-i18n="languageFlag">🇻🇳</span>
                 <span data-i18n="languageLabel">Tiếng Việt</span>
@@ -360,8 +370,7 @@
       tabindex="-1"
       class="flex-grow w-full px-4 md:px-6 py-margin grid grid-cols-1 md:grid-cols-[230px_minmax(0,1fr)] gap-gutter"
     >
-      {% set active_page = 'confirmations' %}
-      {% include '_sidebar.html' %}
+      {% set active_page = 'confirmations' %} {% include '_sidebar.html' %}
 
       <div class="col-span-1 flex flex-col gap-8">
         <div class="space-y-6">
@@ -1055,9 +1064,56 @@
               {% endif %}
             </div>
           </section>
+
+          <!-- Confirmation Modal -->
+          <div
+            class="fixed inset-0 z-[1050] hidden items-center justify-center bg-slate-950/60 backdrop-blur-sm p-4"
+            id="confirmModal"
+            aria-hidden="true"
+          >
+            <div
+              class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 dark:border-slate-800 rounded-xl max-w-md w-full p-6 shadow-xl"
+            >
+              <h3
+                id="modalTitle"
+                class="headline-md font-semibold text-on-surface dark:text-slate-101 flex items-center gap-2"
+              >
+                <span
+                  class="material-symbols-outlined text-amber-500 dark:text-amber-400"
+                  >warning</span
+                ><span data-i18n="confirmActionTitle">Xác nhận thao tác</span>
+              </h3>
+              <p
+                id="modalText"
+                class="body-md text-on-surface-variant dark:text-slate-300 mt-3"
+                data-i18n="confirmActionText"
+              >
+                <span data-i18n="confirmActionText"
+                  >Bạn có chắc muốn thực hiện hành động này?</span
+                >
+              </p>
+              <div class="mt-6 flex items-center justify-end gap-3">
+                <button
+                  type="button"
+                  class="px-4 py-2 rounded-lg border border-outline-variant/40 dark:border-slate-700 label-sm font-semibold text-on-surface dark:text-slate-300 hover:bg-surface-container-low dark:hover:bg-slate-800 transition-colors"
+                  id="modalCancel"
+                  data-i18n="cancel"
+                >
+                  <span data-i18n="cancel">Huỷ</span>
+                </button>
+                <button
+                  type="button"
+                  class="px-4 py-2 rounded-lg bg-primary hover:bg-primary/95 text-on-primary label-sm font-semibold hover:opacity-90 shadow-sm transition-colors"
+                  id="modalOk"
+                  data-i18n="confirm"
+                >
+                  <span data-i18n="confirm">Xác nhận</span>
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-    </main>
+      </main>
 
     <footer
       class="bg-surface-container-low border-t border-outline-variant/30 px-4 md:px-6 pt-6 pb-4"
@@ -1184,11 +1240,14 @@
               >
             </p>
             <div class="flex gap-6">
-              <a class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
-
-                target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.user_guide') }}"
-
-                data-i18n="footerUserGuide"><span data-i18n="footerUserGuide">HƯỚNG DẪN SỬ DỤNG</span></a>
+              <a
+                class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
+                target="_blank"
+                rel="noopener noreferrer"
+                href="{{ url_for('legal.user_guide') }}"
+                data-i18n="footerUserGuide"
+                ><span data-i18n="footerUserGuide">HƯỚNG DẪN SỬ DỤNG</span></a
+              >
 
               <a
                 class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
@@ -1211,54 +1270,6 @@
         </div>
       </div>
     </footer>
-
-    <!-- Confirmation Modal -->
-    <div
-      class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/60 backdrop-blur-sm p-4"
-      id="confirmModal"
-      aria-hidden="true"
-    >
-      <div
-        class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 dark:border-slate-800 rounded-xl max-w-md w-full p-6 shadow-xl"
-      >
-        <h3
-          id="modalTitle"
-          class="headline-md font-semibold text-on-surface dark:text-slate-105 flex items-center gap-2"
-        >
-          <span
-            class="material-symbols-outlined text-amber-500 dark:text-amber-400"
-            >warning</span
-          ><span data-i18n="confirmActionTitle">Xác nhận thao tác</span>
-        </h3>
-        <p
-          id="modalText"
-          class="body-md text-on-surface-variant dark:text-slate-300 mt-3"
-          data-i18n="confirmActionText"
-        >
-          <span data-i18n="confirmActionText"
-            >Bạn có chắc muốn thực hiện hành động này?</span
-          >
-        </p>
-        <div class="mt-6 flex items-center justify-end gap-3">
-          <button
-            type="button"
-            class="px-4 py-2 rounded-lg border border-outline-variant/40 dark:border-slate-700 label-sm font-semibold text-on-surface dark:text-slate-300 hover:bg-surface-container-low dark:hover:bg-slate-800 transition-colors"
-            id="modalCancel"
-            data-i18n="cancelBtn"
-          >
-            <span data-i18n="cancelBtn">Huỷ</span>
-          </button>
-          <button
-            type="button"
-            class="px-4 py-2 rounded-lg bg-primary hover:bg-primary/95 text-on-primary label-sm font-semibold hover:opacity-90 shadow-sm transition-colors"
-            id="modalOk"
-            data-i18n="confirm"
-          >
-            <span data-i18n="confirm">Xác nhận</span>
-          </button>
-        </div>
-      </div>
-    </div>
 
     <script>
       (function () {

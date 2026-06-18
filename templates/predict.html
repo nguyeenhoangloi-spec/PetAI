@@ -1,5 +1,9 @@
 <!doctype html>
-<html class="{{ 'dark' if ui_theme == 'dark' else 'light' }}{{ ' i18n-loading' if ui_language == 'en' else '' }}" lang="{{ ui_language or 'vi' }}" data-theme="{{ ui_theme or 'light' }}">
+<html
+  class="{{ 'dark' if ui_theme == 'dark' else 'light' }}{{ ' i18n-loading' if ui_language == 'en' else '' }}"
+  lang="{{ ui_language or 'vi' }}"
+  data-theme="{{ ui_theme or 'light' }}"
+>
   <head>
     <script>
       (function () {
@@ -91,8 +95,13 @@
         } catch (e) {}
       })();
     </script>
-    <title data-i18n="predictResultPageTitle">{{ 'Prediction Result | PetAI' if ui_language == 'en' else 'Kết quả dự đoán | PetAI' }}</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <title data-i18n="predictResultPageTitle">
+      {{ 'Prediction Result | PetAI' if ui_language == 'en' else 'Kết quả dự
+      đoán | PetAI' }}
+    </title>
+    <script src="{{ url_for('static', filename='js/tailwindcss.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/chart.umd.min.js') }}"></script>
+
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='css/typography.css') }}"
@@ -245,8 +254,10 @@
     {% set has_conf = result.breed_conf is defined and result.breed_conf is not
     none %} {% set conf_percent = (result.breed_conf * 100) if has_conf else 0
     %} {% set conf_percent_clamped = 0 if conf_percent < 0 else (100 if
-    conf_percent > 100 else conf_percent) %} {% set breed_name = result.breed if
-    result.breed else 'Chưa xác định' %} {% set primary_label = 'Giống dự đoán'
+    conf_percent > 100 else conf_percent) %} 
+    {% set breed_name_vi = result.breed if result.breed else 'Chưa xác định' %}
+    {% set breed_name_en = result.breed_en if result.breed_en else 'Not determined' %}
+    {% set primary_label = 'Giống dự đoán'
     %} {% if result.parts_info and result.parts_info.decision and
     result.parts_info.decision.is_hybrid_candidate %} {% set primary_label =
     'Nghi lai' %} {% elif result.parts_info and result.parts_info.acceptance and
@@ -296,20 +307,8 @@
               >PetAI</span
             >
           </a>
-          <button
-            class="menu-toggle ml-2"
-            id="menuToggle"
-            aria-label="Mở menu"
-            aria-expanded="false"
-            type="button"
-            data-i18n-aria="openMenu"
-          >
-            <span></span>
-            <span></span>
-            <span></span>
-          </button>
         </div>
-        
+
         <div class="flex items-center gap-md">
           <a
             class="hidden md:inline-flex bg-primary text-on-primary px-4 py-2 rounded-lg label-sm shadow-sm hover:shadow-md transition-all font-semibold"
@@ -318,12 +317,24 @@
             ><span data-i18n="predict">Nhận diện</span></a
           >
           <div class="language-switcher mr-2" id="languageSwitcher">
-            <button class="language-button" id="languageButton" type="button" aria-haspopup="true" aria-expanded="false">
-      <span class="language-flag" data-i18n="languageFlag">🇻🇳</span>
-      <span class="language-current" data-i18n="languageLabel">Tiếng Việt</span>
-    </button>
+            <button
+              class="language-button"
+              id="languageButton"
+              type="button"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              <span class="language-flag" data-i18n="languageFlag">🇻🇳</span>
+              <span class="language-current" data-i18n="languageLabel"
+                >Tiếng Việt</span
+              >
+            </button>
             <div class="language-menu" id="languageMenu">
-              <button class="language-option active" type="button" data-lang="vi">
+              <button
+                class="language-option active"
+                type="button"
+                data-lang="vi"
+              >
                 <span class="language-check">✓</span>
                 <span class="language-flag" data-i18n="languageFlag">🇻🇳</span>
                 <span data-i18n="languageLabel">Tiếng Việt</span>
@@ -391,8 +402,7 @@
       tabindex="-1"
       class="flex-grow w-full px-4 md:px-6 py-margin grid grid-cols-1 md:grid-cols-[230px_minmax(0,1fr)] gap-gutter"
     >
-      {% set active_page = 'predict' %}
-      {% include '_sidebar.html' %}
+      {% set active_page = 'predict' %} {% include '_sidebar.html' %}
 
       <div class="col-span-1 flex flex-col gap-gutter">
         <div class="w-full space-y-md">
@@ -511,12 +521,13 @@
                           {% if result.parts_info and result.parts_info.decision
                           and result.parts_info.decision.is_hybrid_candidate and
                           result.parts_info.similarity_top3|length >= 2 %}
-                          <span data-i18n="mixLai">Mix Lai:</span> {{
-                          result.parts_info.similarity_top3[0].breed }} × {{
-                          result.parts_info.similarity_top3[1].breed }} {% else
-                          %}
-                          <span data-i18n-breed="{{ breed_name }}"
-                            >{{ breed_name }}</span
+                          <span data-i18n="mixLai">Mix Lai:</span>
+                          <span data-i18n-breed data-i18n-breed-vi="{{ result.parts_info.similarity_top3[0].breed }}" data-i18n-breed-en="{{ result.parts_info.similarity_top3[0].breed_en }}">{{ result.parts_info.similarity_top3[0].breed_en if ui_language == 'en' else result.parts_info.similarity_top3[0].breed }}</span>
+                          ×
+                          <span data-i18n-breed data-i18n-breed-vi="{{ result.parts_info.similarity_top3[1].breed }}" data-i18n-breed-en="{{ result.parts_info.similarity_top3[1].breed_en }}">{{ result.parts_info.similarity_top3[1].breed_en if ui_language == 'en' else result.parts_info.similarity_top3[1].breed }}</span>
+                          {% else %}
+                          <span data-i18n-breed data-i18n-breed-vi="{{ breed_name_vi }}" data-i18n-breed-en="{{ breed_name_en }}"
+                            >{{ breed_name_en if ui_language == 'en' else breed_name_vi }}</span
                           >
                           {% endif %} {% if has_conf %}: {{
                           '%.1f'|format(conf_percent_clamped) }}%{% endif %}
@@ -558,11 +569,13 @@
                         {% if result.parts_info and result.parts_info.decision
                         and result.parts_info.decision.is_hybrid_candidate and
                         result.parts_info.similarity_top3|length >= 2 %}
-                        <span data-i18n="mixLai">Mix Lai:</span> {{
-                        result.parts_info.similarity_top3[0].breed }} × {{
-                        result.parts_info.similarity_top3[1].breed }} {% else %}
-                        <span data-i18n-breed="{{ breed_name }}"
-                          >{{ breed_name }}</span
+                        <span data-i18n="mixLai">Mix Lai:</span>
+                        <span data-i18n-breed data-i18n-breed-vi="{{ result.parts_info.similarity_top3[0].breed }}" data-i18n-breed-en="{{ result.parts_info.similarity_top3[0].breed_en }}">{{ result.parts_info.similarity_top3[0].breed_en if ui_language == 'en' else result.parts_info.similarity_top3[0].breed }}</span>
+                        ×
+                        <span data-i18n-breed data-i18n-breed-vi="{{ result.parts_info.similarity_top3[1].breed }}" data-i18n-breed-en="{{ result.parts_info.similarity_top3[1].breed_en }}">{{ result.parts_info.similarity_top3[1].breed_en if ui_language == 'en' else result.parts_info.similarity_top3[1].breed }}</span>
+                        {% else %}
+                        <span data-i18n-breed data-i18n-breed-vi="{{ breed_name_vi }}" data-i18n-breed-en="{{ breed_name_en }}"
+                          >{{ breed_name_en if ui_language == 'en' else breed_name_vi }}</span
                         >
                         {% if primary_label and primary_label != 'Nghi lai' %}
                         <span
@@ -601,7 +614,7 @@
                     class="p-3 bg-error-container/40 dark:bg-red-950/20 rounded-lg border border-error-container/60 dark:border-red-900/30 mb-4"
                   >
                     <p
-                      class="body-md text-on-error-container dark:text-red-400"
+                      class="body-md text-on-error-container dark:text-red-400 warning-note"
                     >
                       {{ result.note }}
                     </p>
@@ -661,13 +674,13 @@
                           class="h-full bg-gradient-to-r from-primary to-blue-500 flex items-center px-3 text-white text-xs font-bold transition-all duration-500 confidence-fill"
                           data-width="{{ p1 }}"
                         >
-                          {{ mix_breed1.breed }} ({{ p1 }}%)
+                          <span data-i18n-breed data-i18n-breed-vi="{{ mix_breed1.breed }}" data-i18n-breed-en="{{ mix_breed1.breed_en }}">{{ mix_breed1.breed_en if ui_language == 'en' else mix_breed1.breed }}</span> ({{ p1 }}%)
                         </div>
                         <div
                           class="h-full bg-gradient-to-r from-yellow-500 to-orange-500 flex items-center justify-end px-3 text-white text-xs font-bold transition-all duration-500 confidence-fill"
                           data-width="{{ p2 }}"
                         >
-                          {{ mix_breed2.breed }} ({{ p2 }}%)
+                          <span data-i18n-breed data-i18n-breed-vi="{{ mix_breed2.breed }}" data-i18n-breed-en="{{ mix_breed2.breed_en }}">{{ mix_breed2.breed_en if ui_language == 'en' else mix_breed2.breed }}</span> ({{ p2 }}%)
                         </div>
                       </div>
 
@@ -690,7 +703,7 @@
                           <div
                             class="text-sm font-bold text-slate-800 dark:text-slate-200"
                           >
-                            {{ mix_breed1.breed }}
+                            <span data-i18n-breed data-i18n-breed-vi="{{ mix_breed1.breed }}" data-i18n-breed-en="{{ mix_breed1.breed_en }}">{{ mix_breed1.breed_en if ui_language == 'en' else mix_breed1.breed }}</span>
                           </div>
                           <div
                             class="text-[11px] text-slate-400 dark:text-slate-500 font-mono"
@@ -717,7 +730,7 @@
                           <div
                             class="text-sm font-bold text-slate-800 dark:text-slate-200"
                           >
-                            {{ mix_breed2.breed }}
+                            <span data-i18n-breed data-i18n-breed-vi="{{ mix_breed2.breed }}" data-i18n-breed-en="{{ mix_breed2.breed_en }}">{{ mix_breed2.breed_en if ui_language == 'en' else mix_breed2.breed }}</span>
                           </div>
                           <div
                             class="text-[11px] text-slate-400 dark:text-slate-500 font-mono"
@@ -763,7 +776,10 @@
                       <div class="flex justify-between label-sm">
                         <span
                           class="text-on-surface dark:text-slate-200 font-semibold"
-                          >{{ item.breed }}</span
+                          data-i18n-breed
+                          data-i18n-breed-vi="{{ item.breed }}"
+                          data-i18n-breed-en="{{ item.breed_en }}"
+                          >{{ item.breed_en if ui_language == 'en' else item.breed }}</span
                         >
                         <span class="text-outline dark:text-slate-400 font-bold"
                           >{{ '%.1f'|format(sim_score_clamped * 100) }}%</span
@@ -785,7 +801,10 @@
                       <div class="flex justify-between label-sm">
                         <span
                           class="text-on-surface dark:text-slate-200 font-semibold"
-                          >{{ item.breed }}</span
+                          data-i18n-breed
+                          data-i18n-breed-vi="{{ item.breed }}"
+                          data-i18n-breed-en="{{ item.breed_en }}"
+                          >{{ item.breed_en if ui_language == 'en' else item.breed }}</span
                         >
                         <span class="text-outline dark:text-slate-400 font-bold"
                           >{{ '%.1f'|format(score * 100) }}%</span
@@ -806,6 +825,7 @@
                   result.parts_info.display.top3_note %}
                   <p
                     class="label-sm text-on-surface-variant dark:text-slate-400 mt-4"
+                    data-i18n-auto
                   >
                     {{ result.parts_info.display.top3_note }}
                   </p>
@@ -866,7 +886,7 @@
                     <img
                       class="w-full h-full object-cover"
                       src="{% if gradcam_mode == 'dynamic' %}{{ item.image_data }}{% else %}{{ url_for('artifacts_gradcam', filename=item.filename) }}{% endif %}"
-                      alt="Grad-CAM {{ item.breed }}"
+                      alt="Grad-CAM {{ item.breed_en if ui_language == 'en' else item.breed }}"
                       loading="lazy"
                     />
                     <div
@@ -877,15 +897,21 @@
                     ></div>
                     <div
                       class="absolute top-2 left-2 px-2 py-1 bg-black/70 text-white label-sm rounded font-bold uppercase"
+                      data-i18n-breed
+                      data-i18n-breed-vi="{{ item.label or item.breed }}"
+                      data-i18n-breed-en="{{ item.label_en or item.breed_en }}"
                     >
-                      {{ item.label or item.breed }}
+                      {{ (item.label_en or item.breed_en) if ui_language == 'en' else (item.label or item.breed) }}
                     </div>
                   </div>
                   <div class="px-1">
                     <h4
                       class="font-bold text-on-surface dark:text-slate-200 body-md"
+                      data-i18n-breed
+                      data-i18n-breed-vi="{{ item.label or item.breed }}"
+                      data-i18n-breed-en="{{ item.label_en or item.breed_en }}"
                     >
-                      {{ item.label or item.breed }}
+                      {{ (item.label_en or item.breed_en) if ui_language == 'en' else (item.label or item.breed) }}
                     </h4>
                     <p
                       class="label-sm text-outline dark:text-slate-400"
@@ -930,17 +956,14 @@
                     {{ decision_reason }}
                   </p>
                   {% if result.parts_info and result.parts_info.acceptance %}
-                  <p
-                    class="label-sm text-on-surface-variant dark:text-slate-400 mt-3"
-                    data-i18n-auto
-                  >
-                    {% if result.parts_info.decision and
-                    result.parts_info.decision.is_hybrid_candidate %} Mức tin
-                    cậy đủ cho gợi ý ứng viên lai. {% elif
-                    result.parts_info.acceptance.accepted %} Mức tin cậy đủ để
-                    kết luận giống. {% elif result.parts_info.acceptance.level
-                    == 'reference' %} Mức tin cậy tham khảo, chưa đủ để kết luận
-                    giống. {% endif %}
+                  <p class="label-sm text-on-surface-variant dark:text-slate-400 mt-3">
+                    {% if result.parts_info.decision and result.parts_info.decision.is_hybrid_candidate %}
+                    <span data-i18n="decisionHybridText">Mức tin cậy đủ cho gợi ý ứng viên lai.</span>
+                    {% elif result.parts_info.acceptance.accepted %}
+                    <span data-i18n="decisionPureText">Mức tin cậy đủ để kết luận giống.</span>
+                    {% elif result.parts_info.acceptance.level == 'reference' %}
+                    <span data-i18n="decisionRefText">Mức tin cậy tham khảo, chưa đủ để kết luận giống.</span>
+                    {% endif %}
                   </p>
                   {% endif %}
                 </div>
@@ -1100,11 +1123,14 @@
               >
             </p>
             <div class="flex gap-6">
-              <a class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
-
-                target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.user_guide') }}"
-
-                data-i18n="footerUserGuide"><span data-i18n="footerUserGuide">HƯỚNG DẪN SỬ DỤNG</span></a>
+              <a
+                class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
+                target="_blank"
+                rel="noopener noreferrer"
+                href="{{ url_for('legal.user_guide') }}"
+                data-i18n="footerUserGuide"
+                ><span data-i18n="footerUserGuide">HƯỚNG DẪN SỬ DỤNG</span></a
+              >
 
               <a
                 class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
