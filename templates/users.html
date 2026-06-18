@@ -586,7 +586,9 @@
               class="px-6 py-4 flex items-center justify-between border-t border-outline-variant/20 dark:border-slate-800 bg-surface-container-low/60 dark:bg-slate-800/30"
               data-purpose="table-pagination"
             >
-              <span class="label-sm text-on-surface-variant dark:text-slate-400" data-i18n="showingUsers">Hiển thị {{ start_index }} - {{ end_index }} trên {{ total_users }} người dùng</span>
+              <span class="label-sm text-on-surface-variant dark:text-slate-400">
+                <span data-i18n="showingText">Hiển thị</span> {{ start_index }} - {{ end_index }} <span data-i18n="ofText">trên</span> {{ total_users }} <span data-i18n="usersText">người dùng</span>
+              </span>
               <div class="flex items-center gap-1">
                 {% if page > 1 %}
                 <a

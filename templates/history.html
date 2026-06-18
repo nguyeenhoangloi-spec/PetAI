@@ -472,11 +472,9 @@
                 <span data-i18n="predictionHistory">Lịch sử nhận diện</span>
               </h1>
               <p class="body-md text-on-surface-variant dark:text-slate-400">
-                <span data-i18n="predictionsCountPrefix">Bạn có tổng cộng</span
-                ><span id="total-records-count">{{ total_records }}</span
-                ><span data-i18n="predictionsCountSuffix"
-                  >bản ghi dự đoán.</span
-                >
+                <span data-i18n="predictionsCountPrefix">Bạn có tổng cộng</span>
+                <span id="total-records-count"> {{ total_records }} </span>
+                <span data-i18n="predictionsCountSuffix">bản ghi dự đoán.</span>
               </p>
             </div>
             <div class="mt-4 md:mt-0 md:flex-none">
@@ -1287,6 +1285,11 @@
                 });
 
               rebindListeners();
+
+              // Re-apply translations for the new PJAX-loaded content
+              if (window.PetAI_i18n) {
+                window.PetAI_i18n.setLanguage(window.PetAI_i18n.getCurrentLang());
+              }
 
               // Scroll main into view smoothly
               var mainEl = document.querySelector("main");

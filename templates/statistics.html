@@ -775,8 +775,8 @@
             >
               <canvas
                 id="trendChart"
-                data-labels='{{ daily_counts | map(attribute="date") | list | tojson | safe }}'
-                data-values='{{ daily_counts | map(attribute="count") | list | tojson | safe }}'
+                data-labels="{{ daily_counts | map(attribute='date') | list | tojson | forceescape }}"
+                data-values="{{ daily_counts | map(attribute='count') | list | tojson | forceescape }}"
               ></canvas>
             </div>
             {% else %}
@@ -902,7 +902,7 @@
               >
                 <canvas
                   id="confBarChart"
-                  data-values="{{ confidence_dist | tojson | safe }}"
+                  data-values="{{ confidence_dist | tojson | forceescape }}"
                 ></canvas>
               </div>
             </div>
@@ -935,8 +935,8 @@
             >
               <canvas
                 id="breedDonutChart"
-                data-labels='{{ stats.top_breeds | map(attribute="breed") | list | tojson | safe }}'
-                data-values='{{ stats.top_breeds | map(attribute="count") | list | tojson | safe }}'
+                data-labels="{{ stats.top_breeds | map(attribute='breed') | list | tojson | forceescape }}"
+                data-values="{{ stats.top_breeds | map(attribute='count') | list | tojson | forceescape }}"
               ></canvas>
             </div>
             {% else %}
