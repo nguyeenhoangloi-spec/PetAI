@@ -3100,16 +3100,14 @@
     if (!dict) return;
 
     document.querySelectorAll(".language-current").forEach(function (el) {
-      el.textContent = dict.shortLabel;
+      el.textContent = dict.languageLabel;
     });
 
     document
       .querySelectorAll(".language-button .language-flag")
       .forEach(function (el) {
-        // Keep only one compact token on the trigger button (US/VN)
-        // to avoid duplicated rendering like "US US" on some systems.
-        el.textContent = "";
-        el.setAttribute("aria-hidden", "true");
+        el.textContent = dict.languageFlag;
+        el.removeAttribute("aria-hidden");
       });
 
     document.querySelectorAll(".language-option").forEach(function (btn) {
