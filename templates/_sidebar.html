@@ -1,0 +1,104 @@
+{% set display_name = session.get('fullname') or session.get('username') or session.get('email') or 'Người dùng' %}
+{% set display_role = session.get('role') or 'user' %}
+{% set display_plan = current_plan or 'free' %}
+
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-wrapper">
+
+
+    <!-- Menu items -->
+    <nav class="sidebar-menu">
+      {% if is_settings %}
+        <!-- Settings Menu -->
+        <a class="sidebar-menu-item" href="{{ url_for('dashboard.dashboard') }}">
+          <span class="material-symbols-outlined">home</span>
+          <span data-i18n="home">Trang chủ</span>
+        </a>
+        <a class="sidebar-menu-item active" href="#profile">
+          <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">person</span>
+          <span data-i18n="infoSidebarLink">Thông tin</span>
+        </a>
+        <a class="sidebar-menu-item" href="#appearance">
+          <span class="material-symbols-outlined">palette</span>
+          <span data-i18n="appearanceSection">Giao diện</span>
+        </a>
+        <a class="sidebar-menu-item" href="#privacy">
+          <span class="material-symbols-outlined">shield</span>
+          <span data-i18n="privacySection">Quyền riêng tư</span>
+        </a>
+      {% else %}
+        <!-- Standard Menu -->
+        <a class="sidebar-menu-item {% if active_page == 'dashboard' %}active{% endif %}" href="{{ url_for('dashboard.dashboard') }}">
+          <span class="material-symbols-outlined" {% if active_page == 'dashboard' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>home</span>
+          <span data-i18n="home">Trang chủ</span>
+        </a>
+        
+        <a class="sidebar-menu-item {% if active_page == 'upload' or active_page == 'predict' %}active{% endif %}" href="{{ url_for('predict.upload_page') }}">
+          <span class="material-symbols-outlined" {% if active_page == 'upload' or active_page == 'predict' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>upload_file</span>
+          <span data-i18n="uploadAnalyze">Tải ảnh & Phân tích</span>
+        </a>
+        
+        <a class="sidebar-menu-item {% if active_page == 'history' %}active{% endif %}" href="{{ url_for('history.history') }}">
+          <span class="material-symbols-outlined" {% if active_page == 'history' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>history</span>
+          <span data-i18n="predictionHistory">Lịch sử dự đoán</span>
+        </a>
+        
+        {% if session.get('role') == 'user' %}
+        <a class="sidebar-menu-item {% if active_page == 'payments' %}active{% endif %}" href="{{ url_for('predict.my_payments') }}">
+          <span class="material-symbols-outlined" {% if active_page == 'payments' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>payments</span>
+          <span data-i18n="payments">Lịch sử thanh toán</span>
+        </a>
+        {% endif %}
+        
+        <a class="sidebar-menu-item {% if active_page == 'statistics' %}active{% endif %}" href="{{ url_for('statistics.statistics') }}">
+          <span class="material-symbols-outlined" {% if active_page == 'statistics' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>bar_chart</span>
+          <span data-i18n="personalStats">Thống kê cá nhân</span>
+        </a>
+        
+        <a class="sidebar-menu-item {% if active_page == 'upgrade' %}active{% endif %}" href="{{ url_for('predict.upgrade') }}">
+          <span class="material-symbols-outlined" {% if active_page == 'upgrade' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>upgrade</span>
+          <span data-i18n="upgradePlan">Nâng cấp gói</span>
+        </a>
+        
+        {% if session.get('role') == 'admin' %}
+        <a class="sidebar-menu-item {% if active_page == 'users' %}active{% endif %}" href="{{ url_for('users.list_users') }}">
+          <span class="material-symbols-outlined" {% if active_page == 'users' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>groups</span>
+          <span data-i18n="manageUsers">Quản lý người dùng</span>
+        </a>
+        <a class="sidebar-menu-item {% if active_page == 'confirmations' %}active{% endif %}" href="{{ url_for('users.confirmations_list') }}">
+          <span class="material-symbols-outlined" {% if active_page == 'confirmations' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>receipt_long</span>
+          <span data-i18n="approveOrders">Duyệt đơn</span>
+        </a>
+        {% endif %}
+        
+        <hr class="sidebar-divider" />
+        
+        <a class="sidebar-menu-item {% if active_page == 'settings' %}active{% endif %}" href="{{ url_for('settings.settings') }}">
+          <span class="material-symbols-outlined" {% if active_page == 'settings' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>settings</span>
+          <span data-i18n="accountSettings">Cài đặt tài khoản</span>
+        </a>
+      {% endif %}
+    </nav>
+
+    <!-- User Card -->
+    <div class="sidebar-user-card flex items-center justify-between">
+      <div class="flex items-center gap-3 overflow-hidden">
+        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuABdf7zKSVKEqdGUUjqEkF9ftdFTrLW87Tb24r2IiZiv_JP0LrItrCxl23SH-gYj2Mqtkma0ak9DZbUtKM5nW747pmivDYGVbYhNr1PZbxbFuOrZdGJvnbhdSurFLfL3BcmhN2p1h9wv_6geT-x8eoTG1TDoLL40P8wDiaymvRT--SA4jYjU9A77WIji5FmOi99mPDXw7xS6dUyUNJYU2gHLk4-smzFrCuBbQbgtpATDvNo6hq3YR-cfSaNblImtCnDXIb8np7J4HA" alt="Avatar" class="user-avatar-img w-10 h-10 rounded-full object-cover" />
+        <div class="user-info flex flex-col justify-center overflow-hidden">
+          <span class="user-name text-sm font-semibold truncate max-w-[120px]">{{ display_name }}</span>
+          <span class="user-role text-[11px] text-gray-500 capitalize">
+            {% if display_role == 'admin' %}
+              Admin
+            {% else %}
+              {{ display_plan|capitalize }}
+            {% endif %}
+          </span>
+        </div>
+      </div>
+      <a href="{{ url_for('logout.logout') }}" class="logout-btn-link text-gray-400 hover:text-red-500 transition-colors flex items-center" title="Đăng xuất" data-i18n-title="logout">
+        <span class="material-symbols-outlined text-[20px]">logout</span>
+      </a>
+    </div>
+
+  </div>
+</aside>

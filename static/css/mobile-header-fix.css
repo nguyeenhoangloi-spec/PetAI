@@ -20,16 +20,16 @@
     padding-top: 56px !important;
   }
   /* also apply fixes by selector so existing templates work without extra classes */
-  nav > div {
+  body > nav > div {
     height: 48px !important;
   }
-  nav img.h-16 {
+  body > nav img.h-16 {
     height: 40px !important;
   }
-  nav .gap-md {
+  body > nav .gap-md {
     gap: 8px !important;
   }
-  nav a.bg-primary {
+  body > nav a.bg-primary {
     padding-left: 12px !important;
     padding-right: 12px !important;
     padding-top: 6px !important;
@@ -104,13 +104,13 @@
 
 /* Desktop behaviors */
 @media (min-width: 768px) {
-  main {
+  html:has(#sidebar) main {
     transition: grid-template-columns 0.3s ease, gap 0.3s ease;
   }
 
   /* On desktop: when collapsed, set width of sidebar and layout column to 0 */
   .sidebar-collapsed main,
-  main.sidebar-collapsed {
+  html:has(#sidebar) main.sidebar-collapsed {
     grid-template-columns: 0px minmax(0, 1fr) !important;
     gap: 0 !important;
   }
@@ -307,11 +307,357 @@
 }
 
 /* Global navbar logo height constraint to prevent layout overflows */
-nav img[alt="PetAI New Logo"] {
+body > nav img[alt="PetAI New Logo"] {
   height: 48px !important;
 }
 @media (max-width: 640px) {
-  nav img[alt="PetAI New Logo"] {
+  body > nav img[alt="PetAI New Logo"] {
     height: 40px !important;
   }
+}
+
+/* ==========================================
+   REDESIGNED SIDEBAR (ChatGPT/Claude/Notion Style)
+   ========================================== */
+
+:root {
+  --sb-width: 250px;
+  --sb-bg-light: #ffffff;
+  --sb-bg-dark: #0d0f12;
+  --sb-border-light: rgba(0, 0, 0, 0.06);
+  --sb-border-dark: rgba(255, 255, 255, 0.08);
+  --sb-shadow: 2px 0 12px rgba(0, 0, 0, 0.02);
+  --sb-item-active-bg-light: #eff6ff; /* light blue */
+  --sb-item-active-text-light: #2563eb;
+  --sb-item-active-bg-dark: rgba(59, 130, 246, 0.15);
+  --sb-item-active-text-dark: #60a5fa;
+  --sb-item-hover-bg-light: #f3f4f6; /* light gray */
+  --sb-item-hover-bg-dark: #1e293b;
+  --sb-card-bg-light: #F8F9FB;
+  --sb-card-bg-dark: #161920;
+}
+
+.sidebar {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  bottom: 0 !important;
+  height: 100vh !important;
+  width: var(--sb-width) !important;
+  z-index: 100 !important;
+  background-color: var(--sb-bg-light) !important;
+  border-right: 1px solid var(--sb-border-light) !important;
+  box-shadow: var(--sb-shadow) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  transform: translateX(-100%);
+  transition: transform 280ms ease-in-out, background-color 280ms ease-in-out, border-color 280ms ease-in-out !important;
+}
+
+html.dark .sidebar {
+  background-color: var(--sb-bg-dark) !important;
+  border-right: 1px solid var(--sb-border-dark) !important;
+}
+
+.sidebar-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 24px 16px 16px 16px;
+}
+
+.sidebar-header {
+  margin-bottom: 24px;
+  padding: 0 4px;
+}
+
+.sidebar-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex-grow: 1;
+}
+
+.sidebar-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px 10px 18px;
+  border-radius: 12px;
+  color: #4b5563;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 150ms ease, color 150ms ease;
+  text-decoration: none !important;
+}
+
+.sidebar-menu-item .material-symbols-outlined {
+  font-size: 20px;
+  color: #6b7280;
+  transition: color 150ms ease;
+}
+
+html.dark .sidebar-menu-item {
+  color: #9ca3af;
+}
+
+html.dark .sidebar-menu-item .material-symbols-outlined {
+  color: #9ca3af;
+}
+
+.sidebar-menu-item:hover {
+  background-color: var(--sb-item-hover-bg-light) !important;
+  color: #1f2937;
+}
+
+.sidebar-menu-item:hover .material-symbols-outlined {
+  color: #1f2937;
+}
+
+html.dark .sidebar-menu-item:hover {
+  background-color: var(--sb-item-hover-bg-dark) !important;
+  color: #f3f4f6;
+}
+
+html.dark .sidebar-menu-item:hover .material-symbols-outlined {
+  color: #f3f4f6;
+}
+
+.sidebar-menu-item.active {
+  background-color: var(--sb-item-active-bg-light) !important;
+  color: var(--sb-item-active-text-light) !important;
+  font-weight: 600;
+}
+
+.sidebar-menu-item.active .material-symbols-outlined {
+  color: var(--sb-item-active-text-light) !important;
+}
+
+html.dark .sidebar-menu-item.active {
+  background-color: var(--sb-item-active-bg-dark) !important;
+  color: var(--sb-item-active-text-dark) !important;
+}
+
+html.dark .sidebar-menu-item.active .material-symbols-outlined {
+  color: var(--sb-item-active-text-dark) !important;
+}
+
+.sidebar-divider {
+  border: 0;
+  border-top: 1px solid var(--sb-border-light);
+  margin: 8px 0;
+}
+
+html.dark .sidebar-divider {
+  border-top: 1px solid var(--sb-border-dark);
+}
+
+
+
+@media (min-width: 768px) {
+  html:has(#sidebar) main,
+  html:has(#sidebar) footer {
+    transition: margin-left 280ms ease-in-out, width 280ms ease-in-out !important;
+  }
+
+  html:has(#sidebar):not(.sidebar-collapsed) .sidebar {
+    transform: translateX(0) !important;
+  }
+  html:has(#sidebar):not(.sidebar-collapsed) main {
+    margin-left: var(--sb-width) !important;
+    width: calc(100% - var(--sb-width)) !important;
+    grid-template-columns: 1fr !important;
+    gap: 0 !important;
+  }
+  html:has(#sidebar):not(.sidebar-collapsed) footer {
+    margin-left: var(--sb-width) !important;
+    width: calc(100% - var(--sb-width)) !important;
+  }
+
+  html:has(#sidebar).sidebar-collapsed .sidebar {
+    transform: translateX(-100%) !important;
+  }
+  html:has(#sidebar).sidebar-collapsed main {
+    margin-left: 0 !important;
+    width: 100% !important;
+    grid-template-columns: 1fr !important;
+    gap: 0 !important;
+  }
+  html:has(#sidebar).sidebar-collapsed footer {
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .sidebar {
+    width: var(--sb-width) !important;
+    transform: translateX(-100%);
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15) !important;
+    z-index: 999 !important;
+  }
+  
+  .sidebar.active {
+    transform: translateX(0) !important;
+  }
+
+  html:has(#sidebar) main {
+    grid-template-columns: 1fr !important;
+    gap: 0 !important;
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
+
+  .sidebar > div {
+    position: static !important;
+    box-shadow: none !important;
+    border: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+  }
+}
+
+.sidebar-overlay {
+  background: rgba(0, 0, 0, 0.3) !important;
+  backdrop-filter: none !important;
+}
+
+body:has(#sidebar) > nav a[href*="upload_page"],
+body:has(#sidebar) > nav .language-switcher {
+  display: none !important;
+}
+
+/* ==========================================================
+   HEADER & SIDEBAR STABLE LAYOUT CONFIGURATION
+   ========================================================== */
+
+/* Order elements in Header: ☰ button first, Logo PetAI second */
+body:has(#sidebar) > nav .flex.items-center.gap-gutter {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+body:has(#sidebar) > nav .menu-toggle {
+  order: -2 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  position: relative !important;
+}
+
+body:has(#sidebar) > nav a:has(img[alt="PetAI New Logo"]) {
+  order: -1 !important;
+  margin-left: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+}
+
+/* Bring Header Navbar on top of Sidebar on mobile so menu toggle ☰ remains visible */
+@media (max-width: 767px) {
+  body:has(#sidebar) > nav {
+    z-index: 1001 !important;
+  }
+  body:has(#sidebar) .sidebar {
+    z-index: 1000 !important;
+  }
+}
+
+/* 6. Sidebar adjustments (Remove stretching, position relative/absolute, fit content height on Desktop) */
+@media (min-width: 768px) {
+  .sidebar {
+    position: fixed !important;
+    top: 64px !important; /* Align exactly below sticky header */
+    left: 0 !important;
+    height: calc(100vh - 64px) !important; /* Full-height dashboard sidebar */
+    bottom: 0 !important;
+    width: var(--sb-width) !important;
+    z-index: 100 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    border-right: 1px solid var(--sb-border-light) !important;
+    box-shadow: var(--sb-shadow) !important;
+  }
+}
+
+.sidebar-wrapper {
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100% !important;
+  justify-content: space-between !important;
+  padding: 24px 16px 16px 16px !important;
+  box-sizing: border-box !important;
+  gap: 24px !important;
+}
+
+.sidebar-menu {
+  flex: 1 !important;
+}
+
+/* User Card Styling at the bottom of Sidebar */
+.sidebar-user-card {
+  height: auto !important;
+  border-radius: 14px !important;
+  background-color: #f8f9fb !important;
+  border: 1px solid rgba(0, 0, 0, 0.06) !important;
+  padding: 12px 14px !important;
+  margin-top: auto !important;
+  margin-bottom: 16px !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+
+html.dark .sidebar-user-card {
+  background-color: var(--sb-card-bg-dark, #161920) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.sidebar-user-card .user-avatar-img {
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 9999px !important;
+  object-fit: cover !important;
+  border: 1px solid rgba(0, 0, 0, 0.06) !important;
+}
+
+html.dark .sidebar-user-card .user-avatar-img {
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.sidebar-user-card .user-name {
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  color: #1f2937 !important;
+  line-height: 1.25 !important;
+}
+
+html.dark .sidebar-user-card .user-name {
+  color: #e5e7eb !important;
+}
+
+.sidebar-user-card .user-role {
+  font-size: 11px !important;
+  color: #6b7280 !important;
+  margin-top: 2px !important;
+  line-height: 1 !important;
+}
+
+html.dark .sidebar-user-card .user-role {
+  color: #9ca3af !important;
+}
+
+.sidebar-user-card .logout-btn-link {
+  color: #9ca3af !important;
+  transition: color 150ms ease !important;
+  text-decoration: none !important;
+}
+
+.sidebar-user-card .logout-btn-link:hover {
+  color: #ef4444 !important;
 }
