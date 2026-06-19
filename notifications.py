@@ -2,8 +2,11 @@
 # Các hàm gửi email thông báo quan trọng cho user.
 # Mỗi hàm đều chạy trong thread riêng để không block request.
 
+import os
 import threading
 from datetime import datetime
+
+_APP_URL = os.getenv("APP_BASE_URL", "http://127.0.0.1:5000")
 
 
 def _send_async(to_email: str, subject: str, body_html: str) -> None:
@@ -59,7 +62,7 @@ def send_welcome_email(to_email: str, fullname: str) -> None:
         <li>Nâng cấp gói để dùng không giới hạn</li>
       </ul>
       <div style="text-align:center;margin:24px 0;">
-        <a href="http://127.0.0.1:5000"
+        <a href="{_APP_URL}"
            style="background:#004ac6;color:#fff;padding:12px 32px;border-radius:8px;
                   text-decoration:none;font-weight:600;font-size:15px;display:inline-block;">
           Bắt đầu ngay →
@@ -111,7 +114,7 @@ def send_plan_activated_email(to_email: str, fullname: str, plan: str,
         </p>
       </div>
       <div style="text-align:center;margin:24px 0;">
-        <a href="http://127.0.0.1:5000"
+        <a href="{_APP_URL}"
            style="background:#004ac6;color:#fff;padding:12px 32px;border-radius:8px;
                   text-decoration:none;font-weight:600;font-size:15px;display:inline-block;">
           Sử dụng ngay →
@@ -142,7 +145,7 @@ def send_plan_expiring_email(to_email: str, fullname: str, plan: str,
          (còn <b>{days_left} ngày</b>).</p>
       <p>Gia hạn ngay để không bị gián đoạn dịch vụ:</p>
       <div style="text-align:center;margin:24px 0;">
-        <a href="http://127.0.0.1:5000/upgrade"
+        <a href="{_APP_URL}/predict/upgrade"
            style="background:#d97706;color:#fff;padding:12px 32px;border-radius:8px;
                   text-decoration:none;font-weight:600;font-size:15px;display:inline-block;">
           Gia hạn gói →
@@ -166,7 +169,7 @@ def send_password_changed_email(to_email: str, fullname: str) -> None:
       <p style="color:#e53e3e;"><b>⚠️ Nếu bạn không thực hiện thao tác này</b>,
          hãy đổi lại mật khẩu ngay và liên hệ hỗ trợ.</p>
       <div style="text-align:center;margin:24px 0;">
-        <a href="http://127.0.0.1:5000/settings"
+        <a href="{_APP_URL}/settings"
            style="background:#004ac6;color:#fff;padding:12px 32px;border-radius:8px;
                   text-decoration:none;font-weight:600;font-size:15px;display:inline-block;">
           Vào cài đặt →

@@ -5,19 +5,19 @@
   }
 
   .nav-logo-sm {
-    height: 40px !important;
+    height: 36px !important;
   }
 
   .nav-compact-btn {
-    padding-left: 12px !important;
-    padding-right: 12px !important;
-    padding-top: 6px !important;
-    padding-bottom: 6px !important;
-    font-size: 14px !important;
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+    font-size: 12px !important;
   }
 
   .nav-reduce-gap {
-    gap: 8px !important;
+    gap: 6px !important;
   }
 
   main.pt-safe {
@@ -27,22 +27,74 @@
   /* also apply fixes by selector so existing templates work without extra classes */
   body>nav>div {
     height: 48px !important;
+    padding-left: 8px !important;
+    padding-right: 8px !important;
   }
 
-  body>nav img.h-16 {
-    height: 40px !important;
+  body>nav img.h-16,
+  body>nav img[alt="PetAI New Logo"] {
+    height: 36px !important;
   }
 
   body>nav .gap-md {
-    gap: 8px !important;
+    gap: 6px !important;
+  }
+
+  /* Force no wrap and shrink guest/user right navigation menu on mobile */
+  body>nav div.flex.items-center.gap-6,
+  body>nav .flex.items-center.gap-6 {
+    gap: 6px !important;
+    flex-wrap: nowrap !important;
+  }
+
+  body>nav a,
+  body>nav button,
+  body>nav .language-switcher {
+    white-space: nowrap !important;
+  }
+
+  body>nav a.label-sm {
+    font-size: 12px !important;
   }
 
   body>nav a.bg-primary {
-    padding-left: 12px !important;
-    padding-right: 12px !important;
-    padding-top: 6px !important;
-    padding-bottom: 6px !important;
-    font-size: 14px !important;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+    padding-top: 5px !important;
+    padding-bottom: 5px !important;
+    font-size: 12px !important;
+  }
+
+  /* Compact language button on mobile */
+  .language-button {
+    padding-left: 6px !important;
+    padding-right: 6px !important;
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+    font-size: 12px !important;
+    gap: 4px !important;
+    height: 32px !important;
+  }
+
+  .language-current {
+    display: none !important;
+  }
+
+  .language-arrow {
+    display: none !important;
+  }
+
+  .language-switcher {
+    margin-right: 4px !important;
+  }
+}
+
+@media (max-width: 400px) {
+  /* Hide the "PetAI" text next to the logo on very small screens to ensure buttons stay on 1 line */
+  body>nav a span.text-primary,
+  body>nav a span.text-lg,
+  body>nav a span.text-2xl {
+    display: none !important;
   }
 }
 
@@ -751,19 +803,19 @@ html.i18n-loading:has(#sidebar) main > div.col-span-1 {
   visibility: hidden !important;
 }
 
-/* Enable smooth Cross-Document View Transitions */
-@view-transition {
+/* Disable smooth Cross-Document View Transitions to prevent page fade/flicker */
+/* @view-transition {
   navigation: auto;
-}
+} */
 
 /* Keep sidebar and top navbar persistent across page transitions */
-.sidebar {
+/* .sidebar {
   view-transition-name: main-sidebar;
 }
 
 body > nav {
   view-transition-name: main-navbar;
-}
+} */
 
 /* Subtle loading indicator during PJAX fetch — chỉ mờ khu vực content (Đã tắt theo yêu cầu) */
 /* html.pjax-loading main > div.col-span-1 {
@@ -773,18 +825,18 @@ body > nav {
 
 
 /* Only animate the content area during transitions */
-::view-transition-old(page-content),
+/* ::view-transition-old(page-content),
 ::view-transition-new(page-content) {
   animation-duration: 0.18s;
   animation-timing-function: ease-in-out;
-}
+} */
 
 /* Prevent root-level cross-fade (which flashes the whole screen) */
-::view-transition-old(root),
+/* ::view-transition-old(root),
 ::view-transition-new(root) {
   animation: none;
   mix-blend-mode: normal;
-}
+} */
 
 /* Ensure consistent desktop/mobile vertical padding for all layout views */
 main[class*="py-margin"] {

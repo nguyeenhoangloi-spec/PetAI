@@ -925,7 +925,31 @@ def upload():
 			det_items = []
 			annotated_path = save_path
 
-		# Kết quả cũ (HOG+SVM)
+		# --- Early YOLO gate: reject ngay nếu không phát hiện chó ---
+		# Không cần chạy breed model nếu YOLO đã xác định không phải chó.
+		DOG_THRESHOLD = _env_float("DOG_GATE_YOLO_DOG_THRESHOLD", 0.40)
+
+		dog_confs_early = [
+			float(item.get("conf"))
+			for item in det_items
+			if item.get("label") == "dog" and item.get("conf") is not None
+		]
+		best_dog_conf_early = max(dog_confs_early) if dog_confs_early else None
+		yolo_dog_passes = (best_dog_conf_early is not None) and (best_dog_conf_early >= DOG_THRESHOLD)
+
+		if not yolo_dog_passes:
+			ui_lang = request.cookies.get("siteLanguage", "vi")
+			if ui_lang not in {"vi", "en"}:
+				ui_lang = "vi"
+
+			if ui_lang == "en":
+				msg = "This image does not appear to be a dog. Please upload a photo of a dog."
+			else:
+				msg = "Ảnh này không phải chó. Vui lòng tải lên ảnh chó để nhận diện."
+			flash(msg, "error")
+			return redirect(url_for("predict.upload_page"))
+
+		# YOLO đã xác nhận là chó → tiếp tục chạy breed model
 		breed_input_path = save_path
 		try:
 			dog_candidates = [
@@ -972,99 +996,18 @@ def upload():
 		except Exception as e:
 			print("[SIM] log error:", e)
 
-		# Tìm confidence dog từ YOLO để hiển thị và quyết định gate.
+		# Lấy YOLO dog conf để hiển thị trên UI
 		dog_confs = [
 			float(item.get("conf"))
 			for item in det_items
 			if item.get("label") == "dog" and item.get("conf") is not None
 		]
 		best_dog_conf = max(dog_confs) if dog_confs else None
-
-		yolo_conf = best_dog_conf if det_label == "Dog" else None
-
-		# Gate: xác nhận là chó.
-		# - Chỉ xác nhận CHÓ hoặc không xác định.
-		# - Nếu YOLO bỏ sót chó, cho phép fallback bằng độ tin cậy breed model.
-		DOG_THRESHOLD = _env_float("DOG_GATE_YOLO_DOG_THRESHOLD", 0.40)
-		BREED_FALLBACK_THRESHOLD = _env_float("DOG_GATE_BREED_FALLBACK_THRESHOLD", 0.55)
-
-		breed_conf_fallback = 0.0
-		breed_model_ready = False
-		breed_value = ""
-		if isinstance(result, dict):
-			try:
-				breed_conf_fallback = float(result.get("breed_conf", 0.0) or 0.0)
-			except Exception:
-				breed_conf_fallback = 0.0
-			breed_model_ready = bool(result.get("model_ready", False))
-			breed_value = str(result.get("breed") or "").strip().lower()
-
-		breed_is_unknown = breed_value in {"", "unknown", "không xác định", "khong xac dinh"}
-
-		yolo_dog_enough = (best_dog_conf is not None) and (float(best_dog_conf) >= DOG_THRESHOLD)
-		breed_fallback_enough = (
-			breed_model_ready
-			and (not breed_is_unknown)
-			and (breed_conf_fallback >= BREED_FALLBACK_THRESHOLD)
-		)
-
-		is_dog_enough = yolo_dog_enough or breed_fallback_enough
-		should_save_prediction = is_dog_enough
-
-		if is_dog_enough and det_label != "Dog":
-			det_label = "Dog"
-			if yolo_conf is None:
-				yolo_conf = best_dog_conf
-
-		if not is_dog_enough:
-			# Không chắc chắn là chó nhưng vẫn trả kết quả (kèm cảnh báo).
-			note = None
-			ui_lang = request.cookies.get("siteLanguage", "vi")
-			if ui_lang not in {"vi", "en"}:
-				ui_lang = "vi"
-
-			if ui_lang == "en":
-				if best_dog_conf is not None:
-					dog_pct = int(round(float(best_dog_conf or 0.0) * 100))
-					note = (
-						f"YOLO dog confidence is only {dog_pct}% (< {int(DOG_THRESHOLD*100)}%). "
-						"Breed results below are for reference only."
-					)
-				elif breed_model_ready and not breed_is_unknown:
-					breed_pct = int(round(float(breed_conf_fallback or 0.0) * 100))
-					note = (
-						f"AI is leaning towards dog ({breed_pct}%) but verification threshold is not met. "
-						"Results below are for reference only."
-					)
-				else:
-					note = (
-						"This photo is not confidently identified as a DOG. "
-						"Breed results below are for reference only."
-					)
-			else:
-				if best_dog_conf is not None:
-					dog_pct = int(round(float(best_dog_conf or 0.0) * 100))
-					note = (
-						f"Độ tin cậy CHÓ từ YOLO chỉ {dog_pct}% (< {int(DOG_THRESHOLD*100)}%). "
-						"Kết quả giống dưới đây chỉ mang tính tham khảo."
-					)
-				elif breed_model_ready and not breed_is_unknown:
-					breed_pct = int(round(float(breed_conf_fallback or 0.0) * 100))
-					note = (
-						f"AI giống đang nghiêng về chó ({breed_pct}%) nhưng chưa đủ ngưỡng xác nhận. "
-						"Kết quả dưới đây chỉ mang tính tham khảo."
-					)
-				else:
-					note = (
-						"Ảnh này chưa được nhận diện chắc chắn là CHÓ. "
-						"Kết quả giống dưới đây chỉ mang tính tham khảo."
-					)
-			flash(note, "warning")
-			if isinstance(result, dict) and note:
-				existing_note = str(result.get("note") or "").strip()
-				result["note"] = f"{existing_note} {note}".strip() if existing_note else note
+		yolo_conf = best_dog_conf  # Đã qua gate → chắc chắn là chó
+		should_save_prediction = True
 
 		# Lưu vào database (ưu tiên khi đã pass gate chó)
+
 		try:
 			if user_id is not None and should_save_prediction:
 				conn = get_connection()

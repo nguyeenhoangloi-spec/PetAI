@@ -911,7 +911,7 @@
                       class="w-full h-full object-cover"
                       src="{% if gradcam_mode == 'dynamic' %}{{ item.image_data }}{% else %}{{ url_for('artifacts_gradcam', filename=item.filename) }}{% endif %}"
                       alt="Grad-CAM {{ item.breed_en if ui_language == 'en' else item.breed }}"
-                      loading="lazy"
+                      loading="eager"
                     />
                     <div
                       class="absolute inset-0 {{ overlay_class }} mix-blend-overlay"

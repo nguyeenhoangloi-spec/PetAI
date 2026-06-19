@@ -17,13 +17,8 @@ def settings():
     if not session.get("user_id"):
         flash("Vui lòng đăng nhập để truy cập cài đặt.", "warning")
         return redirect(url_for("login.login"))
-    
-    user_id_any = session.get("user_id")
-    if user_id_any is None:
-        flash("Vui lòng đăng nhập để truy cập cài đặt.", "warning")
-        return redirect(url_for("login.login"))
     try:
-        user_id = int(user_id_any)
+        user_id = int(session["user_id"])
     except Exception:
         flash("Phiên đăng nhập không hợp lệ.", "error")
         return redirect(url_for("login.login"))
@@ -130,12 +125,19 @@ def settings():
                     user_email = session.get("email", "")
                     user_fullname = session.get("fullname") or session.get("username") or ""
                     if not user_email:
-                        with get_connection() as _c:
-                            with _c.cursor() as _cur:
+                        _conn = None
+                        try:
+                            _conn = get_connection()
+                            with _conn.cursor() as _cur:
                                 _cur.execute("SELECT email, fullname FROM users WHERE id = %s", (user_id,))
                                 _row = _cur.fetchone()
                                 if _row:
                                     user_email, user_fullname = _row[0], (_row[1] or _row[0])
+                        except Exception:
+                            pass
+                        finally:
+                            if _conn:
+                                _conn.close()
                     if user_email:
                         send_password_changed_email(user_email, user_fullname)
                 except Exception:

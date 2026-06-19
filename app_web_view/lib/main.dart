@@ -105,6 +105,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
           }),
           onPageFinished: (_) {
             setState(() => _isLoading = false);
+            _injectNoTransitionCSS();
             if (_activeToken != null) _injectTokenToWeb(_activeToken!);
           },
           onWebResourceError: (_) => setState(() {
@@ -118,6 +119,9 @@ class _WebViewScreenState extends State<WebViewScreen> {
         'FlutterBridge',
         onMessageReceived: _handleWebMessage,
       );
+
+    // Xóa sạch cache WebView để luôn nhận tệp JS/CSS mới nhất từ máy chủ!
+    _controller.clearCache();
 
     if (_controller.platform is AndroidWebViewController) {
       final androidController =
@@ -237,6 +241,28 @@ class _WebViewScreenState extends State<WebViewScreen> {
     }
 
     if (url.startsWith(AppConfig.webBaseUrl)) {
+      final path = uri?.path ?? '';
+      // Các route sử dụng PJAX chuyển trang mượt mà không reload
+      if (path == '/' ||
+          path.startsWith('/dashboard') ||
+          path.startsWith('/history') ||
+          path.startsWith('/statistics') ||
+          path.startsWith('/settings') ||
+          path.startsWith('/users') ||
+          path.startsWith('/confirmations') ||
+          path.startsWith('/predict') ||
+          path.startsWith('/checkout') ||
+          path.startsWith('/upgrade') ||
+          path.startsWith('/payments')) {
+        
+        if (!url.contains('token=')) {
+          debugPrint('==> [PJAX Delegate] WebView navigating via JS PJAX: $url');
+          _controller.runJavaScript(
+            "if (window.loadPagePjax) { window.loadPagePjax('$url'); } else { window.location.href = '$url'; }"
+          );
+          return NavigationDecision.prevent;
+        }
+      }
       return NavigationDecision.navigate;
     }
     debugPrint('==> Đã chặn điều hướng ngoài: ${request.url}');
@@ -424,6 +450,31 @@ class _WebViewScreenState extends State<WebViewScreen> {
         console.log('[Flutter] Token injected');
       } catch(e) {}
     ''');
+  }
+
+  /// Inject CSS to instantly disable all i18n-loading/preload flicker on Android WebView.
+  /// Root cause: every template has `html.i18n-loading body { visibility: hidden }` to prevent
+  /// language-switch flash. On WebView this causes a visible blank→fade-in on every navigation.
+  /// This override makes body always visible and removes the flicker classes immediately.
+  Future<void> _injectNoTransitionCSS() async {
+    await _controller.runJavaScript(
+      "(function(){"
+      "  var s=document.getElementById('__android_no_flicker__');"
+      "  if(!s){"
+      "    s=document.createElement('style');"
+      "    s.id='__android_no_flicker__';"
+      "    s.textContent="
+      "      'html.i18n-loading body{visibility:visible!important}\\n'"
+      "      +'html.preload body{visibility:visible!important}\\n'"
+      "      +'body{visibility:visible!important}';"
+      "    (document.head||document.documentElement).appendChild(s);"
+      "  }"
+      "  document.documentElement.classList.remove('i18n-loading');"
+      "  document.documentElement.classList.remove('preload');"
+      "  document.documentElement.classList.add('ready');"
+      "  if(document.body)document.body.style.visibility='visible';"
+      "})();"
+    );
   }
 
   @override

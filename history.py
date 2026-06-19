@@ -10,18 +10,14 @@ history_bp = Blueprint("history", __name__)
 
 @history_bp.route("/")
 def history():
-    """Trang lịch sử nhận diện với phân trang và bộ lọc"""
-    if not session.get("user_id"):
+    user_id_raw = session.get("user_id")
+    if not user_id_raw:
         flash("Vui lòng đăng nhập để xem lịch sử.", "warning")
         return redirect(url_for("login.login"))
-    
+    conn = None
     try:
         conn = get_connection()
-        user_id_any = session.get("user_id")
-        if user_id_any is None:
-            flash("Vui lòng đăng nhập để xem lịch sử.", "warning")
-            return redirect(url_for("login.login"))
-        user_id = int(user_id_any)
+        user_id = int(user_id_raw)
         
         # Bộ lọc loại giống: all, pure, hybrid
         breed_type = request.args.get('type', 'all')
@@ -36,22 +32,17 @@ def history():
         per_page = 30
         offset = (page - 1) * per_page
         
-        # Lấy tổng số bản ghi và dữ liệu trang hiện tại theo bộ lọc và tìm kiếm
         total_records = PredictionHistory.count_by_user(conn, user_id, breed_type=breed_type, search_query=search_query)
         predictions = PredictionHistory.get_by_user(conn, user_id, limit=per_page, offset=offset, breed_type=breed_type, search_query=search_query)
         
-        # Thống kê tổng hợp (tất cả thời gian) cho phần Grid thống kê ở đầu trang
         total_records_all = PredictionHistory.count_by_user(conn, user_id)
         pure_count = PredictionHistory.count_by_user(conn, user_id, breed_type='pure')
         hybrid_count = PredictionHistory.count_by_user(conn, user_id, breed_type='hybrid')
         stats_all = PredictionHistory.get_stats(conn, user_id)
         avg_conf = stats_all.get('avg_confidence', 0.0) * 100
         
-        # Tính tổng số trang
         import math
         total_pages = math.ceil(total_records / per_page) if total_records > 0 else 1
-        
-        conn.close()
         
         return render_template("history.html", 
                              predictions=predictions,
@@ -68,30 +59,32 @@ def history():
         print(f"Error loading history: {e}")
         flash("Không thể tải lịch sử. Vui lòng thử lại.", "error")
         return redirect(url_for("dashboard.dashboard"))
+    finally:
+        if conn:
+            conn.close()
 
 
 @history_bp.route("/api/recent")
 def api_recent():
     """API lấy lịch sử gần đây"""
-    if not session.get("user_id"):
+    user_id_raw = session.get("user_id")
+    if not user_id_raw:
         return jsonify({"error": "Not authenticated"}), 401
-    
+    conn = None
     try:
         conn = get_connection()
-        user_id_any = session.get("user_id")
-        if user_id_any is None:
-            return jsonify({"error": "Not authenticated"}), 401
-        user_id = int(user_id_any)
-        limit = int(request.args.get('limit', 10))
+        user_id = int(user_id_raw)
+        limit = min(int(request.args.get('limit', 10)), 100)  # cap at 100
         predictions = PredictionHistory.get_by_user(conn, user_id, limit=limit)
-        conn.close()
         
-        # Convert datetime to string
         for p in predictions:
-            if p['created_at']:
+            if p.get('created_at'):
                 p['created_at'] = p['created_at'].isoformat()
         
         return jsonify({"predictions": predictions})
     except Exception as e:
         print(f"Error in API: {e}")
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": "Internal error"}), 500
+    finally:
+        if conn:
+            conn.close()

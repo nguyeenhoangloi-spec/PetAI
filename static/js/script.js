@@ -304,6 +304,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function loadPagePjax(url, isPopState = false, htmlContent = null) {
     console.log("[PJAX Load Debug] loadPagePjax started for URL:", url);
+    document.documentElement.classList.add("preload");
+    document.documentElement.classList.remove("ready");
     const handleHtml = (html) => {
       console.log("[PJAX Load Debug] handleHtml received html length:", html.length);
       const parser = new DOMParser();
@@ -539,10 +541,12 @@ document.addEventListener("DOMContentLoaded", function () {
         // 8. Clear loading state
         document.documentElement.classList.remove("pjax-loading");
         document.documentElement.classList.remove("i18n-loading");
-        document.documentElement.classList.remove("preload");
-        if (!document.documentElement.classList.contains("ready")) {
-          document.documentElement.classList.add("ready");
-        }
+        setTimeout(function() {
+          document.documentElement.classList.remove("preload");
+          if (!document.documentElement.classList.contains("ready")) {
+            document.documentElement.classList.add("ready");
+          }
+        }, 150);
 
         // 9. Force Tailwind to scan the DOM for new classes
         if (window.tailwind && typeof window.tailwind.process === "function") {

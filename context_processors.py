@@ -58,3 +58,19 @@ def register_context_processors(app):
             "ui_language": ui_language,
             "ui_avatar_url": ui_avatar_url,
         }
+
+    @app.context_processor
+    def override_url_for():
+        import os
+        from flask import url_for as flask_url_for
+
+        def dated_url_for(endpoint, **values):
+            if endpoint == "static":
+                filename = values.get("filename", None)
+                if filename:
+                    file_path = os.path.join(app.root_path, app.static_folder, filename)
+                    if os.path.exists(file_path):
+                        values["q"] = int(os.stat(file_path).st_mtime)
+            return flask_url_for(endpoint, **values)
+
+        return dict(url_for=dated_url_for)

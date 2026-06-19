@@ -152,17 +152,6 @@ def _plan_expire_for(plan: str):
     if plan == "basic":
         return now + timedelta(days=7)
     return None
-    now = datetime.now()
-    if plan == "pro":
-        plan_expire = now + timedelta(days=30)
-    elif plan == "enterprise":
-        plan_expire = now + timedelta(days=90)
-    elif plan == "basic":
-        plan_expire = now + timedelta(days=7)
-    else:
-        plan_expire = None
-
-    UserQuota.set_plan(conn, user_id, plan, plan_expire)
 
 
 @sepay_bp.route("/webhook/sepay", methods=["POST"])

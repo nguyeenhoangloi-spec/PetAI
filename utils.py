@@ -51,10 +51,10 @@ def extract_hog_features(img: np.ndarray) -> np.ndarray:
 
 
 def send_otp_email(to_email: str, subject: str, body_html: str) -> None:
-    smtp_server = "smtp.gmail.com"
-    port = 587
-    sender_email = "nguyenhoangloi070904@gmail.com"
-    sender_password = "fonzdazzggxygxob"
+    smtp_server = os.getenv("SMTP_SERVER", "smtp.gmail.com")
+    port = int(os.getenv("SMTP_PORT", "587"))
+    sender_email = os.getenv("SMTP_EMAIL", "nguyenhoangloi070904@gmail.com")
+    sender_password = os.getenv("SMTP_PASSWORD", "")
 
     message = MIMEMultipart("alternative")
     message["Subject"] = subject
