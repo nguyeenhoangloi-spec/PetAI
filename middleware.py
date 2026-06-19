@@ -28,9 +28,14 @@ def register_block_inactive_users(app):
             conn = get_connection()
             try:
                 with conn.cursor() as cur:
-                    cur.execute("SELECT is_active FROM users WHERE id = %s", (user_id,))
+                    cur.execute("SELECT is_active, force_change_password FROM users WHERE id = %s", (user_id,))
                     row = cur.fetchone()
-                    is_active = bool(row[0]) if row else False
+                    if row:
+                        is_active = bool(row[0])
+                        force_change_password = bool(row[1])
+                    else:
+                        is_active = False
+                        force_change_password = False
             finally:
                 conn.close()
 
@@ -38,6 +43,12 @@ def register_block_inactive_users(app):
                 session.clear()
                 flash("Tài khoản đã bị khóa. Vui lòng đăng nhập lại.", "error")
                 return redirect(url_for("login.login"))
+
+            # Ép buộc đổi mật khẩu nếu đang dùng mật khẩu tạm thời
+            if force_change_password:
+                if not endpoint.startswith("settings."):
+                    flash("Bạn đang sử dụng mật khẩu tạm thời. Vui lòng đổi mật khẩu mới để tiếp tục sử dụng hệ thống.", "warning")
+                    return redirect(url_for("settings.settings"))
         except Exception:
             # If DB fails, do not block request to avoid app-wide outage
             return None

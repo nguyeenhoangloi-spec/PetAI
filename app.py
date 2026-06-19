@@ -164,8 +164,8 @@ def _get_or_create_user_from_google(userinfo: dict) -> tuple[dict, str | None]:
 
                 cur.execute(
                     """
-                    INSERT INTO users (username, password_hash, email, fullname, google_id, created_at)
-                    VALUES (%s, %s, %s, %s, %s, NOW())
+                    INSERT INTO users (username, password_hash, email, fullname, google_id, created_at, email_verified, force_change_password)
+                    VALUES (%s, %s, %s, %s, %s, NOW(), 1, 0)
                     """,
                     (username, pwd_hash, email, fullname, google_id),
                 )

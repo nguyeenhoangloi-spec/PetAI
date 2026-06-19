@@ -2,6 +2,11 @@
 # Các hàm tiện ích: xử lý ảnh, đặc trưng, v.v.
 
 from typing import Tuple
+import smtplib
+import ssl
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+import os
 
 import numpy as np
 import cv2
@@ -43,3 +48,24 @@ def extract_hog_features(img: np.ndarray) -> np.ndarray:
 		feature_vector=True,
 	)
 	return features.astype(np.float32)
+
+
+def send_otp_email(to_email: str, subject: str, body_html: str) -> None:
+    smtp_server = "smtp.gmail.com"
+    port = 587
+    sender_email = "nguyenhoangloi070904@gmail.com"
+    sender_password = "fonzdazzggxygxob"
+
+    message = MIMEMultipart("alternative")
+    message["Subject"] = subject
+    message["From"] = f"PetAI <{sender_email}>"
+    message["To"] = to_email
+
+    part = MIMEText(body_html, "html", "utf-8")
+    message.attach(part)
+
+    context = ssl.create_default_context()
+    with smtplib.SMTP(smtp_server, port) as server:
+        server.starttls(context=context)
+        server.login(sender_email, sender_password)
+        server.sendmail(sender_email, to_email, message.as_string())

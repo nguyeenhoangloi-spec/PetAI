@@ -1,7 +1,7 @@
-<!doctype html>
-
-<html class="{{ 'dark' if ui_theme == 'dark' else 'light' }}{{ ' i18n-loading' if ui_language == 'en' else '' }}"
-  lang="{{ ui_language or 'vi' }}" data-theme="{{ ui_theme or 'light' }}">
+<!DOCTYPE html>
+{% set html_class = 'dark' if ui_theme == 'dark' else 'light' %}
+{% if ui_language == 'en' %}{% set html_class = html_class ~ ' i18n-loading' %}{% endif %}
+<html class="{{ html_class }}" lang="{{ ui_language or 'vi' }}" data-theme="{{ ui_theme or 'light' }}">
 
 <head>
   <script>
@@ -28,19 +28,19 @@
       }
     </style>
   </noscript>
-  <meta charset="utf-8" />
-  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-  <title data-i18n="privacyPolicyPageTitle">{{ 'Privacy Policy | PetAI' if ui_language == 'en' else 'Chính sách quyền
-    riêng tư | PetAI' }}</title>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  {% set page_title = 'Privacy Policy | PetAI' if ui_language == 'en' else 'Chính sách quyền riêng tư | PetAI' %}
+  <title data-i18n="privacyPolicyPageTitle">{{ page_title }}</title>
   <script src="{{ url_for('static', filename='js/tailwindcss.js') }}"></script>
   <script src="{{ url_for('static', filename='js/chart.umd.min.js') }}"></script>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/typography.css') }}" />
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/theme-dark.css') }}" />
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile-header-fix.css') }}" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/typography.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/theme-dark.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile-header-fix.css') }}">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
   <link
     href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
-    rel="stylesheet" />
+    rel="stylesheet">
   <style>
     body {
       background-color: #f9f9ff;
@@ -304,7 +304,7 @@
     <div class="flex justify-between items-center w-full px-4 md:px-6 h-16">
       <div class="flex items-center gap-gutter">
         <a href="{{ url_for('home.index') }}" class="inline-flex items-center gap-0">
-          <img alt="PetAI New Logo" class="w-auto h-10 md:h-24" src="{{ url_for('static', filename='logo.png') }}" />
+          <img alt="PetAI New Logo" class="w-auto h-10 md:h-24" src="{{ url_for('static', filename='logo.png') }}">
           <span class="ml-0 text-lg md:text-2xl font-semibold text-primary">PetAI</span>
         </a>
       </div>
@@ -321,12 +321,12 @@
       </div>
       {% endif %} {% if session.get('user_id') %}
       <div class="flex items-center gap-6">
-<div class="language-switcher mr-2" id="languageSwitcher">
-  <button class="language-button" id="languageButton" type="button" aria-haspopup="true" aria-expanded="false">
+<div class="language-switcher mr-2" id="languageSwitcherLogged">
+  <button class="language-button" id="languageButtonLogged" type="button" aria-haspopup="true" aria-expanded="false">
       <span class="language-flag" data-i18n="languageFlag">🇻🇳</span>
       <span class="language-current" data-i18n="languageLabel">Tiếng Việt</span>
     </button>
-  <div class="language-menu" id="languageMenu">
+  <div class="language-menu" id="languageMenuLogged">
     <button class="language-option active" type="button" data-lang="vi">
       <span class="language-check">✓</span>
       <span class="language-flag" data-i18n="languageFlag">🇻🇳</span>
@@ -341,7 +341,7 @@
 </div>
         <div class="relative cursor-pointer avatar-wrapper">
           <img alt="Ảnh đại diện" class="w-9 h-9 rounded-full border-2 border-primary/20 p-0.5"
-            src="{{ ui_avatar_url }}" />
+            src="{{ ui_avatar_url }}">
           <div
             class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white dark:border-slate-900 rounded-full">
           </div>
@@ -373,12 +373,12 @@
       </div>
       {% else %}
       <div class="flex items-center gap-6">
-        <div class="language-switcher mr-2" id="languageSwitcher">
-          <button class="language-button" id="languageButton" type="button" aria-haspopup="true" aria-expanded="false">
+        <div class="language-switcher mr-2" id="languageSwitcherGuest">
+          <button class="language-button" id="languageButtonGuest" type="button" aria-haspopup="true" aria-expanded="false">
       <span class="language-flag" data-i18n="languageFlag">🇻🇳</span>
       <span class="language-current" data-i18n="languageLabel">Tiếng Việt</span>
     </button>
-          <div class="language-menu" id="languageMenu">
+          <div class="language-menu" id="languageMenuGuest">
             <button class="language-option active" type="button" data-lang="vi">
               <span class="language-check">✓</span>
               <span class="language-flag" data-i18n="languageFlag">🇻🇳</span>
@@ -483,10 +483,10 @@
           <p class="leading-loose">
             Email:
             <a href="mailto:support@pet.ai"
-              class="text-primary hover:underline font-medium">support@pet.ai</a><br />
+              class="text-primary hover:underline font-medium">support@pet.ai</a><br>
             Website:
             <a href="https://pet.ai" class="text-primary hover:underline font-medium" target="_blank"
-              rel="noopener noreferrer">https://pet.ai</a><br /><span data-i18n="addressLabelPlaceholder">Địa chỉ:
+              rel="noopener noreferrer">https://pet.ai</a><br><span data-i18n="addressLabelPlaceholder">Địa chỉ:
               P16, Đường số 8, KDC lô 49, Khu đô thị Nam Cần Thơ, P. Cái Răng, TP. Cần Thơ</span>
           </p>
         </div>
@@ -499,7 +499,7 @@
         <div class="lg:col-span-6 space-y-6">
           <div class="headline-md font-bold tracking-tighter text-primary">
             <span class="inline-flex items-center gap-0">
-              <img alt="PetAI New Logo" class="h-8 w-auto md:h-10" src="{{ url_for('static', filename='logo.png') }}" />
+              <img alt="PetAI New Logo" class="h-8 w-auto md:h-10" src="{{ url_for('static', filename='logo.png') }}">
               <span class="ml-0 text-sm md:text-lg font-semibold text-primary">PetAI</span>
             </span>
           </div>

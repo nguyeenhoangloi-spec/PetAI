@@ -47,7 +47,8 @@ def settings():
             settings_data = {
                 'theme': theme,
                 'notifications': request.form.get('notifications') == 'on',
-                'email_notifications': request.form.get('email_notifications') == 'on'
+                'email_notifications': request.form.get('email_notifications') == 'on',
+                'language': request.form.get('language', 'vi').strip() or 'vi',
             }
 
             # Optional Password Change logic
@@ -56,11 +57,30 @@ def settings():
             confirm_new_password = request.form.get("confirm_new_password", "").strip()
 
             password_changed = False
-            if current_password or new_password or confirm_new_password:
-                if not (current_password and new_password and confirm_new_password):
-                    conn.close()
-                    flash("Vui lòng điền đầy đủ thông tin để thay đổi mật khẩu.", "error")
-                    return redirect(url_for("settings.settings"))
+            
+            # Kiểm tra xem user này có đang bị bắt buộc đổi mật khẩu hay không
+            is_force_change = False
+            pwd_hash = ""
+            with conn.cursor() as cur:
+                cur.execute("SELECT password_hash, force_change_password FROM users WHERE id = %s", (user_id,))
+                row = cur.fetchone()
+                if row:
+                    pwd_hash = row[0]
+                    is_force_change = bool(row[1])
+
+            if is_force_change or current_password or new_password or confirm_new_password:
+                # Nếu bị ép đổi mật khẩu (quên mật khẩu), không yêu cầu nhập mật khẩu hiện tại
+                if is_force_change:
+                    if not (new_password and confirm_new_password):
+                        conn.close()
+                        flash("Vui lòng điền mật khẩu mới và xác nhận mật khẩu.", "error")
+                        return redirect(url_for("settings.settings"))
+                else:
+                    if not (current_password and new_password and confirm_new_password):
+                        conn.close()
+                        flash("Vui lòng điền đầy đủ thông tin để thay đổi mật khẩu.", "error")
+                        return redirect(url_for("settings.settings"))
+
                 if len(new_password) < 6:
                     conn.close()
                     flash("Mật khẩu mới phải có ít nhất 6 ký tự.", "error")
@@ -70,25 +90,23 @@ def settings():
                     flash("Mật khẩu mới và xác nhận mật khẩu không khớp.", "error")
                     return redirect(url_for("settings.settings"))
                 
-                with conn.cursor() as cur:
-                    cur.execute("SELECT password_hash FROM users WHERE id = %s", (user_id,))
-                    row = cur.fetchone()
-                
-                if not row:
+                if not pwd_hash:
                     conn.close()
                     flash("Không tìm thấy người dùng.", "error")
                     return redirect(url_for("settings.settings"))
                 
-                pwd_hash = row[0]
                 from werkzeug.security import check_password_hash, generate_password_hash
-                if not check_password_hash(pwd_hash, current_password):
-                    conn.close()
-                    flash("Mật khẩu hiện tại không chính xác.", "error")
-                    return redirect(url_for("settings.settings"))
+                
+                # Chỉ kiểm tra mật khẩu hiện tại nếu không ở trạng thái ép đổi mật khẩu
+                if not is_force_change:
+                    if not check_password_hash(pwd_hash, current_password):
+                        conn.close()
+                        flash("Mật khẩu hiện tại không chính xác.", "error")
+                        return redirect(url_for("settings.settings"))
                 
                 new_hash = generate_password_hash(new_password)
                 with conn.cursor() as cur:
-                    cur.execute("UPDATE users SET password_hash = %s WHERE id = %s", (new_hash, user_id))
+                    cur.execute("UPDATE users SET password_hash = %s, force_change_password = 0 WHERE id = %s", (new_hash, user_id))
                 password_changed = True
 
             current_fullname = (session.get("fullname") or "").strip()
@@ -106,6 +124,22 @@ def settings():
             
             if password_changed:
                 flash("Cài đặt và mật khẩu đã được thay đổi thành công!", "success")
+                # Gửi email thông báo bảo mật
+                try:
+                    from notifications import send_password_changed_email
+                    user_email = session.get("email", "")
+                    user_fullname = session.get("fullname") or session.get("username") or ""
+                    if not user_email:
+                        with get_connection() as _c:
+                            with _c.cursor() as _cur:
+                                _cur.execute("SELECT email, fullname FROM users WHERE id = %s", (user_id,))
+                                _row = _cur.fetchone()
+                                if _row:
+                                    user_email, user_fullname = _row[0], (_row[1] or _row[0])
+                    if user_email:
+                        send_password_changed_email(user_email, user_fullname)
+                except Exception:
+                    pass
             else:
                 flash("Cài đặt đã được lưu thành công!", "success")
             return redirect(url_for("settings.settings"))
@@ -116,8 +150,16 @@ def settings():
     try:
         conn = get_connection()
         user_settings = UserSettings.get_or_create(conn, user_id)
+        
+        force_change_password = 0
+        with conn.cursor() as cur:
+            cur.execute("SELECT force_change_password FROM users WHERE id = %s", (user_id,))
+            row = cur.fetchone()
+            if row:
+                force_change_password = int(row[0])
+                
         conn.close()
-        return render_template("settings.html", settings=user_settings)
+        return render_template("settings.html", settings=user_settings, force_change_password=force_change_password)
     except Exception:
         logger.exception("Error loading settings")
         flash("Không thể tải cài đặt. Vui lòng thử lại.", "error")

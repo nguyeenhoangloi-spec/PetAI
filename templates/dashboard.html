@@ -1,3 +1,4 @@
+<!-- htmlhint spec-char-escape:false -->
 <!DOCTYPE html>
 
 <html
@@ -31,9 +32,9 @@
         }
       </style>
     </noscript>
-    <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <meta name="csrf-token" content="{{ csrf_token() }}" />
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <script>
       (function () {
         const root = document.documentElement;
@@ -98,40 +99,16 @@
         } catch (e) {}
       })();
     </script>
-    <title data-i18n="dashboardTitle">
-      {{ 'Dashboard - PetAI' if ui_language == 'en' else 'Bảng điều khiển -
-      PetAI' }}
-    </title>
+    {% if ui_language == 'en' %}<title data-i18n="dashboardTitle">Dashboard - PetAI</title>{% else %}<title data-i18n="dashboardTitle">Trang chủ - PetAI</title>{% endif %}
     <script src="{{ url_for('static', filename='js/tailwindcss.js') }}"></script>
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='css/typography.css') }}"
-    />
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='css/theme-dark.css') }}"
-    />
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='css/toasts.css') }}"
-    />
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='css/mobile-header-fix.css') }}?v=2"
-    />
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='css/admin-dashboard-content.css') }}"
-    />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/typography.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/theme-dark.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/toasts.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile-header-fix.css') }}?v=2">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin-dashboard-content.css') }}">
     <script src="{{ url_for('static', filename='js/chart.umd.min.js') }}"></script>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
     <script id="tailwind-config">
       tailwind.config = {
         darkMode: "class",
@@ -278,6 +255,7 @@
     display_plan = current_plan or 'free' %}
     <nav
       class="bg-white/80 dark:bg-slate-950/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-200 dark:border-slate-800 shadow-sm font-['Inter'] antialiased nav-reduce-height"
+      aria-label="Thanh điều hướng chính"
     >
       <div class="flex items-center justify-between px-4 md:px-6 h-16 w-full">
         <div class="flex items-center gap-gutter">
@@ -289,7 +267,7 @@
               alt="PetAI New Logo"
               class="w-auto h-10 md:h-24"
               src="{{ url_for('static', filename='logo.png') }}"
-            />
+            >
             <span class="ml-0 text-lg md:text-2xl font-semibold text-primary"
               >PetAI</span
             >
@@ -339,7 +317,7 @@
               data-i18n-title="avatarAlt"
               class="w-9 h-9 rounded-full border-2 border-primary/20 p-0.5"
               src="{{ ui_avatar_url }}"
-            />
+            >
 
             <div
               class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white dark:border-slate-900 rounded-full"
@@ -781,7 +759,7 @@
                 data-i18n="revenueAndPlans"
               >
                 <span data-i18n="revenueAndPlans"
-                  >Doanh thu & phân bổ gói dịch vụ</span
+                  >Doanh thu &amp; phân bổ gói dịch vụ</span
                 >
               </p>
             </div>
@@ -894,7 +872,7 @@
                         type="date"
                         id="revenueStartDate"
                         class="px-2 py-1.5 rounded-md border border-outline-variant bg-surface-container-low dark:bg-slate-800 text-on-surface text-xs focus:outline-none focus:border-primary"
-                      />
+                      >
                     </div>
                     <div class="flex flex-col gap-1">
                       <label
@@ -906,7 +884,7 @@
                         type="date"
                         id="revenueEndDate"
                         class="px-2 py-1.5 rounded-md border border-outline-variant bg-surface-container-low dark:bg-slate-800 text-on-surface text-xs focus:outline-none focus:border-primary"
-                      />
+                      >
                     </div>
                   </div>
                   <button
@@ -921,8 +899,7 @@
               </div>
             </div>
             <div
-              class="chart-container"
-              style="position: relative; height: 300px"
+              class="chart-container relative h-[300px]"
             >
               <canvas id="revenueTrendChart"></canvas>
             </div>
@@ -953,8 +930,7 @@
                 </p>
               </div>
               <div
-                class="chart-container"
-                style="position: relative; height: 240px"
+                class="chart-container relative h-[240px]"
               >
                 <canvas id="subscriptionChart"></canvas>
               </div>
@@ -1065,7 +1041,7 @@
                         type="date"
                         id="activityStartDate"
                         class="px-2 py-1.5 rounded-md border border-outline-variant bg-surface-container-low dark:bg-slate-800 text-on-surface text-xs focus:outline-none focus:border-primary"
-                      />
+                      >
                     </div>
                     <div class="flex flex-col gap-1">
                       <label
@@ -1077,7 +1053,7 @@
                         type="date"
                         id="activityEndDate"
                         class="px-2 py-1.5 rounded-md border border-outline-variant bg-surface-container-low dark:bg-slate-800 text-on-surface text-xs focus:outline-none focus:border-primary"
-                      />
+                      >
                     </div>
                   </div>
                   <button
@@ -1135,8 +1111,7 @@
               </div>
             </div>
             <div
-              class="chart-container"
-              style="position: relative; height: 320px"
+              class="chart-container relative h-[320px]"
             >
               <canvas id="dailyPredictionsChart"></canvas>
             </div>
@@ -1165,8 +1140,7 @@
                 </p>
               </div>
               <div
-                class="chart-container"
-                style="position: relative; height: 260px"
+                class="chart-container relative h-[260px]"
               >
                 <canvas id="topBreedsChart"></canvas>
               </div>
@@ -1193,8 +1167,7 @@
                 </p>
               </div>
               <div
-                class="chart-container"
-                style="position: relative; height: 260px"
+                class="chart-container relative h-[260px]"
               >
                 <canvas id="confidenceDistChart"></canvas>
               </div>
@@ -1252,7 +1225,7 @@
                   alt="Pet image"
                   class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   src="/{{ pred.image_path }}"
-                />
+                >
                 <div
                   class="absolute top-3 right-3 px-2 py-1 bg-surface-container-lowest/90 backdrop-blur rounded-md label-sm font-bold text-primary shadow-sm uppercase tracking-tight"
                 >
@@ -1382,7 +1355,7 @@
                   alt="PetAI New Logo"
                   class="h-8 w-auto md:h-10"
                   src="{{ url_for('static', filename='logo.png') }}"
-                />
+                >
                 <span class="ml-0 text-sm md:text-lg font-semibold text-primary"
                   >PetAI</span
                 >

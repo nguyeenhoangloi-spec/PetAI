@@ -11,13 +11,14 @@ import os
 from io import BytesIO
 import uuid
 from urllib.parse import quote_plus
+import threading
 
 # --- YOLOv8 integration ---
 from ultralytics import YOLO
 
 # --- Database integration ---
 from connect import get_connection
-from models import PredictionHistory, UserQuota, PaymentOrder
+from models import PredictionHistory, UserQuota, PaymentOrder, UserSettings
 from vietqr import build_vietqr_payload
 
 try:
@@ -1063,7 +1064,6 @@ def upload():
 				existing_note = str(result.get("note") or "").strip()
 				result["note"] = f"{existing_note} {note}".strip() if existing_note else note
 
-		
 		# Lưu vào database (ưu tiên khi đã pass gate chó)
 		try:
 			if user_id is not None and should_save_prediction:
@@ -1093,6 +1093,19 @@ def upload():
 		except Exception as e:
 			print(f"Warning: Could not save to history: {e}")
 		
+		# Đọc cài đặt thông báo hệ thống (chỉ UI toast, không gửi email mỗi lần nhận diện)
+		show_notification = False
+		try:
+			if user_id is not None and should_save_prediction:
+				conn_ns = get_connection()
+				try:
+					user_settings = UserSettings.get_or_create(conn_ns, user_id)
+					show_notification = bool(user_settings.get('notifications', True))
+				finally:
+					conn_ns.close()
+		except Exception as ns_err:
+			print(f"[NOTIFY SETTINGS] {ns_err}")
+
 		return render_template(
 			"predict.html",
 			image_path=annotated_path.replace("\\", "/"),
@@ -1100,6 +1113,7 @@ def upload():
 			yolo_species=det_label,
 			yolo_species_conf=yolo_conf,
 			yolo_detections=det_items,
+			show_notification=show_notification,
 		)
 
 	flash("Định dạng file không được hỗ trợ. Chỉ chấp nhận JPG, JPEG, PNG.", "error")

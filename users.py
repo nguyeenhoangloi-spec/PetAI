@@ -453,6 +453,16 @@ def confirm_payment():
                 else:
                     plan_expire = None
                 UserQuota.set_plan_upgrade_only(conn, user_id, plan, plan_expire)
+                # Gửi email thông báo kích hoạt gói cho user
+                try:
+                    from notifications import send_plan_activated_email
+                    with conn.cursor() as _cur:
+                        _cur.execute("SELECT email, fullname FROM users WHERE id = %s", (user_id,))
+                        _row = _cur.fetchone()
+                    if _row and _row[0]:
+                        send_plan_activated_email(_row[0], _row[1] or _row[0], plan, plan_expire)
+                except Exception:
+                    pass
             flash(f"Đã xác nhận thanh toán cho đơn {order_id}.", "success")
         else:
             flash("Không thể xác nhận đơn (có thể đã xác nhận hoặc không tồn tại).", "error")
@@ -494,6 +504,16 @@ def set_user_plan():
         conn = get_connection()
         UserQuota.get_or_create(conn, user_id)
         UserQuota.set_plan(conn, user_id, plan)
+        # Gửi email thông báo kích hoạt gói
+        try:
+            from notifications import send_plan_activated_email
+            with conn.cursor() as _cur:
+                _cur.execute("SELECT email, fullname FROM users WHERE id = %s", (user_id,))
+                _row = _cur.fetchone()
+            if _row and _row[0]:
+                send_plan_activated_email(_row[0], _row[1] or _row[0], plan)
+        except Exception:
+            pass
         flash(f"Đã cấp gói {plan.upper()} cho user #{user_id}.", "success")
     except Exception:
         logger.exception("[USERS] set plan error")

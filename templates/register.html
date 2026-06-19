@@ -84,6 +84,7 @@
         }
       })();
     </script>
+    <title data-i18n="registerPageTitle">{{ 'Register - PetAI' if ui_language == 'en' else 'Đăng ký - PetAI' }}</title>
     <script src="{{ url_for('static', filename='js/tailwindcss.js') }}"></script>
     <script src="{{ url_for('static', filename='js/chart.umd.min.js') }}"></script>
     <link
@@ -405,6 +406,7 @@
                     autocomplete="name"
                     required
                     data-i18n-placeholder="fullnamePlaceholder"
+                    value="{{ fullname or '' }}"
                   />
                   <small
                     class="label-sm text-error mt-xs"
@@ -427,6 +429,7 @@
                     autocomplete="username"
                     required
                     data-i18n-placeholder="usernamePlaceholderReg"
+                    value="{{ username or '' }}"
                   />
                   <small
                     class="label-sm text-error mt-xs"
@@ -449,6 +452,7 @@
                   type="email"
                   autocomplete="email"
                   required
+                  value="{{ email or '' }}"
                 />
                 <small
                   class="label-sm text-error mt-xs"
@@ -534,7 +538,9 @@
                   class="mt-1 h-4 w-4 rounded border-outline-variant text-primary focus:ring-primary bg-surface-container-lowest"
                   type="checkbox"
                   id="terms"
+                  name="terms"
                   required
+                  {% if terms %}checked{% endif %}
                 />
                 <span
                   class="body-md text-on-surface-variant"
@@ -805,15 +811,9 @@
             ok = false;
           }
 
-          if (
-            !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
-              (fields.email.value || "").trim(),
-            )
-          ) {
-            errors.email.textContent =
-              typeof window.PetAI_i18n !== "undefined"
-                ? window.PetAI_i18n.t("invalidEmail")
-                : "Email không hợp lệ.";
+          const emailVal = (fields.email.value || "").trim().toLowerCase();
+          if (!/^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(emailVal)) {
+            errors.email.textContent = "Email phải đúng định dạng Gmail (đuôi @gmail.com).";
             ok = false;
           }
 

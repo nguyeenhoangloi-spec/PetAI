@@ -1,7 +1,9 @@
+<!-- htmlhint spec-char-escape:false -->
 <!DOCTYPE html>
 
 <html class="{{'dark'if ui_theme=='dark'else'light'}}{{' i18n-loading'if ui_language=='en'else''}}" lang="{{ui_language or'vi'}}" data-theme="{{ui_theme or'light'}}">
   <head>
+    <title data-i18n="settingsPageTitle">{{ 'Settings' if ui_language == 'en' else 'Cài đặt' }} - PetAI</title>
     <script>
       (function () {
         var savedLang = "vi";
@@ -21,9 +23,9 @@
         }
       </style>
     </noscript>
-    <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <meta name="csrf-token" content="{{ csrf_token() }}" />
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <script>
       (function () {
         const root = document.documentElement;
@@ -89,18 +91,18 @@
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='css/typography.css') }}"
-    />
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/theme-dark.css') }}" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/toasts.css') }}" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile-header-fix.css') }}?v=4" />
+    >
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/theme-dark.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/toasts.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile-header-fix.css') }}?v=4">
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
-    />
+    >
     <link
       href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
       rel="stylesheet"
-    />
+    >
     <script id="tailwind-config">
       tailwind.config = {
         darkMode: "class",
@@ -231,13 +233,13 @@
               alt="PetAI New Logo"
               class="w-auto h-10 md:h-12"
               src="{{ url_for('static', filename='logo.png') }}"
-            />
+            >
             <span class="ml-0 text-lg md:text-2xl font-semibold text-primary"
               >PetAI</span
             >
           </a>
         </div>
-        
+
         <div class="flex items-center gap-md">
           <a class="hidden md:inline-flex bg-primary text-on-primary px-4 py-2 rounded-lg label-sm hover:opacity-90 active:scale-95 duration-150 transition-all" href="{{ url_for('predict.upload_page') }}" data-i18n="predict"><span data-i18n="predict">Nhận diện</span></a>
           <div class="language-switcher mr-2" id="languageSwitcher">
@@ -260,7 +262,7 @@
           </div>
 
             <div class="relative cursor-pointer avatar-wrapper">
-              <img id="navbarAvatar" alt="Anh dai dien" class="w-9 h-9 rounded-full border-2 border-primary/20 p-0.5" src="{{ ui_avatar_url }}" />
+              <img id="navbarAvatar" alt="Anh dai dien" class="w-9 h-9 rounded-full border-2 border-primary/20 p-0.5" src="{{ ui_avatar_url }}">
               <div class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white dark:border-slate-900 rounded-full"></div>
               <div class="absolute right-0 top-full w-52 bg-white dark:bg-slate-900 rounded-lg shadow-xl border border-slate-200 dark:border-slate-800 py-2 hidden avatar-dropdown-menu z-50">
                 <div class="px-4 pb-2">
@@ -290,7 +292,7 @@
           <div class="bg-gradient-to-r from-blue-600 to-indigo-700 dark:from-slate-900 dark:to-slate-800 rounded-2xl p-6 text-white shadow-lg flex flex-col md:flex-row items-center justify-between gap-6">
             <div class="flex flex-col md:flex-row items-center gap-6">
               <div class="relative group">
-                <img id="profileAvatar" alt="Ảnh đại diện" class="w-20 h-20 rounded-full border-4 border-white/20 p-1 shadow-md" src="{{ ui_avatar_url }}" />
+                <img id="profileAvatar" alt="Ảnh đại diện" class="w-20 h-20 rounded-full border-4 border-white/20 p-1 shadow-md" src="{{ ui_avatar_url }}">
                 <div class="absolute inset-0 bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer" onclick="document.getElementById('avatarFileInput').click()">
                   <span class="material-symbols-outlined text-white text-xl">photo_camera</span>
                 </div>
@@ -309,7 +311,7 @@
                 </div>
               </div>
             </div>
-            
+
             <div class="flex shrink-0">
               <a href="{{ url_for('predict.upgrade') }}" class="px-5 py-2.5 bg-amber-400 hover:bg-amber-300 text-slate-900 font-semibold rounded-xl text-sm shadow-md transition-all active:scale-95 flex items-center gap-2">
                 <span class="material-symbols-outlined text-[18px]">upgrade</span>
@@ -319,11 +321,11 @@
           </div>
 
           <form method="POST" id="settingsForm" action="{{ url_for('settings.settings') }}" class="flex flex-col gap-6">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
             <!-- Profile and Notifications in a Two Column / Split Layout -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              
+
               <!-- Left Column: Personal Info -->
               <section class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm flex flex-col gap-6" id="profile">
                 <div class="flex items-center gap-3 pb-4 border-b border-slate-100 dark:border-slate-850">
@@ -337,14 +339,14 @@
                   <div class="space-y-2">
                     <label class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block" data-i18n="fullnameLabel">Họ và tên</label>
                     <div class="flex items-center bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all">
-                      <input class="w-full bg-transparent border-none px-4 py-3 text-sm text-on-surface dark:text-slate-100 placeholder-slate-400 focus:ring-0" name="fullname" type="text" maxlength="128" value="{{ session.get('fullname') or session.get('username') or '' }}" />
+                      <input class="w-full bg-transparent border-none px-4 py-3 text-sm text-on-surface dark:text-slate-100 placeholder-slate-400 focus:ring-0" name="fullname" type="text" maxlength="128" value="{{ session.get('fullname') or session.get('username') or '' }}">
                     </div>
                   </div>
 
                   <div class="space-y-2">
                     <label class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block" data-i18n="usernameLabel">Tên đăng nhập</label>
                     <div class="flex items-center bg-slate-100 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 rounded-xl cursor-not-allowed">
-                      <input class="w-full bg-transparent border-none px-4 py-3 text-sm text-slate-500 dark:text-slate-500 cursor-not-allowed" disabled type="text" value="{{ session.get('username', '') }}" />
+                      <input class="w-full bg-transparent border-none px-4 py-3 text-sm text-slate-500 dark:text-slate-500 cursor-not-allowed" disabled type="text" value="{{ session.get('username', '') }}">
                       <span class="material-symbols-outlined mr-4 text-slate-400 dark:text-slate-600 text-sm">lock</span>
                     </div>
                   </div>
@@ -352,7 +354,7 @@
                   <div class="space-y-2">
                     <label class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block" data-i18n="emailLabel">Địa chỉ Email</label>
                     <div class="flex items-center bg-slate-100 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 rounded-xl cursor-not-allowed">
-                      <input class="w-full bg-transparent border-none px-4 py-3 text-sm text-slate-500 dark:text-slate-500 cursor-not-allowed" disabled type="text" value="{{ display_email or '-' }}" />
+                      <input class="w-full bg-transparent border-none px-4 py-3 text-sm text-slate-500 dark:text-slate-500 cursor-not-allowed" disabled type="text" value="{{ display_email or '-' }}">
                       <span class="material-symbols-outlined mr-4 text-slate-400 dark:text-slate-600 text-sm">lock</span>
                     </div>
                   </div>
@@ -369,25 +371,21 @@
                 </div>
 
                 <div class="space-y-5">
-                  <label class="flex items-start gap-4 p-3.5 rounded-xl border border-slate-100 dark:border-slate-850 bg-slate-50/50 dark:bg-slate-950/30 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-950/50 transition-colors">
-                    {% if settings.notifications %}
-                    <input type="checkbox" name="notifications" class="w-4 h-4 text-primary border-slate-300 dark:border-slate-700 rounded focus:ring-primary focus:ring-offset-0 mt-1" checked />
-                    {% else %}
-                    <input type="checkbox" name="notifications" class="w-4 h-4 text-primary border-slate-300 dark:border-slate-700 rounded focus:ring-primary focus:ring-offset-0 mt-1" />
-                    {% endif %}
-                    <div class="space-y-0.5">
-                      <p class="text-sm font-semibold text-slate-800 dark:text-slate-200" data-i18n="systemNotificationsLabel">Thông báo hệ thống</p>
-                      <p class="text-xs text-slate-500 dark:text-slate-400" data-i18n="systemNotificationsDesc">Nhận thông báo trực tiếp trên giao diện khi có hoạt động mới.</p>
-                    </div>
-                  </label>
+                  <div class="flex items-start gap-4 p-3.5 rounded-xl border border-slate-100 dark:border-slate-850 bg-slate-50/50 dark:bg-slate-950/30 hover:bg-slate-50 dark:hover:bg-slate-950/50 transition-colors">
+                    <input type="checkbox" id="notifications-toggle" name="notifications" class="w-4 h-4 text-primary border-slate-300 dark:border-slate-700 rounded focus:ring-primary focus:ring-offset-0 mt-1" {% if settings.notifications %}checked{% endif %}>
+                    <label for="notifications-toggle" class="space-y-0.5 cursor-pointer flex-1">
+                      <span class="text-sm font-semibold text-slate-800 dark:text-slate-200 block" data-i18n="systemNotificationsLabel">Thông báo hệ thống</span>
+                      <span class="text-xs text-slate-500 dark:text-slate-400 block" data-i18n="systemNotificationsDesc">Nhận thông báo trực tiếp trên giao diện khi có hoạt động mới.</span>
+                    </label>
+                  </div>
 
-                  <label class="flex items-start gap-4 p-3.5 rounded-xl border border-slate-100 dark:border-slate-850 bg-slate-50/50 dark:bg-slate-950/30 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-950/50 transition-colors">
-                    <input type="checkbox" name="email_notifications" class="w-4 h-4 text-primary border-slate-300 dark:border-slate-700 rounded focus:ring-primary focus:ring-offset-0 mt-1" {{ 'checked' if settings.email_notifications else '' }} />
-                    <div class="space-y-0.5">
-                      <p class="text-sm font-semibold text-slate-800 dark:text-slate-200" data-i18n="emailNotificationsLabel">Thông báo qua Email</p>
-                      <p class="text-xs text-slate-500 dark:text-slate-400" data-i18n="emailNotificationsDesc">Nhận các báo cáo thống kê và cập nhật tài khoản qua thư điện tử.</p>
-                    </div>
-                  </label>
+                  <div class="flex items-start gap-4 p-3.5 rounded-xl border border-slate-100 dark:border-slate-850 bg-slate-50/50 dark:bg-slate-950/30 hover:bg-slate-50 dark:hover:bg-slate-950/50 transition-colors">
+                    <input type="checkbox" id="email_notifications" name="email_notifications" class="w-4 h-4 text-primary border-slate-300 dark:border-slate-700 rounded focus:ring-primary focus:ring-offset-0 mt-1" {% if settings.email_notifications %}checked{% endif %}>
+                    <label for="email_notifications" class="space-y-0.5 cursor-pointer flex-1">
+                      <span class="text-sm font-semibold text-slate-800 dark:text-slate-200 block" data-i18n="emailNotificationsLabel">Thông báo qua Email</span>
+                      <span class="text-xs text-slate-500 dark:text-slate-400 block" data-i18n="emailNotificationsDesc">Nhận các báo cáo thống kê và cập nhật tài khoản qua thư điện tử.</span>
+                    </label>
+                  </div>
                 </div>
               </section>
             </div>
@@ -404,22 +402,29 @@
               <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="space-y-2">
                   <label class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block" data-i18n="currentPasswordLabel">Mật khẩu hiện tại</label>
-                  <div class="flex items-center bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all">
-                    <input class="w-full bg-transparent border-none px-4 py-3 text-sm text-on-surface dark:text-slate-100 focus:ring-0" name="current_password" type="password" data-i18n-placeholder="currentPasswordPlaceholder" placeholder="Nhập mật khẩu hiện tại" autocomplete="current-password" />
+                  <div class="flex items-center {% if force_change_password %}bg-slate-100 dark:bg-slate-950/60 cursor-not-allowed text-slate-400{% else %}bg-slate-50 dark:bg-slate-950{% endif %} border border-slate-200 dark:border-slate-800 rounded-xl focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all">
+                    <input
+                      class="w-full bg-transparent border-none px-4 py-3 text-sm text-on-surface dark:text-slate-100 focus:ring-0 disabled:text-slate-400 disabled:cursor-not-allowed"
+                      name="current_password"
+                      type="password"
+                      placeholder="{% if force_change_password %}Không cần mật khẩu hiện tại{% else %}Nhập mật khẩu hiện tại{% endif %}"
+                      autocomplete="current-password"
+                      {% if force_change_password %}disabled{% endif %}
+                    >
                   </div>
                 </div>
 
                 <div class="space-y-2">
                   <label class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block" data-i18n="newPasswordLabel">Mật khẩu mới</label>
                   <div class="flex items-center bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all">
-                    <input class="w-full bg-transparent border-none px-4 py-3 text-sm text-on-surface dark:text-slate-100 focus:ring-0" name="new_password" type="password" data-i18n-placeholder="newPasswordPlaceholder" placeholder="Nhập mật khẩu mới (>= 6 ký tự)" autocomplete="new-password" />
+                    <input class="w-full bg-transparent border-none px-4 py-3 text-sm text-on-surface dark:text-slate-100 focus:ring-0" name="new_password" type="password" data-i18n-placeholder="newPasswordPlaceholder" placeholder="Nhập mật khẩu mới (>= 6 ký tự)" autocomplete="new-password">
                   </div>
                 </div>
 
                 <div class="space-y-2">
                   <label class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block" data-i18n="confirmNewPasswordLabel">Xác nhận mật khẩu mới</label>
                   <div class="flex items-center bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all">
-                    <input class="w-full bg-transparent border-none px-4 py-3 text-sm text-on-surface dark:text-slate-100 focus:ring-0" name="confirm_new_password" type="password" data-i18n-placeholder="confirmNewPasswordPlaceholder" placeholder="Xác nhận mật khẩu mới" autocomplete="new-password" />
+                    <input class="w-full bg-transparent border-none px-4 py-3 text-sm text-on-surface dark:text-slate-100 focus:ring-0" name="confirm_new_password" type="password" data-i18n-placeholder="confirmNewPasswordPlaceholder" placeholder="Xác nhận mật khẩu mới" autocomplete="new-password">
                   </div>
                 </div>
               </div>
@@ -437,61 +442,64 @@
               <div>
                 <h4 class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-4" data-i18n="themeLabel">Chủ đề hiển thị</h4>
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                  <label class="relative cursor-pointer group">
-                    <input class="peer sr-only" name="theme" type="radio" value="light" {{ 'checked' if settings.theme == 'light' else '' }} />
-                    <div class="border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden bg-white shadow-sm transition-all hover:shadow-md peer-checked:border-primary peer-checked:ring-2 peer-checked:ring-primary/20">
-                      <div class="h-28 bg-slate-50 p-4 border-b border-slate-100">
-                        <div class="w-2/3 h-2 bg-slate-200 rounded mb-2"></div>
-                        <div class="w-1/2 h-2 bg-slate-200 rounded mb-4"></div>
-                        <div class="flex gap-2">
-                          <div class="w-7 h-7 rounded bg-primary/20"></div>
-                          <div class="flex-1 h-7 rounded bg-white border border-slate-200"></div>
-                        </div>
-                      </div>
-                      <div class="p-4 flex items-center justify-between bg-white dark:bg-slate-900">
+                  <div class="relative group">
+                    {% set _light_checked = (settings.theme == 'light') %}
+                    <input class="peer sr-only" id="theme-light" name="theme" type="radio" value="light"{% if _light_checked %} checked{% endif %}>
+                    <label for="theme-light" class="block border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden bg-white shadow-sm transition-all hover:shadow-md peer-checked:border-primary peer-checked:ring-2 peer-checked:ring-primary/20 cursor-pointer">
+                      <span class="block h-28 bg-slate-50 p-4 border-b border-slate-100">
+                        <span class="block w-2/3 h-2 bg-slate-200 rounded mb-2"></span>
+                        <span class="block w-1/2 h-2 bg-slate-200 rounded mb-4"></span>
+                        <span class="flex gap-2">
+                          <span class="w-7 h-7 rounded bg-primary/20"></span>
+                          <span class="flex-1 h-7 rounded bg-white border border-slate-200"></span>
+                        </span>
+                      </span>
+                      <span class="p-4 flex items-center justify-between bg-white dark:bg-slate-900 block">
                         <span class="text-sm font-semibold text-slate-800 dark:text-slate-200" data-i18n="themeLight">Sáng</span>
                         <span class="material-symbols-outlined text-primary opacity-0 peer-checked:opacity-100 transition-opacity">check_circle</span>
-                      </div>
-                    </div>
-                  </label>
+                      </span>
+                    </label>
+                  </div>
 
-                  <label class="relative cursor-pointer group">
-                    <input class="peer sr-only" name="theme" type="radio" value="dark" {{ 'checked' if settings.theme == 'dark' else '' }} />
-                    <div class="border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden bg-slate-900 shadow-sm transition-all hover:shadow-md peer-checked:border-primary peer-checked:ring-2 peer-checked:ring-primary/20">
-                      <div class="h-28 bg-slate-800 p-4 border-b border-slate-850">
-                        <div class="w-2/3 h-2 bg-slate-700 rounded mb-2"></div>
-                        <div class="w-1/2 h-2 bg-slate-700 rounded mb-4"></div>
-                        <div class="flex gap-2">
-                          <div class="w-7 h-7 rounded bg-primary/40"></div>
-                          <div class="flex-1 h-7 rounded bg-slate-700"></div>
-                        </div>
-                      </div>
-                      <div class="p-4 flex items-center justify-between bg-white dark:bg-slate-900">
+                  <div class="relative group">
+                    {% set _dark_checked = (settings.theme == 'dark') %}
+                    <input class="peer sr-only" id="theme-dark" name="theme" type="radio" value="dark"{% if _dark_checked %} checked{% endif %}>
+                    <label for="theme-dark" class="block border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden bg-slate-900 shadow-sm transition-all hover:shadow-md peer-checked:border-primary peer-checked:ring-2 peer-checked:ring-primary/20 cursor-pointer">
+                      <span class="block h-28 bg-slate-800 p-4 border-b border-slate-850">
+                        <span class="block w-2/3 h-2 bg-slate-700 rounded mb-2"></span>
+                        <span class="block w-1/2 h-2 bg-slate-700 rounded mb-4"></span>
+                        <span class="flex gap-2">
+                          <span class="w-7 h-7 rounded bg-primary/40"></span>
+                          <span class="flex-1 h-7 rounded bg-slate-700"></span>
+                        </span>
+                      </span>
+                      <span class="p-4 flex items-center justify-between bg-white dark:bg-slate-900 block">
                         <span class="text-sm font-semibold text-slate-800 dark:text-slate-200" data-i18n="themeDark">Tối</span>
                         <span class="material-symbols-outlined text-primary opacity-0 peer-checked:opacity-100 transition-opacity">check_circle</span>
-                      </div>
-                    </div>
-                  </label>
+                      </span>
+                    </label>
+                  </div>
 
-                  <label class="relative cursor-pointer group">
-                    <input class="peer sr-only" name="theme" type="radio" value="auto" {{ 'checked' if settings.theme == 'auto' else '' }} />
-                    <div class="border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden bg-white shadow-sm transition-all hover:shadow-md peer-checked:border-primary peer-checked:ring-2 peer-checked:ring-primary/20">
-                      <div class="h-28 flex">
-                        <div class="w-1/2 bg-slate-50 p-4 border-r border-slate-100">
-                          <div class="w-full h-2 bg-slate-200 rounded mb-2"></div>
-                          <div class="w-full h-2 bg-slate-200 rounded"></div>
-                        </div>
-                        <div class="w-1/2 bg-slate-800 p-4">
-                          <div class="w-full h-2 bg-slate-700 rounded mb-2"></div>
-                          <div class="w-full h-2 bg-slate-700 rounded"></div>
-                        </div>
-                      </div>
-                      <div class="p-4 flex items-center justify-between bg-white dark:bg-slate-900">
+                  <div class="relative group">
+                    {% set _auto_checked = (settings.theme == 'auto') %}
+                    <input class="peer sr-only" id="theme-auto" name="theme" type="radio" value="auto"{% if _auto_checked %} checked{% endif %}>
+                    <label for="theme-auto" class="block border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden bg-white shadow-sm transition-all hover:shadow-md peer-checked:border-primary peer-checked:ring-2 peer-checked:ring-primary/20 cursor-pointer">
+                      <span class="block h-28 flex">
+                        <span class="block w-1/2 bg-slate-50 p-4 border-r border-slate-100">
+                          <span class="block w-full h-2 bg-slate-200 rounded mb-2"></span>
+                          <span class="block w-full h-2 bg-slate-200 rounded"></span>
+                        </span>
+                        <span class="block w-1/2 bg-slate-800 p-4">
+                          <span class="block w-full h-2 bg-slate-700 rounded mb-2"></span>
+                          <span class="block w-full h-2 bg-slate-700 rounded"></span>
+                        </span>
+                      </span>
+                      <span class="p-4 flex items-center justify-between bg-white dark:bg-slate-900 block">
                         <span class="text-sm font-semibold text-slate-800 dark:text-slate-200" data-i18n="themeAuto">Tự động</span>
                         <span class="material-symbols-outlined text-primary opacity-0 peer-checked:opacity-100 transition-opacity">check_circle</span>
-                      </div>
-                    </div>
-                  </label>
+                      </span>
+                    </label>
+                  </div>
                 </div>
               </div>
             </section>
@@ -558,7 +566,7 @@
 
         if (window.clickScrollTimeout) clearTimeout(window.clickScrollTimeout);
         window.setActiveHighlight(sectionId);
-        
+
         // Lock scroll spy for 1.2 seconds to cover the full duration of smooth scrolling
         window.clickScrollTimeout = setTimeout(() => {
           window.isClickScroll = false;
@@ -808,7 +816,7 @@
             if (profileAvatar) profileAvatar.src = objectUrl;
 
             const t_func = typeof window.PetAI_i18n !== 'undefined' ? window.PetAI_i18n.t : (x) => x;
-            
+
             // Upload via fetch
             const formData = new FormData();
             formData.append('avatar', file);
@@ -836,7 +844,7 @@
                 if (profileAvatar) profileAvatar.src = newUrl;
                 if (navbarAvatar) navbarAvatar.src = newUrl;
                 if (sidebarAvatar) sidebarAvatar.src = newUrl;
-                
+
                 const dropdownAvatar = document.querySelector('.avatar-wrapper img');
                 if (dropdownAvatar) dropdownAvatar.src = newUrl;
 
@@ -875,7 +883,7 @@
                   alt="PetAI New Logo"
                   class="h-8 w-auto md:h-10"
                   src="{{ url_for('static', filename='logo.png') }}"
-                />
+                >
                 <span class="ml-0 text-sm md:text-lg font-semibold text-primary"
                   >PetAI</span
                 >
@@ -972,5 +980,4 @@
     </footer>
 </body>
 </html>
-
 

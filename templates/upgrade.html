@@ -31,9 +31,9 @@
         }
       </style>
     </noscript>
-    <meta charset="utf-8" />
-      <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-      <meta name="csrf-token" content="{{ csrf_token() }}" />
+    <meta charset="utf-8">
+      <meta content="width=device-width, initial-scale=1.0" name="viewport">
+      <meta name="csrf-token" content="{{ csrf_token() }}">
       <script>
         (function () {
           const root = document.documentElement;
@@ -98,36 +98,33 @@
           } catch (e) {}
         })();
     </script>
-    <title data-i18n="upgradePageTitle">
-      {{ 'Upgrade Plan - PetAI' if ui_language == 'en' else 'Nâng cấp gói -
-      PetAI' }}
-    </title>
+    <title data-i18n="upgradePageTitle">{{ 'Upgrade' if ui_language == 'en' else 'Nâng cấp' }} - PetAI</title>
     <script src="{{ url_for('static', filename='js/tailwindcss.js') }}"></script>
     <script src="{{ url_for('static', filename='js/chart.umd.min.js') }}"></script>
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='css/typography.css') }}"
-    />
+    >
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='css/theme-dark.css') }}"
-    />
+    >
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='css/toasts.css') }}"
-    />
+    >
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='css/mobile-header-fix.css') }}?v=4"
-    />
+    >
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
-    />
+    >
     <link
       href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
       rel="stylesheet"
-    />
+    >
     <script id="tailwind-config">
       tailwind.config = {
         darkMode: "class",
@@ -244,6 +241,12 @@
           "opsz" 24;
       }
 
+      .delay-100 { animation-delay: 100ms; }
+      .delay-150 { animation-delay: 150ms; }
+      .delay-200 { animation-delay: 200ms; }
+      .delay-250 { animation-delay: 250ms; }
+      .delay-300 { animation-delay: 300ms; }
+
       @keyframes fadeInUp {
         from {
           opacity: 0;
@@ -346,7 +349,7 @@
               alt="PetAI New Logo"
               class="w-auto h-10 md:h-12"
               src="{{ url_for('static', filename='logo.png') }}"
-            />
+            >
             <span class="ml-0 text-lg md:text-2xl font-semibold text-primary"
               >PetAI</span
             >
@@ -395,7 +398,7 @@
               alt="Ảnh đại diện"
               class="w-9 h-9 rounded-full border-2 border-primary/20 p-0.5"
               src="{{ ui_avatar_url }}"
-            />
+            >
             <div
               class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white dark:border-slate-900 rounded-full"
             ></div>
@@ -492,7 +495,7 @@
                 class="material-symbols-outlined text-[18px]"
                 aria-hidden="true"
                 >shopping_cart</span
-              ><span data-i18n="choosePlanPay">Chọn gói & Thanh toán</span></a
+              ><span data-i18n="choosePlanPay">Chọn gói &amp; Thanh toán</span></a
             >
           </div>
         </section>
@@ -504,8 +507,7 @@
         >
             <!-- Gói: Free -->
             <article
-              class="pricing-card bg-surface-container-lowest dark:bg-slate-900 p-5 rounded-xl flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[460px] animate-fade-in"
-              style="animation-delay: 100ms"
+              class="pricing-card bg-surface-container-lowest dark:bg-slate-900 p-5 rounded-xl flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[460px] animate-fade-in delay-100"
             >
               <div class="card-accent-bar bg-slate-300 dark:bg-slate-700"></div>
               <div class="pt-2">
@@ -548,12 +550,10 @@
                   </p>
                 </div>
 
-                <hr class="border-outline-variant/10 my-4" />
+                <hr class="border-outline-variant/10 my-4">
 
                 <ul
                   class="space-y-3 body-md text-on-surface-variant"
-                  aria-label="Quyền lợi gói Miễn phí"
-                  data-i18n-aria="freePlanBenefits"
                 >
                   <li class="flex items-start gap-2 text-sm">
                     <span
@@ -636,8 +636,7 @@
 
             <!-- Gói: Basic -->
             <article
-              class="pricing-card bg-surface-container-lowest dark:bg-slate-900 p-5 rounded-xl flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[460px] animate-fade-in"
-              style="animation-delay: 150ms"
+              class="pricing-card bg-surface-container-lowest dark:bg-slate-900 p-5 rounded-xl flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[460px] animate-fade-in delay-150"
             >
               <div class="card-accent-bar bg-blue-500"></div>
               <div class="pt-2">
@@ -680,12 +679,10 @@
                   </p>
                 </div>
 
-                <hr class="border-outline-variant/10 my-4" />
+                <hr class="border-outline-variant/10 my-4">
 
                 <ul
                   class="space-y-3 body-md text-on-surface-variant"
-                  aria-label="Quyền lợi gói Cơ bản"
-                  data-i18n-aria="basicPlanBenefits"
                 >
                   <li
                     class="flex items-start gap-2 text-sm font-medium text-on-surface"
@@ -791,8 +788,7 @@
 
             <!-- Gói: Pro (Highlight) -->
             <article
-              class="pricing-card bg-surface-container-lowest dark:bg-slate-900 p-5 rounded-xl flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[460px] pro-highlight animate-fade-in"
-              style="animation-delay: 200ms"
+              class="pricing-card bg-surface-container-lowest dark:bg-slate-900 p-5 rounded-xl flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[460px] pro-highlight animate-fade-in delay-200"
             >
               <div
                 class="card-accent-bar bg-gradient-to-r from-blue-600 to-indigo-600"
@@ -814,7 +810,7 @@
                       class="text-xs text-on-surface-variant mt-1"
                       data-i18n="planProSub"
                     >
-                      <span data-i18n="planProSub">Tối ưu & phổ biến nhất</span>
+                      <span data-i18n="planProSub">Tối ưu &amp; phổ biến nhất</span>
                     </p>
                   </div>
                   <div
@@ -841,12 +837,10 @@
                   </p>
                 </div>
 
-                <hr class="border-outline-variant/10 my-4" />
+                <hr class="border-outline-variant/10 my-4">
 
                 <ul
                   class="space-y-3 body-md text-on-surface-variant"
-                  aria-label="Quyền lợi gói Pro"
-                  data-i18n-aria="proPlanBenefits"
                 >
                   <li
                     class="flex items-start gap-2 text-sm font-semibold text-on-surface"
@@ -954,8 +948,7 @@
 
             <!-- Gói: Enterprise -->
             <article
-              class="pricing-card bg-surface-container-lowest dark:bg-slate-900 p-5 rounded-xl flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[460px] animate-fade-in"
-              style="animation-delay: 250ms"
+              class="pricing-card bg-surface-container-lowest dark:bg-slate-900 p-5 rounded-xl flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[460px] animate-fade-in delay-250"
             >
               <div class="card-accent-bar bg-amber-500"></div>
               <div class="pt-2">
@@ -998,12 +991,10 @@
                   </p>
                 </div>
 
-                <hr class="border-outline-variant/10 my-4" />
+                <hr class="border-outline-variant/10 my-4">
 
                 <ul
                   class="space-y-3 body-md text-on-surface-variant"
-                  aria-label="Quyền lợi gói Doanh nghiệp"
-                  data-i18n-aria="enterprisePlanBenefits"
                 >
                   <li
                     class="flex items-start gap-2 text-sm font-semibold text-on-surface"
@@ -1037,7 +1028,7 @@
                       >
                     </span>
                     <span data-i18n="vipBandwidth"
-                      >Tối ưu hóa băng thông & VIP</span
+                      >Tối ưu hóa băng thông &amp; VIP</span
                     >
                   </li>
                   <li class="flex items-start gap-2 text-sm">
@@ -1097,8 +1088,7 @@
           <!-- ── Confirmation Section ── -->
           <section
             id="checkout"
-            class="w-full bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-xl p-6 md:p-8 shadow-sm animate-fade-in"
-            style="animation-delay: 300ms"
+            class="w-full bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-xl p-6 md:p-8 shadow-sm animate-fade-in delay-300"
             data-purpose="checkout-section"
           >
             <div
@@ -1133,15 +1123,15 @@
 
             <form
               method="post"
-              action="{{ url_for('predict.checkout') }}"
+              action="/predict/checkout"
               id="checkoutForm"
             >
               <input
                 type="hidden"
                 name="csrf_token"
                 value="{{ csrf_token() }}"
-              />
-              <input type="hidden" name="payment_method" value="qr" />
+              >
+              <input type="hidden" name="payment_method" value="qr">
 
               <div
                 class="grid grid-cols-1 md:grid-cols-[1.2fr_1fr] gap-6 md:gap-8 items-start"
@@ -1347,7 +1337,7 @@
                   alt="PetAI New Logo"
                   class="h-8 w-auto md:h-10"
                   src="{{ url_for('static', filename='logo.png') }}"
-                />
+                >
                 <span class="ml-0 text-sm md:text-lg font-semibold text-primary"
                   >PetAI</span
                 >

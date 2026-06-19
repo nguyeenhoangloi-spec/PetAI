@@ -1,6 +1,9 @@
-<!doctype html>
-
-<html class="{{ 'dark' if ui_theme == 'dark' else 'light' }}{{ ' i18n-loading' if ui_language == 'en' else '' }}"
+<!-- htmlhint spec-char-escape:false, tag-pair:false -->
+<!-- html-validate-disable attribute-allowed-values -->
+<!DOCTYPE html>
+{% set html_class = 'dark' if ui_theme == 'dark' else 'light' %}
+{% if ui_language == 'en' %}{% set html_class = html_class ~ ' i18n-loading' %}{% endif %}
+<html class="{{ html_class }}"
   lang="{{ ui_language or 'vi' }}" data-theme="{{ ui_theme or 'light' }}">
 
 <head>
@@ -29,9 +32,9 @@
       }
     </style>
   </noscript>
-  <meta charset="utf-8" />
-  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-  <meta name="csrf-token" content="{{ csrf_token() }}" />
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
   <script>
     (function () {
       const root = document.documentElement;
@@ -92,18 +95,18 @@
       } catch (e) { }
     })();
   </script>
-  <title data-i18n="adminUsersPageTitle">{{ 'Admin User Management - PetAI' if ui_language == 'en' else 'Quản trị Người
-    dùng - PetAI' }}</title>
+  {% set page_title = 'User Admin - PetAI' if ui_language == 'en' else 'Quản trị User - PetAI' %}
+  <title data-i18n="adminUsersPageTitle">{{ page_title }}</title>
   <script src="{{ url_for('static', filename='js/tailwindcss.js') }}"></script>
   <script src="{{ url_for('static', filename='js/chart.umd.min.js') }}"></script>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/typography.css') }}" />
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/theme-dark.css') }}" />
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/toasts.css') }}" />
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile-header-fix.css') }}?v=4" />
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin-dashboard-content.css') }}" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/typography.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/theme-dark.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/toasts.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile-header-fix.css') }}?v=4">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin-dashboard-content.css') }}">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-    rel="stylesheet" />
+    rel="stylesheet">
   <script id="tailwind-config">
     tailwind.config = {
       darkMode: "class",
@@ -219,6 +222,9 @@
         "GRAD" 0,
         "opsz" 24;
     }
+    .table-container {
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+    }
   </style>
 </head>
 
@@ -233,7 +239,7 @@
     <div class="flex items-center justify-between px-4 md:px-6 h-16 w-full">
       <div class="flex items-center gap-gutter">
         <a href="{{ url_for('home.index') }}" class="inline-flex items-center gap-0">
-          <img alt="PetAI New Logo" class="w-auto h-10 md:h-12" src="{{ url_for('static', filename='logo.png') }}" />
+          <img alt="PetAI New Logo" class="w-auto h-10 md:h-12" src="{{ url_for('static', filename='logo.png') }}">
           <span class="ml-0 text-lg md:text-2xl font-semibold text-primary">PetAI</span>
         </a>
       </div>
@@ -261,7 +267,7 @@
         </div>
         <div class="relative cursor-pointer avatar-wrapper">
           <img alt="Ảnh đại diện" class="w-9 h-9 rounded-full border-2 border-primary/20 p-0.5"
-            src="{{ ui_avatar_url }}" />
+            src="{{ ui_avatar_url }}">
 
           <div
             class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white dark:border-slate-900 rounded-full">
@@ -298,11 +304,6 @@
     {% include '_sidebar.html' %}
 
     <div id="content-area" class="col-span-1 flex flex-col min-w-0 gap-8">
-      <style>
-        .table-container {
-          box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
-        }
-      </style>
 
       <div class="space-y-6">
         <section
@@ -408,7 +409,7 @@
             </span>
             <input id="usersSearch"
               class="w-full pl-10 pr-4 py-2.5 bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/40 dark:border-slate-800 rounded-lg label-sm text-on-surface dark:text-slate-100 focus:ring-primary focus:border-primary dark:focus:ring-blue-500 dark:focus:border-blue-500 transition-colors"
-              placeholder="Tìm username/email/họ tên..." type="text" data-i18n-placeholder="searchUserPlaceholder" />
+              placeholder="Tìm username/email/họ tên..." type="text" data-i18n-placeholder="searchUserPlaceholder">
           </div>
           <div class="relative">
             <select id="roleFilter"
@@ -523,19 +524,23 @@
                     <form class="set-plan-form flex items-center justify-center gap-2" method="POST"
                       action="{{ url_for('users.set_user_plan') }}" data-username="{{ u.username }}"
                       data-userid="{{ u.id }}">
-                      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-                      <input type="hidden" name="user_id" value="{{ u.id }}" />
-                      <input type="hidden" name="page" value="{{ page or 1 }}" />
+                      {% set selected_free = 'selected' if plan_val == 'free' else '' %}
+                      {% set selected_basic = 'selected' if plan_val == 'basic' else '' %}
+                      {% set selected_pro = 'selected' if plan_val == 'pro' else '' %}
+                      {% set selected_enterprise = 'selected' if plan_val == 'enterprise' else '' %}
+                      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                      <input type="hidden" name="user_id" value="{{ u.id }}">
+                      <input type="hidden" name="page" value="{{ page or 1 }}">
                       <div class="relative inline-flex items-center">
                         <select name="plan"
                           class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/40 dark:border-slate-800 rounded-lg py-1 pl-2.5 pr-7 label-sm font-semibold uppercase text-on-surface dark:text-slate-200 focus:ring-primary dark:focus:ring-blue-500 appearance-none bg-none cursor-pointer transition-colors"
                           aria-label="Cấp gói" data-i18n-aria="planColHeader">
-                          <option value="free" {{ 'selected' if plan_val=='free' else '' }} data-i18n="planFree"><span
+                          <option value="free" {{selected_free}} data-i18n="planFree"><span
                               data-i18n="planFree">Free</span></option>
-                          <option value="basic" {{ 'selected' if plan_val=='basic' else '' }} data-i18n="planBasic">
+                          <option value="basic" {{selected_basic}} data-i18n="planBasic">
                             <span data-i18n="planBasic">Basic</span></option>
-                          <option value="pro" {{ 'selected' if plan_val=='pro' else '' }}>PRO</option>
-                          <option value="enterprise" {{ 'selected' if plan_val=='enterprise' else '' }}
+                          <option value="pro" {{selected_pro}}>PRO</option>
+                          <option value="enterprise" {{selected_enterprise}}
                             data-i18n="planEnterprise"><span data-i18n="planEnterprise">Enterprise</span></option>
                         </select>
                         <span class="absolute right-1.5 flex items-center pointer-events-none text-slate-500">
@@ -583,7 +588,7 @@
               {% endif %}
               <span class="px-3 h-8 inline-flex items-center rounded bg-primary text-white label-sm font-bold">{{ page
                 }} / {{ total_pages if total_pages > 0 else 1 }}</span>
-              {% if page < total_pages %} <a
+              {% if total_pages > page %} <a
                 class="p-2 rounded border border-outline-variant/30 dark:border-slate-700 text-on-surface-variant dark:text-slate-400 hover:bg-surface-container-low dark:hover:bg-slate-800 transition-colors"
                 href="{{ url_for('users.list_users', page=page+1) }}" aria-label="Trang sau" data-i18n-aria="nextPage">
                 <span class="material-symbols-outlined text-[18px]">chevron_right</span>
@@ -606,7 +611,7 @@
   </main>
 
   <div class="fixed inset-0 z-[1050] hidden items-center justify-center bg-slate-950/60 backdrop-blur-sm p-4"
-    id="confirmModal" aria-hidden="true">
+    id="confirmModal">
     <div
       class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 dark:border-slate-800 rounded-xl max-w-md w-full p-6 shadow-xl">
       <h3 id="modalTitle" class="headline-md font-semibold text-on-surface dark:text-slate-100 flex items-center gap-2">
@@ -632,7 +637,7 @@
         <div class="lg:col-span-6 space-y-6">
           <div class="headline-md font-bold tracking-tighter text-primary">
             <span class="inline-flex items-center gap-0">
-              <img alt="PetAI New Logo" class="h-8 w-auto md:h-10" src="{{ url_for('static', filename='logo.png') }}" />
+              <img alt="PetAI New Logo" class="h-8 w-auto md:h-10" src="{{ url_for('static', filename='logo.png') }}">
               <span class="ml-0 text-sm md:text-lg font-semibold text-primary">PetAI</span>
             </span>
           </div>

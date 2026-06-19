@@ -79,6 +79,11 @@ def login():
             flash("Tài khoản không tồn tại.", "error")
             return render_template("login.html")
 
+        # Chặn đăng nhập nếu tài khoản chưa xác thực email
+        if not user.get("email_verified", 0):
+            flash("Tài khoản chưa được xác thực email. Vui lòng xác thực email trước khi đăng nhập.", "error")
+            return render_template("login.html")
+
         if not check_password_hash(user["password_hash"], password):
             flash("Mật khẩu không đúng.", "error")
             return render_template("login.html")
@@ -101,6 +106,8 @@ def login():
         # Xử lý remember me
         if remember:
             session.permanent = True  # Session sẽ tồn tại lâu hơn
+        else:
+            session.permanent = False  # Session cookie sẽ bị xóa khi tắt trình duyệt
         
         flash(f"Chào mừng trở lại, {user.get('fullname', user['username'])}!", "success")
         
