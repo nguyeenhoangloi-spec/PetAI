@@ -1,425 +1,250 @@
-# KhoaLuan - Hệ thống nhận diện Chó/Mèo, quản lý quota và thanh toán gói bằng Flask
+# 🐾 PetAI - Hệ Thống Nhận Diện Giống Chó & Quản Lý Dịch Vụ Thanh Toán Tự Động
 
-Ứng dụng web xây dựng bằng Flask để:
+[![Python Version](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/)
+[![Flask Version](https://img.shields.io/badge/flask-3.0+-green.svg)](https://flask.palletsprojects.com/)
+[![YOLOv8](https://img.shields.io/badge/YOLOv8-Ultralytics-orange.svg)](https://github.com/ultralytics/ultralytics)
+[![License](https://img.shields.io/badge/license-MIT-lightgrey.svg)](LICENSE)
 
-- nhận diện ảnh chó,
-- dự đoán giống chó,
-- quản lý lịch sử/thống kê,
-- phân quyền User/Admin,
-- triển khai cơ chế quota miễn phí + xem quảng cáo,
-- nâng cấp gói qua thanh toán QR và webhook SePay.
+**PetAI** là một ứng dụng web hiện đại và tối ưu được xây dựng trên nền tảng **Flask**, tích hợp các mô hình học sâu tiên tiến (Deep Learning) để nhận diện giống chó từ hình ảnh tải lên. Hệ thống sở hữu đầy đủ các tính năng phục vụ mục đích thương mại hóa dịch vụ như: quản lý hạn mức sử dụng (Quota), hệ thống gói cước dịch vụ cao cấp, xem quảng cáo nhận lượt nhận diện miễn phí, cùng cổng thanh toán tự động qua mã VietQR tích hợp Webhook kiểm tra giao dịch thời gian thực từ SePay.
 
 ---
 
-## 1) Tổng quan bài toán
+## 🌟 Tính Năng Nổi Bật
 
-Mục tiêu của hệ thống:
+### 🧠 Trí Tuệ Nhân Tạo & Thị Giác Máy Tính (AI/CV)
+*   **Bộ lọc thông minh YOLOv8 (`yolov8s.pt`):** Tự động phát hiện vùng chứa chó trong ảnh với độ chính xác cao và loại bỏ các ảnh không hợp lệ (ví dụ: vật dụng hoặc động vật khác không phải chó).
+*   **Cắt ảnh thông minh (Smart Dog Crop):** Sau khi xác định được vùng chứa chó, hệ thống tự động cắt ảnh tập trung vào đối tượng để tối ưu hóa đầu vào cho mô hình phân loại giống chó.
+*   **Nhận diện giống chó chuyên sâu:** Sử dụng mô hình phân loại được huấn luyện trên các bộ dữ liệu chuẩn như Stanford Dogs.
+*   **Grad-CAM Heatmaps:** Vẽ bản đồ nhiệt mức độ tập trung đặc trưng hình thái để trực quan hóa vùng trọng tâm mà AI sử dụng nhằm ra quyết định phân loại.
+*   **Mô hình Fallback HOG + SVM:** Hỗ trợ mô hình xử lý ảnh truyền thống làm giải pháp dự phòng hiệu năng nhẹ.
 
-- Cung cấp dịch vụ dự đoán giống thú cưng trên web cho người dùng đăng nhập.
-- Kiểm soát lượt dùng theo gói (`free`, `basic`, `pro`, `enterprise`).
-- Hỗ trợ mở khóa tạm bằng quảng cáo cho người dùng free.
-- Hỗ trợ thanh toán nâng cấp gói với luồng:
-  - User tạo đơn,
-  - User bấm "đã chuyển tiền" (tuỳ cấu hình),
-  - Admin xác nhận hoặc webhook SePay tự động xác nhận.
-- Quản trị toàn bộ user, khóa/mở, xem chi tiết, cấp gói.
+### 💳 Quản Lý Hạn Mức & Thanh Toán Thông Minh
+*   **Kiểm soát hạn mức (Quota Gate):** Tự động trừ lượt nhận diện khi thực hiện phân tích dựa theo phân quyền người dùng và cấp độ gói dịch vụ.
+*   **Cơ chế xem quảng cáo nhận lượt:** Người dùng miễn phí có thể xem tối đa 3 quảng cáo mỗi ngày để mở khóa thêm các lượt nhận diện phụ (mỗi lần xem nhận thêm 3 lượt).
+*   **Hệ thống gói cước dịch vụ đa cấp:** Hỗ trợ các gói cước `basic`, `pro`, và `enterprise` với thời gian hiệu lực và số lượt sử dụng được tối ưu hóa.
+*   **Thanh toán VietQR tự động:** Sinh mã thanh toán QR chuẩn EMVCo có sẵn nội dung chuyển khoản mã hóa hóa đơn.
+*   **Webhook SePay tự động:** Tự động lắng nghe thông tin chuyển khoản từ ngân hàng, khớp mã hóa đơn và kích hoạt gói cước ngay lập tức mà không cần xác nhận thủ công từ Admin.
 
----
-
-## 2) Công nghệ sử dụng
-
-- **Backend**: Flask, Blueprint, Jinja2
-- **Database**: MySQL (`pymysql`)
-- **Auth**:
-  - Đăng nhập thường (username/email + password hash Werkzeug)
-  - Google OAuth (Authlib)
-- **AI/CV**:
-  - YOLOv8 (`ultralytics`) để detect dog/cat và suy luận breed (nếu có weight breed)
-  - Pipeline HOG + SVM (`scikit-learn`, `joblib`) làm fallback/legacy
-- **QR thanh toán**:
-  - Sinh payload VietQR (`vietqr.py`)
-  - Tùy chọn ảnh QR từ API `img.vietqr.io`
-- **Deploy runtime**: `waitress` (production fallback), Flask dev server (debug)
+### 🌐 Trải Nghiệm Người Dùng Cao Cấp (UX Premium)
+*   **PJAX Router:** Cơ chế tải trang mượt mà không cần reload lại toàn bộ trang web (Single Page App experience).
+*   **Hệ thống Theme động:** Hỗ trợ giao diện Sáng/Tối (Light/Dark mode) cùng cơ chế đồng bộ tự động với ứng dụng Flutter di động.
+*   **Hỗ trợ Đa ngôn ngữ (i18n):** Chuyển đổi linh hoạt giữa Tiếng Việt 🇻🇳 và Tiếng Anh 🇺🇸 bằng cơ chế xử lý ở cả Client & Server.
+*   **Đăng nhập linh hoạt:** Đăng nhập thông thường kết hợp Google OAuth.
 
 ---
 
-## 3) Cấu trúc chức năng theo vai trò
+## 🛠️ Công Nghệ Sử Dụng
 
-### 3.1 User
-
-- Đăng ký, đăng nhập, đăng xuất, quên mật khẩu (placeholder).
-- Upload ảnh để nhận diện.
-- Xem lịch sử dự đoán cá nhân (phân trang).
-- Xem thống kê cá nhân (top breed, trung bình confidence...).
-- Xem/cập nhật cài đặt (theme, language, notification).
-- Cơ chế quota:
-  - Free: 10 lượt miễn phí.
-  - Hết free: được xem quảng cáo tối đa 3 lần.
-  - Mỗi lần xem ads mở thêm 3 lượt (`ad_unlocks_remaining`).
-- Mua gói ở trang upgrade, theo dõi trạng thái đơn hàng ở trang payments.
-
-### 3.2 Admin
-
-- Xem danh sách user, xem chi tiết user.
-- Khóa/mở khóa tài khoản.
-- Xóa user (có điều kiện xác nhận + ràng buộc dữ liệu liên quan).
-- Khởi tạo DB (`/users/init-db`).
-- Xem danh sách đơn user đã báo chuyển tiền (`/users/confirmations`).
-- Xác nhận thanh toán để cấp gói.
-- Cấp gói thủ công cho user (`/users/set-plan`).
-
-### 3.3 Hệ thống
-
-- Middleware tự động đăng xuất user đã bị khóa.
-- Context processor inject `ui_theme`, `current_plan` vào mọi template.
-- Error handlers cho 403/404/500.
-- Health check endpoint `/health`.
-- Webhook SePay với cơ chế idempotency theo `sepay_tx_id`.
+*   **Backend:** Python 3.10+, Flask, Blueprint, Jinja2 Templates.
+*   **Database:** MySQL (sử dụng thư viện `pymysql` kết hợp Connection Pool).
+*   **AI Frameworks:** Ultralytics (YOLOv8), OpenCV, PyTorch, Scikit-learn (HOG+SVM fallback).
+*   **Thanh Toán:** VietQR EMVCo Payload, SePay Webhook Integration.
+*   **Frontend:** HTML5, TailwindCSS v4, Vanilla Javascript, Chart.js.
 
 ---
 
-## 4) Luồng AI nhận diện ảnh
+## 📂 Cấu Trúc Dự Án
 
-Trong `upload.py`, khi user upload ảnh:
-
-1. **Kiểm tra quota** trước khi suy luận.
-2. Chạy **YOLO detect base model** (`yolov8n.pt`) để xác định `dog/cat` + confidence.
-3. Chỉ khi `Dog` và confidence >= **75%** mới cho suy luận giống.
-4. Nếu có breed model (`best.pt` tìm tự động trong `runs/detect/**/weights/`) thì dùng YOLO breed để override kết quả giống.
-5. Đồng thời vẫn chạy pipeline `ImagePredictor` (HOG+SVM) làm fallback.
-6. Lưu lịch sử vào `prediction_history`.
-7. Với gói trả phí có giới hạn lượt (`basic`, `pro`) thì trừ `paid_uses_remaining`.
-
-### Trọng số mô hình
-
-- Base detect: `yolov8n.pt` (có sẵn trong repo)
-- Breed detect (tuỳ chọn):
-  - `runs/detect/breeds/weights/best.pt`
-  - `runs/detect/breeds_from_scratch/weights/best.pt`
-  - `weights/yolov8_breed_best.pt`
-  - `models/yolov8_breed_best.pt`
-
-Hệ thống tự quét và chọn file `best.pt` mới nhất.
-
----
-
-## 5) Luồng quota & gói dịch vụ
-
-### Plan hiện hỗ trợ
-
-- `free`:
-  - 10 lượt miễn phí
-  - ads: tối đa 3 lần, mỗi lần +3 lượt mở khóa
-- `basic`: 1.000 VND, 7 ngày, giới hạn 50 lượt
-- `pro`: 5.000 VND, 30 ngày, giới hạn 200 lượt
-- `enterprise`: 15.000 VND, 90 ngày, không giới hạn lượt (`None`)
-
-### Quy tắc mua gói
-
-- Cho phép nâng cấp lên gói cao hơn khi đang active.
-- Không cho mua gói thấp hơn gói đang active.
-- Cùng gói chỉ cho gia hạn khi hết hạn hoặc đã hết lượt.
-- Hàm áp dụng gói có logic **upgrade-only** (không hạ cấp ngẫu nhiên).
-
----
-
-## 6) Luồng thanh toán QR + SePay
-
-### 6.1 User tạo đơn
-
-- `POST /predict/checkout` tạo `order_id`, amount theo plan.
-- Lưu đơn vào `payment_orders` status `pending`.
-- Sinh QR tại `GET /predict/payment/qr.png`:
-  - Ưu tiên redirect QR image API (nếu cấu hình `SEPAY_QR_API` + bank info)
-  - fallback sinh QR local từ payload VietQR.
-
-### 6.2 User xác nhận đã chuyển tiền (tuỳ cấu hình)
-
-- `POST /predict/payments/confirm-transfer`
-- Chuyển trạng thái `pending -> user_confirmed`
-
-### 6.3 Admin xác nhận
-
-- `POST /users/payments/confirm`
-- Chuyển `user_confirmed -> paid`, sau đó cấp plan theo đơn.
-
-### 6.4 Webhook SePay tự động
-
-- Endpoint chính: `POST /webhook/sepay`
-- Alias hỗ trợ cấu hình sai route: `POST /`
-- Xác thực API key qua:
-  - `Authorization: Apikey <SEPAY_API_KEY>`
-  - hoặc `X-Api-Key`
-  - hoặc query `?api_key=`
-- Parse `order_id` từ `code` hoặc nội dung giao dịch.
-- Chống xử lý trùng bằng bảng `sepay_webhook_events`.
-- Nếu amount hợp lệ, tự động `mark_paid_from_webhook` + cấp plan.
-
----
-
-## 7) Danh sách endpoint chính
-
-### Auth & account
-
-- `GET|POST /login/`
-- `GET|POST /register/`
-- `GET /logout/`
-- `GET|POST /account/forgot`
-- `GET /login/google`
-- `GET /authorize/google`
-
-### Trang người dùng
-
-- `GET /` (home)
-- `GET /dashboard/`
-- `GET /predict/upload-page`
-- `POST /predict/upload`
-- `GET /history/`
-- `GET /history/api/recent`
-- `GET /statistics/`
-- `GET /statistics/api/stats`
-- `GET|POST /settings/`
-- `POST /settings/clear-history`
-
-### Quota/upgrade/payment
-
-- `GET /predict/watch-ad`
-- `POST /predict/watch-ad/complete`
-- `GET /predict/upgrade`
-- `POST /predict/checkout`
-- `GET /predict/payment/qr.png`
-- `POST /predict/upgrade/buy` (legacy)
-- `POST /predict/payments/confirm-transfer`
-- `GET /predict/payments`
-
-### Admin
-
-- `GET /users/`
-- `GET /users/detail/<user_id>` (JSON)
-- `GET /users/<user_id>`
-- `POST /users/lock/<user_id>`
-- `POST /users/unlock/<user_id>`
-- `POST /users/delete/<user_id>`
-- `GET|POST /users/init-db`
-- `GET /users/confirmations`
-- `POST /users/payments/confirm`
-- `POST /users/set-plan`
-
-### System/API
-
-- `GET /health`
-- `POST /webhook/sepay`
-- `POST /` (alias webhook)
-
----
-
-## 8) Cơ sở dữ liệu
-
-Các bảng chính:
-
-- `users`
-- `user_settings`
-- `prediction_history`
-- `user_quota`
-- `payment_orders`
-- `sepay_webhook_events`
-
-Schema nền có trong `schema.sql`.
-
-### Khởi tạo DB
-
-Có 2 cách:
-
-1. Chạy SQL trực tiếp:
-
-```bash
-mysql -h <host> -u <user> -p <db> < schema.sql
-```
-
-2. Dùng script Python:
-
-```bash
-python init_db.py
+```text
+├── app.py                     # File chạy chính của ứng dụng Flask
+├── config.py                  # Cấu hình hệ thống (Upload folder, VietQR, Google Client ID...)
+├── connect.py                 # Quản lý kết nối Database MySQL
+├── models.py                  # Định nghĩa các mô hình dữ liệu (User, Quota, Payment, Webhook...)
+├── predict.py                 # Triển khai mô hình ImagePredictor (suy luận YOLO & HOG+SVM)
+├── upload.py                  # Blueprint xử lý luồng upload ảnh, quota và thanh toán
+├── vietqr.py                  # Module tạo payload QR thanh toán theo chuẩn EMVCo
+├── jwt_utils.py               # Tiện ích tạo JWT Token và Mobile Deeplink
+├── init_db.py                 # Script tự động khởi tạo cơ sở dữ liệu
+├── schema.sql                 # File định nghĩa cấu trúc DB MySQL
+├── routes/
+│   ├── sepay.py               # Xử lý Webhook giao dịch tự động SePay
+│   ├── health.py              # Route giám sát sức khỏe ứng dụng (/health)
+│   └── legal.py               # Điều khoản dịch vụ và chính sách bảo mật
+├── static/
+│   ├── js/
+│   │   ├── script.js          # Router PJAX, điều khiển Sidebar và logic giao diện
+│   │   ├── i18n.js            # Xử lý đa ngôn ngữ ở phía client
+│   │   └── toasts.js          # Hệ thống hiển thị thông báo popup nổi
+│   ├── css/                   # Tập hợp file CSS và theme giao diện
+│   └── uploads/               # Nơi lưu trữ ảnh do người dùng tải lên
+└── templates/                 # Các file giao diện HTML (Jinja2)
 ```
 
 ---
 
-## 9) Cấu hình môi trường
+## ⚙️ Cấu Hình Môi Trường (.env)
 
-App tự nạp `.env` (nếu có) trong `app.py`.
+Tạo file `.env` tại thư mục gốc dự án và thiết lập các tham số cấu hình sau:
 
-### 9.1 MySQL
+```env
+# Flask Secret Key
+FLASK_SECRET_KEY=YourSuperSecretKeyHere
 
-- `MYSQL_HOST` (default: `localhost`)
-- `MYSQL_DATABASE` (default: `khoaluantn`)
-- `MYSQL_USER` (default: `root`)
-- `MYSQL_PASSWORD` (default: `123456`)
-- `MYSQL_PORT` (default: `3306`)
+# Cấu hình Database MySQL
+MYSQL_HOST=localhost
+MYSQL_PORT=3306
+MYSQL_USER=root
+MYSQL_PASSWORD=your_mysql_password
+MYSQL_DATABASE=khoaluantn
 
-Tương thích thêm alias cũ:
+# Cấu hình Cổng Google OAuth (Đăng nhập Google)
+GOOGLE_CLIENT_ID=your_google_client_id.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=your_google_client_secret
 
-- `DB_HOST`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `DB_PORT`
+# Cấu hình tài khoản ngân hàng nhận thanh toán (VietQR)
+VIETQR_BANK_NAME=Vietcombank
+VIETQR_BANK_BIN=970436
+VIETQR_ACCOUNT_NUMBER=1234567890
+VIETQR_ACCOUNT_NAME=NGUYEN VAN A
+VIETQR_MERCHANT_NAME=PETAI SERVICES
+VIETQR_MERCHANT_CITY=HANOI
 
-### 9.2 Google OAuth
+# Cấu hình Tự động/Xác nhận Thủ công
+ALLOW_MANUAL_TRANSFER_CONFIRM=True
+AUTO_CONFIRM_ON_USER_CONFIRM=False
 
-- `GOOGLE_CLIENT_ID`
-- `GOOGLE_CLIENT_SECRET`
-
-### 9.3 VietQR / SePay
-
-- `VIETQR_BANK_NAME`
-- `VIETQR_BANK_BIN`
-- `VIETQR_ACCOUNT_NUMBER`
-- `VIETQR_ACCOUNT_NAME`
-- `VIETQR_MERCHANT_NAME`
-- `VIETQR_MERCHANT_CITY`
-- `SEPAY_API_KEY`
-- `SEPAY_QR_API` (mặc định: `https://img.vietqr.io/image`)
-
-### 9.4 Cờ luồng thanh toán demo
-
-- `ALLOW_MANUAL_TRANSFER_CONFIRM` (default: `True`)
-- `AUTO_CONFIRM_ON_USER_CONFIRM` (default: `False`)
+# API SePay
+SEPAY_API_KEY=your_sepay_api_key
+SEPAY_QR_API=https://qr.sepay.vn
+```
 
 ---
 
-## 10) Cài đặt và chạy ứng dụng
+## 🚀 Hướng Dẫn Cài Đặt & Chạy Ứng Dụng
 
-### Bước 1: Cài dependencies
+### Bước 1: Khởi tạo và kích hoạt môi trường ảo
+```bash
+# Windows
+python -m venv venv
+venv\Scripts\activate
 
+# Linux/macOS
+python3 -m venv venv
+source venv/bin/activate
+```
+
+### Bước 2: Cài đặt các thư viện cần thiết
 ```bash
 pip install -r requirements.txt
 ```
 
-### Bước 2: Cấu hình DB + biến môi trường
+### Bước 3: Khởi tạo Cơ sở dữ liệu MySQL
+1. Khởi động MySQL Server trên máy tính.
+2. Tạo database với tên trùng khớp với cấu hình trong `.env` (ví dụ: `khoaluantn`).
+3. Chạy script để khởi tạo các bảng dữ liệu tự động:
+```bash
+python init_db.py
+```
+> [!NOTE]
+> Bạn cũng có thể import trực tiếp file `schema.sql` vào MySQL Client:
+> `mysql -u root -p khoaluantn < schema.sql`
 
-- Tạo DB MySQL
-- Cập nhật `.env` hoặc env hệ thống
-- Chạy `schema.sql` hoặc `python init_db.py`
-
-### Bước 3: Chạy app
-
+### Bước 4: Khởi động ứng dụng Flask
 ```bash
 python app.py
 ```
-
-Truy cập: `http://127.0.0.1:5000`
-
----
-
-## 11) Tài khoản admin
-
-Ứng dụng phân quyền dựa trên cột `users.role`.
-
-Nâng 1 user thành admin:
-
-```sql
-UPDATE users SET role = 'admin' WHERE username = '<username_admin>';
-```
-
-Khóa user:
-
-```sql
-UPDATE users SET is_active = FALSE WHERE username = '<username>';
-```
+Ứng dụng sẽ chạy tại địa chỉ mặc định: [http://127.0.0.1:5000](http://127.0.0.1:5000)
 
 ---
 
-## 12) Huấn luyện mô hình (tuỳ chọn)
+## 👥 Cấu Trúc Phân Quyền & Gói Cước
 
-### 12.1 HOG + SVM
+### 1. Phân Quyền Người Dùng
 
-Cấu trúc dữ liệu:
+| Vai Trò | Phạm Vi Chức Năng |
+| :--- | :--- |
+| **USER** | Tải ảnh nhận diện giống chó, xem lịch sử & thống kê phân tích cá nhân, cập nhật cài đặt hiển thị, thực hiện mua và nâng cấp các gói cước dịch vụ cao cấp. |
+| **ADMIN** | Quản lý danh sách thành viên (khóa/mở khóa/xóa tài khoản), duyệt đơn chuyển khoản thủ công từ người dùng, quản lý hệ thống đơn cước. |
 
+> [!TIP]
+> Bạn có thể chuyển tài khoản bất kỳ thành Admin bằng cách chạy câu lệnh SQL trực tiếp:
+> ```sql
+> UPDATE users SET role = 'admin' WHERE username = 'ten_tai_khoan';
+> ```
+
+### 2. Các Cấp Độ Gói Cước Dịch Vụ
+
+| Gói Cước | Giá Tiền | Thời Hạn | Hạn Mức Lượt Quét | Cơ Chế Quảng Cáo |
+| :--- | :--- | :--- | :--- | :--- |
+| **FREE** | 0 VND | Vĩnh viễn | 10 lượt quét đầu tiên | Có thể xem tối đa 3 ads/ngày để cộng thêm 3 lượt quét/mỗi lần xem. |
+| **BASIC** | 1.000 VND | 7 ngày | 50 lượt quét | Không hiển thị quảng cáo. |
+| **PRO** | 5.000 VND | 30 ngày | 200 lượt quét | Không hiển thị quảng cáo. |
+| **ENTERPRISE** | 15.000 VND | 90 ngày | Không giới hạn | Không hiển thị quảng cáo. |
+
+---
+
+## 🔄 Quy Trình Xử Lý AI Nhận Diện Giống Chó
+
+Khi một tệp ảnh được gửi lên hệ thống thông qua `POST /predict/upload`:
+
+```mermaid
+graph TD
+    A[Nhận ảnh tải lên] --> B{Kiểm tra Quota/Gói cước}
+    B -- Hợp lệ --> C[YOLOv8 lọc vật thể chính]
+    B -- Hết lượt --> D[Yêu cầu xem ADS / Nâng cấp gói]
+    C --> E{Có phát hiện Chó?}
+    E -- Có (Conf >= 12%) --> F[Smart Dog Crop]
+    E -- Không --> G[Báo lỗi: Ảnh không chứa chó]
+    F --> H[Suy luận phân loại Giống Chó]
+    H --> I[Vẽ bản đồ nhiệt Grad-CAM]
+    I --> J[Lưu lịch sử & Hiển thị kết quả]
+```
+
+---
+
+## 💳 Quy Trình Thanh Toán & Gia Hạn Gói Cước
+
+Hệ thống hỗ trợ cơ chế thanh toán tự động tiện lợi cho người dùng:
+
+1. **Tạo hóa đơn:** Người dùng chọn gói tại trang Nâng cấp và nhấn "Thanh toán". Hệ thống tạo mã đơn hàng dạng ngẫu nhiên duy nhất (ví dụ: `DOGAI PRO a1b2c3d4`) và tạo một hóa đơn trạng thái `pending` trong cơ sở dữ liệu.
+2. **Quét mã VietQR:** Hệ thống hiển thị trang thanh toán chứa mã QR chuyển khoản động. Mã QR này chứa đầy đủ thông tin tài khoản đích của bạn, số tiền chính xác, kèm mã chuyển khoản là thông tin hóa đơn.
+3. **Thanh toán tự động:** 
+    *   Người dùng thực hiện chuyển khoản thông qua ứng dụng Mobile Banking của họ.
+    *   Sau khi tiền được ghi nhận, **SePay** sẽ phát một Webhook tới endpoint `/webhook/sepay` của ứng dụng.
+    *   Ứng dụng nhận dữ liệu giao dịch, giải mã nội dung chuyển khoản để lấy mã hóa đơn, đối soát số tiền và cập nhật trạng thái đơn hàng thành `paid`.
+    *   Hệ thống tự động kích hoạt và cập nhật cấp độ gói dịch vụ mới cho tài khoản người dùng ngay lập tức.
+4. **Xác nhận thủ công (Backup):** Người dùng có thể nhấn nút "Tôi đã chuyển tiền" trên trang thanh toán. Một yêu cầu phê duyệt sẽ gửi tới Admin Panel để quản trị viên đối soát trực tiếp và phê duyệt thủ công.
+
+---
+
+## 🤖 Huấn Luyện Mô Hình Phân Loại (Tùy Chọn)
+
+Hệ thống hỗ trợ mở rộng nhận diện giống chó bằng cách huấn luyện mô hình YOLOv8 hoặc HOG + SVM mới.
+
+### 1. Chuẩn bị dữ liệu
+Cấu trúc cây thư mục dữ liệu huấn luyện:
 ```text
-dataset_root/
-  Dog/
-    husky/*.jpg
-    corgi/*.jpg
-  Cat/
-    bengal/*.jpg
-    siamese/*.jpg
+dataset/
+  ├── Dog/
+  │    ├── corgi/
+  │    │    ├── image1.jpg
+  │    │    └── image2.jpg
+  │    └── husky/
+  └── Cat/
 ```
 
-Train:
-
+### 2. Huấn luyện bộ phân loại HOG + SVM
+Chạy lệnh sau để trích xuất đặc trưng ảnh HOG và huấn luyện phân loại giống bằng SVM:
 ```bash
-python train.py path/to/dataset_root --models-dir models
+python train.py dataset/ --models-dir models
 ```
+Bộ trọng số huấn luyện xong sẽ được lưu tại thư mục `models/` gồm `species_svm.joblib`, `breed_svm.joblib`, và `breed_labels.joblib`.
 
-Sinh ra:
-
-- `models/species_svm.joblib`
-- `models/breed_svm.joblib`
-- `models/breed_labels.joblib`
-
-### 12.2 YOLOv8 breed (Stanford Dogs)
-
-Chuyển đổi dataset:
-
+### 3. Huấn luyện giống chuyên sâu bằng YOLOv8
+Chuyển đổi dataset sang định dạng YOLO:
 ```bash
-python scripts/stanford_dogs_to_yolo.py --images-root <images_root> --output-root <output_root> --val-ratio 0.2
+python scripts/stanford_dogs_to_yolo.py --images-root <Stanford_Dogs_Root> --output-root <YOLO_Dataset_Root> --val-ratio 0.2
 ```
-
-Train YOLO:
-
+Chạy huấn luyện mô hình YOLOv8:
 ```bash
-python scripts/train_yolov8_breed.py --data <output_root>/data.yaml --model yolov8n.pt --epochs 100 --imgsz 640 --name breeds
+python scripts/train_yolov8_breed.py --data <YOLO_Dataset_Root>/data.yaml --model yolov8n.pt --epochs 100 --imgsz 640 --name breeds
 ```
-
-Weight đầu ra:
-
-- `runs/detect/breeds/weights/best.pt`
+Tập tin trọng số tốt nhất `best.pt` trong thư mục `runs/detect/breeds/weights/` sẽ tự động được hệ thống quét và áp dụng khi ứng dụng chạy.
 
 ---
 
-## 13) Cấu trúc thư mục quan trọng
+## 🛡️ Hướng Dẫn Vận Hành An Toàn
 
-- `app.py`: khởi tạo app, đăng ký blueprint, OAuth, middleware
-- `upload.py`: nghiệp vụ upload/predict/quota/payment
-- `models.py`: data models cho history/settings/quota/payment/webhook events
-- `routes/sepay.py`: webhook SePay
-- `users.py`: toàn bộ chức năng quản trị
-- `schema.sql`: schema MySQL
-- `templates/`: giao diện
-- `static/`: css/js/uploads
-- `runs/detect/`: kết quả train YOLO
-- `models/`: nơi để model SVM/YOLO tùy chọn
-
----
-
-## 14) Lưu ý vận hành
-
-- `app.secret_key` hiện đang hardcode trong `app.py`; nên chuyển sang env ở production.
-- Endpoint webhook alias `/` có thể đụng route khác nếu mở rộng app; nên ưu tiên cấu hình đúng `/webhook/sepay`.
-- `ALLOW_MANUAL_TRANSFER_CONFIRM=True` chỉ phù hợp demo; production nên ưu tiên webhook xác thực giao dịch tự động.
-- File upload đang lưu trong `static/uploads`; cần chính sách dọn dẹp định kỳ nếu triển khai lâu dài.
-
----
-
-## 15) Kiểm tra nhanh
-
-- Health check:
-
-```bash
-curl http://127.0.0.1:5000/health
-```
-
-Kỳ vọng:
-
-```json
-{ "status": "ok" }
-```
-
-- Smoke test YOLO (nếu cần):
-
-```bash
-python smoke_test.py
-```
-
----
-
-## 16) Tài liệu tham khảo dữ liệu
-
-- Oxford-IIIT Pet Dataset: https://www.robots.ox.ac.uk/~vgg/data/pets/
-- Stanford Dogs Dataset: http://vision.stanford.edu/aditya86/ImageNetDogs/
+*   **Bảo mật Private Key:** Hãy đảm bảo `FLASK_SECRET_KEY` trong môi trường Production luôn được thay đổi sang một chuỗi ký tự ngẫu nhiên phức tạp, thay vì các giá trị mặc định.
+*   **Idempotency Webhook:** Endpoint webhook `/webhook/sepay` đã có bộ lọc trùng lặp tự động dựa vào mã giao dịch giao dịch `sepay_tx_id` để tránh việc xử lý lặp lại giao dịch gây cộng trùng gói.
+*   **Quản lý lưu trữ:** Ảnh do người dùng tải lên được lưu giữ tại `static/uploads/`. Vui lòng cấu hình các tác vụ tự động dọn dẹp định kỳ (cron job) để giải phóng dung lượng bộ nhớ cho máy chủ.

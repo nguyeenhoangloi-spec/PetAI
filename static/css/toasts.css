@@ -14,11 +14,11 @@
   --toast-warning-text: #7c2d12;
   --toast-warning-accent: #f59e0b;
   --toast-warning-icon-bg: #fef3c7;
-  --toast-info-bg: #eff6ff;
-  --toast-info-border: #bfdbfe;
-  --toast-info-text: #1e3a8a;
-  --toast-info-accent: #2563eb;
-  --toast-info-icon-bg: #dbeafe;
+  --toast-info-bg: #eff4ff;
+  --toast-info-border: #d3e4fe;
+  --toast-info-text: #0b1c30;
+  --toast-info-accent: #004ac6;
+  --toast-info-icon-bg: #dbe1ff;
 }
 
 .toast-stack {
@@ -213,9 +213,34 @@ html.dark .toast--warning {
 }
 
 html.dark .toast--info {
-  --toast-bg: #0b1b3a;
-  --toast-border: #1e3a8a;
-  --toast-text: #dbeafe;
-  --toast-accent: #60a5fa;
-  --toast-icon-bg: #10224c;
+  --toast-bg: #0b1c30;
+  --toast-border: #003ea8;
+  --toast-text: #eeefff;
+}
+
+/* Avatar Lightbox Styles */
+#avatarLightbox {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+@keyframes lightbox-scale-up {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-scale-up {
+  animation: lightbox-scale-up 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-scale-up {
+    animation: none !important;
+  }
 }

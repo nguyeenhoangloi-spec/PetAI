@@ -1,5 +1,5 @@
 (function () {
-  const DEFAULT_TIMEOUT = 2000;
+  const DEFAULT_TIMEOUT = 3500;
   const iconMap = {
     success: "check_circle",
     error: "error",

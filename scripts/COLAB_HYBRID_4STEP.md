@@ -1,193 +1,112 @@
-# COLAB HYBRID 4 STEP (BẢN DỄ CHẠY TỪ ĐẦU)
+# 🚀 Google Colab Hybrid 4-Step Pipeline — Hướng Dẫn Từng Bước Từ A - Z
 
-Khuyên dùng: EfficientNet-B0
+[![Colab](https://img.shields.io/badge/Run%20in-Colab-orange.svg?style=flat&logo=googlecolab)](https://colab.research.google.com/)
+[![Framework](https://img.shields.io/badge/Framework-PyTorch-red.svg?style=flat&logo=pytorch)](https://pytorch.org/)
+[![Model](https://img.shields.io/badge/Model-EfficientNet--B0-blue.svg?style=flat)](https://github.com/lukemelas/EfficientNet-PyTorch)
 
-Mục tiêu: copy đúng từng cell theo thứ tự A -> H là chạy được.
+> **Khuyên dùng:** Sử dụng mô hình xương sống (backbone) **EfficientNet-B0** để tối ưu hóa giữa độ chính xác và tài nguyên GPU/RAM trên Google Colab miễn phí.
+> 
+> **Mục tiêu:** Sao chép đúng từng ô mã (cell) trong tài liệu này theo thứ tự từ **A đến H** để thiết lập, huấn luyện và chạy thử nghiệm suy luận mô hình lai hình thái học thành công.
 
-## Quy trình thuật toán sử dụng (Hybrid 4-step)
+---
 
-Pipeline này dùng **một backbone CNN** (ResNet50 hoặc EfficientNet-B0) để:
+## 📐 Kiến Trúc Quy Trình 4 Bước (Hybrid 4-Step)
 
-1. học phân loại giống (breed) bằng supervised learning,
-2. trích **embedding** (vector đặc trưng) từ backbone,
-3. tạo **prototype embedding** cho từng giống,
-4. suy luận “lai hình thái” bằng **độ tương đồng cosine** + bộ ngưỡng.
+Quy trình sử dụng một mô hình xương sống CNN duy nhất (**EfficientNet-B0** hoặc **ResNet50**) để học đặc trưng, trích xuất vector nhúng đặc trưng, xây dựng các vector đại diện (prototypes), và thực hiện suy luận lai hình thái học:
 
-### Bước 1 — Train classifier (lệnh `train`)
-
-- **Input**: dataset dạng thư mục lớp `data-dir/class_name/image.*`
-- **Tiền xử lý**:
-  - Train: resize → random resized crop → flip → color jitter → normalize ImageNet
-  - Val: resize cố định → normalize ImageNet
-- **Chia tập**: stratified split theo lớp (mặc định `val_ratio=0.2`).
-- **Mô hình**: backbone pretrained ImageNet, thay head để ra `num_classes`.
-- **Tối ưu**: AdamW + CosineAnnealingLR, CrossEntropy có `label_smoothing`.
-- **Output**:
-  - `last_classifier.pth` (luôn cập nhật mỗi epoch)
-  - `best_classifier.pth` (khi `val_acc` tốt hơn)
-  - `class_to_idx.json`
-
-### Bước 2 — Grad-CAM + pseudo parts (lệnh `gradcam`)
-
-- **Mục đích**: tạo heatmap trung bình theo giống và cắt “bộ phận giả lập” (pseudo part) dựa trên vùng kích hoạt mạnh.
-- **Cách làm**:
-  - Với mỗi ảnh, tính Grad-CAM tại lớp đúng (ground-truth class).
-  - Cộng dồn để lấy **mean Grad-CAM** cho từng lớp.
-  - Nếu bật `--save-individual-parts`: tạo mask nhị phân `cam >= max(cam) * threshold`, lấy bounding box của mask và crop ảnh gốc tương ứng.
-- **Output**:
-  - `heatmap-out/` chứa mean heatmap theo lớp
-  - `parts-out/` chứa các crop pseudo parts theo lớp
-
-### Bước 3 — Build class prototypes (lệnh `prototypes`)
-
-- **Mục đích**: tạo một vector đại diện (prototype) cho từng giống.
-- **Cách làm**:
-  - Với mỗi ảnh, trích embedding từ backbone (sau avgpool), rồi chuẩn hoá $L_2$.
-  - Với mỗi lớp $c$, lấy trung bình embedding: $p_c = \frac{1}{N_c}\sum_i e_i$ rồi chuẩn hoá $L_2$ lần nữa.
-- **Output**:
-  - `class_prototypes.npy` (ma trận prototype theo thứ tự lớp)
-  - `classes.json` (danh sách tên lớp theo đúng thứ tự trong checkpoint)
-
-### Bước 4 — Inference hybrid (lệnh `infer`)
-
-- **Input**: 1 ảnh, checkpoint classifier, và `class_prototypes.npy`.
-- **Tính toán chính**:
-  - Trích embedding $e$ cho ảnh, chuẩn hoá $L_2$.
-  - Tính similarity với mọi prototype: $s_c = p_c^\top e$ (tương đương cosine vì đã chuẩn hoá).
-  - Lấy top-$k$ theo $s_c$.
-- **Nhận biết chó lai vs chó thuần (điều kiện “nghi lai”)**:
-  - Thuật toán _không_ dùng xét nghiệm DNA; đây là suy luận **lai hình thái** dựa trên mức giống nhau về đặc trưng thị giác.
-  - **Ký hiệu**:
-    - $x$: ảnh đầu vào; $f(\cdot)$: backbone CNN sau khi train.
-    - $e=f(x)\in\mathbb{R}^d$: embedding của ảnh (vector đặc trưng).
-    - $p_c\in\mathbb{R}^d$: prototype của lớp/giống $c$.
-    - Chuẩn hoá $L_2$: $\hat{v}=\frac{v}{\lVert v\rVert_2+\varepsilon}$.
-  - **Cosine similarity**:
-    - Sau khi chuẩn hoá $L_2$, độ tương đồng cosine giữa ảnh và prototype lớp $c$ là:
-      $$s_c = \cos(\hat{e},\hat{p}_c)=\hat{p}_c^\top\hat{e}$$
-    - Vì $\hat{e},\hat{p}_c$ đã chuẩn hoá nên tích vô hướng $\hat{p}_c^\top\hat{e}$ chính là cosine similarity.
-  - Giả sử có ít nhất 2 lớp trong top-$k$:
-    - $s_1$ = similarity của giống top-1, $s_2$ = similarity của giống top-2.
-    - `gap = s1 - s2` (độ cách biệt giữa 2 giống đầu).
-    - `ratio = s2 / s1` (mức “bám sát” của top-2 so với top-1).
-    - `mean = (s1 + s2) / 2` (độ tin cậy trung bình của cặp top-2).
-  - Tạo ngưỡng khoảng cách hiệu dụng (để ép top-1 và top-2 phải _gần nhau_):
-    - `effective_max_gap = min(max_gap, (1 - min_ratio) * s1)`
-    - Ý nghĩa: nếu muốn `ratio >= min_ratio` thì tương đương cần `s2 >= min_ratio * s1` ⇒ `gap = s1 - s2 <= (1 - min_ratio) * s1`.
-  - Kết luận **“nghi lai”** nếu **đồng thời**:
-    - (C1) $s_1 \ge$ `min_score` (top-1 đủ cao)
-    - (C2) $s_2 \ge$ `min_score_2` (top-2 cũng đủ cao)
-    - (C3) `gap <= effective_max_gap` (top-1 và top-2 đủ sát nhau, tức `ratio` đủ lớn)
-    - (C4) $\frac{s_1+s_2}{2} \ge$ `min_mean_score` (cả cặp đủ mạnh, tránh trường hợp 2 điểm đều thấp nhưng vẫn “gần nhau”)
-  - Nếu **không** thoả cả 4 điều kiện ⇒ kết luận **thuần/giống trội** = giống top-1.
-
-**Diễn giải chi tiết ý nghĩa các điều kiện**
-
-- (C1) `min_score` đảm bảo ảnh có **ít nhất một** giống khớp rõ ràng (tránh trường hợp ảnh ngoài dữ liệu huấn luyện).
-- (C2) `min_score_2` đảm bảo giống thứ 2 cũng “đủ thật”, không phải nhiễu.
-- (C3) `gap <= effective_max_gap` là điều kiện “lai hình thái”: top-2 phải **gần** top-1.
-  - Nếu chỉ dùng `max_gap` cố định thì khi $s_1$ cao/ thấp, tiêu chuẩn “gần nhau” có thể bị lệch.
-  - Thành phần $(1-\text{min\_ratio})\cdot s_1$ làm điều kiện tỷ lệ (scale theo $s_1$), tương đương buộc $\frac{s_2}{s_1}\ge \text{min\_ratio}$.
-  - Lấy `min(...)` để giới hạn trên bằng `max_gap` (không cho phép quá “thoáng”).
-- (C4) `min_mean_score` tránh trường hợp **cả hai điểm đều thấp** nhưng vẫn “gần nhau” (ví dụ ảnh mờ khiến mọi $s_c$ đều nhỏ).
-
-**Bảng ngưỡng theo profile (giống hệt trong code)**
-
-| `--profile` | `min_score` | `min_score_2` | `max_gap` | `min_ratio` | `min_mean_score` |
-| ----------- | ----------: | ------------: | --------: | ----------: | ---------------: |
-| `strict`    |        0.70 |          0.70 |      0.08 |        0.90 |             0.60 |
-| `balanced`  |        0.55 |          0.50 |      0.12 |        0.88 |             0.53 |
-| `sensitive` |        0.40 |          0.35 |      0.15 |        0.85 |             0.45 |
-
-Ghi chú: nếu bạn truyền trực tiếp các flag như `--min-score`, `--max-gap`... thì các giá trị đó sẽ **ưu tiên hơn** `--profile`.
-
-**Gợi ý hiệu chỉnh ngưỡng (khi viết/đánh giá mô hình)**
-
-- Nếu muốn **ít gắn nhãn “nghi lai” sai (precision cao)**:
-  - tăng `min_score`, tăng `min_score_2`, tăng `min_mean_score`
-  - giảm `max_gap`, tăng `min_ratio`
-  - dùng `--profile strict` làm mốc ban đầu
-- Nếu muốn **nhạy hơn với trường hợp lai (recall cao)**:
-  - giảm `min_score`, giảm `min_score_2`, giảm `min_mean_score`
-  - tăng `max_gap`, giảm `min_ratio`
-  - dùng `--profile sensitive` làm mốc ban đầu
-- Trực giác từng tham số:
-  - `min_score`: “độ chắc” tối thiểu cho top-1
-  - `min_score_2`: loại trường hợp top-2 chỉ là nhiễu
-  - `max_gap`: độ chênh lệch tuyệt đối cho phép giữa top-1 và top-2
-  - `min_ratio`: ràng buộc tương đối (top-2 phải đạt ít nhất bao nhiêu % top-1)
-  - `min_mean_score`: bộ lọc để tránh _cặp gần nhau nhưng đều thấp_
-- Cách hiệu chỉnh thực tế (ngắn gọn): cố định 1 profile (ví dụ `balanced`), sau đó sweep từng ngưỡng trên tập ảnh kiểm thử; chọn bộ ngưỡng theo mục tiêu (ví dụ ưu tiên precision cho “nghi lai”).
-
-**Giả mã (pseudo-code)**
-
-```text
-e = normalize(embedding(image))
-for each class c:
-  s[c] = dot(prototype[c], e)   # cosine similarity
-top1, top2 = argsort_desc(s)[0], argsort_desc(s)[1]
-s1, s2 = s[top1], s[top2]
-
-gap   = s1 - s2
-mean  = (s1 + s2)/2
-effective_max_gap = min(max_gap, (1 - min_ratio) * s1)
-
-if (s1 >= min_score) and (s2 >= min_score_2) and (gap <= effective_max_gap) and (mean >= min_mean_score):
-  predict = "nghi lai: class[top1] x class[top2]"
-else:
-  predict = "thuần/giống trội: class[top1]"
+```mermaid
+graph TD
+    subgraph Bước 1: Huấn luyện
+        A[Bộ dữ liệu Ảnh] -->|Train Classifier| B(Checkpoint Model: best_classifier.pth)
+    end
+    subgraph Bước 2: Tạo Bản Đồ Nhiệt
+        B -->|Tính đạo hàm Grad-CAM| C[Bản đồ nhiệt Mean Grad-CAM]
+        B -->|Binary Masking & Crop| D[Bộ phận giả lập Pseudo Parts]
+    end
+    subgraph Bước 3: Tạo Prototypes
+        B -->|Trích xuất Vector đặc trưng L2| E[Vector đại diện lớp class_prototypes.npy]
+    end
+    subgraph Bước 4: Suy Luận Lai
+        F[Ảnh đầu vào] -->|Trích xuất Vector| G[Vector L2 Normalized]
+        E -->|Tính Cosine Similarity| H{Bộ đối soát & Ngưỡng quyết định}
+        G --> H
+        H -->|Thỏa mãn đồng thời 4 điều kiện| I[Kết quả: Nghi Lai giống A x giống B]
+        H -->|Không thỏa mãn điều kiện lai| J[Kết quả: Thuần chủng / Giống trội A]
+    end
 ```
 
-**Ví dụ nhanh**
+---
 
-- Ví dụ 1 (nghi lai): $s_1=0.78, s_2=0.74$ ⇒ `gap=0.04`, `mean=0.76`. Với `min_ratio=0.88` ⇒ $(1-\text{min\_ratio})\cdot s_1 = 0.0936$; nên nếu `max_gap=0.08` thì `effective_max_gap=min(0.08,0.0936)=0.08`. Vì `gap=0.04<=0.08` và cả $s_1,s_2,mean$ đều cao ⇒ nghi lai.
-- Ví dụ 2 (không nghi lai do top-2 thấp): $s_1=0.82, s_2=0.35$ ⇒ top-2 không đủ mạnh (`s2 < min_score_2`) ⇒ giống trội top-1.
-- Ví dụ 3 (không nghi lai do cách biệt lớn): $s_1=0.80, s_2=0.60$ ⇒ `gap=0.20` > `effective_max_gap` ⇒ giống trội top-1.
+## 🛠️ Chi Tiết Thuật Toán Quyết Định Lai Hình Thái Học
 
-**Trường hợp biên & lưu ý khi báo cáo kết quả**
+Thuật toán thực hiện đối soát vector đặc trưng của ảnh đầu vào với các vector đại diện giống (Prototypes) thông qua **Cosine Similarity** ($\cos(\hat{e},\hat{p}_c)=\hat{p}_c^\top\hat{e}$):
 
-- Nếu ảnh đầu vào **không phải chó** hoặc chó ở góc chụp quá khác (ngoài phân phối dữ liệu), các $s_c$ có thể thấp → thường rơi vào “giống trội” nhưng độ tin cậy thấp. Khi viết luận văn, nên nhấn mạnh đây là phân loại trong _không gian đặc trưng học được_ từ tập huấn luyện.
-- Cosine similarity có thể âm nếu embedding và prototype lệch hướng mạnh; lúc đó (C1)(C2)(C4) gần như không đạt, nên hệ thống không gắn nhãn “nghi lai”.
-- Đây là “lai hình thái” (visual-morphology) dựa trên ảnh đơn; không thể kết luận “thuần chủng” theo nghĩa phả hệ/di truyền.
+*   **$s_1, s_2$:** Điểm tương đồng của giống có xác suất cao nhất (Top-1) và thứ nhì (Top-2).
+*   **`gap`:** Khoảng cách tuyệt đối ($s_1 - s_2$).
+*   **`ratio`:** Tỷ lệ tương quan ($s_2 / s_1$).
+*   **`mean`:** Điểm trung bình của hai giống đầu ($(s_1 + s_2) / 2$).
 
-Gợi ý: nếu bạn không muốn tự chỉnh tay nhiều ngưỡng, có thể dùng `--profile strict|balanced|sensitive` (các flag ngưỡng truyền trực tiếp vẫn luôn được ưu tiên).
+### 4 Điều Kiện Cần Và Đủ Để Gắn Nhãn "Nghi Lai"
 
-## A) Chuẩn bị trên Google Drive
+Hệ thống sẽ kết luận ảnh cún cưng có **nghi vấn lai hình thái** nếu thỏa mãn đồng thời cả 4 điều kiện sau:
 
-Trong `MyDrive/DogHybrid` cần có đúng 2 file:
+1.  **`C1 (s1 >= min_score)`:** Giống Top-1 phải đủ độ tương đồng tối thiểu (tránh nhận diện sai ảnh rác ngoài tập dữ liệu).
+2.  **`C2 (s2 >= min_score_2)`:** Giống Top-2 phải đủ tin cậy, không phải là kết quả ngẫu nhiên do nhiễu.
+3.  **`C3 (gap <= effective_max_gap)`:** Khoảng cách giữa Top-1 và Top-2 đủ hẹp, trong đó:
+    $$\text{effective\_max\_gap} = \min(\text{max\_gap}, (1 - \text{min\_ratio}) \times s_1)$$
+4.  **`C4 (mean >= min_mean_score)`:** Điểm trung bình cả hai giống phải đủ lớn để tránh trường hợp cả hai giống đều có điểm thấp nhưng vẫn nằm sát nhau (ví dụ ảnh chụp bị mờ/tối).
 
-- `dog-breeds-dataset.zip`
-- `hybrid_breed_pipeline.py`
+> [!NOTE]
+> Nếu bất kỳ điều kiện nào trong 4 điều kiện trên bị vi phạm, hệ thống tự động kết luận cún cưng thuộc **Giống thuần chủng / Giống trội** của giống Top-1.
 
-> `hybrid_breed_pipeline.py` là file Python, KHÔNG dùng `unzip` cho file này.
+### Bảng Ngưỡng Profile Cấu Hình Sẵn
 
-## B) Setup Colab (chạy 1 lần đầu phiên)
+| Profile | `min_score` (C1) | `min_score_2` (C2) | `max_gap` (C3) | `min_ratio` (C3) | `min_mean_score` (C4) |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| **`strict`** (Khắt khe) | 0.70 | 0.70 | 0.08 | 0.90 | 0.60 |
+| **`balanced`** (Cân bằng) | 0.55 | 0.50 | 0.12 | 0.88 | 0.53 |
+| **`sensitive`** (Nhạy) | 0.40 | 0.35 | 0.15 | 0.85 | 0.45 |
 
+---
+
+## 📝 Mã Nguồn Chạy Trên Google Colab
+
+### A) Chuẩn Bị Trên Google Drive
+Trong tài khoản Drive cá nhân, bạn hãy tạo thư mục tên `DogHybrid` trong thư mục gốc (`MyDrive/DogHybrid/`) và tải lên đúng 2 tệp sau:
+1.  `dog-breeds-dataset.zip` (Tệp nén chứa tập dữ liệu ảnh).
+2.  `hybrid_breed_pipeline.py` (Mã nguồn Python thực thi các luồng chạy).
+
+---
+
+### B) Ô mã 1: Khởi Tạo Môi Trường Colab (Chạy 1 lần duy nhất)
 ```python
-!pip -q install torch torchvision opencv-python tqdm pillow
+# Cài đặt các thư viện cần thiết
+!pip -q install torch torchvision opencv-python tqdm pillow matplotlib
 
+# Liên kết Google Drive
 from google.colab import drive
 drive.mount('/content/drive')
 
+# Tạo thư mục làm việc trên Colab
 !mkdir -p /content/project
 
-# unzip dataset (ghi đè không hỏi)
+# Giải nén tập dữ liệu (không hiển thị log dài dòng)
 !unzip -oq "/content/drive/MyDrive/DogHybrid/dog-breeds-dataset.zip" -d /content/project
 
-# xoá thư mục ẩn .git nếu có (tránh lỗi ImageFolder)
+# Loại bỏ thư mục .git nếu có để tránh lỗi nạp dữ liệu PyTorch
 !rm -rf /content/project/dog-breeds-dataset/.git
 
-# copy script vào máy ảo
+# Sao chép tệp mã nguồn từ Drive vào Colab
 !cp -f "/content/drive/MyDrive/DogHybrid/hybrid_breed_pipeline.py" /content/project/
 
+# Di chuyển thư mục làm việc và kiểm tra trợ giúp lệnh
 %cd /content/project
 !python hybrid_breed_pipeline.py --help
 ```
 
-Nếu thấy lệnh `train, gradcam, prototypes, infer` là OK.
+---
 
-## C) Train mới (khuyến nghị lưu thẳng lên Drive)
-
+### C) Ô mã 2: Huấn Luyện Mới
 ```python
 !python hybrid_breed_pipeline.py train \
   --data-dir "/content/project/dog-breeds-dataset" \
@@ -204,8 +123,9 @@ Nếu thấy lệnh `train, gradcam, prototypes, infer` là OK.
   --device 0
 ```
 
-## D) Resume khi bị ngắt phiên / đổi tài khoản Colab
+---
 
+### D) Ô mã 3: Huấn Luyện Tiếp Tục (Khi bị ngắt kết nối / sập phiên)
 ```python
 !python hybrid_breed_pipeline.py train \
   --data-dir "/content/project/dog-breeds-dataset" \
@@ -223,20 +143,21 @@ Nếu thấy lệnh `train, gradcam, prototypes, infer` là OK.
   --resume
 ```
 
-## E) Kiểm tra checkpoint đã lưu lên Drive chưa
+---
 
+### E) Ô mã 4: Kiểm Tra Tệp Huấn Luyện Đã Lưu Trên Drive
 ```python
 !ls -lah "/content/drive/MyDrive/DogHybrid/outputs/classifier"
 ```
+> [!IMPORTANT]
+> Danh sách thư mục phải xuất hiện ít nhất 3 tệp tin sau:
+> *   `last_classifier.pth` (Checkpoint lưu liên tục sau mỗi epoch).
+> *   `best_classifier.pth` (Checkpoint lưu mô hình tốt nhất).
+> *   `class_to_idx.json` (Ánh xạ nhãn phân loại).
 
-Bạn cần thấy tối thiểu:
+---
 
-- `last_classifier.pth`
-- `best_classifier.pth` (sau khi có epoch tốt hơn)
-- `class_to_idx.json` (sau khi train kết thúc)
-
-## F) Chạy Grad-CAM + pseudo parts
-
+### F) Ô mã 5: Chạy Trích Xuất Bản Đồ Nhiệt Grad-CAM & Cắt Pseudo Parts
 ```python
 !python hybrid_breed_pipeline.py gradcam \
   --data-dir "/content/project/dog-breeds-dataset" \
@@ -250,8 +171,9 @@ Bạn cần thấy tối thiểu:
   --device 0
 ```
 
-## G) Build prototypes
+---
 
+### G) Ô mã 6: Xây Dựng Vector Đại Diện (Build Class Prototypes)
 ```python
 !python hybrid_breed_pipeline.py prototypes \
   --data-dir "/content/project/dog-breeds-dataset" \
@@ -262,18 +184,19 @@ Bạn cần thấy tối thiểu:
   --device 0
 ```
 
-## H) Inference ảnh test
+---
 
+### H) Ô mã 7: Chạy Suy Luận Thử Nghiệm Ảnh Ngẫu Nhiên
 ```python
-# Lấy ngẫu nhiên 1 ảnh trong dataset
+# Lấy ngẫu nhiên 1 ảnh trong bộ dữ liệu
 import glob, random
 imgs = glob.glob("/content/project/dog-breeds-dataset/*/*.*")
 test_img = random.choice(imgs)
-print("Test image:", test_img)
+print("Ảnh chạy thử nghiệm ngẫu nhiên được chọn:", test_img)
 ```
 
 ```python
-# Infer ảnh vừa chọn
+# Thực hiện suy luận dự đoán giống
 !python hybrid_breed_pipeline.py infer \
   --image "$test_img" \
   --ckpt "/content/drive/MyDrive/DogHybrid/outputs/classifier/best_classifier.pth" \
@@ -285,43 +208,36 @@ print("Test image:", test_img)
 ```
 
 ```python
-# Chạy thêm cell này để hiện ảnh vừa test:
+# Trực quan hóa ảnh thử nghiệm vừa chạy
 import matplotlib.pyplot as plt
 from PIL import Image
 
 img = Image.open(test_img).convert("RGB")
-plt.figure(figsize=(6,6))
+plt.figure(figsize=(6, 6))
 plt.imshow(img)
 plt.axis("off")
-plt.title(test_img.split("/")[-2])
+plt.title("Nhãn Gốc: " + test_img.split("/")[-2])
 plt.show()
 ```
 
-## Lỗi thường gặp (fix nhanh)
+---
 
-1. `End-of-central-directory signature not found`
+## 🚑 Khắc Phục Lỗi Nhanh (Troubleshooting)
 
-- Bạn đang `unzip` nhầm file `.py`.
-- Sửa: `cp` thay vì `unzip`.
+### 1. Lỗi: `End-of-central-directory signature not found`
+*   **Nguyên nhân:** Lệnh giải nén `unzip` đang trỏ nhầm tệp nguồn `.py` thay vì tệp zip dataset.
+*   **Khắc phục:** Đảm bảo tệp dataset là `.zip` và tệp code được copy bằng lệnh `!cp` như trong bước B.
 
-2. `replace ... ? [y]es, [n]o ...`
+### 2. Lỗi: Bị hỏi ghi đè tệp `replace ... ? [y]es, [n]o...`
+*   **Nguyên nhân:** Chạy lại lệnh giải nén zip nhiều lần làm gián đoạn luồng tự động do chờ input.
+*   **Khắc phục:** Sử dụng cờ `-oq` trong lệnh unzip (ví dụ: `!unzip -oq ...`) để giải nén đè và ẩn toàn bộ hộp thoại xác nhận.
 
-- Bạn unzip lặp lại cùng thư mục.
-- Sửa: dùng `unzip -oq`.
+### 3. Lỗi: `Found no valid file for the classes .git`
+*   **Nguyên nhân:** PyTorch nạp dữ liệu phát hiện thư mục quản lý mã nguồn ẩn `.git` trong thư mục dữ liệu ảnh.
+*   **Khắc phục:** Chạy lệnh xóa triệt để: `!rm -rf /content/project/dog-breeds-dataset/.git` trước khi train.
 
-3. `Found no valid file for the classes .git`
-
-- Dataset có thư mục `.git`.
-- Sửa: `!rm -rf /content/project/dog-breeds-dataset/.git`
-
-4. Hết RAM/GPU
-
-- Giảm `--batch-size` xuống `8` hoặc `16`
-- Giảm `--workers` còn `1`
-- Giữ `--img-size 192`
-
-## Gợi ý chạy ổn định nhất
-
-- Luôn để `--output-dir` nằm trong `/content/drive/MyDrive/...`
-- Mỗi phiên mới: chạy lại cell B trước
-- Khi bị ngắt: chạy cell D (`--resume`)
+### 4. Lỗi: Tràn bộ nhớ GPU / RAM (Out of Memory)
+*   **Khắc phục:**
+    *   Giảm kích thước Batch Size (`--batch-size`) xuống còn `8` hoặc `16`.
+    *   Giảm số lượng xử lý đa luồng (`--workers`) về `1`.
+    *   Giảm kích thước ảnh đầu vào (`--img-size 224` hoặc `192`).

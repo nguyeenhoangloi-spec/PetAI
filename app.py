@@ -8,6 +8,7 @@ from urllib.parse import urlparse
 
 from jwt_utils import build_jwt_access_token, build_mobile_deeplink
 
+
 from connect import get_connection
 from pymysql.cursors import DictCursor
 from werkzeug.security import generate_password_hash

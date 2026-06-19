@@ -27,6 +27,9 @@ document.addEventListener("DOMContentLoaded", function () {
   let lastLoadedPathname = window.location.pathname;
   let lastLoadedSearch = window.location.search;
 
+  let currentMainDiv = document.querySelector("#contentArea") || document.querySelector("#content-area") || document.querySelector("main > div.col-span-1");
+  let currentPjaxContainer = currentMainDiv;
+
   // Initialize desktop sidebar state from localStorage
   if (!isMobile()) {
     const isCollapsed = localStorage.getItem("sidebar-collapsed") === "true";
@@ -165,6 +168,15 @@ document.addEventListener("DOMContentLoaded", function () {
       if (!isClickInsideSidebar && !isClickOnToggle) {
         closeSidebarMobile();
       }
+    }
+
+    // 3.8. Click to View Avatar Lightbox
+    const avatarImg = e.target.closest("#profileAvatar, .user-avatar-img");
+    if (avatarImg && !e.target.closest("#changeAvatarBtn") && !e.target.closest(".avatar-dropdown-menu")) {
+      e.preventDefault();
+      e.stopPropagation();
+      showAvatarLightbox(avatarImg.src);
+      return;
     }
   });
 
@@ -314,7 +326,7 @@ document.addEventListener("DOMContentLoaded", function () {
         console.error("[PJAX] Error updating lastLoadedPathname/Search:", e);
       }
 
-      const newMainDiv = doc.querySelector("#content-area") || doc.querySelector("main > div.col-span-1");
+      const newMainDiv = doc.querySelector("#contentArea") || doc.querySelector("#content-area") || doc.querySelector("main > div.col-span-1");
       if (!newMainDiv) {
         window.location.href = url;
         return;
@@ -355,6 +367,8 @@ document.addEventListener("DOMContentLoaded", function () {
         // 2. Update Main Content Container
         if (currentMainDiv && newMainDiv) {
           currentMainDiv.parentNode.replaceChild(newMainDiv, currentMainDiv);
+          currentMainDiv = newMainDiv;
+          currentPjaxContainer = newMainDiv;
         }
 
         // 3. Update Sidebar (active state highlight)
@@ -626,5 +640,79 @@ document.addEventListener("DOMContentLoaded", function () {
       });
   }
 
+  function showAvatarLightbox(src) {
+    let lightbox = document.getElementById("avatarLightbox");
+    if (!lightbox) {
+      lightbox = document.createElement("div");
+      lightbox.id = "avatarLightbox";
+      lightbox.className = "fixed inset-0 z-[2000] hidden items-center justify-center bg-black/90 backdrop-blur-md p-4 transition-all duration-200 opacity-0";
+      lightbox.innerHTML = `
+        <div class="relative max-w-full max-h-full flex flex-col items-center gap-4 animate-scale-up">
+          <!-- Close Button -->
+          <button type="button" id="closeLightboxBtn" class="absolute -top-12 right-0 md:-right-12 md:top-0 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all hover:scale-105 active:scale-95 cursor-pointer">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+          <!-- Lightbox Image Wrapper -->
+          <div class="relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-slate-900/50 p-2">
+            <img id="lightboxImage" class="max-w-[85vw] max-h-[70vh] md:max-w-[450px] md:max-h-[450px] object-cover rounded-xl shadow-inner transition-transform duration-300" src="" alt="Avatar">
+          </div>
+          <!-- Actions (Download) -->
+          <div class="flex items-center gap-3 mt-2">
+            <a id="downloadAvatarBtn" href="" download="avatar.png" class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold flex items-center gap-2 transition-all hover:scale-105 active:scale-95 cursor-pointer">
+              <span class="material-symbols-outlined text-[16px]">download</span>
+              <span data-i18n="downloadAvatar">Tải xuống</span>
+            </a>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(lightbox);
+
+      // Event listeners
+      const closeBtn = lightbox.querySelector("#closeLightboxBtn");
+      closeBtn.addEventListener("click", hideLightbox);
+      lightbox.addEventListener("click", function (e) {
+        if (e.target === lightbox) hideLightbox();
+      });
+    }
+
+    const img = lightbox.querySelector("#lightboxImage");
+    const downloadBtn = lightbox.querySelector("#downloadAvatarBtn");
+    
+    img.src = src;
+    downloadBtn.href = src;
+
+    // Translate "Download" text if i18n is available
+    if (window.PetAI_i18n) {
+      window.PetAI_i18n.applyToElement(lightbox, window.PetAI_i18n.getCurrentLang());
+    }
+
+    // Show with animation
+    lightbox.classList.remove("hidden");
+    lightbox.classList.add("flex");
+    // Trigger reflow
+    lightbox.offsetHeight;
+    lightbox.classList.remove("opacity-0");
+    lightbox.classList.add("opacity-100");
+
+    function hideLightbox() {
+      lightbox.classList.remove("opacity-100");
+      lightbox.classList.add("opacity-0");
+      setTimeout(() => {
+        lightbox.classList.remove("flex");
+        lightbox.classList.add("hidden");
+      }, 200);
+    }
+
+    // Close on Escape key
+    const escHandler = function (e) {
+      if (e.key === "Escape") {
+        hideLightbox();
+        window.removeEventListener("keydown", escHandler);
+      }
+    };
+    window.addEventListener("keydown", escHandler);
+  }
+
+  window.showAvatarLightbox = showAvatarLightbox;
   window.loadPagePjax = loadPagePjax;
 });

@@ -63,7 +63,7 @@ def settings():
                     pwd_hash = row[0]
                     is_force_change = bool(row[1])
 
-            if is_force_change or current_password or new_password or confirm_new_password:
+            if is_force_change or new_password or confirm_new_password:
                 # Nếu bị ép đổi mật khẩu (quên mật khẩu), không yêu cầu nhập mật khẩu hiện tại
                 if is_force_change:
                     if not (new_password and confirm_new_password):
