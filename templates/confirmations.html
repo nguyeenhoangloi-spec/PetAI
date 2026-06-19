@@ -32,6 +32,7 @@
     </noscript>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
     <script>
       (function () {
         const root = document.documentElement;
@@ -1062,59 +1063,58 @@
                 </div>
               </div>
               {% endif %}
-            </div>
-          </section>
+        </div>
+      </section>
+    </div>
+  </div>
+</main>
 
-          <!-- Confirmation Modal -->
-          <div
-            class="fixed inset-0 z-[1050] hidden items-center justify-center bg-slate-950/60 backdrop-blur-sm p-4"
-            id="confirmModal"
-            aria-hidden="true"
+    <div
+      class="fixed inset-0 z-[1050] hidden items-center justify-center bg-slate-950/60 backdrop-blur-sm p-4"
+      id="confirmModal"
+      aria-hidden="true"
+    >
+      <div
+        class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 dark:border-slate-800 rounded-xl max-w-md w-full p-6 shadow-xl"
+      >
+        <h3
+          id="modalTitle"
+          class="headline-md font-semibold text-on-surface dark:text-slate-101 flex items-center gap-2"
+        >
+          <span
+            class="material-symbols-outlined text-amber-500 dark:text-amber-400"
+            >warning</span
+          ><span data-i18n="confirmActionTitle">Xác nhận thao tác</span>
+        </h3>
+        <p
+          id="modalText"
+          class="body-md text-on-surface-variant dark:text-slate-300 mt-3"
+          data-i18n="confirmActionText"
+        >
+          <span data-i18n="confirmActionText"
+            >Bạn có chắc muốn thực hiện hành động này?</span
           >
-            <div
-              class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 dark:border-slate-800 rounded-xl max-w-md w-full p-6 shadow-xl"
-            >
-              <h3
-                id="modalTitle"
-                class="headline-md font-semibold text-on-surface dark:text-slate-101 flex items-center gap-2"
-              >
-                <span
-                  class="material-symbols-outlined text-amber-500 dark:text-amber-400"
-                  >warning</span
-                ><span data-i18n="confirmActionTitle">Xác nhận thao tác</span>
-              </h3>
-              <p
-                id="modalText"
-                class="body-md text-on-surface-variant dark:text-slate-300 mt-3"
-                data-i18n="confirmActionText"
-              >
-                <span data-i18n="confirmActionText"
-                  >Bạn có chắc muốn thực hiện hành động này?</span
-                >
-              </p>
-              <div class="mt-6 flex items-center justify-end gap-3">
-                <button
-                  type="button"
-                  class="px-4 py-2 rounded-lg border border-outline-variant/40 dark:border-slate-700 label-sm font-semibold text-on-surface dark:text-slate-300 hover:bg-surface-container-low dark:hover:bg-slate-800 transition-colors"
-                  id="modalCancel"
-                  data-i18n="cancel"
-                >
-                  <span data-i18n="cancel">Huỷ</span>
-                </button>
-                <button
-                  type="button"
-                  class="px-4 py-2 rounded-lg bg-primary hover:bg-primary/95 text-on-primary label-sm font-semibold hover:opacity-90 shadow-sm transition-colors"
-                  id="modalOk"
-                  data-i18n="confirm"
-                >
-                  <span data-i18n="confirm">Xác nhận</span>
-                </button>
-              </div>
-            </div>
-          </div>
+        </p>
+        <div class="mt-6 flex items-center justify-end gap-3">
+          <button
+            type="button"
+            class="px-4 py-2 rounded-lg border border-outline-variant/40 dark:border-slate-700 label-sm font-semibold text-on-surface dark:text-slate-300 hover:bg-surface-container-low dark:hover:bg-slate-800 transition-colors"
+            id="modalCancel"
+            data-i18n="cancel"
+          >
+            <span data-i18n="cancel">Huỷ</span>
+          </button>
+          <button
+            type="button"
+            class="px-4 py-2 rounded-lg bg-primary hover:bg-primary/95 text-on-primary label-sm font-semibold hover:opacity-90 shadow-sm transition-colors"
+            id="modalOk"
+            data-i18n="confirm"
+          >
+            <span data-i18n="confirm">Xác nhận</span>
+          </button>
         </div>
       </div>
-    </main>
+    </div>
 
     <footer
       class="bg-surface-container-low border-t border-outline-variant/30 px-4 md:px-6 pt-6 pb-4"

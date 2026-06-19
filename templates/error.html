@@ -27,7 +27,7 @@
     </noscript>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title data-i18n="petaiErrorTitle">{% if ui_language == 'en' %}PetAI - Error {{ code }}{% else %}PetAI - Lỗi {{ code }}{% endif %}</title>
+    <title data-i18n="petaiErrorTitle" data-code="{{ code }}">{% if ui_language == 'en' %}PetAI - Error {{ code }}{% else %}PetAI - Lỗi {{ code }}{% endif %}</title>
     <link href="https://fonts.googleapis.com" rel="preconnect" />
     <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin />
     <link
@@ -201,8 +201,9 @@
         <div
           class="inline-flex items-center justify-center bg-error-container text-on-error-container px-sm py-xs rounded-full label-sm mb-md relative z-10"
           data-i18n="errorCodeTitle"
+          data-code="{{ code }}"
         >
-          <span data-i18n="errorCodeTitle">Lỗi {{ code }}</span>
+          Lỗi {{ code }}
         </div>
         <div
           class="w-24 h-24 bg-surface-container flex items-center justify-center rounded-full mb-md relative z-10 text-primary-container"

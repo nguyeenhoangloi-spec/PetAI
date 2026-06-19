@@ -737,22 +737,14 @@ html.preload:has(#sidebar) footer {
   transition: none !important;
 }
 
-/* Prevent FOUC (Flash of Unstyled Content) and enable smooth fade-in on main content */
-main>div:not(.sidebar) {
-  opacity: 0;
-}
 
-html.ready main>div:not(.sidebar) {
-  opacity: 1;
-  transition: opacity 0.2s ease-in-out !important;
-}
 
 /* Override the template-level i18n-loading style so the sidebar and navbar stay visible in English mode */
 html.i18n-loading body {
   visibility: visible !important;
 }
 
-html.i18n-loading main>div:not(.sidebar) {
+html.i18n-loading main > div.col-span-1 {
   visibility: hidden !important;
 }
 
@@ -766,12 +758,27 @@ html.i18n-loading main>div:not(.sidebar) {
   view-transition-name: main-sidebar;
 }
 
-body>nav {
+body > nav {
   view-transition-name: main-navbar;
 }
 
-/* Subtle loading indicator during PJAX fetch — no opacity flash */
-html.pjax-loading main>div:not(.sidebar) {
-  opacity: 0.6;
-  transition: opacity 0.15s ease-out !important;
+/* Subtle loading indicator during PJAX fetch — chỉ mờ khu vực content */
+html.pjax-loading main > div.col-span-1 {
+  opacity: 0.55;
+  transition: opacity 0.12s ease-out !important;
+}
+
+
+/* Only animate the content area during transitions */
+::view-transition-old(page-content),
+::view-transition-new(page-content) {
+  animation-duration: 0.18s;
+  animation-timing-function: ease-in-out;
+}
+
+/* Prevent root-level cross-fade (which flashes the whole screen) */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
 }

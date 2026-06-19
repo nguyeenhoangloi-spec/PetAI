@@ -82,6 +82,34 @@ def _extract_embedding(model, x, arch: str):
 	raise ValueError("Unsupported arch")
 
 
+def _forward_embedding_and_logits(model, x, arch: str):
+	if F is None or torch is None:
+		raise RuntimeError("PyTorch functional chưa sẵn sàng")
+	arch = arch.lower()
+	if arch == "resnet50":
+		y = model.conv1(x)
+		y = model.bn1(y)
+		y = model.relu(y)
+		y = model.maxpool(y)
+		y = model.layer1(y)
+		y = model.layer2(y)
+		y = model.layer3(y)
+		y = model.layer4(y)
+		y = model.avgpool(y)
+		y = torch.flatten(y, 1)
+		logits = model.fc(y)
+		emb = F.normalize(y, dim=1)
+		return emb, logits
+	if arch == "efficientnet_b0":
+		y = model.features(x)
+		y = model.avgpool(y)
+		y = torch.flatten(y, 1)
+		logits = model.classifier(y)
+		emb = F.normalize(y, dim=1)
+		return emb, logits
+	raise ValueError("Unsupported arch")
+
+
 class ImagePredictor:
 	"""Predictor dùng bộ model mới: classifier + prototype similarity."""
 
@@ -99,7 +127,12 @@ class ImagePredictor:
 		self.breed_name_vi_map: Dict[str, str] = {}
 		self.prototypes: Optional[np.ndarray] = None
 		self.transform = None
-		self.use_tta = True
+		# Enable Test-Time Augmentation (TTA) by default to maintain accuracy
+		raw_tta = os.getenv("ENABLE_TTA")
+		if raw_tta is not None:
+			self.use_tta = str(raw_tta).strip().lower() not in {"0", "false", "no", "off"}
+		else:
+			self.use_tta = True
 		self.model_ready = False
 		self._load_error = ""
 
@@ -357,7 +390,7 @@ class ImagePredictor:
 
 		return views
 
-	def _predict_similarity(self, img: Image.Image) -> np.ndarray:
+	def _predict_similarity_and_logits(self, img: Image.Image) -> tuple[np.ndarray, np.ndarray]:
 		if self.model is None or self.prototypes is None or self.transform is None:
 			raise RuntimeError("Model chưa sẵn sàng")
 		if torch is None:
@@ -371,41 +404,20 @@ class ImagePredictor:
 
 		views = self._build_tta_views(img) if self.use_tta else [img]
 		sim_vectors: List[np.ndarray] = []
-
-		with torch.no_grad():
-			for view in views:
-				x = cast(Any, transform_fn(view)).unsqueeze(0).to(device)
-				emb = _extract_embedding(self.model, x, self.arch)[0].cpu().numpy()
-				emb = emb / (np.linalg.norm(emb) + 1e-8)
-				sim_vectors.append(prototypes @ emb)
-
-		if not sim_vectors:
-			raise RuntimeError("Không tạo được vector similarity")
-		return np.mean(np.stack(sim_vectors, axis=0), axis=0)
-
-	def _predict_logits(self, img: Image.Image) -> np.ndarray:
-		if self.model is None or self.transform is None:
-			raise RuntimeError("Model chưa sẵn sàng")
-		if torch is None:
-			raise RuntimeError("PyTorch chưa sẵn sàng")
-
-		transform_fn = cast(Any, self.transform)
-		device = self.device
-		if device is None:
-			raise RuntimeError("Thiết bị suy luận chưa sẵn sàng")
-
-		views = self._build_tta_views(img) if self.use_tta else [img]
 		logits_vectors: List[np.ndarray] = []
 
 		with torch.no_grad():
 			for view in views:
 				x = cast(Any, transform_fn(view)).unsqueeze(0).to(device)
-				logits = self.model(x)
-				logits_vectors.append(logits[0].detach().cpu().numpy())
+				emb, logits = _forward_embedding_and_logits(self.model, x, self.arch)
+				emb_np = emb[0].cpu().numpy()
+				emb_np = emb_np / (np.linalg.norm(emb_np) + 1e-8)
+				sim_vectors.append(prototypes @ emb_np)
+				logits_vectors.append(logits[0].cpu().numpy())
 
-		if not logits_vectors:
-			raise RuntimeError("Không tạo được logits dự đoán")
-		return np.mean(np.stack(logits_vectors, axis=0), axis=0)
+		if not sim_vectors or not logits_vectors:
+			raise RuntimeError("Không tạo được kết quả dự đoán")
+		return np.mean(np.stack(sim_vectors, axis=0), axis=0), np.mean(np.stack(logits_vectors, axis=0), axis=0)
 
 	def predict(self, image_path: str) -> Dict[str, Any]:
 		if not os.path.exists(image_path):
@@ -432,8 +444,7 @@ class ImagePredictor:
 
 		try:
 			img = Image.open(image_path).convert("RGB")
-			sims = self._predict_similarity(img)
-			logits = self._predict_logits(img)
+			sims, logits = self._predict_similarity_and_logits(img)
 			probs = _softmax(logits)
 			top_idx = np.argsort(-probs)[:5]
 			sim_top_idx = np.argsort(-sims)[:5]
@@ -668,6 +679,69 @@ class ImagePredictor:
 						"breed_en": normalize_breed_label(self.classes[class_idx]),
 						"image_data": overlay_data,
 					})
+
+			parts_info["gradcam_dynamic"]["items"] = dynamic_items
+
+			hybrid_conf = top_score
+			if decision.get("is_hybrid_candidate"):
+				mean_top2_score = float(decision.get("top12_mean_score") or 0.0)
+				hybrid_conf = max(top_score, max(0.0, min(1.0, mean_top2_score)))
+
+			hybrid_label = None
+			hybrid_label_en = None
+			if decision.get("is_hybrid_candidate") and len(sim_top_idx) >= 2:
+				sim_top1_vi = self._to_vi_breed_name(self.classes[int(sim_top_idx[0])])
+				sim_top2_vi = self._to_vi_breed_name(self.classes[int(sim_top_idx[1])])
+				hybrid_label = f"Nghi lai: {sim_top1_vi} x {sim_top2_vi}"
+				sim_top1_en = normalize_breed_label(self.classes[int(sim_top_idx[0])])
+				sim_top2_en = normalize_breed_label(self.classes[int(sim_top_idx[1])])
+				hybrid_label_en = f"Crossbreed: {sim_top1_en} x {sim_top2_en}"
+
+			# Keep the final displayed label consistent with the hybrid decision.
+			final_breed = hybrid_label or top_breed
+			final_breed_en = hybrid_label_en or top_breed_en
+			if is_breed_reference:
+				note = ""
+				logger.info(
+					"Reference confidence | image=%s | score=%.4f (%.1f%%) | conclude_threshold=%.4f (%.0f%%) | note=%s",
+					image_path,
+					top_score,
+					top_score * 100.0,
+					breed_accept_threshold,
+					breed_accept_threshold * 100.0,
+					note,
+				)
+			elif not is_breed_confident and not hybrid_label:
+				# If the image already passed dog-gate, prefer showing Top-1 breed
+				# instead of returning an empty/unknown breed to end users.
+				final_breed = top_breed
+				final_breed_en = top_breed_en
+				decision["is_hybrid_candidate"] = False
+				decision["reason"] = "Giống hiển thị theo Top-1 dự đoán."
+				note = ""
+
+			return {
+				"image_path": image_path,
+				"species": "Dog",
+				"breed": final_breed,
+				"breed_en": final_breed_en,
+				"breed_conf": max(0.0, min(1.0, hybrid_conf if decision.get("is_hybrid_candidate") else top_score)),
+				"parts_info": parts_info,
+				"model_ready": True,
+				"note": note,
+				"message": "Dự đoán thành công bằng classifier softmax (Top-3) + similarity (giải thích).",
+			}
+		except Exception:
+			logger.exception("Loi suy luan predictor cho anh: %s", image_path)
+			return {
+				"image_path": image_path,
+				"species": "Dog",
+				"breed": "Không xác định",
+				"breed_conf": 0.0,
+				"parts_info": {},
+				"model_ready": False,
+				"message": "Hệ thống tạm thời gặp lỗi khi xử lý ảnh. Vui lòng thử lại.",
+			}
 
 			parts_info["gradcam_dynamic"]["items"] = dynamic_items
 

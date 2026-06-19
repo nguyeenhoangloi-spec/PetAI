@@ -13,6 +13,45 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
+  // Auto-inject hamburger toggle button into navbar if sidebar exists but no #menuToggle
+  (function injectMenuToggle() {
+    const sidebar = document.getElementById("sidebar");
+    if (!sidebar) return; // No sidebar on this page
+
+    if (document.getElementById("menuToggle")) return; // Already exists
+
+    // Find the left side of the navbar (div containing the logo)
+    const nav = document.querySelector("nav");
+    if (!nav) return;
+
+    // Find first div inside the flex-row div of nav (the logo container)
+    const navInner = nav.querySelector("div.flex.items-center.justify-between, div.flex.justify-between");
+    const logoContainer = navInner
+      ? navInner.querySelector("div:first-child")
+      : nav.querySelector("div > div:first-child");
+
+    if (!logoContainer) return;
+
+    const btn = document.createElement("button");
+    btn.id = "menuToggle";
+    btn.type = "button";
+    btn.setAttribute("aria-label", "Toggle sidebar");
+    btn.setAttribute("aria-expanded", "false");
+    btn.className = [
+      "inline-flex items-center justify-center",
+      "w-9 h-9 rounded-lg",
+      "text-on-surface-variant dark:text-slate-400",
+      "hover:bg-slate-100 dark:hover:bg-slate-800",
+      "hover:text-primary dark:hover:text-blue-400",
+      "transition-colors focus:outline-none",
+      "mr-1"
+    ].join(" ");
+    btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:22px">menu</span>';
+
+    // Insert before the logo link (as first child of logo container)
+    logoContainer.insertBefore(btn, logoContainer.firstChild);
+  })();
+
   // Helper functions for sidebar open/close
   function openSidebarMobile() {
     const sidebar = document.getElementById("sidebar");
@@ -247,6 +286,10 @@ document.addEventListener("DOMContentLoaded", function () {
         const newMainDiv = doc.querySelector("main > div.col-span-1");
         const newSidebar = doc.querySelector(".sidebar");
         const newNav = doc.querySelector("body > nav");
+        const newModal = doc.querySelector("#confirmModal");
+        const newDetailModal = doc.querySelector("#detailModal");
+        const newToastStack = doc.querySelector(".toast-stack");
+        const newMetaCsrf = doc.querySelector('meta[name="csrf-token"]');
 
         const updateDOM = () => {
           // 0. Pre-translate new elements BEFORE inserting into live DOM
@@ -288,6 +331,53 @@ document.addEventListener("DOMContentLoaded", function () {
             copy.classList.add("pjax-style");
             document.head.appendChild(copy);
           });
+
+          // 4.55 Update CSRF token meta tag if present
+          const currentMetaCsrf = document.querySelector('meta[name="csrf-token"]');
+          if (newMetaCsrf) {
+            if (currentMetaCsrf) {
+              currentMetaCsrf.setAttribute("content", newMetaCsrf.getAttribute("content"));
+            } else {
+              const meta = document.createElement("meta");
+              meta.name = "csrf-token";
+              meta.content = newMetaCsrf.getAttribute("content");
+              document.head.appendChild(meta);
+            }
+          }
+
+          // 4.6 Update confirmModal if present
+          const currentModal = document.getElementById("confirmModal");
+          if (currentModal && newModal) {
+            currentModal.parentNode.replaceChild(newModal, currentModal);
+          } else if (newModal) {
+            document.body.appendChild(newModal);
+          } else if (currentModal) {
+            currentModal.remove();
+          }
+
+          // 4.65 Update detailModal if present
+          const currentDetailModal = document.getElementById("detailModal");
+          if (currentDetailModal && newDetailModal) {
+            currentDetailModal.parentNode.replaceChild(newDetailModal, currentDetailModal);
+          } else if (newDetailModal) {
+            document.body.appendChild(newDetailModal);
+          } else if (currentDetailModal) {
+            currentDetailModal.remove();
+          }
+
+          // 4.7 Handle any new toasts from the parsed document
+          if (newToastStack && typeof window.showToast === "function") {
+            const newToasts = newToastStack.querySelectorAll(".toast");
+            newToasts.forEach(toast => {
+              const typeClass = Array.from(toast.classList).find(c => c.startsWith("toast--"));
+              const type = typeClass ? typeClass.replace("toast--", "") : "info";
+              const messageEl = toast.querySelector(".toast__message");
+              const message = messageEl ? messageEl.textContent.trim() : "";
+              if (message) {
+                window.showToast(type, message);
+              }
+            });
+          }
         };
 
         const postUpdate = () => {
@@ -355,6 +445,24 @@ document.addEventListener("DOMContentLoaded", function () {
           if (menuToggle) {
             const isCollapsed = root.classList.contains("sidebar-collapsed");
             menuToggle.setAttribute("aria-expanded", isCollapsed ? "true" : "false");
+          } else if (document.getElementById("sidebar")) {
+            // Re-inject hamburger toggle if missing after PJAX navigation
+            const nav = document.querySelector("nav");
+            if (nav) {
+              const navInner = nav.querySelector("div.flex.items-center.justify-between, div.flex.justify-between");
+              const logoContainer = navInner ? navInner.querySelector("div:first-child") : nav.querySelector("div > div:first-child");
+              if (logoContainer && !logoContainer.querySelector("#menuToggle")) {
+                const btn = document.createElement("button");
+                btn.id = "menuToggle";
+                btn.type = "button";
+                btn.setAttribute("aria-label", "Toggle sidebar");
+                const isCollapsed = root.classList.contains("sidebar-collapsed");
+                btn.setAttribute("aria-expanded", isCollapsed ? "true" : "false");
+                btn.className = "inline-flex items-center justify-center w-9 h-9 rounded-lg text-on-surface-variant dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-primary dark:hover:text-blue-400 transition-colors focus:outline-none mr-1";
+                btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:22px">menu</span>';
+                logoContainer.insertBefore(btn, logoContainer.firstChild);
+              }
+            }
           }
 
           // 8. Clear loading state

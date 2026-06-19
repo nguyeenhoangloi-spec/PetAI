@@ -49,7 +49,8 @@ def _get_session_user_id() -> int | None:
 		return None
 
 # Base detection model (COCO dog/cat)
-det_model = YOLO('yolov8s.pt')        # Detection/classification
+yolo_model_name = os.getenv("YOLO_MODEL", "yolov8s.pt")
+det_model = YOLO(yolo_model_name)        # Detection/classification
 
 # Dùng hoàn toàn predictor mới (classifier + prototypes), không ghi đè bằng YOLO breed cũ.
 breed_model = None

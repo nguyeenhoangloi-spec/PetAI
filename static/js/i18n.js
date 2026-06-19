@@ -3307,8 +3307,15 @@
 
     document.querySelectorAll("[data-i18n]").forEach(function (el) {
       var key = el.getAttribute("data-i18n");
-      if (dict[key] !== undefined && el.textContent !== dict[key]) {
-        el.textContent = dict[key];
+      if (dict[key] !== undefined) {
+        var val = dict[key];
+        var code = el.getAttribute("data-code");
+        if (code !== null) {
+          val = val.replace("{{ code }}", code);
+        }
+        if (el.textContent !== val) {
+          el.textContent = val;
+        }
       }
     });
 
@@ -3580,7 +3587,14 @@
 
     root.querySelectorAll("[data-i18n]").forEach(function (el) {
       var key = el.getAttribute("data-i18n");
-      if (dict[key] !== undefined) el.textContent = dict[key];
+      if (dict[key] !== undefined) {
+        var val = dict[key];
+        var code = el.getAttribute("data-code");
+        if (code !== null) {
+          val = val.replace("{{ code }}", code);
+        }
+        el.textContent = val;
+      }
     });
 
     root.querySelectorAll("[data-i18n-placeholder]").forEach(function (el) {

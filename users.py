@@ -209,7 +209,9 @@ def user_detail_page(user_id: int):
 
 @users_bp.route("/lock/<int:user_id>", methods=["POST"])
 def lock_user(user_id: int):
+    logger.info("[LOCK] Called. user_id=%s session_role=%s", user_id, session.get("role"))
     if not require_admin():
+        logger.warning("[LOCK] require_admin() failed for user_id=%s", user_id)
         return jsonify({"success": False, "error": "Vui lòng đăng nhập."}), 401
 
     # Tránh tự khóa chính mình (dễ làm admin bị kẹt)
@@ -228,6 +230,7 @@ def lock_user(user_id: int):
             if cur.rowcount == 0:
                 return jsonify({"success": False, "error": "Không tìm thấy người dùng."}), 404
         conn.commit()
+        logger.info("[LOCK] Success. user_id=%s locked.", user_id)
         return jsonify({"success": True}), 200
     except Exception:
         if conn:

@@ -28,6 +28,7 @@
     </noscript>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
     <script>
       (function () {
         const root = document.documentElement;
@@ -756,7 +757,7 @@
     >
       <div
         id="invoiceModalContainer"
-        class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 w-full max-w-lg overflow-hidden transform transition-all duration-300 scale-95 opacity-0"
+        class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 w-full max-w-lg flex flex-col max-h-[90vh] transform transition-all duration-300 scale-95 opacity-0"
       >
         <!-- Header -->
         <div
@@ -784,8 +785,11 @@
         </div>
 
         <!-- Body -->
-        <div class="p-6 space-y-6 max-h-[70vh] overflow-y-auto">
-          <!-- Success Icon -->
+        <div class="p-6 space-y-6 flex-1 overflow-y-auto">
+          <!-- Success Header -->
+          <div class="flex flex-col gap-1">
+            <h4 class="text-base font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-2">
+              <span class="material-symbols-outlined text-[20px]">check_circle</span>
               <span data-i18n="invoiceSuccess">Thanh toán thành công!</span>
             </h4>
             <p
