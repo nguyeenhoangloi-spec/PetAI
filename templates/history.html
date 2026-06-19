@@ -50,68 +50,7 @@
           }
         })();
 
-        // ── Animated counter for stat cards ──
-        document.addEventListener("DOMContentLoaded", function () {
-          (function () {
-            const DURATION = 1200;
-            const els = document.querySelectorAll("[data-counter]");
-            if (!els.length) return;
 
-            function easeOutExpo(t) {
-              return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
-            }
-
-            function formatNumber(num, isFloat, decimals, useCommas) {
-              let formatted = isFloat
-                ? num.toFixed(decimals)
-                : Math.round(num).toString();
-              if (useCommas) {
-                const parts = formatted.split(".");
-                parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-                formatted = parts.join(".");
-              }
-              return formatted;
-            }
-
-            function animateValue(el) {
-              const target = parseFloat(el.getAttribute("data-counter"));
-              const suffix = el.getAttribute("data-suffix") || "";
-              const useCommas = el.getAttribute("data-use-commas") === "true";
-              const isFloat = String(target).includes(".") && !useCommas;
-              const decimals = isFloat
-                ? String(target).split(".")[1].length
-                : 0;
-              let start = null;
-
-              function step(ts) {
-                if (!start) start = ts;
-                const progress = Math.min((ts - start) / DURATION, 1);
-                const value = easeOutExpo(progress) * target;
-                el.textContent =
-                  formatNumber(value, isFloat, decimals, useCommas) + suffix;
-                if (progress < 1) requestAnimationFrame(step);
-              }
-              requestAnimationFrame(step);
-            }
-
-            if ("IntersectionObserver" in window) {
-              const observer = new IntersectionObserver(
-                (entries) => {
-                  entries.forEach((e) => {
-                    if (e.isIntersecting) {
-                      animateValue(e.target);
-                      observer.unobserve(e.target);
-                    }
-                  });
-                },
-                { threshold: 0.3 },
-              );
-              els.forEach((el) => observer.observe(el));
-            } else {
-              els.forEach(animateValue);
-            }
-          })();
-        });
         const preferredTheme = storedTheme || serverTheme;
 
         function resolveTheme(theme) {
@@ -437,7 +376,7 @@
       {% set active_page = 'history' %}
       {% include '_sidebar.html' %}
 
-      <div class="col-span-1 flex flex-col min-w-0 gap-8">
+      <div id="content-area" class="col-span-1 flex flex-col min-w-0 gap-8">
         <div class="space-y-6">
           <section
             class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-outline-variant/20 dark:border-slate-800 pb-5"
@@ -1163,135 +1102,75 @@
         });
       })();
 
-      // PJAX Smooth transitions for tab selections, search, and pagination
+      // ── Animated counter for stat cards ──
       (function () {
-        const container = document.getElementById("history-pjax-container");
-        if (!container) return;
-
-        function rebindListeners() {
-          // Intercept links inside the pjax container
-          container.querySelectorAll("a").forEach((link) => {
-            if (
-              link.hasAttribute("onclick") ||
-              link.getAttribute("target") === "_blank"
-            )
-              return;
-            const href = link.getAttribute("href");
-            if (!href || href.startsWith("#") || href.startsWith("javascript:"))
-              return;
-
-            link.addEventListener("click", function (e) {
-              e.preventDefault();
-              navigateTo(href);
-            });
-          });
-
-          // Intercept search form submission
-          const form = container.querySelector("form");
-          if (form) {
-            form.addEventListener("submit", function (e) {
-              e.preventDefault();
-              const formData = new FormData(form);
-              const params = new URLSearchParams();
-              for (const [key, val] of formData.entries()) {
-                if (val) params.set(key, val);
-              }
-              const action =
-                form.getAttribute("action") || window.location.pathname;
-              const targetUrl = action + "?" + params.toString();
-              navigateTo(targetUrl);
-            });
-
-            // Intercept clear search button click
-            const clearSearchBtn = form.querySelector("a");
-            if (clearSearchBtn) {
-              clearSearchBtn.addEventListener("click", function (e) {
-                const href = clearSearchBtn.getAttribute("href");
-                if (href) {
-                  e.preventDefault();
-                  navigateTo(href);
-                }
-              });
-            }
-          }
+        const DURATION = 1200;
+        
+        function easeOutExpo(t) {
+          return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
         }
 
-        async function navigateTo(url, push = true) {
-          container.classList.add(
-            "opacity-40",
-            "transition-opacity",
-            "duration-200",
-          );
-          try {
-            const res = await fetch(url, {
-              headers: { "X-Requested-With": "XMLHttpRequest" },
-            });
-            if (!res.ok) throw new Error("Load failed");
-            const htmlText = await res.text();
+        function formatNumber(num, isFloat, decimals, useCommas) {
+          let formatted = isFloat
+            ? num.toFixed(decimals)
+            : Math.round(num).toString();
+          if (useCommas) {
+            const parts = formatted.split(".");
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            formatted = parts.join(".");
+          }
+          return formatted;
+        }
 
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(htmlText, "text/html");
-            const newContainer = doc.getElementById("history-pjax-container");
-            const newTotalCount = doc.getElementById("total-records-count");
+        function animateValue(el) {
+          if (el.dataset.animated === "true") return;
+          el.dataset.animated = "true";
+          const target = parseFloat(el.getAttribute("data-counter"));
+          const suffix = el.getAttribute("data-suffix") || "";
+          const useCommas = el.getAttribute("data-use-commas") === "true";
+          const isFloat = String(target).includes(".") && !useCommas;
+          const decimals = isFloat
+            ? String(target).split(".")[1].length
+            : 0;
+          let start = null;
 
-            if (newContainer) {
-              container.innerHTML = newContainer.innerHTML;
-              if (push) {
-                history.pushState({ pjax: true }, "", url);
-              }
+          function step(ts) {
+            if (!start) start = ts;
+            const progress = Math.min((ts - start) / DURATION, 1);
+            const value = easeOutExpo(progress) * target;
+            el.textContent =
+              formatNumber(value, isFloat, decimals, useCommas) + suffix;
+            if (progress < 1) requestAnimationFrame(step);
+          }
+          requestAnimationFrame(step);
+        }
 
-              // Update total count in header
-              const totalCountEl = document.getElementById(
-                "total-records-count",
-              );
-              if (totalCountEl && newTotalCount) {
-                totalCountEl.textContent = newTotalCount.textContent;
-              }
+        function initCounters() {
+          const els = document.querySelectorAll("[data-counter]");
+          if (!els.length) return;
 
-              // Re-animate progress bars
-              document
-                .querySelectorAll(".history-fill[data-width]")
-                .forEach((el) => {
-                  const raw = Number(el.getAttribute("data-width") || 0);
-                  const pct = Math.max(0, Math.min(100, raw));
-                  el.style.width = `${pct}%`;
+          if ("IntersectionObserver" in window) {
+            const observer = new IntersectionObserver(
+              (entries) => {
+                entries.forEach((e) => {
+                  if (e.isIntersecting) {
+                    animateValue(e.target);
+                    observer.unobserve(e.target);
+                  }
                 });
-
-              rebindListeners();
-
-              // Re-apply translations for the new PJAX-loaded content
-              if (window.PetAI_i18n) {
-                window.PetAI_i18n.setLanguage(window.PetAI_i18n.getCurrentLang());
-              }
-
-              // Scroll main into view smoothly
-              var mainEl = document.querySelector("main");
-              if (mainEl) {
-                mainEl.scrollIntoView({ behavior: "smooth", block: "start" });
-              }
-            } else {
-              window.location.href = url;
-            }
-          } catch (err) {
-            console.error("PJAX load error, loading via page reload:", err);
-            window.location.href = url;
-          } finally {
-            container.classList.remove("opacity-40");
+              },
+              { threshold: 0.1 },
+            );
+            els.forEach((el) => observer.observe(el));
+          } else {
+            els.forEach(animateValue);
           }
         }
 
-        // Popstate handler for back/forward browser buttons
-        window.addEventListener("popstate", function (e) {
-          if (e.state && e.state.pjax) {
-            navigateTo(window.location.href, false);
-          } else {
-            window.location.reload();
-          }
-        });
-
-        // Initialize PJAX listening
-        rebindListeners();
+        setTimeout(initCounters, 100);
       })();
+
+
 
       function openDetailModal(imagePath, breed, confidence, species, date) {
         const modal = document.getElementById("detailModal");

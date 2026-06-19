@@ -159,6 +159,11 @@
       adsWatchedLabel: "Quảng cáo đã xem",
 
       /* ── Language switcher ── */
+      success: "Thành công",
+      error: "Lỗi",
+      warning: "Cảnh báo",
+      info: "Thông tin",
+      close: "Đóng",
       languageLabel: "Tiếng Việt",
       languageFlag: "🇻🇳",
       shortLabel: "VN",
@@ -1735,6 +1740,11 @@
       adsWatchedLabel: "Ads watched",
 
       /* ── Language switcher ── */
+      success: "Success",
+      error: "Error",
+      warning: "Warning",
+      info: "Info",
+      close: "Close",
       languageLabel: "English",
       languageFlag: "🇺🇸",
       shortLabel: "US",
@@ -3283,6 +3293,9 @@
 
   function getSavedLang() {
     try {
+      // Prioritize cookie to stay in sync with server-side rendering language
+      var match = document.cookie.match(new RegExp('(^| )' + STORAGE_KEY + '=([^;]+)'));
+      if (match) return match[2];
       return localStorage.getItem(STORAGE_KEY) || DEFAULT_LANG;
     } catch (e) {
       return DEFAULT_LANG;
@@ -3306,6 +3319,14 @@
     if (!dict) return;
 
     document.querySelectorAll("[data-i18n]").forEach(function (el) {
+      // Avoid translating if this element is nested inside another translated element
+      var ancestor = el.parentElement ? el.parentElement.closest("[data-i18n], [data-i18n-html]") : null;
+      if (ancestor) {
+        var ancestorKey = ancestor.getAttribute("data-i18n") || ancestor.getAttribute("data-i18n-html");
+        if (dict[ancestorKey] !== undefined) {
+          return;
+        }
+      }
       var key = el.getAttribute("data-i18n");
       if (dict[key] !== undefined) {
         var val = dict[key];
@@ -3341,6 +3362,14 @@
     });
 
     document.querySelectorAll("[data-i18n-html]").forEach(function (el) {
+      // Avoid translating if this element is nested inside another translated element
+      var ancestor = el.parentElement ? el.parentElement.closest("[data-i18n], [data-i18n-html]") : null;
+      if (ancestor) {
+        var ancestorKey = ancestor.getAttribute("data-i18n") || ancestor.getAttribute("data-i18n-html");
+        if (dict[ancestorKey] !== undefined) {
+          return;
+        }
+      }
       var key = el.getAttribute("data-i18n-html");
       if (dict[key] !== undefined && el.innerHTML !== dict[key]) {
         el.innerHTML = dict[key];
@@ -3563,6 +3592,9 @@
       currentLang = saved;
       applyTranslations(saved);
       updateSwitcherUI(saved);
+      // Ensure cookie is synced on initialization (e.g. if cookie was cleared/expired but localStorage exists)
+      // to prevent FOUC / translation flash on subsequent page reloads (F5) or PJAX request triggers.
+      saveLang(saved);
     } catch (err) {
       console.error("i18n initialization error:", err);
     } finally {
@@ -3586,6 +3618,13 @@
     if (!dict || !root) return;
 
     root.querySelectorAll("[data-i18n]").forEach(function (el) {
+      var ancestor = el.parentElement ? el.parentElement.closest("[data-i18n], [data-i18n-html]") : null;
+      if (ancestor) {
+        var ancestorKey = ancestor.getAttribute("data-i18n") || ancestor.getAttribute("data-i18n-html");
+        if (dict[ancestorKey] !== undefined) {
+          return;
+        }
+      }
       var key = el.getAttribute("data-i18n");
       if (dict[key] !== undefined) {
         var val = dict[key];
@@ -3613,6 +3652,13 @@
     });
 
     root.querySelectorAll("[data-i18n-html]").forEach(function (el) {
+      var ancestor = el.parentElement ? el.parentElement.closest("[data-i18n], [data-i18n-html]") : null;
+      if (ancestor) {
+        var ancestorKey = ancestor.getAttribute("data-i18n") || ancestor.getAttribute("data-i18n-html");
+        if (dict[ancestorKey] !== undefined) {
+          return;
+        }
+      }
       var key = el.getAttribute("data-i18n-html");
       if (dict[key] !== undefined) el.innerHTML = dict[key];
     });

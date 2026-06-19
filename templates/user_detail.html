@@ -295,7 +295,7 @@
     {% set active_page = 'users' %}
     {% include '_sidebar.html' %}
 
-    <div class="col-span-1 flex flex-col gap-6">
+    <div id="content-area" class="col-span-1 flex flex-col gap-6">
       <!-- Page Header -->
       <section
         class="flex flex-col md:flex-row justify-between items-start md:items-center bg-gradient-to-r from-surface-container-low to-primary-fixed/5 dark:from-slate-800/40 dark:to-slate-900/40 p-5 rounded-xl border border-outline-variant/30 dark:border-slate-800 shadow-sm relative overflow-hidden">
@@ -548,13 +548,12 @@
     id="confirmModal" aria-hidden="true">
     <div
       class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 dark:border-slate-800 rounded-xl max-w-md w-full p-6 shadow-xl">
-      <h3 id="modalTitle"
-        class="headline-md font-semibold text-on-surface dark:text-slate-100 flex items-center gap-2">
+      <h3 id="modalTitle" class="headline-md font-semibold text-on-surface dark:text-slate-100 flex items-center gap-2">
         <span class="material-symbols-outlined text-amber-500 dark:text-amber-400">warning</span><span
           data-i18n="confirm">Xác nhận</span>
       </h3>
-      <p id="modalText" class="body-md text-on-surface-variant dark:text-slate-300 mt-2"
-        data-i18n="confirmDialogText"><span data-i18n="confirmDialogText">Bạn có chắc?</span></p>
+      <p id="modalText" class="body-md text-on-surface-variant dark:text-slate-300 mt-2" data-i18n="confirmDialogText">
+        <span data-i18n="confirmDialogText">Bạn có chắc?</span></p>
       <div id="modalInputWrap" class="hidden mt-3">
         <label class="body-md text-on-surface-variant dark:text-slate-400" for="modalConfirmInput"><span
             data-i18n="enterWord">Nhập</span><code
@@ -735,7 +734,30 @@
           const ans = await openModal({
             text: (typeof window.PetAI_i18n !== 'undefined' ? window.PetAI_i18n.t("confirmAssignPlanText").replace("{plan}", plan.toUpperCase()).replace("{username}", "người dùng") : `Cấp gói ${plan.toUpperCase()} cho người dùng này?`),
           });
-          if (ans.ok) this.submit();
+          if (ans.ok) {
+            const formData = new FormData(this);
+            try {
+              const res = await fetch(this.action || window.location.href, {
+                method: "POST",
+                body: formData,
+                headers: {
+                  "X-Requested-With": "XMLHttpRequest"
+                }
+              });
+              if (res.ok) {
+                const html = await res.text();
+                if (window.loadPagePjax) {
+                  window.loadPagePjax(res.url, true, html);
+                } else {
+                  window.location.href = res.url;
+                }
+              } else {
+                console.error("Failed to update plan");
+              }
+            } catch (err) {
+              console.error(err);
+            }
+          }
         });
       }
 
@@ -764,7 +786,15 @@
             }
             return;
           }
-          location.reload();
+          const successMsg = isActive ? `Đã khóa tài khoản ${username} thành công.` : `Đã mở khóa tài khoản ${username} thành công.`;
+          if (window.loadPagePjax) {
+            await window.loadPagePjax(window.location.href, true);
+            if (typeof window.showToast === "function") {
+              window.showToast("success", successMsg);
+            }
+          } else {
+            location.reload();
+          }
         });
       }
 
@@ -787,7 +817,7 @@
                 typeof window.PetAI_i18n !== 'undefined' ? window.PetAI_i18n.t("invalidConfirmation") : "Xác nhận không đúng.",
               );
             } else {
-              alert(typeof window.PetAI_i18n !== 'undefined' ? window.PetAI_i18n.t("invalidConfirmation") : typeof window.PetAI_i18n !== 'undefined' ? window.PetAI_i18n.t("invalidConfirmation") : "Xác nhận không đúng.");
+              alert(typeof window.PetAI_i18n !== 'undefined' ? window.PetAI_i18n.t("invalidConfirmation") : "Xác nhận không đúng.");
             }
             return;
           }
@@ -803,7 +833,15 @@
             }
             return;
           }
-          window.location.href = "{{ url_for('users.list_users') }}";
+          const listUrl = "{{ url_for('users.list_users') }}";
+          if (window.loadPagePjax) {
+            await window.loadPagePjax(listUrl);
+            if (typeof window.showToast === "function") {
+              window.showToast("success", `Đã xóa người dùng ${username} thành công.`);
+            }
+          } else {
+            window.location.href = listUrl;
+          }
         });
       }
     })();

@@ -427,9 +427,9 @@ html.dark .sidebar {
   height: 48px;
   padding: 0 16px;
   border-radius: 12px;
-  color: #4b5563;
+  color: #1f2937;
   font-size: 15px;
-  font-weight: 500;
+  font-weight: 600;
   box-sizing: border-box;
   transition: all 0.2s ease;
   text-decoration: none !important;
@@ -438,16 +438,16 @@ html.dark .sidebar {
 
 .sidebar-menu-item .material-symbols-outlined {
   font-size: 20px !important;
-  color: #6b7280;
+  color: #4b5563;
   transition: color 0.2s ease;
 }
 
 html.dark .sidebar-menu-item {
-  color: #9ca3af;
+  color: #e5e7eb;
 }
 
 html.dark .sidebar-menu-item .material-symbols-outlined {
-  color: #9ca3af;
+  color: #cbd5e1;
 }
 
 .sidebar-menu-item:hover {
@@ -739,12 +739,12 @@ html.preload:has(#sidebar) footer {
 
 
 
-/* Override the template-level i18n-loading style so the sidebar and navbar stay visible in English mode */
-html.i18n-loading body {
+/* Override the template-level i18n-loading style so the sidebar and navbar stay visible in English mode on dashboard layouts */
+html.i18n-loading:has(#sidebar) body {
   visibility: visible !important;
 }
 
-html.i18n-loading main > div.col-span-1 {
+html.i18n-loading:has(#sidebar) main > div.col-span-1 {
   visibility: hidden !important;
 }
 

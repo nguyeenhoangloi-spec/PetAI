@@ -162,12 +162,38 @@
 
   window.showToast = function (type, message, options) {
     const normalized = normalizeType(type);
-    const text = String(message || "").trim();
+    let text = String(message || "").trim();
     if (!text) return;
+
+    // Get titles dynamically to respect current language
+    const currentTitles = getTitleMap(stack);
+
+    // Translate dynamic toast messages from Vietnamese to English if in English mode
+    if (window.PetAI_i18n && typeof window.PetAI_i18n.getTranslations === "function") {
+      const currentLang = window.PetAI_i18n.getCurrentLang();
+      const translations = window.PetAI_i18n.getTranslations();
+      if (currentLang && currentLang !== "vi" && translations) {
+        const viDict = translations.vi;
+        const targetDict = translations[currentLang];
+        if (viDict && targetDict) {
+          let foundKey = null;
+          for (const key in viDict) {
+            if (viDict[key] === text) {
+              foundKey = key;
+              break;
+            }
+          }
+          if (foundKey && targetDict[foundKey] !== undefined) {
+            text = targetDict[foundKey];
+          }
+        }
+      }
+    }
+
     const toast = buildToast(
       stack,
       normalized,
-      options?.title || titles[normalized],
+      options?.title || currentTitles[normalized],
       text,
       options || {},
     );

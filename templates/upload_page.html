@@ -916,16 +916,58 @@
         }
 
         if (uploadForm) {
-          uploadForm.addEventListener("submit", () => {
+          uploadForm.addEventListener("submit", async function (e) {
+            e.preventDefault();
+            const t_func =
+              typeof window.PetAI_i18n !== "undefined"
+                ? window.PetAI_i18n.t
+                : function (x) {
+                    return x;
+                  };
+            const originalHtml = analyzeBtn ? analyzeBtn.innerHTML : "";
+
             if (analyzeBtn) {
               analyzeBtn.disabled = true;
               analyzeBtn.innerHTML =
                 '<span class="material-symbols-outlined text-[18px] animate-spin" style="animation-duration:1s">refresh</span>' +
-                '<span>' + (
-                  typeof window.PetAI_i18n !== "undefined"
-                    ? window.PetAI_i18n.t("analyzing")
-                    : "Đang phân tích..."
-                ) + '</span>';
+                '<span>' + (t_func("analyzing") || "Đang phân tích...") + '</span>';
+            }
+
+            try {
+              const formData = new FormData(this);
+              const res = await fetch(this.action || window.location.href, {
+                method: "POST",
+                body: formData,
+                headers: {
+                  "X-Requested-With": "XMLHttpRequest"
+                }
+              });
+
+              if (res.ok) {
+                const html = await res.text();
+                if (window.loadPagePjax) {
+                  window.loadPagePjax(res.url, true, html);
+                } else {
+                  window.location.href = res.url;
+                }
+              } else {
+                if (analyzeBtn) {
+                  analyzeBtn.disabled = false;
+                  analyzeBtn.innerHTML = originalHtml;
+                }
+                if (typeof window.showToast === "function") {
+                  window.showToast("error", "Đã xảy ra lỗi khi phân tích ảnh");
+                }
+              }
+            } catch (err) {
+              console.error(err);
+              if (analyzeBtn) {
+                analyzeBtn.disabled = false;
+                analyzeBtn.innerHTML = originalHtml;
+              }
+              if (typeof window.showToast === "function") {
+                window.showToast("error", "Đã xảy ra lỗi kết nối");
+              }
             }
           });
         }
@@ -1080,12 +1122,54 @@
         });
 
         if (watchAdForm && watchAdCompleteBtn) {
-          watchAdForm.addEventListener("submit", () => {
+          watchAdForm.addEventListener("submit", async function (e) {
+            e.preventDefault();
+            const t_func =
+              typeof window.PetAI_i18n !== "undefined"
+                ? window.PetAI_i18n.t
+                : function (x) {
+                    return x;
+                  };
+            const originalText = watchAdCompleteBtn.innerHTML;
             watchAdCompleteBtn.disabled = true;
             watchAdCompleteBtn.textContent =
-              typeof window.PetAI_i18n !== "undefined"
-                ? window.PetAI_i18n.t("confirming")
-                : "Đang xác nhận...";
+              t_func("confirming") || "Đang xác nhận...";
+
+            try {
+              const formData = new FormData(this);
+              const res = await fetch(this.action || window.location.href, {
+                method: "POST",
+                body: formData,
+                headers: {
+                  "X-Requested-With": "XMLHttpRequest"
+                }
+              });
+
+              closeWatchAdModal();
+
+              if (res.ok) {
+                const html = await res.text();
+                if (window.loadPagePjax) {
+                  window.loadPagePjax(res.url, true, html);
+                } else {
+                  window.location.href = res.url;
+                }
+              } else {
+                watchAdCompleteBtn.disabled = false;
+                watchAdCompleteBtn.innerHTML = originalText;
+                if (typeof window.showToast === "function") {
+                  window.showToast("error", "Đã xảy ra lỗi");
+                }
+              }
+            } catch (err) {
+              console.error(err);
+              closeWatchAdModal();
+              watchAdCompleteBtn.disabled = false;
+              watchAdCompleteBtn.innerHTML = originalText;
+              if (typeof window.showToast === "function") {
+                window.showToast("error", "Đã xảy ra lỗi");
+              }
+            }
           });
         }
 

@@ -373,7 +373,7 @@
     >
       {% set active_page = 'confirmations' %} {% include '_sidebar.html' %}
 
-      <div class="col-span-1 flex flex-col gap-8">
+      <div id="content-area" class="col-span-1 flex flex-col gap-8">
         <div class="space-y-6">
           <!-- Page Title -->
           <section
@@ -1377,7 +1377,30 @@
                       .replace("{plan}", plan)
                   : `Xác nhận đã nhận tiền cho đơn ${orderId} (${user} - ${plan})?`,
             });
-            if (answer.ok) this.submit();
+            if (answer.ok) {
+              const formData = new FormData(this);
+              try {
+                const res = await fetch(this.action || window.location.href, {
+                  method: "POST",
+                  body: formData,
+                  headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                  }
+                });
+                if (res.ok) {
+                  const html = await res.text();
+                  if (window.loadPagePjax) {
+                    window.loadPagePjax(res.url, true, html);
+                  } else {
+                    window.location.href = res.url;
+                  }
+                } else {
+                  console.error("Failed to confirm payment");
+                }
+              } catch (err) {
+                console.error(err);
+              }
+            }
           });
         });
 

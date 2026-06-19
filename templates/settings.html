@@ -286,7 +286,7 @@
         {% set is_settings = True %}
         {% include '_sidebar.html' %}
 
-        <div class="col-span-1 flex flex-col gap-gutter">
+        <div id="content-area" class="col-span-1 flex flex-col gap-gutter">
           <form method="POST" id="settingsForm" action="{{ url_for('settings.settings') }}" class="flex flex-col gap-gutter">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
           <section class="soft-panel bg-surface-container-lowest dark:bg-slate-900/70 rounded-xl p-5 border border-outline-variant/30 shadow-sm" id="profile">
@@ -469,27 +469,103 @@
         });
 
         if (form) {
-          form.addEventListener('submit', function (e) {
-            if (e.submitter && e.submitter.id === 'clearHistoryBtn') {
-              const ok = confirm(typeof window.PetAI_i18n !== 'undefined' ? window.PetAI_i18n.t("clearHistoryConfirm") : "Bạn có chắc muốn xóa toàn bộ lịch sử nhận diện? Hành động này không thể hoàn tác.");
-              if (!ok) {
-                e.preventDefault();
-                return;
-              }
+          form.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const submitter = e.submitter;
+            const t_func = typeof window.PetAI_i18n !== 'undefined' ? window.PetAI_i18n.t : (x) => x;
+
+            if (submitter && submitter.id === 'clearHistoryBtn') {
+              const ok = confirm(t_func("clearHistoryConfirm") || "Bạn có chắc muốn xóa toàn bộ lịch sử nhận diện? Hành động này không thể hoàn tác.");
+              if (!ok) return;
+
+              const originalText = clearBtn ? clearBtn.innerHTML : "";
               if (clearBtn) {
                 clearBtn.disabled = true;
-                clearBtn.textContent = (typeof window.PetAI_i18n !== 'undefined' ? window.PetAI_i18n.t("deleting") : "Đang xóa...");
+                clearBtn.innerHTML = `<span class="material-symbols-outlined text-[18px]">delete_forever</span>` + (t_func("deleting") || "Đang xóa...");
+              }
+
+              try {
+                const targetUrl = submitter.getAttribute('formaction') || form.action;
+                const res = await fetch(targetUrl, {
+                  method: 'POST',
+                  body: new FormData(form),
+                  headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                  }
+                });
+                if (res.ok) {
+                  const html = await res.text();
+                  if (window.loadPagePjax) {
+                    window.loadPagePjax(res.url, true, html);
+                  } else {
+                    window.location.href = res.url;
+                  }
+                } else {
+                  if (clearBtn) {
+                    clearBtn.disabled = false;
+                    clearBtn.innerHTML = originalText;
+                  }
+                  if (typeof window.showToast === "function") {
+                    window.showToast("error", "Đã xảy ra lỗi");
+                  }
+                }
+              } catch (err) {
+                console.error(err);
+                if (clearBtn) {
+                  clearBtn.disabled = false;
+                  clearBtn.innerHTML = originalText;
+                }
+                if (typeof window.showToast === "function") {
+                  window.showToast("error", "Đã xảy ra lỗi");
+                }
               }
               return;
             }
 
+            // Normal save settings
             try {
               localStorage.setItem('theme', pendingTheme);
             } catch (e) {}
 
+            const originalSaveText = saveBtn ? saveBtn.innerHTML : "";
             if (saveBtn) {
               saveBtn.disabled = true;
-              saveBtn.textContent = (typeof window.PetAI_i18n !== 'undefined' ? window.PetAI_i18n.t("saving") : "Đang lưu...");
+              saveBtn.innerHTML = t_func("saving") || "Đang lưu...";
+            }
+
+            try {
+              const res = await fetch(form.action || window.location.href, {
+                method: 'POST',
+                body: new FormData(form),
+                headers: {
+                  'X-Requested-With': 'XMLHttpRequest'
+                }
+              });
+              if (res.ok) {
+                const html = await res.text();
+                if (window.loadPagePjax) {
+                  window.loadPagePjax(res.url, true, html);
+                } else {
+                  window.location.href = res.url;
+                }
+              } else {
+                if (saveBtn) {
+                  saveBtn.disabled = false;
+                  saveBtn.innerHTML = originalSaveText;
+                }
+                if (typeof window.showToast === "function") {
+                  window.showToast("error", "Đã xảy ra lỗi");
+                }
+              }
+            } catch (err) {
+              console.error(err);
+              if (saveBtn) {
+                saveBtn.disabled = false;
+                saveBtn.innerHTML = originalSaveText;
+              }
+              if (typeof window.showToast === "function") {
+                window.showToast("error", "Đã xảy ra lỗi");
+              }
             }
           });
         }

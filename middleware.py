@@ -96,3 +96,34 @@ def register_csrf_protection(app):
 
         flash("Phiên thao tác không hợp lệ (CSRF). Vui lòng thử lại.", "error")
         return redirect(request.referrer or url_for("home.index"))
+
+
+def register_html_translation(app):
+    """Register response processor that translates HTML when language is 'en'."""
+
+    @app.after_request
+    def translate_response(response):
+        # Only translate HTML documents
+        if response.mimetype == "text/html":
+            # Prevent browser caching of HTML pages to ensure language switching is instant and correct
+            response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate, max-age=0"
+            response.headers["Pragma"] = "no-cache"
+            response.headers["Expires"] = "0"
+            response.headers["Vary"] = "Cookie"
+
+            if "Content-Encoding" in response.headers:
+                return response
+            
+            from flask import request
+            lang = request.cookies.get("siteLanguage", "vi")
+            if lang in {"en", "vi"}:
+                try:
+                    from i18n_server import translate_html
+                    html_content = response.get_data(as_text=True)
+                    translated_html = translate_html(html_content, lang)
+                    response.set_data(translated_html)
+                except Exception as e:
+                    app.logger.error(f"[i18n middleware] Error in translation: {e}")
+        return response
+
+
