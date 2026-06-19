@@ -3482,48 +3482,41 @@
     });
   }
 
+  function inject3DFlag() {
+    // Dynamic 3D Flag Injection for premium flipping flag toggle
+    document.querySelectorAll(".language-button").forEach(function (btn) {
+      if (!btn.querySelector(".language-flag-3d")) {
+        // Hide standard text / static flag / dropdown arrow spans
+        var flagSpan = btn.querySelector(".language-flag");
+        var textSpan = btn.querySelector(".language-current");
+        var arrowSpan = btn.querySelector(".language-arrow");
+        if (flagSpan) flagSpan.style.display = "none";
+        if (textSpan) textSpan.style.display = "none";
+        if (arrowSpan) arrowSpan.style.display = "none";
+
+        var wrapper = document.createElement("div");
+        wrapper.className = "language-flag-3d";
+        wrapper.innerHTML = 
+          '<div class="language-flag-card">' +
+            '<div class="language-flag-face language-flag-front">🇻🇳</div>' +
+            '<div class="language-flag-face language-flag-back">🇺🇸</div>' +
+          '</div>';
+        btn.appendChild(wrapper);
+      }
+    });
+  }
+
   function updateSwitcherUI(lang) {
     var dict = TRANSLATIONS[lang];
     if (!dict) return;
 
-    document.querySelectorAll(".language-current").forEach(function (el) {
-      el.textContent = dict.languageLabel;
+    // Ensure the 3D Flag is injected (e.g. after PJAX page swaps replacement of navbar)
+    inject3DFlag();
+
+    // Update 3D Flip Card state
+    document.querySelectorAll(".language-flag-card").forEach(function (card) {
+      card.classList.toggle("flipped", lang === "en");
     });
-
-    document
-      .querySelectorAll(".language-button .language-flag")
-      .forEach(function (el) {
-        el.textContent = dict.languageFlag;
-        el.removeAttribute("aria-hidden");
-      });
-
-    document.querySelectorAll(".language-option").forEach(function (btn) {
-      var isActive = btn.dataset.lang === lang;
-      btn.classList.toggle("active", isActive);
-      var checkEl = btn.querySelector(".language-check");
-      if (checkEl) checkEl.textContent = isActive ? "✓" : "";
-    });
-
-    // Keep dropdown option labels fixed by target language, not current UI language.
-    document
-      .querySelectorAll(".language-option[data-lang='vi']")
-      .forEach(function (btn) {
-        var flagEl = btn.querySelector(".language-flag");
-        if (flagEl) flagEl.textContent = "🇻🇳";
-        var labels = btn.querySelectorAll("span");
-        var textEl = labels[labels.length - 1];
-        if (textEl) textEl.textContent = "Tiếng Việt";
-      });
-
-    document
-      .querySelectorAll(".language-option[data-lang='en']")
-      .forEach(function (btn) {
-        var flagEl = btn.querySelector(".language-flag");
-        if (flagEl) flagEl.textContent = "🇺🇸";
-        var labels = btn.querySelectorAll("span");
-        var textEl = labels[labels.length - 1];
-        if (textEl) textEl.textContent = "English";
-      });
   }
 
   function setLanguage(lang) {
@@ -3532,13 +3525,6 @@
     saveLang(lang);
     applyTranslations(lang);
     updateSwitcherUI(lang);
-
-    document.querySelectorAll(".language-switcher.open").forEach(function (sw) {
-      sw.classList.remove("open");
-    });
-    document.querySelectorAll(".language-button").forEach(function (btn) {
-      btn.setAttribute("aria-expanded", "false");
-    });
 
     try {
       document.dispatchEvent(
@@ -3553,62 +3539,17 @@
       document.readyState,
     );
 
-    document.addEventListener("click", function (e) {
-      var optionBtn = e.target.closest(".language-option[data-lang]");
-      if (optionBtn) {
-        console.log("i18n clicked language option:", optionBtn.dataset.lang);
-        e.stopPropagation();
-        setLanguage(optionBtn.dataset.lang);
-        return;
-      }
+    inject3DFlag();
 
+    document.addEventListener("click", function (e) {
       var langBtn = e.target.closest(".language-button");
       if (langBtn) {
-        console.log("i18n clicked language button!");
+        console.log("i18n clicked language button! Toggling language...");
         e.stopPropagation();
-        var switcher = langBtn.closest(".language-switcher");
-        if (switcher) {
-          var isOpen = switcher.classList.contains("open");
-          console.log("i18n switcher was open?", isOpen);
-          document
-            .querySelectorAll(".language-switcher.open")
-            .forEach(function (sw) {
-              sw.classList.remove("open");
-              sw.querySelector(".language-button") &&
-                sw
-                  .querySelector(".language-button")
-                  .setAttribute("aria-expanded", "false");
-            });
-          if (!isOpen) {
-            switcher.classList.add("open");
-            langBtn.setAttribute("aria-expanded", "true");
-            console.log("i18n switcher set to open!");
-          }
-        } else {
-          console.log("i18n switcher container not found!");
-        }
+        // Toggle language directly (Option 2: 3D Flip Flag Toggle)
+        var nextLang = currentLang === "vi" ? "en" : "vi";
+        setLanguage(nextLang);
         return;
-      }
-
-      // Close when clicking outside
-      document
-        .querySelectorAll(".language-switcher.open")
-        .forEach(function (sw) {
-          sw.classList.remove("open");
-          var btn = sw.querySelector(".language-button");
-          if (btn) btn.setAttribute("aria-expanded", "false");
-        });
-    });
-
-    document.addEventListener("keydown", function (e) {
-      if (e.key === "Escape") {
-        document
-          .querySelectorAll(".language-switcher.open")
-          .forEach(function (sw) {
-            sw.classList.remove("open");
-            var btn = sw.querySelector(".language-button");
-            if (btn) btn.setAttribute("aria-expanded", "false");
-          });
       }
     });
 

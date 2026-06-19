@@ -93,30 +93,65 @@
             >
               <div class="flex items-center gap-2 text-primary">
                 <span class="material-symbols-outlined">smart_display</span>
-                <span class="label-sm label-sm font-semibold" data-i18n="adSponsor">Nhà Tài Trợ PetAI</span>
+                <span class="label-sm font-semibold" data-i18n="adSponsor">Nhà Tài Trợ PetAI</span>
               </div>
               <div
-                class="bg-surface-variant text-primary px-3 py-1 rounded-full label-sm label-sm flex items-center gap-1"
+                class="flex items-center gap-2 text-slate-800 dark:text-slate-200"
               >
-                <span class="material-symbols-outlined text-[16px]">timer</span><span data-i18n="adRemaining">Còn</span><span id="watchAdCountdown">8</span>s
+                <!-- SVG Circle countdown replacing text pill timer -->
+                <div class="svg-countdown-container">
+                  <svg width="42" height="42">
+                    <circle class="svg-countdown-circle-bg" cx="21" cy="21" r="17"></circle>
+                    <circle class="svg-countdown-circle" id="countdownSvgCircle" cx="21" cy="21" r="17"></circle>
+                  </svg>
+                  <!-- absolute centered countdown number -->
+                  <div class="absolute inset-0 flex items-center justify-center text-[11px] font-black text-slate-800 dark:text-slate-200" id="watchAdCountdown">
+                    8
+                  </div>
+                </div>
+                <span class="text-xs font-bold text-slate-500 dark:text-slate-400" data-i18n="adCountdownLabel">Giây còn lại</span>
               </div>
             </div>
 
             <div
-              class="flex-grow bg-inverse-surface relative flex items-center justify-center min-h-[320px] overflow-hidden"
+              class="flex-grow bg-slate-950 relative flex items-center justify-center min-h-[320px] overflow-hidden"
             >
+              <!-- Slideshow Slides -->
+              <div class="absolute inset-0 ad-slide active">
+                <img src="/static/images/ad_dog_food.png" class="w-full h-full object-cover opacity-85" alt="Dog Food Sponsor">
+                <div class="absolute bottom-4 left-4 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full text-white text-[11px] font-semibold border border-white/10 z-10 flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-[14px]">restaurant</span>
+                  <span data-i18n="sponsorFood">PetFood Ultimate: Dinh dưỡng vượt trội</span>
+                </div>
+              </div>
+              <div class="absolute inset-0 ad-slide">
+                <img src="/static/images/ad_dog_toy.png" class="w-full h-full object-cover opacity-85" alt="Dog Toy Sponsor">
+                <div class="absolute bottom-4 left-4 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full text-white text-[11px] font-semibold border border-white/10 z-10 flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-[14px]">sports_tennis</span>
+                  <span data-i18n="sponsorToy">PetToys Co.: Đồ chơi năng động cho cún</span>
+                </div>
+              </div>
+              <div class="absolute inset-0 ad-slide">
+                <img src="/static/images/ad_dog_spa.png" class="w-full h-full object-cover opacity-85" alt="Dog Spa Sponsor">
+                <div class="absolute bottom-4 left-4 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full text-white text-[11px] font-semibold border border-white/10 z-10 flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-[14px]">spa</span>
+                  <span data-i18n="sponsorSpa">PetSpa Premium: Thư giãn đẳng cấp</span>
+                </div>
+              </div>
+
+              <!-- Subtle dark overlay -->
+              <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/30 z-0"></div>
+
+              <!-- Centered playing indicator overlay -->
               <div
-                class="absolute inset-0 bg-gradient-to-br from-inverse-surface to-[#0b1c30] opacity-80 z-0"
-              ></div>
-              <div
-                class="z-10 flex flex-col items-center gap-4 text-center p-8"
+                class="z-10 flex flex-col items-center gap-2.5 text-center p-5 bg-black/35 backdrop-blur-[3px] rounded-2xl border border-white/10 shadow-lg max-w-xs mx-auto"
               >
-                <span
-                  class="material-symbols-outlined text-on-primary text-[64px] animate-pulse"
-                  >play_circle</span
-                >
-                <h3 class="headline-md text-on-primary" data-i18n="adPlaying"><span data-i18n="adPlaying">Đang phát quảng cáo mô phỏng</span></h3>
-                <p class="body-md text-outline-variant max-w-sm" data-i18n="adWarningDesc"><span data-i18n="adWarningDesc">Vui lòng không đóng cửa sổ này. Lượt nhận diện sẽ được cộng vào tài khoản sau khi video kết thúc.</span></p>
+                <div class="flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                  <span class="text-[9px] font-bold text-red-500 uppercase tracking-widest" data-i18n="adLive">LIVE</span>
+                </div>
+                <h3 class="text-xs font-bold text-white uppercase tracking-wider" data-i18n="adPlayingSponsor">Quảng cáo tài trợ</h3>
+                <p class="text-[10px] text-white/80 leading-relaxed" data-i18n="adWarningDescShort">Lượt cộng sẽ được tính sau khi đếm ngược kết thúc.</p>
               </div>
             </div>
 

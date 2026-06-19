@@ -335,6 +335,8 @@ document.addEventListener("DOMContentLoaded", function () {
       const newNav = doc.querySelector("body > nav");
       const newModal = doc.querySelector("#confirmModal");
       const newDetailModal = doc.querySelector("#detailModal");
+      const newGradcamModal = doc.querySelector("#gradcamDetailModal");
+      const newWatchAdModal = doc.querySelector("#watchAdModal");
       const newToastStack = doc.querySelector(".toast-stack");
       const newMetaCsrf = doc.querySelector('meta[name="csrf-token"]');
 
@@ -435,6 +437,36 @@ document.addEventListener("DOMContentLoaded", function () {
           document.body.appendChild(newDetailModal);
         } else if (currentDetailModal) {
           currentDetailModal.remove();
+        }
+
+        // 4.66 Update watchAdModal if present
+        const currentWatchAdModal = document.getElementById("watchAdModal");
+        if (currentWatchAdModal && newWatchAdModal) {
+          currentWatchAdModal.parentNode.replaceChild(newWatchAdModal, currentWatchAdModal);
+        } else if (newWatchAdModal) {
+          document.body.appendChild(newWatchAdModal);
+        } else if (currentWatchAdModal) {
+          currentWatchAdModal.remove();
+        }
+
+        // 4.68 Update gradcamDetailModal if present
+        const currentGradcamModal = document.getElementById("gradcamDetailModal");
+        if (currentGradcamModal && newGradcamModal) {
+          currentGradcamModal.parentNode.replaceChild(newGradcamModal, currentGradcamModal);
+        } else if (newGradcamModal) {
+          document.body.appendChild(newGradcamModal);
+        } else if (currentGradcamModal) {
+          currentGradcamModal.remove();
+        }
+
+        // 4.67 Sync body dataset attributes
+        if (doc.body) {
+          for (const key in document.body.dataset) {
+            delete document.body.dataset[key];
+          }
+          for (const key in doc.body.dataset) {
+            document.body.dataset[key] = doc.body.dataset[key];
+          }
         }
 
         // 4.7 Handle any new toasts from the parsed document
@@ -640,21 +672,23 @@ document.addEventListener("DOMContentLoaded", function () {
       });
   }
 
-  function showAvatarLightbox(src) {
+  function showAvatarLightbox(src, downloadName = "avatar.png") {
     let lightbox = document.getElementById("avatarLightbox");
     if (!lightbox) {
       lightbox = document.createElement("div");
       lightbox.id = "avatarLightbox";
-      lightbox.className = "fixed inset-0 z-[2000] hidden items-center justify-center bg-black/90 backdrop-blur-md p-4 transition-all duration-200 opacity-0";
+      lightbox.className = "fixed inset-0 z-[2000] hidden items-center justify-center bg-slate-955/85 backdrop-blur-sm p-4 transition-all duration-300 opacity-0";
+      lightbox.style.backgroundColor = "rgba(2, 6, 23, 0.85)"; // slate-950 with 85% opacity
       lightbox.innerHTML = `
+        <!-- Close Button (Screen-level top-right) -->
+        <button type="button" id="closeLightboxBtn" class="absolute top-4 right-4 md:top-6 md:right-6 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all hover:scale-105 active:scale-95 cursor-pointer shadow-md z-[2010]">
+          <span class="material-symbols-outlined text-[24px]">close</span>
+        </button>
+        
         <div class="relative max-w-full max-h-full flex flex-col items-center gap-4 animate-scale-up">
-          <!-- Close Button -->
-          <button type="button" id="closeLightboxBtn" class="absolute -top-12 right-0 md:-right-12 md:top-0 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all hover:scale-105 active:scale-95 cursor-pointer">
-            <span class="material-symbols-outlined">close</span>
-          </button>
           <!-- Lightbox Image Wrapper -->
-          <div class="relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-slate-900/50 p-2">
-            <img id="lightboxImage" class="max-w-[85vw] max-h-[70vh] md:max-w-[450px] md:max-h-[450px] object-cover rounded-xl shadow-inner transition-transform duration-300" src="" alt="Avatar">
+          <div class="w-[85vw] h-[85vw] sm:w-[75vw] sm:h-[75vw] md:w-[600px] md:h-[600px] relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-slate-900/50 p-0 flex items-center justify-center">
+            <img id="lightboxImage" class="w-full h-full object-cover transition-transform duration-300" src="" alt="Image">
           </div>
           <!-- Actions (Download) -->
           <div class="flex items-center gap-3 mt-2">
@@ -680,6 +714,7 @@ document.addEventListener("DOMContentLoaded", function () {
     
     img.src = src;
     downloadBtn.href = src;
+    downloadBtn.download = downloadName;
 
     // Translate "Download" text if i18n is available
     if (window.PetAI_i18n) {

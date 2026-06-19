@@ -270,7 +270,7 @@
             <img
               alt="PetAI New Logo"
               class="w-auto h-10 md:h-12"
-              src="{{ url_for('static', filename='logo.png') }}"
+              src="{{ url_for('static', filename='images/logo.png') }}"
             />
             <span class="ml-0 text-lg md:text-2xl font-semibold text-primary"
               >PetAI</span
@@ -481,7 +481,7 @@
                 >
                   <img
                     id="imagePreview"
-                    class="w-full max-h-[360px] rounded-lg object-contain bg-surface dark:bg-slate-950"
+                    class="max-h-[400px] max-w-full rounded-xl object-contain shadow-md mx-auto bg-transparent border border-outline-variant/10 dark:border-slate-800/40"
                     alt="Xem trước ảnh tải lên"
                   />
                   <div class="flex flex-wrap items-center gap-3">
@@ -882,14 +882,47 @@
         const watchAdTotal = 8;
         let watchAdRemaining = watchAdTotal;
         let watchAdTimer = null;
+        let adSlideInterval = null;
+
+        function startAdSlideshow() {
+          stopAdSlideshow();
+          let activeAdSlideIndex = 0;
+          const adSlides = document.querySelectorAll(".ad-slide");
+          if (adSlides.length === 0) return;
+
+          adSlides.forEach((slide, idx) => {
+            slide.classList.toggle("active", idx === 0);
+          });
+
+          adSlideInterval = setInterval(() => {
+            const currentSlides = document.querySelectorAll(".ad-slide");
+            if (currentSlides.length === 0) return;
+            currentSlides[activeAdSlideIndex].classList.remove("active");
+            activeAdSlideIndex = (activeAdSlideIndex + 1) % currentSlides.length;
+            currentSlides[activeAdSlideIndex].classList.add("active");
+          }, 2500);
+        }
+
+        function stopAdSlideshow() {
+          if (adSlideInterval) {
+            clearInterval(adSlideInterval);
+            adSlideInterval = null;
+          }
+        }
 
         function resetWatchAd() {
           watchAdRemaining = watchAdTotal;
           if (watchAdCountdown) {
             watchAdCountdown.textContent = String(watchAdTotal);
           }
+          const circle = document.getElementById("countdownSvgCircle");
+          if (circle) {
+            circle.style.strokeDasharray = "107";
+            circle.style.strokeDashoffset = "0";
+          }
           if (watchAdCompleteBtn) {
             watchAdCompleteBtn.disabled = true;
+            watchAdCompleteBtn.classList.remove("shimmer-active");
             watchAdCompleteBtn.innerHTML =
               typeof window.PetAI_i18n !== "undefined"
                 ? '<span class="material-symbols-outlined text-[18px]">check</span>' +
@@ -911,8 +944,13 @@
             if (watchAdCountdown) {
               watchAdCountdown.textContent = "0";
             }
+            const circle = document.getElementById("countdownSvgCircle");
+            if (circle) {
+              circle.style.strokeDashoffset = "107";
+            }
             if (watchAdCompleteBtn) {
               watchAdCompleteBtn.disabled = false;
+              watchAdCompleteBtn.classList.add("shimmer-active");
             }
             if (watchAdBar) {
               watchAdBar.style.width = "100%";
@@ -921,6 +959,11 @@
           }
           if (watchAdCountdown) {
             watchAdCountdown.textContent = String(watchAdRemaining);
+          }
+          const circle = document.getElementById("countdownSvgCircle");
+          if (circle) {
+            const offset = ((watchAdTotal - watchAdRemaining) / watchAdTotal) * 107;
+            circle.style.strokeDashoffset = String(offset);
           }
           if (watchAdBar) {
             const progress =
@@ -937,6 +980,7 @@
           watchAdModal.classList.add("flex");
           watchAdModal.setAttribute("aria-hidden", "false");
           document.body.classList.add("overflow-hidden");
+          startAdSlideshow();
           watchAdTimer = setTimeout(tickWatchAd, 1000);
         }
 
@@ -946,6 +990,7 @@
           watchAdModal.classList.remove("flex");
           watchAdModal.setAttribute("aria-hidden", "true");
           document.body.classList.remove("overflow-hidden");
+          stopAdSlideshow();
           if (watchAdTimer) {
             clearTimeout(watchAdTimer);
             watchAdTimer = null;

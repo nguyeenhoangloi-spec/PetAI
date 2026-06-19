@@ -5,7 +5,7 @@ import html
 from html.parser import HTMLParser
 from breed_names import _COMMON_VI_NAMES
 
-TRANSLATIONS_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "translations.json")
+TRANSLATIONS_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "locales", "translations.json")
 
 translations = {}
 vi_to_key = {}

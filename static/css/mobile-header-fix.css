@@ -849,3 +849,95 @@ main[class*="py-margin"] {
     padding-bottom: 20px !important;
   }
 }
+
+/* --- Premium 3D Flip Language Switcher (Option 2) --- */
+
+/* Hide traditional language menu and text labels */
+.language-switcher .language-menu,
+.language-button .language-current,
+.language-button .language-arrow,
+.language-button .language-flag {
+  display: none !important;
+}
+
+/* Redesign button to be a premium circular capsule */
+.language-button {
+  width: 38px !important;
+  height: 38px !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: transparent !important;
+  border: 1px solid var(--outline-variant, rgba(195, 198, 215, 0.4)) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  box-sizing: border-box !important;
+}
+
+.language-button:hover {
+  background: rgba(0, 74, 198, 0.08) !important;
+  border-color: var(--primary, #004ac6) !important;
+  transform: scale(1.08) !important;
+}
+
+.dark .language-button {
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+.dark .language-button:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: #ffffff !important;
+}
+
+/* 3D Flag viewport */
+.language-flag-3d {
+  perspective: 1000px;
+  width: 24px;
+  height: 24px;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* Card container */
+.language-flag-card {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Card faces */
+.language-flag-face {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  line-height: 1;
+  user-select: none;
+}
+
+/* Back face starts rotated */
+.language-flag-back {
+  transform: rotateY(180deg);
+}
+
+/* Flipped class triggers 3D turn */
+.language-flag-card.flipped {
+  transform: rotateY(180deg);
+}
+
+/* --- Prevent header layout shift when translating navbar links --- */
+nav a[data-i18n="product"] { min-width: 80px; text-align: center; display: inline-block; }
+nav a[data-i18n="features"] { min-width: 80px; text-align: center; display: inline-block; }
+nav a[data-i18n="pricing"] { min-width: 70px; text-align: center; display: inline-block; }
+nav a[data-i18n="about"] { min-width: 85px; text-align: center; display: inline-block; }
+nav a[data-i18n="login"] { min-width: 85px; text-align: center; display: inline-block; }
+nav a[data-i18n="dashboard"] { min-width: 115px; text-align: center; display: inline-block; }

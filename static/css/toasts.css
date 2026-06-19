@@ -236,11 +236,78 @@ html.dark .toast--info {
 }
 
 .animate-scale-up {
-  animation: lightbox-scale-up 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  animation: lightbox-scale-up 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .animate-scale-up {
     animation: none !important;
   }
+}
+
+/* Ad Slideshow Styles */
+.ad-slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
+  transform: scale(1.03);
+}
+.ad-slide.active {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* SVG Circular Countdown */
+.svg-countdown-container {
+  position: relative;
+  width: 42px;
+  height: 42px;
+}
+.svg-countdown-circle-bg {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.15);
+  stroke-width: 3.5;
+}
+.svg-countdown-circle {
+  fill: none;
+  stroke: #ffffff;
+  stroke-width: 3.5;
+  stroke-linecap: round;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+  transition: stroke-dashoffset 0.1s linear;
+}
+
+/* Shimmer Glow Animation */
+@keyframes shimmer-glow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(0, 74, 198, 0.4), 0 4px 6px -1px rgba(0, 74, 198, 0.1);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 16px 4px rgba(0, 74, 198, 0.6), 0 10px 15px -3px rgba(0, 74, 198, 0.3);
+    transform: scale(1.02);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 74, 198, 0.4), 0 4px 6px -1px rgba(0, 74, 198, 0.1);
+    transform: scale(1);
+  }
+}
+html.dark @keyframes shimmer-glow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4), 0 4px 6px -1px rgba(59, 130, 246, 0.1);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 16px 4px rgba(59, 130, 246, 0.6), 0 10px 15px -3px rgba(59, 130, 246, 0.3);
+    transform: scale(1.02);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4), 0 4px 6px -1px rgba(59, 130, 246, 0.1);
+    transform: scale(1);
+  }
+}
+.shimmer-active {
+  animation: shimmer-glow 1.5s infinite ease-in-out !important;
 }
