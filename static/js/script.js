@@ -8,7 +8,6 @@ document.addEventListener("DOMContentLoaded", function () {
     if (window.FlutterBridge) {
       const isDark = root.classList.contains("dark") || root.getAttribute("data-theme") === "dark";
       window.FlutterBridge.postMessage("THEME:" + (isDark ? "dark" : "light"));
-      console.log("[FlutterBridge] Sent theme:", isDark ? "dark" : "light");
     }
   }
 
@@ -216,8 +215,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const href = link.getAttribute("href");
     if (!href) return;
 
-    console.log("[PJAX Click Debug] Clicked link:", link, "href:", href);
-
     // Skip special navigation elements
     if (href.startsWith("#") || href.startsWith("javascript:") || href.includes("logout") || link.target === "_blank") {
       return;
@@ -241,12 +238,8 @@ document.addEventListener("DOMContentLoaded", function () {
       relativePath.startsWith("/upgrade") ||
       relativePath.startsWith("/payments");
 
-    const currentPjaxContainer = document.querySelector("#content-area") || document.querySelector("main > div.col-span-1");
-    console.log("[PJAX Click Debug] absoluteUrl:", absoluteUrl, "isInternal:", isInternal, "relativePath:", relativePath, "isPjaxRoute:", isPjaxRoute, "currentPjaxContainer:", !!currentPjaxContainer);
-
     if (isPjaxRoute && currentPjaxContainer) {
       e.preventDefault();
-      console.log("[PJAX Click Debug] Calling loadPagePjax for:", absoluteUrl);
       loadPagePjax(absoluteUrl);
     }
   });
@@ -303,11 +296,9 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function loadPagePjax(url, isPopState = false, htmlContent = null) {
-    console.log("[PJAX Load Debug] loadPagePjax started for URL:", url);
     document.documentElement.classList.add("preload");
     document.documentElement.classList.remove("ready");
     const handleHtml = (html) => {
-      console.log("[PJAX Load Debug] handleHtml received html length:", html.length);
       const parser = new DOMParser();
       const doc = parser.parseFromString(html, "text/html");
 
@@ -324,9 +315,7 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       const newMainDiv = doc.querySelector("#content-area") || doc.querySelector("main > div.col-span-1");
-      console.log("[PJAX Load Debug] newMainDiv element found:", !!newMainDiv);
       if (!newMainDiv) {
-        console.warn("[PJAX Load Debug] newMainDiv NOT found! Standard redirect fallback.");
         window.location.href = url;
         return;
       }
@@ -338,7 +327,6 @@ document.addEventListener("DOMContentLoaded", function () {
       const newMetaCsrf = doc.querySelector('meta[name="csrf-token"]');
 
       const updateDOM = () => {
-        console.log("[PJAX Load Debug] updateDOM starting...");
         
         // Clean up settings page event listeners to prevent leaks and scroll spy overlap on other pages
         if (window._settingsCleanupListeners) {
@@ -365,11 +353,8 @@ document.addEventListener("DOMContentLoaded", function () {
         document.title = doc.title;
 
         // 2. Update Main Content Container
-        const currentMainDiv = document.querySelector("#content-area") || document.querySelector("main > div.col-span-1");
-        console.log("[PJAX Load Debug] currentMainDiv element found:", !!currentMainDiv);
         if (currentMainDiv && newMainDiv) {
           currentMainDiv.parentNode.replaceChild(newMainDiv, currentMainDiv);
-          console.log("[PJAX Load Debug] replaceChild executed successfully.");
         }
 
         // 3. Update Sidebar (active state highlight)
