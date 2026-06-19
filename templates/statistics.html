@@ -1,9 +1,9 @@
-<!doctype html>
+<!DOCTYPE html>
 
 <html
-  class="{{ 'dark' if ui_theme == 'dark' else 'light' }}{{ ' i18n-loading' if ui_language == 'en' else '' }}"
-  lang="{{ ui_language or 'vi' }}"
-  data-theme="{{ ui_theme or 'light' }}"
+  class="{{'dark'if ui_theme=='dark'else'light'}}{{' i18n-loading'if ui_language=='en'else''}}"
+  lang="{{ui_language or'vi'}}"
+  data-theme="{{ui_theme or'light'}}"
 >
   <head>
     <script>
@@ -117,7 +117,7 @@
     />
     <link
       rel="stylesheet"
-      href="{{ url_for('static', filename='css/mobile-header-fix.css') }}"
+      href="{{ url_for('static', filename='css/mobile-header-fix.css') }}?v=3"
     />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
@@ -462,7 +462,7 @@
           >
             <img
               alt="PetAI New Logo"
-              class="w-auto h-10 md:h-24"
+              class="w-auto h-10 md:h-12"
               src="{{ url_for('static', filename='logo.png') }}"
             />
             <span class="ml-0 text-lg md:text-2xl font-semibold text-primary"
@@ -512,7 +512,7 @@
             <img
               alt="Ảnh đại diện"
               class="w-9 h-9 rounded-full border-2 border-primary/20 p-0.5"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuABdf7zKSVKEqdGUUjqEkF9ftdFTrLW87Tb24r2IiZiv_JP0LrItrCxl23SH-gYj2Mqtkma0ak9DZbUtKM5nW747pmivDYGVbYhNr1PZbxbFuOrZdGJvnbhdSurFLfL3BcmhN2p1h9wv_6geT-x8eoTG1TDoLL40P8wDiaymvRT--SA4jYjU9A77WIji5FmOi99mPDXw7xS6dUyUNJYU2gHLk4-smzFrCuBbQbgtpATDvNo6hq3YR-cfSaNblImtCnDXIb8np7J4HA"
+              src="{{ ui_avatar_url }}"
             />
 
             <div
@@ -566,7 +566,7 @@
     >
       {% set active_page = 'statistics' %} {% include '_sidebar.html' %}
 
-      <div class="col-span-1 flex flex-col min-w-0">
+      <div id="content-area" class="col-span-1 flex flex-col min-w-0">
         <!-- ── Page Header ── -->
         <section
           class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-outline-variant/20 dark:border-slate-800 pb-5 mb-8"

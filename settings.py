@@ -50,6 +50,47 @@ def settings():
                 'email_notifications': request.form.get('email_notifications') == 'on'
             }
 
+            # Optional Password Change logic
+            current_password = request.form.get("current_password", "").strip()
+            new_password = request.form.get("new_password", "").strip()
+            confirm_new_password = request.form.get("confirm_new_password", "").strip()
+
+            password_changed = False
+            if current_password or new_password or confirm_new_password:
+                if not (current_password and new_password and confirm_new_password):
+                    conn.close()
+                    flash("Vui lòng điền đầy đủ thông tin để thay đổi mật khẩu.", "error")
+                    return redirect(url_for("settings.settings"))
+                if len(new_password) < 6:
+                    conn.close()
+                    flash("Mật khẩu mới phải có ít nhất 6 ký tự.", "error")
+                    return redirect(url_for("settings.settings"))
+                if new_password != confirm_new_password:
+                    conn.close()
+                    flash("Mật khẩu mới và xác nhận mật khẩu không khớp.", "error")
+                    return redirect(url_for("settings.settings"))
+                
+                with conn.cursor() as cur:
+                    cur.execute("SELECT password_hash FROM users WHERE id = %s", (user_id,))
+                    row = cur.fetchone()
+                
+                if not row:
+                    conn.close()
+                    flash("Không tìm thấy người dùng.", "error")
+                    return redirect(url_for("settings.settings"))
+                
+                pwd_hash = row[0]
+                from werkzeug.security import check_password_hash, generate_password_hash
+                if not check_password_hash(pwd_hash, current_password):
+                    conn.close()
+                    flash("Mật khẩu hiện tại không chính xác.", "error")
+                    return redirect(url_for("settings.settings"))
+                
+                new_hash = generate_password_hash(new_password)
+                with conn.cursor() as cur:
+                    cur.execute("UPDATE users SET password_hash = %s WHERE id = %s", (new_hash, user_id))
+                password_changed = True
+
             current_fullname = (session.get("fullname") or "").strip()
             if fullname and fullname != current_fullname:
                 with conn.cursor() as cur:
@@ -60,9 +101,13 @@ def settings():
                 session["fullname"] = fullname
             
             UserSettings.update(conn, user_id, settings_data)
+            conn.commit()
             conn.close()
             
-            flash("Cài đặt đã được lưu thành công!", "success")
+            if password_changed:
+                flash("Cài đặt và mật khẩu đã được thay đổi thành công!", "success")
+            else:
+                flash("Cài đặt đã được lưu thành công!", "success")
             return redirect(url_for("settings.settings"))
         except Exception:
             logger.exception("Error saving settings")
@@ -138,3 +183,83 @@ def clear_history():
     finally:
         if conn:
             conn.close()
+
+
+@settings_bp.route("/upload-avatar", methods=["POST"])
+def upload_avatar():
+    """Upload custom avatar for the logged in user"""
+    if not session.get("user_id"):
+        return {"success": False, "message": "Vui lòng đăng nhập để thực hiện."}, 401
+
+    user_id_raw = session.get("user_id")
+    try:
+        user_id = int(user_id_raw)
+    except Exception:
+        return {"success": False, "message": "Phiên đăng nhập không hợp lệ."}, 401
+
+    # Accept the file from request.files.get("avatar")
+    file = request.files.get("avatar")
+    if not file:
+        return {"success": False, "message": "Không tìm thấy file ảnh tải lên."}, 400
+
+    filename = file.filename or ""
+    if filename == "":
+        return {"success": False, "message": "Tên file rỗng."}, 400
+
+    # Validate file extension
+    allowed_extensions = {"png", "jpg", "jpeg", "webp", "gif"}
+    ext = filename.rsplit(".", 1)[1].lower() if "." in filename else ""
+    if ext not in allowed_extensions:
+        return {"success": False, "message": f"Định dạng file không được hỗ trợ. Chỉ chấp nhận: {', '.join(allowed_extensions)}"}, 400
+
+    # Save details
+    from werkzeug.utils import secure_filename
+    import secrets
+    
+    # Generate unique filename to prevent browser caching issues and collisions
+    unique_id = secrets.token_hex(8)
+    new_filename = f"avatar_{user_id}_{unique_id}.{ext}"
+    
+    avatar_dir = os.path.join("static", "uploads", "avatars")
+    os.makedirs(avatar_dir, exist_ok=True)
+    save_path = os.path.join(avatar_dir, new_filename)
+    
+    try:
+        # Save new file
+        file.save(save_path)
+        
+        # Open DB connection
+        conn = get_connection()
+        avatar_url_relative = f"/static/uploads/avatars/{new_filename}"
+        
+        # Fetch previous avatar to delete it (prevent disk space leaks)
+        old_avatar_path = None
+        try:
+            with conn.cursor() as cur:
+                cur.execute("SELECT avatar_url FROM users WHERE id = %s", (user_id,))
+                row = cur.fetchone()
+                if row and row[0]:
+                    old_avatar_path = row[0]
+        except Exception as e:
+            logger.warning(f"Error fetching old avatar path: {e}")
+
+        # Update users table
+        with conn.cursor() as cur:
+            cur.execute("UPDATE users SET avatar_url = %s WHERE id = %s", (avatar_url_relative, user_id))
+        conn.commit()
+        conn.close()
+        
+        # Clean up old local file if it is a custom uploaded avatar (starts with /static/uploads/avatars/)
+        if old_avatar_path and old_avatar_path.startswith("/static/uploads/avatars/"):
+            try:
+                rel_path = old_avatar_path.lstrip("/")
+                full_old_path = os.path.abspath(os.path.join(os.getcwd(), rel_path))
+                if os.path.exists(full_old_path) and os.path.isfile(full_old_path):
+                    os.remove(full_old_path)
+            except Exception as e:
+                logger.warning(f"Error deleting old avatar file {old_avatar_path}: {e}")
+                
+        return {"success": True, "avatar_url": avatar_url_relative}
+    except Exception as e:
+        logger.exception("Error during avatar upload")
+        return {"success": False, "message": "Lỗi lưu file ảnh đại diện. Vui lòng thử lại."}, 500

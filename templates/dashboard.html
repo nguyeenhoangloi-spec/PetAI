@@ -1,9 +1,9 @@
-<!doctype html>
+<!DOCTYPE html>
 
 <html
-  class="{{ 'dark' if ui_theme == 'dark' else 'light' }}{{ ' i18n-loading' if ui_language == 'en' else '' }}"
-  lang="{{ ui_language or 'vi' }}"
-  data-theme="{{ ui_theme or 'light' }}"
+  class="{{'dark'if ui_theme=='dark'else'light'}}{{' i18n-loading'if ui_language=='en'else''}}"
+  lang="{{ui_language or'vi'}}"
+  data-theme="{{ui_theme or'light'}}"
 >
   <head>
     <script>
@@ -117,7 +117,7 @@
     />
     <link
       rel="stylesheet"
-      href="{{ url_for('static', filename='css/mobile-header-fix.css') }}"
+      href="{{ url_for('static', filename='css/mobile-header-fix.css') }}?v=2"
     />
     <link
       rel="stylesheet"
@@ -338,7 +338,7 @@
               alt="Avatar"
               data-i18n-title="avatarAlt"
               class="w-9 h-9 rounded-full border-2 border-primary/20 p-0.5"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuABdf7zKSVKEqdGUUjqEkF9ftdFTrLW87Tb24r2IiZiv_JP0LrItrCxl23SH-gYj2Mqtkma0ak9DZbUtKM5nW747pmivDYGVbYhNr1PZbxbFuOrZdGJvnbhdSurFLfL3BcmhN2p1h9wv_6geT-x8eoTG1TDoLL40P8wDiaymvRT--SA4jYjU9A77WIji5FmOi99mPDXw7xS6dUyUNJYU2gHLk4-smzFrCuBbQbgtpATDvNo6hq3YR-cfSaNblImtCnDXIb8np7J4HA"
+              src="{{ ui_avatar_url }}"
             />
 
             <div

@@ -46,6 +46,10 @@
   }
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 /* --- Responsive Collapsible Sidebar Styles --- */
 
 /* Hamburger menu toggle button styling */
@@ -486,7 +490,6 @@ html.dark .sidebar-menu-item.active {
 html.dark .sidebar-menu-item.active .material-symbols-outlined {
   color: var(--sb-item-active-text-dark) !important;
 }
-
 .sidebar-group-title {
   font-size: 11px;
   font-weight: 600;
@@ -762,11 +765,11 @@ body > nav {
   view-transition-name: main-navbar;
 }
 
-/* Subtle loading indicator during PJAX fetch — chỉ mờ khu vực content */
-html.pjax-loading main > div.col-span-1 {
+/* Subtle loading indicator during PJAX fetch — chỉ mờ khu vực content (Đã tắt theo yêu cầu) */
+/* html.pjax-loading main > div.col-span-1 {
   opacity: 0.55;
   transition: opacity 0.12s ease-out !important;
-}
+} */
 
 
 /* Only animate the content area during transitions */
@@ -781,4 +784,16 @@ html.pjax-loading main > div.col-span-1 {
 ::view-transition-new(root) {
   animation: none;
   mix-blend-mode: normal;
+}
+
+/* Ensure consistent desktop/mobile vertical padding for all layout views */
+main[class*="py-margin"] {
+  padding-top: 24px !important;
+}
+
+@media (max-width: 767px) {
+  main[class*="py-margin"] {
+    padding-top: 20px !important;
+    padding-bottom: 20px !important;
+  }
 }

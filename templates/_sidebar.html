@@ -37,85 +37,87 @@
     <!-- Menu items -->
     <nav class="sidebar-menu">
       {% if is_settings %}
-      <!-- Settings Menu -->
+      <!-- Settings-specific Menu -->
       <a class="sidebar-menu-item" href="{{ url_for('dashboard.dashboard') }}">
         <span class="material-symbols-outlined">home</span>
         <span data-i18n="home">Trang chủ</span>
       </a>
-      <a class="sidebar-menu-item active" href="#profile">
+      <a class="sidebar-menu-item active" href="#profile" onclick="if(window.handleSettingsSidebarClick) window.handleSettingsSidebarClick('profile')">
         <span class="material-symbols-outlined">person</span>
         <span data-i18n="infoSidebarLink">Thông tin</span>
       </a>
-      <a class="sidebar-menu-item" href="#appearance">
+      <a class="sidebar-menu-item" href="#appearance" onclick="if(window.handleSettingsSidebarClick) window.handleSettingsSidebarClick('appearance')">
         <span class="material-symbols-outlined">palette</span>
         <span data-i18n="appearanceSection">Giao diện</span>
       </a>
-      <a class="sidebar-menu-item" href="#privacy">
+      <a class="sidebar-menu-item" href="#privacy" onclick="if(window.handleSettingsSidebarClick) window.handleSettingsSidebarClick('privacy')">
         <span class="material-symbols-outlined">shield</span>
         <span data-i18n="privacySection">Quyền riêng tư</span>
       </a>
       {% else %}
       <!-- Standard Menu -->
-      <a class="sidebar-menu-item {% if active_page == 'dashboard' %}active{% endif %}"
+      <a class="sidebar-menu-item {%if active_page=='dashboard'%}active{%endif%}"
         href="{{ url_for('dashboard.dashboard') }}">
         <span class="material-symbols-outlined">home</span>
         <span data-i18n="home">Trang chủ</span>
       </a>
 
-      <a class="sidebar-menu-item {% if active_page == 'upload' or active_page == 'predict' %}active{% endif %}"
+      <a class="sidebar-menu-item {%if active_page in('upload','predict')%}active{%endif%}"
         href="{{ url_for('predict.upload_page') }}">
         <span class="material-symbols-outlined">upload_file</span>
-        <span data-i18n="uploadAnalyze">Tải ảnh & Phân tích</span>
+        <span data-i18n="uploadAnalyze">Tải ảnh &amp; Phân tích</span>
       </a>
 
-      <a class="sidebar-menu-item {% if active_page == 'history' %}active{% endif %}"
+      <a class="sidebar-menu-item {%if active_page=='history'%}active{%endif%}"
         href="{{ url_for('history.history') }}">
         <span class="material-symbols-outlined">history</span>
         <span data-i18n="predictionHistory">Lịch sử nhận diện</span>
       </a>
 
       {% if session.get('role') == 'user' %}
-      <a class="sidebar-menu-item {% if active_page == 'payments' %}active{% endif %}"
+      <a class="sidebar-menu-item {%if active_page=='payments'%}active{%endif%}"
         href="{{ url_for('predict.my_payments') }}">
         <span class="material-symbols-outlined">payments</span>
         <span data-i18n="payments">Lịch sử thanh toán</span>
       </a>
       {% endif %}
 
-      <a class="sidebar-menu-item {% if active_page == 'statistics' %}active{% endif %}"
+      <a class="sidebar-menu-item {%if active_page=='statistics'%}active{%endif%}"
         href="{{ url_for('statistics.statistics') }}">
         <span class="material-symbols-outlined">bar_chart</span>
         <span data-i18n="personalStats">Thống kê cá nhân</span>
       </a>
 
-      <a class="sidebar-menu-item {% if active_page == 'upgrade' %}active{% endif %}"
+      <a class="sidebar-menu-item {%if active_page=='upgrade'%}active{%endif%}"
         href="{{ url_for('predict.upgrade') }}">
         <span class="material-symbols-outlined">upgrade</span>
         <span data-i18n="upgradePlan">Nâng cấp gói</span>
       </a>
 
       {% if session.get('role') == 'admin' %}
-      <hr class="sidebar-divider" />
+      <hr class="sidebar-divider">
       <div class="sidebar-group-title" data-i18n="adminGroupTitle">QUẢN TRỊ VIÊN</div>
-      <a class="sidebar-menu-item {% if active_page == 'users' %}active{% endif %}"
+      <a class="sidebar-menu-item {%if active_page=='users'%}active{%endif%}"
         href="{{ url_for('users.list_users') }}">
         <span class="material-symbols-outlined">groups</span>
         <span data-i18n="manageUsers">Quản lý người dùng</span>
       </a>
-      <a class="sidebar-menu-item {% if active_page == 'confirmations' %}active{% endif %}"
+      <a class="sidebar-menu-item {%if active_page=='confirmations'%}active{%endif%}"
         href="{{ url_for('users.confirmations_list') }}">
         <span class="material-symbols-outlined">receipt_long</span>
         <span data-i18n="approveOrders">Duyệt đơn</span>
       </a>
       {% endif %}
 
-      <hr class="sidebar-divider" />
+      <hr class="sidebar-divider">
 
-      <a class="sidebar-menu-item {% if active_page == 'settings' %}active{% endif %}"
-        href="{{ url_for('settings.settings') }}">
-        <span class="material-symbols-outlined">settings</span>
-        <span data-i18n="accountSettings">Cài đặt tài khoản</span>
-      </a>
+      <div class="sidebar-menu-group">
+        <a class="sidebar-menu-item {%if active_page=='settings'%}active{%endif%}"
+          href="{{ url_for('settings.settings') }}">
+          <span class="material-symbols-outlined">settings</span>
+          <span data-i18n="accountSettings">Cài đặt tài khoản</span>
+        </a>
+      </div>
       {% endif %}
     </nav>
 
@@ -123,8 +125,8 @@
     <div class="sidebar-user-card flex items-center justify-between">
       <div class="flex items-center gap-3 overflow-hidden">
         <img
-          src="https://lh3.googleusercontent.com/aida-public/AB6AXuABdf7zKSVKEqdGUUjqEkF9ftdFTrLW87Tb24r2IiZiv_JP0LrItrCxl23SH-gYj2Mqtkma0ak9DZbUtKM5nW747pmivDYGVbYhNr1PZbxbFuOrZdGJvnbhdSurFLfL3BcmhN2p1h9wv_6geT-x8eoTG1TDoLL40P8wDiaymvRT--SA4jYjU9A77WIji5FmOi99mPDXw7xS6dUyUNJYU2gHLk4-smzFrCuBbQbgtpATDvNo6hq3YR-cfSaNblImtCnDXIb8np7J4HA"
-          alt="Avatar" class="user-avatar-img w-10 h-10 rounded-full object-cover" />
+          src="{{ ui_avatar_url }}"
+          alt="Avatar" class="user-avatar-img w-10 h-10 rounded-full object-cover">
         <div class="user-info flex flex-col justify-center overflow-hidden">
           <span class="user-name text-sm font-semibold truncate max-w-[120px]">{{ display_name }}</span>
           <span class="user-role text-[11px] text-gray-500 capitalize">

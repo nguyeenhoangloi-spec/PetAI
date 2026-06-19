@@ -1,6 +1,6 @@
-<!doctype html>
+<!DOCTYPE html>
 
-<html class="{{ 'dark' if ui_theme == 'dark' else 'light' }}{{ ' i18n-loading' if ui_language == 'en' else '' }}" lang="{{ ui_language or 'vi' }}" data-theme="{{ ui_theme or 'light' }}">
+<html class="{{'dark'if ui_theme=='dark'else'light'}}{{' i18n-loading'if ui_language=='en'else''}}" lang="{{ui_language or'vi'}}" data-theme="{{ui_theme or'light'}}">
   <head>
     <script>
       (function () {
@@ -92,7 +92,7 @@
     />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/theme-dark.css') }}" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/toasts.css') }}" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile-header-fix.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile-header-fix.css') }}?v=2" />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
@@ -229,7 +229,7 @@
           <a href="{{ url_for('home.index') }}" class="inline-flex items-center gap-0">
             <img
               alt="PetAI New Logo"
-              class="w-auto h-10 md:h-24"
+              class="w-auto h-10 md:h-12"
               src="{{ url_for('static', filename='logo.png') }}"
             />
             <span class="ml-0 text-lg md:text-2xl font-semibold text-primary"
@@ -260,7 +260,7 @@
           </div>
 
             <div class="relative cursor-pointer avatar-wrapper">
-              <img alt="Anh dai dien" class="w-9 h-9 rounded-full border-2 border-primary/20 p-0.5" src="https://lh3.googleusercontent.com/aida-public/AB6AXuABdf7zKSVKEqdGUUjqEkF9ftdFTrLW87Tb24r2IiZiv_JP0LrItrCxl23SH-gYj2Mqtkma0ak9DZbUtKM5nW747pmivDYGVbYhNr1PZbxbFuOrZdGJvnbhdSurFLfL3BcmhN2p1h9wv_6geT-x8eoTG1TDoLL40P8wDiaymvRT--SA4jYjU9A77WIji5FmOi99mPDXw7xS6dUyUNJYU2gHLk4-smzFrCuBbQbgtpATDvNo6hq3YR-cfSaNblImtCnDXIb8np7J4HA" />
+              <img id="navbarAvatar" alt="Anh dai dien" class="w-9 h-9 rounded-full border-2 border-primary/20 p-0.5" src="{{ ui_avatar_url }}" />
               <div class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white dark:border-slate-900 rounded-full"></div>
               <div class="absolute right-0 top-full w-52 bg-white dark:bg-slate-900 rounded-lg shadow-xl border border-slate-200 dark:border-slate-800 py-2 hidden avatar-dropdown-menu z-50">
                 <div class="px-4 pb-2">
@@ -282,70 +282,174 @@
         </div>
       </nav>
 
-      <main class="flex-grow w-full px-margin py-margin grid grid-cols-1 md:grid-cols-[230px_minmax(0,1fr)] gap-6">
+      <main class="flex-grow w-full px-4 md:px-6 py-margin grid grid-cols-1 md:grid-cols-[230px_minmax(0,1fr)] gap-gutter">
         {% set is_settings = True %}
         {% include '_sidebar.html' %}
+        <div id="content-area" class="col-span-1 flex flex-col gap-8">
+          <!-- Premium Hero Profile & Quota Card -->
+          <div class="bg-gradient-to-r from-blue-600 to-indigo-700 dark:from-slate-900 dark:to-slate-800 rounded-2xl p-6 text-white shadow-lg flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="flex flex-col md:flex-row items-center gap-6">
+              <div class="relative group">
+                <img id="profileAvatar" alt="Ảnh đại diện" class="w-20 h-20 rounded-full border-4 border-white/20 p-1 shadow-md" src="{{ ui_avatar_url }}" />
+                <div class="absolute inset-0 bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer" onclick="document.getElementById('avatarFileInput').click()">
+                  <span class="material-symbols-outlined text-white text-xl">photo_camera</span>
+                </div>
+                <input type="file" id="avatarFileInput" accept="image/*" class="hidden">
+              </div>
+              <div class="text-center md:text-left space-y-1">
+                <h2 class="text-2xl font-bold tracking-tight">{{ display_name }}</h2>
+                <p class="text-white/85 text-sm font-medium">{{ display_email or '-' }}</p>
+                <div class="flex flex-wrap justify-center md:justify-start gap-2 pt-1">
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-white/20 text-white uppercase tracking-wider">
+                    <span class="material-symbols-outlined text-[12px] mr-1">verified_user</span>{{ display_role }}
+                  </span>
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-400 text-slate-900 uppercase tracking-wider">
+                    <span class="material-symbols-outlined text-[12px] mr-1">workspace_premium</span>Gói {{ display_plan }}
+                  </span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="flex shrink-0">
+              <a href="{{ url_for('predict.upgrade') }}" class="px-5 py-2.5 bg-amber-400 hover:bg-amber-300 text-slate-900 font-semibold rounded-xl text-sm shadow-md transition-all active:scale-95 flex items-center gap-2">
+                <span class="material-symbols-outlined text-[18px]">upgrade</span>
+                <span data-i18n="subscriptionUpgradeBtn">Nâng cấp gói</span>
+              </a>
+            </div>
+          </div>
 
-        <div id="content-area" class="col-span-1 flex flex-col gap-gutter">
-          <form method="POST" id="settingsForm" action="{{ url_for('settings.settings') }}" class="flex flex-col gap-gutter">
+          <form method="POST" id="settingsForm" action="{{ url_for('settings.settings') }}" class="flex flex-col gap-6">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-          <section class="soft-panel bg-surface-container-lowest dark:bg-slate-900/70 rounded-xl p-5 border border-outline-variant/30 shadow-sm" id="profile">
-            <div class="flex items-center gap-sm mb-6 border-b border-outline-variant/50 dark:border-slate-800 pb-4">
-              <div class="w-10 h-10 rounded-xl bg-primary/10 dark:bg-blue-500/20 flex items-center justify-center text-primary dark:text-blue-200">
-                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">person</span>
-              </div>
-              <h2 class="headline-md headline-md text-on-surface dark:text-slate-100" data-i18n="personalInfo"><span data-i18n="personalInfo">Thông tin cá nhân</span></h2>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div class="space-y-2">
-                <label class="label-sm label-sm text-on-surface-variant dark:text-slate-300 block" data-i18n="fullnameLabel"><span data-i18n="fullnameLabel">Họ và tên</span></label>
-                <div class="flex items-center bg-surface-container-low dark:bg-slate-900 border border-outline-variant/50 dark:border-slate-700 rounded-lg transition-all focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary">
-                  <input class="w-full bg-transparent border-none px-4 py-2.5 body-md body-md text-on-surface dark:text-slate-100 placeholder-outline focus:ring-0" name="fullname" type="text" maxlength="128" value="{{ session.get('fullname') or session.get('username') or '' }}" />
-                </div>
-                <p class="label-sm text-outline dark:text-slate-400 mt-1 body-md flex items-center gap-1">
-                  <span class="material-symbols-outlined text-[14px]">info</span><span data-i18n="fullnameHint">Tên này hiển thị trên hồ sơ và thanh điều hướng.</span></p>
-              </div>
-              <div class="space-y-2">
-                <label class="label-sm label-sm text-on-surface-variant dark:text-slate-300 block" data-i18n="usernameLabel"><span data-i18n="usernameLabel">Tên đăng nhập</span></label>
-                <div class="flex items-center bg-surface-container-highest/40 dark:bg-slate-900/60 border border-outline-variant/50 dark:border-slate-700 rounded-lg cursor-not-allowed">
-                  <input class="w-full bg-transparent border-none px-4 py-2.5 body-md body-md text-on-surface-variant dark:text-slate-400 cursor-not-allowed" disabled type="text" value="{{ session.get('username', '') }}" />
-                  <span class="material-symbols-outlined mr-4 text-outline-variant dark:text-slate-500 text-sm">lock</span>
-                </div>
-                <p class="label-sm text-outline dark:text-slate-400 mt-1 body-md" data-i18n="usernameLocked"><span data-i18n="usernameLocked">Không thể thay đổi tên đăng nhập.</span></p>
-              </div>
-              <div class="space-y-2 md:col-span-2">
-                <label class="label-sm label-sm text-on-surface-variant dark:text-slate-300 block" data-i18n="emailLabel"><span data-i18n="emailLabel">Email</span></label>
-                <div class="flex items-center bg-surface-container-low dark:bg-slate-900/60 border border-outline-variant/50 dark:border-slate-700 rounded-lg cursor-not-allowed">
-                  <input class="w-full bg-transparent border-none px-4 py-2.5 body-md body-md text-on-surface-variant dark:text-slate-400 cursor-not-allowed" disabled type="text" value="{{ display_email or '-' }}" />
-                </div>
-              </div>
-            </div>
-          </section>
 
-          <section class="soft-panel bg-surface-container-lowest dark:bg-slate-900/70 rounded-xl p-5 border border-outline-variant/30 shadow-sm" id="appearance">
-            <div class="flex items-center gap-sm mb-6 border-b border-outline-variant/50 dark:border-slate-800 pb-4">
-              <div class="w-10 h-10 rounded-xl bg-secondary-container/20 dark:bg-amber-500/20 flex items-center justify-center text-secondary dark:text-amber-200">
-                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">palette</span>
-              </div>
-              <h2 class="headline-md headline-md text-on-surface dark:text-slate-100" data-i18n="appearanceSection"><span data-i18n="appearanceSection">Giao diện</span></h2>
+            <!-- Profile and Notifications in a Two Column / Split Layout -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              
+              <!-- Left Column: Personal Info -->
+              <section class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm flex flex-col gap-6" id="profile">
+                <div class="flex items-center gap-3 pb-4 border-b border-slate-100 dark:border-slate-850">
+                  <div class="w-9 h-9 rounded-lg bg-blue-500/10 text-primary dark:text-blue-400 flex items-center justify-center">
+                    <span class="material-symbols-outlined">person</span>
+                  </div>
+                  <h3 class="text-lg font-bold text-on-background dark:text-slate-100" data-i18n="personalInfo">Thông tin cá nhân</h3>
+                </div>
+
+                <div class="space-y-4">
+                  <div class="space-y-2">
+                    <label class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block" data-i18n="fullnameLabel">Họ và tên</label>
+                    <div class="flex items-center bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all">
+                      <input class="w-full bg-transparent border-none px-4 py-3 text-sm text-on-surface dark:text-slate-100 placeholder-slate-400 focus:ring-0" name="fullname" type="text" maxlength="128" value="{{ session.get('fullname') or session.get('username') or '' }}" />
+                    </div>
+                  </div>
+
+                  <div class="space-y-2">
+                    <label class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block" data-i18n="usernameLabel">Tên đăng nhập</label>
+                    <div class="flex items-center bg-slate-100 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 rounded-xl cursor-not-allowed">
+                      <input class="w-full bg-transparent border-none px-4 py-3 text-sm text-slate-500 dark:text-slate-500 cursor-not-allowed" disabled type="text" value="{{ session.get('username', '') }}" />
+                      <span class="material-symbols-outlined mr-4 text-slate-400 dark:text-slate-600 text-sm">lock</span>
+                    </div>
+                  </div>
+
+                  <div class="space-y-2">
+                    <label class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block" data-i18n="emailLabel">Địa chỉ Email</label>
+                    <div class="flex items-center bg-slate-100 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 rounded-xl cursor-not-allowed">
+                      <input class="w-full bg-transparent border-none px-4 py-3 text-sm text-slate-500 dark:text-slate-500 cursor-not-allowed" disabled type="text" value="{{ display_email or '-' }}" />
+                      <span class="material-symbols-outlined mr-4 text-slate-400 dark:text-slate-600 text-sm">lock</span>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <!-- Right Column: Settings and Notification switches -->
+              <section class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm flex flex-col gap-6" id="notifications">
+                <div class="flex items-center gap-3 pb-4 border-b border-slate-100 dark:border-slate-850">
+                  <div class="w-9 h-9 rounded-lg bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+                    <span class="material-symbols-outlined">notifications</span>
+                  </div>
+                  <h3 class="text-lg font-bold text-on-background dark:text-slate-100" data-i18n="notificationsSection">Cài đặt thông báo</h3>
+                </div>
+
+                <div class="space-y-5">
+                  <label class="flex items-start gap-4 p-3.5 rounded-xl border border-slate-100 dark:border-slate-850 bg-slate-50/50 dark:bg-slate-950/30 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-950/50 transition-colors">
+                    {% if settings.notifications %}
+                    <input type="checkbox" name="notifications" class="w-4 h-4 text-primary border-slate-300 dark:border-slate-700 rounded focus:ring-primary focus:ring-offset-0 mt-1" checked />
+                    {% else %}
+                    <input type="checkbox" name="notifications" class="w-4 h-4 text-primary border-slate-300 dark:border-slate-700 rounded focus:ring-primary focus:ring-offset-0 mt-1" />
+                    {% endif %}
+                    <div class="space-y-0.5">
+                      <p class="text-sm font-semibold text-slate-800 dark:text-slate-200" data-i18n="systemNotificationsLabel">Thông báo hệ thống</p>
+                      <p class="text-xs text-slate-500 dark:text-slate-400" data-i18n="systemNotificationsDesc">Nhận thông báo trực tiếp trên giao diện khi có hoạt động mới.</p>
+                    </div>
+                  </label>
+
+                  <label class="flex items-start gap-4 p-3.5 rounded-xl border border-slate-100 dark:border-slate-850 bg-slate-50/50 dark:bg-slate-950/30 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-950/50 transition-colors">
+                    <input type="checkbox" name="email_notifications" class="w-4 h-4 text-primary border-slate-300 dark:border-slate-700 rounded focus:ring-primary focus:ring-offset-0 mt-1" {{ 'checked' if settings.email_notifications else '' }} />
+                    <div class="space-y-0.5">
+                      <p class="text-sm font-semibold text-slate-800 dark:text-slate-200" data-i18n="emailNotificationsLabel">Thông báo qua Email</p>
+                      <p class="text-xs text-slate-500 dark:text-slate-400" data-i18n="emailNotificationsDesc">Nhận các báo cáo thống kê và cập nhật tài khoản qua thư điện tử.</p>
+                    </div>
+                  </label>
+                </div>
+              </section>
             </div>
-            <div class="space-y-6">
+
+            <!-- Change Password Section -->
+            <section class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm flex flex-col gap-6" id="security">
+              <div class="flex items-center gap-3 pb-4 border-b border-slate-100 dark:border-slate-850">
+                <div class="w-9 h-9 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+                  <span class="material-symbols-outlined">security</span>
+                </div>
+                <h3 class="text-lg font-bold text-on-background dark:text-slate-100" data-i18n="changePasswordTitle">Thay đổi mật khẩu</h3>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="space-y-2">
+                  <label class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block" data-i18n="currentPasswordLabel">Mật khẩu hiện tại</label>
+                  <div class="flex items-center bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all">
+                    <input class="w-full bg-transparent border-none px-4 py-3 text-sm text-on-surface dark:text-slate-100 focus:ring-0" name="current_password" type="password" data-i18n-placeholder="currentPasswordPlaceholder" placeholder="Nhập mật khẩu hiện tại" autocomplete="current-password" />
+                  </div>
+                </div>
+
+                <div class="space-y-2">
+                  <label class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block" data-i18n="newPasswordLabel">Mật khẩu mới</label>
+                  <div class="flex items-center bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all">
+                    <input class="w-full bg-transparent border-none px-4 py-3 text-sm text-on-surface dark:text-slate-100 focus:ring-0" name="new_password" type="password" data-i18n-placeholder="newPasswordPlaceholder" placeholder="Nhập mật khẩu mới (>= 6 ký tự)" autocomplete="new-password" />
+                  </div>
+                </div>
+
+                <div class="space-y-2">
+                  <label class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block" data-i18n="confirmNewPasswordLabel">Xác nhận mật khẩu mới</label>
+                  <div class="flex items-center bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all">
+                    <input class="w-full bg-transparent border-none px-4 py-3 text-sm text-on-surface dark:text-slate-100 focus:ring-0" name="confirm_new_password" type="password" data-i18n-placeholder="confirmNewPasswordPlaceholder" placeholder="Xác nhận mật khẩu mới" autocomplete="new-password" />
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- Appearance Section -->
+            <section class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm flex flex-col gap-6" id="appearance">
+              <div class="flex items-center gap-3 pb-4 border-b border-slate-100 dark:border-slate-850">
+                <div class="w-9 h-9 rounded-lg bg-teal-500/10 text-teal-600 dark:text-teal-400 flex items-center justify-center">
+                  <span class="material-symbols-outlined">palette</span>
+                </div>
+                <h3 class="text-lg font-bold text-on-background dark:text-slate-100" data-i18n="appearanceSection">Giao diện</h3>
+              </div>
+
               <div>
-                <h3 class="label-sm label-sm text-on-surface-variant dark:text-slate-300 mb-4" data-i18n="themeLabel"><span data-i18n="themeLabel">Chủ đề</span></h3>
+                <h4 class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-4" data-i18n="themeLabel">Chủ đề hiển thị</h4>
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
                   <label class="relative cursor-pointer group">
                     <input class="peer sr-only" name="theme" type="radio" value="light" {{ 'checked' if settings.theme == 'light' else '' }} />
-                    <div class="border border-outline-variant/30 dark:border-slate-700 rounded-xl overflow-hidden bg-white dark:bg-slate-900 shadow-sm transition-all hover:shadow-md peer-checked:border-primary">
-                      <div class="h-32 bg-surface-container-lowest dark:bg-slate-800 border-b border-outline-variant/30 p-4">
-                        <div class="w-2/3 h-2 bg-outline-variant/30 rounded-full mb-2"></div>
-                        <div class="w-1/2 h-2 bg-outline-variant/20 rounded-full mb-5"></div>
+                    <div class="border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden bg-white shadow-sm transition-all hover:shadow-md peer-checked:border-primary peer-checked:ring-2 peer-checked:ring-primary/20">
+                      <div class="h-28 bg-slate-50 p-4 border-b border-slate-100">
+                        <div class="w-2/3 h-2 bg-slate-200 rounded mb-2"></div>
+                        <div class="w-1/2 h-2 bg-slate-200 rounded mb-4"></div>
                         <div class="flex gap-2">
-                          <div class="w-8 h-8 rounded-lg bg-primary-container/80 shadow-sm"></div>
-                          <div class="flex-1 h-8 rounded-lg bg-white dark:bg-slate-900 border border-outline-variant/50"></div>
+                          <div class="w-7 h-7 rounded bg-primary/20"></div>
+                          <div class="flex-1 h-7 rounded bg-white border border-slate-200"></div>
                         </div>
                       </div>
-                      <div class="p-4 flex items-center justify-between">
-                        <span class="label-sm label-sm text-on-surface dark:text-slate-100" data-i18n="themeLight">Sáng</span>
+                      <div class="p-4 flex items-center justify-between bg-white dark:bg-slate-900">
+                        <span class="text-sm font-semibold text-slate-800 dark:text-slate-200" data-i18n="themeLight">Sáng</span>
                         <span class="material-symbols-outlined text-primary opacity-0 peer-checked:opacity-100 transition-opacity">check_circle</span>
                       </div>
                     </div>
@@ -353,17 +457,17 @@
 
                   <label class="relative cursor-pointer group">
                     <input class="peer sr-only" name="theme" type="radio" value="dark" {{ 'checked' if settings.theme == 'dark' else '' }} />
-                    <div class="border border-outline-variant/30 dark:border-slate-700 rounded-xl overflow-hidden bg-[#181c22] shadow-sm transition-all hover:shadow-md peer-checked:border-primary">
-                      <div class="h-32 bg-[#2d3037] border-b border-white/5 p-4">
-                        <div class="w-2/3 h-2 bg-[#414753] rounded-full mb-2"></div>
-                        <div class="w-1/2 h-2 bg-[#414753] rounded-full mb-5"></div>
+                    <div class="border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden bg-slate-900 shadow-sm transition-all hover:shadow-md peer-checked:border-primary peer-checked:ring-2 peer-checked:ring-primary/20">
+                      <div class="h-28 bg-slate-800 p-4 border-b border-slate-850">
+                        <div class="w-2/3 h-2 bg-slate-700 rounded mb-2"></div>
+                        <div class="w-1/2 h-2 bg-slate-700 rounded mb-4"></div>
                         <div class="flex gap-2">
-                          <div class="w-8 h-8 rounded-lg bg-primary shadow-sm"></div>
-                          <div class="flex-1 h-8 rounded-lg bg-[#414753]"></div>
+                          <div class="w-7 h-7 rounded bg-primary/40"></div>
+                          <div class="flex-1 h-7 rounded bg-slate-700"></div>
                         </div>
                       </div>
-                      <div class="p-4 flex items-center justify-between">
-                        <span class="label-sm label-sm text-white" data-i18n="themeDark">Tối</span>
+                      <div class="p-4 flex items-center justify-between bg-white dark:bg-slate-900">
+                        <span class="text-sm font-semibold text-slate-800 dark:text-slate-200" data-i18n="themeDark">Tối</span>
                         <span class="material-symbols-outlined text-primary opacity-0 peer-checked:opacity-100 transition-opacity">check_circle</span>
                       </div>
                     </div>
@@ -371,64 +475,172 @@
 
                   <label class="relative cursor-pointer group">
                     <input class="peer sr-only" name="theme" type="radio" value="auto" {{ 'checked' if settings.theme == 'auto' else '' }} />
-                    <div class="border border-outline-variant/30 dark:border-slate-700 rounded-xl overflow-hidden bg-surface dark:bg-slate-900 shadow-sm transition-all hover:shadow-md peer-checked:border-primary">
-                      <div class="h-32 flex">
-                        <div class="w-1/2 bg-surface-container-lowest dark:bg-slate-800 p-4 border-r border-outline-variant/20">
-                          <div class="w-full h-2 bg-outline-variant/30 rounded-full mb-2"></div>
-                          <div class="w-full h-2 bg-outline-variant/20 rounded-full"></div>
+                    <div class="border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden bg-white shadow-sm transition-all hover:shadow-md peer-checked:border-primary peer-checked:ring-2 peer-checked:ring-primary/20">
+                      <div class="h-28 flex">
+                        <div class="w-1/2 bg-slate-50 p-4 border-r border-slate-100">
+                          <div class="w-full h-2 bg-slate-200 rounded mb-2"></div>
+                          <div class="w-full h-2 bg-slate-200 rounded"></div>
                         </div>
-                        <div class="w-1/2 bg-[#181c22] p-4">
-                          <div class="w-full h-2 bg-[#414753] rounded-full mb-2"></div>
-                          <div class="w-full h-2 bg-[#414753] rounded-full"></div>
+                        <div class="w-1/2 bg-slate-800 p-4">
+                          <div class="w-full h-2 bg-slate-700 rounded mb-2"></div>
+                          <div class="w-full h-2 bg-slate-700 rounded"></div>
                         </div>
                       </div>
-                      <div class="p-4 flex items-center justify-between">
-                        <span class="label-sm label-sm text-on-surface dark:text-slate-100" data-i18n="themeAuto">Tự động</span>
+                      <div class="p-4 flex items-center justify-between bg-white dark:bg-slate-900">
+                        <span class="text-sm font-semibold text-slate-800 dark:text-slate-200" data-i18n="themeAuto">Tự động</span>
                         <span class="material-symbols-outlined text-primary opacity-0 peer-checked:opacity-100 transition-opacity">check_circle</span>
                       </div>
                     </div>
                   </label>
                 </div>
               </div>
+            </section>
 
-            </div>
-          </section>
-
-
-          <section class="soft-panel bg-surface-container-lowest dark:bg-slate-900/70 rounded-xl p-5 border border-outline-variant/30 shadow-sm" id="privacy">
-            <div class="flex items-center gap-sm mb-6 border-b border-outline-variant/50 dark:border-slate-800 pb-4">
-              <div class="w-10 h-10 rounded-xl bg-error-container/50 dark:bg-red-950/60 flex items-center justify-center text-error dark:text-red-200">
-                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">shield</span>
-              </div>
-              <h2 class="headline-md headline-md text-on-surface dark:text-slate-100" data-i18n="privacySection"><span data-i18n="privacySection">Quyền riêng tư</span></h2>
-            </div>
-            <div class="bg-error-container/30 dark:bg-red-950/40 border border-error/20 dark:border-red-900/40 rounded-xl p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-              <div class="flex gap-4">
-                <div class="mt-1 w-8 h-8 rounded-full bg-error-container flex items-center justify-center shrink-0">
-                  <span class="material-symbols-outlined text-error text-[20px]">warning</span>
+            <!-- Privacy Section (Delete History) -->
+            <section class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm flex flex-col gap-6" id="privacy">
+              <div class="flex items-center gap-3 pb-4 border-b border-slate-100 dark:border-slate-850">
+                <div class="w-9 h-9 rounded-lg bg-red-500/10 text-red-600 dark:text-red-400 flex items-center justify-center">
+                  <span class="material-symbols-outlined">shield</span>
                 </div>
-                <div>
-                  <h4 class="body-md body-md font-semibold text-error dark:text-red-200" data-i18n="historyStorage"><span data-i18n="historyStorage">Lưu trữ lịch sử</span></h4>
-                  <p class="body-md body-md text-on-surface-variant dark:text-slate-300 mt-1 max-w-lg" data-i18n="historyStorageDesc"><span data-i18n="historyStorageDesc">Dữ liệu ảnh và kết quả dự đoán được lưu trong lịch sử. Bạn có thể xóa toàn bộ bất cứ lúc nào.</span></p>
-                  <a class="text-primary dark:text-blue-300 font-semibold body-md inline-flex items-center mt-3 hover:underline group" href="{{ url_for('history.history') }}"><span data-i18n="viewHistory">Xem lịch sử</span><span class="material-symbols-outlined text-sm ml-1 group-hover:translate-x-1 transition-transform">arrow_forward</span>
-                  </a>
-                </div>
+                <h3 class="text-lg font-bold text-on-background dark:text-slate-100" data-i18n="privacySection">Quyền riêng tư</h3>
               </div>
-              <button class="whitespace-nowrap px-4 py-2 bg-white dark:bg-slate-900 border border-error/60 dark:border-red-800 text-error dark:text-red-300 font-semibold rounded-lg hover:bg-error-container/50 dark:hover:bg-red-950/40 transition-all flex items-center gap-2 active:scale-[0.98]" id="clearHistoryBtn" type="submit" formaction="{{ url_for('settings.clear_history') }}" formmethod="POST">
-                <span class="material-symbols-outlined text-[18px]">delete_forever</span><span data-i18n="clearAllHistory">Xóa toàn bộ lịch sử</span></button>
-            </div>
-          </section>
 
-          <div class="flex justify-end gap-sm">
-            <a class="px-4 py-2 rounded-lg border border-outline-variant dark:border-slate-700 text-on-surface dark:text-slate-200 hover:bg-surface-container-low dark:hover:bg-slate-800 label-sm label-sm transition-colors" href="{{ url_for('dashboard.dashboard') }}" data-i18n="cancel"><span data-i18n="cancel">Hủy</span></a>
-            <button class="px-4 py-2 rounded-lg bg-primary text-on-primary label-sm label-sm hover:-translate-y-[1px] shadow-[0_4px_20px_rgba(0,0,0,0.05)] transition-all" type="submit" id="saveSettingsBtn" data-i18n="saveChanges"><span data-i18n="saveChanges">Lưu thay đổi</span></button>
-          </div>
+              <div class="bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900/30 rounded-2xl p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                <div class="flex gap-4">
+                  <div class="mt-1 w-8 h-8 rounded-full bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-300 flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined text-[20px]">warning</span>
+                  </div>
+                  <div class="space-y-1">
+                    <h4 class="text-sm font-bold text-red-800 dark:text-red-300" data-i18n="historyStorage">Lưu trữ lịch sử nhận diện</h4>
+                    <p class="text-xs text-red-700/80 dark:text-red-400/80 max-w-xl" data-i18n="historyStorageDesc">Dữ liệu ảnh và kết quả dự đoán được lưu trong lịch sử. Bạn có thể xóa toàn bộ bất cứ lúc nào.</p>
+                    <a class="text-red-600 dark:text-red-400 font-semibold text-xs inline-flex items-center pt-2 hover:underline group" href="{{ url_for('history.history') }}">
+                      <span data-i18n="viewHistory">Xem lịch sử</span>
+                      <span class="material-symbols-outlined text-xs ml-1 group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                    </a>
+                  </div>
+                </div>
+                <button class="whitespace-nowrap px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white font-semibold text-sm rounded-xl transition-all flex items-center gap-2 active:scale-95 shadow-sm" id="clearHistoryBtn" type="submit" formaction="{{ url_for('settings.clear_history') }}" formmethod="POST">
+                  <span class="material-symbols-outlined text-[18px]">delete_forever</span>
+                  <span data-i18n="clearAllHistory">Xóa toàn bộ lịch sử</span>
+                </button>
+              </div>
+            </section>
+
+            <!-- Save and Cancel actions -->
+            <div class="flex justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-850">
+              <a class="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-950/60 text-sm font-semibold transition-colors" href="{{ url_for('dashboard.dashboard') }}" data-i18n="cancel">Hủy</a>
+              <button class="px-6 py-2.5 rounded-xl bg-primary hover:bg-primary-container text-white text-sm font-semibold shadow-md shadow-primary/10 transition-all hover:-translate-y-[1px] active:translate-y-0" type="submit" id="saveSettingsBtn" data-i18n="saveChanges">Lưu thay đổi</button>
+            </div>
           </form>
         </div>
       </main>
 
     <script>
+      // Define these globally on window so they are accessible from _sidebar.html onclick handlers
+      window.isClickScroll = false;
+      window.clickScrollTimeout = null;
+
+      window.setActiveHighlight = function (sectionId) {
+        const items = document.querySelectorAll('.sidebar-menu a[href^="#"]');
+        items.forEach((item) => {
+          const targetHash = '#' + sectionId;
+          if (item.getAttribute('href') === targetHash) {
+            item.classList.add('active');
+          } else {
+            item.classList.remove('active');
+          }
+        });
+      };
+
+      window.handleSettingsSidebarClick = function (sectionId) {
+        window.isClickScroll = true;
+        window.targetSectionId = sectionId;
+
+        if (window.clickScrollTimeout) clearTimeout(window.clickScrollTimeout);
+        window.setActiveHighlight(sectionId);
+        
+        // Lock scroll spy for 1.2 seconds to cover the full duration of smooth scrolling
+        window.clickScrollTimeout = setTimeout(() => {
+          window.isClickScroll = false;
+        }, 1200);
+      };
+
       (function () {
+        // Dynamic Sidebar Scroll Spy & Active State Management
+        const settingsSections = ['profile', 'appearance', 'privacy'];
+
+        let scrollSpyTimeout = null;
+
+        function updateActiveSidebar() {
+          if (window.isClickScroll) {
+            return; // Still scrolling to target, do not update highlight!
+          }
+          if (scrollSpyTimeout) return; // Throttle scroll event processing
+
+          scrollSpyTimeout = setTimeout(() => {
+            scrollSpyTimeout = null;
+            if (window.isClickScroll) return;
+
+            let activeSection = 'profile';
+            const scrollY = window.scrollY !== undefined ? window.scrollY : window.pageYOffset;
+            const isAtBottom = (window.innerHeight + scrollY) >= (document.documentElement.scrollHeight - 80);
+            if (isAtBottom) {
+              activeSection = 'privacy';
+            } else {
+              const threshold = 160; // offset in px from viewport top
+              let closestSection = 'profile';
+              for (const secId of settingsSections) {
+                const el = document.getElementById(secId);
+                if (el) {
+                  const rect = el.getBoundingClientRect();
+                  if (rect.top <= threshold) {
+                    closestSection = secId;
+                  }
+                }
+              }
+              activeSection = closestSection;
+            }
+            window.setActiveHighlight(activeSection);
+          }, 80); // Limit execution frequency to prevent jumpiness
+        }
+
+        // Clean up previous event listeners if they exist to prevent duplicates under PJAX
+        if (window._settingsCleanupListeners) {
+          window._settingsCleanupListeners();
+        }
+
+        window._settingsScrollSpyHandler = updateActiveSidebar;
+        window.addEventListener('scroll', window._settingsScrollSpyHandler, true);
+
+        // Store cleanup function globally to remove listeners when navigating away
+        window._settingsCleanupListeners = () => {
+          if (window._settingsScrollSpyHandler) {
+            window.removeEventListener('scroll', window._settingsScrollSpyHandler, true);
+          }
+          if (window.clickScrollTimeout) clearTimeout(window.clickScrollTimeout);
+        };
+
+        // Direct Click Handling for instant highlight feedback
+        document.querySelectorAll('.sidebar-menu a[href^="#"]').forEach((item) => {
+          const lockSpy = function () {
+            const hash = item.getAttribute('href');
+            const targetSection = hash.substring(1);
+            window.handleSettingsSidebarClick(targetSection);
+          };
+          item.addEventListener('mousedown', lockSpy);
+          item.addEventListener('touchstart', lockSpy, { passive: true });
+          item.addEventListener('click', lockSpy);
+        });
+
+        if (window.location.hash) {
+          const targetSection = window.location.hash.substring(1);
+          if (settingsSections.includes(targetSection)) {
+            window.setActiveHighlight(targetSection);
+          }
+        }
+
+        setTimeout(updateActiveSidebar, 100);
+
         let pendingTheme = (document.querySelector('input[name="theme"]:checked') || {}).value || 'light';
         const form = document.getElementById('settingsForm');
         const saveBtn = document.getElementById('saveSettingsBtn');
@@ -566,6 +778,83 @@
               if (typeof window.showToast === "function") {
                 window.showToast("error", "Đã xảy ra lỗi");
               }
+            }
+          });
+        }
+
+        // Avatar File Upload Handling
+        const avatarInput = document.getElementById('avatarFileInput');
+        const profileAvatar = document.getElementById('profileAvatar');
+        const navbarAvatar = document.getElementById('navbarAvatar');
+        const sidebarAvatar = document.querySelector('.user-avatar-img');
+
+        if (avatarInput) {
+          avatarInput.addEventListener('change', async function () {
+            const file = this.files[0];
+            if (!file) return;
+
+            // Validate client-side
+            const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp', 'image/gif'];
+            if (!allowedTypes.includes(file.type)) {
+              if (typeof window.showToast === "function") {
+                window.showToast("error", "Định dạng file không được hỗ trợ.");
+              }
+              return;
+            }
+
+            // Preview instantly
+            const originalSrc = profileAvatar ? profileAvatar.src : '';
+            const objectUrl = URL.createObjectURL(file);
+            if (profileAvatar) profileAvatar.src = objectUrl;
+
+            const t_func = typeof window.PetAI_i18n !== 'undefined' ? window.PetAI_i18n.t : (x) => x;
+            
+            // Upload via fetch
+            const formData = new FormData();
+            formData.append('avatar', file);
+
+            // Get CSRF Token
+            const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+            const csrfToken = csrfMeta ? csrfMeta.getAttribute('content') : '';
+
+            try {
+              if (typeof window.showToast === "function") {
+                window.showToast("info", t_func("uploading") || "Đang tải ảnh lên...");
+              }
+              const response = await fetch('/settings/upload-avatar', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                  'X-CSRF-Token': csrfToken,
+                  'X-Requested-With': 'XMLHttpRequest'
+                }
+              });
+
+              const result = await response.json();
+              if (response.ok && result.success) {
+                const newUrl = result.avatar_url;
+                if (profileAvatar) profileAvatar.src = newUrl;
+                if (navbarAvatar) navbarAvatar.src = newUrl;
+                if (sidebarAvatar) sidebarAvatar.src = newUrl;
+                
+                const dropdownAvatar = document.querySelector('.avatar-wrapper img');
+                if (dropdownAvatar) dropdownAvatar.src = newUrl;
+
+                if (typeof window.showToast === "function") {
+                  window.showToast("success", t_func("uploadSuccess") || "Đã cập nhật ảnh đại diện thành công!");
+                }
+              } else {
+                throw new Error(result.message || "Upload failed");
+              }
+            } catch (err) {
+              console.error(err);
+              if (profileAvatar) profileAvatar.src = originalSrc;
+              if (typeof window.showToast === "function") {
+                window.showToast("error", err.message || "Không thể tải ảnh lên. Vui lòng thử lại.");
+              }
+            } finally {
+              URL.revokeObjectURL(objectUrl);
+              avatarInput.value = '';
             }
           });
         }

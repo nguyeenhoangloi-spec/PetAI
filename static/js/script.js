@@ -3,6 +3,9 @@ document.addEventListener("DOMContentLoaded", function () {
   const root = document.documentElement;
   const isMobile = () => window.innerWidth < 768;
 
+  let lastLoadedPathname = window.location.pathname;
+  let lastLoadedSearch = window.location.search;
+
   // Initialize desktop sidebar state from localStorage
   if (!isMobile()) {
     const isCollapsed = localStorage.getItem("sidebar-collapsed") === "true";
@@ -254,6 +257,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Handle browser back and forward navigation
   window.addEventListener("popstate", function () {
+    const currentUrl = new URL(window.location.href);
+    if (currentUrl.pathname === lastLoadedPathname && currentUrl.search === lastLoadedSearch) {
+      // Just a hash change (or no change), do not run PJAX page load
+      return;
+    }
     loadPagePjax(window.location.href, true);
   });
 
@@ -283,6 +291,14 @@ document.addEventListener("DOMContentLoaded", function () {
         history.pushState(null, "", url);
       }
 
+      try {
+        const parsedUrl = new URL(url, window.location.origin);
+        lastLoadedPathname = parsedUrl.pathname;
+        lastLoadedSearch = parsedUrl.search;
+      } catch (e) {
+        console.error("[PJAX] Error updating lastLoadedPathname/Search:", e);
+      }
+
       const newMainDiv = doc.querySelector("#content-area") || doc.querySelector("main > div.col-span-1");
       console.log("[PJAX Load Debug] newMainDiv element found:", !!newMainDiv);
       if (!newMainDiv) {
@@ -299,6 +315,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
       const updateDOM = () => {
         console.log("[PJAX Load Debug] updateDOM starting...");
+        
+        // Clean up settings page event listeners to prevent leaks and scroll spy overlap on other pages
+        if (window._settingsCleanupListeners) {
+          try {
+            window._settingsCleanupListeners();
+            window._settingsCleanupListeners = null;
+          } catch (e) {
+            console.error("Error during settings cleanup:", e);
+          }
+        }
+
         // 0. Pre-translate new elements BEFORE inserting into live DOM
         //    This prevents Vietnamese→English flash when user is in English mode
         if (window.PetAI_i18n && window.PetAI_i18n.applyToElement) {
@@ -324,6 +351,18 @@ document.addEventListener("DOMContentLoaded", function () {
         // 3. Update Sidebar (active state highlight)
         const currentSidebar = document.getElementById("sidebar");
         if (currentSidebar && newSidebar) {
+          // Preserve the active hash-link state if we are on a page with hash-based sidebar links
+          const activeHashLink = currentSidebar.querySelector('.sidebar-menu a.active[href^="#"]');
+          if (activeHashLink) {
+            const hash = activeHashLink.getAttribute('href');
+            const newActiveHashLink = newSidebar.querySelector(`.sidebar-menu a[href="${hash}"]`);
+            if (newActiveHashLink) {
+              newSidebar.querySelectorAll('.sidebar-menu a[href^="#"]').forEach(item => {
+                item.classList.remove('active');
+              });
+              newActiveHashLink.classList.add('active');
+            }
+          }
           currentSidebar.parentNode.replaceChild(newSidebar, currentSidebar);
         }
 

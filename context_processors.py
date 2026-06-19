@@ -9,6 +9,7 @@ def register_context_processors(app):
         if ui_language not in {"vi", "en"}:
             ui_language = "vi"
         ui_theme = "light"
+        ui_avatar_url = "https://lh3.googleusercontent.com/aida-public/AB6AXuABdf7zKSVKEqdGUUjqEkF9ftdFTrLW87Tb24r2IiZiv_JP0LrItrCxl23SH-gYj2Mqtkma0ak9DZbUtKM5nW747pmivDYGVbYhNr1PZbxbFuOrZdGJvnbhdSurFLfL3BcmhN2p1h9wv_6geT-x8eoTG1TDoLL40P8wDiaymvRT--SA4jYjU9A77WIji5FmOi99mPDXw7xS6dUyUNJYU2gHLk4-smzFrCuBbQbgtpATDvNo6hq3YR-cfSaNblImtCnDXIb8np7J4HA"
 
         user_id_raw = session.get("user_id")
         if user_id_raw is not None:
@@ -39,6 +40,13 @@ def register_context_processors(app):
                     theme_raw = (user_settings or {}).get("theme")
                     if isinstance(theme_raw, str) and theme_raw.strip().lower() in {"light", "dark", "auto"}:
                         ui_theme = theme_raw.strip().lower()
+
+                    # Fetch custom user avatar
+                    with conn.cursor() as cur:
+                        cur.execute("SELECT avatar_url FROM users WHERE id = %s", (user_id,))
+                        row = cur.fetchone()
+                        if row and row[0]:
+                            ui_avatar_url = row[0]
                 finally:
                     conn.close()
             except Exception:
@@ -48,4 +56,5 @@ def register_context_processors(app):
             "ui_theme": ui_theme,
             "current_plan": current_plan,
             "ui_language": ui_language,
+            "ui_avatar_url": ui_avatar_url,
         }
