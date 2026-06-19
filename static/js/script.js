@@ -3,6 +3,28 @@ document.addEventListener("DOMContentLoaded", function () {
   const root = document.documentElement;
   const isMobile = () => window.innerWidth < 768;
 
+  // Notify Flutter native app about theme changes
+  function notifyFlutterTheme() {
+    if (window.FlutterBridge) {
+      const isDark = root.classList.contains("dark") || root.getAttribute("data-theme") === "dark";
+      window.FlutterBridge.postMessage("THEME:" + (isDark ? "dark" : "light"));
+      console.log("[FlutterBridge] Sent theme:", isDark ? "dark" : "light");
+    }
+  }
+
+  // Initial notification (with a small timeout to let WebView initialize the bridge)
+  setTimeout(notifyFlutterTheme, 400);
+
+  // Watch for dynamic theme toggle updates
+  const themeObserver = new MutationObserver(function (mutations) {
+    mutations.forEach(function (mutation) {
+      if (mutation.attributeName === "class" || mutation.attributeName === "data-theme") {
+        notifyFlutterTheme();
+      }
+    });
+  });
+  themeObserver.observe(root, { attributes: true });
+
   let lastLoadedPathname = window.location.pathname;
   let lastLoadedSearch = window.location.search;
 

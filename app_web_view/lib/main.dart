@@ -79,6 +79,8 @@ class _WebViewScreenState extends State<WebViewScreen> {
   double _loadingProgress = 0;
   String? _activeToken;
   bool _isAuthenticating = false;
+  Color _scaffoldBgColor = const Color(0xFFFCFAF7);
+  Brightness _iconBrightness = Brightness.dark;
 
   @override
   void initState() {
@@ -254,9 +256,30 @@ class _WebViewScreenState extends State<WebViewScreen> {
         if (data.startsWith('GOOGLE_LOGIN:')) {
           final sessionId = data.split(':')[1];
           _triggerNativeGoogleLogin(sessionId);
+        } else if (data.startsWith('THEME:')) {
+          final themeMode = data.split(':')[1];
+          _updateSystemTheme(themeMode);
         }
         break;
     }
+  }
+
+  void _updateSystemTheme(String themeMode) {
+    final isDark = themeMode == 'dark';
+    setState(() {
+      _scaffoldBgColor = isDark ? const Color(0xFF0b1220) : const Color(0xFFFCFAF7);
+      _iconBrightness = isDark ? Brightness.light : Brightness.dark;
+    });
+
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: _iconBrightness,
+        systemNavigationBarColor: _scaffoldBgColor,
+        systemNavigationBarIconBrightness: _iconBrightness,
+      ),
+    );
+    debugPrint('==> Android system theme updated: $themeMode');
   }
 
   // --- Core Logic ---
@@ -418,7 +441,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
         }
       },
       child: Scaffold(
-        backgroundColor: const Color(0xFFFCFAF7),
+        backgroundColor: _scaffoldBgColor,
         body: Column(
           children: [
             if (topInset > 0) SizedBox(height: topInset),

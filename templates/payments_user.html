@@ -1442,157 +1442,16 @@
     <script src="{{ url_for('static', filename='js/toasts.js') }}"></script>
     <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
-    <footer
-      class="bg-surface-container-low border-t border-outline-variant/30 px-4 md:px-6 pt-6 pb-4"
-    >
-      <div class="footer-inner max-w-container-max mx-auto">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-10">
-          <div class="lg:col-span-6 space-y-6">
-            <div class="headline-md font-bold tracking-tighter text-primary">
-              <span class="inline-flex items-center gap-0">
-                <img
-                  alt="PetAI New Logo"
-                  class="h-8 w-auto md:h-10"
-                  src="{{ url_for('static', filename='logo.png') }}"
-                />
-                <span class="ml-0 text-sm md:text-lg font-semibold text-primary"
-                  >PetAI</span
-                >
-              </span>
-            </div>
-            <p
-              class="body-md text-on-surface-variant max-w-sm"
-              data-i18n="footerDesc"
-            >
-              <span data-i18n="footerDesc"
-                >Ứng dụng nhận diện giống chó bằng AI dành cho người yêu thú
-                cưng. Kết quả chính xác, nhanh chóng.</span
-              >
-            </p>
-          </div>
-          <div class="lg:col-span-6 grid grid-cols-2 md:grid-cols-2 gap-8">
-            <div class="space-y-6">
-              <h4 class="label-sm text-primary uppercase tracking-widest">
-                <span data-i18n="aboutPetAI">Về PetAI</span>
-              </h4>
-              <ul class="space-y-4">
-                <li class="">
-                  <a
-                    class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    href="{{ url_for('legal.privacy_policy') }}"
-                    data-i18n="privacy"
-                    ><span data-i18n="privacy"
-                      >Chính sách quyền riêng tư</span
-                    ></a
-                  >
-                </li>
-                <li class="">
-                  <a
-                    class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    href="{{ url_for('legal.terms_of_service') }}"
-                    data-i18n="terms"
-                    ><span data-i18n="terms">Điều khoản sử dụng</span></a
-                  >
-                </li>
-                <li class="">
-                  <a
-                    class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    href="{{ url_for('legal.data_deletion') }}"
-                    data-i18n="dataDeletion"
-                    ><span data-i18n="dataDeletion"
-                      >Chính sách xóa dữ liệu</span
-                    ></a
-                  >
-                </li>
-                <li class="">
-                  <a
-                    class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    href="{{ url_for('legal.support') }}"
-                    data-i18n="support"
-                    ><span data-i18n="homeStatsSupport">HỖ TRỢ</span></a
-                  >
-                </li>
-                <li class="">
-                  <a
-                    class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    href="{{ url_for('legal.contact') }}"
-                    data-i18n="contact"
-                    ><span data-i18n="contact">Liên hệ</span></a
-                  >
-                </li>
-              </ul>
-            </div>
-            <div class="space-y-6">
-              <h4 class="label-sm text-primary uppercase tracking-widest">
-                <span data-i18n="connect">Kết nối</span>
-              </h4>
-              <ul class="space-y-4">
-                <li class="">
-                  <a
-                    class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                    href="{{ url_for('predict.upload_page') }}"
-                    data-i18n="identifyNow"
-                    ><span data-i18n="identifyNow">Nhận diện ngay</span></a
-                  >
-                </li>
-                <li class="">
-                  <a
-                    class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                    href="{{ url_for('history.history') }}"
-                    data-i18n="collection"
-                    ><span data-i18n="collection">Bộ sưu tập</span></a
-                  >
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-        <div class="border-t border-outline-variant/20 relative py-1">
-          <div
-            class="flex flex-col md:flex-row justify-between items-center gap-4"
-          >
-            <p class="label-sm text-on-surface-variant/70 dark:text-slate-400">
-              <span data-i18n="copyright"
-                >Bản quyền © 2026 PetAI. Mọi quyền được bảo lưu</span
-              >
-            </p>
-            <div class="flex gap-6">
-              <a
-                class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
-                target="_blank"
-                rel="noopener noreferrer"
-                href="{{ url_for('legal.user_guide') }}"
-                data-i18n="footerUserGuide"
-                ><span data-i18n="footerUserGuide">HƯỚNG DẪN SỬ DỤNG</span></a
-              >
-
-              <a
-                class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
-                target="_blank"
-                rel="noopener noreferrer"
-                href="{{ url_for('legal.terms_of_service') }}"
-                data-i18n="footerTerms"
-                ><span data-i18n="footerTerms">ĐIỀU KHOẢN</span></a
-              >
-              <a
-                class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
-                target="_blank"
-                rel="noopener noreferrer"
-                href="{{ url_for('legal.privacy_policy') }}"
-                data-i18n="footerPrivacy"
-                ><span data-i18n="footerPrivacy">BẢO MẬT</span></a
-              >
-            </div>
+        <footer class="bg-surface-container-low border-t border-outline-variant/30 px-4 md:px-6 py-4 mt-auto">
+      <div class="max-w-container-max mx-auto">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+          <p class="label-sm text-on-surface-variant/70 dark:text-slate-400">
+            <span data-i18n="copyright">Bản quyền © 2026 PetAI. Mọi quyền được bảo lưu</span>
+          </p>
+          <div class="flex gap-6">
+            <a class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4" target="_blank" rel="noopener noreferrer" href="/user-guide" data-i18n="footerUserGuide"><span data-i18n="footerUserGuide">HƯỚNG DẪN SỬ DỤNG</span></a>
+            <a class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4" target="_blank" rel="noopener noreferrer" href="/terms-of-service" data-i18n="footerTerms"><span data-i18n="footerTerms">ĐIỀU KHOẢN</span></a>
+            <a class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4" target="_blank" rel="noopener noreferrer" href="/privacy-policy" data-i18n="footerPrivacy"><span data-i18n="footerPrivacy">BẢO MẬT</span></a>
           </div>
         </div>
       </div>

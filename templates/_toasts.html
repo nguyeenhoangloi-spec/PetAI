@@ -17,7 +17,7 @@
   messages %} {% for category, message in messages %} {% set toast_type =
   (category or 'info')|lower %} {% if toast_type not in ['success', 'error',
   'warning', 'info'] %} {% set toast_type = 'info' %} {% endif %}
-  <div class="toast toast--{{ toast_type }}" role="alert" data-timeout="3000">
+  <div class="toast toast--{{ toast_type }}" role="alert" data-timeout="2000">
     <div class="toast__icon">
       <span class="material-symbols-outlined">
         {% if toast_type == 'success' %}check_circle{% elif toast_type ==

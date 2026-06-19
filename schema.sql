@@ -13,6 +13,9 @@ CREATE TABLE IF NOT EXISTS users (
     role VARCHAR(20) NOT NULL DEFAULT 'user',
     is_active BOOLEAN NOT NULL DEFAULT TRUE,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    avatar_url VARCHAR(500) NULL,
+    email_verified BOOLEAN NOT NULL DEFAULT FALSE,
+    force_change_password BOOLEAN NOT NULL DEFAULT FALSE,
     UNIQUE KEY uq_users_google_id (google_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

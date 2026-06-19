@@ -26,6 +26,9 @@
       html.i18n-loading body {
         visibility: visible !important;
       }
+      body {
+        opacity: 1 !important;
+      }
     </style>
   </noscript>
   <meta charset="utf-8" />
@@ -45,6 +48,8 @@
   <style>
     body {
       background-color: #f9f9ff;
+      opacity: 0;
+      transition: opacity 0.15s ease-in;
       color: #181c22;
       overflow-x: hidden;
     }
@@ -581,6 +586,9 @@
 
   <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
   <script src="{{ url_for('static', filename='js/script.js') }}"></script>
-</body>
+    <script>
+      document.body.style.opacity = "1";
+    </script>
+  </body>
 
 </html>

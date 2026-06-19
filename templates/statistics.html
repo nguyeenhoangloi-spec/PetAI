@@ -1089,157 +1089,16 @@
       </div>
     </main>
 
-    <footer
-      class="bg-surface-container-low border-t border-outline-variant/30 px-4 md:px-6 pt-6 pb-4"
-    >
-      <div class="footer-inner max-w-container-max mx-auto">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-10">
-          <div class="lg:col-span-6 space-y-6">
-            <div class="headline-md font-bold tracking-tighter text-primary">
-              <span class="inline-flex items-center gap-0">
-                <img
-                  alt="PetAI New Logo"
-                  class="h-8 w-auto md:h-10"
-                  src="{{ url_for('static', filename='logo.png') }}"
-                />
-                <span class="ml-0 text-sm md:text-lg font-semibold text-primary"
-                  >PetAI</span
-                >
-              </span>
-            </div>
-            <p
-              class="body-md text-on-surface-variant max-w-sm"
-              data-i18n="footerDesc"
-            >
-              <span data-i18n="footerDesc"
-                >Ứng dụng nhận diện giống chó bằng AI dành cho người yêu thú
-                cưng. Kết quả chính xác, nhanh chóng.</span
-              >
-            </p>
-          </div>
-          <div class="lg:col-span-6 grid grid-cols-2 md:grid-cols-2 gap-8">
-            <div class="space-y-6">
-              <h4 class="label-sm text-primary uppercase tracking-widest">
-                <span data-i18n="aboutPetAI">Về PetAI</span>
-              </h4>
-              <ul class="space-y-4">
-                <li class="">
-                  <a
-                    class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    href="{{ url_for('legal.privacy_policy') }}"
-                    data-i18n="privacy"
-                    ><span data-i18n="privacy"
-                      >Chính sách quyền riêng tư</span
-                    ></a
-                  >
-                </li>
-                <li class="">
-                  <a
-                    class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    href="{{ url_for('legal.terms_of_service') }}"
-                    data-i18n="terms"
-                    ><span data-i18n="terms">Điều khoản sử dụng</span></a
-                  >
-                </li>
-                <li class="">
-                  <a
-                    class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    href="{{ url_for('legal.data_deletion') }}"
-                    data-i18n="dataDeletion"
-                    ><span data-i18n="dataDeletion"
-                      >Chính sách xóa dữ liệu</span
-                    ></a
-                  >
-                </li>
-                <li class="">
-                  <a
-                    class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    href="{{ url_for('legal.support') }}"
-                    data-i18n="support"
-                    ><span data-i18n="homeStatsSupport">HỖ TRỢ</span></a
-                  >
-                </li>
-                <li class="">
-                  <a
-                    class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    href="{{ url_for('legal.contact') }}"
-                    data-i18n="contact"
-                    ><span data-i18n="contact">Liên hệ</span></a
-                  >
-                </li>
-              </ul>
-            </div>
-            <div class="space-y-6">
-              <h4 class="label-sm text-primary uppercase tracking-widest">
-                <span data-i18n="connect">Kết nối</span>
-              </h4>
-              <ul class="space-y-4">
-                <li class="">
-                  <a
-                    class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                    href="{{ url_for('predict.upload_page') }}"
-                    data-i18n="identifyNow"
-                    ><span data-i18n="identifyNow">Nhận diện ngay</span></a
-                  >
-                </li>
-                <li class="">
-                  <a
-                    class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                    href="{{ url_for('history.history') }}"
-                    data-i18n="collection"
-                    ><span data-i18n="collection">Bộ sưu tập</span></a
-                  >
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-        <div class="border-t border-outline-variant/20 relative py-1">
-          <div
-            class="flex flex-col md:flex-row justify-between items-center gap-4"
-          >
-            <p class="label-sm text-on-surface-variant/70 dark:text-slate-400">
-              <span data-i18n="copyright"
-                >Bản quyền © 2026 PetAI. Mọi quyền được bảo lưu</span
-              >
-            </p>
-            <div class="flex gap-6">
-              <a
-                class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
-                target="_blank"
-                rel="noopener noreferrer"
-                href="{{ url_for('legal.user_guide') }}"
-                data-i18n="footerUserGuide"
-                ><span data-i18n="footerUserGuide">HƯỚNG DẪN SỬ DỤNG</span></a
-              >
-
-              <a
-                class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
-                target="_blank"
-                rel="noopener noreferrer"
-                href="{{ url_for('legal.terms_of_service') }}"
-                data-i18n="footerTerms"
-                ><span data-i18n="footerTerms">ĐIỀU KHOẢN</span></a
-              >
-              <a
-                class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
-                target="_blank"
-                rel="noopener noreferrer"
-                href="{{ url_for('legal.privacy_policy') }}"
-                data-i18n="footerPrivacy"
-                ><span data-i18n="footerPrivacy">BẢO MẬT</span></a
-              >
-            </div>
+        <footer class="bg-surface-container-low border-t border-outline-variant/30 px-4 md:px-6 py-4 mt-auto">
+      <div class="max-w-container-max mx-auto">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+          <p class="label-sm text-on-surface-variant/70 dark:text-slate-400">
+            <span data-i18n="copyright">Bản quyền © 2026 PetAI. Mọi quyền được bảo lưu</span>
+          </p>
+          <div class="flex gap-6">
+            <a class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4" target="_blank" rel="noopener noreferrer" href="/user-guide" data-i18n="footerUserGuide"><span data-i18n="footerUserGuide">HƯỚNG DẪN SỬ DỤNG</span></a>
+            <a class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4" target="_blank" rel="noopener noreferrer" href="/terms-of-service" data-i18n="footerTerms"><span data-i18n="footerTerms">ĐIỀU KHOẢN</span></a>
+            <a class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4" target="_blank" rel="noopener noreferrer" href="/privacy-policy" data-i18n="footerPrivacy"><span data-i18n="footerPrivacy">BẢO MẬT</span></a>
           </div>
         </div>
       </div>
@@ -1632,6 +1491,80 @@
         } else {
           document.addEventListener("i18nReady", initCharts);
         }
+
+        function updateChartColors(chart, isDark) {
+          if (!chart) return;
+          const grid = isDark ? "rgba(148,163,184,0.12)" : "rgba(15,23,42,0.07)";
+          const text = isDark ? "#94a3b8" : "#64748b";
+          const tooltipBg = isDark ? "#1e293b" : "#ffffff";
+          const tooltipText = isDark ? "#e2e8f0" : "#0f172a";
+
+          // 1. Update defaults
+          Chart.defaults.color = text;
+
+          // 2. Update scales ticks and grid colors
+          if (chart.options.scales) {
+            Object.values(chart.options.scales).forEach(scale => {
+              if (scale.ticks) scale.ticks.color = text;
+              if (scale.grid) scale.grid.color = grid;
+            });
+          }
+
+          // 3. Update legend labels color
+          if (chart.options.plugins && chart.options.plugins.legend && chart.options.plugins.legend.labels) {
+            chart.options.plugins.legend.labels.color = text;
+          }
+
+          // 4. Update tooltip styles
+          if (chart.options.plugins && chart.options.plugins.tooltip) {
+            const tt = chart.options.plugins.tooltip;
+            tt.backgroundColor = tooltipBg;
+            tt.titleColor = tooltipText;
+            tt.bodyColor = tooltipText;
+            tt.borderColor = grid;
+            tt.borderWidth = 1;
+          }
+
+          // 5. Update dataset-specific values based on canvas ID
+          const canvasId = chart.canvas ? chart.canvas.id : "";
+          if (chart.data.datasets && chart.data.datasets[0]) {
+            const ds = chart.data.datasets[0];
+            
+            if (canvasId === "trendChart") {
+              ds.backgroundColor = isDark
+                ? "rgba(37,99,235,0.13)"
+                : "rgba(37,99,235,0.08)";
+              ds.pointBorderColor = isDark ? "#1e293b" : "#fff";
+            } else if (canvasId === "breedDonutChart") {
+              const donutColors = ["#2563eb", "#f59e0b", "#ea580c", "#6366f1", "#10b981"];
+              const donutDark = ["#60a5fa", "#fbbf24", "#fb923c", "#a5b4fc", "#34d399"];
+              ds.backgroundColor = isDark ? donutDark : donutColors;
+              ds.borderColor = isDark ? "#0f172a" : "#ffffff";
+            } else if (canvasId === "confBarChart") {
+              const barColors = isDark
+                ? ["#f87171", "#fbbf24", "#60a5fa", "#34d399", "#a78bfa"]
+                : ["#ef4444", "#f59e0b", "#2563eb", "#10b981", "#8b5cf6"];
+              ds.backgroundColor = barColors;
+            }
+          }
+
+          chart.update();
+        }
+
+        // Listen for dark mode theme changes dynamically via MutationObserver
+        const themeObserver = new MutationObserver(function (mutations) {
+          mutations.forEach(function (mutation) {
+            if (mutation.attributeName === "class" || mutation.attributeName === "data-theme") {
+              const currentDark = document.documentElement.classList.contains("dark");
+              [trendChartInstance, breedDonutChartInstance, confBarChartInstance].forEach(chart => {
+                if (chart) {
+                  updateChartColors(chart, currentDark);
+                }
+              });
+            }
+          });
+        });
+        themeObserver.observe(document.documentElement, { attributes: true });
 
         // Listen for language changes dynamically
         document.addEventListener("i18nChanged", function (e) {
