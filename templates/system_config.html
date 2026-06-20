@@ -288,6 +288,86 @@
       html.dark .ql-container.ql-snow {
         border-color: #334155 !important;
       }
+      
+      /* Visual Editor Styling */
+      .visual-sec-wrapper {
+        position: relative;
+        padding: 1rem;
+        border: 1px dashed transparent;
+        border-radius: 0.75rem;
+        transition: all 0.2s ease;
+      }
+      .visual-sec-wrapper:hover {
+        border-color: #004ac6;
+        background-color: rgba(0, 74, 198, 0.02);
+      }
+      html.dark .visual-sec-wrapper:hover {
+        border-color: #3b82f6;
+        background-color: rgba(59, 130, 246, 0.02);
+      }
+      .visual-sec-controls {
+        position: absolute;
+        top: -12px;
+        right: 12px;
+        display: none;
+        gap: 4px;
+        z-index: 10;
+      }
+      .visual-sec-wrapper:hover .visual-sec-controls {
+        display: flex;
+      }
+      .visual-sec-btn {
+        background-color: #ffffff;
+        border: 1px solid #c3c6d7;
+        width: 26px;
+        height: 26px;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #434655;
+        cursor: pointer;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        transition: all 0.15s ease;
+      }
+      html.dark .visual-sec-btn {
+        background-color: #1e293b;
+        border-color: #334155;
+        color: #cbd5e1;
+      }
+      .visual-sec-btn:hover {
+        background-color: #f1f5f9;
+        color: #004ac6;
+      }
+      html.dark .visual-sec-btn:hover {
+        background-color: #334155;
+        color: #3b82f6;
+      }
+      .visual-sec-btn.delete:hover {
+        background-color: #fef2f2;
+        color: #ef4444;
+        border-color: #fca5a5;
+      }
+      html.dark .visual-sec-btn.delete:hover {
+        background-color: #450a0a;
+        color: #f87171;
+        border-color: #991b1b;
+      }
+      
+      /* Editable areas placeholder */
+      [contenteditable="true"]:empty::before {
+        content: attr(placeholder);
+        color: #94a3b8;
+        font-style: italic;
+      }
+      [contenteditable="true"]:focus {
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(0, 74, 198, 0.2);
+        border-radius: 4px;
+      }
+      html.dark [contenteditable="true"]:focus {
+        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+      }
     </style>
   </head>
 
@@ -515,11 +595,13 @@
               <div class="flex flex-wrap gap-4 items-center border-b border-outline-variant/10 pb-4">
                 <label class="label-sm font-bold text-on-surface dark:text-slate-300" data-i18n="sysLegalSelectLabel">Chọn trang cần soạn thảo:</label>
                 <select id="legal-page-select" onchange="loadLegalContent(this.value)" class="bg-surface dark:bg-slate-950 border border-outline-variant/30 dark:border-slate-850 rounded-lg py-2 px-4 text-sm text-on-surface dark:text-slate-200 cursor-pointer focus:outline-none">
-                  <option value="privacy-policy" data-i18n="sysLegalOptPrivacy">Chính sách bảo mật (Privacy Policy)</option>
-                  <option value="terms-of-service" data-i18n="sysLegalOptTerms">Điều khoản dịch vụ (Terms of Service)</option>
+                  <option value="privacy-policy" data-i18n="sysLegalOptPrivacy">Chính sách quyền riêng tư (Privacy Policy)</option>
+                  <option value="terms-of-service" data-i18n="sysLegalOptTerms">Điều khoản sử dụng (Terms of Service)</option>
                   <option value="payment-policy" data-i18n="sysLegalOptPayment">Chính sách thanh toán (Payment Policy)</option>
-                  <option value="data-deletion" data-i18n="sysLegalOptDeletion">Yêu cầu xóa dữ liệu (Data Deletion Policy)</option>
-                  <option value="support" data-i18n="sysLegalOptSupport">Trang Hỗ trợ &amp; Hướng dẫn (Support Page)</option>
+                  <option value="data-deletion" data-i18n="sysLegalOptDeletion">Chính sách xóa dữ liệu (Data Deletion Policy)</option>
+                  <option value="support" data-i18n="sysLegalOptSupport">Hỗ trợ (Support Page)</option>
+                  <option value="contact" data-i18n="sysLegalOptContact">Liên hệ (Contact Page)</option>
+                  <option value="user-guide" data-i18n="sysLegalOptUserGuide">Hướng dẫn sử dụng (User Guide)</option>
                 </select>
               </div>
 
@@ -527,7 +609,7 @@
               <div class="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
                 
                 <!-- Left Column: Form Editor (col-span-7) -->
-                <form action="{{ url_for('users.save_legal_config') }}" method="POST" onsubmit="serializeSectionsBeforeSubmit(this)" class="xl:col-span-7 flex flex-col gap-6">
+                <form id="legal-editor-column" action="{{ url_for('users.save_legal_config') }}" method="POST" onsubmit="serializeSectionsBeforeSubmit(this)" class="xl:col-span-7 flex flex-col gap-6">
                   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                   <input type="hidden" name="page" id="legal-form-page" value="privacy-policy" />
                   <input type="hidden" name="content_vi" id="legal-submit-vi" />
@@ -552,6 +634,12 @@
                         <span class="material-symbols-outlined !text-sm">translate</span>
                         <span data-i18n="sysAutoTranslateBtn">Dịch toàn bộ</span>
                       </button>
+
+                      <!-- Toggle Preview button -->
+                      <button type="button" id="toggle-preview-btn" onclick="toggleLivePreview()" class="text-xs text-on-surface-variant dark:text-slate-300 flex items-center gap-1.5 py-1.5 px-3 rounded-lg border border-outline-variant/20 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all font-semibold">
+                        <span class="material-symbols-outlined !text-sm" id="toggle-preview-icon">visibility_off</span>
+                        <span id="toggle-preview-text">Ẩn xem trước</span>
+                      </button>
                     </div>
                   </div>
 
@@ -571,14 +659,22 @@
                 </form>
 
                 <!-- Right Column: Live Preview (col-span-5) -->
-                <div class="xl:col-span-5 flex flex-col gap-4 xl:sticky xl:top-20">
-                  <div class="flex justify-between items-center border-b border-outline-variant/10 pb-2">
+                <div id="legal-preview-column" class="xl:col-span-5 flex flex-col gap-4 xl:sticky xl:top-20">
+                  <div class="flex justify-between items-center border-b border-outline-variant/10 pb-2 gap-2 flex-wrap">
                     <span class="text-sm font-bold text-on-surface-variant">Khung xem trước (Live Preview)</span>
                     
-                    <!-- Preview Lang tabs -->
-                    <div class="flex gap-2 bg-slate-100 dark:bg-slate-950 p-1 rounded-lg">
-                      <button type="button" id="preview-lang-vi-btn" onclick="switchPreviewLanguage('vi')" class="px-3 py-1 rounded-md text-xs font-semibold bg-white dark:bg-slate-900 text-primary shadow-sm">VI</button>
-                      <button type="button" id="preview-lang-en-btn" onclick="switchPreviewLanguage('en')" class="px-3 py-1 rounded-md text-xs font-semibold text-on-surface-variant hover:text-primary">EN</button>
+                    <div class="flex items-center gap-2">
+                      <!-- Visual Fullscreen Editor trigger -->
+                      <button type="button" onclick="openVisualEditor()" class="flex items-center gap-1.5 bg-primary/10 hover:bg-primary/20 text-primary py-1.5 px-3 rounded-lg text-xs font-semibold transition-all">
+                        <span class="material-symbols-outlined !text-sm">open_in_full</span>
+                        Chỉnh sửa trực quan
+                      </button>
+
+                      <!-- Preview Lang tabs -->
+                      <div class="flex gap-2 bg-slate-100 dark:bg-slate-950 p-1 rounded-lg">
+                        <button type="button" id="preview-lang-vi-btn" onclick="switchPreviewLanguage('vi')" class="px-3 py-1 rounded-md text-xs font-semibold bg-white dark:bg-slate-900 text-primary shadow-sm">VI</button>
+                        <button type="button" id="preview-lang-en-btn" onclick="switchPreviewLanguage('en')" class="px-3 py-1 rounded-md text-xs font-semibold text-on-surface-variant hover:text-primary">EN</button>
+                      </div>
                     </div>
                   </div>
 
@@ -596,27 +692,86 @@
             </div>
           </div>
         </div>
+        <!-- Hidden container to pass legal content to JavaScript without triggering syntax errors in VS Code JS parser -->
+        <div style="display: none;">
+          <textarea id="raw-privacy-policy-vi">{{ configs.get('privacy_policy_content_vi', '') }}</textarea>
+          <textarea id="raw-privacy-policy-en">{{ configs.get('privacy_policy_content_en', '') }}</textarea>
+          <textarea id="raw-terms-of-service-vi">{{ configs.get('terms_of_service_content_vi', '') }}</textarea>
+          <textarea id="raw-terms-of-service-en">{{ configs.get('terms_of_service_content_en', '') }}</textarea>
+          <textarea id="raw-payment-policy-vi">{{ configs.get('payment_policy_content_vi', '') }}</textarea>
+          <textarea id="raw-payment-policy-en">{{ configs.get('payment_policy_content_en', '') }}</textarea>
+          <textarea id="raw-data-deletion-vi">{{ configs.get('data_deletion_content_vi', '') }}</textarea>
+          <textarea id="raw-data-deletion-en">{{ configs.get('data_deletion_content_en', '') }}</textarea>
+          <textarea id="raw-support-vi">{{ configs.get('support_content_vi', '') }}</textarea>
+          <textarea id="raw-support-en">{{ configs.get('support_content_en', '') }}</textarea>
+          <textarea id="raw-contact-vi">{{ configs.get('contact_content_vi', '') }}</textarea>
+          <textarea id="raw-contact-en">{{ configs.get('contact_content_en', '') }}</textarea>
+          <textarea id="raw-user-guide-vi">{{ configs.get('user_guide_content_vi', '') }}</textarea>
+          <textarea id="raw-user-guide-en">{{ configs.get('user_guide_content_en', '') }}</textarea>
+        </div>
       </div>
-    </main>
+    <!-- Fullscreen Visual Editor Modal -->
+    <div id="visual-editor-modal" class="fixed inset-0 z-[100] bg-slate-950/70 backdrop-blur-md hidden flex flex-col font-['Inter'] antialiased">
+      <!-- Header bar -->
+      <header class="bg-white dark:bg-slate-900 border-b border-outline-variant/30 dark:border-slate-800 px-6 py-4 flex flex-wrap items-center justify-between shadow-sm gap-4">
+        <div class="flex items-center gap-3">
+          <span class="material-symbols-outlined text-primary text-[28px]">edit_note</span>
+          <div>
+            <h2 class="text-base font-bold text-on-surface dark:text-slate-100" id="visual-editor-title">Chỉnh sửa trực quan: Chính sách bảo mật</h2>
+            <p class="text-xs text-on-surface-variant dark:text-slate-400">Sửa trực tiếp bằng cách nhấp vào tiêu đề hoặc nội dung văn bản dưới đây</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-6 flex-wrap">
+          <!-- Active Editing Lang tabs inside visual editor -->
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-bold text-on-surface-variant">Ngôn ngữ soạn thảo:</span>
+            <div class="flex gap-1 bg-slate-100 dark:bg-slate-950 p-1 rounded-lg border border-outline-variant/20">
+              <button type="button" id="visual-lang-vi-btn" onclick="switchVisualEditorLanguage('vi')" class="px-3 py-1.5 rounded-md text-xs font-semibold bg-white dark:bg-slate-900 text-primary shadow-sm">Tiếng Việt</button>
+              <button type="button" id="visual-lang-en-btn" onclick="switchVisualEditorLanguage('en')" class="px-3 py-1.5 rounded-md text-xs font-semibold text-on-surface-variant hover:text-primary">English</button>
+            </div>
+          </div>
+
+          <!-- Controls -->
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="addSectionVisual()" class="flex items-center gap-1 bg-primary/10 hover:bg-primary/20 text-primary py-2 px-4 rounded-lg text-xs font-bold transition-all">
+              <span class="material-symbols-outlined !text-sm">add</span> Thêm mục mới
+            </button>
+            <button type="button" onclick="closeVisualEditor(true)" class="bg-primary text-on-primary hover:bg-primary-hover py-2 px-5 rounded-lg text-xs font-bold shadow-sm transition-all">
+              Hoàn tất &amp; Áp dụng
+            </button>
+            <button type="button" onclick="closeVisualEditor(false)" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-on-surface-variant dark:text-slate-300 py-2 px-4 rounded-lg text-xs font-bold transition-all">
+              Hủy
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <!-- Scrollable editor container -->
+      <main class="flex-grow overflow-y-auto bg-slate-50 dark:bg-slate-950/40 py-10 px-4">
+        <div class="max-w-4xl mx-auto">
+          <!-- Policy layout simulation -->
+          <div class="glass-card p-6 md:p-12 rounded-3xl bg-white dark:bg-slate-900 border border-outline-variant/30 dark:border-slate-800 shadow-xl leading-relaxed relative">
+            
+            <!-- Page Title -->
+            <h1 class="headline-lg text-on-surface dark:text-slate-105 mb-8 font-bold border-b border-outline-variant/10 pb-4" id="visual-page-title">Chính sách bảo mật</h1>
+            
+            <!-- Dynamic editable sections -->
+            <div id="visual-sections-container" class="space-y-8">
+              <!-- Rendered sections will go here with contenteditable="true" -->
+            </div>
+            
+          </div>
+        </div>
+      </main>
+    </div>
 
     <!-- Script imports -->
     <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
     <script src="{{ url_for('static', filename='js/toasts.js') }}"></script>
 
-    <!-- Hidden container to pass legal content to JavaScript without triggering syntax errors in VS Code JS parser -->
-    <div style="display: none;">
-      <textarea id="raw-privacy-policy-vi">{{ configs.get('privacy_policy_content_vi', '') }}</textarea>
-      <textarea id="raw-privacy-policy-en">{{ configs.get('privacy_policy_content_en', '') }}</textarea>
-      <textarea id="raw-terms-of-service-vi">{{ configs.get('terms_of_service_content_vi', '') }}</textarea>
-      <textarea id="raw-terms-of-service-en">{{ configs.get('terms_of_service_content_en', '') }}</textarea>
-      <textarea id="raw-payment-policy-vi">{{ configs.get('payment_policy_content_vi', '') }}</textarea>
-      <textarea id="raw-payment-policy-en">{{ configs.get('payment_policy_content_en', '') }}</textarea>
-      <textarea id="raw-data-deletion-vi">{{ configs.get('data_deletion_content_vi', '') }}</textarea>
-      <textarea id="raw-data-deletion-en">{{ configs.get('data_deletion_content_en', '') }}</textarea>
-      <textarea id="raw-support-vi">{{ configs.get('support_content_vi', '') }}</textarea>
-      <textarea id="raw-support-en">{{ configs.get('support_content_en', '') }}</textarea>
-    </div>
+
 
     <script>
       // Load raw content for policies directly from the hidden textareas
@@ -640,6 +795,14 @@
         "support": {
           vi: document.getElementById("raw-support-vi").value,
           en: document.getElementById("raw-support-en").value
+        },
+        "contact": {
+          vi: document.getElementById("raw-contact-vi").value,
+          en: document.getElementById("raw-contact-en").value
+        },
+        "user-guide": {
+          vi: document.getElementById("raw-user-guide-vi").value,
+          en: document.getElementById("raw-user-guide-en").value
         }
       };
 
@@ -896,6 +1059,34 @@
             <h2>3. Common Troubleshooting</h2>
             <p>If image upload fails or results don't show, check internet connection, ensure the image is in JPG/PNG format and under 5MB. Contact support@pet.ai if the issue persists.</p>
           `
+        },
+        "contact": {
+          vi: `
+            <h2>1. Thông tin liên hệ</h2>
+            <p>Email: support@tienphongtech.vn<br>Điện thoại: 0916 416 409<br>Địa chỉ: P16, Đường số 8, KDC lô 49, Khu đô thị Nam Cần Thơ, Phường Cái Răng, TP. Cần Thơ</p>
+            <h2>2. Thông tin pháp lý</h2>
+            <p>Tên công ty: CÔNG TY TNHH MỘT THÀNH VIÊN CÔNG NGHỆ KỸ THUẬT TIÊN PHONG<br>Mã số thuế: 1801648011<br>Người đại diện: Nguyễn Hoàng Lợi<br>Ngày cấp phép: 21/10/2019</p>
+          `,
+          en: `
+            <h2>1. Contact Information</h2>
+            <p>Email: support@tienphongtech.vn<br>Phone: 0916 416 409<br>Address: P16, Street 8, Lot 49 residential area, Nam Can Tho Urban Area, Cai Rang District, Can Tho City, Vietnam</p>
+            <h2>2. Legal Information</h2>
+            <p>Company Name: TIEN PHONG TECHNOLOGY ENGINEERING ONE MEMBER COMPANY LIMITED<br>Tax Code: 1801648011<br>Representative: Nguyen Hoang Loi<br>License Date: 21/10/2019</p>
+          `
+        },
+        "user-guide": {
+          vi: `
+            <h2>1. Giới thiệu về PetAI</h2>
+            <p>PetAI là ứng dụng nhận diện giống chó bằng công nghệ AI tiên tiến, giúp bạn phát hiện giống chó thuần chủng hoặc lai nhanh chóng.</p>
+            <h2>2. Các bước sử dụng chính</h2>
+            <p>Bước 1: Tải ảnh chó cưng rõ mặt lên hệ thống.<br>Bước 2: Hệ thống AI sẽ phân tích và trả về kết quả Top 3 giống chó tiềm năng nhất cùng Grad-CAM.<br>Bước 3: Xem lịch sử và thống kê cá nhân tại trang cá nhân.</p>
+          `,
+          en: `
+            <h2>1. Introduction to PetAI</h2>
+            <p>PetAI is a dog breed identification application using advanced AI technology, helping you quickly identify purebred or mixed breeds.</p>
+            <h2>2. Primary Usage Steps</h2>
+            <p>Step 1: Upload a clear photo of your dog's face.<br>Step 2: The AI system will analyze and return the Top 3 potential dog breeds with Grad-CAM visualization.<br>Step 3: View your prediction history and personal statistics on your dashboard.</p>
+          `
         }
       };
 
@@ -1066,7 +1257,7 @@
                 </div>
                 <div class="flex flex-col gap-1">
                   <label class="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Nội dung (VI)</label>
-                  <textarea rows="12" class="w-full px-3 py-2 bg-white dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-800 rounded-lg text-sm text-on-surface dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all resize-y leading-relaxed" oninput="updateSectionField('${sec.id}', 'content_vi', this.value)" placeholder="Nhập nội dung Tiếng Việt hoặc mã HTML...">${escapeHtml(sec.content_vi)}</textarea>
+                  <div class="bg-white dark:bg-slate-950 rounded-lg min-h-[220px]" id="quill-vi-${sec.id}"></div>
                 </div>
               </div>
 
@@ -1089,7 +1280,7 @@
                         <span class="material-symbols-outlined !text-[14px]">translate</span> Dịch mục này
                       </button>
                     </div>
-                    <textarea rows="12" class="w-full px-3 py-2 bg-white dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-800 rounded-lg text-sm text-on-surface dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all resize-y leading-relaxed" oninput="updateSectionField('${sec.id}', 'content_en', this.value)" placeholder="Enter English content or HTML...">${escapeHtml(sec.content_en)}</textarea>
+                    <div class="bg-white dark:bg-slate-950 rounded-lg min-h-[220px]" id="quill-en-${sec.id}"></div>
                   </div>
                 </div>
               </div>
@@ -1098,6 +1289,56 @@
         });
 
         listContainer.innerHTML = html;
+
+        // Initialize Quill editors for each section
+        window.quillInstances = window.quillInstances || {};
+        sections.forEach(sec => {
+          const viId = `quill-vi-${sec.id}`;
+          const viElem = document.getElementById(viId);
+          if (viElem && typeof Quill !== "undefined") {
+            const quillVi = new Quill(`#${viId}`, {
+              theme: 'snow',
+              modules: {
+                toolbar: [
+                  ['bold', 'italic', 'underline', 'strike'],
+                  [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                  ['link', 'clean']
+                ]
+              }
+            });
+            quillVi.clipboard.dangerouslyPasteHTML(sec.content_vi || "");
+            window.quillInstances[viId] = quillVi;
+            
+            quillVi.on('text-change', () => {
+              const htmlContent = quillVi.getSemanticHTML ? quillVi.getSemanticHTML() : quillVi.root.innerHTML;
+              const val = (quillVi.root.innerHTML === '<p><br></p>') ? '' : htmlContent;
+              updateSectionField(sec.id, 'content_vi', val);
+            });
+          }
+
+          const enId = `quill-en-${sec.id}`;
+          const enElem = document.getElementById(enId);
+          if (enElem && typeof Quill !== "undefined") {
+            const quillEn = new Quill(`#${enId}`, {
+              theme: 'snow',
+              modules: {
+                toolbar: [
+                  ['bold', 'italic', 'underline', 'strike'],
+                  [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                  ['link', 'clean']
+                ]
+              }
+            });
+            quillEn.clipboard.dangerouslyPasteHTML(sec.content_en || "");
+            window.quillInstances[enId] = quillEn;
+            
+            quillEn.on('text-change', () => {
+              const htmlContent = quillEn.getSemanticHTML ? quillEn.getSemanticHTML() : quillEn.root.innerHTML;
+              const val = (quillEn.root.innerHTML === '<p><br></p>') ? '' : htmlContent;
+              updateSectionField(sec.id, 'content_en', val);
+            });
+          }
+        });
       }
 
       function renderPreview() {
@@ -1106,11 +1347,13 @@
         if (!previewTitle || !previewContent) return;
 
         const pageNames = {
-          "privacy-policy": { vi: "Chính sách bảo mật", en: "Privacy Policy" },
+          "privacy-policy": { vi: "Chính sách quyền riêng tư", en: "Privacy Policy" },
           "terms-of-service": { vi: "Điều khoản sử dụng", en: "Terms of Service" },
           "payment-policy": { vi: "Chính sách thanh toán", en: "Payment Policy" },
           "data-deletion": { vi: "Chính sách xóa dữ liệu", en: "Data Deletion Policy" },
-          "support": { vi: "HỖ TRỢ", en: "SUPPORT" }
+          "support": { vi: "Hỗ trợ", en: "Support" },
+          "contact": { vi: "Liên hệ", en: "Contact" },
+          "user-guide": { vi: "Hướng dẫn sử dụng", en: "User Guide" }
         };
 
         const pageName = pageNames[activeLegalPage] || { vi: "Văn bản pháp lý", en: "Legal Page" };
@@ -1351,13 +1594,296 @@
         renderPreview();
       }
 
+      // Visual Editor State
+      if (typeof window.tempSections === "undefined") {
+        window.tempSections = [];
+      }
+      if (typeof window.visualEditorLang === "undefined") {
+        window.visualEditorLang = "vi";
+      }
+
+      function openVisualEditor() {
+        // Deep copy sections
+        window.tempSections = JSON.parse(JSON.stringify(sections));
+        window.visualEditorLang = activePreviewLang || "vi";
+
+        const modal = document.getElementById("visual-editor-modal");
+        if (modal) {
+          modal.classList.remove("hidden");
+          document.body.style.overflow = "hidden"; // disable background scrolling
+        }
+
+        // Set visual editor header title
+        const pageNames = {
+          "privacy-policy": { vi: "Chính sách bảo mật", en: "Privacy Policy" },
+          "terms-of-service": { vi: "Điều khoản sử dụng", en: "Terms of Service" },
+          "payment-policy": { vi: "Chính sách thanh toán", en: "Payment Policy" },
+          "data-deletion": { vi: "Chính sách xóa dữ liệu", en: "Data Deletion Policy" },
+          "support": { vi: "Trang Hỗ trợ & Hướng dẫn", en: "Support & Guide" }
+        };
+        const activeName = pageNames[activeLegalPage] || { vi: "Trang pháp lý", en: "Legal Page" };
+        const visualEditorTitle = document.getElementById("visual-editor-title");
+        if (visualEditorTitle) {
+          visualEditorTitle.textContent = "Chỉnh sửa trực quan: " + (window.visualEditorLang === "vi" ? activeName.vi : activeName.en);
+        }
+
+        // Sync active language buttons
+        syncVisualLanguageTabs();
+        
+        // Render
+        renderVisualSections();
+      }
+
+      function syncVisualLanguageTabs() {
+        const viBtn = document.getElementById("visual-lang-vi-btn");
+        const enBtn = document.getElementById("visual-lang-en-btn");
+        if (!viBtn || !enBtn) return;
+
+        if (window.visualEditorLang === 'vi') {
+          viBtn.className = "px-3 py-1.5 rounded-md text-xs font-semibold bg-white dark:bg-slate-900 text-primary shadow-sm";
+          enBtn.className = "px-3 py-1.5 rounded-md text-xs font-semibold text-on-surface-variant hover:text-primary";
+        } else {
+          enBtn.className = "px-3 py-1.5 rounded-md text-xs font-semibold bg-white dark:bg-slate-900 text-primary shadow-sm";
+          viBtn.className = "px-3 py-1.5 rounded-md text-xs font-semibold text-on-surface-variant hover:text-primary";
+        }
+      }
+
+      function switchVisualEditorLanguage(lang) {
+        window.visualEditorLang = lang;
+        syncVisualLanguageTabs();
+
+        // Update visual editor header title dynamically
+        const pageNames = {
+          "privacy-policy": { vi: "Chính sách bảo mật", en: "Privacy Policy" },
+          "terms-of-service": { vi: "Điều khoản sử dụng", en: "Terms of Service" },
+          "payment-policy": { vi: "Chính sách thanh toán", en: "Payment Policy" },
+          "data-deletion": { vi: "Chính sách xóa dữ liệu", en: "Data Deletion Policy" },
+          "support": { vi: "Trang Hỗ trợ & Hướng dẫn", en: "Support & Guide" }
+        };
+        const activeName = pageNames[activeLegalPage] || { vi: "Trang pháp lý", en: "Legal Page" };
+        const visualEditorTitle = document.getElementById("visual-editor-title");
+        if (visualEditorTitle) {
+          visualEditorTitle.textContent = "Chỉnh sửa trực quan: " + (window.visualEditorLang === "vi" ? activeName.vi : activeName.en);
+        }
+
+        renderVisualSections();
+      }
+
+      function renderVisualSections() {
+        const container = document.getElementById("visual-sections-container");
+        const pageTitle = document.getElementById("visual-page-title");
+        if (!container || !pageTitle) return;
+
+        // Set visual page main title
+        const pageNames = {
+          "privacy-policy": { vi: "Chính sách bảo mật", en: "Privacy Policy" },
+          "terms-of-service": { vi: "Điều khoản sử dụng", en: "Terms of Service" },
+          "payment-policy": { vi: "Chính sách thanh toán", en: "Payment Policy" },
+          "data-deletion": { vi: "Chính sách xóa dữ liệu", en: "Data Deletion Policy" },
+          "support": { vi: "HỖ TRỢ & HƯỚNG DẪN", en: "SUPPORT & GUIDE" }
+        };
+        const pageName = pageNames[activeLegalPage] || { vi: "Văn bản pháp lý", en: "Legal Page" };
+        pageTitle.textContent = window.visualEditorLang === 'vi' ? pageName.vi : pageName.en;
+
+        if (window.tempSections.length === 0) {
+          container.innerHTML = `
+            <div class="border border-dashed border-outline-variant/50 rounded-xl p-8 text-center text-on-surface-variant bg-surface-container-low/20">
+              <p class="text-sm font-semibold mb-2">Chưa có mục nào để hiển thị</p>
+              <p class="text-xs">Nhấn "Thêm mục mới" ở thanh tiêu đề để tạo mục mới.</p>
+            </div>
+          `;
+          return;
+        }
+
+        let html = "";
+        window.tempSections.forEach((sec, index) => {
+          const title = window.visualEditorLang === 'vi' ? sec.title_vi : sec.title_en;
+          const content = window.visualEditorLang === 'vi' ? sec.content_vi : sec.content_en;
+          
+          // If HTML tags are missing, wrap newlines with <br> for styling
+          const formattedContent = (content.includes("<") && content.includes(">")) ? content : content.replace(/\n/g, "<br>");
+
+          html += `
+            <div class="visual-sec-wrapper" data-id="${sec.id}">
+              <!-- Floating actions on hover -->
+              <div class="visual-sec-controls">
+                <button type="button" onclick="moveVisualSectionUp('${sec.id}')" class="visual-sec-btn" title="Di chuyển lên">
+                  <span class="material-symbols-outlined !text-sm">arrow_upward</span>
+                </button>
+                <button type="button" onclick="moveVisualSectionDown('${sec.id}')" class="visual-sec-btn" title="Di chuyển xuống">
+                  <span class="material-symbols-outlined !text-sm">arrow_downward</span>
+                </button>
+                <button type="button" onclick="removeVisualSection('${sec.id}')" class="visual-sec-btn delete" title="Xóa mục này">
+                  <span class="material-symbols-outlined !text-sm">delete</span>
+                </button>
+              </div>
+
+              <!-- Editable Title -->
+              <h2 contenteditable="true" 
+                  class="text-lg font-bold text-primary dark:text-blue-400 mt-2 mb-2" 
+                  placeholder="Nhập tiêu đề mục..." 
+                  onblur="updateVisualSectionField('${sec.id}', 'title', this.innerText)"
+              >${escapeHtml(title)}</h2>
+
+              <!-- Editable Content -->
+              <div contenteditable="true" 
+                   class="text-on-surface-variant dark:text-slate-300 body-md leading-relaxed legal-content-rich mb-4" 
+                   placeholder="Nhập nội dung mục..." 
+                   onblur="updateVisualSectionField('${sec.id}', 'content', this.innerHTML)"
+              >${formattedContent}</div>
+            </div>
+          `;
+        });
+
+        container.innerHTML = html;
+      }
+
+      async function updateVisualSectionField(id, field, value) {
+        const sec = window.tempSections.find(s => s.id === id);
+        if (!sec) return;
+
+        // Clean double spaces or clean value if empty
+        const cleanedValue = value.replace(/&nbsp;/g, ' ').trim();
+
+        if (window.visualEditorLang === "vi") {
+          if (field === "title") {
+            sec.title_vi = cleanedValue;
+            if (document.getElementById("auto-translate-toggle").checked) {
+              sec.title_en = await translateText(sec.title_vi);
+            }
+          } else if (field === "content") {
+            sec.content_vi = cleanedValue;
+            if (document.getElementById("auto-translate-toggle").checked) {
+              sec.content_en = await translateHTML(sec.content_vi);
+            }
+          }
+        } else {
+          if (field === "title") {
+            sec.title_en = cleanedValue;
+          } else if (field === "content") {
+            sec.content_en = cleanedValue;
+          }
+        }
+      }
+
+      function addSectionVisual() {
+        const newSec = {
+          id: "sec_" + Date.now() + "_" + Math.random().toString(36).substr(2, 5),
+          title_vi: "",
+          title_en: "",
+          content_vi: "",
+          content_en: ""
+        };
+        window.tempSections.push(newSec);
+        renderVisualSections();
+        
+        // Scroll to the bottom of the editor main viewport
+        setTimeout(() => {
+          const mainContainer = document.querySelector("#visual-editor-modal main");
+          if (mainContainer) {
+            mainContainer.scrollTo({
+              top: mainContainer.scrollHeight,
+              behavior: 'smooth'
+            });
+          }
+        }, 100);
+      }
+
+      function moveVisualSectionUp(id) {
+        const idx = window.tempSections.findIndex(s => s.id === id);
+        if (idx <= 0) return;
+        const temp = window.tempSections[idx];
+        window.tempSections[idx] = window.tempSections[idx - 1];
+        window.tempSections[idx - 1] = temp;
+        renderVisualSections();
+      }
+
+      function moveVisualSectionDown(id) {
+        const idx = window.tempSections.findIndex(s => s.id === id);
+        if (idx === -1 || idx === window.tempSections.length - 1) return;
+        const temp = window.tempSections[idx];
+        window.tempSections[idx] = window.tempSections[idx + 1];
+        window.tempSections[idx + 1] = temp;
+        renderVisualSections();
+      }
+
+      function removeVisualSection(id) {
+        if (!confirm("Bạn có chắc muốn xóa mục này?")) return;
+        window.tempSections = window.tempSections.filter(s => s.id !== id);
+        renderVisualSections();
+      }
+
+      function closeVisualEditor(applyChanges) {
+        const modal = document.getElementById("visual-editor-modal");
+        if (modal) {
+          modal.classList.add("hidden");
+          document.body.style.overflow = ""; // restore scrolling
+        }
+
+        if (applyChanges) {
+          sections = window.tempSections;
+          window.sections = sections;
+          
+          // Sync changes back to the main list editors and live preview
+          renderSections();
+          renderPreview();
+
+          if (window.showToast) {
+            window.showToast("Đã đồng bộ nội dung chỉnh sửa trực quan thành công!", "success");
+          }
+        }
+      }
+
       function serializeSectionsBeforeSubmit(form) {
+        // Sync latest content from Quill editors back to sections array
+        sections.forEach(s => {
+          const viId = `quill-vi-${s.id}`;
+          const enId = `quill-en-${s.id}`;
+          
+          if (window.quillInstances && window.quillInstances[viId]) {
+            const quillVi = window.quillInstances[viId];
+            const htmlContent = quillVi.getSemanticHTML ? quillVi.getSemanticHTML() : quillVi.root.innerHTML;
+            s.content_vi = (quillVi.root.innerHTML === '<p><br></p>') ? '' : htmlContent;
+          }
+          if (window.quillInstances && window.quillInstances[enId]) {
+            const quillEn = window.quillInstances[enId];
+            const htmlContent = quillEn.getSemanticHTML ? quillEn.getSemanticHTML() : quillEn.root.innerHTML;
+            s.content_en = (quillEn.root.innerHTML === '<p><br></p>') ? '' : htmlContent;
+          }
+        });
+
         // Serialize both VI and EN arrays to JSON string
         const viData = sections.map(s => ({ title: s.title_vi, content: s.content_vi }));
         const enData = sections.map(s => ({ title: s.title_en, content: s.content_en }));
 
         document.getElementById("legal-submit-vi").value = JSON.stringify(viData);
         document.getElementById("legal-submit-en").value = JSON.stringify(enData);
+      }
+
+      function toggleLivePreview() {
+        const editorCol = document.getElementById("legal-editor-column");
+        const previewCol = document.getElementById("legal-preview-column");
+        const btnText = document.getElementById("toggle-preview-text");
+        const btnIcon = document.getElementById("toggle-preview-icon");
+        
+        if (!editorCol || !previewCol) return;
+        
+        const isHidden = previewCol.classList.contains("hidden");
+        if (isHidden) {
+          previewCol.classList.remove("hidden");
+          editorCol.classList.remove("xl:col-span-12");
+          editorCol.classList.add("xl:col-span-7");
+          if (btnText) btnText.textContent = "Ẩn xem trước";
+          if (btnIcon) btnIcon.textContent = "visibility_off";
+          localStorage.setItem("legal-preview-hidden", "false");
+        } else {
+          previewCol.classList.add("hidden");
+          editorCol.classList.remove("xl:col-span-7");
+          editorCol.classList.add("xl:col-span-12");
+          if (btnText) btnText.textContent = "Hiện xem trước";
+          if (btnIcon) btnIcon.textContent = "visibility";
+          localStorage.setItem("legal-preview-hidden", "true");
+        }
       }
 
       function switchTab(tabId, btn, isInitial = false) {
@@ -1415,6 +1941,24 @@
         } else {
           loadLegalContent("privacy-policy", true);
         }
+
+        // Restore preview panel visibility state from localStorage
+        try {
+          const isHidden = localStorage.getItem("legal-preview-hidden") === "true";
+          if (isHidden) {
+            const editorCol = document.getElementById("legal-editor-column");
+            const previewCol = document.getElementById("legal-preview-column");
+            const btnText = document.getElementById("toggle-preview-text");
+            const btnIcon = document.getElementById("toggle-preview-icon");
+            if (editorCol && previewCol) {
+              previewCol.classList.add("hidden");
+              editorCol.classList.remove("xl:col-span-7");
+              editorCol.classList.add("xl:col-span-12");
+              if (btnText) btnText.textContent = "Hiện xem trước";
+              if (btnIcon) btnIcon.textContent = "visibility";
+            }
+          }
+        } catch(e) {}
       })();
 
       document.body.style.opacity = "1";

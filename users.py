@@ -635,7 +635,7 @@ def save_legal_config():
     content_vi = (request.form.get("content_vi") or "").strip()
     content_en = (request.form.get("content_en") or "").strip()
     
-    allowed_pages = {"privacy-policy", "terms-of-service", "payment-policy", "data-deletion", "support"}
+    allowed_pages = {"privacy-policy", "terms-of-service", "payment-policy", "data-deletion", "support", "contact", "user-guide"}
     if page not in allowed_pages:
         flash("Trang pháp lý không hợp lệ.", "error")
         return redirect(url_for("users.system_config"))

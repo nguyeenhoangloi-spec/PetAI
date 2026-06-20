@@ -71,5 +71,55 @@
 - **Prevention**: Rà soát cấu trúc cú pháp JS cẩn thận sau khi thực hiện gộp hoặc chỉnh sửa các đoạn code lớn.
 - **Status**: Fixed
 
+---
+
+## [2026-06-20 21:05] - Lỗi không hiển thị các trường nhập nội dung pháp lý khi chuyển trang qua PJAX
+
+- **Type**: Logic
+- **Severity**: High
+- **File**: `templates/system_config.html:608`
+- **Agent**: Antigravity Orchestrator
+- **Root Cause**: Container ẩn `<div style="display: none;">` chứa các `textarea` lưu dữ liệu chính sách ban đầu được đặt ở ngoài thẻ div `#content-area`. Khi người dùng điều hướng qua lại bằng liên kết động (PJAX), PJAX chỉ tải và thay thế nội dung bên trong `#content-area`, dẫn đến việc các `textarea` này không tồn tại trong DOM thực tế, khiến đoạn mã JavaScript khởi tạo ném ra lỗi `TypeError` khi đọc thuộc tính `.value` của phần tử `null`.
+- **Error Message**: 
+  ```text
+  TypeError: Cannot read properties of null (reading 'value')
+  ```
+- **Fix Applied**: Di chuyển toàn bộ thẻ div container ẩn chứa các `textarea` vào bên trong phạm vi của phần tử `#content-area` để nó luôn được PJAX tải và nạp vào DOM cùng với giao diện trang.
+- **Prevention**: Đảm bảo tất cả các thẻ HTML chứa dữ liệu hoặc biểu mẫu động mà mã script cần truy cập trong quá trình PJAX tải trang đều phải nằm trong phân vùng nội dung chính (`#content-area`).
+- **Status**: Fixed
 
 ---
+
+## [2026-06-20 21:40] - Lỗi cú pháp Jinja2 và code rác gây sập trang Chính sách quyền riêng tư
+
+- **Type**: Syntax
+- **Severity**: High
+- **File**: `templates/privacy-policy.html:461`
+- **Agent**: Antigravity Orchestrator
+- **Root Cause**: Có một đoạn mã HTML rác và vòng lặp Jinja2 trùng lặp không đầy đủ bị chèn nhầm vào sau thẻ `{% endif %}` ở dòng 461, dẫn đến việc trình biên dịch Jinja2 ném lỗi hoặc hiển thị giao diện nát bét. Ngoài ra, các thẻ tiêu đề và nội dung tĩnh trong trang không hỗ trợ thẻ `data-i18n` khiến trang không dịch được khi chuyển ngôn ngữ.
+- **Error Message**: 
+  ```text
+  TemplateSyntaxError: Encountered unknown tag (or similar render failure due to stray Jinja tags outside loop)
+  ```
+- **Fix Applied**: Loại bỏ toàn bộ đoạn code rác từ dòng 461 đến 476, đóng thẻ `</main>` và phân vùng nội dung một cách chính xác. Đồng thời, cấu trúc lại phần fallback tĩnh để hỗ trợ thuộc tính `data-i18n` đầy đủ giúp dịch song ngữ chuẩn xác giống các trang khác.
+- **Prevention**: Luôn kiểm tra cấu trúc thẻ đóng/mở và thẻ Jinja2 trước khi lưu file, tránh để code rác còn sót lại khi merge.
+- **Status**: Fixed
+
+---
+
+## [2026-06-20 21:49] - Lỗi UnicodeEncodeError cp1252 khi chạy script cập nhật footer trên Windows
+
+- **Type**: Process
+- **Severity**: Low
+- **File**: `scratch/update_column_footers.py:40`
+- **Agent**: Antigravity Orchestrator
+- **Root Cause**: Chạy script python có `print()` tiếng Việt có dấu ("Hướng dẫn sử dụng") trên terminal Windows (mặc định mã hóa cp1252) dẫn đến lỗi không thể ánh xạ ký tự Unicode.
+- **Error Message**: 
+  ```text
+  UnicodeEncodeError: 'charmap' codec can't encode characters in position 7-8: character maps to <undefined>
+  ```
+- **Fix Applied**: Sửa nội dung in trong script `update_column_footers.py` thành ký tự ASCII không dấu.
+- **Prevention**: Sử dụng tiếng Anh hoặc tiếng Việt không dấu cho thông tin in ra stdout trong các script chạy tự động trên terminal Windows.
+- **Status**: Fixed
+
+
