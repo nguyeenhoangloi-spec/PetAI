@@ -1090,3 +1090,237 @@ class SepayWebhookEvent:
             inserted = cur.rowcount > 0
             conn.commit()
             return bool(inserted)
+
+
+class DeleteAccountManager:
+    """Quản lý vòng đời yêu cầu xóa tài khoản.
+
+    Trạng thái tài khoản (account_status):
+      'active'         -- Bình thường
+      'pending_delete' -- Đã yêu cầu xóa, chờ 30 ngày
+      'deleted'        -- Đã xóa/vô hiệu hóa (soft-delete)
+    """
+
+    @staticmethod
+    def ensure_columns(conn) -> None:
+        """Thêm các cột cần thiết vào bảng users nếu chưa có (migration an toàn)."""
+        cols = [
+            ("account_status",         "VARCHAR(20) NOT NULL DEFAULT 'active'"),
+            ("delete_requested_at",     "DATETIME NULL"),
+            ("delete_scheduled_at",     "DATETIME NULL"),
+            ("delete_reason",           "TEXT NULL"),
+            ("delete_otp_hash",         "VARCHAR(255) NULL"),
+            ("delete_otp_expires_at",   "DATETIME NULL"),
+            ("delete_otp_type",         "VARCHAR(20) NULL"),
+            ("delete_otp_attempts",     "INT NOT NULL DEFAULT 0"),
+            ("delete_otp_locked_until", "DATETIME NULL"),
+            ("delete_cancelled_at",     "DATETIME NULL"),
+            ("deleted_at",              "DATETIME NULL"),
+        ]
+        for col_name, col_def in cols:
+            _ensure_column(conn, "users", col_name, col_def)
+
+    @staticmethod
+    def get_delete_status(conn, user_id: int) -> Dict[str, Any]:
+        """Trả về trạng thái xóa tài khoản của user."""
+        DeleteAccountManager.ensure_columns(conn)
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                SELECT account_status, delete_requested_at, delete_scheduled_at,
+                       delete_reason, delete_cancelled_at, deleted_at
+                FROM users WHERE id = %s
+                """,
+                (user_id,),
+            )
+            row = cur.fetchone()
+        if not row:
+            return {}
+        return {
+            "account_status":       row[0] or "active",
+            "delete_requested_at":  row[1],
+            "delete_scheduled_at":  row[2],
+            "delete_reason":        row[3],
+            "delete_cancelled_at":  row[4],
+            "deleted_at":           row[5],
+        }
+
+    @staticmethod
+    def set_delete_otp(conn, user_id: int, otp_hash: str, otp_type: str = "delete",
+                       expires_seconds: int = 300) -> None:
+        """Ghi OTP xóa hoặc khôi phục vào DB."""
+        DeleteAccountManager.ensure_columns(conn)
+        from datetime import timedelta
+        expires_at = datetime.now() + timedelta(seconds=expires_seconds)
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                UPDATE users
+                SET delete_otp_hash = %s,
+                    delete_otp_expires_at = %s,
+                    delete_otp_type = %s,
+                    delete_otp_attempts = 0,
+                    delete_otp_locked_until = NULL
+                WHERE id = %s
+                """,
+                (otp_hash, expires_at, otp_type, user_id),
+            )
+        conn.commit()
+
+    @staticmethod
+    def check_otp_rate_limit(conn, user_id: int) -> Dict[str, Any]:
+        """Kiểm tra rate limit OTP. Trả về dict với is_locked, locked_until."""
+        DeleteAccountManager.ensure_columns(conn)
+        with conn.cursor() as cur:
+            cur.execute(
+                "SELECT delete_otp_attempts, delete_otp_locked_until FROM users WHERE id = %s",
+                (user_id,),
+            )
+            row = cur.fetchone()
+        if not row:
+            return {"is_locked": False, "locked_until": None}
+        attempts = int(row[0] or 0)
+        locked_until = row[1]
+        if locked_until and datetime.now() < locked_until:
+            return {"is_locked": True, "locked_until": locked_until, "attempts": attempts}
+        return {"is_locked": False, "locked_until": None, "attempts": attempts}
+
+    @staticmethod
+    def verify_delete_otp(conn, user_id: int, otp: str, expected_type: str) -> Dict[str, Any]:
+        """Xác thực OTP xóa hoặc khôi phục.
+
+        Trả về dict:
+          success: bool
+          error: str | None  ('expired', 'locked', 'invalid', 'type_mismatch')
+          attempts_left: int | None
+        """
+        from werkzeug.security import check_password_hash
+        from datetime import timedelta
+
+        DeleteAccountManager.ensure_columns(conn)
+
+        # Kiểm tra lock
+        rate = DeleteAccountManager.check_otp_rate_limit(conn, user_id)
+        if rate["is_locked"]:
+            return {"success": False, "error": "locked", "locked_until": rate["locked_until"]}
+
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                SELECT delete_otp_hash, delete_otp_expires_at, delete_otp_type,
+                       delete_otp_attempts
+                FROM users WHERE id = %s
+                """,
+                (user_id,),
+            )
+            row = cur.fetchone()
+
+        if not row or not row[0]:
+            return {"success": False, "error": "not_found"}
+
+        otp_hash, expires_at, otp_type, attempts = row[0], row[1], row[2], int(row[3] or 0)
+
+        # Kiểm tra hết hạn
+        if not expires_at or datetime.now() > expires_at:
+            return {"success": False, "error": "expired"}
+
+        # Kiểm tra type
+        if otp_type != expected_type:
+            return {"success": False, "error": "type_mismatch"}
+
+        # Kiểm tra OTP
+        if check_password_hash(otp_hash, otp):
+            # OTP đúng — xóa OTP khỏi DB
+            with conn.cursor() as cur:
+                cur.execute(
+                    """
+                    UPDATE users
+                    SET delete_otp_hash = NULL, delete_otp_expires_at = NULL,
+                        delete_otp_type = NULL, delete_otp_attempts = 0,
+                        delete_otp_locked_until = NULL
+                    WHERE id = %s
+                    """,
+                    (user_id,),
+                )
+            conn.commit()
+            return {"success": True, "error": None}
+        else:
+            # OTP sai — tăng attempts
+            new_attempts = attempts + 1
+            locked_until_val = None
+            if new_attempts >= 5:
+                locked_until_val = datetime.now() + timedelta(minutes=10)
+            with conn.cursor() as cur:
+                cur.execute(
+                    "UPDATE users SET delete_otp_attempts = %s, delete_otp_locked_until = %s WHERE id = %s",
+                    (new_attempts, locked_until_val, user_id),
+                )
+            conn.commit()
+            attempts_left = max(0, 5 - new_attempts)
+            return {"success": False, "error": "invalid", "attempts_left": attempts_left}
+
+    @staticmethod
+    def activate_pending_delete(conn, user_id: int, reason: Optional[str] = None) -> None:
+        """Chuyển tài khoản sang trạng thái pending_delete sau khi OTP xác nhận."""
+        from datetime import timedelta
+        DeleteAccountManager.ensure_columns(conn)
+        now = datetime.now()
+        scheduled = now + timedelta(days=30)
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                UPDATE users
+                SET account_status = 'pending_delete',
+                    delete_requested_at = %s,
+                    delete_scheduled_at = %s,
+                    delete_reason = %s,
+                    delete_cancelled_at = NULL,
+                    deleted_at = NULL
+                WHERE id = %s
+                """,
+                (now, scheduled, reason, user_id),
+            )
+        conn.commit()
+
+    @staticmethod
+    def restore_account(conn, user_id: int) -> None:
+        """Khôi phục tài khoản từ pending_delete về active."""
+        from datetime import timedelta
+        DeleteAccountManager.ensure_columns(conn)
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                UPDATE users
+                SET account_status = 'active',
+                    delete_cancelled_at = %s,
+                    delete_scheduled_at = NULL,
+                    delete_requested_at = NULL,
+                    delete_reason = NULL
+                WHERE id = %s
+                """,
+                (datetime.now(), user_id),
+            )
+        conn.commit()
+
+    @staticmethod
+    def auto_cleanup_expired(conn) -> int:
+        """Chuyển các tài khoản pending_delete đã quá 30 ngày sang deleted.
+
+        Trả về số tài khoản đã bị xử lý.
+        """
+        DeleteAccountManager.ensure_columns(conn)
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                UPDATE users
+                SET account_status = 'deleted',
+                    deleted_at = NOW(),
+                    is_active = 0
+                WHERE account_status = 'pending_delete'
+                  AND delete_scheduled_at IS NOT NULL
+                  AND delete_scheduled_at <= NOW()
+                """,
+            )
+            affected = cur.rowcount
+        conn.commit()
+        return int(affected)

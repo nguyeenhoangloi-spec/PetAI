@@ -28,24 +28,40 @@ def register_block_inactive_users(app):
             conn = get_connection()
             try:
                 with conn.cursor() as cur:
-                    cur.execute("SELECT is_active, force_change_password FROM users WHERE id = %s", (user_id,))
+                    cur.execute(
+                        "SELECT is_active, force_change_password, account_status FROM users WHERE id = %s",
+                        (user_id,),
+                    )
                     row = cur.fetchone()
                     if row:
                         is_active = bool(row[0])
                         force_change_password = bool(row[1])
+                        account_status = row[2] or "active"
                     else:
                         is_active = False
                         force_change_password = False
+                        account_status = "active"
             finally:
                 conn.close()
 
-            if not is_active:
+            # Tài khoản bị xóa hoàn toàn
+            if account_status == "deleted" or not is_active:
                 session.clear()
-                flash("Tài khoản đã bị khóa. Vui lòng đăng nhập lại.", "error")
+                flash("Tài khoản đã bị khóa hoặc đã xóa. Vui lòng liên hệ hỗ trợ.", "error")
                 return redirect(url_for("login.login"))
 
+            # Tài khoản đang chờ xóa — chỉ cho phép vào trang pending và logout
+            if account_status == "pending_delete":
+                allowed_pending = (
+                    endpoint.startswith("account_delete.") or
+                    endpoint.startswith("logout.") or
+                    endpoint.startswith("static")
+                )
+                if not allowed_pending:
+                    return redirect(url_for("account_delete.delete_pending"))
+
             # Ép buộc đổi mật khẩu nếu đang dùng mật khẩu tạm thời
-            if force_change_password:
+            if force_change_password and account_status == "active":
                 if not endpoint.startswith("settings."):
                     flash("Bạn đang sử dụng mật khẩu tạm thời. Vui lòng đổi mật khẩu mới để tiếp tục sử dụng hệ thống.", "warning")
                     return redirect(url_for("settings.settings"))

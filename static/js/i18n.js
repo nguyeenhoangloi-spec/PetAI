@@ -3683,6 +3683,28 @@
     });
   }
 
+  // Listen for language change to toggle custom database contents instantly without F5
+  function updateDynamicContentVisibility(lang) {
+    var viDiv = document.getElementById("dynamic-content-vi");
+    var enDiv = document.getElementById("dynamic-content-en");
+    if (viDiv && enDiv) {
+      if (lang === "en") {
+        viDiv.classList.add("hidden");
+        enDiv.classList.remove("hidden");
+      } else {
+        enDiv.classList.add("hidden");
+        viDiv.classList.remove("hidden");
+      }
+    }
+  }
+
+  document.addEventListener("i18nChanged", function (e) {
+    updateDynamicContentVisibility(e.detail.lang);
+  });
+  document.addEventListener("i18nReady", function (e) {
+    updateDynamicContentVisibility(e.detail.lang);
+  });
+
   window.PetAI_i18n = {
     t: t,
     setLanguage: setLanguage,
@@ -3694,11 +3716,20 @@
     },
     applyToElement: applyToElement,
     translateBreed: translateBreedViToEn,
+    updateDynamicContentVisibility: updateDynamicContentVisibility
   };
 
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", bootstrap);
+    document.addEventListener("DOMContentLoaded", function() {
+      bootstrap();
+      try {
+        updateDynamicContentVisibility(currentLang);
+      } catch (e) {}
+    });
   } else {
     bootstrap();
+    try {
+      updateDynamicContentVisibility(currentLang);
+    } catch (e) {}
   }
 })();

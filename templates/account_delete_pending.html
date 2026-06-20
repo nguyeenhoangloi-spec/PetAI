@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="light" class="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Tài khoản đang chờ xóa - PetAI</title>
+  <script src="{{ url_for('static', filename='js/tailwindcss.js') }}"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/typography.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/theme-dark.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/toasts.css') }}">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@400,0&display=swap" rel="stylesheet">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: "#004ac6",
+            error: "#ba1a1a",
+            "on-primary": "#ffffff",
+            "surface-container": "#e5eeff",
+          },
+          fontFamily: { body: ["Inter"] },
+        },
+      },
+    };
+  </script>
+  <style>
+    .material-symbols-outlined { font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24; }
+    @keyframes pulse-ring {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(197,48,48,0.4); }
+      50% { box-shadow: 0 0 0 16px rgba(197,48,48,0); }
+    }
+    .pulse-danger { animation: pulse-ring 2.5s ease-in-out infinite; }
+    @keyframes countdown-tick { from { opacity: 1; } to { opacity: 0.7; } }
+    .otp-input {
+      width: 48px; height: 56px;
+      font-size: 24px; font-weight: 700; text-align: center;
+      border: 2px solid #e2e8f0; border-radius: 12px;
+      outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .otp-input:focus { border-color: #004ac6; box-shadow: 0 0 0 3px rgba(0,74,198,0.15); }
+  </style>
+</head>
+
+<body class="min-h-screen bg-gradient-to-br from-red-50 via-slate-50 to-red-50 flex flex-col items-center justify-center p-4 font-['Inter'] antialiased">
+  {% include '_toasts.html' %}
+
+  <!-- Card chính -->
+  <div class="w-full max-w-md">
+
+    <!-- Header logo -->
+    <div class="text-center mb-8">
+      <a href="{{ url_for('home.index') }}" class="inline-flex items-center gap-1 hover:opacity-80 transition-opacity">
+        <img alt="PetAI" class="h-10 w-auto" src="{{ url_for('static', filename='images/logo.png') }}">
+        <span class="text-2xl font-bold text-primary">PetAI</span>
+      </a>
+    </div>
+
+    <!-- Card cảnh báo chính -->
+    <div class="bg-white rounded-3xl shadow-xl border border-red-100 overflow-hidden">
+
+      <!-- Header đỏ -->
+      <div class="bg-gradient-to-r from-red-600 to-red-700 px-6 py-5 text-white text-center">
+        <div class="w-16 h-16 rounded-full bg-white/20 mx-auto flex items-center justify-center mb-3 pulse-danger">
+          <span class="material-symbols-outlined text-4xl">delete_forever</span>
+        </div>
+        <h1 class="text-xl font-bold mb-1">Tài khoản đang chờ xóa</h1>
+        <p class="text-red-100 text-xs">Yêu cầu xóa tài khoản đã được ghi nhận</p>
+      </div>
+
+      <!-- Nội dung -->
+      <div class="p-6">
+
+        <!-- Thông tin user -->
+        <div class="text-center mb-6">
+          <p class="text-slate-600 text-sm">Tài khoản: <span class="font-semibold text-slate-800">{{ user_email }}</span></p>
+        </div>
+
+        <!-- Countdown -->
+        <div class="bg-red-50 border border-red-200 rounded-2xl p-4 mb-4 text-center">
+          <p class="text-xs font-bold text-red-500 uppercase tracking-wider mb-1">Tài khoản sẽ bị xóa vĩnh viễn vào</p>
+          <p class="text-lg font-bold text-red-700 mb-3" id="delete-date">
+            {% if delete_scheduled_at %}
+              {{ delete_scheduled_at.strftime('%d/%m/%Y lúc %H:%M') if delete_scheduled_at else 'N/A' }}
+            {% else %}
+              N/A
+            {% endif %}
+          </p>
+          <div class="flex justify-center gap-4">
+            <div class="text-center">
+              <div class="text-3xl font-bold text-red-700" id="days-left">--</div>
+              <div class="text-xs text-red-500">ngày</div>
+            </div>
+            <div class="text-3xl font-bold text-red-300 self-start mt-1">:</div>
+            <div class="text-center">
+              <div class="text-3xl font-bold text-red-700" id="hours-left">--</div>
+              <div class="text-xs text-red-500">giờ</div>
+            </div>
+            <div class="text-3xl font-bold text-red-300 self-start mt-1">:</div>
+            <div class="text-center">
+              <div class="text-3xl font-bold text-red-700" id="mins-left">--</div>
+              <div class="text-xs text-red-500">phút</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mô tả -->
+        <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-4">
+          <div class="flex gap-3">
+            <span class="material-symbols-outlined text-amber-600 shrink-0 mt-0.5">info</span>
+            <div class="text-sm text-amber-800 space-y-1">
+              <p><b>Bạn vẫn có thể đăng nhập</b> nhưng mọi tính năng sẽ bị tạm khóa.</p>
+              <p>Nếu bạn <b>không muốn xóa tài khoản</b>, hãy nhấn nút khôi phục bên dưới.</p>
+              <p>Sau 30 ngày, tất cả dữ liệu sẽ bị vô hiệu hóa vĩnh viễn.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Nút hành động -->
+        <div class="space-y-3">
+          <button
+            id="restore-btn"
+            type="button"
+            onclick="startRestore()"
+            class="w-full py-3.5 bg-primary hover:bg-blue-700 text-white font-semibold rounded-xl transition-all active:scale-95 flex items-center justify-center gap-2 shadow-md shadow-primary/20">
+            <span class="material-symbols-outlined">restore</span>
+            Khôi phục tài khoản
+          </button>
+
+          <a
+            href="{{ url_for('logout.logout') }}"
+            class="w-full py-3.5 border border-slate-200 text-slate-600 hover:bg-slate-50 font-semibold rounded-xl transition-all active:scale-95 flex items-center justify-center gap-2">
+            <span class="material-symbols-outlined">logout</span>
+            Đăng xuất
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <p class="text-center text-xs text-slate-400 mt-6">
+      Cần hỗ trợ? Liên hệ <a href="mailto:support@petai.vn" class="text-primary hover:underline">support@petai.vn</a>
+    </p>
+  </div>
+
+  <!-- =====================================================================
+       Modal: OTP Khôi phục
+  ====================================================================== -->
+  <div id="restore-modal" class="fixed inset-0 z-[1050] flex items-center justify-center p-4 hidden" role="dialog" aria-modal="true" aria-labelledby="restore-modal-title">
+    <!-- Backdrop -->
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeRestoreModal()"></div>
+
+    <div class="relative bg-white rounded-3xl shadow-2xl w-full max-w-sm p-6 text-center">
+      <!-- Icon -->
+      <div class="w-16 h-16 rounded-full bg-blue-100 mx-auto flex items-center justify-center mb-4">
+        <span class="material-symbols-outlined text-primary text-4xl">shield_lock</span>
+      </div>
+
+      <h2 id="restore-modal-title" class="text-xl font-bold text-slate-800 mb-2">Xác nhận khôi phục</h2>
+      <p class="text-sm text-slate-500 mb-1">Mã OTP đã được gửi đến</p>
+      <p class="font-semibold text-slate-700 text-sm mb-5">{{ user_email }}</p>
+
+      <!-- Countdown OTP -->
+      <div class="mb-5">
+        <p class="text-xs text-slate-400 mb-2">Mã có hiệu lực trong <span id="otp-countdown" class="font-semibold text-primary">05:00</span></p>
+        <!-- OTP Input boxes -->
+        <div class="flex justify-center gap-2" id="otp-boxes">
+          <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="one-time-code">
+          <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
+          <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
+          <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
+          <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
+          <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
+        </div>
+        <p id="restore-otp-error" class="text-red-500 text-xs mt-2 hidden"></p>
+      </div>
+
+      <!-- Actions -->
+      <button id="restore-confirm-btn" type="button" onclick="confirmRestore()"
+        class="w-full py-3 bg-primary hover:bg-blue-700 text-white font-semibold rounded-xl transition-all active:scale-95 mb-3 disabled:opacity-50">
+        Xác nhận khôi phục
+      </button>
+      <button id="restore-resend-btn" type="button" onclick="resendRestoreOtp()"
+        class="w-full py-2.5 border border-slate-200 text-slate-600 hover:bg-slate-50 text-sm font-medium rounded-xl transition-all">
+        Gửi lại mã OTP
+      </button>
+      <button type="button" onclick="closeRestoreModal()"
+        class="w-full py-2 text-slate-400 text-xs mt-2 hover:text-slate-600 transition-colors">
+        Đóng
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // =====================================================================
+    // Countdown đến ngày xóa tài khoản
+    // =====================================================================
+    (function () {
+      {% if delete_scheduled_at %}
+      const targetDate = new Date("{{ delete_scheduled_at.strftime('%Y-%m-%dT%H:%M:%S') }}");
+      {% else %}
+      const targetDate = null;
+      {% endif %}
+
+      function updateCountdown() {
+        if (!targetDate) return;
+        const now = new Date();
+        const diff = targetDate - now;
+        if (diff <= 0) {
+          document.getElementById('days-left').textContent = '0';
+          document.getElementById('hours-left').textContent = '00';
+          document.getElementById('mins-left').textContent = '00';
+          return;
+        }
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        document.getElementById('days-left').textContent = days;
+        document.getElementById('hours-left').textContent = String(hours).padStart(2, '0');
+        document.getElementById('mins-left').textContent = String(mins).padStart(2, '0');
+      }
+      updateCountdown();
+      setInterval(updateCountdown, 60000);
+    })();
+
+    // =====================================================================
+    // Restore flow
+    // =====================================================================
+    const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]')?.content || '';
+    let otpCountdownTimer = null;
+    let otpSecondsLeft = 300;
+
+    async function startRestore() {
+      const btn = document.getElementById('restore-btn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="material-symbols-outlined animate-spin">progress_activity</span> Đang gửi OTP...';
+
+      try {
+        const res = await fetch('/account/delete/restore/request', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRF-Token': CSRF_TOKEN,
+          },
+          body: JSON.stringify({}),
+        });
+        const data = await res.json();
+        if (data.success) {
+          openRestoreModal();
+        } else {
+          showToastMsg('error', data.message || 'Gặp lỗi khi gửi OTP. Vui lòng thử lại.');
+        }
+      } catch (e) {
+        showToastMsg('error', 'Lỗi kết nối. Vui lòng thử lại.');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<span class="material-symbols-outlined">restore</span> Khôi phục tài khoản';
+      }
+    }
+
+    function openRestoreModal() {
+      document.getElementById('restore-modal').classList.remove('hidden');
+      document.getElementById('restore-otp-error').classList.add('hidden');
+      // Clear OTP inputs
+      document.querySelectorAll('.otp-input').forEach(inp => inp.value = '');
+      document.querySelectorAll('.otp-input')[0]?.focus();
+      startOtpCountdown();
+    }
+
+    function closeRestoreModal() {
+      document.getElementById('restore-modal').classList.add('hidden');
+      clearInterval(otpCountdownTimer);
+    }
+
+    function startOtpCountdown() {
+      clearInterval(otpCountdownTimer);
+      otpSecondsLeft = 300;
+      updateOtpCountdownDisplay();
+      otpCountdownTimer = setInterval(() => {
+        otpSecondsLeft--;
+        updateOtpCountdownDisplay();
+        if (otpSecondsLeft <= 0) clearInterval(otpCountdownTimer);
+      }, 1000);
+    }
+
+    function updateOtpCountdownDisplay() {
+      const m = Math.floor(Math.max(0, otpSecondsLeft) / 60);
+      const s = Math.max(0, otpSecondsLeft) % 60;
+      document.getElementById('otp-countdown').textContent =
+        `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    }
+
+    // OTP input auto-advance
+    document.querySelectorAll('.otp-input').forEach((inp, idx, inputs) => {
+      inp.addEventListener('input', () => {
+        inp.value = inp.value.replace(/[^0-9]/g, '').slice(-1);
+        if (inp.value && idx < inputs.length - 1) inputs[idx + 1].focus();
+      });
+      inp.addEventListener('keydown', (e) => {
+        if (e.key === 'Backspace' && !inp.value && idx > 0) inputs[idx - 1].focus();
+      });
+      inp.addEventListener('paste', (e) => {
+        e.preventDefault();
+        const paste = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '');
+        inputs.forEach((box, i) => { box.value = paste[i] || ''; });
+        inputs[Math.min(paste.length, inputs.length - 1)].focus();
+      });
+    });
+
+    function getOtpValue() {
+      return Array.from(document.querySelectorAll('.otp-input')).map(i => i.value).join('');
+    }
+
+    async function confirmRestore() {
+      const otp = getOtpValue();
+      if (otp.length !== 6) {
+        showOtpError('Vui lòng nhập đủ 6 chữ số.');
+        return;
+      }
+      const btn = document.getElementById('restore-confirm-btn');
+      btn.disabled = true;
+      btn.textContent = 'Đang xác nhận...';
+
+      try {
+        const res = await fetch('/account/delete/restore/confirm', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRF-Token': CSRF_TOKEN,
+          },
+          body: JSON.stringify({ otp }),
+        });
+        const data = await res.json();
+        if (data.success) {
+          closeRestoreModal();
+          showToastMsg('success', data.message || 'Tài khoản đã được khôi phục!');
+          setTimeout(() => { window.location.href = data.redirect || '/dashboard'; }, 1800);
+        } else {
+          showOtpError(data.message || 'Mã OTP không đúng.');
+          btn.disabled = false;
+          btn.textContent = 'Xác nhận khôi phục';
+        }
+      } catch (e) {
+        showOtpError('Lỗi kết nối. Vui lòng thử lại.');
+        btn.disabled = false;
+        btn.textContent = 'Xác nhận khôi phục';
+      }
+    }
+
+    async function resendRestoreOtp() {
+      const btn = document.getElementById('restore-resend-btn');
+      btn.disabled = true;
+      btn.textContent = 'Đang gửi lại...';
+      try {
+        const res = await fetch('/account/delete/restore/request', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRF-Token': CSRF_TOKEN,
+          },
+          body: JSON.stringify({}),
+        });
+        const data = await res.json();
+        if (data.success) {
+          document.querySelectorAll('.otp-input').forEach(inp => inp.value = '');
+          document.querySelectorAll('.otp-input')[0]?.focus();
+          hideOtpError();
+          startOtpCountdown();
+          showToastMsg('success', 'Mã OTP mới đã được gửi về email.');
+        } else {
+          showOtpError(data.message || 'Không thể gửi lại OTP.');
+        }
+      } catch (e) {
+        showOtpError('Lỗi kết nối.');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Gửi lại mã OTP';
+      }
+    }
+
+    function showOtpError(msg) {
+      const el = document.getElementById('restore-otp-error');
+      el.textContent = msg;
+      el.classList.remove('hidden');
+    }
+    function hideOtpError() {
+      document.getElementById('restore-otp-error').classList.add('hidden');
+    }
+
+    function showToastMsg(type, message) {
+      if (typeof window.showToast === 'function') {
+        window.showToast(type, message);
+      } else {
+        alert(message);
+      }
+    }
+  </script>
+</body>
+</html>

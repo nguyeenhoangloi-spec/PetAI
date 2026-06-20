@@ -177,3 +177,152 @@ def send_password_changed_email(to_email: str, fullname: str) -> None:
       </div>
     """
     _send_async(to_email, subject, _base_layout(content))
+
+
+# ---------------------------------------------------------------------------
+# 5. OTP xác nhận xóa tài khoản
+# ---------------------------------------------------------------------------
+def send_delete_otp_email(to_email: str, fullname: str, otp: str) -> None:
+    subject = "[PetAI] Mã OTP xác nhận xóa tài khoản ⚠️"
+    content = f"""
+      <h2 style="margin:0 0 16px;color:#c53030;">Yêu cầu xóa tài khoản</h2>
+      <p>Xin chào <b>{fullname}</b>,</p>
+      <p>Chúng tôi nhận được yêu cầu <b>xóa tài khoản PetAI</b> của bạn.
+         Vui lòng sử dụng mã OTP dưới đây để xác nhận:</p>
+      <div style="font-size:36px;font-weight:700;text-align:center;color:#c53030;
+                  padding:18px;margin:20px 0;background:#fff5f5;border-radius:10px;
+                  letter-spacing:8px;border:2px dashed #fc8181;">
+        {otp}
+      </div>
+      <p>Mã có hiệu lực trong <b>5 phút</b>. Sau khi xác nhận, tài khoản sẽ
+         chuyển sang trạng thái <b>chờ xóa trong 30 ngày</b>.</p>
+      <p style="color:#e53e3e;"><b>⚠️ Nếu bạn không yêu cầu điều này</b>,
+         hãy bỏ qua email này và đổi mật khẩu ngay lập tức.</p>
+      <p style="font-size:13px;color:#718096;">Không chia sẻ mã này với bất kỳ ai.</p>
+    """
+    _send_async(to_email, subject, _base_layout(content))
+
+
+# ---------------------------------------------------------------------------
+# 6. Xác nhận đã ghi nhận yêu cầu xóa (gửi cho user sau khi OTP thành công)
+# ---------------------------------------------------------------------------
+def send_delete_requested_email(to_email: str, fullname: str,
+                                 delete_scheduled_at=None, request_time=None) -> None:
+    scheduled_str = ""
+    if delete_scheduled_at:
+        try:
+            if isinstance(delete_scheduled_at, str):
+                from datetime import datetime as _dt
+                delete_scheduled_at = _dt.fromisoformat(delete_scheduled_at)
+            scheduled_str = delete_scheduled_at.strftime("%d/%m/%Y lúc %H:%M")
+        except Exception:
+            scheduled_str = str(delete_scheduled_at)
+
+    request_str = ""
+    if request_time:
+        try:
+            if isinstance(request_time, str):
+                from datetime import datetime as _dt
+                request_time = _dt.fromisoformat(request_time)
+            request_str = request_time.strftime("%d/%m/%Y lúc %H:%M")
+        except Exception:
+            request_str = str(request_time)
+
+    subject = "[PetAI] Yêu cầu xóa tài khoản đã được ghi nhận 🗑️"
+    content = f"""
+      <h2 style="margin:0 0 16px;color:#c53030;">Yêu cầu xóa tài khoản đã được ghi nhận</h2>
+      <p>Xin chào <b>{fullname}</b>,</p>
+      <p>Chúng tôi đã nhận được yêu cầu xóa tài khoản PetAI của bạn vào <b>{request_str}</b>.</p>
+      <div style="background:#fff5f5;border-left:4px solid #fc8181;border-radius:8px;padding:16px 20px;margin:16px 0;">
+        <p style="margin:0 0 8px;font-weight:700;color:#c53030;">⏰ Tài khoản sẽ bị xóa vào: {scheduled_str}</p>
+        <p style="margin:0;font-size:14px;color:#718096;">Trong vòng 30 ngày, bạn vẫn có thể đăng nhập và
+           chọn <b>Khôi phục tài khoản</b> để hủy yêu cầu này.</p>
+      </div>
+      <div style="text-align:center;margin:24px 0;">
+        <a href="{_APP_URL}/account/delete/pending"
+           style="background:#004ac6;color:#fff;padding:12px 32px;border-radius:8px;
+                  text-decoration:none;font-weight:600;font-size:15px;display:inline-block;">
+          Xem trạng thái tài khoản →
+        </a>
+      </div>
+    """
+    _send_async(to_email, subject, _base_layout(content))
+
+
+# ---------------------------------------------------------------------------
+# 7. Thông báo admin khi có yêu cầu xóa tài khoản
+# ---------------------------------------------------------------------------
+def send_delete_admin_email(admin_email: str, user_id: int, fullname: str,
+                             user_email: str, request_time=None,
+                             delete_scheduled_at=None, reason: str = None) -> None:
+    def _fmt(dt):
+        if not dt:
+            return "N/A"
+        try:
+            if isinstance(dt, str):
+                from datetime import datetime as _dt
+                dt = _dt.fromisoformat(dt)
+            return dt.strftime("%d/%m/%Y %H:%M")
+        except Exception:
+            return str(dt)
+
+    reason_row = f"<p><b>Lý do:</b> {reason}</p>" if reason else ""
+    subject = f"[PetAI Admin] Yêu cầu xóa tài khoản: {fullname} ({user_email})"
+    content = f"""
+      <h2 style="margin:0 0 16px;color:#c53030;">⚠️ Yêu cầu xóa tài khoản mới</h2>
+      <div style="background:#f7f8fb;border-radius:10px;padding:20px 24px;margin:16px 0;">
+        <p><b>User ID:</b> {user_id}</p>
+        <p><b>Họ tên:</b> {fullname}</p>
+        <p><b>Email:</b> {user_email}</p>
+        <p><b>Thời gian yêu cầu:</b> {_fmt(request_time)}</p>
+        <p><b>Sẽ bị xóa vào:</b> {_fmt(delete_scheduled_at)}</p>
+        {reason_row}
+      </div>
+      <p style="font-size:13px;color:#718096;">Tài khoản sẽ tự động bị vô hiệu hóa sau 30 ngày
+         trừ khi người dùng hủy yêu cầu.</p>
+    """
+    _send_async(admin_email, subject, _base_layout(content))
+
+
+# ---------------------------------------------------------------------------
+# 8. OTP xác nhận khôi phục tài khoản
+# ---------------------------------------------------------------------------
+def send_restore_otp_email(to_email: str, fullname: str, otp: str) -> None:
+    subject = "[PetAI] Mã OTP khôi phục tài khoản 🔄"
+    content = f"""
+      <h2 style="margin:0 0 16px;color:#004ac6;">Khôi phục tài khoản PetAI</h2>
+      <p>Xin chào <b>{fullname}</b>,</p>
+      <p>Bạn đã yêu cầu <b>khôi phục tài khoản</b>. Vui lòng dùng mã OTP sau để xác nhận:</p>
+      <div style="font-size:36px;font-weight:700;text-align:center;color:#004ac6;
+                  padding:18px;margin:20px 0;background:#f0f4ff;border-radius:10px;
+                  letter-spacing:8px;border:2px dashed #93c5fd;">
+        {otp}
+      </div>
+      <p>Mã có hiệu lực trong <b>5 phút</b>.</p>
+      <p style="font-size:13px;color:#718096;">Không chia sẻ mã này với bất kỳ ai.</p>
+    """
+    _send_async(to_email, subject, _base_layout(content))
+
+
+# ---------------------------------------------------------------------------
+# 9. Thông báo khôi phục tài khoản thành công
+# ---------------------------------------------------------------------------
+def send_restore_success_email(to_email: str, fullname: str) -> None:
+    now_str = datetime.now().strftime("%d/%m/%Y lúc %H:%M")
+    subject = "[PetAI] Tài khoản của bạn đã được khôi phục ✅"
+    content = f"""
+      <h2 style="margin:0 0 16px;color:#004ac6;">Tài khoản đã được khôi phục!</h2>
+      <p>Xin chào <b>{fullname}</b>,</p>
+      <p>Tài khoản PetAI của bạn đã được <b>khôi phục thành công</b> vào <b>{now_str}</b>.</p>
+      <p>Yêu cầu xóa tài khoản trước đó đã bị hủy. Bạn có thể tiếp tục sử dụng dịch vụ
+         bình thường.</p>
+      <div style="text-align:center;margin:24px 0;">
+        <a href="{_APP_URL}/dashboard"
+           style="background:#004ac6;color:#fff;padding:12px 32px;border-radius:8px;
+                  text-decoration:none;font-weight:600;font-size:15px;display:inline-block;">
+          Về Dashboard →
+        </a>
+      </div>
+    """
+    _send_async(to_email, subject, _base_layout(content))
+

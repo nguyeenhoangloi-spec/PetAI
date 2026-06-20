@@ -216,6 +216,32 @@
           transition: none !important;
         }
       }
+
+      .otp-input {
+        width: 48px;
+        height: 56px;
+        font-size: 24px;
+        font-weight: 700;
+        text-align: center;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        outline: none;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        background-color: #f8fafc;
+      }
+      .otp-input:focus {
+        border-color: #004ac6;
+        box-shadow: 0 0 0 3px rgba(0, 74, 198, 0.15);
+      }
+      .dark .otp-input {
+        border-color: #334155;
+        background-color: #0f172a;
+        color: #f8fafc;
+      }
+      .dark .otp-input:focus {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+      }
     </style>
   </head>
   <body class="bg-background text-on-background body-md antialiased min-h-screen flex flex-col dark:bg-slate-950 dark:text-slate-100">
@@ -535,6 +561,44 @@
               </div>
             </section>
 
+            <!-- ============================================================
+                 Xóa tài khoản
+            ============================================================= -->
+            <section class="bg-white dark:bg-slate-900 border border-red-200 dark:border-red-900/40 rounded-2xl p-6 shadow-sm flex flex-col gap-6" id="danger-zone">
+              <div class="flex items-center gap-3 pb-4 border-b border-red-100 dark:border-red-900/30">
+                <div class="w-9 h-9 rounded-lg bg-red-500/10 text-red-600 dark:text-red-400 flex items-center justify-center">
+                  <span class="material-symbols-outlined">delete_forever</span>
+                </div>
+                <div>
+                  <h3 class="text-lg font-bold text-red-700 dark:text-red-400">Vùng nguy hiểm</h3>
+                  <p class="text-xs text-red-500/80 dark:text-red-500/60">Hành động không thể hoàn tác nếu quá thời hạn</p>
+                </div>
+              </div>
+
+              <div class="bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900/30 rounded-2xl p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                <div class="flex gap-4">
+                  <div class="mt-1 w-8 h-8 rounded-full bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-300 flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined text-[20px]">person_off</span>
+                  </div>
+                  <div class="space-y-1">
+                    <h4 class="text-sm font-bold text-red-800 dark:text-red-300">Yêu cầu xóa tài khoản</h4>
+                    <p class="text-xs text-red-700/80 dark:text-red-400/80 max-w-xl">
+                      Tài khoản sẽ không bị xóa ngay mà chuyển sang <b>trạng thái chờ xóa trong 30 ngày</b>.
+                      Trong thời gian này bạn có thể đăng nhập lại để khôi phục.
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  id="deleteAccountBtn"
+                  onclick="openDeleteModal()"
+                  class="whitespace-nowrap px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white font-semibold text-sm rounded-xl transition-all flex items-center gap-2 active:scale-95 shadow-sm">
+                  <span class="material-symbols-outlined text-[18px]">delete_forever</span>
+                  Yêu cầu xóa tài khoản
+                </button>
+              </div>
+            </section>
+
             <!-- Save and Cancel actions -->
             <div class="flex justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-850">
               <a class="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-950/60 text-sm font-semibold transition-colors" href="{{ url_for('dashboard.dashboard') }}" data-i18n="cancel">Hủy</a>
@@ -543,6 +607,292 @@
           </form>
         </div>
       </main>
+
+  <!-- ======================================================================
+       MODALS: Yêu cầu xóa tài khoản (3 bước)
+  ====================================================================== -->
+
+  <!-- Modal 1: Cảnh báo + lý do -->
+  <div id="delete-modal-1" class="fixed inset-0 z-[1050] flex items-center justify-center p-4 hidden" role="dialog" aria-modal="true" aria-labelledby="delete-modal-1-title">
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeDeleteModals()"></div>
+    <div class="relative bg-white dark:bg-slate-900 rounded-3xl shadow-2xl w-full max-w-md p-8">
+      <!-- Icon cảnh báo -->
+      <div class="w-16 h-16 rounded-full bg-red-100 dark:bg-red-900/40 mx-auto flex items-center justify-center mb-5">
+        <span class="material-symbols-outlined text-red-600 dark:text-red-400 text-4xl">warning</span>
+      </div>
+      <h2 id="delete-modal-1-title" class="text-xl font-bold text-slate-800 dark:text-slate-100 text-center mb-2">Xác nhận yêu cầu xóa tài khoản</h2>
+      <p class="text-sm text-slate-500 dark:text-slate-400 text-center mb-5">
+        Tài khoản sẽ chuyển sang <b>trạng thái chờ xóa 30 ngày</b>.<br>
+        Trong thời gian này bạn vẫn có thể đăng nhập và khôi phục.
+      </p>
+
+      <!-- Cảnh báo đỏ -->
+      <div class="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-xl p-4 mb-5 text-sm text-red-700 dark:text-red-300 space-y-1">
+        <p>⚠️ <b>Sau 30 ngày</b>, tất cả dữ liệu, lịch sử và quyền truy cập sẽ bị <b>vô hiệu hóa vĩnh viễn</b>.</p>
+        <p>⚠️ Quá trình này <b>yêu cầu xác nhận qua email</b> (OTP).</p>
+      </div>
+
+      <!-- Lý do (tùy chọn) -->
+      <div class="mb-5">
+        <label class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-2">Lý do xóa (tùy chọn)</label>
+        <textarea
+          id="delete-reason-input"
+          placeholder="Ví dụ: Tôi không còn sử dụng dịch vụ nữa..."
+          rows="3"
+          class="w-full px-4 py-3 text-sm bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-red-400/30 focus:border-red-400 dark:text-slate-100"
+          maxlength="500"></textarea>
+      </div>
+
+      <div class="flex gap-3">
+        <button type="button" onclick="closeDeleteModals()"
+          class="flex-1 py-3 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-semibold rounded-xl transition-all hover:bg-slate-50 dark:hover:bg-slate-800">
+          Hủy bỏ
+        </button>
+        <button type="button" id="delete-send-otp-btn" onclick="sendDeleteOtp()"
+          class="flex-1 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl transition-all active:scale-95 shadow-sm">
+          Gửi mã xác nhận
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 2: Nhập OTP -->
+  <div id="delete-modal-2" class="fixed inset-0 z-[1050] flex items-center justify-center p-4 hidden" role="dialog" aria-modal="true" aria-labelledby="delete-modal-2-title">
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeDeleteModals()"></div>
+    <div class="relative bg-white dark:bg-slate-900 rounded-3xl shadow-2xl w-full max-w-sm p-6 text-center">
+      <!-- Icon -->
+      <div class="w-16 h-16 rounded-full bg-blue-100 dark:bg-blue-900/30 mx-auto flex items-center justify-center mb-4">
+        <span class="material-symbols-outlined text-primary dark:text-blue-400 text-4xl">mark_email_read</span>
+      </div>
+
+      <h2 id="delete-modal-2-title" class="text-xl font-bold text-slate-800 dark:text-slate-100 mb-2">Nhập mã OTP xác nhận</h2>
+      <p class="text-sm text-slate-500 dark:text-slate-400 mb-1">Mã đã được gửi đến</p>
+      <p class="font-semibold text-slate-700 dark:text-slate-200 text-sm mb-5">{{ session.get('email') or '' }}</p>
+
+      <!-- Countdown -->
+      <div class="mb-5">
+        <p class="text-xs text-slate-400 mb-2">Mã có hiệu lực trong <span id="delete-otp-countdown" class="font-semibold text-primary">05:00</span></p>
+        <!-- OTP boxes -->
+        <div class="flex justify-center gap-2" id="delete-otp-boxes">
+          <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="one-time-code">
+          <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
+          <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
+          <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
+          <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
+          <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
+        </div>
+        <p id="delete-otp-error" class="text-red-500 text-xs mt-2 hidden"></p>
+      </div>
+
+      <!-- Actions -->
+      <button type="button" id="delete-confirm-btn" onclick="confirmDeleteOtp()"
+        class="w-full py-3 bg-primary hover:bg-blue-700 text-white font-semibold rounded-xl transition-all active:scale-95 mb-3 disabled:opacity-50">
+        Xác nhận xóa tài khoản
+      </button>
+      <button type="button" id="delete-resend-btn" onclick="resendDeleteOtp()"
+        class="w-full py-2.5 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-sm font-medium rounded-xl transition-all hover:bg-slate-50 dark:hover:bg-slate-800 mb-2">
+        Gửi lại mã OTP
+      </button>
+      <button type="button" onclick="closeDeleteModals()"
+        class="w-full py-2 text-slate-400 text-xs mt-2 hover:text-slate-600 transition-colors">
+        Đóng
+      </button>
+    </div>
+  </div>
+
+  <!-- Modal 3: Thành công -->
+  <div id="delete-modal-3" class="fixed inset-0 z-[1050] flex items-center justify-center p-4 hidden" role="dialog" aria-modal="true">
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+    <div class="relative bg-white dark:bg-slate-900 rounded-3xl shadow-2xl w-full max-w-sm p-8 text-center">
+      <div class="w-16 h-16 rounded-full bg-green-100 dark:bg-green-900/40 mx-auto flex items-center justify-center mb-4">
+        <span class="material-symbols-outlined text-green-600 dark:text-green-400 text-4xl">check_circle</span>
+      </div>
+      <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 mb-2">Yêu cầu đã được ghi nhận</h2>
+      <p class="text-sm text-slate-500 dark:text-slate-400 mb-5">
+        Tài khoản của bạn đã được chuyển sang <b>trạng thái chờ xóa</b>.<br>
+        Kiểm tra email để biết thêm chi tiết.
+      </p>
+      <button type="button" onclick="window.location.reload()"
+        class="w-full py-3 bg-primary hover:bg-blue-700 text-white font-semibold rounded-xl transition-all active:scale-95">
+        Đóng
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // ==========================================================================
+    // Delete Account Modal Logic
+    // ==========================================================================
+    const _CSRF = document.querySelector('meta[name="csrf-token"]')?.content || '';
+    let _delCountdownTimer = null;
+    let _delSecondsLeft = 300;
+
+    function openDeleteModal() {
+      document.getElementById('delete-modal-1').classList.remove('hidden');
+      document.getElementById('delete-reason-input').value = '';
+    }
+
+    function closeDeleteModals() {
+      ['delete-modal-1', 'delete-modal-2', 'delete-modal-3'].forEach(id => {
+        document.getElementById(id).classList.add('hidden');
+      });
+      clearInterval(_delCountdownTimer);
+      document.querySelectorAll('.del-otp-input').forEach(inp => inp.value = '');
+      document.getElementById('delete-otp-error').classList.add('hidden');
+    }
+
+    async function sendDeleteOtp() {
+      const reason = document.getElementById('delete-reason-input').value.trim();
+      const btn = document.getElementById('delete-send-otp-btn');
+      btn.disabled = true;
+      btn.textContent = 'Đang gửi...';
+
+      try {
+        const res = await fetch('/account/delete/request', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRF-Token': _CSRF,
+          },
+          body: JSON.stringify({ reason }),
+        });
+        const data = await res.json();
+        if (data.success) {
+          document.getElementById('delete-modal-1').classList.add('hidden');
+          document.getElementById('delete-modal-2').classList.remove('hidden');
+          document.querySelectorAll('#delete-otp-boxes .otp-input')[0]?.focus();
+          startDelCountdown();
+        } else {
+          alert(data.message || 'Gặp lỗi. Vui lòng thử lại.');
+        }
+      } catch (e) {
+        alert('Lỗi kết nối. Vui lòng thử lại.');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Gửi mã xác nhận';
+      }
+    }
+
+    function startDelCountdown() {
+      clearInterval(_delCountdownTimer);
+      _delSecondsLeft = 300;
+      updateDelCountdown();
+      _delCountdownTimer = setInterval(() => {
+        _delSecondsLeft--;
+        updateDelCountdown();
+        if (_delSecondsLeft <= 0) clearInterval(_delCountdownTimer);
+      }, 1000);
+    }
+
+    function updateDelCountdown() {
+      const m = Math.floor(Math.max(0, _delSecondsLeft) / 60);
+      const s = Math.max(0, _delSecondsLeft) % 60;
+      const el = document.getElementById('delete-otp-countdown');
+      if (el) el.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    }
+
+    // OTP input auto-advance
+    document.querySelectorAll('#delete-otp-boxes .otp-input').forEach((inp, idx, inputs) => {
+      inp.addEventListener('input', () => {
+        inp.value = inp.value.replace(/[^0-9]/g, '').slice(-1);
+        if (inp.value && idx < inputs.length - 1) inputs[idx + 1].focus();
+      });
+      inp.addEventListener('keydown', (e) => {
+        if (e.key === 'Backspace' && !inp.value && idx > 0) inputs[idx - 1].focus();
+      });
+      inp.addEventListener('paste', (e) => {
+        e.preventDefault();
+        const paste = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g,'');
+        inputs.forEach((box, i) => { box.value = paste[i] || ''; });
+        inputs[Math.min(paste.length, inputs.length-1)].focus();
+      });
+    });
+
+    function getDelOtp() {
+      return Array.from(document.querySelectorAll('#delete-otp-boxes .otp-input')).map(i => i.value).join('');
+    }
+
+    async function confirmDeleteOtp() {
+      const otp = getDelOtp();
+      if (otp.length !== 6) {
+        showDelOtpError('Vui lòng nhập đủ 6 chữ số.');
+        return;
+      }
+      const btn = document.getElementById('delete-confirm-btn');
+      btn.disabled = true;
+      btn.textContent = 'Đang xác nhận...';
+
+      try {
+        const res = await fetch('/account/delete/confirm', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRF-Token': _CSRF,
+          },
+          body: JSON.stringify({ otp }),
+        });
+        const data = await res.json();
+        if (data.success) {
+          clearInterval(_delCountdownTimer);
+          document.getElementById('delete-modal-2').classList.add('hidden');
+          document.getElementById('delete-modal-3').classList.remove('hidden');
+        } else {
+          showDelOtpError(data.message || 'Mã OTP không đúng.');
+          btn.disabled = false;
+          btn.textContent = 'Xác nhận xóa tài khoản';
+        }
+      } catch (e) {
+        showDelOtpError('Lỗi kết nối. Vui lòng thử lại.');
+        btn.disabled = false;
+        btn.textContent = 'Xác nhận xóa tài khoản';
+      }
+    }
+
+    async function resendDeleteOtp() {
+      const reason = ''; // Lý do đã gửi từ modal 1
+      const btn = document.getElementById('delete-resend-btn');
+      btn.disabled = true;
+      btn.textContent = 'Đang gửi lại...';
+      try {
+        const res = await fetch('/account/delete/request', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRF-Token': _CSRF,
+          },
+          body: JSON.stringify({ reason }),
+        });
+        const data = await res.json();
+        if (data.success) {
+          document.querySelectorAll('#delete-otp-boxes .otp-input').forEach(inp => inp.value = '');
+          document.querySelectorAll('#delete-otp-boxes .otp-input')[0]?.focus();
+          hideDelOtpError();
+          startDelCountdown();
+          if (typeof window.showToast === 'function') window.showToast('success', 'Mã OTP mới đã được gửi về email.');
+        } else {
+          showDelOtpError(data.message || 'Không thể gửi lại OTP.');
+        }
+      } catch (e) {
+        showDelOtpError('Lỗi kết nối.');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Gửi lại mã OTP';
+      }
+    }
+
+    function showDelOtpError(msg) {
+      const el = document.getElementById('delete-otp-error');
+      el.textContent = msg;
+      el.classList.remove('hidden');
+    }
+    function hideDelOtpError() {
+      document.getElementById('delete-otp-error').classList.add('hidden');
+    }
+  </script>
+
 
     <script>
       // Define these globally on window so they are accessible from _sidebar.html onclick handlers

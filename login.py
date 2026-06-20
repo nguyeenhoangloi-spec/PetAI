@@ -93,6 +93,12 @@ def login():
             flash("Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên.", "error")
             return render_template("login.html")
 
+        # Kiểm tra trạng thái xóa tài khoản
+        account_status = (user.get("account_status") or "active")
+        if account_status == "deleted":
+            flash("Tài khoản này đã bị xóa vĩnh viễn. Vui lòng liên hệ hỗ trợ nếu cần được giúp đỡ.", "error")
+            return render_template("login.html")
+
         # Đăng nhập thành công
         session["user_id"] = user["id"]
         session["username"] = user["username"]
@@ -110,7 +116,11 @@ def login():
             session.permanent = False  # Session cookie sẽ bị xóa khi tắt trình duyệt
         
         flash(f"Chào mừng trở lại, {user.get('fullname', user['username'])}!", "success")
-        
+
+        # Nếu tài khoản đang chờ xóa — đăng nhập được nhưng đưa về trang cảnh báo
+        if account_status == "pending_delete":
+            return redirect(url_for("account_delete.delete_pending"))
+
         # Chuyển hướng về trang trước đó nếu có, không thì về dashboard
         next_page = request.args.get('next')
         if isinstance(next_page, str) and _is_safe_next_url(next_page):

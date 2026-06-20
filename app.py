@@ -62,6 +62,7 @@ from config import configure_app
 from middleware import register_block_inactive_users, register_csrf_protection, register_html_translation
 from context_processors import register_context_processors
 from error_handlers import register_error_handlers
+from account_delete import account_delete_bp
 
 
 _load_dotenv_if_present()
@@ -95,6 +96,7 @@ app.register_blueprint(users_bp, url_prefix="/users")
 app.register_blueprint(health_bp, url_prefix="")
 app.register_blueprint(sepay_bp, url_prefix="")
 app.register_blueprint(legal_bp, url_prefix="")
+app.register_blueprint(account_delete_bp, url_prefix="/account")
 
 # Middleware registration
 register_block_inactive_users(app)
@@ -106,6 +108,43 @@ register_context_processors(app)
 
 # Error handlers
 register_error_handlers(app)
+
+# ---------------------------------------------------------------------------
+# Background auto-cleanup: chuyển pending_delete -> deleted sau 30 ngày
+# Dùng threading.Timer để tránh phụ thuộc apscheduler
+# ---------------------------------------------------------------------------
+import threading as _threading
+
+
+def _run_delete_cleanup():
+    """Chạy trong background thread — dọn dẹp tài khoản hết hạn xóa."""
+    try:
+        from connect import get_connection
+        from models import DeleteAccountManager
+        conn = get_connection()
+        try:
+            affected = DeleteAccountManager.auto_cleanup_expired(conn)
+            if affected:
+                import logging as _log
+                _log.getLogger(__name__).info(
+                    "[AUTO-CLEANUP] Đã vô hiệu hóa %d tài khoản hết hạn pending_delete.", affected
+                )
+        finally:
+            conn.close()
+    except Exception as _e:
+        import logging as _log
+        _log.getLogger(__name__).warning("[AUTO-CLEANUP] Lỗi: %s", _e)
+    finally:
+        # Lặp lại sau 1 giờ
+        _t = _threading.Timer(3600, _run_delete_cleanup)
+        _t.daemon = True
+        _t.start()
+
+
+# Khởi động lần đầu sau 60 giây (để app có thời gian fully boot)
+_initial_timer = _threading.Timer(60, _run_delete_cleanup)
+_initial_timer.daemon = True
+_initial_timer.start()
 
 # OAuth setup
 oauth = OAuth(app)

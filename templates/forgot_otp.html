@@ -34,7 +34,34 @@
       }
     };
   </script>
-</head>
+    <style>
+      .otp-input {
+        width: 48px;
+        height: 56px;
+        font-size: 24px;
+        font-weight: 700;
+        text-align: center;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        outline: none;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        background-color: #f8fafc;
+      }
+      .otp-input:focus {
+        border-color: #bc4800;
+        box-shadow: 0 0 0 3px rgba(188, 72, 0, 0.15);
+      }
+      .dark .otp-input {
+        border-color: #334155;
+        background-color: #0f172a;
+        color: #f8fafc;
+      }
+      .dark .otp-input:focus {
+        border-color: #f97316;
+        box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.25);
+      }
+    </style>
+  </head>
 
 <body class="bg-background text-on-background font-sans min-h-screen flex flex-col justify-between">
   {% include '_toasts.html' %}
@@ -57,12 +84,17 @@
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
 
         <div class="flex flex-col gap-2">
-          <label class="block text-sm font-medium text-on-background" for="otp">Mã xác thực OTP</label>
-          <input
-            class="w-full h-12 text-center text-2xl font-semibold tracking-[8px] rounded-xl border border-outline-variant bg-slate-50 focus:bg-white text-on-background focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all"
-            id="otp" name="otp" placeholder="000000" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="6"
-            required autocomplete="one-time-code" autofocus />
-          <small class="text-error text-xs" id="otpError"></small>
+          <label class="block text-sm font-medium text-on-background text-center mb-1" for="otp-box-1">Mã xác thực OTP</label>
+          <div class="flex justify-center gap-2 mb-2" id="otp-boxes">
+            <input id="otp-box-1" class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="one-time-code">
+            <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
+            <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
+            <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
+            <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
+            <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
+          </div>
+          <input type="hidden" name="otp" id="otp">
+          <small class="text-error text-xs text-center" id="otpError"></small>
         </div>
 
         <div class="text-center text-sm text-on-surface-variant flex items-center justify-center gap-1">
@@ -137,13 +169,37 @@
       }
     }, 1000);
 
-    // Validation trước khi submit
+    // OTP input auto-advance
+    const inputs = document.querySelectorAll('#otp-boxes .otp-input');
+    inputs.forEach((inp, idx) => {
+      inp.addEventListener('input', () => {
+        inp.value = inp.value.replace(/[^0-9]/g, '').slice(-1);
+        if (inp.value && idx < inputs.length - 1) inputs[idx + 1].focus();
+      });
+      inp.addEventListener('keydown', (e) => {
+        if (e.key === 'Backspace' && !inp.value && idx > 0) inputs[idx - 1].focus();
+      });
+      inp.addEventListener('paste', (e) => {
+        e.preventDefault();
+        const paste = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '');
+        inputs.forEach((box, i) => { box.value = paste[i] || ''; });
+        inputs[Math.min(paste.length, inputs.length - 1)].focus();
+      });
+    });
+
+    // Focus first box automatically
+    inputs[0]?.focus();
+
+    // Combine values on submit and validate
     document.getElementById("otpForm").addEventListener("submit", function (e) {
       const otpInput = document.getElementById("otp");
       const otpError = document.getElementById("otpError");
       otpError.textContent = "";
 
-      if (!/^[0-9]{6}$/.test(otpInput.value)) {
+      const otpVal = Array.from(inputs).map(i => i.value).join('');
+      otpInput.value = otpVal;
+
+      if (!/^[0-9]{6}$/.test(otpVal)) {
         otpError.textContent = "Vui lòng nhập mã OTP gồm đúng 6 chữ số.";
         e.preventDefault();
       }

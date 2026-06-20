@@ -102,6 +102,8 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/toasts.css') }}" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile-header-fix.css') }}?v=4" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/admin-dashboard-content.css') }}" />
+    <!-- Quill Rich Text Editor Styles -->
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
     <script id="tailwind-config">
@@ -229,6 +231,61 @@
       }
       .tab-content.active {
         display: block;
+      }
+      
+      /* Quill Dark Mode Overrides */
+      html.dark .ql-toolbar,
+      html[data-theme="dark"] .ql-toolbar {
+        background-color: #1e293b !important;
+        border-color: #334155 !important;
+        color: #f1f5f9 !important;
+      }
+
+      html.dark .ql-container,
+      html[data-theme="dark"] .ql-container {
+        background-color: #0f172a !important;
+        border-color: #334155 !important;
+        color: #f1f5f9 !important;
+        font-family: "Inter", sans-serif;
+        font-size: 14px;
+      }
+
+      html.dark .ql-stroke,
+      html[data-theme="dark"] .ql-stroke {
+        stroke: #cbd5e1 !important;
+      }
+
+      html.dark .ql-fill,
+      html[data-theme="dark"] .ql-fill {
+        fill: #cbd5e1 !important;
+      }
+
+      html.dark .ql-picker,
+      html[data-theme="dark"] .ql-picker {
+        color: #cbd5e1 !important;
+      }
+
+      html.dark .ql-picker-options,
+      html[data-theme="dark"] .ql-picker-options {
+        background-color: #1e293b !important;
+        border-color: #334155 !important;
+      }
+      
+      .ql-toolbar.ql-snow {
+        border-top-left-radius: 0.5rem;
+        border-top-right-radius: 0.5rem;
+        border-color: #c3c6d7;
+      }
+      
+      .ql-container.ql-snow {
+        border-bottom-left-radius: 0.5rem;
+        border-bottom-right-radius: 0.5rem;
+        border-color: #c3c6d7;
+      }
+      
+      html.dark .ql-toolbar.ql-snow,
+      html.dark .ql-container.ql-snow {
+        border-color: #334155 !important;
       }
     </style>
   </head>
@@ -489,10 +546,12 @@
                   </div>
 
                   <div id="editor-vi-container">
-                    <textarea name="content_vi" id="editor_vi" rows="18" class="w-full p-4 bg-surface dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-800 rounded-lg text-on-surface dark:text-slate-200 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary" placeholder="Nhập mã HTML hoặc nội dung tiếng Việt của chính sách tại đây..."></textarea>
+                    <textarea name="content_vi" id="editor_vi" class="hidden"></textarea>
+                    <div id="quill_editor_vi" class="bg-white dark:bg-slate-950 text-on-surface dark:text-slate-200 min-h-[350px]"></div>
                   </div>
                   <div id="editor-en-container" class="hidden">
-                    <textarea name="content_en" id="editor_en" rows="18" class="w-full p-4 bg-surface dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-800 rounded-lg text-on-surface dark:text-slate-200 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary" placeholder="Enter HTML content or English translation here..."></textarea>
+                    <textarea name="content_en" id="editor_en" class="hidden"></textarea>
+                    <div id="quill_editor_en" class="bg-white dark:bg-slate-950 text-on-surface dark:text-slate-200 min-h-[350px]"></div>
                   </div>
                 </div>
 
@@ -505,6 +564,7 @@
     </main>
 
     <!-- Script imports -->
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
     <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
     <script src="{{ url_for('static', filename='js/toasts.js') }}"></script>
@@ -548,6 +608,52 @@
         }
       };
 
+      let quillVi = null;
+      let quillEn = null;
+
+      function initQuillEditors() {
+        if (quillVi && quillEn) return; // Already initialized
+
+        quillVi = new Quill('#quill_editor_vi', {
+          theme: 'snow',
+          modules: {
+            toolbar: [
+              [{ 'header': [1, 2, 3, false] }],
+              ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+              [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+              ['link', 'clean']                                 // remove formatting button
+            ]
+          }
+        });
+
+        quillEn = new Quill('#quill_editor_en', {
+          theme: 'snow',
+          modules: {
+            toolbar: [
+              [{ 'header': [1, 2, 3, false] }],
+              ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+              [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+              ['link', 'clean']                                 // remove formatting button
+            ]
+          }
+        });
+
+        // Sync Quill back to textareas before form submit
+        const legalForm = document.querySelector('form[action*="save-legal"]');
+        if (legalForm) {
+          legalForm.addEventListener('submit', function() {
+            document.getElementById("editor_vi").value = quillVi.root.innerHTML;
+            document.getElementById("editor_en").value = quillEn.root.innerHTML;
+          });
+        }
+
+        // Trigger load initial content to populate Quill editors
+        const select = document.getElementById("legal-page-select");
+        if (select) {
+          loadLegalContent(select.value);
+        }
+      }
+
       function switchTab(tabId, btn) {
         document.querySelectorAll(".tab-btn").forEach(b => {
           b.classList.remove("active", "border-primary", "text-primary");
@@ -558,6 +664,10 @@
 
         document.querySelectorAll(".tab-content").forEach(c => c.classList.remove("active"));
         document.getElementById("tab-" + tabId).classList.add("active");
+
+        if (tabId === "legal") {
+          initQuillEditors();
+        }
         
         // Save current tab in URL parameter
         const url = new URL(window.location);
@@ -586,8 +696,17 @@
 
       function loadLegalContent(page) {
         document.getElementById("legal-form-page").value = page;
-        document.getElementById("editor_vi").value = rawLegalData[page].vi;
-        document.getElementById("editor_en").value = rawLegalData[page].en;
+        
+        const viContent = rawLegalData[page].vi || "";
+        const enContent = rawLegalData[page].en || "";
+        
+        document.getElementById("editor_vi").value = viContent;
+        document.getElementById("editor_en").value = enContent;
+        
+        if (quillVi && quillEn) {
+          quillVi.root.innerHTML = viContent;
+          quillEn.root.innerHTML = enContent;
+        }
         
         // Sync URL query
         const url = new URL(window.location);
@@ -596,6 +715,11 @@
       }
 
       async function autoTranslateToEnglish() {
+        if (!quillVi || !quillEn) return;
+        
+        // Sync Quill editor to textareas first
+        document.getElementById("editor_vi").value = quillVi.root.innerHTML;
+
         const viText = document.getElementById("editor_vi").value.trim();
         if (!viText) {
           if (window.showToast) {
@@ -612,32 +736,59 @@
         btn.innerHTML = `<span class="material-symbols-outlined !text-sm animate-spin">sync</span> Đang dịch...`;
 
         try {
-          const paragraphs = viText.split("\n");
-          const translatedParagraphs = [];
+          const tempDiv = document.createElement("div");
+          tempDiv.innerHTML = viText;
+          const children = Array.from(tempDiv.childNodes);
+          const translatedNodes = [];
 
-          for (let p of paragraphs) {
-            if (!p.trim()) {
-              translatedParagraphs.push("");
-              continue;
+          for (let node of children) {
+            if (node.nodeType === Node.TEXT_NODE) {
+              const text = node.textContent.trim();
+              if (!text) {
+                translatedNodes.push(document.createTextNode(node.textContent));
+                continue;
+              }
+              const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=vi&tl=en&dt=t&q=${encodeURIComponent(text)}`;
+              const response = await fetch(url);
+              if (!response.ok) throw new Error("Translation failed");
+              const data = await response.json();
+              let translatedPart = "";
+              if (data && data[0]) {
+                data[0].forEach(item => {
+                  if (item && item[0]) translatedPart += item[0];
+                });
+              }
+              translatedNodes.push(document.createTextNode(translatedPart || text));
+            } else if (node.nodeType === Node.ELEMENT_NODE) {
+              const innerText = node.innerText.trim();
+              if (!innerText) {
+                translatedNodes.push(node.cloneNode(true));
+                continue;
+              }
+              const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=vi&tl=en&dt=t&q=${encodeURIComponent(innerText)}`;
+              const response = await fetch(url);
+              if (!response.ok) throw new Error("Translation failed");
+              const data = await response.json();
+              let translatedPart = "";
+              if (data && data[0]) {
+                data[0].forEach(item => {
+                  if (item && item[0]) translatedPart += item[0];
+                });
+              }
+              const cloned = node.cloneNode(true);
+              cloned.innerHTML = translatedPart || innerText;
+              translatedNodes.push(cloned);
+            } else {
+              translatedNodes.push(node.cloneNode(true));
             }
-            if (p.trim().startsWith("<") && p.trim().endsWith(">") && !p.trim().includes(" ")) {
-              translatedParagraphs.push(p);
-              continue;
-            }
-            const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=vi&tl=en&dt=t&q=${encodeURIComponent(p)}`;
-            const response = await fetch(url);
-            if (!response.ok) throw new Error("Translation failed");
-            const data = await response.json();
-            let translatedPart = "";
-            if (data && data[0]) {
-              data[0].forEach(item => {
-                if (item && item[0]) translatedPart += item[0];
-              });
-            }
-            translatedParagraphs.push(translatedPart || p);
           }
 
-          document.getElementById("editor_en").value = translatedParagraphs.join("\n");
+          tempDiv.innerHTML = "";
+          translatedNodes.forEach(node => tempDiv.appendChild(node));
+          const translatedHTML = tempDiv.innerHTML;
+
+          document.getElementById("editor_en").value = translatedHTML;
+          quillEn.root.innerHTML = translatedHTML;
           switchLanguageTab('en');
 
           if (window.showToast) {
