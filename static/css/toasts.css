@@ -282,32 +282,24 @@ html.dark .toast--info {
 /* Shimmer Glow Animation */
 @keyframes shimmer-glow {
   0% {
-    box-shadow: 0 0 0 0 rgba(0, 74, 198, 0.4), 0 4px 6px -1px rgba(0, 74, 198, 0.1);
+    box-shadow: 0 0 0 0 rgba(var(--shimmer-glow-color, 0, 74, 198), 0.4), 0 4px 6px -1px rgba(var(--shimmer-glow-color, 0, 74, 198), 0.1);
     transform: scale(1);
   }
   50% {
-    box-shadow: 0 0 16px 4px rgba(0, 74, 198, 0.6), 0 10px 15px -3px rgba(0, 74, 198, 0.3);
+    box-shadow: 0 0 16px 4px rgba(var(--shimmer-glow-color, 0, 74, 198), 0.6), 0 10px 15px -3px rgba(var(--shimmer-glow-color, 0, 74, 198), 0.3);
     transform: scale(1.02);
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(0, 74, 198, 0.4), 0 4px 6px -1px rgba(0, 74, 198, 0.1);
+    box-shadow: 0 0 0 0 rgba(var(--shimmer-glow-color, 0, 74, 198), 0.4), 0 4px 6px -1px rgba(var(--shimmer-glow-color, 0, 74, 198), 0.1);
     transform: scale(1);
   }
 }
-html.dark @keyframes shimmer-glow {
-  0% {
-    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4), 0 4px 6px -1px rgba(59, 130, 246, 0.1);
-    transform: scale(1);
-  }
-  50% {
-    box-shadow: 0 0 16px 4px rgba(59, 130, 246, 0.6), 0 10px 15px -3px rgba(59, 130, 246, 0.3);
-    transform: scale(1.02);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4), 0 4px 6px -1px rgba(59, 130, 246, 0.1);
-    transform: scale(1);
-  }
+
+html.dark {
+  --shimmer-glow-color: 59, 130, 246;
 }
+
 .shimmer-active {
   animation: shimmer-glow 1.5s infinite ease-in-out !important;
 }
+

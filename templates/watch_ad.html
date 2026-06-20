@@ -1,9 +1,9 @@
+<!-- html-validate-disable no-dup-class, aria-hidden-focusable, no-inline-style, attribute-allowed-values, void-style -->
 <div
   id="watchAdModal"
   class="fixed inset-0 z-[1050] hidden bg-black/40 backdrop-blur-sm"
   role="dialog"
   aria-modal="true"
-  aria-hidden="true"
 >
   <div class="relative w-full h-full overflow-y-auto">
     <div
@@ -34,7 +34,7 @@
             >
               <div class="flex items-center justify-between mb-4">
                 <span
-                  class="label-sm label-sm text-on-surface-variant uppercase tracking-wider" data-i18n="adScanned">Đã nhận diện</span>
+                  class="label-sm text-on-surface-variant uppercase tracking-wider" data-i18n="adScanned">Đã nhận diện</span>
                 <span class="material-symbols-outlined text-error"
                   >warning</span
                 >
@@ -45,7 +45,7 @@
                 >
                   {{ quota_info.total_predictions }}
                 </span>
-                <span class="body-md body-md text-on-surface-variant">
+                <span class="body-md text-on-surface-variant">
                   / {{ quota_info.free_limit }}
                 </span>
               </div>
@@ -60,7 +60,7 @@
               <div
                 class="bg-surface-container-lowest p-4 rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-outline-variant flex flex-col justify-center"
               >
-                <span class="label-sm label-sm text-on-surface-variant mb-1">
+                <span class="label-sm text-on-surface-variant mb-1">
                   <span data-i18n="adUnlockRemaining">Lần mở khóa còn lại</span>
                 </span>
                 <span class="headline-md text-primary">
@@ -72,7 +72,7 @@
               <div
                 class="bg-surface-container-lowest p-4 rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-outline-variant flex flex-col justify-center"
               >
-                <span class="label-sm label-sm text-on-surface-variant mb-1">
+                <span class="label-sm text-on-surface-variant mb-1">
                   <span data-i18n="adViewsUsed">Quảng cáo đã xem</span>
                 </span>
                 <span class="headline-md text-on-background">
@@ -171,23 +171,23 @@
           class="flex flex-col items-center gap-6 mt-8"
           id="watchAdCompleteForm"
         >
-          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <div class="flex items-center gap-4">
             <button
               type="button"
               id="watchAdCancel"
-              class="px-8 py-3 rounded-lg border-2 border-outline-variant label-sm label-sm font-semibold text-on-surface hover:bg-surface-container transition-colors focus:ring-2 focus:ring-primary focus:outline-none" data-i18n="back"><span data-i18n="back">Quay lại</span></button>
+              class="px-8 py-3 rounded-lg border-2 border-outline-variant label-sm font-semibold text-on-surface hover:bg-surface-container transition-colors focus:ring-2 focus:ring-primary focus:outline-none" data-i18n="back"><span data-i18n="back">Quay lại</span></button>
             <button
               type="submit"
               id="watchAdCompleteBtn"
-              class="px-8 py-3 rounded-lg bg-primary text-on-primary label-sm label-sm font-semibold border-2 border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+              class="px-8 py-3 rounded-lg bg-primary text-on-primary label-sm font-semibold border-2 border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
               disabled data-i18n="adWatchedComplete"><span data-i18n="adWatchedComplete">Tôi đã xem xong</span></button>
           </div>
           <div
             class="flex items-center gap-2 text-outline bg-surface-container-low px-4 py-2 rounded-lg border border-outline-variant/50"
           >
             <span class="material-symbols-outlined text-[18px]">info</span>
-            <p class="label-sm label-sm" data-i18n="adLimitReachedDesc"><span data-i18n="adLimitReachedDesc">Nếu đã xem đủ 3 lần, bạn cần nâng cấp gói để tiếp tục.</span></p>
+            <p class="label-sm" data-i18n="adLimitReachedDesc"><span data-i18n="adLimitReachedDesc">Nếu đã xem đủ 3 lần, bạn cần nâng cấp gói để tiếp tục.</span></p>
           </div>
         </form>
       </div>

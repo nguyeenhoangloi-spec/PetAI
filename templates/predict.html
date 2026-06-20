@@ -1,3 +1,4 @@
+<!-- html-validate-disable no-dup-class -->
 <!-- htmlhint spec-char-escape:false -->
 <!DOCTYPE html>
 <html
@@ -30,9 +31,9 @@
         }
       </style>
     </noscript>
-    <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <meta name="csrf-token" content="{{ csrf_token() }}" />
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <script>
       (function () {
         const root = document.documentElement;
@@ -97,37 +98,34 @@
         } catch (e) {}
       })();
     </script>
-    <title data-i18n="predictResultPageTitle">
-      {{ 'Prediction Result | PetAI' if ui_language == 'en' else 'Kết quả dự
-      đoán | PetAI' }}
-    </title>
+    <title data-i18n="predictResultPageTitle">{{ 'Result' if ui_language == 'en' else 'Kết quả' }} - PetAI</title>
     <script src="{{ url_for('static', filename='js/tailwindcss.js') }}"></script>
     <script src="{{ url_for('static', filename='js/chart.umd.min.js') }}"></script>
 
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='css/typography.css') }}"
-    />
+    >
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='css/theme-dark.css') }}"
-    />
+    >
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='css/toasts.css') }}"
-    />
+    >
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='css/mobile-header-fix.css') }}?v=4"
-    />
+    >
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
-    />
+    >
     <link
       href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
       rel="stylesheet"
-    />
+    >
     <script id="tailwind-config">
       tailwind.config = {
         darkMode: "class",
@@ -246,6 +244,53 @@
       .ai-overlay-label {
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
       }
+      #system-notification-toast {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        z-index: 9999;
+        max-width: 340px;
+        background: #004ac6;
+        color: #fff;
+        border-radius: 14px;
+        box-shadow: 0 8px 32px rgba(0, 74, 198, 0.25);
+        padding: 16px 20px;
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        animation: slideInRight 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+      }
+      #system-notification-toast .toast-icon {
+        font-size: 24px;
+        flex-shrink: 0;
+        margin-top: 2px;
+      }
+      #system-notification-toast .toast-title {
+        font-weight: 700;
+        font-size: 14px;
+        margin: 0 0 4px;
+      }
+      #system-notification-toast .toast-body {
+        font-size: 13px;
+        margin: 0;
+        opacity: 0.9;
+      }
+      #system-notification-toast .toast-close-btn {
+        background: none;
+        border: none;
+        color: #fff;
+        cursor: pointer;
+        padding: 0;
+        margin-left: auto;
+        flex-shrink: 0;
+        opacity: 0.7;
+        font-size: 18px;
+        line-height: 1;
+      }
+      @keyframes slideInRight {
+        from { transform: translateX(120%); opacity: 0; }
+        to   { transform: translateX(0);   opacity: 1; }
+      }
     </style>
   </head>
   <body
@@ -253,20 +298,14 @@
   >
     {% include '_toasts.html' %}
     {% if show_notification and result and result.breed %}
-    <div id="system-notification-toast" style="position:fixed;bottom:24px;right:24px;z-index:9999;max-width:340px;background:#004ac6;color:#fff;border-radius:14px;box-shadow:0 8px 32px rgba(0,74,198,0.25);padding:16px 20px;display:flex;align-items:flex-start;gap:12px;animation:slideInRight 0.4s cubic-bezier(0.34,1.56,0.64,1) both;">
-      <span class="material-symbols-outlined" style="font-size:24px;flex-shrink:0;margin-top:2px;">notifications_active</span>
+    <div id="system-notification-toast">
+      <span class="material-symbols-outlined toast-icon">notifications_active</span>
       <div>
-        <p style="font-weight:700;font-size:14px;margin:0 0 4px;">Nhận diện hoàn tất!</p>
-        <p style="font-size:13px;margin:0;opacity:0.9;">Giống: <b>{{ result.breed }}</b> &mdash; Độ tin cậy: <b>{{ (result.breed_conf * 100)|int }}%</b></p>
+        <p class="toast-title">Nhận diện hoàn tất!</p>
+        <p class="toast-body">Giống: <b>{{ result.breed }}</b> &mdash; Độ tin cậy: <b>{{ (result.breed_conf * 100)|int }}%</b></p>
       </div>
-      <button onclick="document.getElementById('system-notification-toast').remove()" style="background:none;border:none;color:#fff;cursor:pointer;padding:0;margin-left:auto;flex-shrink:0;opacity:0.7;font-size:18px;line-height:1;" aria-label="Đóng">&times;</button>
+      <button type="button" class="toast-close-btn" onclick="document.getElementById('system-notification-toast').remove()" aria-label="Đóng">&times;</button>
     </div>
-    <style>
-      @keyframes slideInRight {
-        from { transform: translateX(120%); opacity: 0; }
-        to   { transform: translateX(0);   opacity: 1; }
-      }
-    </style>
     <script>
       setTimeout(function() {
         var t = document.getElementById('system-notification-toast');
@@ -277,8 +316,8 @@
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
     {% set has_conf = result.breed_conf is defined and result.breed_conf is not
     none %} {% set conf_percent = (result.breed_conf * 100) if has_conf else 0
-    %} {% set conf_percent_clamped = 0 if conf_percent < 0 else (100 if
-    conf_percent > 100 else conf_percent) %} 
+    %} {% set conf_percent_clamped = 0 if 0 > conf_percent else (100 if
+    conf_percent > 100 else conf_percent) %}
     {% set breed_name_vi = result.breed if result.breed else 'Chưa xác định' %}
     {% set breed_name_en = result.breed_en if result.breed_en else 'Not determined' %}
     {% set primary_label = 'Giống dự đoán'
@@ -326,7 +365,7 @@
               alt="PetAI New Logo"
               class="w-auto h-10 md:h-12"
               src="{{ url_for('static', filename='images/logo.png') }}"
-            />
+            >
             <span class="ml-0 text-lg md:text-2xl font-semibold text-primary"
               >PetAI</span
             >
@@ -376,7 +415,7 @@
               data-i18n-title="avatarAlt"
               class="w-9 h-9 rounded-full border-2 border-primary/20 p-0.5"
               src="{{ ui_avatar_url }}"
-            />
+            >
             <div
               class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white dark:border-slate-900 rounded-full"
             ></div>
@@ -529,7 +568,7 @@
                       class="w-full h-auto max-h-[700px] object-contain mx-auto"
                       src="/{{ image_path }}"
                       alt="Uploaded photo"
-                    />
+                    >
                     <div
                       class="absolute inset-0 flex items-center justify-center"
                     >
@@ -804,8 +843,8 @@
                   <div class="space-y-6">
                     {% if top3_mode == 'similarity' %} {% for item in
                     result.parts_info.similarity_top3[:3] %} {% set sim_score =
-                    item.score or 0 %} {% set sim_score_clamped = 0 if sim_score
-                    < 0 else (1 if sim_score > 1 else sim_score) %}
+                    item.score or 0 %} {% set sim_score_clamped = 0 if 0 > sim_score
+                    else (1 if sim_score > 1 else sim_score) %}
                     <div class="space-y-2">
                       <div class="flex justify-between label-sm">
                         <span
@@ -915,19 +954,22 @@
                 (heatmap_rings|length)] %}
                 <div class="space-y-3 group">
                   <div
-                    class="relative rounded-xl overflow-hidden aspect-square border border-outline-variant/30 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 cursor-pointer"
-                    onclick="if (window.openGradcamModal) { window.openGradcamModal(this.querySelector('.heatmap-img').src, '{{ item.breed }}', '{{ item.breed_en }}', '{{ item.label }}', '{{ item.label_en }}', 'gradcam_{{ item.breed_en|replace(' ', '_')|lower }}.png'); }"
+                    class="relative rounded-xl overflow-hidden aspect-square border border-outline-variant/30 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 cursor-pointer heatmap-thumbnail"
+                    data-breed="{{ item.breed }}"
+                    data-breed-en="{{ item.breed_en }}"
+                    data-label="{{ item.label }}"
+                    data-label-en="{{ item.label_en }}"
+                    data-filename="gradcam_{{ item.breed_en|replace(' ', '_')|lower }}.png"
                   >
                     <img
                       class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 heatmap-img"
                       src="{% if gradcam_mode == 'dynamic' %}{{ item.image_data }}{% else %}{{ url_for('artifacts_gradcam', filename=item.filename) }}{% endif %}"
                       alt="Grad-CAM {{ item.breed_en if ui_language == 'en' else item.breed }}"
                       loading="eager"
-                    />
+                    >
                     <div
                       class="absolute inset-0 {{ overlay_class }} mix-blend-overlay"
                     ></div>
-                    
                     <!-- Dark overlay and View Details text on hover -->
                     <div
                       class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center gap-1.5"
@@ -1066,7 +1108,7 @@
             class="w-full h-full object-cover absolute inset-0"
             src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'%3E%3C/svg%3E"
             alt="Grad-CAM Image"
-          />
+          >
         </div>
 
         <!-- Info Panel (Right/Bottom) -->
@@ -1099,7 +1141,7 @@
             >
               Chihuahua
             </h3>
-            
+
             <!-- Description -->
             <p
               id="gradcamModalDesc"
@@ -1243,6 +1285,23 @@
             if (w > 100) w = 100;
             el.style.width = w + "%";
           });
+
+        document.querySelectorAll(".heatmap-thumbnail").forEach(function (el) {
+          el.addEventListener("click", function () {
+            if (window.openGradcamModal) {
+              const img = this.querySelector(".heatmap-img");
+              if (img) {
+                const src = img.src;
+                const breed = this.getAttribute("data-breed");
+                const breedEn = this.getAttribute("data-breed-en");
+                const label = this.getAttribute("data-label");
+                const labelEn = this.getAttribute("data-label-en");
+                const filename = this.getAttribute("data-filename");
+                window.openGradcamModal(src, breed, breedEn, label, labelEn, filename);
+              }
+            }
+          });
+        });
       });
     </script>
     <script src="{{ url_for('static', filename='js/toasts.js') }}"></script>

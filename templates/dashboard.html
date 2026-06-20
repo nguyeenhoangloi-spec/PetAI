@@ -99,7 +99,7 @@
         } catch (e) {}
       })();
     </script>
-    {% if ui_language == 'en' %}<title data-i18n="dashboardTitle">Dashboard - PetAI</title>{% else %}<title data-i18n="dashboardTitle">Trang chủ - PetAI</title>{% endif %}
+    <title data-i18n="dashboardTitle">{{ 'Dashboard' if ui_language == 'en' else 'Trang chủ' }} - PetAI</title>
     <script src="{{ url_for('static', filename='js/tailwindcss.js') }}"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/typography.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/theme-dark.css') }}">

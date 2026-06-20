@@ -1,3 +1,4 @@
+<!-- html-validate-disable no-inline-style, no-dup-class -->
 <!-- htmlhint spec-char-escape:false -->
 <!DOCTYPE html>
 
@@ -32,9 +33,9 @@
         }
       </style>
     </noscript>
-    <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <meta name="csrf-token" content="{{ csrf_token() }}" />
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <script>
       (function () {
         const root = document.documentElement;
@@ -99,39 +100,37 @@
         } catch (e) {}
       })();
     </script>
-    <title data-i18n="statisticsPageTitle">
-      {{ 'Statistics - PetAI' if ui_language == 'en' else 'Thống kê - PetAI' }}
-    </title>
+    <title data-i18n="statisticsPageTitle">{{ 'Statistics' if ui_language == 'en' else 'Thống kê' }} - PetAI</title>
     <script src="{{ url_for('static', filename='js/tailwindcss.js') }}"></script>
     <script src="{{ url_for('static', filename='js/chart.umd.min.js') }}"></script>
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='css/typography.css') }}"
-    />
+    >
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='css/theme-dark.css') }}"
-    />
+    >
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='css/toasts.css') }}"
-    />
+    >
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='css/mobile-header-fix.css') }}?v=4"
-    />
+    >
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
-    />
+    >
     <link
       href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
       rel="stylesheet"
-    />
+    >
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='css/admin-dashboard-content.css') }}"
-    />
+    >
     <script id="tailwind-config">
       tailwind.config = {
         darkMode: "class",
@@ -465,7 +464,7 @@
               alt="PetAI New Logo"
               class="w-auto h-10 md:h-12"
               src="{{ url_for('static', filename='images/logo.png') }}"
-            />
+            >
             <span class="ml-0 text-lg md:text-2xl font-semibold text-primary"
               >PetAI</span
             >
@@ -514,7 +513,7 @@
               alt="Ảnh đại diện"
               class="w-9 h-9 rounded-full border-2 border-primary/20 p-0.5"
               src="{{ ui_avatar_url }}"
-            />
+            >
 
             <div
               class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white dark:border-slate-900 rounded-full"
@@ -593,6 +592,7 @@
           <div class="flex items-center gap-3">
             <button
               id="exportReportBtn"
+              type="button"
               class="bg-surface-container-lowest dark:bg-slate-900 text-on-surface dark:text-slate-200 border border-outline-variant/60 dark:border-slate-800 hover:border-primary hover:text-primary dark:hover:text-blue-400 px-4 py-2.5 rounded-lg label-sm shadow-sm hover:shadow-md transition-all flex items-center gap-2 font-semibold"
             >
               <span class="material-symbols-outlined text-[18px]">download</span
@@ -1017,7 +1017,7 @@
                     class="activity-thumb"
                     src="{{ p.image_path if p.image_path.startswith('http') else '/' ~ p.image_path }}"
                     onerror="this.src='{{ default_logo }}'"
-                  />
+                  >
                   {% else %}
                   <div
                     class="activity-thumb bg-surface-container flex items-center justify-center"

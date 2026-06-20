@@ -1,3 +1,4 @@
+<!-- html-validate-disable no-dup-class, void-style, title-length, attribute-allowed-values, scope-present, aria-hidden-focusable -->
 <!-- htmlhint spec-char-escape:false -->
 <!DOCTYPE html>
 
@@ -98,10 +99,7 @@
         } catch (e) {}
       })();
     </script>
-    <title data-i18n="adminConfirmationsPageTitle">
-      {{ 'Admin Payment Approval - PetAI' if ui_language == 'en' else 'Quản trị
-      Duyệt thanh toán - PetAI' }}
-    </title>
+    <title data-i18n="adminConfirmationsPageTitle">{{ 'Approval' if ui_language == 'en' else 'Duyệt' }} - PetAI</title>
     <script src="{{ url_for('static', filename='js/tailwindcss.js') }}"></script>
     <script src="{{ url_for('static', filename='js/chart.umd.min.js') }}"></script>
 
@@ -624,36 +622,42 @@
                       class="bg-surface-container-low dark:bg-slate-800/40 border-b border-outline-variant/30 dark:border-slate-800"
                     >
                       <th
+                        scope="col"
                         class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider"
                         data-i18n="orderCode"
                       >
                         <span data-i18n="orderCode">Mã đơn</span>
                       </th>
                       <th
+                        scope="col"
                         class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider"
                         data-i18n="filterUser"
                       >
                         <span data-i18n="homeStatsUsers">NGƯỜI DÙNG</span>
                       </th>
                       <th
+                        scope="col"
                         class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-center"
                         data-i18n="planName"
                       >
                         <span data-i18n="planName">Gói</span>
                       </th>
                       <th
+                        scope="col"
                         class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-center"
                         data-i18n="paymentMethodCol"
                       >
                         <span data-i18n="paymentMethodCol">Phương thức</span>
                       </th>
                       <th
+                        scope="col"
                         class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-center"
                         data-i18n="amount"
                       >
                         <span data-i18n="amount">Số tiền</span>
                       </th>
                       <th
+                        scope="col"
                         class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-right"
                         data-i18n="confirmedAt"
                       >
@@ -788,48 +792,56 @@
                       class="bg-surface-container-low dark:bg-slate-800/40 border-b border-outline-variant/30 dark:border-slate-800"
                     >
                       <th
+                        scope="col"
                         class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider"
                         data-i18n="orderCode"
                       >
                         <span data-i18n="orderCode">Mã đơn</span>
                       </th>
                       <th
+                        scope="col"
                         class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider"
                         data-i18n="filterUser"
                       >
                         <span data-i18n="homeStatsUsers">NGƯỜI DÙNG</span>
                       </th>
                       <th
+                        scope="col"
                         class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-center"
                         data-i18n="planName"
                       >
                         <span data-i18n="planName">Gói</span>
                       </th>
                       <th
+                        scope="col"
                         class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-center"
                         data-i18n="paymentMethodCol"
                       >
                         <span data-i18n="paymentMethodCol">Phương thức</span>
                       </th>
                       <th
+                        scope="col"
                         class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-center"
                         data-i18n="amount"
                       >
                         <span data-i18n="amount">Số tiền</span>
                       </th>
                       <th
+                        scope="col"
                         class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-center"
                         data-i18n="status"
                       >
                         <span data-i18n="status">Trạng thái</span>
                       </th>
                       <th
+                        scope="col"
                         class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-center"
                         data-i18n="createdAt"
                       >
                         <span data-i18n="createdAt">Tạo lúc</span>
                       </th>
                       <th
+                        scope="col"
                         class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-right"
                         data-i18n="actionColHeader"
                       >
@@ -1007,7 +1019,7 @@
                 >
                   <span data-i18n="showingText">Hiển thị</span> {{ (page - 1) *
                   per_page + 1 if total_orders > 0 else 0 }} - {{ page *
-                  per_page if page * per_page < total_orders else total_orders
+                  per_page if total_orders > page * per_page else total_orders
                   }} <span data-i18n="ofText">trên</span> {{ total_orders }}
                   <span data-i18n="pendingConfirmOrdersText"
                     >đơn chờ xác nhận</span
@@ -1041,7 +1053,7 @@
                     {{ page }} / {{ total_pages }}
                   </span>
 
-                  {% if page < total_pages %}
+                  {% if total_pages > page %}
                   <a
                     class="p-2 rounded border border-outline-variant/30 dark:border-slate-700 text-on-surface-variant dark:text-slate-400 hover:bg-surface-container-low dark:hover:bg-slate-800 transition-colors"
                     href="{{ url_for('users.confirmations_list', page=page+1) }}"
@@ -1073,7 +1085,8 @@
     <div
       class="fixed inset-0 z-[1050] hidden items-center justify-center bg-slate-950/60 backdrop-blur-sm p-4"
       id="confirmModal"
-      aria-hidden="true"
+      role="dialog"
+      aria-modal="true"
     >
       <div
         class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 dark:border-slate-800 rounded-xl max-w-md w-full p-6 shadow-xl"

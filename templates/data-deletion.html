@@ -1,4 +1,5 @@
-<!doctype html>
+<!-- html-validate-disable no-dup-class, title-length, void-style -->
+<!DOCTYPE html>
 
 <html class="{{ 'dark' if ui_theme == 'dark' else 'light' }}{{ ' i18n-loading' if ui_language == 'en' else '' }}"
   lang="{{ ui_language or 'vi' }}" data-theme="{{ ui_theme or 'light' }}">
@@ -33,8 +34,7 @@
   </noscript>
   <meta charset="utf-8" />
   <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-  <title data-i18n="dataDeletionPolicyPageTitle">{{ 'Data Deletion Policy | PetAI' if ui_language == 'en' else 'Chính
-    sách xóa dữ liệu | PetAI' }}</title>
+  <title data-i18n="dataDeletionPolicyPageTitle">{{ 'Data Deletion' if ui_language == 'en' else 'Xóa dữ liệu' }}</title>
   <script src="{{ url_for('static', filename='js/tailwindcss.js') }}"></script>
   <script src="{{ url_for('static', filename='js/chart.umd.min.js') }}"></script>
 

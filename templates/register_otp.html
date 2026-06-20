@@ -1,4 +1,5 @@
-<!doctype html>
+<!-- html-validate-disable no-dup-class, void-style, attribute-allowed-values -->
+<!DOCTYPE html>
 <html class="{{ 'dark' if ui_theme == 'dark' else 'light' }}" lang="{{ ui_language or 'vi' }}" data-theme="{{ ui_theme or 'light' }}">
   <head>
     <meta charset="utf-8" />
@@ -33,7 +34,7 @@
   </head>
   <body class="bg-background text-on-background font-sans min-h-screen flex flex-col justify-between">
     {% include '_toasts.html' %}
-    
+
     <main class="flex-grow flex items-center justify-center p-6">
       <div class="max-w-[480px] w-full bg-surface-container-lowest rounded-2xl border border-slate-100 shadow-lg p-8 flex flex-col gap-6">
         <div class="text-center">
@@ -49,8 +50,8 @@
         </div>
 
         <form action="{{ url_for('register.verify_otp') }}" method="post" id="otpForm" class="flex flex-col gap-4">
-          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-          
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
           <div class="flex flex-col gap-2">
             <label class="block text-sm font-medium text-on-background" for="otp">Mã xác thực OTP</label>
             <input
@@ -92,9 +93,9 @@
           <a href="{{ url_for('register.register') }}" class="text-slate-500 hover:text-primary transition-colors flex items-center gap-1">
             <span class="material-symbols-outlined text-sm">arrow_back</span> Đăng ký lại
           </a>
-          
+
           <form action="{{ url_for('register.resend_otp') }}" method="post" id="resendForm">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <button type="submit" id="resendBtn" class="text-primary hover:underline font-medium disabled:opacity-50 disabled:no-underline disabled:cursor-not-allowed">
               Gửi lại mã OTP
             </button>

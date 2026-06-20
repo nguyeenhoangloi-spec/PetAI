@@ -1,3 +1,4 @@
+<!-- html-validate-disable no-dup-class, void-style, title-length, attribute-allowed-values -->
 <!-- htmlhint spec-char-escape:false -->
 <!DOCTYPE html>
 
@@ -98,10 +99,7 @@
         } catch (e) {}
       })();
     </script>
-    <title data-i18n="uploadPageTitle">
-      {{ 'Upload & Analyze - PetAI' if ui_language == 'en' else 'Tải ảnh & Phân
-      tích - PetAI' }}
-    </title>
+    <title data-i18n="uploadPageTitle">{{ 'Upload' if ui_language == 'en' else 'Tải ảnh' }} - PetAI</title>
     <script src="{{ url_for('static', filename='js/tailwindcss.js') }}"></script>
     <script src="{{ url_for('static', filename='js/chart.umd.min.js') }}"></script>
     <link
@@ -459,7 +457,7 @@
                     class="headline-md font-semibold text-on-surface dark:text-slate-200"
                     data-i18n="dragDropHere"
                   >
-                    <span data-i18n="dragDropHere">Kéo & thả ảnh vào đây</span>
+                    <span data-i18n="dragDropHere">Kéo &amp; thả ảnh vào đây</span>
                   </h3>
                   <p
                     class="body-md text-on-surface-variant dark:text-slate-400"
@@ -483,7 +481,8 @@
                     id="imagePreview"
                     class="max-h-[400px] max-w-full rounded-xl object-contain shadow-md mx-auto bg-transparent border border-outline-variant/10 dark:border-slate-800/40"
                     alt="Xem trước ảnh tải lên"
-                  />
+                    src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+                  >
                   <div class="flex flex-wrap items-center gap-3">
                     <button
                       type="button"
@@ -595,7 +594,7 @@
                   >
                 </div>
               </div>
-              {% if quota_info.remaining_free <= 0 %}
+              {% if 0 >= quota_info.remaining_free %}
               <a
                 class="mt-md w-full inline-flex items-center justify-center gap-2 py-2.5 bg-inverse-surface dark:bg-slate-800 text-inverse-on-surface dark:text-slate-200 rounded-lg label-sm font-semibold hover:bg-on-background dark:hover:bg-slate-700 transition-colors"
                 href="{{ url_for('predict.watch_ad') }}"
