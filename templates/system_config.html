@@ -94,7 +94,7 @@
         } catch (e) {}
       })();
     </script>
-    <title>Cấu hình hệ thống - PetAI</title>
+    <title data-i18n="sysConfigPageTitle">Cấu hình hệ thống - PetAI</title>
     <script src="{{ url_for('static', filename='js/tailwindcss.js') }}"></script>
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/typography.css') }}" />
@@ -102,8 +102,9 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/toasts.css') }}" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile-header-fix.css') }}?v=4" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/admin-dashboard-content.css') }}" />
-    <!-- Quill Rich Text Editor Styles -->
+    <!-- Quill Rich Text Editor Styles & Script -->
     <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
     <script id="tailwind-config">
@@ -355,53 +356,53 @@
       {% set active_page = 'system_config' %}
       {% include '_sidebar.html' %}
 
-      <div id="content-area" class="col-span-1 flex flex-col gap-8">
+      <div id="content-area" class="col-span-1 flex flex-col gap-6">
         <!-- Page Header -->
         <section class="flex flex-col gap-2 border-b border-outline-variant/20 dark:border-slate-800 pb-5">
-          <h1 class="headline-lg font-semibold text-on-surface dark:text-slate-105">Cấu hình hệ thống</h1>
-          <p class="body-md text-on-surface-variant dark:text-slate-400">Quản lý cài đặt logo, email liên hệ, gói cước dịch vụ và nội dung các trang điều khoản pháp lý.</p>
+          <h1 class="headline-lg font-semibold text-on-surface dark:text-slate-105" data-i18n="sysConfigTitle">Cấu hình hệ thống</h1>
+          <p class="body-md text-on-surface-variant dark:text-slate-400" data-i18n="sysConfigDesc">Quản lý cài đặt logo, email liên hệ, gói cước dịch vụ và nội dung các trang điều khoản pháp lý.</p>
         </section>
 
         <!-- Navigation Tabs -->
         <section class="border-b border-outline-variant/20 dark:border-slate-800">
           <div class="flex gap-8">
-            <button type="button" class="tab-btn pb-3 border-b-2 border-transparent text-on-surface-variant hover:text-primary transition-all label-sm font-semibold active" onclick="switchTab('general', this)">
+            <button type="button" class="tab-btn pb-3 border-b-2 border-transparent text-on-surface-variant hover:text-primary transition-all label-sm font-semibold active" onclick="switchTab('general', this)" data-i18n="sysTabGeneral">
               Cấu hình chung
             </button>
-            <button type="button" class="tab-btn pb-3 border-b-2 border-transparent text-on-surface-variant hover:text-primary transition-all label-sm font-semibold" onclick="switchTab('plans', this)">
+            <button type="button" class="tab-btn pb-3 border-b-2 border-transparent text-on-surface-variant hover:text-primary transition-all label-sm font-semibold" onclick="switchTab('plans', this)" data-i18n="sysTabPlans">
               Gói cước dịch vụ
             </button>
-            <button type="button" class="tab-btn pb-3 border-b-2 border-transparent text-on-surface-variant hover:text-primary transition-all label-sm font-semibold" id="tab-legal-btn" onclick="switchTab('legal', this)">
+            <button type="button" class="tab-btn pb-3 border-b-2 border-transparent text-on-surface-variant hover:text-primary transition-all label-sm font-semibold" id="tab-legal-btn" onclick="switchTab('legal', this)" data-i18n="sysTabLegal">
               Các trang chính sách &amp; điều khoản
             </button>
           </div>
         </section>
 
         <!-- Tab contents -->
-        <div class="space-y-6">
+        <div>
 
           <!-- GENERAL TAB -->
-          <div id="tab-general" class="tab-content active space-y-8">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div id="tab-general" class="tab-content active space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <!-- Site Logo configuration card -->
               <div class="glass-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 border border-outline-variant/30 dark:border-slate-800 shadow-sm flex flex-col gap-6">
                 <div>
-                  <h3 class="headline-md text-on-surface dark:text-slate-105 mb-1">Logo website</h3>
-                  <p class="label-sm text-on-surface-variant dark:text-slate-400">Thay đổi hình ảnh logo hiển thị trên thanh tiêu đề và chân trang website.</p>
+                  <h3 class="headline-md text-on-surface dark:text-slate-105 mb-1" data-i18n="sysLogoTitle">Logo website</h3>
+                  <p class="label-sm text-on-surface-variant dark:text-slate-400" data-i18n="sysLogoDesc">Thay đổi hình ảnh logo hiển thị trên thanh tiêu đề và chân trang website.</p>
                 </div>
 
                 <div class="flex flex-col items-center justify-center border-2 border-dashed border-outline-variant/50 dark:border-slate-700 rounded-xl p-8 bg-surface-container-low/40 dark:bg-slate-950/20 gap-4">
                   <img src="{{ url_for('static', filename='images/logo.png') }}" class="h-16 w-auto object-contain dark:invert" alt="Logo hiện tại" id="logo-preview" />
-                  <span class="label-sm text-on-surface-variant dark:text-slate-400">Logo hiện hành</span>
+                  <span class="label-sm text-on-surface-variant dark:text-slate-400" data-i18n="sysLogoCurrent">Logo hiện hành</span>
                 </div>
 
                 <form action="{{ url_for('users.save_logo_config') }}" method="POST" enctype="multipart/form-data" class="flex flex-col gap-4">
                   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                   <div class="flex flex-col gap-2">
-                    <label class="label-sm font-bold text-on-surface dark:text-slate-300">Tải lên logo mới</label>
+                    <label class="label-sm font-bold text-on-surface dark:text-slate-300" data-i18n="sysLogoUploadNew">Tải lên logo mới</label>
                     <input type="file" name="logo" accept=".png,.jpg,.jpeg,.svg,.webp" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary file:hover:bg-primary/20 cursor-pointer" />
                   </div>
-                  <button type="submit" class="bg-primary text-on-primary py-2.5 px-4 rounded-lg label-sm font-semibold hover:shadow-md transition-all self-start">Cập nhật logo</button>
+                  <button type="submit" class="bg-primary text-on-primary py-2.5 px-4 rounded-lg label-sm font-semibold hover:shadow-md transition-all self-start" data-i18n="sysLogoUpdateBtn">Cập nhật logo</button>
                 </form>
               </div>
 
@@ -410,16 +411,16 @@
                 <form action="{{ url_for('users.save_system_config') }}" method="POST" class="flex flex-col gap-6">
                   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                   <div>
-                    <h3 class="headline-md text-on-surface dark:text-slate-105 mb-1">Cấu hình liên lạc</h3>
-                    <p class="label-sm text-on-surface-variant dark:text-slate-400">Thiết lập các thông tin liên lạc chính của website hiển thị tới người dùng.</p>
+                    <h3 class="headline-md text-on-surface dark:text-slate-105 mb-1" data-i18n="sysContactTitle">Cấu hình liên lạc</h3>
+                    <p class="label-sm text-on-surface-variant dark:text-slate-400" data-i18n="sysContactDesc">Thiết lập các thông tin liên lạc chính của website hiển thị tới người dùng.</p>
                   </div>
 
                   <div class="flex flex-col gap-2">
-                    <label class="label-sm font-bold text-on-surface dark:text-slate-300">Email liên hệ / hỗ trợ</label>
+                    <label class="label-sm font-bold text-on-surface dark:text-slate-300" data-i18n="sysContactEmailLabel">Email liên hệ / hỗ trợ</label>
                     <input type="email" name="site_email" value="{{ configs.get('site_email', 'support@pet.ai') }}" required class="w-full px-4 py-2.5 bg-surface dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-800 rounded-lg text-on-surface dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all" />
                   </div>
 
-                  <button type="submit" class="bg-primary text-on-primary py-2.5 px-4 rounded-lg label-sm font-semibold hover:shadow-md transition-all self-start">Lưu cài đặt</button>
+                  <button type="submit" class="bg-primary text-on-primary py-2.5 px-4 rounded-lg label-sm font-semibold hover:shadow-md transition-all self-start" data-i18n="sysSaveSettingsBtn">Lưu cài đặt</button>
                 </form>
               </div>
             </div>
@@ -427,78 +428,78 @@
 
           <!-- PLANS TAB -->
           <div id="tab-plans" class="tab-content space-y-6">
-            <form action="{{ url_for('users.save_system_config') }}" method="POST" class="glass-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 border border-outline-variant/30 dark:border-slate-800 shadow-sm flex flex-col gap-8">
+            <form action="{{ url_for('users.save_system_config') }}" method="POST" class="glass-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 border border-outline-variant/30 dark:border-slate-800 shadow-sm flex flex-col gap-6">
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
               <input type="hidden" name="site_email" value="{{ configs.get('site_email', 'support@pet.ai') }}" />
 
               <div>
-                <h3 class="headline-md text-on-surface dark:text-slate-105 mb-1">Gói cước dịch vụ</h3>
-                <p class="label-sm text-on-surface-variant dark:text-slate-400">Thay đổi đơn giá, số ngày sử dụng và hạn mức lượt quét cho từng gói thành viên đăng ký.</p>
+                <h3 class="headline-md text-on-surface dark:text-slate-105 mb-1" data-i18n="sysPlansTitle">Gói cước dịch vụ</h3>
+                <p class="label-sm text-on-surface-variant dark:text-slate-400" data-i18n="sysPlansDesc">Thay đổi đơn giá, số ngày sử dụng và hạn mức lượt quét cho từng gói thành viên đăng ký.</p>
               </div>
 
               <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <!-- BASIC PLAN CARD -->
                 <div class="flex flex-col border border-outline-variant/30 dark:border-slate-800 rounded-xl p-5 bg-surface-container-low/30 dark:bg-slate-950/20 gap-4">
-                  <h4 class="label-sm font-bold text-primary dark:text-blue-400 uppercase tracking-widest">Gói Cơ Bản (Basic)</h4>
+                  <h4 class="label-sm font-bold text-primary dark:text-blue-400 uppercase tracking-widest" data-i18n="sysPlanBasic">Gói Cơ Bản (Basic)</h4>
 
                   <div class="flex flex-col gap-2">
-                    <label class="label-sm text-on-surface-variant dark:text-slate-400">Giá gói (VNĐ)</label>
+                    <label class="label-sm text-on-surface-variant dark:text-slate-400" data-i18n="sysPlanPriceVnd">Giá gói (VNĐ)</label>
                     <input type="number" name="plan_basic_price" value="{{ configs.get('plan_basic_price', '1000') }}" required class="w-full px-3 py-2 bg-white dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-850 rounded-lg text-on-surface dark:text-slate-200 text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary" />
                   </div>
 
                   <div class="flex flex-col gap-2">
-                    <label class="label-sm text-on-surface-variant dark:text-slate-400">Thời gian dùng (Ngày)</label>
+                    <label class="label-sm text-on-surface-variant dark:text-slate-400" data-i18n="sysPlanDurationDays">Thời gian dùng (Ngày)</label>
                     <input type="number" name="plan_basic_days" value="{{ configs.get('plan_basic_days', '7') }}" required class="w-full px-3 py-2 bg-white dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-850 rounded-lg text-on-surface dark:text-slate-200 text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary" />
                   </div>
 
                   <div class="flex flex-col gap-2">
-                    <label class="label-sm text-on-surface-variant dark:text-slate-400">Hạn mức quét (Lượt)</label>
+                    <label class="label-sm text-on-surface-variant dark:text-slate-400" data-i18n="sysPlanScanLimit">Hạn mức quét (Lượt)</label>
                     <input type="number" name="plan_basic_scans" value="{{ configs.get('plan_basic_scans', '50') }}" required class="w-full px-3 py-2 bg-white dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-850 rounded-lg text-on-surface dark:text-slate-200 text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary" />
                   </div>
                 </div>
 
                 <!-- PRO PLAN CARD -->
                 <div class="flex flex-col border border-outline-variant/30 dark:border-slate-800 rounded-xl p-5 bg-surface-container-low/30 dark:bg-slate-950/20 gap-4">
-                  <h4 class="label-sm font-bold text-primary dark:text-blue-400 uppercase tracking-widest">Gói Chuyên Nghiệp (Pro)</h4>
+                  <h4 class="label-sm font-bold text-primary dark:text-blue-400 uppercase tracking-widest" data-i18n="sysPlanPro">Gói Chuyên Nghiệp (Pro)</h4>
 
                   <div class="flex flex-col gap-2">
-                    <label class="label-sm text-on-surface-variant dark:text-slate-400">Giá gói (VNĐ)</label>
+                    <label class="label-sm text-on-surface-variant dark:text-slate-400" data-i18n="sysPlanPriceVnd">Giá gói (VNĐ)</label>
                     <input type="number" name="plan_pro_price" value="{{ configs.get('plan_pro_price', '5000') }}" required class="w-full px-3 py-2 bg-white dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-850 rounded-lg text-on-surface dark:text-slate-200 text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary" />
                   </div>
 
                   <div class="flex flex-col gap-2">
-                    <label class="label-sm text-on-surface-variant dark:text-slate-400">Thời gian dùng (Ngày)</label>
+                    <label class="label-sm text-on-surface-variant dark:text-slate-400" data-i18n="sysPlanDurationDays">Thời gian dùng (Ngày)</label>
                     <input type="number" name="plan_pro_days" value="{{ configs.get('plan_pro_days', '30') }}" required class="w-full px-3 py-2 bg-white dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-850 rounded-lg text-on-surface dark:text-slate-200 text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary" />
                   </div>
 
                   <div class="flex flex-col gap-2">
-                    <label class="label-sm text-on-surface-variant dark:text-slate-400">Hạn mức quét (Lượt)</label>
+                    <label class="label-sm text-on-surface-variant dark:text-slate-400" data-i18n="sysPlanScanLimit">Hạn mức quét (Lượt)</label>
                     <input type="number" name="plan_pro_scans" value="{{ configs.get('plan_pro_scans', '200') }}" required class="w-full px-3 py-2 bg-white dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-850 rounded-lg text-on-surface dark:text-slate-200 text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary" />
                   </div>
                 </div>
 
                 <!-- ENTERPRISE PLAN CARD -->
                 <div class="flex flex-col border border-outline-variant/30 dark:border-slate-800 rounded-xl p-5 bg-surface-container-low/30 dark:bg-slate-950/20 gap-4">
-                  <h4 class="label-sm font-bold text-primary dark:text-blue-400 uppercase tracking-widest">Gói Doanh Nghiệp (Enterprise)</h4>
+                  <h4 class="label-sm font-bold text-primary dark:text-blue-400 uppercase tracking-widest" data-i18n="sysPlanEnterprise">Gói Doanh Nghiệp (Enterprise)</h4>
 
                   <div class="flex flex-col gap-2">
-                    <label class="label-sm text-on-surface-variant dark:text-slate-400">Giá gói (VNĐ)</label>
+                    <label class="label-sm text-on-surface-variant dark:text-slate-400" data-i18n="sysPlanPriceVnd">Giá gói (VNĐ)</label>
                     <input type="number" name="plan_enterprise_price" value="{{ configs.get('plan_enterprise_price', '15000') }}" required class="w-full px-3 py-2 bg-white dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-850 rounded-lg text-on-surface dark:text-slate-200 text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary" />
                   </div>
 
                   <div class="flex flex-col gap-2">
-                    <label class="label-sm text-on-surface-variant dark:text-slate-400">Thời gian dùng (Ngày)</label>
+                    <label class="label-sm text-on-surface-variant dark:text-slate-400" data-i18n="sysPlanDurationDays">Thời gian dùng (Ngày)</label>
                     <input type="number" name="plan_enterprise_days" value="{{ configs.get('plan_enterprise_days', '90') }}" required class="w-full px-3 py-2 bg-white dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-850 rounded-lg text-on-surface dark:text-slate-200 text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary" />
                   </div>
 
                   <div class="flex flex-col gap-2">
-                    <label class="label-sm text-on-surface-variant dark:text-slate-400">Hạn mức quét (Gõ 'unlimited' nếu không giới hạn)</label>
+                    <label class="label-sm text-on-surface-variant dark:text-slate-400" data-i18n="sysPlanEntScanNote">Hạn mức quét (Gõ 'unlimited' nếu không giới hạn)</label>
                     <input type="text" name="plan_enterprise_scans" value="{{ configs.get('plan_enterprise_scans', 'unlimited') }}" required class="w-full px-3 py-2 bg-white dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-850 rounded-lg text-on-surface dark:text-slate-200 text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary" />
                   </div>
                 </div>
               </div>
 
-              <button type="submit" class="bg-primary text-on-primary py-2.5 px-4 rounded-lg label-sm font-semibold hover:shadow-md transition-all self-start">Lưu cấu hình gói</button>
+              <button type="submit" class="bg-primary text-on-primary py-2.5 px-4 rounded-lg label-sm font-semibold hover:shadow-md transition-all self-start" data-i18n="sysSavePlansBtn">Lưu cấu hình gói</button>
             </form>
           </div>
 
@@ -507,56 +508,91 @@
             <div class="glass-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 border border-outline-variant/30 dark:border-slate-800 shadow-sm flex flex-col gap-6">
 
               <div>
-                <h3 class="headline-md text-on-surface dark:text-slate-105 mb-1">Nội dung trang pháp lý &amp; điều khoản</h3>
-                <p class="label-sm text-on-surface-variant dark:text-slate-400">Biên soạn nội dung trực tiếp cho các trang pháp luật của hệ thống bằng mã HTML/Văn bản.</p>
+                <h3 class="headline-md text-on-surface dark:text-slate-105 mb-1" data-i18n="sysLegalTitle">Nội dung trang pháp lý &amp; điều khoản</h3>
+                <p class="label-sm text-on-surface-variant dark:text-slate-400" data-i18n="sysLegalDesc">Biên soạn nội dung trực tiếp cho các trang pháp luật của hệ thống bằng mã HTML/Văn bản.</p>
               </div>
 
               <div class="flex flex-wrap gap-4 items-center border-b border-outline-variant/10 pb-4">
-                <label class="label-sm font-bold text-on-surface dark:text-slate-300">Chọn trang cần soạn thảo:</label>
+                <label class="label-sm font-bold text-on-surface dark:text-slate-300" data-i18n="sysLegalSelectLabel">Chọn trang cần soạn thảo:</label>
                 <select id="legal-page-select" onchange="loadLegalContent(this.value)" class="bg-surface dark:bg-slate-950 border border-outline-variant/30 dark:border-slate-850 rounded-lg py-2 px-4 text-sm text-on-surface dark:text-slate-200 cursor-pointer focus:outline-none">
-                  <option value="privacy-policy">Chính sách bảo mật (Privacy Policy)</option>
-                  <option value="terms-of-service">Điều khoản dịch vụ (Terms of Service)</option>
-                  <option value="payment-policy">Chính sách thanh toán (Payment Policy)</option>
-                  <option value="data-deletion">Yêu cầu xóa dữ liệu (Data Deletion Policy)</option>
-                  <option value="support">Trang Hỗ trợ &amp; Hướng dẫn (Support Page)</option>
+                  <option value="privacy-policy" data-i18n="sysLegalOptPrivacy">Chính sách bảo mật (Privacy Policy)</option>
+                  <option value="terms-of-service" data-i18n="sysLegalOptTerms">Điều khoản dịch vụ (Terms of Service)</option>
+                  <option value="payment-policy" data-i18n="sysLegalOptPayment">Chính sách thanh toán (Payment Policy)</option>
+                  <option value="data-deletion" data-i18n="sysLegalOptDeletion">Yêu cầu xóa dữ liệu (Data Deletion Policy)</option>
+                  <option value="support" data-i18n="sysLegalOptSupport">Trang Hỗ trợ &amp; Hướng dẫn (Support Page)</option>
                 </select>
               </div>
 
-              <form action="{{ url_for('users.save_legal_config') }}" method="POST" class="flex flex-col gap-6">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-                <input type="hidden" name="page" id="legal-form-page" value="privacy-policy" />
+              <!-- Two Column split view -->
+              <div class="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
+                
+                <!-- Left Column: Form Editor (col-span-7) -->
+                <form action="{{ url_for('users.save_legal_config') }}" method="POST" onsubmit="serializeSectionsBeforeSubmit(this)" class="xl:col-span-7 flex flex-col gap-6">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                  <input type="hidden" name="page" id="legal-form-page" value="privacy-policy" />
+                  <input type="hidden" name="content_vi" id="legal-submit-vi" />
+                  <input type="hidden" name="content_en" id="legal-submit-en" />
 
-                <!-- Language Tabs -->
-                <div class="flex justify-between items-center border-b border-outline-variant/10">
-                  <div class="flex gap-4 text-sm font-medium">
-                    <button type="button" class="pb-2 border-b-2 border-primary text-primary font-bold" id="lang-vi-tab" onclick="switchLanguageTab('vi')">Tiếng Việt (VI)</button>
-                    <button type="button" class="pb-2 border-b-2 border-transparent text-on-surface-variant hover:text-primary" id="lang-en-tab" onclick="switchLanguageTab('en')">English (EN)</button>
+                  <!-- Language tabs & Translation toggle -->
+                  <div class="flex flex-wrap justify-between items-center border-b border-outline-variant/10 pb-2 gap-4">
+                    <div class="flex gap-4 text-sm font-medium">
+                      <button type="button" class="pb-2 border-b-2 border-primary text-primary font-bold" id="lang-vi-tab" onclick="switchEditorLanguage('vi')" data-i18n="sysLangVi">Tiếng Việt (VI)</button>
+                      <button type="button" class="pb-2 border-b-2 border-transparent text-on-surface-variant hover:text-primary" id="lang-en-tab" onclick="switchEditorLanguage('en')" data-i18n="sysLangEn">English (EN)</button>
+                    </div>
+
+                    <div class="flex items-center gap-4">
+                      <!-- Auto-translate switch -->
+                      <label class="flex items-center gap-2 cursor-pointer select-none">
+                        <input type="checkbox" id="auto-translate-toggle" class="w-4 h-4 text-primary border-slate-300 dark:border-slate-700 rounded focus:ring-primary focus:ring-offset-0" checked />
+                        <span class="text-xs text-on-surface-variant font-medium">Tự động dịch sang EN</span>
+                      </label>
+
+                      <!-- Force Translate All button -->
+                      <button type="button" id="auto-translate-btn" onclick="translateAllFieldsForce()" class="text-xs text-primary hover:text-primary-hover flex items-center gap-1.5 py-1.5 px-3 rounded-lg border border-primary/20 bg-primary/5 hover:bg-primary/10 transition-all font-semibold">
+                        <span class="material-symbols-outlined !text-sm">translate</span>
+                        <span data-i18n="sysAutoTranslateBtn">Dịch toàn bộ</span>
+                      </button>
+                    </div>
                   </div>
-                  <button type="button" id="auto-translate-btn" onclick="autoTranslateToEnglish()" class="text-xs text-primary hover:text-primary-hover flex items-center gap-1.5 py-1.5 px-3 rounded-lg border border-primary/20 bg-primary/5 hover:bg-primary/10 transition-all font-semibold mb-2">
-                    <span class="material-symbols-outlined !text-sm">translate</span>
-                    Dịch tự động sang tiếng Anh
-                  </button>
+
+                  <!-- Dynamic Sections List container -->
+                  <div id="sections-list" class="flex flex-col gap-6">
+                    <!-- Sections will be rendered here dynamically via JS -->
+                  </div>
+
+                  <!-- Add section button & Save button -->
+                  <div class="flex justify-between items-center pt-4 border-t border-outline-variant/10">
+                    <button type="button" onclick="addNewSection()" class="flex items-center gap-1.5 bg-primary/10 hover:bg-primary/20 text-primary py-2 px-4 rounded-lg label-sm font-semibold transition-all">
+                      <span class="material-symbols-outlined text-sm font-bold">add</span>
+                      Thêm mục mới (Add Section)
+                    </button>
+                    <button type="submit" class="bg-primary text-on-primary py-2.5 px-6 rounded-lg label-sm font-semibold hover:shadow-md transition-all" data-i18n="sysSaveLegalBtn">Lưu nội dung trang</button>
+                  </div>
+                </form>
+
+                <!-- Right Column: Live Preview (col-span-5) -->
+                <div class="xl:col-span-5 flex flex-col gap-4 xl:sticky xl:top-20">
+                  <div class="flex justify-between items-center border-b border-outline-variant/10 pb-2">
+                    <span class="text-sm font-bold text-on-surface-variant">Khung xem trước (Live Preview)</span>
+                    
+                    <!-- Preview Lang tabs -->
+                    <div class="flex gap-2 bg-slate-100 dark:bg-slate-950 p-1 rounded-lg">
+                      <button type="button" id="preview-lang-vi-btn" onclick="switchPreviewLanguage('vi')" class="px-3 py-1 rounded-md text-xs font-semibold bg-white dark:bg-slate-900 text-primary shadow-sm">VI</button>
+                      <button type="button" id="preview-lang-en-btn" onclick="switchPreviewLanguage('en')" class="px-3 py-1 rounded-md text-xs font-semibold text-on-surface-variant hover:text-primary">EN</button>
+                    </div>
+                  </div>
+
+                  <!-- Rendered Preview Area -->
+                  <div class="glass-card border border-outline-variant/30 dark:border-slate-800 rounded-2xl p-6 bg-slate-50/20 dark:bg-slate-900/30 shadow-inner max-h-[500px] overflow-y-auto w-full leading-relaxed">
+                    <h1 class="headline-lg text-on-surface mb-6 font-bold" id="preview-page-title">Chính sách bảo mật</h1>
+                    <div id="preview-page-content" class="space-y-4 text-on-surface-variant body-md leading-relaxed legal-content-rich">
+                      <!-- Rendered HTML content goes here -->
+                    </div>
+                  </div>
                 </div>
 
-                <!-- Editor Textareas -->
-                <div class="space-y-2">
-                  <div class="flex justify-between items-center">
-                    <label class="label-sm font-bold text-on-surface dark:text-slate-300">Nội dung HTML / Văn bản</label>
-                    <span class="text-xs text-on-surface-variant dark:text-slate-400">Lưu ý: Để trống sẽ tự phục hồi theo bản dịch mặc định trong i18n.js</span>
-                  </div>
+              </div>
 
-                  <div id="editor-vi-container">
-                    <textarea name="content_vi" id="editor_vi" class="hidden"></textarea>
-                    <div id="quill_editor_vi" class="bg-white dark:bg-slate-950 text-on-surface dark:text-slate-200 min-h-[350px]"></div>
-                  </div>
-                  <div id="editor-en-container" class="hidden">
-                    <textarea name="content_en" id="editor_en" class="hidden"></textarea>
-                    <div id="quill_editor_en" class="bg-white dark:bg-slate-950 text-on-surface dark:text-slate-200 min-h-[350px]"></div>
-                  </div>
-                </div>
-
-                <button type="submit" class="bg-primary text-on-primary py-2.5 px-4 rounded-lg label-sm font-semibold hover:shadow-md transition-all self-start">Lưu nội dung trang</button>
-              </form>
             </div>
           </div>
         </div>
@@ -564,7 +600,6 @@
     </main>
 
     <!-- Script imports -->
-    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
     <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
     <script src="{{ url_for('static', filename='js/toasts.js') }}"></script>
@@ -585,7 +620,7 @@
 
     <script>
       // Load raw content for policies directly from the hidden textareas
-      const rawLegalData = {
+      var rawLegalData = {
         "privacy-policy": {
           vi: document.getElementById("raw-privacy-policy-vi").value,
           en: document.getElementById("raw-privacy-policy-en").value
@@ -608,53 +643,724 @@
         }
       };
 
-      let quillVi = null;
-      let quillEn = null;
+      // Ensure global variables do not throw SyntaxError when re-executed in PJAX
+      if (typeof window.activeLegalPage === "undefined") {
+        window.activeLegalPage = "privacy-policy";
+      }
+      if (typeof window.activeEditorLang === "undefined") {
+        window.activeEditorLang = "vi";
+      }
+      if (typeof window.activePreviewLang === "undefined") {
+        window.activePreviewLang = "vi";
+      }
+      if (typeof window.sections === "undefined") {
+        window.sections = [];
+      }
 
-      function initQuillEditors() {
-        if (quillVi && quillEn) return; // Already initialized
+      var activeLegalPage = window.activeLegalPage;
+      var activeEditorLang = window.activeEditorLang;
+      var activePreviewLang = window.activePreviewLang;
+      var sections = window.sections;
 
-        quillVi = new Quill('#quill_editor_vi', {
-          theme: 'snow',
-          modules: {
-            toolbar: [
-              [{ 'header': [1, 2, 3, false] }],
-              ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
-              [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-              ['link', 'clean']                                 // remove formatting button
-            ]
+      function escapeHtml(text) {
+        if (!text) return "";
+        return text
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
+      async function translateText(text) {
+        if (!text.trim()) return "";
+        try {
+          const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=vi&tl=en&dt=t&q=${encodeURIComponent(text)}`;
+          const response = await fetch(url);
+          if (!response.ok) return text;
+          const data = await response.json();
+          let translated = "";
+          if (data && data[0]) {
+            data[0].forEach(item => {
+              if (item && item[0]) translated += item[0];
+            });
           }
-        });
-
-        quillEn = new Quill('#quill_editor_en', {
-          theme: 'snow',
-          modules: {
-            toolbar: [
-              [{ 'header': [1, 2, 3, false] }],
-              ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
-              [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-              ['link', 'clean']                                 // remove formatting button
-            ]
-          }
-        });
-
-        // Sync Quill back to textareas before form submit
-        const legalForm = document.querySelector('form[action*="save-legal"]');
-        if (legalForm) {
-          legalForm.addEventListener('submit', function() {
-            document.getElementById("editor_vi").value = quillVi.root.innerHTML;
-            document.getElementById("editor_en").value = quillEn.root.innerHTML;
-          });
-        }
-
-        // Trigger load initial content to populate Quill editors
-        const select = document.getElementById("legal-page-select");
-        if (select) {
-          loadLegalContent(select.value);
+          return translated || text;
+        } catch (e) {
+          console.error("Translation error", e);
+          return text;
         }
       }
 
-      function switchTab(tabId, btn) {
+      async function translateHTML(html) {
+        if (!html.trim()) return "";
+        if (!html.includes("<") && !html.includes(">")) {
+          return await translateText(html);
+        }
+        try {
+          const tempDiv = document.createElement("div");
+          tempDiv.innerHTML = html;
+          const children = Array.from(tempDiv.childNodes);
+          const translatedNodes = [];
+
+          for (let node of children) {
+            if (node.nodeType === Node.TEXT_NODE) {
+              const text = node.textContent.trim();
+              if (!text) {
+                translatedNodes.push(document.createTextNode(node.textContent));
+                continue;
+              }
+              const translatedVal = await translateText(text);
+              translatedNodes.push(document.createTextNode(translatedVal));
+            } else if (node.nodeType === Node.ELEMENT_NODE) {
+              const innerText = node.innerText.trim();
+              if (!innerText) {
+                translatedNodes.push(node.cloneNode(true));
+                continue;
+              }
+              const translatedVal = await translateText(innerText);
+              const cloned = node.cloneNode(true);
+              cloned.innerHTML = translatedVal;
+              translatedNodes.push(cloned);
+            } else {
+              translatedNodes.push(node.cloneNode(true));
+            }
+          }
+
+          tempDiv.innerHTML = "";
+          translatedNodes.forEach(node => tempDiv.appendChild(node));
+          return tempDiv.innerHTML;
+        } catch (e) {
+          console.error("HTML translation error", e);
+          return html;
+        }
+      }
+
+      var fallbackDefaultHtml = {
+        "privacy-policy": {
+          vi: `
+            <h2>1. Thông tin nhà phát triển/công ty</h2>
+            <p>Dịch vụ được phát triển và thiết kế bởi <strong>CÔNG TY TNHH MỘT THÀNH VIÊN CÔNG NGHỆ KỸ THUẬT TIÊN PHONG</strong>. Chúng tôi cam kết bảo vệ thông tin cá nhân và quyền riêng tư của bạn an toàn nhất có thể.</p>
+            <h2>2. Dữ liệu nào được thu thập</h2>
+            <p>Chúng tôi có thể thu thập các loại dữ liệu bao gồm: Tên tài khoản, Email, Mật khẩu (đã mã hóa an toàn), hình ảnh chó bạn tải về hệ thống nhận diện, cũng như các hành vi tương tác trên ứng dụng.</p>
+            <h2>3. Mục đích sử dụng dữ liệu</h2>
+            <p>Dữ liệu được dùng để cung cấp quyền truy cập, xác thực bảo mật, tối ưu hóa các mẫu nhận dạng AI qua thời gian, và hỗ trợ kĩ thuật cần thiết.</p>
+            <h2>4. Có chia sẻ dữ liệu với bên thứ ba hay không</h2>
+            <p>Tuyệt đối không, trừ các hệ thống hạ tầng lõi cần thiết (Firebase, Google Analytics) hoặc nếu có yêu cầu chặt chẽ từ cơ quan có thẩm quyền theo pháp luật.</p>
+            <h2>5. Cookies, Firebase, Analytics</h2>
+            <p>Ứng dụng có thể sử dụng Cookies, Google Analytics để đo đạc và Crashlytics để thu thập lỗi giúp chúng tôi hoàn thiện chất lượng nhanh chóng hơn.</p>
+            <h2>6. Quyền của người dùng</h2>
+            <p>Bạn luôn có quyền kiểm soát nội dung cá nhân của mình, yêu cầu xem, chỉnh sửa, trích xuất dữ liệu, hoặc yêu cầu dừng xử lý tại bất kỳ thời điểm nào.</p>
+            <h2>7. Cách yêu cầu xóa dữ liệu</h2>
+            <p>Bạn có thể chủ động vào Cài đặt -> Xóa tài khoản, hoặc xem hướng dẫn chi tiết tại <a href="/data-deletion" target="_blank">Chính sách xóa dữ liệu</a>.</p>
+            <h2>8. Thông tin liên hệ</h2>
+            <p>Email: <a href="mailto:support@pet.ai">support@pet.ai</a><br>Website: <a href="https://pet.ai" target="_blank">https://pet.ai</a><br>Địa chỉ: P16, Đường số 8, KDC lô 49, Khu đô thị Nam Cần Thơ, P. Cái Răng, TP. Cần Thơ</p>
+          `,
+          en: `
+            <h2>1. Developer/company information</h2>
+            <p>The service is developed and designed by <strong>PIONEER TECHNOLOGY ENGINEERING COMPANY LIMITED</strong>. We are committed to protecting your personal information and privacy as securely as possible.</p>
+            <h2>2. What data is collected</h2>
+            <p>We may collect data including: account name, email, password (securely encrypted), dog images you upload to the identification system, and your usage interactions.</p>
+            <h2>3. Purpose of using data</h2>
+            <p>Data is used to provide access, verify security, optimize AI models over time, and provide necessary technical support.</p>
+            <h2>4. Sharing data with third parties</h2>
+            <p>Absolutely not, except for necessary core infrastructure (Firebase, Google Analytics) or strict legal requests from authorized government agencies.</p>
+            <h2>5. Cookies, Firebase, Analytics</h2>
+            <p>The application may use Cookies, Google Analytics for measurement, and Crashlytics for error collection to help improve our quality.</p>
+            <h2>6. User rights</h2>
+            <p>You always have control over your personal content, with the right to view, edit, extract, or stop processing data at any time.</p>
+            <h2>7. Requesting data deletion</h2>
+            <p>You can manually go to Settings -> Delete Account, or see detailed instructions at <a href="/data-deletion" target="_blank">Data Deletion Policy</a>.</p>
+            <h2>8. Contact information</h2>
+            <p>Email: <a href="mailto:support@pet.ai">support@pet.ai</a><br>Website: <a href="https://pet.ai" target="_blank">https://pet.ai</a><br>Address: P16, Road 8, Lot 49 KDC, Nam Can Tho Urban Area, Cai Rang Dist, Can Tho City</p>
+          `
+        },
+        "terms-of-service": {
+          vi: `
+            <h2>1. Điều kiện sử dụng ứng dụng/website</h2>
+            <p>Việc bạn truy cập và sử dụng dịch vụ đồng nghĩa với việc bạn xác nhận đã đọc, hiểu và chấp thuận toàn bộ các điều khoản được quy định tại văn bản này.</p>
+            <h2>2. Quyền và trách nhiệm của người dùng</h2>
+            <p>Người dùng cam kết cung cấp thông tin chân thực khi tạo tài khoản, và tự chịu trách nhiệm bảo mật thông tin đăng nhập của chính bản thân.</p>
+            <h2>3. Quy định về tài khoản</h2>
+            <p>Việc sử dụng các tính năng cao cấp có thể yêu cầu đăng nhập. Mỗi tài khoản cá nhân chỉ được ủy quyền cho một người, cấm việc mua bán tài khoản.</p>
+            <h2>4. Nội dung hoặc hành vi bị cấm</h2>
+            <p>Bạn không được phép: (a) sử dụng ứng dụng vào các mục đích phi pháp; (b) khai thác lạm dụng hệ thống API của chúng tôi; (c) can thiệp, sao chép hay dịch ngược phần mềm cũng như mô hình AI mà chúng tôi cung cấp.</p>
+            <h2>5. Giới hạn trách nhiệm của nhà phát triển</h2>
+            <p>Các phân tích và nhận diện dựa trên AI chỉ mang tính tham khảo và có thể xuất hiện xác suất sai lệch. Chúng tôi không nhận trách nhiệm cho các hậu quả gián tiếp gây ra từ tư vấn kết quả của phần mềm.</p>
+            <h2>6. Chấm dứt tài khoản khi vi phạm</h2>
+            <p>Chúng tôi bảo lưu toàn quyền đơn phương khóa hoặc xóa sạch tài khoản và dữ liệu liên quan nếu phát hiện người dùng vi phạm nghiêm trọng những điều kiện đã nêu.</p>
+            <h2>7. Thông tin liên hệ</h2>
+            <p>Mọi thắc mắc và góp ý vui lòng gửi về: <a href="mailto:support@pet.ai">support@pet.ai</a></p>
+          `,
+          en: `
+            <h2>1. Conditions of Use for App/Website</h2>
+            <p>By accessing and using our service, you acknowledge that you have read, understood, and accepted all terms set forth in this document.</p>
+            <h2>2. User Rights and Responsibilities</h2>
+            <p>Users commit to providing truthful information when creating an account and are solely responsible for maintaining the confidentiality of their login credentials.</p>
+            <h2>3. Account Rules</h2>
+            <p>Using premium features may require logging in. Each personal account is authorized for one individual only; buying, selling, or transferring accounts is strictly prohibited.</p>
+            <h2>4. Prohibited Content and Conduct</h2>
+            <p>You are not permitted to: (a) use the application for any unlawful purposes; (b) exploit or abuse our API system; (c) interfere with, copy, or reverse-engineer the software or the AI models we provide.</p>
+            <h2>5. Limitation of Liability</h2>
+            <p>AI-based analyses and predictions are for reference only and may contain errors. We assume no liability for any indirect consequences resulting from recommendations or software results.</p>
+            <h2>6. Account Termination upon Violation</h2>
+            <p>We reserve the right to unilaterally lock or permanently delete accounts and associated data if a user is found to have seriously violated any stated conditions.</p>
+            <h2>7. Contact Information</h2>
+            <p>For any questions or suggestions, please send to: <a href="mailto:support@pet.ai">support@pet.ai</a></p>
+          `
+        },
+        "payment-policy": {
+          vi: `
+            <h2>1. Phương thức thanh toán</h2>
+            <p>Hệ thống hỗ trợ thanh toán qua hình thức chuyển khoản ngân hàng bằng mã VietQR tự động hoặc chuyển khoản trực tiếp với thông tin được hiển thị chi tiết khi nâng cấp gói.</p>
+            <h2>2. Quy trình xử lý giao dịch</h2>
+            <p>Sau khi chuyển khoản đúng số tiền và nội dung ghi chú theo hướng dẫn, hệ thống VietQR tự động sẽ ghi nhận và kích hoạt gói dịch vụ trong vòng từ 1 đến 5 phút. Trong trường hợp giao dịch cần duyệt thủ công từ quản trị viên, thời gian xử lý có thể kéo dài tối đa 24 giờ làm việc.</p>
+            <h2>3. Chính sách hoàn tiền</h2>
+            <p>Chúng tôi thực hiện hoàn tiền trong các trường hợp sau: (a) Lỗi hệ thống phát sinh khiến giao dịch bị trừ tiền nhưng tài khoản không được kích hoạt gói dịch vụ và không thể khắc phục kỹ thuật; (b) Người dùng chuyển khoản thừa tiền so với giá trị gói dịch vụ đăng ký. Mọi yêu cầu hoàn trả vui lòng gửi về email support@pet.ai kèm theo ảnh chụp biên lai giao dịch để được đối soát và xử lý trong vòng 3-5 ngày làm việc.</p>
+            <h2>4. Bảo mật giao dịch</h2>
+            <p>Mọi giao dịch thanh toán được thực hiện an toàn qua cổng tích hợp, thông tin tài khoản ngân hàng và nội dung giao dịch được xử lý bảo mật theo tiêu chuẩn mã hóa SSL/TLS, cam kết không lưu giữ thông tin nhạy cảm của khách hàng.</p>
+            <h2>5. Giải quyết tranh chấp và khiếu nại</h2>
+            <p>Mọi vấn đề khiếu nại liên quan đến thanh toán, vui lòng cung cấp mã đơn hàng (Order Code) và minh chứng chuyển khoản gửi tới bộ phận hỗ trợ khách hàng để được giải quyết nhanh nhất.</p>
+            <h2>8. Thông tin liên hệ</h2>
+            <p>Email: <a href="mailto:support@pet.ai">support@pet.ai</a><br>Website: <a href="https://pet.ai" target="_blank">https://pet.ai</a><br>Địa chỉ: P16, Đường số 8, KDC lô 49, Khu đô thị Nam Cần Thơ, P. Cái Răng, TP. Cần Thơ</p>
+          `,
+          en: `
+            <h2>1. Payment Methods</h2>
+            <p>The system supports payment via automatic bank transfer using VietQR codes or direct transfer with details displayed during package upgrade.</p>
+            <h2>2. Transaction Processing Workflow</h2>
+            <p>After transferring the correct amount and syntax instructions, the automatic VietQR system will recognize and activate the service plan within 1 to 5 minutes. If manual review is required, processing may take up to 24 business hours.</p>
+            <h2>3. Refund Policy</h2>
+            <p>We issue refunds in the following cases: (a) System errors causing charge deductions without activating the package and cannot be resolved technically; (b) User transfers more money than the plan value. Please send refund requests to support@pet.ai with transaction receipt for processing within 3-5 business days.</p>
+            <h2>4. Transaction Security</h2>
+            <p>All payment transactions are secured through integrated gateways, bank accounts and details are processed securely under SSL/TLS standards, committing not to store sensitive customer data.</p>
+            <h2>5. Dispute Resolution</h2>
+            <p>For payment complaints, please provide the Order Code and bank transfer receipt to customer support for the fastest resolution.</p>
+            <h2>8. Contact Information</h2>
+            <p>Email: <a href="mailto:support@pet.ai">support@pet.ai</a><br>Website: <a href="https://pet.ai" target="_blank">https://pet.ai</a><br>Address: P16, Road 8, Lot 49 KDC, Nam Can Tho Urban Area, Cai Rang Dist, Can Tho City</p>
+          `
+        },
+        "data-deletion": {
+          vi: `
+            <h2>1. Quyền yêu cầu xóa tài khoản và dữ liệu</h2>
+            <p>Người dùng luôn có quyền yêu cầu xóa bỏ tài khoản cũng như tất cả dữ liệu cá nhân (tên, email, hình ảnh) đã tích lũy trong quá trình sử dụng hệ thống.</p>
+            <h2>2. Hướng dẫn xóa tài khoản trong ứng dụng</h2>
+            <p>Vui lòng đi tới phần <strong>Thiết lập / Settings</strong> &gt; Chọn <strong>Quản lý tài khoản</strong> &gt; Nhấn <strong>Xóa tài khoản</strong> để hệ thống tự động loại bỏ thông tin của bạn.</p>
+            <h2>3. Gửi email yêu cầu</h2>
+            <p>Trong trường hợp hệ thống chưa có chức năng xóa trực tiếp, bạn hoàn toàn có thể yêu cầu xóa bằng cách gửi thư. Hãy làm theo hướng dẫn sau:</p>
+            <ul>
+              <li><strong>Email nhận yêu cầu:</strong> <a href="mailto:support@pet.ai">support@pet.ai</a></li>
+              <li><strong>Tiêu đề email:</strong> Yêu cầu xóa dữ liệu/tài khoản</li>
+              <li>Hãy nêu rõ địa chỉ Email bạn dùng để đăng ký để chúng tôi đối chứng.</li>
+            </ul>
+            <h2>4. Quá trình xử lý</h2>
+            <p>Tất cả các định dạng dữ liệu, hình ảnh, tài khoản của bạn sẽ được xử lý và xóa vĩnh viễn trong vòng <strong>30 ngày</strong> kể từ khi có yêu cầu.</p>
+            <h2>5. Một số dữ liệu có thể được giữ lại</h2>
+            <p>Một số dữ liệu thuộc về báo cáo thanh toán, giao dịch hoá đơn hoặc các chi tiết nhằm phục vụ tranh chấp có thể sẽ được tiếp tục lưu giữ tùy thuộc vào quy định pháp luật sở tại yêu cầu.</p>
+            <h2>6. Thông tin liên hệ</h2>
+            <p>Mọi khó khăn vui lòng liên lạc: <a href="mailto:support@pet.ai">support@pet.ai</a></p>
+          `,
+          en: `
+            <h2>1. Right to Request Account and Data Deletion</h2>
+            <p>Users always have the right to request deletion of accounts and all personal data accumulated during the use of the system.</p>
+            <h2>2. Instructions to Delete Account In-App</h2>
+            <p>Please go to <strong>Settings</strong> &gt; Select <strong>Account Management</strong> &gt; Click <strong>Delete Account</strong> to let the system automatically remove your info.</p>
+            <h2>3. Sending Request Email</h2>
+            <p>If the function is not directly available, you can submit a deletion request via email. Follow these details:</p>
+            <ul>
+              <li><strong>Recipient Email:</strong> <a href="mailto:support@pet.ai">support@pet.ai</a></li>
+              <li><strong>Subject:</strong> Account/Data Deletion Request</li>
+              <li>State clearly the email address you registered with for verification.</li>
+            </ul>
+            <h2>4. Processing Duration</h2>
+            <p>All data formats, images, and accounts will be permanently processed and deleted within <strong>30 days</strong> from the request time.</p>
+            <h2>5. Certain Retained Data</h2>
+            <p>Certain data belonging to payments, billing invoices, or details for dispute resolution may continue to be retained according to local legal requirements.</p>
+            <h2>6. Contact Information</h2>
+            <p>For any inquiries, please contact: <a href="mailto:support@pet.ai">support@pet.ai</a></p>
+          `
+        },
+        "support": {
+          vi: `
+            <h2>1. Hướng dẫn sử dụng tính năng nhận diện</h2>
+            <p>Để nhận dạng giống chó, hãy truy cập trang 'Nhận diện', tải ảnh chụp rõ mặt chó cưng lên và đợi hệ thống phân tích trong vài giây. Kết quả sẽ hiển thị giống kèm độ tin cậy phần trăm.</p>
+            <h2>2. Quản lý hạn ngạch và nâng cấp</h2>
+            <p>Tài khoản miễn phí có hạn mức quét giới hạn mỗi ngày. Bạn có thể xem quảng cáo ngắn để nhận thêm lượt, hoặc nâng cấp lên gói Basic, Pro, Enterprise tại trang 'Nâng cấp' để quét không giới hạn.</p>
+            <h2>3. Khắc phục sự cố thường gặp</h2>
+            <p>Nếu ảnh tải lên bị báo lỗi hoặc kết quả không hiển thị, vui lòng kiểm tra kết nối internet, đảm bảo tệp ảnh thuộc định dạng hỗ trợ (JPG, PNG) và dung lượng dưới 5MB. Nếu lỗi tiếp diễn, liên hệ support@pet.ai để được trợ giúp.</p>
+          `,
+          en: `
+            <h2>1. How to Use Breed Recognition</h2>
+            <p>To identify a dog breed, go to the 'Recognition' page, upload a clear picture of the dog's face, and wait for analysis. Results will show the breed and confidence percentage.</p>
+            <h2>2. Quota Management and Upgrades</h2>
+            <p>Free accounts have limited daily scans. You can watch short ads to unlock more scans, or purchase Basic, Pro, or Enterprise plans on the 'Upgrade' page for unlimited use.</p>
+            <h2>3. Common Troubleshooting</h2>
+            <p>If image upload fails or results don't show, check internet connection, ensure the image is in JPG/PNG format and under 5MB. Contact support@pet.ai if the issue persists.</p>
+          `
+        }
+      };
+
+      function parseHtmlToSections(html) {
+        if (!html || !html.trim()) return [];
+        
+        const tempDiv = document.createElement("div");
+        tempDiv.innerHTML = html.trim();
+        
+        const parsed = [];
+        let currentSec = null;
+        
+        Array.from(tempDiv.childNodes).forEach(node => {
+          if (node.nodeType === Node.ELEMENT_NODE && (node.tagName === "H2" || node.tagName === "H3" || node.tagName === "H1")) {
+            if (currentSec) {
+              parsed.push(currentSec);
+            }
+            let titleText = node.textContent || node.innerText || "";
+            titleText = titleText.replace(/\s+/g, " ").trim();
+            currentSec = {
+              title: titleText,
+              content: ""
+            };
+          } else {
+            if (!currentSec) {
+              currentSec = {
+                title: "",
+                content: ""
+              };
+            }
+            if (node.nodeType === Node.TEXT_NODE) {
+              currentSec.content += node.textContent;
+            } else if (node.nodeType === Node.ELEMENT_NODE) {
+              currentSec.content += node.outerHTML;
+            }
+          }
+        });
+        
+        if (currentSec) {
+          parsed.push(currentSec);
+        }
+        
+        return parsed.map(sec => {
+          return {
+            title: sec.title.trim(),
+            content: sec.content.trim()
+          };
+        }).filter(sec => sec.title || sec.content);
+      }
+
+      function loadLegalContent(page, isInitial = false) {
+        activeLegalPage = page;
+        window.activeLegalPage = page;
+        document.getElementById("legal-form-page").value = page;
+
+        let viContent = rawLegalData[page].vi || "";
+        let enContent = rawLegalData[page].en || "";
+
+        // Parse structured sections from DB or fall back to parsing legacy HTML/defaults
+        let vi_array = null;
+        let en_array = null;
+
+        if (viContent.trim().startsWith("[") && viContent.trim().endsWith("]")) {
+          try {
+            vi_array = JSON.parse(viContent);
+          } catch(e) {}
+        }
+        if (enContent.trim().startsWith("[") && enContent.trim().endsWith("]")) {
+          try {
+            en_array = JSON.parse(enContent);
+          } catch(e) {}
+        }
+
+        if (Array.isArray(vi_array)) {
+          const enList = Array.isArray(en_array) ? en_array : [];
+          sections = vi_array.map((item, idx) => {
+            const en_item = enList[idx] || {};
+            return {
+              id: "sec_" + idx + "_" + Math.random().toString(36).substr(2, 5),
+              title_vi: item.title || "",
+              title_en: en_item.title || "",
+              content_vi: item.content || "",
+              content_en: en_item.content || ""
+            };
+          });
+        } else {
+          // Legacy content fallback or Empty DB - split elements dynamically
+          let htmlVi = viContent.trim();
+          let htmlEn = enContent.trim();
+
+          if (!htmlVi && fallbackDefaultHtml[page]) {
+            htmlVi = fallbackDefaultHtml[page].vi.trim();
+          }
+          if (!htmlEn && fallbackDefaultHtml[page]) {
+            htmlEn = fallbackDefaultHtml[page].en.trim();
+          }
+
+          const viSections = parseHtmlToSections(htmlVi);
+          const enSections = parseHtmlToSections(htmlEn);
+
+          const maxLen = Math.max(viSections.length, enSections.length);
+          sections = [];
+          for (let i = 0; i < maxLen; i++) {
+            const vSec = viSections[i] || { title: "", content: "" };
+            const eSec = enSections[i] || { title: "", content: "" };
+            sections.push({
+              id: "sec_" + i + "_" + Math.random().toString(36).substr(2, 5),
+              title_vi: vSec.title,
+              title_en: eSec.title,
+              content_vi: vSec.content,
+              content_en: eSec.content
+            });
+          }
+        }
+
+        window.sections = sections;
+        renderSections();
+        renderPreview();
+
+        if (!isInitial) {
+          const url = new URL(window.location);
+          url.searchParams.set("page_select", page);
+          window.history.pushState({}, '', url);
+        }
+      }
+
+      function renderSections() {
+        const listContainer = document.getElementById("sections-list");
+        if (!listContainer) return;
+
+        if (sections.length === 0) {
+          listContainer.innerHTML = `
+            <div class="border border-dashed border-outline-variant/50 rounded-xl p-8 text-center text-on-surface-variant bg-surface-container-low/20">
+              <p class="text-sm font-semibold mb-2">Chưa có mục nào được thêm</p>
+              <p class="text-xs">Nhấn "Thêm mục mới" để bắt đầu soạn thảo các điều khoản.</p>
+            </div>
+          `;
+          return;
+        }
+
+        let html = "";
+        sections.forEach((sec, index) => {
+          const hideVi = activeEditorLang === 'vi' ? "" : "hidden";
+          const hideEn = activeEditorLang === 'en' ? "" : "hidden";
+
+          html += `
+            <div class="border border-outline-variant/30 dark:border-slate-800 rounded-xl p-4 bg-slate-50/50 dark:bg-slate-900/30 flex flex-col gap-4 section-card" data-id="${sec.id}">
+              <div class="flex justify-between items-center pb-2 border-b border-outline-variant/10">
+                <span class="text-xs font-bold text-primary uppercase tracking-wider">Mục / Section #${index + 1}</span>
+                <div class="flex gap-1">
+                  <button type="button" onclick="moveSectionUp('${sec.id}')" class="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-slate-200 dark:hover:bg-slate-800 text-on-surface-variant transition-colors" title="Di chuyển lên">
+                    <span class="material-symbols-outlined !text-lg">arrow_upward</span>
+                  </button>
+                  <button type="button" onclick="moveSectionDown('${sec.id}')" class="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-slate-200 dark:hover:bg-slate-800 text-on-surface-variant transition-colors" title="Di chuyển xuống">
+                    <span class="material-symbols-outlined !text-lg">arrow_downward</span>
+                  </button>
+                  <button type="button" onclick="removeSection('${sec.id}')" class="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-red-50 dark:hover:bg-red-950/30 text-red-600 transition-colors" title="Xóa mục này">
+                    <span class="material-symbols-outlined !text-lg">delete</span>
+                  </button>
+                </div>
+              </div>
+              
+              <!-- VI Fields -->
+              <div class="flex flex-col gap-3 lang-field-vi ${hideVi}">
+                <div class="flex flex-col gap-1">
+                  <label class="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Tiêu đề (VI)</label>
+                  <input type="text" class="w-full px-3 py-2 bg-white dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-800 rounded-lg text-sm text-on-surface dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all font-semibold" value="${escapeHtml(sec.title_vi)}" oninput="updateSectionField('${sec.id}', 'title_vi', this.value)" placeholder="Ví dụ: 1. Thông tin thu thập" />
+                </div>
+                <div class="flex flex-col gap-1">
+                  <label class="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Nội dung (VI)</label>
+                  <textarea rows="12" class="w-full px-3 py-2 bg-white dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-800 rounded-lg text-sm text-on-surface dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all resize-y leading-relaxed" oninput="updateSectionField('${sec.id}', 'content_vi', this.value)" placeholder="Nhập nội dung Tiếng Việt hoặc mã HTML...">${escapeHtml(sec.content_vi)}</textarea>
+                </div>
+              </div>
+
+              <!-- EN Fields -->
+              <div class="flex flex-col gap-3 lang-field-en ${hideEn}">
+                <div class="flex flex-col gap-3">
+                  <div class="flex flex-col gap-1">
+                    <div class="flex justify-between items-center">
+                      <label class="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Title (EN)</label>
+                      <button type="button" onclick="translateField('${sec.id}', 'title')" class="text-[11px] text-primary hover:underline flex items-center gap-0.5">
+                        <span class="material-symbols-outlined !text-[14px]">translate</span> Dịch mục này
+                      </button>
+                    </div>
+                    <input type="text" class="w-full px-3 py-2 bg-white dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-800 rounded-lg text-sm text-on-surface dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all font-semibold" value="${escapeHtml(sec.title_en)}" oninput="updateSectionField('${sec.id}', 'title_en', this.value)" placeholder="e.g. 1. Collected Information" />
+                  </div>
+                  <div class="flex flex-col gap-1">
+                    <div class="flex justify-between items-center">
+                      <label class="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Content (EN)</label>
+                      <button type="button" onclick="translateField('${sec.id}', 'content')" class="text-[11px] text-primary hover:underline flex items-center gap-0.5">
+                        <span class="material-symbols-outlined !text-[14px]">translate</span> Dịch mục này
+                      </button>
+                    </div>
+                    <textarea rows="12" class="w-full px-3 py-2 bg-white dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-800 rounded-lg text-sm text-on-surface dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all resize-y leading-relaxed" oninput="updateSectionField('${sec.id}', 'content_en', this.value)" placeholder="Enter English content or HTML...">${escapeHtml(sec.content_en)}</textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+        });
+
+        listContainer.innerHTML = html;
+      }
+
+      function renderPreview() {
+        const previewTitle = document.getElementById("preview-page-title");
+        const previewContent = document.getElementById("preview-page-content");
+        if (!previewTitle || !previewContent) return;
+
+        const pageNames = {
+          "privacy-policy": { vi: "Chính sách bảo mật", en: "Privacy Policy" },
+          "terms-of-service": { vi: "Điều khoản sử dụng", en: "Terms of Service" },
+          "payment-policy": { vi: "Chính sách thanh toán", en: "Payment Policy" },
+          "data-deletion": { vi: "Chính sách xóa dữ liệu", en: "Data Deletion Policy" },
+          "support": { vi: "HỖ TRỢ", en: "SUPPORT" }
+        };
+
+        const pageName = pageNames[activeLegalPage] || { vi: "Văn bản pháp lý", en: "Legal Page" };
+        previewTitle.textContent = activePreviewLang === 'vi' ? pageName.vi : pageName.en;
+
+        let html = "";
+        if (sections.length === 0) {
+          html = `<p class="text-on-surface-variant dark:text-slate-400 italic text-center py-8">Nội dung trống. Sẽ sử dụng bản dịch mặc định của hệ thống.</p>`;
+        } else {
+          sections.forEach(sec => {
+            const title = activePreviewLang === 'vi' ? sec.title_vi : sec.title_en;
+            const content = activePreviewLang === 'vi' ? sec.content_vi : sec.content_en;
+
+            if (title.trim()) {
+              html += `<h2 class="text-lg font-bold text-primary dark:text-blue-400 mt-6 mb-2">${escapeHtml(title)}</h2>`;
+            }
+            if (content.trim()) {
+              const formattedContent = (content.includes("<") && content.includes(">")) ? content : content.replace(/\n/g, "<br>");
+              html += `<div class="text-on-surface-variant dark:text-slate-300 body-md leading-relaxed legal-content-rich mb-4">${formattedContent}</div>`;
+            }
+          });
+        }
+        previewContent.innerHTML = html;
+      }
+
+      function addNewSection() {
+        const newSec = {
+          id: "sec_" + Date.now() + "_" + Math.random().toString(36).substr(2, 5),
+          title_vi: "",
+          title_en: "",
+          content_vi: "",
+          content_en: ""
+        };
+        sections.push(newSec);
+        window.sections = sections;
+        renderSections();
+        renderPreview();
+
+        // Focus the newly added section input
+        setTimeout(() => {
+          const card = document.querySelector(`.section-card[data-id="${newSec.id}"]`);
+          if (card) {
+            card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            const input = card.querySelector('input');
+            if (input) input.focus();
+          }
+        }, 100);
+      }
+
+      function removeSection(id) {
+        sections = sections.filter(s => s.id !== id);
+        window.sections = sections;
+        renderSections();
+        renderPreview();
+      }
+
+      function moveSectionUp(id) {
+        const idx = sections.findIndex(s => s.id === id);
+        if (idx <= 0) return;
+        const temp = sections[idx];
+        sections[idx] = sections[idx - 1];
+        sections[idx - 1] = temp;
+        window.sections = sections;
+        renderSections();
+        renderPreview();
+      }
+
+      function moveSectionDown(id) {
+        const idx = sections.findIndex(s => s.id === id);
+        if (idx === -1 || idx >= sections.length - 1) return;
+        const temp = sections[idx];
+        sections[idx] = sections[idx + 1];
+        sections[idx + 1] = temp;
+        window.sections = sections;
+        renderSections();
+        renderPreview();
+      }
+
+      function updateSectionField(id, field, value) {
+        const sec = sections.find(s => s.id === id);
+        if (sec) {
+          sec[field] = value;
+          renderPreview();
+        }
+      }
+
+      async function translateField(id, fieldType) {
+        const sec = sections.find(s => s.id === id);
+        if (!sec) return;
+
+        const card = document.querySelector(`.section-card[data-id="${id}"]`);
+        let btn = null;
+        if (card) {
+          btn = Array.from(card.querySelectorAll('button')).find(b => b.textContent.includes('Dịch'));
+        }
+        const originalText = btn ? btn.innerHTML : "";
+        if (btn) {
+          btn.disabled = true;
+          btn.innerHTML = `<span class="material-symbols-outlined !text-[12px] animate-spin">sync</span> Đang dịch...`;
+        }
+
+        try {
+          if (fieldType === 'title') {
+            if (sec.title_vi.trim()) {
+              sec.title_en = await translateText(sec.title_vi);
+            }
+          } else if (fieldType === 'content') {
+            if (sec.content_vi.trim()) {
+              sec.content_en = await translateHTML(sec.content_vi);
+            }
+          }
+          renderSections();
+          renderPreview();
+        } catch(e) {
+          console.error(e);
+        } finally {
+          if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+          }
+        }
+      }
+
+      async function switchEditorLanguage(lang) {
+        activeEditorLang = lang;
+        window.activeEditorLang = lang;
+
+        const viTab = document.getElementById("lang-vi-tab");
+        const enTab = document.getElementById("lang-en-tab");
+
+        if (lang === 'vi') {
+          viTab.className = "pb-2 border-b-2 border-primary text-primary font-bold";
+          enTab.className = "pb-2 border-b-2 border-transparent text-on-surface-variant hover:text-primary";
+          document.querySelectorAll(".lang-field-vi").forEach(el => el.classList.remove("hidden"));
+          document.querySelectorAll(".lang-field-en").forEach(el => el.classList.add("hidden"));
+        } else {
+          enTab.className = "pb-2 border-b-2 border-primary text-primary font-bold";
+          viTab.className = "pb-2 border-b-2 border-transparent text-on-surface-variant hover:text-primary";
+          document.querySelectorAll(".lang-field-vi").forEach(el => el.classList.add("hidden"));
+          document.querySelectorAll(".lang-field-en").forEach(el => el.classList.remove("hidden"));
+
+          const toggle = document.getElementById("auto-translate-toggle");
+          if (toggle && toggle.checked) {
+            await autoTranslateAllEmptyFields();
+          }
+        }
+      }
+
+      async function autoTranslateAllEmptyFields() {
+        let hasTranslated = false;
+        const btn = document.getElementById("auto-translate-btn");
+        const originalText = btn ? btn.innerHTML : "";
+        if (btn) {
+          btn.disabled = true;
+          btn.innerHTML = `<span class="material-symbols-outlined !text-sm animate-spin">sync</span> Đang dịch...`;
+        }
+
+        try {
+          for (let sec of sections) {
+            if (!sec.title_en.trim() && sec.title_vi.trim()) {
+              sec.title_en = await translateText(sec.title_vi);
+              hasTranslated = true;
+            }
+            if (!sec.content_en.trim() && sec.content_vi.trim()) {
+              sec.content_en = await translateHTML(sec.content_vi);
+              hasTranslated = true;
+            }
+          }
+          if (hasTranslated) {
+            renderSections();
+            renderPreview();
+            if (window.showToast) {
+              window.showToast("Đã dịch tự động các mục còn trống!", "success");
+            }
+          }
+        } catch(e) {
+          console.error(e);
+        } finally {
+          if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+          }
+        }
+      }
+
+      async function translateAllFieldsForce() {
+        const ok = confirm("Bạn có chắc muốn tự động dịch toàn bộ nội dung? Các chỉnh sửa Tiếng Anh hiện tại của bạn sẽ bị ghi đè.");
+        if (!ok) return;
+
+        const btn = document.getElementById("auto-translate-btn");
+        const originalText = btn ? btn.innerHTML : "";
+        if (btn) {
+          btn.disabled = true;
+          btn.innerHTML = `<span class="material-symbols-outlined !text-sm animate-spin">sync</span> Đang dịch...`;
+        }
+
+        try {
+          for (let sec of sections) {
+            if (sec.title_vi.trim()) {
+              sec.title_en = await translateText(sec.title_vi);
+            }
+            if (sec.content_vi.trim()) {
+              sec.content_en = await translateHTML(sec.content_vi);
+            }
+          }
+          renderSections();
+          renderPreview();
+          if (window.showToast) {
+            window.showToast("Đã tự động dịch toàn bộ nội dung thành công!", "success");
+          }
+        } catch(e) {
+          console.error(e);
+          if (window.showToast) {
+            window.showToast("Lỗi khi tự động dịch.", "error");
+          }
+        } finally {
+          if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+          }
+        }
+      }
+
+      function switchPreviewLanguage(lang) {
+        activePreviewLang = lang;
+        window.activePreviewLang = lang;
+
+        const viBtn = document.getElementById("preview-lang-vi-btn");
+        const enBtn = document.getElementById("preview-lang-en-btn");
+
+        if (lang === 'vi') {
+          viBtn.className = "px-3 py-1 rounded-md text-xs font-semibold bg-white dark:bg-slate-900 text-primary shadow-sm";
+          enBtn.className = "px-3 py-1 rounded-md text-xs font-semibold text-on-surface-variant hover:text-primary";
+        } else {
+          enBtn.className = "px-3 py-1 rounded-md text-xs font-semibold bg-white dark:bg-slate-900 text-primary shadow-sm";
+          viBtn.className = "px-3 py-1 rounded-md text-xs font-semibold text-on-surface-variant hover:text-primary";
+        }
+        renderPreview();
+      }
+
+      function serializeSectionsBeforeSubmit(form) {
+        // Serialize both VI and EN arrays to JSON string
+        const viData = sections.map(s => ({ title: s.title_vi, content: s.content_vi }));
+        const enData = sections.map(s => ({ title: s.title_en, content: s.content_en }));
+
+        document.getElementById("legal-submit-vi").value = JSON.stringify(viData);
+        document.getElementById("legal-submit-en").value = JSON.stringify(enData);
+      }
+
+      function switchTab(tabId, btn, isInitial = false) {
         document.querySelectorAll(".tab-btn").forEach(b => {
           b.classList.remove("active", "border-primary", "text-primary");
           b.classList.add("border-transparent", "text-on-surface-variant");
@@ -666,146 +1372,23 @@
         document.getElementById("tab-" + tabId).classList.add("active");
 
         if (tabId === "legal") {
-          initQuillEditors();
-        }
-        
-        // Save current tab in URL parameter
-        const url = new URL(window.location);
-        url.searchParams.set("tab", tabId);
-        window.history.pushState({}, '', url);
-      }
-
-      function switchLanguageTab(lang) {
-        const viTab = document.getElementById("lang-vi-tab");
-        const enTab = document.getElementById("lang-en-tab");
-        const viCont = document.getElementById("editor-vi-container");
-        const enCont = document.getElementById("editor-en-container");
-
-        if (lang === 'vi') {
-          viTab.className = "pb-2 border-b-2 border-primary text-primary font-bold";
-          enTab.className = "pb-2 border-b-2 border-transparent text-on-surface-variant hover:text-primary";
-          viCont.classList.remove("hidden");
-          enCont.classList.add("hidden");
-        } else {
-          enTab.className = "pb-2 border-b-2 border-primary text-primary font-bold";
-          viTab.className = "pb-2 border-b-2 border-transparent text-on-surface-variant hover:text-primary";
-          enCont.classList.remove("hidden");
-          viCont.classList.add("hidden");
-        }
-      }
-
-      function loadLegalContent(page) {
-        document.getElementById("legal-form-page").value = page;
-        
-        const viContent = rawLegalData[page].vi || "";
-        const enContent = rawLegalData[page].en || "";
-        
-        document.getElementById("editor_vi").value = viContent;
-        document.getElementById("editor_en").value = enContent;
-        
-        if (quillVi && quillEn) {
-          quillVi.root.innerHTML = viContent;
-          quillEn.root.innerHTML = enContent;
-        }
-        
-        // Sync URL query
-        const url = new URL(window.location);
-        url.searchParams.set("page_select", page);
-        window.history.pushState({}, '', url);
-      }
-
-      async function autoTranslateToEnglish() {
-        if (!quillVi || !quillEn) return;
-        
-        // Sync Quill editor to textareas first
-        document.getElementById("editor_vi").value = quillVi.root.innerHTML;
-
-        const viText = document.getElementById("editor_vi").value.trim();
-        if (!viText) {
-          if (window.showToast) {
-            window.showToast("Vui lòng nhập nội dung Tiếng Việt trước khi dịch.", "warning");
-          } else {
-            alert("Vui lòng nhập nội dung Tiếng Việt trước khi dịch.");
-          }
-          return;
-        }
-
-        const btn = document.getElementById("auto-translate-btn");
-        const originalText = btn.innerHTML;
-        btn.disabled = true;
-        btn.innerHTML = `<span class="material-symbols-outlined !text-sm animate-spin">sync</span> Đang dịch...`;
-
-        try {
-          const tempDiv = document.createElement("div");
-          tempDiv.innerHTML = viText;
-          const children = Array.from(tempDiv.childNodes);
-          const translatedNodes = [];
-
-          for (let node of children) {
-            if (node.nodeType === Node.TEXT_NODE) {
-              const text = node.textContent.trim();
-              if (!text) {
-                translatedNodes.push(document.createTextNode(node.textContent));
-                continue;
-              }
-              const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=vi&tl=en&dt=t&q=${encodeURIComponent(text)}`;
-              const response = await fetch(url);
-              if (!response.ok) throw new Error("Translation failed");
-              const data = await response.json();
-              let translatedPart = "";
-              if (data && data[0]) {
-                data[0].forEach(item => {
-                  if (item && item[0]) translatedPart += item[0];
-                });
-              }
-              translatedNodes.push(document.createTextNode(translatedPart || text));
-            } else if (node.nodeType === Node.ELEMENT_NODE) {
-              const innerText = node.innerText.trim();
-              if (!innerText) {
-                translatedNodes.push(node.cloneNode(true));
-                continue;
-              }
-              const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=vi&tl=en&dt=t&q=${encodeURIComponent(innerText)}`;
-              const response = await fetch(url);
-              if (!response.ok) throw new Error("Translation failed");
-              const data = await response.json();
-              let translatedPart = "";
-              if (data && data[0]) {
-                data[0].forEach(item => {
-                  if (item && item[0]) translatedPart += item[0];
-                });
-              }
-              const cloned = node.cloneNode(true);
-              cloned.innerHTML = translatedPart || innerText;
-              translatedNodes.push(cloned);
-            } else {
-              translatedNodes.push(node.cloneNode(true));
+          const select = document.getElementById("legal-page-select");
+          if (select) {
+            loadLegalContent(select.value, isInitial);
+            if (!isInitial) {
+              const url = new URL(window.location);
+              url.searchParams.set("tab", tabId);
+              url.searchParams.set("page_select", select.value);
+              window.history.pushState({}, '', url);
+              return;
             }
           }
-
-          tempDiv.innerHTML = "";
-          translatedNodes.forEach(node => tempDiv.appendChild(node));
-          const translatedHTML = tempDiv.innerHTML;
-
-          document.getElementById("editor_en").value = translatedHTML;
-          quillEn.root.innerHTML = translatedHTML;
-          switchLanguageTab('en');
-
-          if (window.showToast) {
-            window.showToast("Đã tự động dịch sang tiếng Anh thành công!", "success");
-          } else {
-            alert("Đã tự động dịch sang tiếng Anh thành công!");
-          }
-        } catch (err) {
-          console.error(err);
-          if (window.showToast) {
-            window.showToast("Không thể dịch tự động. Vui lòng thử lại sau.", "error");
-          } else {
-            alert("Lỗi dịch tự động.");
-          }
-        } finally {
-          btn.disabled = false;
-          btn.innerHTML = originalText;
+        }
+        
+        if (!isInitial) {
+          const url = new URL(window.location);
+          url.searchParams.set("tab", tabId);
+          window.history.pushState({}, '', url);
         }
       }
 
@@ -817,10 +1400,10 @@
         
         if (tab === "plans") {
           const btn = document.querySelector('[onclick*="plans"]');
-          if (btn) switchTab("plans", btn);
+          if (btn) switchTab("plans", btn, true);
         } else if (tab === "legal") {
           const btn = document.getElementById("tab-legal-btn");
-          if (btn) switchTab("legal", btn);
+          if (btn) switchTab("legal", btn, true);
         }
         
         if (pageSelect && rawLegalData[pageSelect]) {
@@ -828,9 +1411,9 @@
           if (select) {
             select.value = pageSelect;
           }
-          loadLegalContent(pageSelect);
+          loadLegalContent(pageSelect, true);
         } else {
-          loadLegalContent("privacy-policy");
+          loadLegalContent("privacy-policy", true);
         }
       })();
 

@@ -88,10 +88,44 @@ def register_context_processors(app):
                     return match.group(0)
                 val = re.sub(r'<p[^>]*>\s*(\d+\.\s+[^<]+)\s*</p>', make_header, val)
             return val
+
+        def get_legal_sections(page_key, lang="vi"):
+            db_key = f"{page_key.replace('-', '_')}_content_{lang}"
+            val = system_config.get(db_key, "").strip()
+            if not val:
+                return []
+            
+            # Check if it is a JSON array
+            if val.startswith("[") and val.endswith("]"):
+                try:
+                    import json
+                    sections = json.loads(val)
+                    if isinstance(sections, list):
+                        cleaned_sections = []
+                        for item in sections:
+                            if isinstance(item, dict):
+                                title = item.get("title", "")
+                                content = item.get("content", "")
+                                cleaned_sections.append({"title": title, "content": content})
+                        return cleaned_sections
+                except Exception:
+                    pass
+            
+            # Fallback for legacy HTML content
+            import re
+            val = re.sub(r'<p[^>]*>\s*<(strong|b)>([^<]+)</\1>\s*</p>', r'<h2>\2</h2>', val)
+            def make_header(match):
+                content = match.group(1)
+                if len(content) < 150:
+                    return f"<h2>{content}</h2>"
+                return match.group(0)
+            val = re.sub(r'<p[^>]*>\s*(\d+\.\s+[^<]+)\s*</p>', make_header, val)
+            return [{"title": "", "content": val}]
             
         return {
             "system_config": system_config,
             "get_config": get_config,
+            "get_legal_sections": get_legal_sections,
             "site_logo": system_config.get("site_logo", "/static/images/logo.png"),
             "site_email": system_config.get("site_email", "support@pet.ai")
         }

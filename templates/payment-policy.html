@@ -410,14 +410,24 @@
         <h1 class="headline-lg text-on-surface mb-6 font-bold" data-i18n="paymentPolicy">
           <span data-i18n="paymentPolicy">Chính sách thanh toán</span>
         </h1>
-        {% set db_content_vi = get_config('payment_policy_content_vi') %}
-        {% set db_content_en = get_config('payment_policy_content_en') %}
-        {% if db_content_vi or db_content_en %}
+        {% set sections_vi = get_legal_sections('payment-policy', 'vi') %}
+        {% set sections_en = get_legal_sections('payment-policy', 'en') %}
+        {% if sections_vi or sections_en %}
           <div id="dynamic-content-vi" class="space-y-6 text-on-surface-variant body-md leading-relaxed legal-content-rich {{ 'hidden' if ui_language == 'en' else '' }}">
-            {{ (db_content_vi or '') | safe }}
+            {% for sec in sections_vi %}
+              {% if sec.title %}
+                <h2 class="text-xl font-bold text-primary mt-6 mb-2">{{ sec.title }}</h2>
+              {% endif %}
+              <div>{{ sec.content | safe }}</div>
+            {% endfor %}
           </div>
           <div id="dynamic-content-en" class="space-y-6 text-on-surface-variant body-md leading-relaxed legal-content-rich {{ 'hidden' if ui_language != 'en' else '' }}">
-            {{ (db_content_en or '') | safe }}
+            {% for sec in sections_en %}
+              {% if sec.title %}
+                <h2 class="text-xl font-bold text-primary mt-6 mb-2">{{ sec.title }}</h2>
+              {% endif %}
+              <div>{{ sec.content | safe }}</div>
+            {% endfor %}
           </div>
         {% else %}
         <div class="space-y-6 text-on-surface-variant body-md leading-relaxed">
@@ -477,103 +487,100 @@
       </div>
     </section>
   </main>
-  <footer class="bg-surface-container-low border-t border-outline-variant/30 px-4 md:px-6 pt-6 pb-4">
-    <div class="footer-inner max-w-container-max mx-auto">
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-10">
-        <div class="lg:col-span-6 space-y-6">
-          <div class="headline-md font-bold tracking-tighter text-primary">
-            <span class="inline-flex items-center gap-0">
-              <img alt="PetAI New Logo" class="h-8 w-auto md:h-10" src="{{ url_for('static', filename='images/logo.png') }}">
-              <span class="ml-0 text-sm md:text-lg font-semibold text-primary">PetAI</span>
-            </span>
+  <footer class="bg-surface-container-low border-t border-outline-variant/30 px-6 py-12">
+    <div class="max-w-container-max mx-auto">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-10">
+        <!-- Column 1: Brand & Logo -->
+        <div class="space-y-5">
+          <div class="flex items-center gap-2">
+            <img alt="PetAI Logo" class="h-9 w-auto hover:scale-105 transition-transform duration-300" src="{{ url_for('static', filename='images/logo.png') }}">
+            <span class="text-xl font-bold text-primary tracking-tight font-display">PetAI</span>
           </div>
-          <p class="body-md text-on-surface-variant max-w-sm" data-i18n="footerDesc">
-            <span data-i18n="footerDesc">Ứng dụng nhận diện giống chó bằng AI dành cho người yêu thú
-              cưng. Kết quả chính xác, nhanh chóng.</span>
+          <p class="text-sm text-on-surface-variant leading-relaxed max-w-xs" data-i18n="footerDesc">
+            Ứng dụng nhận diện giống chó bằng AI dành cho người yêu thú cưng. Kết quả chính xác, nhanh chóng.
           </p>
         </div>
-        <div class="lg:col-span-6 grid grid-cols-2 md:grid-cols-2 gap-8">
-          <div class="space-y-6">
-            <h4 class="label-sm text-primary uppercase tracking-widest">
-              <span data-i18n="aboutPetAI">Về PetAI</span>
-            </h4>
-            <ul class="space-y-4">
-              <li class="">
-                <a class="text-on-surface-variant hover:text-primary transition-colors font-medium" target="_blank"
-                  rel="noopener noreferrer" href="{{ url_for('legal.privacy_policy') }}" data-i18n="privacy"><span
-                    data-i18n="privacy">Chính sách quyền riêng tư</span></a>
-              </li>
-              <li class="">
-                <a class="text-on-surface-variant hover:text-primary transition-colors font-medium" target="_blank"
-                  rel="noopener noreferrer" href="{{ url_for('legal.terms_of_service') }}" data-i18n="terms"><span
-                    data-i18n="terms">Điều khoản sử dụng</span></a>
-              </li>
-              <li class="">
-                <a class="text-on-surface-variant hover:text-primary transition-colors font-medium" target="_blank"
-                  rel="noopener noreferrer" href="{{ url_for('legal.payment_policy') }}" data-i18n="paymentPolicy"><span
-                    data-i18n="paymentPolicy">Chính sách thanh toán</span></a>
-              </li>
-              <li class="">
-                <a class="text-on-surface-variant hover:text-primary transition-colors font-medium" target="_blank"
-                  rel="noopener noreferrer" href="{{ url_for('legal.data_deletion') }}" data-i18n="dataDeletion"><span
-                    data-i18n="dataDeletion">Chính sách xóa dữ liệu</span></a>
-              </li>
-              <li class="">
-                <a class="text-on-surface-variant hover:text-primary transition-colors font-medium" target="_blank"
-                  rel="noopener noreferrer" href="{{ url_for('legal.support') }}" data-i18n="support"><span
-                    data-i18n="homeStatsSupport">HỖ TRỢ</span></a>
-              </li>
-              <li class="">
-                <a class="text-on-surface-variant hover:text-primary transition-colors font-medium" target="_blank"
-                  rel="noopener noreferrer" href="{{ url_for('legal.contact') }}" data-i18n="contact"><span
-                    data-i18n="contact">Liên hệ</span></a>
-              </li>
-            </ul>
-          </div>
-          <div class="space-y-6">
-            <h4 class="label-sm text-primary uppercase tracking-widest">
-              <span data-i18n="connect">Kết nối</span>
-            </h4>
-            <ul class="space-y-4">
-              <li class="">
-                <a class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                  href="{{ url_for('predict.upload_page') }}" data-i18n="identifyNow"><span data-i18n="identifyNow">Nhận
-                    diện ngay</span></a>
-              </li>
-              <li class="">
-                <a class="text-on-surface-variant hover:text-primary transition-colors font-medium"
-                  href="{{ url_for('history.history') }}" data-i18n="collection"><span data-i18n="collection">Bộ sưu
-                    tập</span></a>
-              </li>
-            </ul>
-          </div>
+
+        <!-- Column 2: Về PetAI Links -->
+        <div class="space-y-4">
+          <h4 class="text-sm font-bold text-on-surface tracking-wider uppercase" data-i18n="aboutPetAI">Về PetAI</h4>
+          <ul class="space-y-3 text-sm">
+            <li>
+              <a class="text-on-surface-variant hover:text-primary hover:translate-x-1 inline-block transition-all duration-200 font-medium" href="{{ url_for('legal.privacy_policy') }}" data-i18n="privacy">Chính sách quyền riêng tư</a>
+            </li>
+            <li>
+              <a class="text-on-surface-variant hover:text-primary hover:translate-x-1 inline-block transition-all duration-200 font-medium" href="{{ url_for('legal.terms_of_service') }}" data-i18n="terms">Điều khoản sử dụng</a>
+            </li>
+            <li>
+              <a class="text-on-surface-variant hover:text-primary hover:translate-x-1 inline-block transition-all duration-200 font-medium" href="{{ url_for('legal.payment_policy') }}" data-i18n="paymentPolicy">Chính sách thanh toán</a>
+            </li>
+            <li>
+              <a class="text-on-surface-variant hover:text-primary hover:translate-x-1 inline-block transition-all duration-200 font-medium" href="{{ url_for('legal.data_deletion') }}" data-i18n="dataDeletion">Chính sách xóa dữ liệu</a>
+            </li>
+            <li>
+              <a class="text-on-surface-variant hover:text-primary hover:translate-x-1 inline-block transition-all duration-200 font-medium" href="{{ url_for('legal.support') }}" data-i18n="support">Hỗ trợ</a>
+            </li>
+            <li>
+              <a class="text-on-surface-variant hover:text-primary hover:translate-x-1 inline-block transition-all duration-200 font-medium" href="{{ url_for('legal.contact') }}" data-i18n="contact">Liên hệ</a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Column 3: Kết nối Links -->
+        <div class="space-y-4">
+          <h4 class="text-sm font-bold text-on-surface tracking-wider uppercase" data-i18n="connect">Kết nối</h4>
+          <ul class="space-y-3 text-sm">
+            <li>
+              <a class="text-on-surface-variant hover:text-primary hover:translate-x-1 inline-block transition-all duration-200 font-medium" href="{{ url_for('predict.upload_page') }}" data-i18n="identifyNow">Nhận diện ngay</a>
+            </li>
+            <li>
+              <a class="text-on-surface-variant hover:text-primary hover:translate-x-1 inline-block transition-all duration-200 font-medium" href="{{ url_for('history.history') }}" data-i18n="collection">Bộ sưu tập</a>
+            </li>
+            <li>
+              <a class="text-on-surface-variant hover:text-primary hover:translate-x-1 inline-block transition-all duration-200 font-medium" href="{{ url_for('history.history') }}" data-i18n="historyScan">Lịch sử nhận dạng</a>
+            </li>
+            <li>
+              <a class="text-on-surface-variant hover:text-primary hover:translate-x-1 inline-block transition-all duration-200 font-medium" href="{{ url_for('predict.upgrade') }}" data-i18n="servicePlans">Gói dịch vụ</a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Column 4: Thông tin liên hệ -->
+        <div class="space-y-4">
+          <h4 class="text-sm font-bold text-on-surface tracking-wider uppercase" data-i18n="contactInfoTitle">Thông tin liên hệ</h4>
+          <ul class="space-y-3 text-sm text-on-surface-variant leading-relaxed">
+            <li class="flex items-start gap-2">
+              <span class="material-symbols-outlined text-primary text-base mt-0.5 contact-icon">mail</span>
+              <span data-i18n="contactEmail">Email: support@tienphongtech.vn</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="material-symbols-outlined text-primary text-base mt-0.5 contact-icon">call</span>
+              <span data-i18n="contactPhone">Điện thoại: 0916 416 409</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="material-symbols-outlined text-primary text-base mt-0.5 contact-icon">pin_drop</span>
+              <span class="max-w-[240px]" data-i18n="contactAddress">Địa chỉ: P16, Đường số 8, KDC lô 49, Khu đô thị Nam Cần Thơ, Phường Cái Răng, TP. Cần Thơ</span>
+            </li>
+          </ul>
         </div>
       </div>
-      <div class="border-t border-outline-variant/20 relative py-1">
-        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-          <p class="label-sm text-on-surface-variant/70 dark:text-slate-400">
-            <span data-i18n="copyright">Bản quyền © 2026 PetAI. Mọi quyền được bảo lưu</span>
-          </p>
-          <div class="flex gap-6">
-            <a class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
-              target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.user_guide') }}"
-              data-i18n="footerUserGuide"><span data-i18n="footerUserGuide">HƯỚNG DẪN SỬ DỤNG</span></a>
 
-            <a class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
-              target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.terms_of_service') }}"
-              data-i18n="footerTerms"><span data-i18n="footerTerms">ĐIỀU KHOẢN</span></a>
-            <a class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
-              target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.privacy_policy') }}"
-              data-i18n="footerPrivacy"><span data-i18n="footerPrivacy">BẢO MẬT</span></a>
-            <a class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
-              target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.payment_policy') }}"
-              data-i18n="footerPayment"><span data-i18n="footerPayment">THANH TOÁN</span></a>
+      <!-- Bottom Bar -->
+      <div class="border-t border-outline-variant/20 pt-6">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-xs">
+          <p class="text-on-surface-variant/70 dark:text-slate-400" data-i18n="copyright">
+            Bản quyền © 2026 PetAI. Mọi quyền được bảo lưu
+          </p>
+          <div class="flex flex-wrap justify-center gap-x-6 gap-y-2">
+            <a class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors underline underline-offset-4" target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.user_guide') }}" data-i18n="footerUserGuide">HƯỚNG DẪN SỬ DỤNG</a>
+            <a class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors underline underline-offset-4" target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.terms_of_service') }}" data-i18n="footerTerms">ĐIỀU KHOẢN</a>
+            <a class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors underline underline-offset-4" target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.privacy_policy') }}" data-i18n="footerPrivacy">BẢO MẬT</a>
+            <a class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors underline underline-offset-4" target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.payment_policy') }}" data-i18n="footerPayment">THANH TOÁN</a>
           </div>
         </div>
       </div>
     </div>
   </footer>
-
   <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
   <script src="{{ url_for('static', filename='js/script.js') }}"></script>
     <script>

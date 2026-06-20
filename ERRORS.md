@@ -35,3 +35,41 @@
 - **Status**: Fixed
 
 ---
+
+## [2026-06-20 17:35] - Lỗi Quill Editor không hiển thị (Race Condition) khi tải trang Cấu hình hệ thống
+
+- **Type**: Runtime
+- **Severity**: High
+- **File**: `templates/system_config.html:614`
+- **Agent**: @frontend-specialist
+- **Root Cause**: Thư viện Quill JS (`quill.js`) trước đây được tải ở cuối thẻ `<body>`. Khi người dùng click nhanh vào tab "Các trang chính sách & điều khoản", hàm `initQuillEditors()` cố gắng khởi tạo `new Quill(...)` trước khi script Quill JS được tải và thực thi xong, dẫn đến lỗi `ReferenceError: Quill is not defined`.
+- **Error Message**: 
+  ```text
+  Uncaught ReferenceError: Quill is not defined
+  ```
+- **Fix Applied**: 
+  1. Đưa script `<script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>` vào thẻ `<head>` để tải từ đầu.
+  2. Bổ sung cơ chế tự động thử lại (Retry Loop) sau mỗi 50ms trong hàm `initQuillEditors()` nếu đối tượng `Quill` chưa sẵn sàng.
+  3. Cải tiến hàm `switchTab` và `loadLegalContent` sử dụng cờ `isInitial` để loại bỏ các URL trùng lặp sinh ra trong lịch sử duyệt web (`pushState`).
+- **Prevention**: Luôn tải các thư viện UI JS quan trọng từ sớm hoặc kiểm tra tính sẵn sàng (`typeof Library !== "undefined"`) trước khi khởi tạo.
+- **Status**: Fixed
+
+---
+
+## [2026-06-20 20:50] - Lỗi lặp khai báo loadLegalContent gây vỡ cú pháp JavaScript trong Cấu hình hệ thống
+
+- **Type**: Agent
+- **Severity**: High
+- **File**: `templates/system_config.html:739`
+- **Agent**: Antigravity Orchestrator
+- **Root Cause**: Khai báo dư thừa hàm `loadLegalContent` không có đóng ngoặc nhọn ở đầu định nghĩa biến `fallbackDefaultHtml` tại dòng 739. Việc này khiến toàn bộ các hàm phía sau bị lồng vào trong và gây lỗi cú pháp JavaScript khiến toàn bộ Script trên trang Cấu hình hệ thống không thể hoạt động (bao gồm hàm `switchTab` để chuyển đổi tab).
+- **Error Message**: 
+  ```text
+  Uncaught SyntaxError: Unexpected token 'var' (or similar script compilation failure)
+  ```
+- **Fix Applied**: Loại bỏ khai báo dư thừa của hàm `loadLegalContent` bắt đầu tại dòng 739 để trả biến `fallbackDefaultHtml` về phạm vi toàn cục (global) và đóng đúng cấu trúc cú pháp của thẻ script.
+- **Prevention**: Rà soát cấu trúc cú pháp JS cẩn thận sau khi thực hiện gộp hoặc chỉnh sửa các đoạn code lớn.
+- **Status**: Fixed
+
+
+---

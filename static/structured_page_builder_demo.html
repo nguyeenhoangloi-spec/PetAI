@@ -1,0 +1,1608 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MÃ´ Phá»ng TrÃ¬nh Dá»±ng Trang PhÃ¡p LÃ½ ThÃ´ng Minh - PetAI</title>
+    
+    <!-- Google Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    
+    <style>
+      :root {
+        --primary: #005ab4;
+        --primary-rgb: 0, 90, 180;
+        --primary-light: #e0f2fe;
+        --secondary: #855300;
+        --bg-app: #f8fafc;
+        --bg-card: #ffffff;
+        --border-color: #e2e8f0;
+        --text-main: #0f172a;
+        --text-muted: #64748b;
+        --radius-lg: 16px;
+        --radius-md: 12px;
+        --radius-sm: 8px;
+        --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+      }
+
+      [data-theme="dark"] {
+        --primary: #3b82f6;
+        --primary-rgb: 59, 130, 246;
+        --primary-light: #1e3a8a;
+        --secondary: #f59e0b;
+        --bg-app: #090d16;
+        --bg-card: #151c2c;
+        --border-color: #1e293b;
+        --text-main: #f1f5f9;
+        --text-muted: #94a3b8;
+        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: 'Inter', sans-serif;
+        background-color: var(--bg-app);
+        color: var(--text-main);
+        min-height: 100vh;
+        display: flex;
+        flex-col: column;
+        flex-direction: column;
+        overflow-x: hidden;
+        transition: background-color var(--transition-normal), color var(--transition-normal);
+      }
+
+      /* Scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--border-color);
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--text-muted);
+      }
+
+      /* Header */
+      header {
+        background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.05), rgba(var(--primary-rgb), 0.02));
+        border-b: 1px solid var(--border-color);
+        padding: 24px 32px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      header::before {
+        content: '';
+        position: absolute;
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(circle, rgba(var(--primary-rgb), 0.15) 0%, transparent 70%);
+        top: -150px;
+        right: -50px;
+        border-radius: 50%;
+        pointer-events: none;
+      }
+
+      .header-content {
+        max-width: 1400px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+      }
+
+      .logo-title {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .logo-title img {
+        height: 40px;
+        width: auto;
+      }
+
+      .logo-title h1 {
+        font-family: 'Outfit', sans-serif;
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--primary);
+      }
+
+      .logo-title span {
+        font-size: 14px;
+        font-weight: 500;
+        background: rgba(var(--primary-rgb), 0.1);
+        color: var(--primary);
+        padding: 4px 10px;
+        border-radius: 99px;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+      }
+
+      .header-desc {
+        color: var(--text-muted);
+        font-size: 14px;
+        margin-top: 4px;
+        max-width: 600px;
+      }
+
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 10px 18px;
+        border-radius: var(--radius-md);
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all var(--transition-fast);
+        border: 1px solid transparent;
+        user-select: none;
+      }
+
+      .btn-primary {
+        background-color: var(--primary);
+        color: white;
+      }
+      .btn-primary:hover {
+        background-color: rgb(0, 75, 150);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.2);
+      }
+
+      .btn-outline {
+        background-color: transparent;
+        border-color: var(--border-color);
+        color: var(--text-main);
+      }
+      .btn-outline:hover {
+        background-color: rgba(var(--primary-rgb), 0.05);
+        border-color: var(--primary);
+      }
+
+      .theme-toggle {
+        width: 42px;
+        height: 42px;
+        border-radius: var(--radius-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--border-color);
+        color: var(--text-main);
+        cursor: pointer;
+        transition: all var(--transition-fast);
+        background: var(--bg-card);
+      }
+      .theme-toggle:hover {
+        background: rgba(var(--primary-rgb), 0.05);
+        border-color: var(--primary);
+      }
+
+      /* Main container splitting screen */
+      main {
+        max-width: 1500px;
+        width: 100%;
+        margin: 0 auto;
+        padding: 32px;
+        flex-grow: 1;
+        display: grid;
+        grid-template-columns: 1.2fr 1fr;
+        gap: 32px;
+      }
+
+      @media (max-width: 1100px) {
+        main {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* Cards styling with glassmorphism touches */
+      .panel {
+        background-color: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-md);
+        display: flex;
+        flex-direction: column;
+        max-height: calc(100vh - 160px);
+        position: relative;
+        overflow: hidden;
+      }
+
+      @media (max-width: 1100px) {
+        .panel {
+          max-height: none;
+        }
+      }
+
+      .panel-header {
+        padding: 20px 24px;
+        border-b: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: linear-gradient(180deg, rgba(var(--primary-rgb), 0.02) 0%, transparent 100%);
+      }
+
+      .panel-title {
+        font-family: 'Outfit', sans-serif;
+        font-size: 18px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .panel-body {
+        padding: 24px;
+        overflow-y: auto;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      /* Editor Panel Specifics */
+      .editor-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 8px;
+      }
+
+      .lang-tabs {
+        display: flex;
+        background-color: rgba(var(--primary-rgb), 0.03);
+        border: 1px solid var(--border-color);
+        padding: 4px;
+        border-radius: var(--radius-md);
+        gap: 4px;
+      }
+
+      .lang-tab {
+        padding: 8px 16px;
+        border-radius: var(--radius-sm);
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text-muted);
+        cursor: pointer;
+        transition: all var(--transition-fast);
+        border: none;
+        background: transparent;
+      }
+
+      .lang-tab.active {
+        background-color: var(--primary);
+        color: white;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .auto-trans-container {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--text-muted);
+      }
+
+      .switch {
+        position: relative;
+        display: inline-block;
+        width: 38px;
+        height: 20px;
+      }
+
+      .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+
+      .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: var(--border-color);
+        transition: .3s;
+        border-radius: 20px;
+      }
+
+      .slider:before {
+        position: absolute;
+        content: "";
+        height: 14px;
+        width: 14px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        transition: .3s;
+        border-radius: 50%;
+      }
+
+      input:checked + .slider {
+        background-color: var(--primary);
+      }
+
+      input:checked + .slider:before {
+        transform: translateX(18px);
+      }
+
+      /* Sections cards */
+      .sections-container {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .section-card {
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        background-color: rgba(var(--primary-rgb), 0.01);
+        overflow: hidden;
+        transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+        animation: slideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .section-card:hover {
+        border-color: rgba(var(--primary-rgb), 0.3);
+        box-shadow: var(--shadow-sm);
+      }
+
+      .section-card-header {
+        padding: 12px 16px;
+        background-color: rgba(var(--primary-rgb), 0.03);
+        border-b: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .section-number {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--primary);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .section-controls {
+        display: flex;
+        gap: 4px;
+      }
+
+      .control-btn {
+        width: 28px;
+        height: 28px;
+        border-radius: var(--radius-sm);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: transparent;
+        border: none;
+        color: var(--text-muted);
+        cursor: pointer;
+        transition: all var(--transition-fast);
+      }
+
+      .control-btn:hover {
+        background-color: rgba(var(--primary-rgb), 0.08);
+        color: var(--primary);
+      }
+
+      .control-btn-danger:hover {
+        background-color: #fef2f2;
+        color: #ef4444;
+      }
+
+      .section-card-body {
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .form-group-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .form-label {
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .btn-translate-inline {
+        font-size: 11px;
+        color: var(--primary);
+        background: none;
+        border: none;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
+        font-weight: 600;
+      }
+      .btn-translate-inline:hover {
+        text-decoration: underline;
+      }
+
+      .input-text {
+        width: 100%;
+        padding: 10px 14px;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--border-color);
+        background-color: var(--bg-card);
+        color: var(--text-main);
+        font-size: 14px;
+        font-weight: 600;
+        outline: none;
+        transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+      }
+
+      .input-text:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.15);
+      }
+
+      .textarea-content {
+        width: 100%;
+        padding: 12px 14px;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--border-color);
+        background-color: var(--bg-card);
+        color: var(--text-main);
+        font-size: 14px;
+        line-height: 1.5;
+        outline: none;
+        resize: vertical;
+        min-height: 100px;
+        font-family: inherit;
+        transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+      }
+
+      .textarea-content:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.15);
+      }
+
+      /* Live Preview Panel Specifics */
+      .preview-window {
+        background-color: var(--bg-app);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        flex-grow: 1;
+        overflow-y: auto;
+        padding: 32px;
+        position: relative;
+      }
+
+      .preview-theme-indicator {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+        background-color: var(--bg-card);
+        border: 1px solid var(--border-color);
+        padding: 4px;
+        border-radius: var(--radius-sm);
+      }
+
+      .preview-theme-btn {
+        padding: 4px 8px;
+        border-radius: var(--radius-sm) - 2px;
+        font-size: 11px;
+        font-weight: 600;
+        cursor: pointer;
+        border: none;
+        background: transparent;
+        color: var(--text-muted);
+      }
+
+      .preview-theme-btn.active {
+        background-color: var(--primary);
+        color: white;
+      }
+
+      /* Emulating the premium UI of website */
+      .website-page-card {
+        background: var(--bg-card);
+        border-radius: 24px;
+        padding: 32px;
+        border: 1px solid var(--border-color);
+        box-shadow: var(--shadow-sm);
+        transition: background-color var(--transition-normal), border-color var(--transition-normal);
+      }
+
+      .website-title {
+        font-family: 'Outfit', sans-serif;
+        font-size: 28px;
+        font-weight: 800;
+        color: var(--text-main);
+        margin-bottom: 24px;
+        position: relative;
+        padding-bottom: 12px;
+      }
+
+      .website-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 60px;
+        height: 4px;
+        background: var(--primary);
+        border-radius: 2px;
+      }
+
+      .website-content-section {
+        margin-bottom: 24px;
+      }
+
+      .website-content-section h2 {
+        font-family: 'Outfit', sans-serif;
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--primary);
+        margin-bottom: 10px;
+        margin-top: 20px;
+      }
+
+      .website-content-section p {
+        font-size: 14px;
+        color: var(--text-muted);
+        line-height: 1.7;
+        margin-bottom: 12px;
+      }
+
+      .website-content-section ul {
+        padding-left: 20px;
+        margin-bottom: 12px;
+        color: var(--text-muted);
+        font-size: 14px;
+        line-height: 1.7;
+      }
+
+      .website-content-section li {
+        margin-bottom: 6px;
+      }
+
+      /* Toast & Animations */
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateY(12px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .toast-container {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        z-index: 1000;
+      }
+
+      .toast {
+        background-color: #1e293b;
+        color: white;
+        padding: 12px 20px;
+        border-radius: var(--radius-md);
+        font-size: 13px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        animation: toastIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border-left: 4px solid var(--primary);
+      }
+
+      @keyframes toastIn {
+        from {
+          opacity: 0;
+          transform: translateX(100%) scale(0.9);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0) scale(1);
+        }
+      }
+
+      .animate-spin {
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+
+      /* Panel footer */
+      .panel-footer {
+        padding: 16px 24px;
+        border-t: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: rgba(var(--primary-rgb), 0.01);
+      }
+
+      /* Preset configuration info card */
+      .info-banner {
+        background-color: rgba(var(--primary-rgb), 0.05);
+        border: 1px solid rgba(var(--primary-rgb), 0.1);
+        padding: 16px;
+        border-radius: var(--radius-md);
+        font-size: 13px;
+        color: var(--text-muted);
+        line-height: 1.5;
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+      }
+
+      .info-banner span {
+        color: var(--primary);
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="header-content">
+        <div>
+          <div class="logo-title">
+            <img src="/static/images/logo.png" alt="PetAI logo" />
+            <h1>PetAI Admin Workspace</h1>
+            <span>Concept Demo</span>
+          </div>
+          <p class="header-desc">
+            TrÃ¬nh quáº£n lÃ½ chÃ­nh sÃ¡ch &amp; Ä‘iá»u khoáº£n (Structured Page Builder). Chia nhá» trang phÃ¡p lÃ½ thÃ nh cÃ¡c má»¥c (sections) Ä‘á»™c láº­p Ä‘á»ƒ tá»‘i Æ°u hiá»ƒn thá»‹, trÃ¡nh vá»¡ layout vÃ  dá»‹ch tá»± Ä‘á»™ng song song.
+          </p>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-outline" onclick="loadPresetData()">
+            <span class="material-symbols-outlined">restart_alt</span> Táº£i Dá»¯ Liá»‡u Máº«u
+          </button>
+          <div class="theme-toggle" onclick="toggleAppTheme()" title="Chuyá»ƒn cháº¿ Ä‘á»™ sÃ¡ng tá»‘i toÃ n cá»¥c">
+            <span class="material-symbols-outlined" id="app-theme-icon">dark_mode</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <!-- LEFT PANEL: Editor -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span class="material-symbols-outlined" style="color: var(--primary);">edit_note</span>
+            Khung Cấu Trúc Soạn Thảo (Editor Panel)
+          </div>
+          
+          <div class="lang-tabs">
+            <button class="lang-tab active" id="tab-edit-vi" onclick="switchEditorLang('vi')">Tiếng Việt (VI)</button>
+            <button class="lang-tab" id="tab-edit-en" onclick="switchEditorLang('en')">English (EN)</button>
+          </div>
+        </div>
+
+        <div class="panel-body">
+          <!-- Page Selector dropdown -->
+          <div class="form-group" style="margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 16px;">
+            <label class="form-label" style="font-size: 11px; margin-bottom: 6px; display: block; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Chọn trang pháp lý để soạn thảo:</label>
+            <select id="legal-page-select" onchange="switchPage(this.value)" class="input-text" style="font-weight: 600; cursor: pointer; background-color: var(--bg-card); border-color: var(--border-color); font-family: inherit;">
+              <option value="privacy-policy">Chính sách bảo mật (Privacy Policy)</option>
+              <option value="terms-of-service">Điều khoản dịch vụ (Terms of Service)</option>
+              <option value="payment-policy">Chính sách thanh toán (Payment Policy)</option>
+              <option value="data-deletion">Yêu cầu xóa dữ liệu (Data Deletion Policy)</option>
+              <option value="support">Trang Hỗ trợ &amp; Hướng dẫn (Support Page)</option>
+            </select>
+          </div>
+
+          <div class="info-banner">
+            <span class="material-symbols-outlined">info</span>
+            <div>
+              <strong>Hướng dẫn:</strong> Bố cục trang pháp lý được lưu trữ dưới dạng mảng JSON gồm nhiều điều khoản (mục). Bạn sửa ở ô bên trái, kết quả sẽ đồng bộ trực tiếp sang khung xem trước bên phải. Hãy bật <strong>Tự động dịch sang EN</strong> để trải nghiệm công nghệ dịch tự động trên từng ô nhập liệu!
+            </div>
+          </div>
+
+          <div class="editor-toolbar">
+            <div class="auto-trans-container">
+              <label class="switch">
+                <input type="checkbox" id="auto-translate-toggle" checked />
+                <span class="slider"></span>
+              </label>
+              <span>Dịch tự động sang Tiếng Anh khi chuyển Tab</span>
+            </div>
+            
+            <button class="btn-translate-inline" onclick="translateAllForce()" style="font-size: 13px;">
+              <span class="material-symbols-outlined" style="font-size: 16px;">translate</span> Dịch đè toàn bộ bản trống
+            </button>
+          </div>
+
+          <!-- List of editable sections -->
+          <div class="sections-container" id="editor-sections-container">
+            <!-- Dynamic elements go here -->
+          </div>
+        </div>
+
+        <div class="panel-footer">
+          <button class="btn btn-outline" onclick="addNewSection()" style="border-color: rgba(var(--primary-rgb), 0.2); color: var(--primary);">
+            <span class="material-symbols-outlined">add</span> Thêm Mục Mới
+          </button>
+          
+          <button class="btn btn-primary" onclick="simulateSave()">
+            <span class="material-symbols-outlined">save</span> Lưu Cấu Hình Vào DB
+          </button>
+        </div>
+      </div>
+
+      <!-- RIGHT PANEL: Live Preview -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span class="material-symbols-outlined" style="color: var(--secondary);">preview</span>
+            Live Preview (Xem Trước)
+          </div>
+
+          <div style="display: flex; gap: 12px; align-items: center;">
+            <!-- Preview Language -->
+            <div class="lang-tabs" style="padding: 2px;">
+              <button class="lang-tab active" id="tab-prev-vi" onclick="switchPreviewLang('vi')" style="padding: 4px 10px; font-size: 11px;">VI</button>
+              <button class="lang-tab" id="tab-prev-en" onclick="switchPreviewLang('en')" style="padding: 4px 10px; font-size: 11px;">EN</button>
+            </div>
+
+            <!-- Preview Theme Switch -->
+            <div class="preview-theme-indicator">
+              <button class="preview-theme-btn active" id="prev-theme-light" onclick="setPreviewTheme('light')">Sáng</button>
+              <button class="preview-theme-btn" id="prev-theme-dark" onclick="setPreviewTheme('dark')">Tối</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-body" style="background-color: var(--bg-app); padding: 20px;">
+          <!-- Preview Frame Emulation -->
+          <div class="preview-window" id="preview-window-frame">
+            <div class="website-page-card" id="preview-card">
+              <h1 class="website-title" id="preview-title">Chính sách bảo mật</h1>
+              <div id="preview-content-area">
+                <!-- Dynamic Content -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <div class="toast-container" id="toast-holder"></div>
+
+    <script>
+      // Global app state
+      let appTheme = 'light';
+      let editorLang = 'vi';
+      let previewLang = 'vi';
+      let previewTheme = 'light';
+      let activeLegalPage = 'privacy-policy';
+      let sections = [];
+
+      let rawLegalData = {
+        "privacy-policy": { vi: "", en: "" },
+        "terms-of-service": { vi: "", en: "" },
+        "payment-policy": { vi: "", en: "" },
+        "data-deletion": { vi: "", en: "" },
+        "support": { vi: "", en: "" }
+      };
+
+      const fallbackDefaultHtml = {
+        "privacy-policy": {
+          vi: `
+            <h2>1. Thông tin nhà phát triển/công ty</h2>
+            <p>Dịch vụ được phát triển và thiết kế bởi <strong>CÔNG TY TNHH MỘT THÀNH VIÊN CÔNG NGHỆ KỸ THUẬT TIÊN PHONG</strong>. Chúng tôi cam kết bảo vệ thông tin cá nhân và quyền riêng tư của bạn an toàn nhất có thể.</p>
+            <h2>2. Dữ liệu nào được thu thập</h2>
+            <p>Chúng tôi có thể thu thập các loại dữ liệu bao gồm: Tên tài khoản, Email, Mật khẩu (đã mã hóa an toàn), hình ảnh chó bạn tải về hệ thống nhận diện, cũng như các hành vi tương tác trên ứng dụng.</p>
+            <h2>3. Mục đích sử dụng dữ liệu</h2>
+            <p>Dữ liệu được dùng để cung cấp quyền truy cập, xác thực bảo mật, tối ưu hóa các mẫu nhận dạng AI qua thời gian, và hỗ trợ kĩ thuật cần thiết.</p>
+            <h2>4. Có chia sẻ dữ liệu với bên thứ ba hay không</h2>
+            <p>Tuyệt đối không, trừ các hệ thống hạ tầng lõi cần thiết (Firebase, Google Analytics) hoặc nếu có yêu cầu chặt chẽ từ cơ quan có thẩm quyền theo pháp luật.</p>
+            <h2>5. Cookies, Firebase, Analytics</h2>
+            <p>Ứng dụng có thể sử dụng Cookies, Google Analytics để đo đạc và Crashlytics để thu thập lỗi giúp chúng tôi hoàn thiện chất lượng nhanh chóng hơn.</p>
+            <h2>6. Quyền của người dùng</h2>
+            <p>Bạn luôn có quyền kiểm soát nội dung cá nhân của mình, yêu cầu xem, chỉnh sửa, trích xuất dữ liệu, hoặc yêu cầu dừng xử lý tại bất kỳ thời điểm nào.</p>
+            <h2>7. Cách yêu cầu xóa dữ liệu</h2>
+            <p>Bạn có thể chủ động vào Cài đặt -> Xóa tài khoản, hoặc xem hướng dẫn chi tiết tại <a href="/data-deletion" target="_blank">Chính sách xóa dữ liệu</a>.</p>
+            <h2>8. Thông tin liên hệ</h2>
+            <p>Email: <a href="mailto:support@pet.ai">support@pet.ai</a><br>Website: <a href="https://pet.ai" target="_blank">https://pet.ai</a><br>Địa chỉ: P16, Đường số 8, KDC lô 49, Khu đô thị Nam Cần Thơ, P. Cái Răng, TP. Cần Thơ</p>
+          `,
+          en: `
+            <h2>1. Developer/company information</h2>
+            <p>The service is developed and designed by <strong>PIONEER TECHNOLOGY ENGINEERING COMPANY LIMITED</strong>. We are committed to protecting your personal information and privacy as securely as possible.</p>
+            <h2>2. What data is collected</h2>
+            <p>We may collect data including: account name, email, password (securely encrypted), dog images you upload to the identification system, and your usage interactions.</p>
+            <h2>3. Purpose of using data</h2>
+            <p>Data is used to provide access, verify security, optimize AI models over time, and provide necessary technical support.</p>
+            <h2>4. Sharing data with third parties</h2>
+            <p>Absolutely not, except for necessary core infrastructure (Firebase, Google Analytics) or strict legal requests from authorized government agencies.</p>
+            <h2>5. Cookies, Firebase, Analytics</h2>
+            <p>The application may use Cookies, Google Analytics for measurement, and Crashlytics for error collection to help improve our quality.</p>
+            <h2>6. User rights</h2>
+            <p>You always have control over your personal content, with the right to view, edit, extract, or stop processing data at any time.</p>
+            <h2>7. Requesting data deletion</h2>
+            <p>You can manually go to Settings -> Delete Account, or see detailed instructions at <a href="/data-deletion" target="_blank">Data Deletion Policy</a>.</p>
+            <h2>8. Contact information</h2>
+            <p>Email: <a href="mailto:support@pet.ai">support@pet.ai</a><br>Website: <a href="https://pet.ai" target="_blank">https://pet.ai</a><br>Address: P16, Road 8, Lot 49 KDC, Nam Can Tho Urban Area, Cai Rang Dist, Can Tho City</p>
+          `
+        },
+        "terms-of-service": {
+          vi: `
+            <h2>1. Điều kiện sử dụng ứng dụng/website</h2>
+            <p>Việc bạn truy cập và sử dụng dịch vụ đồng nghĩa với việc bạn xác nhận đã đọc, hiểu và chấp thuận toàn bộ các điều khoản được quy định tại văn bản này.</p>
+            <h2>2. Quyền và trách nhiệm của người dùng</h2>
+            <p>Người dùng cam kết cung cấp thông tin chân thực khi tạo tài khoản, và tự chịu trách nhiệm bảo mật thông tin đăng nhập của chính bản thân.</p>
+            <h2>3. Quy định về tài khoản</h2>
+            <p>Việc sử dụng các tính năng cao cấp có thể yêu cầu đăng nhập. Mỗi tài khoản cá nhân chỉ được ủy quyền cho một người, cấm việc mua bán tài khoản.</p>
+            <h2>4. Nội dung hoặc hành vi bị cấm</h2>
+            <p>Bạn không được phép: (a) sử dụng ứng dụng vào các mục đích phi pháp; (b) khai thác lạm dụng hệ thống API của chúng tôi; (c) can thiệp, sao chép hay dịch ngược phần mềm cũng như mô hình AI mà chúng tôi cung cấp.</p>
+            <h2>5. Giới hạn trách nhiệm của nhà phát triển</h2>
+            <p>Các phân tích và nhận diện dựa trên AI chỉ mang tính tham khảo và có thể xuất hiện xác suất sai lệch. Chúng tôi không nhận trách nhiệm cho các hậu quả gián tiếp gây ra từ tư vấn kết quả của phần mềm.</p>
+            <h2>6. Chấm dứt tài khoản khi vi phạm</h2>
+            <p>Chúng tôi bảo lưu toàn quyền đơn phương khóa hoặc xóa sạch tài khoản và dữ liệu liên quan nếu phát hiện người dùng vi phạm nghiêm trọng những điều kiện đã nêu.</p>
+            <h2>7. Thông tin liên hệ</h2>
+            <p>Mọi thắc mắc và góp ý vui lòng gửi về: <a href="mailto:support@pet.ai">support@pet.ai</a></p>
+          `,
+          en: `
+            <h2>1. Conditions of Use for App/Website</h2>
+            <p>By accessing and using our service, you acknowledge that you have read, understood, and accepted all terms set forth in this document.</p>
+            <h2>2. User Rights and Responsibilities</h2>
+            <p>Users commit to providing truthful information when creating an account and are solely responsible for maintaining the confidentiality of their login credentials.</p>
+            <h2>3. Account Rules</h2>
+            <p>Using premium features may require logging in. Each personal account is authorized for one individual only; buying, selling, or transferring accounts is strictly prohibited.</p>
+            <h2>4. Prohibited Content and Conduct</h2>
+            <p>You are not permitted to: (a) use the application for any unlawful purposes; (b) exploit or abuse our API system; (c) interfere with, copy, or reverse-engineer the software or the AI models we provide.</p>
+            <h2>5. Limitation of Liability</h2>
+            <p>AI-based predictions are for reference only and may contain errors. We assume no liability for any indirect consequences resulting from recommendations or software results.</p>
+            <h2>6. Account Termination upon Violation</h2>
+            <p>We reserve the right to unilaterally lock or permanently delete accounts and associated data if a user is found to have seriously violated any stated conditions.</p>
+            <h2>7. Contact Information</h2>
+            <p>For any questions or suggestions, please send to: <a href="mailto:support@pet.ai">support@pet.ai</a></p>
+          `
+        },
+        "payment-policy": {
+          vi: `
+            <h2>1. Phương thức thanh toán</h2>
+            <p>Hệ thống hỗ trợ thanh toán qua hình thức chuyển khoản ngân hàng bằng mã VietQR tự động hoặc chuyển khoản trực tiếp với thông tin được hiển thị chi tiết khi nâng cấp gói.</p>
+            <h2>2. Quy trình xử lý giao dịch</h2>
+            <p>Sau khi chuyển khoản đúng số tiền và nội dung ghi chú theo hướng dẫn, hệ thống VietQR tự động sẽ ghi nhận và kích hoạt gói dịch vụ trong vòng từ 1 đến 5 phút. Trong trường hợp giao dịch cần duyệt thủ công từ quản trị viên, thời gian xử lý có thể kéo dài tối đa 24 giờ làm việc.</p>
+            <h2>3. Chính sách hoàn tiền</h2>
+            <p>Chúng tôi thực hiện hoàn tiền trong các trường hợp sau: (a) Lỗi hệ thống phát sinh khiến giao dịch bị trừ tiền nhưng tài khoản không được kích hoạt gói dịch vụ và không thể khắc phục kỹ thuật; (b) Người dùng chuyển khoản thừa tiền so với giá trị gói dịch vụ đăng ký. Mọi yêu cầu hoàn trả vui lòng gửi về email support@pet.ai kèm theo ảnh chụp biên lai giao dịch để được đối soát và xử lý trong vòng 3-5 ngày làm việc.</p>
+            <h2>4. Bảo mật giao dịch</h2>
+            <p>Mọi giao dịch thanh toán được thực hiện an toàn qua cổng tích hợp, thông tin tài khoản ngân hàng và nội dung giao dịch được xử lý bảo mật theo tiêu chuẩn mã hóa SSL/TLS, cam kết không lưu giữ thông tin nhạy cảm của khách hàng.</p>
+            <h2>5. Giải quyết tranh chấp và khiếu nại</h2>
+            <p>Mọi vấn đề khiếu nại liên quan đến thanh toán, vui lòng cung cấp mã đơn hàng (Order Code) và minh chứng chuyển khoản gửi tới bộ phận hỗ trợ khách hàng để được giải quyết nhanh nhất.</p>
+            <h2>8. Thông tin liên hệ</h2>
+            <p>Email: <a href="mailto:support@pet.ai">support@pet.ai</a><br>Website: <a href="https://pet.ai" target="_blank">https://pet.ai</a><br>Địa chỉ: P16, Đường số 8, KDC lô 49, Khu đô thị Nam Cần Thơ, P. Cái Răng, TP. Cần Thơ</p>
+          `,
+          en: `
+            <h2>1. Payment Methods</h2>
+            <p>The system supports payment via automatic bank transfer using VietQR codes or direct transfer with details displayed during package upgrade.</p>
+            <h2>2. Transaction Processing Workflow</h2>
+            <p>After transferring the correct amount and syntax instructions, the automatic VietQR system will recognize and activate the service plan within 1 to 5 minutes. If manual review is required, processing may take up to 24 business hours.</p>
+            <h2>3. Refund Policy</h2>
+            <p>We issue refunds in the following cases: (a) System errors causing charge deductions without activating the package and cannot be resolved technically; (b) User transfers more money than the plan value. Please send refund requests to support@pet.ai with transaction receipt for processing within 3-5 business days.</p>
+            <h2>4. Transaction Security</h2>
+            <p>All payment transactions are secured through integrated gateways, bank accounts and details are processed securely under SSL/TLS standards, committing not to store sensitive customer data.</p>
+            <h2>5. Dispute Resolution</h2>
+            <p>For payment complaints, please provide the Order Code and bank transfer receipt to customer support for the fastest resolution.</p>
+            <h2>8. Contact Information</h2>
+            <p>Email: <a href="mailto:support@pet.ai">support@pet.ai</a><br>Website: <a href="https://pet.ai" target="_blank">https://pet.ai</a><br>Address: P16, Road 8, Lot 49 KDC, Nam Can Tho Urban Area, Cai Rang Dist, Can Tho City</p>
+          `
+        },
+        "data-deletion": {
+          vi: `
+            <h2>1. Quyền yêu cầu xóa tài khoản và dữ liệu</h2>
+            <p>Người dùng luôn có quyền yêu cầu xóa bỏ tài khoản cũng như tất cả dữ liệu cá nhân (tên, email, hình ảnh) đã tích lũy trong quá trình sử dụng hệ thống.</p>
+            <h2>2. Hướng dẫn xóa tài khoản trong ứng dụng</h2>
+            <p>Vui lòng đi tới phần <strong>Thiết lập / Settings</strong> &gt; Chọn <strong>Quản lý tài khoản</strong> &gt; Nhấn <strong>Xóa tài khoản</strong> để hệ thống tự động loại bỏ thông tin của bạn.</p>
+            <h2>3. Gửi email yêu cầu</h2>
+            <p>Trong trường hợp hệ thống chưa có chức năng xóa trực tiếp, bạn hoàn toàn có thể yêu cầu xóa bằng cách gửi thư. Hãy làm theo hướng dẫn sau:</p>
+            <ul>
+              <li><strong>Email nhận yêu cầu:</strong> <a href="mailto:support@pet.ai">support@pet.ai</a></li>
+              <li><strong>Tiêu đề email:</strong> Yêu cầu xóa dữ liệu/tài khoản</li>
+              <li>Hãy nêu rõ địa chỉ Email bạn dùng để đăng ký để chúng tôi đối chứng.</li>
+            </ul>
+            <h2>4. Quá trình xử lý</h2>
+            <p>Tất cả các định dạng dữ liệu, hình ảnh, tài khoản của bạn sẽ được xử lý và xóa vĩnh viễn trong vòng <strong>30 ngày</strong> kể từ khi có yêu cầu.</p>
+            <h2>5. Một số dữ liệu có thể được giữ lại</h2>
+            <p>Một số dữ liệu thuộc về báo cáo thanh toán, giao dịch hoá đơn hoặc các chi tiết nhằm phục vụ tranh chấp có thể sẽ được tiếp tục lưu giữ tùy thuộc vào quy định pháp luật sở tại yêu cầu.</p>
+            <h2>6. Thông tin liên hệ</h2>
+            <p>Mọi khó khăn vui lòng liên lạc: <a href="mailto:support@pet.ai">support@pet.ai</a></p>
+          `,
+          en: `
+            <h2>1. Right to Request Account and Data Deletion</h2>
+            <p>Users always have the right to request deletion of accounts and all personal data accumulated during the use of the system.</p>
+            <h2>2. Instructions to Delete Account In-App</h2>
+            <p>Please go to <strong>Settings</strong> &gt; Select <strong>Account Management</strong> &gt; Click <strong>Delete Account</strong> to let the system automatically remove your info.</p>
+            <h2>3. Sending Request Email</h2>
+            <p>If the function is not directly available, you can submit a deletion request via email. Follow these details:</p>
+            <ul>
+              <li><strong>Recipient Email:</strong> <a href="mailto:support@pet.ai">support@pet.ai</a></li>
+              <li><strong>Subject:</strong> Account/Data Deletion Request</li>
+              <li>State clearly the email address you registered with for verification.</li>
+            </ul>
+            <h2>4. Processing Duration</h2>
+            <p>All data formats, images, and accounts will be permanently processed and deleted within <strong>30 days</strong> from the request time.</p>
+            <h2>5. Certain Retained Data</h2>
+            <p>Certain data belonging to payments, billing invoices, or details for dispute resolution may continue to be retained according to local legal requirements.</p>
+            <h2>6. Contact Information</h2>
+            <p>For any inquiries, please contact: <a href="mailto:support@pet.ai">support@pet.ai</a></p>
+          `
+        },
+        "support": {
+          vi: `
+            <h2>1. Hướng dẫn sử dụng tính năng nhận diện</h2>
+            <p>Để nhận dạng giống chó, hãy truy cập trang 'Nhận diện', tải ảnh chụp rõ mặt chó cưng lên và đợi hệ thống phân tích trong vài giây. Kết quả sẽ hiển thị giống kèm độ tin cậy phần trăm.</p>
+            <h2>2. Quản lý hạn ngạch và nâng cấp</h2>
+            <p>Tài khoản miễn phí có hạn mức quét giới hạn mỗi ngày. Bạn có thể xem quảng cáo ngắn để nhận thêm lượt, hoặc nâng cấp lên gói Basic, Pro, Enterprise tại trang 'Nâng cấp' để quét không giới hạn.</p>
+            <h2>3. Khắc phục sự cố thường gặp</h2>
+            <p>Nếu ảnh tải lên bị báo lỗi hoặc kết quả không hiển thị, vui lòng kiểm tra kết nối internet, đảm bảo tệp ảnh thuộc định dạng hỗ trợ (JPG, PNG) và dung lượng dưới 5MB. Nếu lỗi tiếp diễn, liên hệ support@pet.ai để được trợ giúp.</p>
+          `,
+          en: `
+            <h2>1. How to Use Breed Recognition</h2>
+            <p>To identify a dog breed, go to the 'Recognition' page, upload a clear picture of the dog's face, and wait for analysis. Results will show the breed and confidence percentage.</p>
+            <h2>2. Quota Management and Upgrades</h2>
+            <p>Free accounts have limited daily scans. You can watch short ads to unlock more scans, or purchase Basic, Pro, or Enterprise plans on the 'Upgrade' page for unlimited use.</p>
+            <h2>3. Common Troubleshooting</h2>
+            <p>If image upload fails or results don't show, check internet connection, ensure the image is in JPG/PNG format and under 5MB. Contact support@pet.ai if the issue persists.</p>
+          `
+        }
+      };
+
+      function parseHtmlToSections(html) {
+        if (!html || !html.trim()) return [];
+        const tempDiv = document.createElement("div");
+        tempDiv.innerHTML = html.trim();
+        const parsed = [];
+        let currentSec = null;
+        
+        Array.from(tempDiv.childNodes).forEach(node => {
+          if (node.nodeType === Node.ELEMENT_NODE && (node.tagName === "H2" || node.tagName === "H3" || node.tagName === "H1")) {
+            if (currentSec) {
+              parsed.push(currentSec);
+            }
+            let titleText = node.textContent || node.innerText || "";
+            titleText = titleText.replace(/\s+/g, " ").trim();
+            currentSec = {
+              title: titleText,
+              content: ""
+            };
+          } else {
+            if (!currentSec) {
+              currentSec = {
+                title: "",
+                content: ""
+              };
+            }
+            if (node.nodeType === Node.TEXT_NODE) {
+              currentSec.content += node.textContent;
+            } else if (node.nodeType === Node.ELEMENT_NODE) {
+              currentSec.content += node.outerHTML;
+            }
+          }
+        });
+        
+        if (currentSec) {
+          parsed.push(currentSec);
+        }
+        
+        return parsed.map(sec => {
+          return {
+            title: sec.title.trim(),
+            content: sec.content.trim()
+          };
+        }).filter(sec => sec.title || sec.content);
+      }
+
+      function switchPage(page) {
+        saveCurrentToRaw();
+        activeLegalPage = page;
+        loadPageData(page);
+        showToast("Đã tải trang: " + page.replace("-", " ").toUpperCase());
+      }
+
+      function saveCurrentToRaw() {
+        if (!activeLegalPage) return;
+        const viData = sections.map(s => ({ title: s.title_vi, content: s.content_vi }));
+        const enData = sections.map(s => ({ title: s.title_en, content: s.content_en }));
+        rawLegalData[activeLegalPage].vi = JSON.stringify(viData);
+        rawLegalData[activeLegalPage].en = JSON.stringify(enData);
+      }
+
+      function loadPageData(page) {
+        let viContent = rawLegalData[page].vi || "";
+        let enContent = rawLegalData[page].en || "";
+
+        let vi_array = null;
+        let en_array = null;
+
+        if (viContent.trim().startsWith("[") && viContent.trim().endsWith("]")) {
+          try { vi_array = JSON.parse(viContent); } catch(e) {}
+        }
+        if (enContent.trim().startsWith("[") && enContent.trim().endsWith("]")) {
+          try { en_array = JSON.parse(enContent); } catch(e) {}
+        }
+
+        if (Array.isArray(vi_array)) {
+          const enList = Array.isArray(en_array) ? en_array : [];
+          sections = vi_array.map((item, idx) => {
+            const en_item = enList[idx] || {};
+            return {
+              id: "sec_" + idx + "_" + Math.random().toString(36).substr(2, 5),
+              title_vi: item.title || "",
+              title_en: en_item.title || "",
+              content_vi: item.content || "",
+              content_en: en_item.content || ""
+            };
+          });
+        } else {
+          let htmlVi = viContent.trim();
+          let htmlEn = enContent.trim();
+
+          if (!htmlVi && fallbackDefaultHtml[page]) {
+            htmlVi = fallbackDefaultHtml[page].vi.trim();
+          }
+          if (!htmlEn && fallbackDefaultHtml[page]) {
+            htmlEn = fallbackDefaultHtml[page].en.trim();
+          }
+
+          const viSections = parseHtmlToSections(htmlVi);
+          const enSections = parseHtmlToSections(htmlEn);
+
+          const maxLen = Math.max(viSections.length, enSections.length);
+          sections = [];
+          for (let i = 0; i < maxLen; i++) {
+            const vSec = viSections[i] || { title: "", content: "" };
+            const eSec = enSections[i] || { title: "", content: "" };
+            sections.push({
+              id: "sec_" + i + "_" + Math.random().toString(36).substr(2, 5),
+              title_vi: vSec.title,
+              title_en: eSec.title,
+              content_vi: vSec.content,
+              content_en: eSec.content
+            });
+          }
+        }
+
+        renderSections();
+        renderPreview();
+      }
+
+      // Initial startup
+      window.onload = function() {
+        loadPageData(activeLegalPage);
+        showToast("Đã tải môi trường mô phỏng thành công!", "success");
+      };
+
+      // Toast manager
+      function showToast(message, type = "success") {
+        const container = document.getElementById("toast-holder");
+        const toast = document.createElement("div");
+        toast.className = "toast";
+        if (type === "error") {
+          toast.style.borderLeftColor = "#ef4444";
+        }
+        toast.innerHTML = `
+          <span class="material-symbols-outlined" style="color: ${type === 'error' ? '#ef4444' : 'var(--primary)'}">
+            ${type === 'error' ? 'error' : 'check_circle'}
+          </span>
+          <span>${message}</span>
+        `;
+        container.appendChild(toast);
+        setTimeout(() => {
+          toast.style.opacity = '0';
+          toast.style.transform = 'translateX(50px)';
+          toast.style.transition = 'all 0.3s ease';
+          setTimeout(() => toast.remove(), 300);
+        }, 3000);
+      }
+
+      // App global theme toggle
+      function toggleAppTheme() {
+        const html = document.documentElement;
+        const icon = document.getElementById("app-theme-icon");
+        if (appTheme === 'light') {
+          html.setAttribute("data-theme", "dark");
+          appTheme = 'dark';
+          icon.textContent = 'light_mode';
+          showToast("Đã bật chế độ Dark Mode hệ thống!");
+        } else {
+          html.setAttribute("data-theme", "light");
+          appTheme = 'light';
+          icon.textContent = 'dark_mode';
+          showToast("Đã bật chế độ Light Mode hệ thống!");
+        }
+      }
+
+      // Render all section cards in Left Editor
+      function renderSections() {
+        const container = document.getElementById("editor-sections-container");
+        container.innerHTML = "";
+
+        if (sections.length === 0) {
+          container.innerHTML = `
+            <div style="border: 2px dashed var(--border-color); padding: 40px; border-radius: var(--radius-md); text-align: center; color: var(--text-muted);">
+              <span class="material-symbols-outlined" style="font-size: 48px; margin-bottom: 8px;">library_add</span>
+              <p style="font-weight: 500; font-size: 15px; margin-bottom: 4px;">Chưa có mục chính sách nào</p>
+              <p style="font-size: 13px;">Hãy nhấn nút "Thêm Mục Mới" ở góc dưới để bắt đầu viết bài.</p>
+            </div>
+          `;
+          return;
+        }
+
+        sections.forEach((sec, idx) => {
+          const card = document.createElement("div");
+          card.className = "section-card";
+          card.setAttribute("data-id", sec.id);
+
+          const hideVi = editorLang === 'vi' ? '' : 'style="display:none;"';
+          const hideEn = editorLang === 'en' ? '' : 'style="display:none;"';
+
+          card.innerHTML = `
+            <div class="section-card-header">
+              <span class="section-number">
+                <span class="material-symbols-outlined" style="font-size: 16px;">drag_indicator</span>
+                Mục #${idx + 1}
+              </span>
+              <div class="section-controls">
+                <button class="control-btn" onclick="moveSection('${sec.id}', -1)" title="Di chuyển lên">
+                  <span class="material-symbols-outlined" style="font-size: 18px;">arrow_upward</span>
+                </button>
+                <button class="control-btn" onclick="moveSection('${sec.id}', 1)" title="Di chuyển xuống">
+                  <span class="material-symbols-outlined" style="font-size: 18px;">arrow_downward</span>
+                </button>
+                <button class="control-btn control-btn-danger" onclick="deleteSection('${sec.id}')" title="Xóa mục này">
+                  <span class="material-symbols-outlined" style="font-size: 18px;">delete</span>
+                </button>
+              </div>
+            </div>
+            
+            <div class="section-card-body">
+              <!-- VIETNAMESE EDITORS -->
+              <div class="editor-lang-fields-vi" ${hideVi}>
+                <div class="form-group" style="margin-bottom: 12px;">
+                  <label class="form-label">Tiêu đề (Tiếng Việt)</label>
+                  <input type="text" class="input-text" value="${escapeHtml(sec.title_vi)}" 
+                    oninput="updateVal('${sec.id}', 'title_vi', this.value)" placeholder="Ví dụ: 1. Quy định bản quyền" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Nội dung chính (Tiếng Việt)</label>
+                  <textarea class="textarea-content" oninput="updateVal('${sec.id}', 'content_vi', this.value)" 
+                    placeholder="Nhập điều khoản chi tiết bằng Tiếng Việt...">${escapeHtml(sec.content_vi)}</textarea>
+                </div>
+              </div>
+
+              <!-- ENGLISH EDITORS -->
+              <div class="editor-lang-fields-en" ${hideEn}>
+                <div class="form-group" style="margin-bottom: 12px;">
+                  <div class="form-group-header">
+                    <label class="form-label">Title (English)</label>
+                    <button class="btn-translate-inline" id="btn-trans-title-${sec.id}" onclick="translateField('${sec.id}', 'title')">
+                      <span class="material-symbols-outlined" style="font-size: 12px;">translate</span> Dịch tự động
+                    </button>
+                  </div>
+                  <input type="text" class="input-text" value="${escapeHtml(sec.title_en)}" 
+                    oninput="updateVal('${sec.id}', 'title_en', this.value)" placeholder="e.g. 1. Copyright Terms" />
+                </div>
+                <div class="form-group">
+                  <div class="form-group-header">
+                    <label class="form-label">Main Content (English)</label>
+                    <button class="btn-translate-inline" id="btn-trans-content-${sec.id}" onclick="translateField('${sec.id}', 'content')">
+                      <span class="material-symbols-outlined" style="font-size: 12px;">translate</span> Dịch tự động
+                    </button>
+                  </div>
+                  <textarea class="textarea-content" oninput="updateVal('${sec.id}', 'content_en', this.value)" 
+                    placeholder="Enter English content details here...">${escapeHtml(sec.content_en)}</textarea>
+                </div>
+              </div>
+            </div>
+          `;
+          container.appendChild(card);
+        });
+      }
+
+      // Sync typing with state and preview
+      function updateVal(id, field, value) {
+        const sec = sections.find(s => s.id === id);
+        if (sec) {
+          sec[field] = value;
+          renderPreview();
+        }
+      }
+
+      // Live Preview Panel Update
+      function renderPreview() {
+        const previewTitle = document.getElementById("preview-title");
+        const previewContentArea = document.getElementById("preview-content-area");
+
+        const pageNames = {
+          "privacy-policy": { vi: "Chính sách bảo mật", en: "Privacy Policy" },
+          "terms-of-service": { vi: "Điều khoản sử dụng", en: "Terms of Service" },
+          "payment-policy": { vi: "Chính sách thanh toán", en: "Payment Policy" },
+          "data-deletion": { vi: "Chính sách xóa dữ liệu", en: "Data Deletion Policy" },
+          "support": { vi: "HỖ TRỢ & HƯỚNG DẪN", en: "SUPPORT & GUIDE" }
+        };
+
+        const pageName = pageNames[activeLegalPage] || { vi: "Văn bản pháp lý", en: "Legal Page" };
+        previewTitle.textContent = previewLang === 'vi' ? pageName.vi : pageName.en;
+
+        previewContentArea.innerHTML = "";
+
+        if (sections.length === 0) {
+          previewContentArea.innerHTML = `
+            <div style="text-align: center; color: var(--text-muted); font-style: italic; padding: 40px 0;">
+              Chưa có dữ liệu hiển thị. Hãy soạn thảo nội dung bên trái để cập nhật preview thời gian thực.
+            </div>
+          `;
+          return;
+        }
+
+        sections.forEach(sec => {
+          const title = previewLang === 'vi' ? sec.title_vi : sec.title_en;
+          const content = previewLang === 'vi' ? sec.content_vi : sec.content_en;
+
+          if (title.trim() || content.trim()) {
+            const sectionDiv = document.createElement("div");
+            sectionDiv.className = "website-content-section";
+            
+            let html = "";
+            if (title.trim()) {
+              html += `<h2>${escapeHtml(title)}</h2>`;
+            }
+            if (content.trim()) {
+              const formattedContent = (content.includes("<") && content.includes(">")) ? content : content.replace(/\n/g, "<br>");
+              html += `<p>${formattedContent}</p>`;
+            }
+            
+            sectionDiv.innerHTML = html;
+            previewContentArea.appendChild(sectionDiv);
+          }
+        });
+      }
+
+      // Add a new section block
+      function addNewSection() {
+        const newId = 'sec_' + Date.now();
+        sections.push({
+          id: newId,
+          title_vi: '',
+          title_en: '',
+          content_vi: '',
+          content_en: ''
+        });
+        renderSections();
+        renderPreview();
+        showToast("Đã thêm một mục mới ở dưới cùng!");
+        
+        // Auto scroll to card
+        setTimeout(() => {
+          const newCard = document.querySelector(`.section-card[data-id="${newId}"]`);
+          if (newCard) {
+            newCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            newCard.querySelector('input').focus();
+          }
+        }, 100);
+      }
+
+      // Delete a section
+      function deleteSection(id) {
+        const idx = sections.findIndex(s => s.id === id);
+        if (idx !== -1) {
+          sections.splice(idx, 1);
+          renderSections();
+          renderPreview();
+          showToast("Đã xóa mục thành công!", "success");
+        }
+      }
+
+      // Reorder cards with simple array shift
+      function moveSection(id, direction) {
+        const idx = sections.findIndex(s => s.id === id);
+        if (idx === -1) return;
+        const newIdx = idx + direction;
+        if (newIdx < 0 || newIdx >= sections.length) return;
+
+        // Swap elements
+        const temp = sections[idx];
+        sections[idx] = sections[newIdx];
+        sections[newIdx] = temp;
+
+        renderSections();
+        renderPreview();
+        showToast("Đã thay đổi thứ tự mục thành công!");
+
+        // Highlight card
+        const card = document.querySelector(`.section-card[data-id="${id}"]`);
+        if (card) {
+          card.style.backgroundColor = "rgba(var(--primary-rgb), 0.1)";
+          card.style.transition = "background-color 0.5s ease";
+          setTimeout(() => {
+            card.style.backgroundColor = "rgba(var(--primary-rgb), 0.01)";
+          }, 600);
+        }
+      }
+
+      // Switch language tabs in Left Editor
+      async function switchEditorLang(lang) {
+        if (editorLang === lang) return;
+        
+        const autoTransToggle = document.getElementById("auto-translate-toggle");
+        
+        if (lang === 'en' && autoTransToggle.checked) {
+          // Trigger translation of empty English fields before rendering
+          await autoTranslateEmpty();
+        }
+
+        editorLang = lang;
+        
+        // Update tabs active state
+        document.getElementById("tab-edit-vi").classList.toggle("active", lang === 'vi');
+        document.getElementById("tab-edit-en").classList.toggle("active", lang === 'en');
+        
+        renderSections();
+      }
+
+      // Switch language in Right Live Preview
+      function switchPreviewLang(lang) {
+        previewLang = lang;
+        document.getElementById("tab-prev-vi").classList.toggle("active", lang === 'vi');
+        document.getElementById("tab-prev-en").classList.toggle("active", lang === 'en');
+        renderPreview();
+      }
+
+      // Set Preview Frame light/dark background color contrast
+      function setPreviewTheme(theme) {
+        previewTheme = theme;
+        const frame = document.getElementById("preview-window-frame");
+        const card = document.getElementById("preview-card");
+        
+        document.getElementById("prev-theme-light").classList.toggle("active", theme === 'light');
+        document.getElementById("prev-theme-dark").classList.toggle("active", theme === 'dark');
+
+        if (theme === 'dark') {
+          frame.style.backgroundColor = "#0f172a";
+          card.style.backgroundColor = "#1e293b";
+          card.style.borderColor = "#334155";
+          card.style.color = "#f8fafc";
+          document.querySelectorAll("#preview-card h2").forEach(h2 => h2.style.color = "#60a5fa");
+          document.querySelectorAll("#preview-card p").forEach(p => p.style.color = "#94a3b8");
+        } else {
+          frame.style.backgroundColor = "";
+          card.style.backgroundColor = "";
+          card.style.borderColor = "";
+          card.style.color = "";
+          document.querySelectorAll("#preview-card h2").forEach(h2 => h2.style.color = "");
+          document.querySelectorAll("#preview-card p").forEach(p => p.style.color = "");
+        }
+        renderPreview();
+      }
+
+      // Call Google Translate public API Client-Side
+      async function translateText(text) {
+        if (!text.trim()) return "";
+        try {
+          const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=vi&tl=en&dt=t&q=${encodeURIComponent(text)}`;
+          const response = await fetch(url);
+          if (!response.ok) return text;
+          const data = await response.json();
+          let translated = "";
+          if (data && data[0]) {
+            data[0].forEach(item => {
+              if (item && item[0]) translated += item[0];
+            });
+          }
+          return translated || text;
+        } catch (e) {
+          console.error(e);
+          return text;
+        }
+      }
+
+      async function translateHTML(html) {
+        if (!html.trim()) return "";
+        if (!html.includes("<") && !html.includes(">")) {
+          return await translateText(html);
+        }
+        try {
+          const tempDiv = document.createElement("div");
+          tempDiv.innerHTML = html;
+          const children = Array.from(tempDiv.childNodes);
+          const translatedNodes = [];
+
+          for (let node of children) {
+            if (node.nodeType === Node.TEXT_NODE) {
+              const text = node.textContent.trim();
+              if (!text) {
+                translatedNodes.push(document.createTextNode(node.textContent));
+                continue;
+              }
+              const translatedVal = await translateText(text);
+              translatedNodes.push(document.createTextNode(translatedVal));
+            } else if (node.nodeType === Node.ELEMENT_NODE) {
+              const innerText = node.innerText.trim();
+              if (!innerText) {
+                translatedNodes.push(node.cloneNode(true));
+                continue;
+              }
+              const translatedVal = await translateText(innerText);
+              const cloned = node.cloneNode(true);
+              cloned.innerHTML = translatedVal;
+              translatedNodes.push(cloned);
+            } else {
+              translatedNodes.push(node.cloneNode(true));
+            }
+          }
+
+          tempDiv.innerHTML = "";
+          translatedNodes.forEach(node => tempDiv.appendChild(node));
+          return tempDiv.innerHTML;
+        } catch (e) {
+          console.error("HTML translation error", e);
+          return html;
+        }
+      }
+
+      // Translate a single field on demand
+      async function translateField(id, fieldType) {
+        const sec = sections.find(s => s.id === id);
+        if (!sec) return;
+
+        const btn = document.getElementById(`btn-trans-${fieldType}-${id}`);
+        const originalHtml = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = `<span class="material-symbols-outlined animate-spin" style="font-size:12px;">sync</span> Đang dịch...`;
+
+        try {
+          if (fieldType === 'title') {
+            if (sec.title_vi.trim()) {
+              sec.title_en = await translateText(sec.title_vi);
+            }
+          } else if (fieldType === 'content') {
+            if (sec.content_vi.trim()) {
+              sec.content_en = await translateHTML(sec.content_vi);
+            }
+          }
+          renderSections();
+          renderPreview();
+          showToast("ÄÃ£ dá»‹ch thÃ nh cÃ´ng má»™t trÆ°á»ng!");
+        } catch(e) {
+          showToast("Lá»—i káº¿t ná»‘i API dá»‹ch thuáº­t", "error");
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = originalHtml;
+        }
+      }
+
+      // Automatically translate empty EN fields
+      async function autoTranslateEmpty() {
+        let count = 0;
+        showToast("Äang phÃ¡t hiá»‡n & tá»± dá»‹ch cÃ¡c Ã´ Tiáº¿ng Anh trá»‘ng...");
+        
+        for (let sec of sections) {
+          if (!sec.title_en.trim() && sec.title_vi.trim()) {
+            sec.title_en = await translateText(sec.title_vi);
+            count++;
+          }
+          if (!sec.content_en.trim() && sec.content_vi.trim()) {
+            sec.content_en = await translateHTML(sec.content_vi);
+            count++;
+          }
+        }
+        
+        if (count > 0) {
+          showToast(`ÄÃ£ tá»± Ä‘á»™ng dá»‹ch xong ${count} ná»™i dung trá»‘ng!`);
+        }
+      }
+
+      // Force overwrite translation for all sections
+      async function translateAllForce() {
+        const ok = confirm("Báº¡n cÃ³ cháº¯c muá»‘n tá»± Ä‘á»™ng dá»‹ch dá»‹ch Ä‘Ã¨ toÃ n bá»™ báº£n Tiáº¿ng Anh? Dá»¯ liá»‡u tiáº¿ng Anh cÅ© chÆ°a lÆ°u sáº½ bá»‹ cáº­p nháº­t.");
+        if (!ok) return;
+
+        showToast("Äang dá»‹ch toÃ n bá»™ dá»¯ liá»‡u...");
+        for (let sec of sections) {
+          if (sec.title_vi.trim()) sec.title_en = await translateText(sec.title_vi);
+          if (sec.content_vi.trim()) sec.content_en = await translateHTML(sec.content_vi);
+        }
+        renderSections();
+        renderPreview();
+        showToast("Dá»‹ch thuáº­t toÃ n bá»™ thÃ nh cÃ´ng!");
+      }
+
+      // Preset data loading (Reset current page to default)
+      function loadPresetData() {
+        const ok = confirm("Báº¡n cÃ³ muá»‘n Ä‘áº·t láº¡i dá»¯ liá»‡u cá»§a trang hiá»‡n táº¡i vá» máº·c Ä‘á»‹nh gá»‘c?");
+        if (!ok) return;
+        rawLegalData[activeLegalPage] = { vi: "", en: "" };
+        loadPageData(activeLegalPage);
+        showToast("ÄÃ£ táº£i láº¡i dá»¯ liá»‡u máº·c Ä‘á»‹nh!");
+      }
+
+      // Simulate Database Save operation
+      function simulateSave() {
+        showToast("Äang kiá»ƒm thá»­ Ä‘á»‹nh dáº¡ng JSON gá»­i lÃªn...");
+        saveCurrentToRaw();
+        const jsonVI = rawLegalData[activeLegalPage].vi;
+        const jsonEN = rawLegalData[activeLegalPage].en;
+        
+        console.log("SENDING VI JSON TO FLASK:", jsonVI);
+        console.log("SENDING EN JSON TO FLASK:", jsonEN);
+        
+        setTimeout(() => {
+          showToast("XÃ¡c thá»±c JSON thÃ nh cÃ´ng! ÄÃ£ gá»­i lá»‡nh SQL UPDATE.", "success");
+          setTimeout(() => {
+            showToast("ÄÃ£ lÆ°u vÄ©nh viá»…n cáº¥u hÃ¬nh chÃ­nh sÃ¡ch vÃ o MySQL!", "success");
+          }, 600);
+        }, 800);
+      }
+
+      // Helper to escape HTML tags
+      function escapeHtml(text) {
+        if (!text) return "";
+        return text
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+    </script>
+  </body>
+</html>
