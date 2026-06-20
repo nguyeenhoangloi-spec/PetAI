@@ -905,6 +905,7 @@
     </main>
 
     <!-- Print styles relocated to head -->
+    <div id="payment-auto-invoice" data-auto-invoice="{{ auto_show_invoice|tojson|forceescape if auto_show_invoice else '' }}"></div>
 
     <!-- Invoice Popup Modal Markup -->
     <div
@@ -1271,17 +1272,21 @@
         };
 
         // Auto show invoice modal if triggered by backend on redirect
-        {% if auto_show_invoice %}
-        document.addEventListener("DOMContentLoaded", function () {
-          const autoData = {{ auto_show_invoice|tojson }};
-          console.log("Auto showing invoice from backend redirect:", autoData);
-          if (autoData) {
-            setTimeout(() => {
-              window.showPaymentSuccessBill(autoData);
-            }, 100);
+        const autoInvoiceEl = document.getElementById("payment-auto-invoice");
+        if (autoInvoiceEl) {
+          const autoInvoiceRaw = autoInvoiceEl.getAttribute("data-auto-invoice");
+          if (autoInvoiceRaw) {
+            try {
+              const autoData = JSON.parse(autoInvoiceRaw);
+              console.log("Auto showing invoice from backend redirect:", autoData);
+              setTimeout(() => {
+                window.showPaymentSuccessBill(autoData);
+              }, 100);
+            } catch (err) {
+              console.error("Error parsing auto invoice data:", err);
+            }
           }
-        });
-        {% endif %}
+        }
 
         const badgeClasses = {
           paid: "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border border-emerald-250 dark:border-emerald-900/40 shadow-sm",
