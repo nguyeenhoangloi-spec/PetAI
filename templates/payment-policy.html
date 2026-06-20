@@ -1,8 +1,7 @@
-<!-- html-validate-disable no-dup-class, void-style, attribute-allowed-values -->
 <!DOCTYPE html>
-
-<html class="{{ 'dark' if ui_theme == 'dark' else 'light' }}{{ ' i18n-loading' if ui_language == 'en' else '' }}"
-  lang="{{ ui_language or 'vi' }}" data-theme="{{ ui_theme or 'light' }}">
+{% set html_class = 'dark' if ui_theme == 'dark' else 'light' %}
+{% if ui_language == 'en' %}{% set html_class = html_class ~ ' i18n-loading' %}{% endif %}
+<html class="{{ html_class }}" lang="{{ ui_language or 'vi' }}" data-theme="{{ ui_theme or 'light' }}">
 
 <head>
   <script>
@@ -32,18 +31,19 @@
       }
     </style>
   </noscript>
-  <meta charset="utf-8" />
-  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-  <title data-i18n="supportPageTitle">{{ 'Support - PetAI' if ui_language == 'en' else 'Hỗ trợ - PetAI' }}</title>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  {% set page_title = 'Payment Policy | PetAI' if ui_language == 'en' else 'Chính sách thanh toán | PetAI' %}
+  <title data-i18n="paymentPolicyPageTitle">{{ page_title }}</title>
   <script src="{{ url_for('static', filename='js/tailwindcss.js') }}"></script>
   <script src="{{ url_for('static', filename='js/chart.umd.min.js') }}"></script>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/typography.css') }}" />
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/theme-dark.css') }}" />
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile-header-fix.css') }}" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/typography.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/theme-dark.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile-header-fix.css') }}">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
   <link
     href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
-    rel="stylesheet" />
+    rel="stylesheet">
   <style>
     body {
       background-color: #f9f9ff;
@@ -73,7 +73,6 @@
       background: #f1f3fc;
       box-shadow: none;
     }
-
     .material-symbols-outlined {
       font-variation-settings:
         "FILL" 0,
@@ -100,7 +99,7 @@
       }
     }
 
-    .dashboard-width nav>div,
+    .dashboard-width nav > div,
     .dashboard-width footer {
       width: 100% !important;
       max-width: none !important;
@@ -112,15 +111,14 @@
     }
 
     @media (min-width: 768px) {
-
-      .dashboard-width nav>div,
+      .dashboard-width nav > div,
       .dashboard-width footer {
         padding-left: 1.5rem !important;
         padding-right: 1.5rem !important;
       }
     }
 
-    .dashboard-width footer>.footer-inner {
+    .dashboard-width footer > .footer-inner {
       width: 100% !important;
       max-width: none !important;
       margin-left: 0 !important;
@@ -129,7 +127,7 @@
       padding-right: 0 !important;
     }
 
-    .dashboard-width main>section {
+    .dashboard-width main > section {
       width: 100% !important;
       max-width: none !important;
       margin-left: 0 !important;
@@ -139,9 +137,9 @@
       box-sizing: border-box;
     }
 
-    .dashboard-width main>section>.grid,
-    .dashboard-width main>section>.glass-card,
-    .dashboard-width main>section>div:not(.aura-glow) {
+    .dashboard-width main > section > .grid,
+    .dashboard-width main > section > .glass-card,
+    .dashboard-width main > section > div:not(.aura-glow) {
       width: 100% !important;
       max-width: none !important;
     }
@@ -151,28 +149,22 @@
         font-size: 30px !important;
         line-height: 36px !important;
       }
-
       .aura-glow {
         display: none !important;
       }
-
       .px-margin-desktop {
         padding-left: 16px !important;
         padding-right: 16px !important;
       }
-
       /* Header/nav mobile adjustments to prevent overflow */
-      nav>div {
+      nav > div {
         height: 52px !important;
         padding-left: 12px !important;
         padding-right: 12px !important;
       }
-
       nav img.h-16 {
         height: 34px !important;
       }
-
-      /* Reduce register button size on phones */
       nav a.bg-primary {
         padding-left: 12px !important;
         padding-right: 12px !important;
@@ -180,13 +172,9 @@
         padding-bottom: 6px !important;
         font-size: 14px !important;
       }
-
-      /* Reduce spacing around header links */
       nav .flex.items-center.gap-6 {
         gap: 8px !important;
       }
-
-      /* Ensure fixed header doesn't overlap content: reduce main top padding on small screens */
       main.relative.z-10.pt-20 {
         padding-top: 60px !important;
       }
@@ -321,7 +309,7 @@
     <div class="flex justify-between items-center w-full px-4 md:px-6 h-16">
       <div class="flex items-center gap-gutter">
         <a href="{{ url_for('home.index') }}" class="inline-flex items-center gap-0">
-          <img alt="PetAI New Logo" class="w-auto h-10 md:h-24" src="{{ url_for('static', filename='images/logo.png') }}" />
+          <img alt="PetAI New Logo" class="w-auto h-10 md:h-24" src="{{ url_for('static', filename='images/logo.png') }}">
           <span class="ml-0 text-lg md:text-2xl font-semibold text-primary">PetAI</span>
         </a>
       </div>
@@ -419,111 +407,67 @@
   <main class="relative z-10 pt-20">
     <section class="px-4 md:px-6 w-full py-16 mb-16 max-w-4xl mx-auto dashboard-width">
       <div class="glass-card p-gutter rounded-3xl bg-surface-container-low border border-outline-variant/30">
-        <h1 class="headline-lg text-on-surface mb-6 font-bold" data-i18n="support">
-          <span data-i18n="homeStatsSupport">HỖ TRỢ</span>
+        <h1 class="headline-lg text-on-surface mb-6 font-bold" data-i18n="paymentPolicy">
+          <span data-i18n="paymentPolicy">Chính sách thanh toán</span>
         </h1>
-        {% set db_content = get_config('support_content_' ~ ui_language) %}
+        {% set db_content = get_config('payment_policy_content_' ~ ui_language) %}
         {% if db_content %}
           <div class="space-y-6 text-on-surface-variant body-md leading-relaxed">
             {{ db_content | safe }}
           </div>
         {% else %}
         <div class="space-y-6 text-on-surface-variant body-md leading-relaxed">
-          <div class="text-center mb-10">
-            <p class="body-md text-on-surface-variant mt-2" data-i18n="supportSubtitle">
-              <span data-i18n="supportSubtitle">Chúng tôi luôn sẵn sàng lắng nghe mọi phản hồi từ phía
-                bạn.</span>
-            </p>
-          </div>
+          <p class="mb-4 text-on-surface-variant" data-i18n="paymentUpdateDatePrefix">
+            <span data-i18n="paymentUpdateDatePrefix">Ngày cập nhật: 20/06/2026</span>
+          </p>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div class="bg-white border border-outline-variant/30 rounded-2xl p-6 shadow-sm">
-              <h3 class="text-xl font-bold text-primary mb-4" data-i18n="supportQuickInfoTitle">
-                <span data-i18n="supportQuickInfoTitle">Thông tin nhanh</span>
-              </h3>
-              <p>
-                <strong data-i18n="supportEmailLabel"><span data-i18n="supportEmailLabel">Email hỗ trợ:</span></strong>
-                <a href="mailto:{{ get_config('site_email', 'support@pet.ai') }}"
-                  class="text-primary hover:underline font-medium">{{ get_config('site_email', 'support@pet.ai') }}</a>
-              </p>
-              <p class="mt-2">
-                <strong data-i18n="supportResponseTimeLabel"><span data-i18n="supportResponseTimeLabel">Thời gian phản
-                    hồi dự kiến:</span></strong><span data-i18n="fromLabel">Từ </span><strong
-                  data-i18n="businessDaysCount"><span data-i18n="businessDaysCount">1 – 3 ngày làm việc</span></strong>.
-              </p>
-              <h3 class="text-xl font-bold text-primary mt-6 mb-4" data-i18n="supportBasicGuideTitle">
-                <span data-i18n="supportBasicGuideTitle">Hướng dẫn sử dụng cơ bản</span>
-              </h3>
-              <p class="mb-2" data-i18n-html="supportStep1">
-                1. Tại giao diện chính, chọn
-                <strong data-i18n="login"><span data-i18n="login">Đăng nhập</span></strong><span
-                  data-i18n="orCreateAccount">hoặc tạo tài khoản mới.</span>
-              </p>
-              <p class="mb-2" data-i18n="supportStep2">
-                <span data-i18n="supportStep2">2. Vào trang Nhận Diện, cho quyền máy ảnh hoặc tải lên
-                  hình.</span>
-              </p>
-              <p data-i18n="supportStep3">
-                <span data-i18n="supportStep3">3. Chờ từ 2 - 4 giây và AI sẽ trả về kết quả 3 giống chó
-                  tiềm năng nhất cùng với lịch sử thống kê.</span>
-              </p>
-            </div>
+          <h2 class="text-xl font-bold text-primary mt-6 mb-2" data-i18n="paymentSection1Title">
+            <span data-i18n="paymentSection1Title">1. Phương thức thanh toán</span>
+          </h2>
+          <p data-i18n="paymentSection1Desc">
+            <span data-i18n="paymentSection1Desc">Hệ thống hỗ trợ thanh toán qua hình thức chuyển khoản ngân hàng bằng mã VietQR tự động hoặc chuyển khoản trực tiếp với thông tin được hiển thị chi tiết khi nâng cấp gói.</span>
+          </p>
 
-            <div class="space-y-4">
-              <h3 class="text-xl font-bold text-primary mb-4" data-i18n="supportFaqTitle">
-                <span data-i18n="supportFaqTitle">Các câu hỏi thường gặp (FAQ)</span>
-              </h3>
+          <h2 class="text-xl font-bold text-primary mt-6 mb-2" data-i18n="paymentSection2Title">
+            <span data-i18n="paymentSection2Title">2. Quy trình xử lý giao dịch</span>
+          </h2>
+          <p data-i18n="paymentSection2Desc">
+            <span data-i18n="paymentSection2Desc">Sau khi chuyển khoản đúng số tiền và nội dung ghi chú theo hướng dẫn, hệ thống VietQR tự động sẽ ghi nhận và kích hoạt gói dịch vụ trong vòng từ 1 đến 5 phút. Trong trường hợp giao dịch cần duyệt thủ công từ quản trị viên, thời gian xử lý có thể kéo dài tối đa 24 giờ làm việc.</span>
+          </p>
 
-              <details class="glass-card p-4 rounded-xl cursor-pointer bg-white group border border-outline-variant/30">
-                <summary class="font-bold flex justify-between items-center text-on-surface">
-                  <span data-i18n="supportFaq1Q">Làm sao để đăng nhập?</span><span
-                    class="group-open:rotate-180 transition-transform">▼</span>
-                </summary>
-                <p class="mt-2 text-on-surface-variant text-sm" data-i18n="supportFaq1A">
-                  <span data-i18n="supportFaq1A">Bạn nhấp vào nút Đăng nhập ở góc trên cùng của Website
-                     hoặc qua menu di động để sử dụng Email/Google.</span>
-                </p>
-              </details>
+          <h2 class="text-xl font-bold text-primary mt-6 mb-2" data-i18n="paymentSection3Title">
+            <span data-i18n="paymentSection3Title">3. Chính sách hoàn tiền</span>
+          </h2>
+          <p data-i18n="paymentSection3Desc">
+            <span data-i18n="paymentSection3Desc">Chúng tôi thực hiện hoàn tiền trong các trường hợp sau: (a) Lỗi hệ thống phát sinh khiến giao dịch bị trừ tiền nhưng tài khoản không được kích hoạt gói dịch vụ và không thể khắc phục kỹ thuật; (b) Người dùng chuyển khoản thừa tiền so với giá trị gói dịch vụ đăng ký. Mọi yêu cầu hoàn trả vui lòng gửi về email support@pet.ai kèm theo ảnh chụp biên lai giao dịch để được đối soát và xử lý trong vòng 3-5 ngày làm việc.</span>
+          </p>
 
-              <details class="glass-card p-4 rounded-xl cursor-pointer bg-white group border border-outline-variant/30">
-                <summary class="font-bold flex justify-between items-center text-on-surface">
-                  <span data-i18n="supportFaq2Q">Làm sao để xóa tài khoản?</span><span
-                    class="group-open:rotate-180 transition-transform">▼</span>
-                </summary>
-                <p class="mt-2 text-on-surface-variant text-sm">
-                  <span data-i18n="sendMailUnder">Gửi thư theo</span><a href="{{ url_for('legal.data_deletion') }}"
-                    target="_blank" rel="noopener noreferrer" class="text-primary hover:underline"
-                    data-i18n="dataDeletion"><span data-i18n="dataDeletion">Chính sách xóa dữ liệu</span></a><span
-                    data-i18n="ourHelpSupport">của chúng tôi để được trợ giúp.</span>
-                </p>
-              </details>
+          <h2 class="text-xl font-bold text-primary mt-6 mb-2" data-i18n="paymentSection4Title">
+            <span data-i18n="paymentSection4Title">4. Bảo mật giao dịch</span>
+          </h2>
+          <p data-i18n="paymentSection4Desc">
+            <span data-i18n="paymentSection4Desc">Mọi giao dịch thanh toán được thực hiện an toàn qua cổng tích hợp, thông tin tài khoản ngân hàng và nội dung giao dịch được xử lý bảo mật theo tiêu chuẩn mã hóa SSL/TLS, cam kết không lưu giữ thông tin nhạy cảm của khách hàng.</span>
+          </p>
 
-              <details class="glass-card p-4 rounded-xl cursor-pointer bg-white group border border-outline-variant/30">
-                <summary class="font-bold flex justify-between items-center text-on-surface">
-                  <span data-i18n="supportFaq3Q">Làm sao để liên hệ hỗ trợ?</span><span
-                    class="group-open:rotate-180 transition-transform">▼</span>
-                </summary>
-                <p class="mt-2 text-on-surface-variant text-sm">
-                  <span data-i18n="useFormBelow">Bạn có thể sử dụng biểu mẫu phía dưới mục</span><a
-                    href="{{ url_for('legal.contact') }}" class="text-primary hover:underline" target="_blank"
-                    rel="noopener noreferrer" data-i18n="contact"><span data-i18n="contact">Liên hệ</span></a><span
-                    data-i18n="orSendSupportEmail">hoặc gửi thư về {{ get_config('site_email', 'support@pet.ai') }}.</span>
-                </p>
-              </details>
+          <h2 class="text-xl font-bold text-primary mt-6 mb-2" data-i18n="paymentSection5Title">
+            <span data-i18n="paymentSection5Title">5. Giải quyết tranh chấp và khiếu nại</span>
+          </h2>
+          <p data-i18n="paymentSection5Desc">
+            <span data-i18n="paymentSection5Desc">Mọi vấn đề khiếu nại liên quan đến thanh toán, vui lòng cung cấp mã đơn hàng (Order Code) và minh chứng chuyển khoản gửi tới bộ phận hỗ trợ khách hàng để được giải quyết nhanh nhất.</span>
+          </p>
 
-              <details class="glass-card p-4 rounded-xl cursor-pointer bg-white group border border-outline-variant/30">
-                <summary class="font-bold flex justify-between items-center text-on-surface">
-                  <span data-i18n="supportFaq4Q">Tôi gặp lỗi trong ứng dụng thì phải làm gì?</span><span
-                    class="group-open:rotate-180 transition-transform">▼</span>
-                </summary>
-                <p class="mt-2 text-on-surface-variant text-sm" data-i18n="supportFaq4A">
-                  <span data-i18n="supportFaq4A">Rất mong bạn thông cảm, hãy chụp lại lỗi đó (screenshot),
-                    ghi rõ hành động dẫn tới lỗi và gửi email về cho chúng tôi
-                    sớm nhất!</span>
-                </p>
-              </details>
-            </div>
-          </div>
+          <h2 class="text-xl font-bold text-primary mt-6 mb-2" data-i18n="privacySection8Title">
+            <span data-i18n="privacySection8Title">8. Thông tin liên hệ</span>
+          </h2>
+          <p class="leading-loose">
+            Email:
+            <a href="mailto:{{ get_config('site_email', 'support@pet.ai') }}"
+              class="text-primary hover:underline font-medium">{{ get_config('site_email', 'support@pet.ai') }}</a><br>
+            Website:
+            <a href="https://pet.ai" class="text-primary hover:underline font-medium" target="_blank"
+              rel="noopener noreferrer">https://pet.ai</a><br><span data-i18n="addressLabelPlaceholder">Địa chỉ:
+              P16, Đường số 8, KDC lô 49, Khu đô thị Nam Cần Thơ, P. Cái Răng, TP. Cần Thơ</span>
+          </p>
         </div>
         {% endif %}
       </div>
@@ -535,7 +479,7 @@
         <div class="lg:col-span-6 space-y-6">
           <div class="headline-md font-bold tracking-tighter text-primary">
             <span class="inline-flex items-center gap-0">
-              <img alt="PetAI New Logo" class="h-8 w-auto md:h-10" src="{{ url_for('static', filename='images/logo.png') }}" />
+              <img alt="PetAI New Logo" class="h-8 w-auto md:h-10" src="{{ url_for('static', filename='images/logo.png') }}">
               <span class="ml-0 text-sm md:text-lg font-semibold text-primary">PetAI</span>
             </span>
           </div>
@@ -557,13 +501,13 @@
               </li>
               <li class="">
                 <a class="text-on-surface-variant hover:text-primary transition-colors font-medium" target="_blank"
-                  rel="noopener noreferrer" href="{{ url_for('legal.payment_policy') }}" data-i18n="paymentPolicy"><span
-                    data-i18n="paymentPolicy">Chính sách thanh toán</span></a>
+                  rel="noopener noreferrer" href="{{ url_for('legal.terms_of_service') }}" data-i18n="terms"><span
+                    data-i18n="terms">Điều khoản sử dụng</span></a>
               </li>
               <li class="">
                 <a class="text-on-surface-variant hover:text-primary transition-colors font-medium" target="_blank"
-                  rel="noopener noreferrer" href="{{ url_for('legal.terms_of_service') }}" data-i18n="terms"><span
-                    data-i18n="terms">Điều khoản sử dụng</span></a>
+                  rel="noopener noreferrer" href="{{ url_for('legal.payment_policy') }}" data-i18n="paymentPolicy"><span
+                    data-i18n="paymentPolicy">Chính sách thanh toán</span></a>
               </li>
               <li class="">
                 <a class="text-on-surface-variant hover:text-primary transition-colors font-medium" target="_blank"
@@ -608,9 +552,7 @@
           </p>
           <div class="flex gap-6">
             <a class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
-
               target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.user_guide') }}"
-
               data-i18n="footerUserGuide"><span data-i18n="footerUserGuide">HƯỚNG DẪN SỬ DỤNG</span></a>
 
             <a class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
@@ -627,6 +569,7 @@
       </div>
     </div>
   </footer>
+
   <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
   <script src="{{ url_for('static', filename='js/script.js') }}"></script>
     <script>

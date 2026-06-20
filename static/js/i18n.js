@@ -185,6 +185,7 @@
       payments: "Lịch sử thanh toán",
       manageUsers: "Quản lý người dùng",
       approveOrders: "Duyệt đơn",
+      systemConfig: "Cấu hình hệ thống",
       adminGroupTitle: "QUẢN TRỊ VIÊN",
 
       /* ── Sidebar ── */
@@ -207,6 +208,7 @@
       collection: "Bộ sưu tập",
       privacy: "Chính sách quyền riêng tư",
       terms: "Điều khoản sử dụng",
+      paymentPolicy: "Chính sách thanh toán",
       dataDeletion: "Chính sách xóa dữ liệu",
       support: "Hỗ trợ",
       contact: "Liên hệ",
@@ -214,8 +216,21 @@
       footerUserGuide: "HƯỚNG DẪN SỬ DỤNG",
       footerTerms: "ĐIỀU KHOẢN",
       footerPrivacy: "BẢO MẬT",
+      footerPayment: "THANH TOÁN",
       footerDesc:
         "Ứng dụng nhận diện giống chó bằng AI dành cho người yêu thú cưng. Kết quả chính xác, nhanh chóng.",
+      paymentPolicyPageTitle: "Chính sách thanh toán | PetAI",
+      paymentUpdateDatePrefix: "Ngày cập nhật: 20/06/2026",
+      paymentSection1Title: "1. Phương thức thanh toán",
+      paymentSection1Desc: "Hệ thống hỗ trợ thanh toán qua hình thức chuyển khoản ngân hàng bằng mã VietQR tự động hoặc chuyển khoản trực tiếp với thông tin được hiển thị chi tiết khi nâng cấp gói.",
+      paymentSection2Title: "2. Quy trình xử lý giao dịch",
+      paymentSection2Desc: "Sau khi chuyển khoản đúng số tiền và nội dung ghi chú theo hướng dẫn, hệ thống VietQR tự động sẽ ghi nhận và kích hoạt gói dịch vụ trong vòng từ 1 đến 5 phút. Trong trường hợp giao dịch cần duyệt thủ công từ quản trị viên, thời gian xử lý có thể kéo dài tối đa 24 giờ làm việc.",
+      paymentSection3Title: "3. Chính sách hoàn tiền",
+      paymentSection3Desc: "Chúng tôi thực hiện hoàn tiền trong các trường hợp sau: (a) Lỗi hệ thống phát sinh khiến giao dịch bị trừ tiền nhưng tài khoản không được kích hoạt gói dịch vụ và không thể khắc phục kỹ thuật; (b) Người dùng chuyển khoản thừa tiền so với giá trị gói dịch vụ đăng ký. Mọi yêu cầu hoàn trả vui lòng gửi về email support@pet.ai kèm theo ảnh chụp biên lai giao dịch để được đối soát và xử lý trong vòng 3-5 ngày làm việc.",
+      paymentSection4Title: "4. Bảo mật giao dịch",
+      paymentSection4Desc: "Mọi giao dịch thanh toán được thực hiện an toàn qua cổng tích hợp, thông tin tài khoản ngân hàng và nội dung giao dịch được xử lý bảo mật theo tiêu chuẩn mã hóa SSL/TLS, cam kết không lưu giữ thông tin nhạy cảm của khách hàng.",
+      paymentSection5Title: "5. Giải quyết tranh chấp và khiếu nại",
+      paymentSection5Desc: "Mọi vấn đề khiếu nại liên quan đến thanh toán, vui lòng cung cấp mã đơn hàng (Order Code) và minh chứng chuyển khoản gửi tới bộ phận hỗ trợ khách hàng để được giải quyết nhanh nhất.",
 
       /* ── Dashboard ── */
       dashWelcomeDesc:
@@ -1779,6 +1794,7 @@
       payments: "Payment History",
       manageUsers: "Manage Users",
       approveOrders: "Approve Orders",
+      systemConfig: "System Configuration",
       adminGroupTitle: "ADMINISTRATOR",
 
       /* ── Sidebar ── */
@@ -1801,6 +1817,7 @@
       collection: "Collection",
       privacy: "Privacy Policy",
       terms: "Terms of Service",
+      paymentPolicy: "Payment Policy",
       dataDeletion: "Data Deletion Policy",
       support: "Support",
       contact: "Contact",
@@ -1808,8 +1825,21 @@
       footerUserGuide: "USER GUIDE",
       footerTerms: "TERMS",
       footerPrivacy: "PRIVACY",
+      footerPayment: "PAYMENT",
       footerDesc:
         "AI-powered dog breed identification app for pet lovers. Fast and accurate results.",
+      paymentPolicyPageTitle: "Payment Policy | PetAI",
+      paymentUpdateDatePrefix: "Last updated: June 20, 2026",
+      paymentSection1Title: "1. Payment Methods",
+      paymentSection1Desc: "The system supports bank transfer payment via automatic VietQR code or direct bank transfer with details displayed during the plan upgrade process.",
+      paymentSection2Title: "2. Transaction Processing",
+      paymentSection2Desc: "After transferring the exact amount and memo matching the instructions, the automatic VietQR gateway will verify and activate your subscription plan within 1 to 5 minutes. If manual review is required, processing may take up to 24 business hours.",
+      paymentSection3Title: "3. Refund Policy",
+      paymentSection3Desc: "We issue refunds in the following scenarios: (a) A system error occurs where funds are deducted but the subscription plan cannot be activated and technical resolution is impossible; (b) The user transfers an amount exceeding the registered plan price. All refund requests must be sent to support@pet.ai with a transaction receipt screenshot for audit and processing within 3-5 business days.",
+      paymentSection4Title: "4. Transaction Security",
+      paymentSection4Desc: "All payment transactions are securely routed through our integrated gateway. Bank account details and transaction memos are encrypted using SSL/TLS standards. We commit to never storing sensitive client credentials.",
+      paymentSection5Title: "5. Disputes and Complaints",
+      paymentSection5Desc: "For any billing complaints or disputes, please provide the Order Code and bank transfer proof to our customer support desk for immediate resolution.",
 
       /* ── Dashboard ── */
       dashWelcomeDesc:
@@ -3341,6 +3371,18 @@
   }
 
   function applyTranslations(lang) {
+    if (window.PetAI_DynamicSettings) {
+      if (window.PetAI_DynamicSettings.vi) {
+        for (var k in window.PetAI_DynamicSettings.vi) {
+          TRANSLATIONS.vi[k] = window.PetAI_DynamicSettings.vi[k];
+        }
+      }
+      if (window.PetAI_DynamicSettings.en) {
+        for (var k in window.PetAI_DynamicSettings.en) {
+          TRANSLATIONS.en[k] = window.PetAI_DynamicSettings.en[k];
+        }
+      }
+    }
     var dict = TRANSLATIONS[lang];
     if (!dict) return;
 

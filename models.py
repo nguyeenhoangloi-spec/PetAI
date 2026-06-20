@@ -533,8 +533,19 @@ class UserQuota:
         _ensure_column(conn, "user_quota", "paid_uses_remaining", "INTEGER NULL")
 
     @staticmethod
-    def _paid_plan_limit(plan: str) -> Optional[int]:
+    def _paid_plan_limit(conn, plan: str) -> Optional[int]:
         plan = (plan or "free").strip().lower()
+        if plan == "free":
+            return None
+        if conn:
+            try:
+                scans_str = SystemConfig.get(conn, f"plan_{plan}_scans")
+                if scans_str:
+                    if scans_str.lower() in ("unlimited", "-1", "none"):
+                        return None
+                    return int(scans_str)
+            except Exception:
+                pass
         return UserQuota.PAID_PLAN_USES.get(plan, None)
 
     @staticmethod
@@ -614,7 +625,7 @@ class UserQuota:
         print(f"[DEBUG] set_plan: user_id={user_id}, plan={plan}, plan_expire={plan_expire}")
         UserQuota.create_table(conn)
         plan = (plan or "free").strip().lower()
-        limit = UserQuota._paid_plan_limit(plan)
+        limit = UserQuota._paid_plan_limit(conn, plan)
         with conn.cursor() as cur:
             if plan_expire:
                 cur.execute(
@@ -753,8 +764,85 @@ class UserQuota:
             conn.commit()
 
 
+class SystemConfig:
+    """Model quản lý cấu hình hệ thống động (Admin-only settings)"""
+
+    @staticmethod
+    def create_table(conn):
+        with conn.cursor() as cur:
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS system_config (
+                    config_key VARCHAR(100) PRIMARY KEY,
+                    config_value TEXT NOT NULL,
+                    description VARCHAR(500) NULL,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                )
+            """)
+            conn.commit()
+
+    @staticmethod
+    def get_all(conn) -> Dict[str, str]:
+        SystemConfig.create_table(conn)
+        with conn.cursor() as cur:
+            cur.execute("SELECT config_key, config_value FROM system_config")
+            rows = cur.fetchall() or []
+            return {r[0]: r[1] for r in rows}
+
+    @staticmethod
+    def get(conn, key: str, default: str = "") -> str:
+        SystemConfig.create_table(conn)
+        with conn.cursor() as cur:
+            cur.execute("SELECT config_value FROM system_config WHERE config_key = %s", (key,))
+            row = cur.fetchone()
+            return row[0] if row else default
+
+    @staticmethod
+    def set(conn, key: str, value: str, description: str = None) -> None:
+        SystemConfig.create_table(conn)
+        with conn.cursor() as cur:
+            cur.execute("""
+                INSERT INTO system_config (config_key, config_value, description)
+                VALUES (%s, %s, %s)
+                ON DUPLICATE KEY UPDATE config_value = %s, description = COALESCE(%s, description)
+            """, (key, value, description, value, description))
+            conn.commit()
+
+    @staticmethod
+    def seed_defaults(conn):
+        defaults = {
+            "site_logo": "/static/images/logo.png",
+            "site_email": "support@pet.ai",
+            "plan_basic_price": "1000",
+            "plan_basic_days": "7",
+            "plan_basic_scans": "50",
+            "plan_pro_price": "5000",
+            "plan_pro_days": "30",
+            "plan_pro_scans": "200",
+            "plan_enterprise_price": "15000",
+            "plan_enterprise_days": "90",
+            "plan_enterprise_scans": "unlimited",
+            "privacy_policy_content_vi": "",
+            "privacy_policy_content_en": "",
+            "terms_of_service_content_vi": "",
+            "terms_of_service_content_en": "",
+            "payment_policy_content_vi": "",
+            "payment_policy_content_en": "",
+            "data_deletion_content_vi": "",
+            "data_deletion_content_en": "",
+            "support_content_vi": "",
+            "support_content_en": ""
+        }
+        for k, v in defaults.items():
+            with conn.cursor() as cur:
+                cur.execute("SELECT 1 FROM system_config WHERE config_key = %s", (k,))
+                if not cur.fetchone():
+                    SystemConfig.set(conn, k, v)
+
+
 def init_database(conn):
     """Khởi tạo tất cả các bảng cần thiết"""
+    SystemConfig.create_table(conn)
+    SystemConfig.seed_defaults(conn)
     PredictionHistory.create_table(conn)
     UserSettings.create_table(conn)
     UserQuota.create_table(conn)

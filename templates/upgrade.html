@@ -1335,6 +1335,9 @@
             <a class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4" target="_blank" rel="noopener noreferrer" href="/user-guide" data-i18n="footerUserGuide"><span data-i18n="footerUserGuide">HƯỚNG DẪN SỬ DỤNG</span></a>
             <a class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4" target="_blank" rel="noopener noreferrer" href="/terms-of-service" data-i18n="footerTerms"><span data-i18n="footerTerms">ĐIỀU KHOẢN</span></a>
             <a class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4" target="_blank" rel="noopener noreferrer" href="/privacy-policy" data-i18n="footerPrivacy"><span data-i18n="footerPrivacy">BẢO MẬT</span></a>
+            <a class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
+              target="_blank" rel="noopener noreferrer" href="/payment-policy"
+              data-i18n="footerPayment"><span data-i18n="footerPayment">THANH TOÁN</span></a>
           </div>
         </div>
       </div>
@@ -1516,6 +1519,71 @@
       })();
     </script>
     <script src="{{ url_for('static', filename='js/toasts.js') }}"></script>
+  <script>
+    (function() {
+      function formatVND(val, suffix) {
+        if (!val) return "";
+        const num = parseFloat(String(val).replace(/[^0-9]/g, ''));
+        if (isNaN(num)) return val + suffix;
+        return num.toLocaleString('en-US').replace(/,/g, '.') + suffix;
+      }
+      function formatVND_EN(val, suffix) {
+        if (!val) return "";
+        const num = parseFloat(String(val).replace(/[^0-9]/g, ''));
+        if (isNaN(num)) return val + suffix;
+        return num.toLocaleString('en-US') + suffix;
+      }
+      
+      window.PetAI_DynamicSettings = {
+        vi: {
+          planBasicPrice: formatVND("{{ get_config('plan_basic_price', '1000') }}", "đ"),
+          planProPrice: formatVND("{{ get_config('plan_pro_price', '5000') }}", "đ"),
+          planEntPrice: formatVND("{{ get_config('plan_enterprise_price', '15000') }}", "đ"),
+          planBasicPriceSub: "/ {{ get_config('plan_basic_days', '7') }} ngày sử dụng",
+          planProPriceSub: "/ {{ get_config('plan_pro_days', '30') }} ngày sử dụng",
+          planEntPriceSub: "/ {{ get_config('plan_enterprise_days', '90') }} ngày sử dụng",
+          scanLimit50: "{{ get_config('plan_basic_scans', '50') }} lượt nhận diện",
+          scanLimit200: "{{ get_config('plan_pro_scans', '200') }} lượt nhận diện",
+          scanLimitUnlimit: "{{ 'Không giới hạn nhận diện' if get_config('plan_enterprise_scans', 'unlimited') == 'unlimited' else (get_config('plan_enterprise_scans', 'unlimited') ~ ' lượt nhận diện') }}",
+          optPro: "Chuyên nghiệp (Pro) — " + formatVND("{{ get_config('plan_pro_price', '5000') }}", "đ") + " / {{ get_config('plan_pro_days', '30') }} ngày / {{ get_config('plan_pro_scans', '200') }} lượt",
+          optBasic: "Cơ bản (Basic) — " + formatVND("{{ get_config('plan_basic_price', '1000') }}", "đ") + " / {{ get_config('plan_basic_days', '7') }} ngày / {{ get_config('plan_basic_scans', '50') }} lượt",
+          optEnterprise: "Doanh nghiệp (Enterprise) — " + formatVND("{{ get_config('plan_enterprise_price', '15000') }}", "đ") + " / {{ get_config('plan_enterprise_days', '90') }} ngày / " + ("{{ get_config('plan_enterprise_scans', 'unlimited') }}" === "unlimited" ? "Không giới hạn" : "{{ get_config('plan_enterprise_scans', 'unlimited') }} lượt"),
+          planBasicName: "Cơ bản (Basic)",
+          planBasicDuration: "{{ get_config('plan_basic_days', '7') }} ngày",
+          planBasicLimit: "{{ get_config('plan_basic_scans', '50') }} lượt",
+          planProName: "Chuyên nghiệp (Pro)",
+          planProDuration: "{{ get_config('plan_pro_days', '30') }} ngày",
+          planProLimit: "{{ get_config('plan_pro_scans', '200') }} lượt",
+          planEntName: "Doanh nghiệp (Enterprise)",
+          planEntDuration: "{{ get_config('plan_enterprise_days', '90') }} ngày",
+          planEntLimit: "{{ 'Không giới hạn' if get_config('plan_enterprise_scans', 'unlimited') == 'unlimited' else (get_config('plan_enterprise_scans', 'unlimited') ~ ' lượt') }}"
+        },
+        en: {
+          planBasicPrice: formatVND_EN("{{ get_config('plan_basic_price', '1000') }}", " VND"),
+          planProPrice: formatVND_EN("{{ get_config('plan_pro_price', '5000') }}", " VND"),
+          planEntPrice: formatVND_EN("{{ get_config('plan_enterprise_price', '15000') }}", " VND"),
+          planBasicPriceSub: "/ {{ get_config('plan_basic_days', '7') }} days usage",
+          planProPriceSub: "/ {{ get_config('plan_pro_days', '30') }} days usage",
+          planEntPriceSub: "/ {{ get_config('plan_enterprise_days', '90') }} days usage",
+          scanLimit50: "{{ get_config('plan_basic_scans', '50') }} AI scans",
+          scanLimit200: "{{ get_config('plan_pro_scans', '200') }} AI scans",
+          scanLimitUnlimit: "{{ 'Unlimited AI scans' if get_config('plan_enterprise_scans', 'unlimited') == 'unlimited' else (get_config('plan_enterprise_scans', 'unlimited') ~ ' AI scans') }}",
+          optPro: "Professional (Pro) — " + formatVND_EN("{{ get_config('plan_pro_price', '5000') }}", " VND") + " / {{ get_config('plan_pro_days', '30') }} days / {{ get_config('plan_pro_scans', '200') }} scans",
+          optBasic: "Basic (Basic) — " + formatVND_EN("{{ get_config('plan_basic_price', '1000') }}", " VND") + " / {{ get_config('plan_basic_days', '7') }} days / {{ get_config('plan_basic_scans', '50') }} scans",
+          optEnterprise: "Enterprise (Enterprise) — " + formatVND_EN("{{ get_config('plan_enterprise_price', '15000') }}", " VND") + " / {{ get_config('plan_enterprise_days', '90') }} days / " + ("{{ get_config('plan_enterprise_scans', 'unlimited') }}" === "unlimited" ? "Unlimited" : "{{ get_config('plan_enterprise_scans', 'unlimited') }} scans"),
+          planBasicName: "Basic",
+          planBasicDuration: "{{ get_config('plan_basic_days', '7') }} days",
+          planBasicLimit: "{{ get_config('plan_basic_scans', '50') }} scans",
+          planProName: "Pro",
+          planProDuration: "{{ get_config('plan_pro_days', '30') }} days",
+          planProLimit: "{{ get_config('plan_pro_scans', '200') }} scans",
+          planEntName: "Enterprise",
+          planEntDuration: "{{ get_config('plan_enterprise_days', '90') }} days",
+          planEntLimit: "{{ 'Unlimited' if get_config('plan_enterprise_scans', 'unlimited') == 'unlimited' else (get_config('plan_enterprise_scans', 'unlimited') ~ ' scans') }}"
+        }
+      };
+    })();
+  </script>
     <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
   </body>

@@ -157,35 +157,56 @@ def upgrade():
 	return render_template("upgrade.html")
 
 
-def _plan_price_vnd(plan: str) -> int:
+def _plan_price_vnd(plan: str, conn=None) -> int:
+	from models import SystemConfig
 	plan = (plan or "").lower()
+	fallback = 0
 	if plan == "basic":
-		return 1000
-	if plan == "pro":
-		return 5000
-	if plan == "enterprise":
-		return 15000
-	return 0
+		fallback = 1000
+	elif plan == "pro":
+		fallback = 5000
+	elif plan == "enterprise":
+		fallback = 15000
+	else:
+		return 0
+
+	if conn:
+		try:
+			return int(SystemConfig.get(conn, f"plan_{plan}_price", str(fallback)))
+		except Exception:
+			pass
+	return fallback
 
 
-def _plan_expire_for(plan: str):
+def _plan_expire_for(plan: str, conn=None):
 	from datetime import datetime, timedelta
+	from models import SystemConfig
 
 	plan = (plan or "free").lower()
 	now = datetime.now()
-	if plan == "pro":
-		return now + timedelta(days=30)
-	if plan == "enterprise":
-		return now + timedelta(days=90)
+	fallback_days = 0
 	if plan == "basic":
-		return now + timedelta(days=7)
-	return None
+		fallback_days = 7
+	elif plan == "pro":
+		fallback_days = 30
+	elif plan == "enterprise":
+		fallback_days = 90
+	else:
+		return None
+
+	days = fallback_days
+	if conn:
+		try:
+			days = int(SystemConfig.get(conn, f"plan_{plan}_days", str(fallback_days)))
+		except Exception:
+			pass
+	return now + timedelta(days=days)
 
 
 def _auto_apply_plan_for_order(conn, user_id: int, plan: str) -> None:
 	# Ensure quota row exists
 	UserQuota.get_or_create(conn, user_id)
-	UserQuota.set_plan_upgrade_only(conn, user_id, (plan or "free").lower(), _plan_expire_for(plan))
+	UserQuota.set_plan_upgrade_only(conn, user_id, (plan or "free").lower(), _plan_expire_for(plan, conn))
 
 
 @predict_bp.route("/checkout", methods=["GET"])
@@ -242,12 +263,12 @@ def checkout():
 			conn.close()
 
 	order_id = uuid.uuid4().hex[:12]
-	amount_vnd = _plan_price_vnd(plan)
 
 	# Lưu order vào DB để admin theo dõi + session để xác nhận sau
 	conn = None
 	try:
 		conn = get_connection()
+		amount_vnd = _plan_price_vnd(plan, conn)
 		PaymentOrder.create_order(
 			conn,
 			order_id=order_id,
@@ -416,7 +437,7 @@ def payment_status():
 		if status == PaymentOrder.STATUS_PAID:
 			# Sync plan if webhook updated order but quota is stale
 			if order_plan and current_plan != order_plan:
-				UserQuota.set_plan(conn, user_id, order_plan, _plan_expire_for(order_plan))
+				UserQuota.set_plan(conn, user_id, order_plan, _plan_expire_for(order_plan, conn))
 				quota = UserQuota.get_or_create(conn, user_id)
 				current_plan = (quota.get("plan") or "free").lower()
 

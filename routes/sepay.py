@@ -142,16 +142,29 @@ def _apply_best_paid_plan(conn, user_id: int) -> None:
     return
 
 
-def _plan_expire_for(plan: str):
+def _plan_expire_for(plan: str, conn=None):
+    from datetime import datetime, timedelta
+    from models import SystemConfig
+
     plan = (plan or "free").lower()
     now = datetime.now()
-    if plan == "pro":
-        return now + timedelta(days=30)
-    if plan == "enterprise":
-        return now + timedelta(days=90)
+    fallback_days = 0
     if plan == "basic":
-        return now + timedelta(days=7)
-    return None
+        fallback_days = 7
+    elif plan == "pro":
+        fallback_days = 30
+    elif plan == "enterprise":
+        fallback_days = 90
+    else:
+        return None
+
+    days = fallback_days
+    if conn:
+        try:
+            days = int(SystemConfig.get(conn, f"plan_{plan}_days", str(fallback_days)))
+        except Exception:
+            pass
+    return now + timedelta(days=days)
 
 
 @sepay_bp.route("/webhook/sepay", methods=["POST"])
@@ -272,7 +285,7 @@ def webhook_sepay():
                     # Apply EXACT plan of this order after successful payment
                     paid_plan = str(order.get("plan") or "free").lower()
                     UserQuota.get_or_create(conn, int(user_id))
-                    UserQuota.set_plan(conn, int(user_id), paid_plan, _plan_expire_for(paid_plan))
+                    UserQuota.set_plan(conn, int(user_id), paid_plan, _plan_expire_for(paid_plan, conn))
                 except Exception as e:
                     # Don't fail webhook because plan update errored
                     try:

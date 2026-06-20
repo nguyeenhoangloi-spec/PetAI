@@ -410,6 +410,12 @@
         <h1 class="headline-lg text-on-surface mb-6 font-bold" data-i18n="privacy">
           <span data-i18n="privacy">Chính sách quyền riêng tư</span>
         </h1>
+        {% set db_content = get_config('privacy_policy_content_' ~ ui_language) %}
+        {% if db_content %}
+          <div class="space-y-6 text-on-surface-variant body-md leading-relaxed">
+            {{ db_content | safe }}
+          </div>
+        {% else %}
         <div class="space-y-6 text-on-surface-variant body-md leading-relaxed">
           <p class="mb-4 text-on-surface-variant" data-i18n="updateDatePrefix">
             <span data-i18n="updateDatePrefix">Ngày cập nhật: 16/06/2026</span>
@@ -487,14 +493,15 @@
           </h2>
           <p class="leading-loose">
             Email:
-            <a href="mailto:support@pet.ai"
-              class="text-primary hover:underline font-medium">support@pet.ai</a><br>
+            <a href="mailto:{{ get_config('site_email', 'support@pet.ai') }}"
+              class="text-primary hover:underline font-medium">{{ get_config('site_email', 'support@pet.ai') }}</a><br>
             Website:
             <a href="https://pet.ai" class="text-primary hover:underline font-medium" target="_blank"
               rel="noopener noreferrer">https://pet.ai</a><br><span data-i18n="addressLabelPlaceholder">Địa chỉ:
               P16, Đường số 8, KDC lô 49, Khu đô thị Nam Cần Thơ, P. Cái Răng, TP. Cần Thơ</span>
           </p>
         </div>
+        {% endif %}
       </div>
     </section>
   </main>
@@ -528,6 +535,11 @@
                 <a class="text-on-surface-variant hover:text-primary transition-colors font-medium" target="_blank"
                   rel="noopener noreferrer" href="{{ url_for('legal.terms_of_service') }}" data-i18n="terms"><span
                     data-i18n="terms">Điều khoản sử dụng</span></a>
+              </li>
+              <li class="">
+                <a class="text-on-surface-variant hover:text-primary transition-colors font-medium" target="_blank"
+                  rel="noopener noreferrer" href="{{ url_for('legal.payment_policy') }}" data-i18n="paymentPolicy"><span
+                    data-i18n="paymentPolicy">Chính sách thanh toán</span></a>
               </li>
               <li class="">
                 <a class="text-on-surface-variant hover:text-primary transition-colors font-medium" target="_blank"
@@ -583,6 +595,9 @@
             <a class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
               target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.privacy_policy') }}"
               data-i18n="footerPrivacy"><span data-i18n="footerPrivacy">BẢO MẬT</span></a>
+            <a class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
+              target="_blank" rel="noopener noreferrer" href="{{ url_for('legal.payment_policy') }}"
+              data-i18n="footerPayment"><span data-i18n="footerPayment">THANH TOÁN</span></a>
           </div>
         </div>
       </div>

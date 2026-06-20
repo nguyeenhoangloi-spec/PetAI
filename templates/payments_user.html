@@ -909,7 +909,7 @@
     <!-- Invoice Popup Modal Markup -->
     <div
       id="invoiceModal"
-      class="fixed inset-0 z-[1050] hidden flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-md transition-opacity duration-300"
+      class="fixed inset-0 z-[1050] hidden items-center justify-center p-4 bg-slate-950/60 backdrop-blur-md transition-opacity duration-300"
       role="dialog"
       aria-modal="true"
     >
@@ -1109,83 +1109,100 @@
         const closeXBtn = document.getElementById("closeInvoiceXBtn");
         const printBtn = document.getElementById("printInvoiceBtn");
 
+        console.log("Invoice Script Initialized. Elements found:", {
+          modal: !!modal,
+          container: !!container,
+          closeBtn: !!closeBtn,
+          closeXBtn: !!closeXBtn,
+          printBtn: !!printBtn
+        });
+
         window.showPaymentSuccessBill = function (data) {
+          console.log("showPaymentSuccessBill triggered with data:", data);
           if (!data) return;
 
-          document.getElementById("invoiceOrderId").textContent =
-            "#" + (data.order_id || "");
-          document.getElementById("invoicePlanName").textContent = (
-            data.order_plan ||
-            data.plan ||
-            ""
-          ).toUpperCase();
+          try {
+            document.getElementById("invoiceOrderId").textContent =
+              "#" + (data.order_id || "");
+            document.getElementById("invoicePlanName").textContent = (
+              data.order_plan ||
+              data.plan ||
+              ""
+            ).toUpperCase();
 
-          let methodText =
-            typeof window.PetAI_i18n !== "undefined"
-              ? window.PetAI_i18n.t("paymentMethodQR")
-              : "Chuyển khoản QR";
-          const method = (data.payment_method || "").toLowerCase();
-          if (method !== "qr" && method !== "") {
-            methodText = method.toUpperCase();
-          }
-          document.getElementById("invoiceMethod").textContent = methodText;
-
-          const amount = data.amount_vnd || 0;
-          document.getElementById("invoiceAmount").textContent =
-            new Intl.NumberFormat("vi-VN", {
-              style: "currency",
-              currency: "VND",
-            })
-              .format(amount)
-              .replace(/\s?₫/, "đ");
-
-          const user = data.user || {};
-          document.getElementById("invoiceCustomerName").textContent =
-            user.fullname ||
-            user.username ||
-            (typeof window.PetAI_i18n !== "undefined"
-              ? window.PetAI_i18n.t("customerLabel")
-              : "Khách hàng");
-          document.getElementById("invoiceCustomerEmail").textContent =
-            user.email || "-";
-
-          const formatDate = (dateStr) => {
-            if (!dateStr) return "-";
-            try {
-              const d = new Date(dateStr.replace(/-/g, "/"));
-              if (isNaN(d.getTime())) return dateStr;
-              return (
-                d.toLocaleDateString("vi-VN") +
-                " " +
-                d.toLocaleTimeString("vi-VN", {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })
-              );
-            } catch (e) {
-              return dateStr;
+            let methodText =
+              typeof window.PetAI_i18n !== "undefined" && typeof window.PetAI_i18n.t === "function"
+                ? window.PetAI_i18n.t("paymentMethodQR")
+                : "Chuyển khoản QR";
+            const method = (data.payment_method || "").toLowerCase();
+            if (method !== "qr" && method !== "") {
+              methodText = method.toUpperCase();
             }
-          };
+            document.getElementById("invoiceMethod").textContent = methodText;
 
-          document.getElementById("invoiceCreatedAt").textContent = formatDate(
-            data.created_at,
-          );
-          document.getElementById("invoiceConfirmedAt").textContent =
-            formatDate(data.confirmed_at);
+            const amount = data.amount_vnd || 0;
+            document.getElementById("invoiceAmount").textContent =
+              new Intl.NumberFormat("vi-VN", {
+                style: "currency",
+                currency: "VND",
+              })
+                .format(amount)
+                .replace(/\s?₫/, "đ");
 
-          modal.classList.remove("hidden");
-          modal.classList.add("flex");
-          void modal.offsetWidth; // Trigger reflow
-          container.classList.remove("scale-95", "opacity-0");
-          container.classList.add("scale-100", "opacity-100");
+            const user = data.user || {};
+            document.getElementById("invoiceCustomerName").textContent =
+              user.fullname ||
+              user.username ||
+              (typeof window.PetAI_i18n !== "undefined" && typeof window.PetAI_i18n.t === "function"
+                ? window.PetAI_i18n.t("customerLabel")
+                : "Khách hàng");
+            document.getElementById("invoiceCustomerEmail").textContent =
+              user.email || "-";
+
+            const formatDate = (dateStr) => {
+              if (!dateStr) return "-";
+              try {
+                const d = new Date(dateStr.replace(/-/g, "/"));
+                if (isNaN(d.getTime())) return dateStr;
+                return (
+                  d.toLocaleDateString("vi-VN") +
+                  " " +
+                  d.toLocaleTimeString("vi-VN", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })
+                );
+              } catch (e) {
+                return dateStr;
+              }
+            };
+
+            document.getElementById("invoiceCreatedAt").textContent = formatDate(
+              data.created_at,
+            );
+            document.getElementById("invoiceConfirmedAt").textContent =
+              formatDate(data.confirmed_at);
+
+            console.log("Showing invoice modal elements...");
+            modal.classList.remove("hidden");
+            modal.classList.add("flex");
+            modal.style.display = "flex";
+            void modal.offsetWidth; // Trigger reflow
+            container.classList.remove("scale-95", "opacity-0");
+            container.classList.add("scale-100", "opacity-100");
+          } catch (err) {
+            console.error("Error displaying invoice modal:", err);
+          }
         };
 
         window.hideInvoiceModal = function () {
+          console.log("hideInvoiceModal triggered");
           container.classList.remove("scale-100", "opacity-100");
           container.classList.add("scale-95", "opacity-0");
           setTimeout(() => {
             modal.classList.add("hidden");
             modal.classList.remove("flex");
+            modal.style.display = "none";
           }, 150);
         };
 
@@ -1216,39 +1233,55 @@
         });
 
         window.viewInvoice = async function (orderId) {
+          console.log("viewInvoice clicked for orderId:", orderId);
           try {
             const res = await fetch(
               "{{ url_for('predict.payment_status') }}?order_id=" +
                 encodeURIComponent(orderId),
               { cache: "no-store" },
             );
+            console.log("payment_status response status:", res.status);
             if (!res.ok) {
               alert(
-                typeof window.PetAI_i18n !== "undefined"
+                typeof window.PetAI_i18n !== "undefined" && typeof window.PetAI_i18n.t === "function"
                   ? window.PetAI_i18n.t("actionFailed")
                   : "Không thể tải thông tin hóa đơn.",
               );
               return;
             }
             const data = await res.json();
+            console.log("payment_status response data:", data);
             if (data && data.success) {
               showPaymentSuccessBill(data);
             } else {
               alert(
-                typeof window.PetAI_i18n !== "undefined"
+                typeof window.PetAI_i18n !== "undefined" && typeof window.PetAI_i18n.t === "function"
                   ? window.PetAI_i18n.t("actionFailed")
                   : "Không thể tải thông tin hóa đơn.",
               );
             }
           } catch (e) {
-            console.error(e);
+            console.error("viewInvoice exception:", e);
             alert(
-              typeof window.PetAI_i18n !== "undefined"
+              typeof window.PetAI_i18n !== "undefined" && typeof window.PetAI_i18n.t === "function"
                 ? window.PetAI_i18n.t("actionFailed")
                 : "Có lỗi xảy ra khi tải hóa đơn.",
             );
           }
         };
+
+        // Auto show invoice modal if triggered by backend on redirect
+        {% if auto_show_invoice %}
+        document.addEventListener("DOMContentLoaded", function () {
+          const autoData = {{ auto_show_invoice|tojson }};
+          console.log("Auto showing invoice from backend redirect:", autoData);
+          if (autoData) {
+            setTimeout(() => {
+              window.showPaymentSuccessBill(autoData);
+            }, 100);
+          }
+        });
+        {% endif %}
 
         const badgeClasses = {
           paid: "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border border-emerald-250 dark:border-emerald-900/40 shadow-sm",
@@ -1452,6 +1485,9 @@
             <a class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4" target="_blank" rel="noopener noreferrer" href="/user-guide" data-i18n="footerUserGuide"><span data-i18n="footerUserGuide">HƯỚNG DẪN SỬ DỤNG</span></a>
             <a class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4" target="_blank" rel="noopener noreferrer" href="/terms-of-service" data-i18n="footerTerms"><span data-i18n="footerTerms">ĐIỀU KHOẢN</span></a>
             <a class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4" target="_blank" rel="noopener noreferrer" href="/privacy-policy" data-i18n="footerPrivacy"><span data-i18n="footerPrivacy">BẢO MẬT</span></a>
+            <a class="text-on-surface-variant/70 dark:text-slate-400 hover:text-primary transition-colors label-sm underline underline-offset-4"
+              target="_blank" rel="noopener noreferrer" href="/payment-policy"
+              data-i18n="footerPayment"><span data-i18n="footerPayment">THANH TOÁN</span></a>
           </div>
         </div>
       </div>

@@ -391,5 +391,47 @@ class FlaskSystemTestCase(unittest.TestCase):
         response = self._post_with_csrf('/users/delete/2', data={'confirm': 'DELETE'})
         self.assertEqual(response.status_code, 200)
 
+    def test_admin_system_config_get(self):
+        with self.client.session_transaction() as sess:
+            sess['user_id'] = 1
+            sess['username'] = 'admin'
+            sess['role'] = 'admin'
+
+        response = self.client.get('/users/system-config')
+        self.assertEqual(response.status_code, 200)
+
+    def test_admin_system_config_save(self):
+        with self.client.session_transaction() as sess:
+            sess['user_id'] = 1
+            sess['username'] = 'admin'
+            sess['role'] = 'admin'
+
+        response = self._post_with_csrf('/users/system-config/save', data={
+            'site_email': 'support@newpet.ai',
+            'plan_basic_price': '2000',
+            'plan_basic_days': '10',
+            'plan_basic_scans': '60',
+            'plan_pro_price': '6000',
+            'plan_pro_days': '35',
+            'plan_pro_scans': '250',
+            'plan_enterprise_price': '20000',
+            'plan_enterprise_days': '100',
+            'plan_enterprise_scans': 'unlimited'
+        }, follow_redirects=False)
+        self.assertEqual(response.status_code, 302)
+
+    def test_admin_system_config_save_legal(self):
+        with self.client.session_transaction() as sess:
+            sess['user_id'] = 1
+            sess['username'] = 'admin'
+            sess['role'] = 'admin'
+
+        response = self._post_with_csrf('/users/system-config/save-legal', data={
+            'page': 'privacy-policy',
+            'content_vi': '<p>Chính sách bảo mật mới</p>',
+            'content_en': '<p>New privacy policy</p>'
+        }, follow_redirects=False)
+        self.assertEqual(response.status_code, 302)
+
 if __name__ == '__main__':
     unittest.main()

@@ -10,6 +10,12 @@ def privacy_policy():
 	return render_template("privacy-policy.html")
 
 
+@legal_bp.route("/payment-policy.html")
+@legal_bp.route("/payment-policy")
+def payment_policy():
+	return render_template("payment-policy.html")
+
+
 @legal_bp.route("/terms-of-service.html")
 @legal_bp.route("/terms-of-service")
 def terms_of_service():

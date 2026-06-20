@@ -20,11 +20,24 @@ PLAN_PRICE_VND = {
 }
 
 
-def _order_amount_vnd(order: dict) -> int:
+def get_plan_price_vnd(conn) -> dict:
+    from models import SystemConfig
+    try:
+        return {
+            "basic": int(SystemConfig.get(conn, "plan_basic_price", "1000")),
+            "pro": int(SystemConfig.get(conn, "plan_pro_price", "5000")),
+            "enterprise": int(SystemConfig.get(conn, "plan_enterprise_price", "15000")),
+        }
+    except Exception:
+        return PLAN_PRICE_VND
+
+
+def _order_amount_vnd(order: dict, pricing: dict = None) -> int:
     # Doanh thu & hiển thị số tiền phải bám theo giá gói.
     # Tránh trường hợp DB có amount_vnd sai (ví dụ 49k/99k) làm doanh thu bị đội.
     plan = (order.get("plan") or "").strip().lower()
-    expected = PLAN_PRICE_VND.get(plan)
+    p_dict = pricing if pricing is not None else PLAN_PRICE_VND
+    expected = p_dict.get(plan)
     if expected is not None:
         return int(expected)
 
@@ -368,15 +381,17 @@ def confirmations_list():
     except Exception:
         page = 1
     per_page = 10
+    pricing = PLAN_PRICE_VND
     try:
         conn = get_connection()
         orders = PaymentOrder.list_all(conn, limit=200) or []
+        pricing = get_plan_price_vnd(conn)
     finally:
         if conn:
             conn.close()
 
     for o in orders:
-        o["amount_calc"] = _order_amount_vnd(o)
+        o["amount_calc"] = _order_amount_vnd(o, pricing)
 
     paid_orders = [o for o in orders if (o.get("status") or "").lower() == PaymentOrder.STATUS_PAID]
     total_paid_amount = sum(int(o.get("amount_calc") or 0) for o in paid_orders)
@@ -444,14 +459,24 @@ def confirm_payment():
             plan = (order.get("plan") if order else None) or "free"
             if user_id:
                 now = datetime.now()
+                from models import SystemConfig
+                fallback_days = 0
                 if plan == "pro":
-                    plan_expire = now + timedelta(days=30)
+                    fallback_days = 30
                 elif plan == "enterprise":
-                    plan_expire = now + timedelta(days=90)
+                    fallback_days = 90
                 elif plan == "basic":
-                    plan_expire = now + timedelta(days=7)
+                    fallback_days = 7
+
+                if fallback_days > 0:
+                    try:
+                        days = int(SystemConfig.get(conn, f"plan_{plan}_days", str(fallback_days)))
+                    except Exception:
+                        days = fallback_days
+                    plan_expire = now + timedelta(days=days)
                 else:
                     plan_expire = None
+
                 UserQuota.set_plan_upgrade_only(conn, user_id, plan, plan_expire)
                 # Gửi email thông báo kích hoạt gói cho user
                 try:
@@ -525,3 +550,151 @@ def set_user_plan():
     if current_page:
         return redirect(url_for("users.list_users", page=current_page))
     return redirect(url_for("users.list_users"))
+
+
+@users_bp.route("/system-config", methods=["GET"])
+def system_config():
+    if not require_admin():
+        return redirect(url_for("login.login"))
+    
+    import os
+    from models import SystemConfig
+    configs = {}
+    conn = None
+    try:
+        conn = get_connection()
+        configs = SystemConfig.get_all(conn)
+    except Exception:
+        logger.exception("[ADMIN] Fetch system configs error")
+        flash("Không thể tải cấu hình hệ thống.", "error")
+    finally:
+        if conn:
+            conn.close()
+            
+    return render_template("system_config.html", configs=configs)
+
+
+@users_bp.route("/system-config/save", methods=["POST"])
+def save_system_config():
+    if not require_admin():
+        return redirect(url_for("login.login"))
+        
+    from models import SystemConfig
+    
+    site_email = (request.form.get("site_email") or "").strip()
+    
+    plan_basic_price = (request.form.get("plan_basic_price") or "").strip()
+    plan_basic_days = (request.form.get("plan_basic_days") or "").strip()
+    plan_basic_scans = (request.form.get("plan_basic_scans") or "").strip()
+    
+    plan_pro_price = (request.form.get("plan_pro_price") or "").strip()
+    plan_pro_days = (request.form.get("plan_pro_days") or "").strip()
+    plan_pro_scans = (request.form.get("plan_pro_scans") or "").strip()
+    
+    plan_enterprise_price = (request.form.get("plan_enterprise_price") or "").strip()
+    plan_enterprise_days = (request.form.get("plan_enterprise_days") or "").strip()
+    plan_enterprise_scans = (request.form.get("plan_enterprise_scans") or "").strip()
+    
+    conn = None
+    try:
+        conn = get_connection()
+        if site_email:
+            SystemConfig.set(conn, "site_email", site_email, "Email liên hệ chính")
+            
+        SystemConfig.set(conn, "plan_basic_price", plan_basic_price, "Giá gói Basic (VND)")
+        SystemConfig.set(conn, "plan_basic_days", plan_basic_days, "Thời gian gói Basic (ngày)")
+        SystemConfig.set(conn, "plan_basic_scans", plan_basic_scans, "Lượt quét gói Basic")
+        
+        SystemConfig.set(conn, "plan_pro_price", plan_pro_price, "Giá gói Pro (VND)")
+        SystemConfig.set(conn, "plan_pro_days", plan_pro_days, "Thời gian gói Pro (ngày)")
+        SystemConfig.set(conn, "plan_pro_scans", plan_pro_scans, "Lượt quét gói Pro")
+        
+        SystemConfig.set(conn, "plan_enterprise_price", plan_enterprise_price, "Giá gói Enterprise (VND)")
+        SystemConfig.set(conn, "plan_enterprise_days", plan_enterprise_days, "Thời gian gói Enterprise (ngày)")
+        SystemConfig.set(conn, "plan_enterprise_scans", plan_enterprise_scans, "Lượt quét gói Enterprise")
+        
+        flash("Cập nhật cấu hình hệ thống thành công.", "success")
+    except Exception:
+        logger.exception("[ADMIN] Save system configs error")
+        flash("Lỗi lưu cấu hình hệ thống.", "error")
+    finally:
+        if conn:
+            conn.close()
+            
+    return redirect(url_for("users.system_config"))
+
+
+@users_bp.route("/system-config/save-legal", methods=["POST"])
+def save_legal_config():
+    if not require_admin():
+        return redirect(url_for("login.login"))
+        
+    from models import SystemConfig
+    
+    page = (request.form.get("page") or "").strip()
+    content_vi = (request.form.get("content_vi") or "").strip()
+    content_en = (request.form.get("content_en") or "").strip()
+    
+    allowed_pages = {"privacy-policy", "terms-of-service", "payment-policy", "data-deletion", "support"}
+    if page not in allowed_pages:
+        flash("Trang pháp lý không hợp lệ.", "error")
+        return redirect(url_for("users.system_config"))
+        
+    db_key_vi = f"{page.replace('-', '_')}_content_vi"
+    db_key_en = f"{page.replace('-', '_')}_content_en"
+    
+    conn = None
+    try:
+        conn = get_connection()
+        SystemConfig.set(conn, db_key_vi, content_vi, f"Nội dung tiếng Việt trang {page}")
+        SystemConfig.set(conn, db_key_en, content_en, f"Nội dung tiếng Anh trang {page}")
+        flash(f"Đã cập nhật nội dung trang {page.upper()}.", "success")
+    except Exception:
+        logger.exception("[ADMIN] Save legal content error")
+        flash("Lỗi cập nhật nội dung trang pháp lý.", "error")
+    finally:
+        if conn:
+            conn.close()
+            
+    return redirect(url_for("users.system_config") + f"?tab=legal&page_select={page}")
+
+
+@users_bp.route("/system-config/logo", methods=["POST"])
+def save_logo_config():
+    if not require_admin():
+        return redirect(url_for("login.login"))
+        
+    import os
+    if "logo" not in request.files:
+        flash("Không tìm thấy file logo.", "error")
+        return redirect(url_for("users.system_config"))
+        
+    file = request.files["logo"]
+    if file.filename == "":
+        flash("Chưa chọn file upload.", "warning")
+        return redirect(url_for("users.system_config"))
+        
+    filename = file.filename.lower()
+    allowed_extensions = {".png", ".jpg", ".jpeg", ".svg", ".webp"}
+    _, ext = os.path.splitext(filename)
+    if ext not in allowed_extensions:
+        flash("Định dạng file không hỗ trợ. Chỉ cho phép PNG, JPG, JPEG, SVG, WEBP.", "error")
+        return redirect(url_for("users.system_config"))
+        
+    try:
+        static_dir = os.path.join(current_app.root_path, "static", "images")
+        logo_path = os.path.join(static_dir, "logo.png")
+        backup_path = os.path.join(static_dir, "logo_backup.png")
+        
+        # Backup original logo if backup doesn't exist
+        if os.path.exists(logo_path) and not os.path.exists(backup_path):
+            import shutil
+            shutil.copy2(logo_path, backup_path)
+            
+        file.save(logo_path)
+        flash("Thay đổi logo trang web thành công.", "success")
+    except Exception as e:
+        logger.exception("[ADMIN] Upload logo error")
+        flash(f"Lỗi tải lên logo: {str(e)}", "error")
+        
+    return redirect(url_for("users.system_config"))

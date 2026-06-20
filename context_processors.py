@@ -58,6 +58,30 @@ def register_context_processors(app):
             "ui_language": ui_language,
             "ui_avatar_url": ui_avatar_url,
         }
+    @app.context_processor
+    def inject_system_config():
+        from connect import get_connection
+        from models import SystemConfig
+        
+        system_config = {}
+        try:
+            conn = get_connection()
+            try:
+                system_config = SystemConfig.get_all(conn)
+            finally:
+                conn.close()
+        except Exception:
+            pass
+            
+        def get_config(key, default=""):
+            return system_config.get(key, default)
+            
+        return {
+            "system_config": system_config,
+            "get_config": get_config,
+            "site_logo": system_config.get("site_logo", "/static/images/logo.png"),
+            "site_email": system_config.get("site_email", "support@pet.ai")
+        }
 
     @app.context_processor
     def override_url_for():
