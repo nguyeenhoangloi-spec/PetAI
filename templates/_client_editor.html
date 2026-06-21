@@ -364,6 +364,43 @@
      HTML → Sections parser
      Splits on H2/H3 headings; strips H1 titles
   ═══════════════════════════════════════════════ */
+  /* ═══════════════════════════════════════════════
+     HTML → Sections parser
+     Splits on H2/H3 headings; strips H1 titles
+  ═══════════════════════════════════════════════ */
+  function splitSectionArray(arr) {
+    if (!Array.isArray(arr)) return [];
+    const result = [];
+    arr.forEach(item => {
+      // 1. If it has a title, add it as a header section
+      if (item.title && item.title.trim()) {
+        result.push({
+          title: item.title.trim(),
+          content: ""
+        });
+      }
+      // 2. If it has content, parse and split it into children elements
+      if (item.content && item.content.trim()) {
+        const temp = document.createElement("div");
+        temp.innerHTML = item.content.trim();
+        if (temp.children.length > 0) {
+          Array.from(temp.children).forEach(child => {
+            result.push({
+              title: "",
+              content: child.outerHTML
+            });
+          });
+        } else {
+          result.push({
+            title: "",
+            content: `<p>${item.content.trim()}</p>`
+          });
+        }
+      }
+    });
+    return result;
+  }
+
   function parseHtmlToSections(html) {
     if (!html || !html.trim()) return [];
     const tempDiv = document.createElement("div");
@@ -372,24 +409,43 @@
     tempDiv.querySelectorAll('h1').forEach(el => el.remove());
 
     const parsed = [];
-    let currentSec = null;
+    
+    if (pageKey === 'support') {
+      let currentSec = null;
+      Array.from(tempDiv.childNodes).forEach(node => {
+        if (node.nodeType === Node.ELEMENT_NODE && (node.tagName === "H2" || node.tagName === "H3" || node.tagName === "H4")) {
+          if (currentSec) parsed.push(currentSec);
+          const titleText = (node.textContent || "").replace(/\s+/g, " ").trim();
+          currentSec = { title: titleText, content: "" };
+        } else {
+          if (!currentSec) currentSec = { title: "", content: "" };
+          if (node.nodeType === Node.TEXT_NODE) currentSec.content += node.textContent;
+          else if (node.nodeType === Node.ELEMENT_NODE) currentSec.content += node.outerHTML;
+        }
+      });
+      if (currentSec) parsed.push(currentSec);
+    } else {
+      const wrapper = tempDiv.querySelector('.space-y-6, #dynamic-content-vi, #dynamic-content-en');
+      const targetElements = wrapper ? Array.from(wrapper.children) : Array.from(tempDiv.children);
 
-    Array.from(tempDiv.childNodes).forEach(node => {
-      if (node.nodeType === Node.ELEMENT_NODE && (node.tagName === "H2" || node.tagName === "H3")) {
-        if (currentSec) parsed.push(currentSec);
-        const titleText = (node.textContent || "").replace(/\s+/g, " ").trim();
-        currentSec = { title: titleText, content: "" };
-      } else {
-        if (!currentSec) currentSec = { title: "", content: "" };
-        if (node.nodeType === Node.TEXT_NODE) currentSec.content += node.textContent;
-        else if (node.nodeType === Node.ELEMENT_NODE) currentSec.content += node.outerHTML;
-      }
-    });
-
-    if (currentSec) parsed.push(currentSec);
+      targetElements.forEach(node => {
+        const tag = node.tagName.toLowerCase();
+        if (tag === "h2" || tag === "h3" || tag === "h4") {
+          parsed.push({
+            title: (node.textContent || "").trim(),
+            content: ""
+          });
+        } else {
+          parsed.push({
+            title: "",
+            content: node.outerHTML
+          });
+        }
+      });
+    }
 
     return parsed
-      .map(sec => ({ title: sec.title.trim(), content: sec.content.trim() }))
+      .map(sec => ({ title: (sec.title || "").trim(), content: (sec.content || "").trim() }))
       .filter(sec => sec.title || sec.content);
   }
 
@@ -403,26 +459,59 @@
 
     let vi_array = null, en_array = null;
 
-    if (rawVi.trim().startsWith("[") && rawVi.trim().endsWith("]")) {
+    if (rawVi.trim().startsWith("[")) {
       try { vi_array = JSON.parse(rawVi); } catch(e) {}
     }
-    if (rawEn.trim().startsWith("[") && rawEn.trim().endsWith("]")) {
+    if (rawEn.trim().startsWith("[")) {
       try { en_array = JSON.parse(rawEn); } catch(e) {}
+    }
+
+    if (pageKey === 'support') {
+      if (!vi_array || vi_array.length === 0) {
+        vi_array = [
+          { title: "Thông tin nhanh", content: `<p><strong>Email hỗ trợ:</strong> <a href="mailto:support@pet.ai" class="text-primary hover:underline font-medium">support@pet.ai</a></p>\n<p class="mt-2"><strong>Thời gian phản hồi dự kiến:</strong> Từ <strong>1 – 3 ngày làm việc</strong>.</p>` },
+          { title: "Hướng dẫn sử dụng cơ bản", content: `<p class="mb-2">1. Tại giao diện chính, chọn <strong>Đăng nhập</strong> hoặc tạo tài khoản mới.</p>\n<p class="mb-2">2. Vào trang Nhận Diện, cho quyền máy ảnh hoặc tải lên hình.</p>\n<p>3. Chờ từ 2 - 4 giây và AI sẽ trả về kết quả 3 giống chó tiềm năng nhất cùng với lịch sử thống kê.</p>` },
+          { title: "Làm sao để đăng nhập?", content: `Bạn nhấp vào nút Đăng nhập ở góc trên cùng của Website hoặc qua menu di động để sử dụng Email/Google.` },
+          { title: "Làm sao để xóa tài khoản?", content: `Gửi thư theo <a href="/data-deletion" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">Chính sách xóa dữ liệu</a> của chúng tôi để được trợ giúp.` },
+          { title: "Làm sao để liên hệ hỗ trợ?", content: `Bạn có thể sử dụng biểu mẫu phía dưới mục <a href="/contact" class="text-primary hover:underline" target="_blank" rel="noopener noreferrer">Liên hệ</a> hoặc gửi thư về support@pet.ai.` },
+          { title: "Tôi gặp lỗi trong ứng dụng thì phải làm gì?", content: `Rất mong bạn thông cảm, hãy chụp lại lỗi đó (screenshot), ghi rõ hành động dẫn tới lỗi và gửi email về cho chúng tôi sớm nhất!` }
+        ];
+      }
+      if (!en_array || en_array.length === 0) {
+        en_array = [
+          { title: "Quick Info", content: `<p><strong>Support Email:</strong> <a href="mailto:support@pet.ai" class="text-primary hover:underline font-medium">support@pet.ai</a></p>\n<p class="mt-2"><strong>Estimated Response Time:</strong> From <strong>1 – 3 business days</strong>.</p>` },
+          { title: "Basic User Guide", content: `<p class="mb-2">1. From the main interface, select <strong>Login</strong> or create a new account.</p>\n<p class="mb-2">2. Go to the Identification page, grant camera permission or upload a photo.</p>\n<p>3. Wait 2 - 4 seconds and the AI will return the top 3 potential dog breeds along with scan history statistics.</p>` },
+          { title: "How do I log in?", content: `Click the Login button at the top corner of the Website or via the mobile menu to log in using Email/Google.` },
+          { title: "How do I delete my account?", content: `Send a request according to our <a href="/data-deletion" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">Data Deletion Policy</a> for assistance.` },
+          { title: "How do I contact support?", content: `You can use the form under the <a href="/contact" class="text-primary hover:underline" target="_blank" rel="noopener noreferrer">Contact</a> page or send an email to support@pet.ai.` },
+          { title: "What should I do if I encounter an error?", content: `We apologize for any inconvenience. Please take a screenshot of the error, describe the steps that led to it, and send an email to us as soon as possible!` }
+        ];
+      }
     }
 
     if (Array.isArray(vi_array) && vi_array.length > 0) {
       /* ── DB has saved content (JSON) ── */
-      const enList = Array.isArray(en_array) ? en_array : [];
-      sections = vi_array.map((item, idx) => {
-        const en_item = enList[idx] || {};
-        return {
-          id: genId(idx),
+      let parsedVi = vi_array;
+      let parsedEn = Array.isArray(en_array) ? en_array : [];
+
+      if (pageKey !== 'support') {
+        parsedVi = splitSectionArray(vi_array);
+        parsedEn = splitSectionArray(parsedEn);
+      }
+
+      const maxLen = Math.max(parsedVi.length, parsedEn.length);
+      sections = [];
+      for (let i = 0; i < maxLen; i++) {
+        const item = parsedVi[i] || {};
+        const en_item = parsedEn[i] || {};
+        sections.push({
+          id: genId(i),
           title_vi: item.title || "",
           title_en: en_item.title || "",
           content_vi: item.content || "",
           content_en: en_item.content || ""
-        };
-      });
+        });
+      }
     } else {
       /* ── DB is empty → use full DOM template as source (Fix 1) ── */
       const viSections = originalDomHtml ? parseHtmlToSections(originalDomHtml) : [];
@@ -432,6 +521,10 @@
         enSections = en_array.map(item => ({ title: item.title || "", content: item.content || "" }));
       } else if (rawEn.trim() && !rawEn.trim().startsWith("[")) {
         enSections = parseHtmlToSections(rawEn);
+      }
+
+      if (pageKey !== 'support' && Array.isArray(enSections)) {
+        enSections = splitSectionArray(enSections);
       }
 
       const maxLen = Math.max(viSections.length, enSections.length);
@@ -524,60 +617,163 @@
     card.innerHTML = "";
     if (h1) card.appendChild(h1);
 
-    const container = document.createElement("div");
-    container.id = "visual-sections-container";
-    container.className = "space-y-6 mt-8";
-    card.appendChild(container);
+    if (pageKey === 'support') {
+      // Build the original 2-column layout for support editor
+      const grid = document.createElement("div");
+      grid.className = "grid grid-cols-1 md:grid-cols-2 gap-8 mt-8";
+      card.appendChild(grid);
 
-    if (sections.length === 0) {
-      container.innerHTML = `
-        <div class="border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-2xl p-10 text-center">
-          <span class="material-symbols-outlined text-4xl text-slate-300 dark:text-slate-600 mb-3 block">article</span>
-          <p class="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-1">Chưa có mục nào</p>
-          <p class="text-xs text-slate-400 dark:text-slate-500">Nhấn "Thêm mục mới" bên dưới để bắt đầu soạn nội dung.</p>
-        </div>
-      `;
-    } else {
-      let html = "";
-      sections.forEach((sec) => {
+      // Left Column wrapper (Cards info)
+      const leftCol = document.createElement("div");
+      leftCol.className = "bg-white dark:bg-slate-800 border border-outline-variant/30 dark:border-slate-700 rounded-2xl p-6 shadow-sm h-fit space-y-6";
+      grid.appendChild(leftCol);
+
+      // Right Column wrapper (FAQs Accordions)
+      const rightCol = document.createElement("div");
+      rightCol.className = "space-y-4";
+      grid.appendChild(rightCol);
+
+      const rightTitle = document.createElement("h3");
+      rightTitle.className = "text-xl font-bold text-primary dark:text-blue-400 mb-4";
+      rightTitle.setAttribute("data-i18n", "supportFaqTitle");
+      rightTitle.textContent = visualEditorLang === 'vi' ? "Các câu hỏi thường gặp (FAQ)" : "Frequently Asked Questions (FAQ)";
+      rightCol.appendChild(rightTitle);
+
+      // Render sections into columns based on index
+      sections.forEach((sec, idx) => {
         const title = visualEditorLang === 'vi' ? sec.title_vi : sec.title_en;
         const content = visualEditorLang === 'vi' ? sec.content_vi : sec.content_en;
         const rendered = (content.includes("<") && content.includes(">"))
           ? content
           : content.replace(/\n/g, "<br>");
 
-        html += `
-          <div class="visual-sec-wrapper" data-id="${sec.id}">
-            <div class="visual-sec-controls">
-              <button type="button" onclick="moveVisualSectionUp('${sec.id}')" class="visual-sec-btn" title="Di chuyển lên">
-                <span class="material-symbols-outlined !text-sm">arrow_upward</span>
-              </button>
-              <button type="button" onclick="moveVisualSectionDown('${sec.id}')" class="visual-sec-btn" title="Di chuyển xuống">
-                <span class="material-symbols-outlined !text-sm">arrow_downward</span>
-              </button>
-              <button type="button" onclick="duplicateVisualSection('${sec.id}')" class="visual-sec-btn" title="Nhân đôi mục này (Duplicate)">
-                <span class="material-symbols-outlined !text-sm">content_copy</span>
-              </button>
-              <button type="button" onclick="toggleHtmlEdit('${sec.id}', this)" class="visual-sec-btn html-toggle" title="Chỉnh sửa mã HTML (Edit HTML)">
-                <span class="material-symbols-outlined !text-sm">code</span>
-              </button>
-              <button type="button" onclick="removeVisualSection('${sec.id}')" class="visual-sec-btn delete" title="Xóa mục">
-                <span class="material-symbols-outlined !text-sm">delete</span>
-              </button>
-            </div>
-            <h2 contenteditable="true"
-                class="text-xl font-bold text-primary dark:text-blue-400 mt-6 mb-2"
-                placeholder="Nhập tiêu đề điều khoản..."
+        const secWrapper = document.createElement("div");
+        secWrapper.className = "visual-sec-wrapper relative";
+        secWrapper.setAttribute("data-id", sec.id);
+
+        secWrapper.innerHTML = `
+          <div class="visual-sec-controls">
+            <button type="button" onclick="moveVisualSectionUp('${sec.id}')" class="visual-sec-btn" title="Di chuyển lên">
+              <span class="material-symbols-outlined !text-sm">arrow_upward</span>
+            </button>
+            <button type="button" onclick="moveVisualSectionDown('${sec.id}')" class="visual-sec-btn" title="Di chuyển xuống">
+              <span class="material-symbols-outlined !text-sm">arrow_downward</span>
+            </button>
+            <button type="button" onclick="duplicateVisualSection('${sec.id}')" class="visual-sec-btn" title="Nhân đôi mục này (Duplicate)">
+              <span class="material-symbols-outlined !text-sm">content_copy</span>
+            </button>
+            <button type="button" onclick="toggleHtmlEdit('${sec.id}', this)" class="visual-sec-btn html-toggle" title="Chỉnh sửa mã HTML (Edit HTML)">
+              <span class="material-symbols-outlined !text-sm">code</span>
+            </button>
+            <button type="button" onclick="removeVisualSection('${sec.id}')" class="visual-sec-btn delete" title="Xóa mục">
+              <span class="material-symbols-outlined !text-sm">delete</span>
+            </button>
+          </div>
+        `;
+
+        if (idx === 0 || idx === 1) {
+          // Info cards in the left column
+          secWrapper.innerHTML += `
+            <h3 contenteditable="true"
+                class="text-xl font-bold text-primary dark:text-blue-400 mb-4"
+                placeholder="Nhập tiêu đề..."
                 onblur="handleSectionBlur('${sec.id}', 'title', this)"
-            >${escapeHtml(title)}</h2>
+            >${escapeHtml(title)}</h3>
             <div contenteditable="true"
                  class="text-on-surface-variant dark:text-slate-300 body-md leading-relaxed legal-content-rich"
-                 placeholder="Nhập nội dung điều khoản..."
+                 placeholder="Nhập nội dung..."
                  onblur="handleSectionBlur('${sec.id}', 'content', this)"
             >${rendered}</div>
-          </div>`;
+          `;
+          leftCol.appendChild(secWrapper);
+        } else {
+          // Accordion items in the right column
+          secWrapper.className = "visual-sec-wrapper relative border border-outline-variant/30 dark:border-slate-700 rounded-xl p-4 bg-white dark:bg-slate-800/50";
+          secWrapper.innerHTML += `
+            <h4 contenteditable="true"
+                class="font-bold text-on-surface dark:text-slate-105 select-none pr-10 mb-2"
+                placeholder="Câu hỏi (Title)..."
+                onblur="handleSectionBlur('${sec.id}', 'title', this)"
+            >${escapeHtml(title)}</h4>
+            <div contenteditable="true"
+                 class="mt-2 text-on-surface-variant dark:text-slate-300 text-sm leading-relaxed legal-content-rich"
+                 placeholder="Câu trả lời (Content)..."
+                 onblur="handleSectionBlur('${sec.id}', 'content', this)"
+            >${rendered}</div>
+          `;
+          rightCol.appendChild(secWrapper);
+        }
       });
-      container.innerHTML = html;
+    } else {
+      // Standard flat layout for other pages
+      const container = document.createElement("div");
+      container.id = "visual-sections-container";
+      container.className = "space-y-6 mt-8";
+      card.appendChild(container);
+
+      if (sections.length === 0) {
+        container.innerHTML = `
+          <div class="border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-2xl p-10 text-center">
+            <span class="material-symbols-outlined text-4xl text-slate-300 dark:text-slate-600 mb-3 block">article</span>
+            <p class="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-1">Chưa có mục nào</p>
+            <p class="text-xs text-slate-400 dark:text-slate-500">Nhấn "Thêm mục mới" bên dưới để bắt đầu soạn nội dung.</p>
+          </div>
+        `;
+      } else {
+        let html = "";
+        sections.forEach((sec) => {
+          const title = visualEditorLang === 'vi' ? sec.title_vi : sec.title_en;
+          const content = visualEditorLang === 'vi' ? sec.content_vi : sec.content_en;
+          const rendered = (content.includes("<") && content.includes(">"))
+            ? content
+            : content.replace(/\n/g, "<br>");
+
+          const isHeading = title.trim() !== "";
+          const isContent = content.trim() !== "";
+          const isEmpty = !isHeading && !isContent;
+
+          html += `
+            <div class="visual-sec-wrapper" data-id="${sec.id}">
+              <div class="visual-sec-controls">
+                <button type="button" onclick="moveVisualSectionUp('${sec.id}')" class="visual-sec-btn" title="Di chuyển lên">
+                  <span class="material-symbols-outlined !text-sm">arrow_upward</span>
+                </button>
+                <button type="button" onclick="moveVisualSectionDown('${sec.id}')" class="visual-sec-btn" title="Di chuyển xuống">
+                  <span class="material-symbols-outlined !text-sm">arrow_downward</span>
+                </button>
+                <button type="button" onclick="duplicateVisualSection('${sec.id}')" class="visual-sec-btn" title="Nhân đôi mục này (Duplicate)">
+                  <span class="material-symbols-outlined !text-sm">content_copy</span>
+                </button>
+                <button type="button" onclick="toggleHtmlEdit('${sec.id}', this)" class="visual-sec-btn html-toggle" title="Chỉnh sửa mã HTML (Edit HTML)">
+                  <span class="material-symbols-outlined !text-sm">code</span>
+                </button>
+                <button type="button" onclick="removeVisualSection('${sec.id}')" class="visual-sec-btn delete" title="Xóa mục">
+                  <span class="material-symbols-outlined !text-sm">delete</span>
+                </button>
+              </div>`;
+
+          if (isHeading || isEmpty) {
+            html += `
+              <h2 contenteditable="true"
+                  class="text-xl font-bold text-primary dark:text-blue-400 mt-6 mb-2"
+                  placeholder="Nhập tiêu đề điều khoản..."
+                  onblur="handleSectionBlur('${sec.id}', 'title', this)"
+              >${escapeHtml(title)}</h2>`;
+          }
+
+          if (isContent || isEmpty) {
+            html += `
+              <div contenteditable="true"
+                   class="text-on-surface-variant dark:text-slate-300 body-md leading-relaxed legal-content-rich"
+                   placeholder="Nhập nội dung điều khoản..."
+                   onblur="handleSectionBlur('${sec.id}', 'content', this)"
+              >${rendered}</div>`;
+          }
+
+          html += `</div>`;
+        });
+        container.innerHTML = html;
+      }
     }
 
     // Add Section button
@@ -660,8 +856,8 @@
     const original = sections[idx];
     const copy = {
       id: "sec_" + Date.now() + "_" + Math.random().toString(36).substr(2, 5),
-      title_vi: original.title_vi + " (Bản sao)",
-      title_en: original.title_en + " (Copy)",
+      title_vi: original.title_vi ? original.title_vi + " (Bản sao)" : "",
+      title_en: original.title_en ? original.title_en + " (Copy)" : "",
       content_vi: original.content_vi,
       content_en: original.content_en
     };
@@ -694,36 +890,64 @@
     updateVisualSectionField(id, field, val);
   }
 
-  function toggleHtmlEdit(id, btn) {
+  function formatHtmlString(html) {
+    if (!html) return "";
+    return html
+      .replace(/>\s*</g, '>\n<')
+      .replace(/(<\/(?:p|h1|h2|h3|h4|div|ul|ol|li|details|summary)>)/gi, '$1\n')
+      .trim();
+  }
+
+  async function toggleHtmlEdit(id, btn) {
     const wrapper = document.querySelector(`.visual-sec-wrapper[data-id="${id}"]`);
     if (!wrapper) return;
-    const contentDiv = wrapper.querySelector('.legal-content-rich');
+    
+    let contentDiv = wrapper.querySelector('.legal-content-rich');
+    let isHeading = false;
+    if (!contentDiv) {
+      contentDiv = wrapper.querySelector('h2, h3, h4');
+      if (contentDiv) isHeading = true;
+    }
     if (!contentDiv) return;
 
     const isHtmlMode = contentDiv.dataset.htmlMode === "true";
     const iconSpan = btn.querySelector('.material-symbols-outlined');
 
     if (!isHtmlMode) {
-      // Switch to HTML code edit mode: display innerHTML as textContent
+      // Switch to HTML code edit mode using a clean textarea to avoid browser-injected rich text noise
       const rawHtml = contentDiv.innerHTML;
-      contentDiv.textContent = rawHtml;
-      contentDiv.classList.add("font-mono", "text-xs", "bg-slate-100", "dark:bg-slate-900", "p-3", "border", "border-dashed", "border-primary/30", "rounded-lg", "whitespace-pre-wrap");
+      const currentHeight = contentDiv.offsetHeight;
+      
+      contentDiv.setAttribute("contenteditable", "false");
       contentDiv.dataset.htmlMode = "true";
+
+      const textarea = document.createElement("textarea");
+      textarea.className = "w-full p-3 font-mono text-xs bg-slate-50 dark:bg-slate-950 border border-slate-350 dark:border-slate-800 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary block resize-y whitespace-pre-wrap leading-relaxed";
+      textarea.style.minHeight = Math.max(isHeading ? 60 : 120, currentHeight) + "px";
+      textarea.value = formatHtmlString(rawHtml);
+
+      contentDiv.innerHTML = "";
+      contentDiv.appendChild(textarea);
+      textarea.focus();
+
       if (iconSpan) iconSpan.textContent = "text_fields";
       btn.title = "Xem giao diện trực quan (Visual View)";
       btn.classList.add("bg-primary/20", "text-primary");
     } else {
-      // Switch back to rich text visual mode: parse textContent as innerHTML
-      const plainText = contentDiv.textContent;
+      // Switch back to rich text visual mode
+      const textarea = contentDiv.querySelector("textarea");
+      const plainText = textarea ? textarea.value : "";
+
       contentDiv.innerHTML = plainText;
-      contentDiv.classList.remove("font-mono", "text-xs", "bg-slate-100", "dark:bg-slate-900", "p-3", "border", "border-dashed", "border-primary/30", "rounded-lg", "whitespace-pre-wrap");
+      contentDiv.setAttribute("contenteditable", "true");
       delete contentDiv.dataset.htmlMode;
+
       if (iconSpan) iconSpan.textContent = "code";
       btn.title = "Chỉnh sửa mã HTML (Edit HTML)";
       btn.classList.remove("bg-primary/20", "text-primary");
 
       // Sync changes to the model
-      updateVisualSectionField(id, 'content', plainText);
+      await updateVisualSectionField(id, isHeading ? 'title' : 'content', plainText);
     }
   }
 
@@ -746,14 +970,15 @@
   ═══════════════════════════════════════════════ */
   async function savePageChanges() {
     // Exit HTML mode for any active sections to ensure clean HTML content is saved
-    document.querySelectorAll('[data-html-mode="true"]').forEach(el => {
+    const htmlToggles = document.querySelectorAll('[data-html-mode="true"]');
+    for (const el of htmlToggles) {
       const wrapper = el.closest('.visual-sec-wrapper');
       if (wrapper) {
         const id = wrapper.dataset.id;
         const btn = wrapper.querySelector('.html-toggle');
-        if (btn) toggleHtmlEdit(id, btn);
+        if (btn) await toggleHtmlEdit(id, btn);
       }
-    });
+    }
 
     const viData = sections.map(s => ({ title: s.title_vi, content: s.content_vi }));
     const enData = sections.map(s => ({ title: s.title_en, content: s.content_en }));
@@ -766,11 +991,11 @@
     fd.append("content_en", JSON.stringify(enData));
 
     try {
-      const res = await fetch("/system-config/save-legal", { method: "POST", body: fd });
+      const res = await fetch("/users/system-config/save-legal", { method: "POST", body: fd });
       if (res.ok) {
         if (window.showToast) window.showToast("Đã lưu nội dung trang thành công!", "success");
         else alert("Lưu trang thành công!");
-        setTimeout(() => { window.location.href = "/system-config?page_select=" + pageKey; }, 900);
+        setTimeout(() => { window.location.href = "/users/system-config?tab=legal&page_select=" + pageKey; }, 900);
       } else throw new Error("HTTP " + res.status);
     } catch(e) {
       alert("Lỗi khi lưu trang: " + e.message);
@@ -778,7 +1003,7 @@
   }
 
   function cancelPageEdit() {
-    window.location.href = "/system-config?page_select=" + pageKey;
+    window.location.href = "/users/system-config?tab=legal&page_select=" + pageKey;
   }
 
   /* FIX 2: Reset – clears DB entry, reloads page to show original template */
@@ -789,7 +1014,7 @@
     fd.append("csrf_token", csrfMeta ? csrfMeta.getAttribute("content") : "");
     fd.append("page", pageKey);
     try {
-      const res = await fetch("/system-config/reset-legal", { method: "POST", body: fd });
+      const res = await fetch("/users/system-config/reset-legal", { method: "POST", body: fd });
       const data = await res.json();
       if (data.success) {
         if (window.showToast) window.showToast("Đã khôi phục nội dung gốc!", "success");
@@ -905,7 +1130,7 @@
         <p class="text-xs">Đang tải...</p>
       </div>`;
     try {
-      const res = await fetch(`/system-config/legal-versions?page=${encodeURIComponent(pageKey)}`);
+      const res = await fetch(`/users/system-config/legal-versions?page=${encodeURIComponent(pageKey)}`);
       const data = await res.json();
       if (!data.success || !data.versions || data.versions.length === 0) {
         container.innerHTML = `
@@ -954,7 +1179,7 @@
     fd.append("csrf_token", csrfMeta ? csrfMeta.getAttribute("content") : "");
     fd.append("version_id", versionId);
     try {
-      const res = await fetch("/system-config/restore-version", { method: "POST", body: fd });
+      const res = await fetch("/users/system-config/restore-version", { method: "POST", body: fd });
       const data = await res.json();
       if (data.success) {
         if (window.showToast) window.showToast("Đã khôi phục phiên bản thành công!", "success");

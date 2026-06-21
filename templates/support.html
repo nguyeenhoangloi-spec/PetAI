@@ -392,124 +392,150 @@
         <h1 class="headline-lg text-on-surface mb-6 font-bold" data-i18n="support">
           <span data-i18n="homeStatsSupport">HỖ TRỢ</span>
         </h1>
+        {% set default_sections_vi = [
+          {
+            "title": "Thông tin nhanh",
+            "content": '<p><strong>Email hỗ trợ:</strong> <a href="mailto:' ~ get_config('site_email', 'support@pet.ai') ~ '" class="text-primary hover:underline font-medium">' ~ get_config('site_email', 'support@pet.ai') ~ '</a></p><p class="mt-2"><strong>Thời gian phản hồi dự kiến:</strong> Từ <strong>1 – 3 ngày làm việc</strong>.</p>'
+          },
+          {
+            "title": "Hướng dẫn sử dụng cơ bản",
+            "content": '<p class="mb-2">1. Tại giao diện chính, chọn <strong>Đăng nhập</strong> hoặc tạo tài khoản mới.</p><p class="mb-2">2. Vào trang Nhận Diện, cho quyền máy ảnh hoặc tải lên hình.</p><p>3. Chờ từ 2 - 4 giây và AI sẽ trả về kết quả 3 giống chó tiềm năng nhất cùng với lịch sử thống kê.</p>'
+          },
+          {
+            "title": "Làm sao để đăng nhập?",
+            "content": 'Bạn nhấp vào nút Đăng nhập ở góc trên cùng của Website hoặc qua menu di động để sử dụng Email/Google.'
+          },
+          {
+            "title": "Làm sao để xóa tài khoản?",
+            "content": 'Gửi thư theo <a href="' ~ url_for('legal.data_deletion') ~ '" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">Chính sách xóa dữ liệu</a> của chúng tôi để được trợ giúp.'
+          },
+          {
+            "title": "Làm sao để liên hệ hỗ trợ?",
+            "content": 'Bạn có thể sử dụng biểu mẫu phía dưới mục <a href="' ~ url_for('legal.contact') ~ '" class="text-primary hover:underline" target="_blank" rel="noopener noreferrer">Liên hệ</a> hoặc gửi thư về ' ~ get_config('site_email', 'support@pet.ai') ~ '.'
+          },
+          {
+            "title": "Tôi gặp lỗi trong ứng dụng thì phải làm gì?",
+            "content": 'Rất mong bạn thông cảm, hãy chụp lại lỗi đó (screenshot), ghi rõ hành động dẫn tới lỗi và gửi email về cho chúng tôi sớm nhất!'
+          }
+        ] %}
+
+        {% set default_sections_en = [
+          {
+            "title": "Quick Info",
+            "content": '<p><strong>Support Email:</strong> <a href="mailto:' ~ get_config('site_email', 'support@pet.ai') ~ '" class="text-primary hover:underline font-medium">' ~ get_config('site_email', 'support@pet.ai') ~ '</a></p><p class="mt-2"><strong>Estimated Response Time:</strong> From <strong>1 – 3 business days</strong>.</p>'
+          },
+          {
+            "title": "Basic User Guide",
+            "content": '<p class="mb-2">1. From the main interface, select <strong>Login</strong> or create a new account.</p><p class="mb-2">2. Go to the Identification page, grant camera permission or upload a photo.</p><p>3. Wait 2 - 4 seconds and the AI will return the top 3 potential dog breeds along with scan history statistics.</p>'
+          },
+          {
+            "title": "How do I log in?",
+            "content": 'Click the Login button at the top corner of the Website or via the mobile menu to log in using Email/Google.'
+          },
+          {
+            "title": "How do I delete my account?",
+            "content": 'Send a request according to our <a href="' ~ url_for('legal.data_deletion') ~ '" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">Data Deletion Policy</a> for assistance.'
+          },
+          {
+            "title": "How do I contact support?",
+            "content": 'You can use the form under the <a href="' ~ url_for('legal.contact') ~ '" class="text-primary hover:underline" target="_blank" rel="noopener noreferrer">Contact</a> page or send an email to ' ~ get_config('site_email', 'support@pet.ai') ~ '.'
+          },
+          {
+            "title": "What should I do if I encounter an error?",
+            "content": 'We apologize for any inconvenience. Please take a screenshot of the error, describe the steps that led to it, and send an email to us as soon as possible!'
+          }
+        ] %}
+
         {% set sections_vi = get_legal_sections('support', 'vi') %}
         {% set sections_en = get_legal_sections('support', 'en') %}
-        {% if sections_vi or sections_en %}
-          <div id="dynamic-content-vi" class="space-y-6 text-on-surface-variant body-md leading-relaxed legal-content-rich {{ 'hidden' if ui_language == 'en' else '' }}">
-            {% for sec in sections_vi %}
-              {% if sec.title %}
-                <h2 class="text-xl font-bold text-primary mt-6 mb-2">{{ sec.title }}</h2>
-              {% endif %}
-              <div>{{ sec.content | safe }}</div>
-            {% endfor %}
-          </div>
-          <div id="dynamic-content-en" class="space-y-6 text-on-surface-variant body-md leading-relaxed legal-content-rich {{ 'hidden' if ui_language != 'en' else '' }}">
-            {% for sec in sections_en %}
-              {% if sec.title %}
-                <h2 class="text-xl font-bold text-primary mt-6 mb-2">{{ sec.title }}</h2>
-              {% endif %}
-              <div>{{ sec.content | safe }}</div>
-            {% endfor %}
-          </div>
-        {% else %}
-        <div class="space-y-6 text-on-surface-variant body-md leading-relaxed">
+
+        <!-- Vietnamese View -->
+        <div id="dynamic-content-vi" class="space-y-6 text-on-surface-variant body-md leading-relaxed {{ 'hidden' if ui_language == 'en' else '' }}">
           <div class="text-center mb-10">
             <p class="body-md text-on-surface-variant mt-2" data-i18n="supportSubtitle">
-              <span data-i18n="supportSubtitle">Chúng tôi luôn sẵn sàng lắng nghe mọi phản hồi từ phía
-                bạn.</span>
+              <span data-i18n="supportSubtitle">Chúng tôi luôn sẵn sàng lắng nghe mọi phản hồi từ phía bạn.</span>
             </p>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div class="bg-white border border-outline-variant/30 rounded-2xl p-6 shadow-sm">
-              <h3 class="text-xl font-bold text-primary mb-4" data-i18n="supportQuickInfoTitle">
-                <span data-i18n="supportQuickInfoTitle">Thông tin nhanh</span>
-              </h3>
-              <p>
-                <strong data-i18n="supportEmailLabel"><span data-i18n="supportEmailLabel">Email hỗ trợ:</span></strong>
-                <a href="mailto:{{ get_config('site_email', 'support@pet.ai') }}"
-                  class="text-primary hover:underline font-medium">{{ get_config('site_email', 'support@pet.ai') }}</a>
-              </p>
-              <p class="mt-2">
-                <strong data-i18n="supportResponseTimeLabel"><span data-i18n="supportResponseTimeLabel">Thời gian phản
-                    hồi dự kiến:</span></strong><span data-i18n="fromLabel">Từ </span><strong
-                  data-i18n="businessDaysCount"><span data-i18n="businessDaysCount">1 – 3 ngày làm việc</span></strong>.
-              </p>
-              <h3 class="text-xl font-bold text-primary mt-6 mb-4" data-i18n="supportBasicGuideTitle">
-                <span data-i18n="supportBasicGuideTitle">Hướng dẫn sử dụng cơ bản</span>
-              </h3>
-              <p class="mb-2" data-i18n-html="supportStep1">
-                1. Tại giao diện chính, chọn
-                <strong data-i18n="login"><span data-i18n="login">Đăng nhập</span></strong><span
-                  data-i18n="orCreateAccount">hoặc tạo tài khoản mới.</span>
-              </p>
-              <p class="mb-2" data-i18n="supportStep2">
-                <span data-i18n="supportStep2">2. Vào trang Nhận Diện, cho quyền máy ảnh hoặc tải lên
-                  hình.</span>
-              </p>
-              <p data-i18n="supportStep3">
-                <span data-i18n="supportStep3">3. Chờ từ 2 - 4 giây và AI sẽ trả về kết quả 3 giống chó
-                  tiềm năng nhất cùng với lịch sử thống kê.</span>
-              </p>
+            <!-- Left Column: Cards -->
+            <div class="bg-white dark:bg-slate-800 border border-outline-variant/30 dark:border-slate-700 rounded-2xl p-6 shadow-sm h-fit">
+              {% set active_sections_vi = sections_vi if sections_vi else default_sections_vi %}
+              {% if active_sections_vi[0] %}
+                <h3 class="text-xl font-bold text-primary dark:text-blue-400 mb-4">{{ active_sections_vi[0].title }}</h3>
+                <div class="text-on-surface-variant dark:text-slate-300 body-md leading-relaxed mb-6">{{ active_sections_vi[0].content | safe }}</div>
+              {% endif %}
+
+              {% if active_sections_vi[1] %}
+                <h3 class="text-xl font-bold text-primary dark:text-blue-400 mt-6 mb-4">{{ active_sections_vi[1].title }}</h3>
+                <div class="text-on-surface-variant dark:text-slate-300 body-md leading-relaxed">{{ active_sections_vi[1].content | safe }}</div>
+              {% endif %}
             </div>
 
+            <!-- Right Column: Accordions -->
             <div class="space-y-4">
-              <h3 class="text-xl font-bold text-primary mb-4" data-i18n="supportFaqTitle">
+              <h3 class="text-xl font-bold text-primary dark:text-blue-400 mb-4" data-i18n="supportFaqTitle">
                 <span data-i18n="supportFaqTitle">Các câu hỏi thường gặp (FAQ)</span>
               </h3>
 
-              <details class="glass-card p-4 rounded-xl cursor-pointer bg-white group border border-outline-variant/30">
-                <summary class="font-bold flex justify-between items-center text-on-surface">
-                  <span data-i18n="supportFaq1Q">Làm sao để đăng nhập?</span><span
-                    class="group-open:rotate-180 transition-transform">▼</span>
-                </summary>
-                <p class="mt-2 text-on-surface-variant text-sm" data-i18n="supportFaq1A">
-                  <span data-i18n="supportFaq1A">Bạn nhấp vào nút Đăng nhập ở góc trên cùng của Website
-                     hoặc qua menu di động để sử dụng Email/Google.</span>
-                </p>
-              </details>
-
-              <details class="glass-card p-4 rounded-xl cursor-pointer bg-white group border border-outline-variant/30">
-                <summary class="font-bold flex justify-between items-center text-on-surface">
-                  <span data-i18n="supportFaq2Q">Làm sao để xóa tài khoản?</span><span
-                    class="group-open:rotate-180 transition-transform">▼</span>
-                </summary>
-                <p class="mt-2 text-on-surface-variant text-sm">
-                  <span data-i18n="sendMailUnder">Gửi thư theo</span><a href="{{ url_for('legal.data_deletion') }}"
-                    target="_blank" rel="noopener noreferrer" class="text-primary hover:underline"
-                    data-i18n="dataDeletion"><span data-i18n="dataDeletion">Chính sách xóa dữ liệu</span></a><span
-                    data-i18n="ourHelpSupport">của chúng tôi để được trợ giúp.</span>
-                </p>
-              </details>
-
-              <details class="glass-card p-4 rounded-xl cursor-pointer bg-white group border border-outline-variant/30">
-                <summary class="font-bold flex justify-between items-center text-on-surface">
-                  <span data-i18n="supportFaq3Q">Làm sao để liên hệ hỗ trợ?</span><span
-                    class="group-open:rotate-180 transition-transform">▼</span>
-                </summary>
-                <p class="mt-2 text-on-surface-variant text-sm">
-                  <span data-i18n="useFormBelow">Bạn có thể sử dụng biểu mẫu phía dưới mục</span><a
-                    href="{{ url_for('legal.contact') }}" class="text-primary hover:underline" target="_blank"
-                    rel="noopener noreferrer" data-i18n="contact"><span data-i18n="contact">Liên hệ</span></a><span
-                    data-i18n="orSendSupportEmail">hoặc gửi thư về {{ get_config('site_email', 'support@pet.ai') }}.</span>
-                </p>
-              </details>
-
-              <details class="glass-card p-4 rounded-xl cursor-pointer bg-white group border border-outline-variant/30">
-                <summary class="font-bold flex justify-between items-center text-on-surface">
-                  <span data-i18n="supportFaq4Q">Tôi gặp lỗi trong ứng dụng thì phải làm gì?</span><span
-                    class="group-open:rotate-180 transition-transform">▼</span>
-                </summary>
-                <p class="mt-2 text-on-surface-variant text-sm" data-i18n="supportFaq4A">
-                  <span data-i18n="supportFaq4A">Rất mong bạn thông cảm, hãy chụp lại lỗi đó (screenshot),
-                    ghi rõ hành động dẫn tới lỗi và gửi email về cho chúng tôi
-                    sớm nhất!</span>
-                </p>
-              </details>
+              {% for sec in active_sections_vi[2:] %}
+                <details class="glass-card p-4 rounded-xl cursor-pointer bg-white dark:bg-slate-800/50 group border border-outline-variant/30 dark:border-slate-700">
+                  <summary class="font-bold flex justify-between items-center text-on-surface dark:text-slate-100 select-none">
+                    <span>{{ sec.title }}</span>
+                    <span class="group-open:rotate-180 transition-transform">▼</span>
+                  </summary>
+                  <div class="mt-2 text-on-surface-variant dark:text-slate-300 text-sm leading-relaxed">
+                    {{ sec.content | safe }}
+                  </div>
+                </details>
+              {% endfor %}
             </div>
           </div>
         </div>
-        {% endif %}
+
+        <!-- English View -->
+        <div id="dynamic-content-en" class="space-y-6 text-on-surface-variant body-md leading-relaxed {{ 'hidden' if ui_language != 'en' else '' }}">
+          <div class="text-center mb-10">
+            <p class="body-md text-on-surface-variant mt-2" data-i18n="supportSubtitle">
+              <span>We are always ready to listen to any feedback from you.</span>
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Left Column: Cards -->
+            <div class="bg-white dark:bg-slate-800 border border-outline-variant/30 dark:border-slate-700 rounded-2xl p-6 shadow-sm h-fit">
+              {% set active_sections_en = sections_en if sections_en else default_sections_en %}
+              {% if active_sections_en[0] %}
+                <h3 class="text-xl font-bold text-primary dark:text-blue-400 mb-4">{{ active_sections_en[0].title }}</h3>
+                <div class="text-on-surface-variant dark:text-slate-300 body-md leading-relaxed mb-6">{{ active_sections_en[0].content | safe }}</div>
+              {% endif %}
+
+              {% if active_sections_en[1] %}
+                <h3 class="text-xl font-bold text-primary dark:text-blue-400 mt-6 mb-4">{{ active_sections_en[1].title }}</h3>
+                <div class="text-on-surface-variant dark:text-slate-300 body-md leading-relaxed">{{ active_sections_en[1].content | safe }}</div>
+              {% endif %}
+            </div>
+
+            <!-- Right Column: Accordions -->
+            <div class="space-y-4">
+              <h3 class="text-xl font-bold text-primary dark:text-blue-400 mb-4" data-i18n="supportFaqTitle">
+                <span>Frequently Asked Questions (FAQ)</span>
+              </h3>
+
+              {% for sec in active_sections_en[2:] %}
+                <details class="glass-card p-4 rounded-xl cursor-pointer bg-white dark:bg-slate-800/50 group border border-outline-variant/30 dark:border-slate-700">
+                  <summary class="font-bold flex justify-between items-center text-on-surface dark:text-slate-100 select-none">
+                    <span>{{ sec.title }}</span>
+                    <span class="group-open:rotate-180 transition-transform">▼</span>
+                  </summary>
+                  <div class="mt-2 text-on-surface-variant dark:text-slate-300 text-sm leading-relaxed">
+                    {{ sec.content | safe }}
+                  </div>
+                </details>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   </main>
