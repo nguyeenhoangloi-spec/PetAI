@@ -263,15 +263,27 @@ class PredictionHistory:
             return cur.fetchone()[0]
     
     @staticmethod
-    def get_stats(conn, user_id: Optional[int], days: Optional[int] = None) -> Dict[str, Any]:
-        """Lấy thống kê cho user (hoặc toàn hệ thống nếu user_id là None) với tùy chọn số ngày gần đây"""
+    def get_stats(
+        conn,
+        user_id: Optional[int],
+        days: Optional[int] = None,
+        start_at: Optional[datetime] = None,
+        end_at: Optional[datetime] = None
+    ) -> Dict[str, Any]:
+        """Lấy thống kê cho user (hoặc toàn hệ thống nếu user_id là None) với tùy chọn số ngày gần đây hoặc khoảng thời gian"""
         with conn.cursor() as cur:
             conds = []
             params = []
             if user_id is not None:
                 conds.append("user_id = %s")
                 params.append(user_id)
-            if days is not None:
+            if start_at is not None:
+                conds.append("created_at >= %s")
+                params.append(start_at)
+            if end_at is not None:
+                conds.append("created_at <= %s")
+                params.append(end_at)
+            if start_at is None and end_at is None and days is not None:
                 conds.append("created_at >= DATE_SUB(CURDATE(), INTERVAL %s DAY)")
                 params.append(days)
             
@@ -323,65 +335,107 @@ class PredictionHistory:
             }
 
     @staticmethod
-    def get_daily_counts(conn, user_id: Optional[int], days: Optional[int] = 7) -> List[Dict[str, Any]]:
-        """Đếm số dự đoán theo từng ngày trong N ngày gần đây hoặc theo tháng nếu days là None"""
+    def get_daily_counts(
+        conn,
+        user_id: Optional[int],
+        days: Optional[int] = 7,
+        start_at: Optional[datetime] = None,
+        end_at: Optional[datetime] = None
+    ) -> List[Dict[str, Any]]:
+        """Đếm số dự đoán theo từng ngày trong N ngày gần đây hoặc theo khoảng thời gian"""
         with conn.cursor() as cur:
-            if days is not None:
-                if user_id is not None:
-                    cur.execute("""
-                        SELECT DATE(created_at) AS day, COUNT(*) AS cnt
-                        FROM prediction_history
-                        WHERE user_id = %s
-                          AND created_at >= DATE_SUB(CURDATE(), INTERVAL %s DAY)
-                        GROUP BY DATE(created_at)
-                        ORDER BY day ASC
-                    """, (user_id, days))
-                else:
-                    cur.execute("""
-                        SELECT DATE(created_at) AS day, COUNT(*) AS cnt
-                        FROM prediction_history
-                        WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL %s DAY)
-                        GROUP BY DATE(created_at)
-                        ORDER BY day ASC
-                    """, (days,))
+            conds = []
+            params = []
+            if user_id is not None:
+                conds.append("user_id = %s")
+                params.append(user_id)
+
+            if start_at is not None or end_at is not None:
+                if start_at is not None:
+                    conds.append("created_at >= %s")
+                    params.append(start_at)
+                if end_at is not None:
+                    conds.append("created_at <= %s")
+                    params.append(end_at)
+                where_clause = " WHERE " + " AND ".join(conds) if conds else ""
+                cur.execute(f"""
+                    SELECT DATE(created_at) AS day, COUNT(*) AS cnt
+                    FROM prediction_history
+                    {where_clause}
+                    GROUP BY DATE(created_at)
+                    ORDER BY day ASC
+                """, tuple(params))
                 rows = cur.fetchall()
                 return [{'date': row[0].strftime('%d/%m') if row[0] else '', 'count': int(row[1] or 0)} for row in rows]
             else:
-                # All time: group by month
-                if user_id is not None:
-                    cur.execute("""
-                        SELECT DATE_FORMAT(created_at, '%%Y-%%m') AS month, COUNT(*) AS cnt
-                        FROM prediction_history
-                        WHERE user_id = %s
-                        GROUP BY month
-                        ORDER BY month ASC
-                    """, (user_id,))
+                if days is not None:
+                    if user_id is not None:
+                        cur.execute("""
+                            SELECT DATE(created_at) AS day, COUNT(*) AS cnt
+                            FROM prediction_history
+                            WHERE user_id = %s
+                              AND created_at >= DATE_SUB(CURDATE(), INTERVAL %s DAY)
+                            GROUP BY DATE(created_at)
+                            ORDER BY day ASC
+                        """, (user_id, days))
+                    else:
+                        cur.execute("""
+                            SELECT DATE(created_at) AS day, COUNT(*) AS cnt
+                            FROM prediction_history
+                            WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL %s DAY)
+                            GROUP BY DATE(created_at)
+                            ORDER BY day ASC
+                        """, (days,))
+                    rows = cur.fetchall()
+                    return [{'date': row[0].strftime('%d/%m') if row[0] else '', 'count': int(row[1] or 0)} for row in rows]
                 else:
-                    cur.execute("""
-                        SELECT DATE_FORMAT(created_at, '%%Y-%%m') AS month, COUNT(*) AS cnt
-                        FROM prediction_history
-                        GROUP BY month
-                        ORDER BY month ASC
-                    """, ())
-                rows = cur.fetchall()
-                formatted_rows = []
-                for row in rows:
-                    if not row[0]:
-                        continue
-                    parts = row[0].split('-')
-                    formatted_rows.append({'date': f"{parts[1]}/{parts[0][2:]}", 'count': int(row[1] or 0)})
-                return formatted_rows
+                    # All time: group by month
+                    if user_id is not None:
+                        cur.execute("""
+                            SELECT DATE_FORMAT(created_at, '%%Y-%%m') AS month, COUNT(*) AS cnt
+                            FROM prediction_history
+                            WHERE user_id = %s
+                            GROUP BY month
+                            ORDER BY month ASC
+                        """, (user_id,))
+                    else:
+                        cur.execute("""
+                            SELECT DATE_FORMAT(created_at, '%%Y-%%m') AS month, COUNT(*) AS cnt
+                            FROM prediction_history
+                            GROUP BY month
+                            ORDER BY month ASC
+                        """, ())
+                    rows = cur.fetchall()
+                    formatted_rows = []
+                    for row in rows:
+                        if not row[0]:
+                            continue
+                        parts = row[0].split('-')
+                        formatted_rows.append({'date': f"{parts[1]}/{parts[0][2:]}", 'count': int(row[1] or 0)})
+                    return formatted_rows
 
     @staticmethod
-    def get_confidence_distribution(conn, user_id: Optional[int], days: Optional[int] = None) -> List[int]:
-        """Phân bố độ tin cậy thành 5 nhóm: 0-20, 20-40, 40-60, 60-80, 80-100 (%) với bộ lọc ngày"""
+    def get_confidence_distribution(
+        conn,
+        user_id: Optional[int],
+        days: Optional[int] = None,
+        start_at: Optional[datetime] = None,
+        end_at: Optional[datetime] = None
+    ) -> List[int]:
+        """Phân bố độ tin cậy thành 5 nhóm: 0-20, 20-40, 40-60, 60-80, 80-100 (%) với bộ lọc ngày hoặc khoảng thời gian"""
         with conn.cursor() as cur:
             conds = ["confidence IS NOT NULL"]
             params = []
             if user_id is not None:
                 conds.append("user_id = %s")
                 params.append(user_id)
-            if days is not None:
+            if start_at is not None:
+                conds.append("created_at >= %s")
+                params.append(start_at)
+            if end_at is not None:
+                conds.append("created_at <= %s")
+                params.append(end_at)
+            if start_at is None and end_at is None and days is not None:
                 conds.append("created_at >= DATE_SUB(CURDATE(), INTERVAL %s DAY)")
                 params.append(days)
             
@@ -403,21 +457,28 @@ class PredictionHistory:
             return [int(v or 0) for v in row]
 
     @staticmethod
-    def get_unique_breed_count(conn, user_id: Optional[int]) -> int:
-        """Đếm số giống chó duy nhất đã nhận diện (hoặc toàn hệ thống nếu user_id là None)"""
+    def get_unique_breed_count(
+        conn,
+        user_id: Optional[int],
+        start_at: Optional[datetime] = None,
+        end_at: Optional[datetime] = None
+    ) -> int:
+        """Đếm số giống chó duy nhất đã nhận diện (hoặc toàn hệ thống nếu user_id là None) có lọc theo ngày"""
         with conn.cursor() as cur:
+            conds = ["breed IS NOT NULL AND breed != ''"]
+            params = []
             if user_id is not None:
-                cur.execute("""
-                    SELECT COUNT(DISTINCT breed)
-                    FROM prediction_history
-                    WHERE user_id = %s AND breed IS NOT NULL AND breed != ''
-                """, (user_id,))
-            else:
-                cur.execute("""
-                    SELECT COUNT(DISTINCT breed)
-                    FROM prediction_history
-                    WHERE breed IS NOT NULL AND breed != ''
-                """)
+                conds.append("user_id = %s")
+                params.append(user_id)
+            if start_at is not None:
+                conds.append("created_at >= %s")
+                params.append(start_at)
+            if end_at is not None:
+                conds.append("created_at <= %s")
+                params.append(end_at)
+            
+            where_clause = " WHERE " + " AND ".join(conds)
+            cur.execute(f"SELECT COUNT(DISTINCT breed) FROM prediction_history {where_clause}", tuple(params))
             return int(cur.fetchone()[0] or 0)
 
 

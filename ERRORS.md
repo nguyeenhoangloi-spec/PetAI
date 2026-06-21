@@ -275,3 +275,25 @@
 - **Prevention**: Tránh lồng các thẻ block-level (như div) bên dưới thẻ label. Luôn sử dụng span và định dạng hiển thị flex/inline-block/block để tuân thủ chuẩn HTML.
 - **Status**: Fixed
 
+---
+
+## [2026-06-22 01:20] - Lỗi truyền sai tham số set_cookie và assertion decode unicode trong unit test
+
+- **Type**: Process
+- **Severity**: Medium
+- **File**: `tests/test_app.py:568`
+- **Agent**: Antigravity Orchestrator
+- **Root Cause**: 
+  1. Sử dụng sai chữ ký hàm của `self.client.set_cookie` (truyền 4 đối số thay vì tối đa 3 đối số do Werkzeug/Flask test client không yêu cầu domain `localhost` theo kiểu truyền vị trí).
+  2. Lỗi assertion so sánh trực tiếp chuỗi Unicode Tiếng Việt có dấu với chuỗi thô JSON đã được escape dạng ascii (`\u1ea1n...`) trong `response.data.decode('utf-8')`.
+- **Error Message**:
+  ```text
+  TypeError: Client.set_cookie() takes from 2 to 3 positional arguments but 4 were given
+  AssertionError: 'Quản trị viên (Admin) hoạt động duy nhất' not found in '{"message":"B\\u1ea1n l\\u00e0 Qu\\u1ea3n..."}'
+  ```
+- **Fix Applied**: 
+  1. Sửa hàm gọi cookie thành `self.client.set_cookie('siteLanguage', 'en')`.
+  2. Sử dụng thư viện `json.loads` để giải mã dữ liệu JSON phản hồi trước khi thực hiện so sánh chuỗi có dấu.
+- **Prevention**: Luôn giải mã JSON trước khi kiểm tra các trường dữ liệu text chứa ký tự unicode/UTF-8. Đảm bảo truyền đúng chữ ký của Client.set_cookie trong các phiên bản Flask/Werkzeug khác nhau.
+- **Status**: Fixed
+

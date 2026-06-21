@@ -8,128 +8,134 @@
   data-theme="{{ui_theme or'light'}}"
 >
   <head>
-  <script>
-    // Apply initial sidebar collapse state immediately on load to prevent transition animation
-    (function() {
-      document.documentElement.classList.add("preload");
-      try {
-        if (window.innerWidth >= 768) {
-          const isCollapsed = localStorage.getItem("sidebar-collapsed") === "true";
-          if (isCollapsed) {
-            document.documentElement.classList.add("sidebar-collapsed");
-          } else {
-            document.documentElement.classList.remove("sidebar-collapsed");
+    <script>
+      // Apply initial sidebar collapse state immediately on load to prevent transition animation
+      (function() {
+        document.documentElement.classList.add("preload");
+        try {
+          if (window.innerWidth >= 768) {
+            const isCollapsed = localStorage.getItem("sidebar-collapsed") === "true";
+            if (isCollapsed) {
+              document.documentElement.classList.add("sidebar-collapsed");
+            } else {
+              document.documentElement.classList.remove("sidebar-collapsed");
+            }
           }
-        }
-      } catch (e) {}
-    })();
-  </script>
-  <style id="early-sidebar-style">
-    /* Prevent FOUC (Flash of Unstyled Content) during Tailwind compiler startup */
-    html.preload body {
-      opacity: 0 !important;
-    }
-    
-    /* Early CSS to prevent F5 flicker before stylesheet loads */
-    html.preload .sidebar,
-    html.preload main,
-    html.preload footer {
-      transition: none !important;
-    }
-    
-    /* Stable header styles to prevent navigation bar shifting */
-    body>nav .flex.items-center.gap-gutter {
-      gap: 12px !important;
-    }
-    body>nav #menuToggle {
-      margin-left: 4px !important;
-      margin-right: 0 !important;
-      position: relative !important;
-    }
-    
-    /* Stable inner sidebar styles to prevent internal text/layout shifting */
-    .sidebar-wrapper {
-      display: flex !important;
-      flex-direction: column !important;
-      height: 100% !important;
-      justify-content: space-between !important;
-      padding: 16px 10px 12px 10px !important;
-      box-sizing: border-box !important;
-      gap: 12px !important;
-    }
-    .sidebar-menu {
-      display: flex !important;
-      flex-direction: column !important;
-      gap: 6px !important;
-      flex-grow: 1 !important;
-    }
-    .sidebar-menu-item {
-      display: flex !important;
-      align-items: center !important;
-      gap: 10px !important;
-      height: 40px !important;
-      padding: 0 10px !important;
-      border-radius: 12px !important;
-      box-sizing: border-box !important;
-    }
-    
-    @media (min-width: 768px) {
-      .sidebar {
-        position: fixed !important;
-        top: 64px !important;
-        left: 0 !important;
-        bottom: 0 !important;
-        width: 224px !important;
-        height: calc(100vh - 64px) !important;
-        z-index: 100 !important;
-      }
-      
-      /* Collapsed state */
-      html.sidebar-collapsed .sidebar {
-        transform: translateX(-100%) !important;
+        } catch (e) {}
+      })();
+    </script>
+    <style id="early-sidebar-style">
+      /* Prevent FOUC (Flash of Unstyled Content) during Tailwind compiler startup */
+      html.preload body {
         opacity: 0 !important;
-        visibility: hidden !important;
-      }
-      html.sidebar-collapsed main,
-      html.sidebar-collapsed footer {
-        margin-left: 0 !important;
-        width: 100% !important;
       }
       
-      /* Expanded state (default) */
-      html:not(.sidebar-collapsed) .sidebar {
-        transform: translateX(0) !important;
-        opacity: 1 !important;
-        visibility: visible !important;
-      }
-      html:not(.sidebar-collapsed) main,
-      html:not(.sidebar-collapsed) footer {
-        margin-left: 224px !important;
-        width: calc(100% - 224px) !important;
+      /* Early CSS to prevent F5 flicker before stylesheet loads */
+      html.preload .sidebar,
+      html.preload main,
+      html.preload footer {
+        transition: none !important;
       }
       
-      /* Force single-column grid immediately for main container on both states */
-      html main {
-        grid-template-columns: 1fr !important;
-        gap: 0 !important;
+      /* Stable header styles to prevent navigation bar shifting */
+      body>nav .flex.items-center.gap-gutter {
+        gap: 12px !important;
       }
-    }
-    
-    @media (max-width: 767px) {
-      .sidebar {
-        position: fixed !important;
-        top: 0 !important;
-        left: 0 !important;
-        height: 100vh !important;
-        width: 224px !important;
-        transform: translateX(-100%) !important;
-        z-index: 1000 !important;
+      body>nav #menuToggle {
+        margin-left: 4px !important;
+        margin-right: 0 !important;
+        position: relative !important;
       }
-      .sidebar.active {
-        transform: translateX(0) !important;
+      
+      /* Stable inner sidebar styles to prevent internal text/layout shifting */
+      .sidebar-wrapper {
+        display: flex !important;
+        flex-direction: column !important;
+        height: 100% !important;
+        justify-content: space-between !important;
+        padding: 16px 10px 12px 10px !important;
+        box-sizing: border-box !important;
+        gap: 12px !important;
       }
-    }
-  </style>
+      .sidebar-menu {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 6px !important;
+        flex-grow: 1 !important;
+      }
+      .sidebar-menu-item {
+        display: flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+        height: 40px !important;
+        padding: 0 10px !important;
+        border-radius: 12px !important;
+        box-sizing: border-box !important;
+      }
+      
+      @media (min-width: 768px) {
+        .sidebar {
+          position: fixed !important;
+          top: 64px !important;
+          left: 0 !important;
+          bottom: 0 !important;
+          width: 224px !important;
+          height: calc(100vh - 64px) !important;
+          z-index: 100 !important;
+        }
+        
+        /* Collapsed state */
+        html.sidebar-collapsed .sidebar {
+          transform: translateX(-100%) !important;
+          opacity: 0 !important;
+          visibility: hidden !important;
+        }
+        html.sidebar-collapsed main,
+        html.sidebar-collapsed footer {
+          margin-left: 0 !important;
+          width: 100% !important;
+        }
+        
+        /* Expanded state (default) */
+        html:not(.sidebar-collapsed) .sidebar {
+          transform: translateX(0) !important;
+          opacity: 1 !important;
+          visibility: visible !important;
+        }
+        html:not(.sidebar-collapsed) main,
+        html:not(.sidebar-collapsed) footer {
+          margin-left: 224px !important;
+          width: calc(100% - 224px) !important;
+        }
+        
+        /* Force single-column grid immediately for main container on both states */
+        html main {
+          grid-template-columns: 1fr !important;
+          gap: 0 !important;
+        }
+      }
+      
+      @media (max-width: 767px) {
+        .sidebar {
+          position: fixed !important;
+          top: 0 !important;
+          left: 0 !important;
+          height: 100vh !important;
+          width: 224px !important;
+          transform: translateX(-100%) !important;
+          z-index: 1000 !important;
+        }
+        .sidebar.active {
+          transform: translateX(0) !important;
+        }
+      }
+
+      /* Custom i18n styles for relative dates */
+      html[lang="en"] .lang-vi-only { display: none !important; }
+      html[lang="en"] .lang-en-only { display: inline !important; }
+      html[lang="vi"] .lang-vi-only { display: inline !important; }
+      html[lang="vi"] .lang-en-only { display: none !important; }
+    </style>
     <script>
       (function () {
         var savedLang = "vi";
@@ -151,7 +157,7 @@
       html.i18n-loading body {
         visibility: hidden !important;
       }
-    </style>
+    </noscript>
     <noscript>
       <style>
         html.i18n-loading body {
@@ -587,7 +593,7 @@
       <div id="content-area" class="col-span-1 flex flex-col min-w-0">
         <!-- ── Page Header ── -->
         <section
-          class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-outline-variant/20 dark:border-slate-800 pb-5 mb-6"
+          class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4 border-b border-outline-variant/20 dark:border-slate-800 pb-5 mb-6"
           data-purpose="page-header"
         >
           <div class="flex flex-col gap-2">
@@ -601,31 +607,113 @@
               class="body-md text-on-surface-variant"
               data-i18n="statsSubtitle"
             >
-              <span data-i18n="statsSubtitle"
-                >Tổng quan số lần dự đoán, độ tin cậy và top giống chó phổ
-                biến.</span
-              >
+              <span>Tổng quan số lần dự đoán, độ tin cậy và top giống chó phổ biến.</span>
             </p>
           </div>
-          <div class="flex items-center gap-3">
+          
+          <div class="flex flex-wrap items-center gap-3">
+            <!-- Time-range filter pill buttons -->
+            <div
+              class="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-900/60 rounded-xl p-1 border border-outline-variant/20 dark:border-slate-800 overflow-x-auto max-w-full"
+            >
+              <a
+                href="?days=7"
+                class="time-filter-btn {{ 'active' if selected_days == '7' else '' }} px-3 py-1.5 rounded-lg label-sm font-semibold transition-all whitespace-nowrap"
+                data-i18n="days7"
+                >7 ngày</a
+              >
+              <a
+                href="?days=30"
+                class="time-filter-btn {{ 'active' if selected_days == '30' else '' }} px-3 py-1.5 rounded-lg label-sm font-semibold transition-all whitespace-nowrap"
+                data-i18n="days30"
+                >30 ngày</a
+              >
+              <a
+                href="?days=90"
+                class="time-filter-btn {{ 'active' if selected_days == '90' else '' }} px-3 py-1.5 rounded-lg label-sm font-semibold transition-all whitespace-nowrap"
+                data-i18n="days90"
+                >90 ngày</a
+              >
+              <a
+                href="?days=0"
+                class="time-filter-btn {{ 'active' if selected_days == '0' else '' }} px-3 py-1.5 rounded-lg label-sm font-semibold transition-all whitespace-nowrap"
+                data-i18n="all"
+                >Tất cả</a
+              >
+              
+              <!-- Custom Date Range Picker Dropdown -->
+              <div class="relative inline-block">
+                <button
+                  id="customDateBtn"
+                  type="button"
+                  class="time-filter-btn {{ 'active' if selected_days == 'custom' else '' }} px-3 py-1.5 rounded-lg label-sm font-semibold transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
+                >
+                  <span class="material-symbols-outlined text-[16px]">calendar_today</span>
+                  {% if selected_days == 'custom' %}
+                    <span>{{ start_date|replace('-','/') }} - {{ end_date|replace('-','/') }}</span>
+                  {% else %}
+                    <span data-i18n="custom">Tùy chọn</span>
+                  {% endif %}
+                </button>
+                
+                <!-- Popover picker panel -->
+                <div
+                  id="customDatePopover"
+                  class="hidden absolute right-0 mt-2 p-4 bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/60 dark:border-slate-800 rounded-xl shadow-xl z-50 w-72"
+                >
+                  <form method="GET" action="" class="flex flex-col gap-3">
+                    <input type="hidden" name="days" value="custom">
+                    <div class="flex flex-col gap-1">
+                      <label class="label-sm text-on-surface-variant font-semibold" data-i18n="fromDate">Từ ngày</label>
+                      <input
+                        type="date"
+                        name="start_date"
+                        value="{{ start_date }}"
+                        class="px-3 py-2 bg-white dark:bg-slate-950 border border-outline-variant/60 dark:border-slate-800 rounded-lg text-xs font-semibold focus:ring-2 focus:ring-primary/20 focus:border-primary text-slate-800 dark:text-slate-100"
+                        required
+                      >
+                    </div>
+                    <div class="flex flex-col gap-1">
+                      <label class="label-sm text-on-surface-variant font-semibold" data-i18n="toDate">Đến ngày</label>
+                      <input
+                        type="date"
+                        name="end_date"
+                        value="{{ end_date }}"
+                        class="px-3 py-2 bg-white dark:bg-slate-950 border border-outline-variant/60 dark:border-slate-800 rounded-lg text-xs font-semibold focus:ring-2 focus:ring-primary/20 focus:border-primary text-slate-800 dark:text-slate-100"
+                        required
+                      >
+                    </div>
+                    <button
+                      type="submit"
+                      class="w-full py-2 bg-primary hover:bg-primary/95 text-on-primary font-semibold rounded-lg text-xs shadow-sm transition-colors cursor-pointer"
+                      data-i18n="apply"
+                    >
+                      Áp dụng
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <!-- Export button -->
             <button
               id="exportReportBtn"
               type="button"
-              class="bg-surface-container-lowest dark:bg-slate-900 text-on-surface dark:text-slate-200 border border-outline-variant/60 dark:border-slate-800 hover:border-primary hover:text-primary dark:hover:text-blue-400 px-4 py-2.5 rounded-lg label-sm shadow-sm hover:shadow-md transition-all flex items-center gap-2 font-semibold"
+              class="bg-surface-container-lowest dark:bg-slate-900 text-on-surface dark:text-slate-200 border border-outline-variant/60 dark:border-slate-800 hover:border-primary hover:text-primary dark:hover:text-blue-400 px-4 py-2.5 rounded-lg label-sm shadow-sm hover:shadow-md transition-all flex items-center gap-2 font-semibold cursor-pointer"
             >
-              <span class="material-symbols-outlined text-[18px]">download</span
-              ><span data-i18n="exportReport">Xuất báo cáo</span>
+              <span class="material-symbols-outlined text-[18px]">download</span>
+              <span data-i18n="exportReport">Xuất báo cáo</span>
             </button>
           </div>
         </section>
 
         <!-- ══════════ KPI Cards ══════════ -->
         <section
-          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10"
+          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
         >
           <!-- Card 1 – Tổng lượt -->
           <div
-            class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[140px]"
+            class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[145px]"
           >
             <div class="flex items-center justify-between">
               <span
@@ -645,17 +733,41 @@
                 data-counter="{{ stats.total_predictions }}"
                 >0</span
               >
-              <span
-                class="label-sm text-on-surface-variant/70 mt-1"
-                data-i18n="totalScansLabel"
-                >Tổng số lần nhận diện</span
-              >
+              
+              <!-- Comparison badge scans -->
+              {% if scans_diff_pct is not none and selected_days != '0' %}
+                {% if scans_diff_pct > 0 %}
+                  <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 dark:text-emerald-450 bg-emerald-500/10 dark:bg-emerald-950/40 px-2 py-0.5 rounded-md mt-1.5 w-fit">
+                    <span class="material-symbols-outlined text-[12px]">trending_up</span>
+                    <span>+{{ scans_diff_pct }}%</span>
+                    <span class="text-on-surface-variant/60 font-normal ml-0.5" data-i18n="comparedToLastPeriodLabel" data-code="{{ duration_days }}">so với {{ duration_days }} ngày trước</span>
+                  </span>
+                {% elif scans_diff_pct < 0 %}
+                  <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-rose-600 dark:text-rose-455 bg-rose-500/10 dark:bg-rose-950/40 px-2 py-0.5 rounded-md mt-1.5 w-fit">
+                    <span class="material-symbols-outlined text-[12px]">trending_down</span>
+                    <span>{{ scans_diff_pct }}%</span>
+                    <span class="text-on-surface-variant/60 font-normal ml-0.5" data-i18n="comparedToLastPeriodLabel" data-code="{{ duration_days }}">so với {{ duration_days }} ngày trước</span>
+                  </span>
+                {% else %}
+                  <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-500 dark:text-slate-400 bg-slate-500/10 dark:bg-slate-900/60 px-2 py-0.5 rounded-md mt-1.5 w-fit">
+                    <span class="material-symbols-outlined text-[12px]">trending_flat</span>
+                    <span>0%</span>
+                    <span class="text-on-surface-variant/60 font-normal ml-0.5" data-i18n="comparedToLastPeriodLabel" data-code="{{ duration_days }}">so với {{ duration_days }} ngày trước</span>
+                  </span>
+                {% endif %}
+              {% else %}
+                <span
+                  class="label-sm text-on-surface-variant/70 mt-1.5"
+                  data-i18n="totalScansLabel"
+                  >Tổng số lần nhận diện</span
+                >
+              {% endif %}
             </div>
           </div>
 
           <!-- Card 2 – Độ tin cậy -->
           <div
-            class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[140px]"
+            class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[145px]"
           >
             <div class="flex items-center justify-between">
               <span
@@ -664,7 +776,7 @@
                 >Độ tin cậy TB</span
               >
               <div
-                class="w-10 h-10 rounded-lg bg-yellow-500/10 dark:bg-yellow-500/20 flex items-center justify-center text-yellow-600 dark:text-yellow-400"
+                class="w-10 h-10 rounded-lg bg-amber-500/10 dark:bg-amber-500/20 flex items-center justify-center text-amber-600 dark:text-amber-400"
               >
                 <span class="material-symbols-outlined">analytics</span>
               </div>
@@ -677,17 +789,41 @@
                 data-suffix="%"
                 >0%</span
               >
-              <span
-                class="label-sm text-on-surface-variant/70 mt-1"
-                data-i18n="avgAccuracy"
-                >Độ chính xác trung bình</span
-              >
+              
+              <!-- Comparison badge accuracy/confidence -->
+              {% if conf_diff is not none and selected_days != '0' %}
+                {% if conf_diff > 0 %}
+                  <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 dark:text-emerald-455 bg-emerald-500/10 dark:bg-emerald-950/40 px-2 py-0.5 rounded-md mt-1.5 w-fit">
+                    <span class="material-symbols-outlined text-[12px]">trending_up</span>
+                    <span>+{{ conf_diff }}%</span>
+                    <span class="text-on-surface-variant/60 font-normal ml-0.5" data-i18n="comparedToLastPeriodLabel" data-code="{{ duration_days }}">so với {{ duration_days }} ngày trước</span>
+                  </span>
+                {% elif conf_diff < 0 %}
+                  <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-rose-600 dark:text-rose-455 bg-rose-500/10 dark:bg-rose-950/40 px-2 py-0.5 rounded-md mt-1.5 w-fit">
+                    <span class="material-symbols-outlined text-[12px]">trending_down</span>
+                    <span>{{ conf_diff }}%</span>
+                    <span class="text-on-surface-variant/60 font-normal ml-0.5" data-i18n="comparedToLastPeriodLabel" data-code="{{ duration_days }}">so với {{ duration_days }} ngày trước</span>
+                  </span>
+                {% else %}
+                  <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-500 dark:text-slate-400 bg-slate-500/10 dark:bg-slate-900/60 px-2 py-0.5 rounded-md mt-1.5 w-fit">
+                    <span class="material-symbols-outlined text-[12px]">trending_flat</span>
+                    <span>0%</span>
+                    <span class="text-on-surface-variant/60 font-normal ml-0.5" data-i18n="comparedToLastPeriodLabel" data-code="{{ duration_days }}">so với {{ duration_days }} ngày trước</span>
+                  </span>
+                {% endif %}
+              {% else %}
+                <span
+                  class="label-sm text-on-surface-variant/70 mt-1.5"
+                  data-i18n="avgAccuracy"
+                  >Độ chính xác trung bình</span
+                >
+              {% endif %}
             </div>
           </div>
 
           <!-- Card 3 – Số giống duy nhất -->
           <div
-            class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[140px]"
+            class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[145px]"
           >
             <div class="flex items-center justify-between">
               <span
@@ -707,17 +843,26 @@
                 data-counter="{{ unique_breed_count }}"
                 >0</span
               >
-              <span
-                class="label-sm text-on-surface-variant/70 mt-1"
-                data-i18n="uniqueBreeds"
-                >Giống chó khác nhau</span
-              >
+              
+              <!-- Comparison new breeds -->
+              {% if new_breeds_count > 0 and selected_days != '0' %}
+                <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 dark:text-emerald-455 bg-emerald-500/10 dark:bg-emerald-950/40 px-2 py-0.5 rounded-md mt-1.5 w-fit">
+                  <span class="material-symbols-outlined text-[12px]">add</span>
+                  <span data-i18n="statsNewBreedsBadge" data-code="{{ new_breeds_count }}">+{{ new_breeds_count }} giống mới</span>
+                </span>
+              {% else %}
+                <span
+                  class="label-sm text-on-surface-variant/70 mt-1.5"
+                  data-i18n="uniqueBreeds"
+                  >Giống chó khác nhau</span
+                >
+              {% endif %}
             </div>
           </div>
 
           <!-- Card 4 – Hoạt động gần đây -->
           <div
-            class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[140px]"
+            class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[145px]"
           >
             <div class="flex items-center justify-between">
               <span
@@ -734,55 +879,25 @@
             <div class="mt-4 flex flex-col">
               <span
                 class="text-3xl font-bold text-on-surface tracking-tight"
-                data-counter="{{ recent_predictions|length }}"
+                data-counter="{{ stats.total_predictions }}"
                 >0</span
               >
-              <span
-                class="label-sm text-on-surface-variant/70 mt-1"
-                data-i18n="recentActivityLabel"
-                >Lượt nhận diện gần nhất</span
-              >
+              
+              <!-- Relative date string -->
+              <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-purple-600 dark:text-purple-450 bg-purple-500/10 dark:bg-purple-950/40 px-2 py-0.5 rounded-md mt-1.5 w-fit">
+                <span class="material-symbols-outlined text-[12px]">schedule</span>
+                <span class="lang-vi-only">{{ latest_scan_time_vi }}</span>
+                <span class="lang-en-only hidden">{{ latest_scan_time_en }}</span>
+              </span>
             </div>
           </div>
         </section>
 
-        <!-- Section: Charts and Analytics -->
-        <section class="mb-10 flex flex-col gap-6">
-          <div class="flex items-center justify-between">
-            <h2
-              class="headline-md font-semibold text-on-surface"
-              data-i18n="activityCharts"
-            >
-              <span data-i18n="activityCharts">Biểu đồ hoạt động</span>
-            </h2>
-            <!-- Time-range filter -->
-            <div
-              class="flex items-center gap-1.5 bg-surface-container rounded-xl p-1 border border-outline-variant/20"
-            >
-              <a
-                href="?days=7"
-                class="time-filter-btn {{ 'active' if selected_days == '7' else '' }} px-3 py-1.5 rounded-lg label-sm font-semibold transition-all"
-                data-i18n="days7"
-                ><span data-i18n="homePricing7Days">7 ngày</span></a
-              >
-              <a
-                href="?days=30"
-                class="time-filter-btn {{ 'active' if selected_days == '30' else '' }} px-3 py-1.5 rounded-lg label-sm font-semibold transition-all"
-                data-i18n="days30"
-                ><span data-i18n="homePricing30Days">30 ngày</span></a
-              >
-              <a
-                href="?days=0"
-                class="time-filter-btn {{ 'active' if selected_days == '0' else '' }} px-3 py-1.5 rounded-lg label-sm font-semibold transition-all"
-                data-i18n="all"
-                ><span data-i18n="all">Tất cả</span></a
-              >
-            </div>
-          </div>
-
-          <!-- Line Chart – Xu hướng nhận diện -->
+        <!-- ══════════ Primary Charts Section ══════════ -->
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+          <!-- Cột trái: Xu hướng nhận diện (65%) -->
           <div
-            class="chart-card bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-xl p-6 shadow-sm"
+            class="lg:col-span-2 bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-xl p-6 shadow-sm flex flex-col justify-between"
           >
             <div class="flex items-center justify-between mb-4">
               <div>
@@ -790,342 +905,654 @@
                   class="text-lg font-bold text-on-surface"
                   data-i18n="trendTitle"
                 >
-                  <span data-i18n="trendTitle">Xu hướng nhận diện</span>
+                  Xu hướng nhận diện
                 </h3>
                 <p
                   class="text-xs text-on-surface-variant mt-0.5"
-                  data-i18n="predTrendSubtitle"
+                  data-i18n="trendSubtitle"
                 >
-                  <span data-i18n="predTrendSubtitle"
-                    >Số lượng ảnh đã nhận diện mỗi ngày</span
-                  >
+                  Số lượng ảnh đã nhận diện theo thời gian
                 </p>
               </div>
               <div
                 class="text-primary bg-primary/10 dark:bg-primary/20 px-3 py-1 rounded-lg text-xs font-semibold"
               >
                 {% if selected_days == '7' %}
-                <span data-i18n="days7Ago">7 ngày qua</span>
+                  <span data-i18n="days7">7 ngày</span>
                 {% elif selected_days == '30' %}
-                <span data-i18n="days30Ago">30 ngày qua</span>
+                  <span data-i18n="days30">30 ngày</span>
+                {% elif selected_days == '90' %}
+                  <span data-i18n="days90">90 ngày</span>
+                {% elif selected_days == 'custom' %}
+                  <span data-i18n="custom">Tùy chọn</span>
                 {% else %}
-                <span data-i18n="all">Tất cả</span>
+                  <span data-i18n="all">Tất cả</span>
                 {% endif %}
               </div>
             </div>
+            
             {% if daily_counts %}
-            <div
-              class="chart-container"
-              style="position: relative; height: 320px"
-            >
-              <canvas
-                id="trendChart"
-                data-labels="{{ daily_counts | map(attribute='date') | list | tojson | forceescape | safe }}"
-                data-values="{{ daily_counts | map(attribute='count') | list | tojson | forceescape | safe }}"
-              ></canvas>
-            </div>
+              <div
+                class="chart-container w-full"
+                style="position: relative; height: 320px"
+              >
+                <canvas
+                  id="trendChart"
+                  data-labels="{{ daily_counts | map(attribute='date') | list | tojson | forceescape | safe }}"
+                  data-values="{{ daily_counts | map(attribute='count') | list | tojson | forceescape | safe }}"
+                ></canvas>
+              </div>
             {% else %}
-            <div class="flex flex-col items-center justify-center py-10 gap-3">
-              <span
-                class="material-symbols-outlined text-[40px] text-slate-300 dark:text-slate-600"
-                >bar_chart</span
-              >
-              <p
-                class="label-sm text-on-surface-variant"
-                data-i18n="noDataInRange"
-              >
-                <span data-i18n="noDataInRange"
-                  >Chưa có dữ liệu trong khoảng thời gian này.</span
+              <div class="flex flex-col items-center justify-center py-20 gap-3">
+                <span
+                  class="material-symbols-outlined text-[40px] text-slate-350 dark:text-slate-600"
+                  >bar_chart</span
                 >
-              </p>
-            </div>
+                <p
+                  class="label-sm text-on-surface-variant font-medium"
+                  data-i18n="noDataInRange"
+                >
+                  Chưa có dữ liệu trong khoảng thời gian này.
+                </p>
+              </div>
             {% endif %}
           </div>
 
-          <!-- Row 2: Top Breeds + Confidence Distribution -->
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <!-- Top 5 giống phổ biến -->
+          <!-- Cột phải: Phân bố độ tin cậy (35%) -->
+          <div
+            class="lg:col-span-1 bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-xl p-6 shadow-sm flex flex-col justify-between"
+          >
+            <div class="mb-4">
+              <h3
+                class="text-lg font-bold text-on-surface"
+                data-i18n="confidenceDist"
+              >
+                Phân bố độ tin cậy
+              </h3>
+              <p
+                class="text-xs text-on-surface-variant mt-0.5"
+                data-i18n="confidenceDistSubtitle"
+              >
+                Mức độ tin cậy của thuật toán phân loại
+              </p>
+            </div>
+            
             <div
-              class="chart-card bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-xl p-6 shadow-sm"
+              class="chart-container w-full"
+              style="position: relative; height: 320px"
             >
-              <div class="mb-4">
-                <h3
-                  class="text-lg font-bold text-on-surface"
-                  data-i18n="top5Breeds"
-                >
-                  <span data-i18n="top5Breeds">Top 5 giống phổ biến nhất</span>
-                </h3>
-                <p
-                  class="text-xs text-on-surface-variant mt-0.5"
-                  data-i18n="top5BreedsSubtitle"
-                >
-                  <span data-i18n="top5BreedsSubtitle"
-                    >Các giống chó được nhận diện nhiều nhất</span
-                  >
-                </p>
-              </div>
-              {% if stats.top_breeds %} {% set max_count =
-              stats.top_breeds[0].count %}
-              <div>
-                {% for item in stats.top_breeds %} {% set rank = loop.index %}
-                {% set pct = ((item.count / max_count) * 100)|round|int if
-                max_count > 0 else 0 %}
-                <div class="breed-row">
-                  <div class="flex items-center gap-3 mb-2">
-                    <span class="rank-badge rank-badge--{{ rank }}"
-                      >{{ rank }}</span
-                    >
-                    <span
-                      class="body-md font-semibold text-on-surface flex-1 truncate"
-                      title="{{ item.breed }}"
-                      data-i18n-breed="{{ item.breed or '' }}"
-                      >{{ item.breed }}</span
-                    >
-                    <span
-                      class="label-sm text-on-surface-variant font-bold tabular-nums"
-                      data-i18n="timesLabel"
-                      data-code="{{ item.count }}"
-                      >{{ item.count }} lần</span
-                    >
+              <canvas
+                id="confBarChart"
+                data-values="{{ confidence_dist | tojson | forceescape | safe }}"
+              ></canvas>
+            </div>
+          </div>
+        </section>
+
+        <!-- ══════════ Sub-Analysis Section ══════════ -->
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+          <!-- Card 1: Top 5 giống phổ biến nhất -->
+          <div
+            class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-xl p-6 shadow-sm flex flex-col justify-between"
+          >
+            <div class="mb-4">
+              <h3
+                class="text-lg font-bold text-on-surface"
+                data-i18n="top5Breeds"
+              >
+                Top 5 giống phổ biến nhất
+              </h3>
+              <p
+                class="text-xs text-on-surface-variant mt-0.5"
+                data-i18n="top5BreedsSubtitle"
+              >
+                Các giống chó được nhận diện nhiều nhất
+              </p>
+            </div>
+
+            {% if stats.top_breeds %}
+              {% set max_count = stats.top_breeds[0].count %}
+              <div class="flex-grow flex flex-col justify-center gap-3">
+                {% for item in stats.top_breeds[:5] %}
+                  {% set rank = loop.index %}
+                  {% set pct = ((item.count / max_count) * 100)|round|int if max_count > 0 else 0 %}
+                  <div class="breed-row w-full">
+                    <div class="flex items-center gap-3 mb-1.5">
+                      <span class="rank-badge rank-badge--{{ rank }}">{{ rank }}</span>
+                      <span
+                        class="body-md font-semibold text-on-surface flex-1 truncate"
+                        title="{{ item.breed }}"
+                        data-i18n-breed="{{ item.breed or '' }}"
+                        >{{ item.breed }}</span
+                      >
+                      <span
+                        class="label-sm text-on-surface-variant font-bold tabular-nums"
+                        data-code="{{ item.count }}"
+                        ><span class="count-value">{{ item.count }}</span> <span data-i18n="timesCount">lần</span></span
+                      >
+                    </div>
+                    <div class="progress-track">
+                      <div
+                        class="progress-fill"
+                        style="width: 0%"
+                        data-width="{{ pct }}"
+                      ></div>
+                    </div>
                   </div>
-                  <div class="progress-track">
-                    <div
-                      class="progress-fill"
-                      style="width: 0%"
-                      data-width="{{ pct }}"
-                    ></div>
-                  </div>
-                </div>
                 {% endfor %}
               </div>
-              {% else %}
+            {% else %}
               <div
-                class="flex flex-col items-center justify-center py-10 gap-3"
+                class="flex-grow flex flex-col items-center justify-center py-10 gap-3"
               >
                 <span
-                  class="material-symbols-outlined text-[40px] text-slate-300 dark:text-slate-600"
+                  class="material-symbols-outlined text-[40px] text-slate-350 dark:text-slate-655"
                   >emoji_events</span
                 >
                 <p
                   class="label-sm text-on-surface-variant text-center"
                   data-i18n="noTopBreedData"
                 >
-                  <span data-i18n="noTopBreedData"
-                    >Chưa có đủ dữ liệu để hiển thị top giống.</span
-                  >
+                  Chưa có đủ dữ liệu để hiển thị top giống.
                 </p>
                 <a
                   href="{{ url_for('predict.upload_page') }}"
-                  class="bg-primary text-on-primary px-4 py-2 rounded-lg label-sm font-semibold hover:opacity-90 transition-opacity"
+                  class="bg-primary hover:bg-primary/95 text-on-primary px-4 py-2 rounded-lg label-sm font-semibold transition-colors"
                   data-i18n="identifyNow"
-                  ><span data-i18n="identifyNow">Nhận diện ngay</span></a
+                  >Nhận diện ngay</a
                 >
               </div>
-              {% endif %}
-            </div>
-
-            <!-- Phân bố độ tin cậy -->
-            <div
-              class="chart-card bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-xl p-6 shadow-sm"
-            >
-              <div class="mb-4">
-                <h3
-                  class="text-lg font-bold text-on-surface"
-                  data-i18n="confidenceDist"
+            {% endif %}
+            
+            {% if stats.top_breeds %}
+              <div class="mt-4 border-t border-outline-variant/10 pt-3 flex justify-center">
+                <a
+                  href="{{ url_for('history.history') }}"
+                  class="text-primary hover:underline label-sm font-bold flex items-center gap-1"
                 >
-                  <span data-i18n="confidenceDist">Phân bố độ tin cậy</span>
-                </h3>
-                <p
-                  class="text-xs text-on-surface-variant mt-0.5"
-                  data-i18n="confidenceDistSubtitle"
-                >
-                  <span data-i18n="confidenceDistSubtitle"
-                    >Mức độ tin cậy của thuật toán phân loại</span
-                  >
-                </p>
+                  <span data-i18n="viewHistory">Xem lịch sử</span>
+                  <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+                </a>
               </div>
-              <div
-                class="chart-container"
-                style="position: relative; height: 260px"
-              >
-                <canvas
-                  id="confBarChart"
-                  data-values="{{ confidence_dist | tojson | forceescape | safe }}"
-                ></canvas>
-              </div>
-            </div>
+            {% endif %}
           </div>
 
-          <!-- Donut chart: breed distribution -->
+          <!-- Card 2: Phân bố giống chó (Donut chart với tâm số) -->
           <div
-            class="chart-card bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-xl p-6 shadow-sm"
+            class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-xl p-6 shadow-sm flex flex-col justify-between"
           >
             <div class="mb-4">
               <h3
                 class="text-lg font-bold text-on-surface"
                 data-i18n="breedDistTitle"
               >
-                <span data-i18n="breedDistTitle">Phân bố giống chó</span>
+                Phân bố giống chó
               </h3>
               <p
                 class="text-xs text-on-surface-variant mt-0.5"
                 data-i18n="breedDistDesc"
               >
-                <span data-i18n="breedDistDesc"
-                  >Tỉ lệ các giống chó được nhận diện</span
-                >
+                Tỉ lệ các giống chó được nhận diện
               </p>
             </div>
+
             {% if stats.top_breeds %}
-            <div
-              class="chart-container"
-              style="position: relative; height: 260px"
-            >
-              <canvas
-                id="breedDonutChart"
-                data-labels="{{ stats.top_breeds | map(attribute='breed') | list | tojson | forceescape | safe }}"
-                data-values="{{ stats.top_breeds | map(attribute='count') | list | tojson | forceescape | safe }}"
-              ></canvas>
-            </div>
+              <div class="relative w-full h-[240px] flex items-center justify-center flex-grow">
+                <canvas
+                  id="breedDonutChart"
+                  data-labels="{{ stats.top_breeds | map(attribute='breed') | list | tojson | forceescape | safe }}"
+                  data-values="{{ stats.top_breeds | map(attribute='count') | list | tojson | forceescape | safe }}"
+                ></canvas>
+                
+                <!-- Central layout indicator -->
+                <div class="absolute flex flex-col items-center justify-center pointer-events-none text-center">
+                  <span class="text-[10px] text-on-surface-variant/70 font-semibold uppercase tracking-wider" data-i18n="all">Tổng</span>
+                  <span class="text-3xl font-bold text-on-surface tracking-tight">{{ stats.total_predictions }}</span>
+                  <span class="text-[10px] text-on-surface-variant/70 font-semibold" data-i18n="timesCount">lượt</span>
+                </div>
+              </div>
             {% else %}
-            <div
-              class="flex flex-col items-center justify-center h-[260px] gap-2"
-            >
-              <span
-                class="material-symbols-outlined text-[36px] text-slate-300 dark:text-slate-600"
-                >donut_large</span
+              <div
+                class="flex-grow flex flex-col items-center justify-center h-[240px] gap-2"
               >
+                <span
+                  class="material-symbols-outlined text-[36px] text-slate-300 dark:text-slate-600"
+                  >donut_large</span
+                >
+                <p
+                  class="label-sm text-on-surface-variant"
+                  data-i18n="noDataChart"
+                >
+                  Chưa có dữ liệu
+                </p>
+              </div>
+            {% endif %}
+            
+            {% if stats.top_breeds %}
+              <div class="mt-4 border-t border-outline-variant/10 pt-3 flex justify-center">
+                <span class="text-xs text-on-surface-variant/70 font-medium" data-i18n="liveUpdate">Cập nhật trực tiếp</span>
+              </div>
+            {% endif %}
+          </div>
+
+          <!-- Card 3: Thông tin nổi bật (Insights) -->
+          <div
+            class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-xl p-6 shadow-sm flex flex-col justify-between"
+          >
+            <div class="mb-4">
+              <h3
+                class="text-lg font-bold text-on-surface"
+                data-i18n="statsHighlights"
+              >
+                Thông tin nổi bật
+              </h3>
               <p
-                class="label-sm text-on-surface-variant"
-                data-i18n="noDataChart"
+                class="text-xs text-on-surface-variant mt-0.5"
+                data-i18n="statsHighlightsDesc"
               >
-                <span data-i18n="noDataChart">Chưa có dữ liệu</span>
+                Các chỉ số quan trọng trong kỳ
               </p>
             </div>
+
+            {% if stats.total_predictions > 0 %}
+              <div class="flex-grow flex flex-col justify-center gap-4.5">
+                <!-- Insight 1: Giống phổ biến nhất -->
+                <div class="flex items-center gap-3">
+                  <div class="w-9 h-9 rounded-xl bg-orange-500/10 text-orange-600 dark:text-orange-400 flex items-center justify-center flex-shrink-0">
+                    <span class="material-symbols-outlined text-[20px]">trophy</span>
+                  </div>
+                  <div class="flex flex-col min-w-0">
+                    <span class="text-xs text-on-surface-variant font-medium" data-i18n="statsMostCommonBreed">Giống phổ biến nhất</span>
+                    <span class="text-sm font-bold text-on-surface truncate" data-i18n-breed="{{ most_common_breed }}">{{ most_common_breed }}</span>
+                  </div>
+                </div>
+
+                <!-- Insight 2: Khoảng tin cậy phổ biến nhất -->
+                <div class="flex items-center gap-3">
+                  <div class="w-9 h-9 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center flex-shrink-0">
+                    <span class="material-symbols-outlined text-[20px]">target</span>
+                  </div>
+                  <div class="flex flex-col min-w-0">
+                    <span class="text-xs text-on-surface-variant font-medium" data-i18n="statsPeakConfidence">Khoảng tin cậy phổ biến nhất</span>
+                    <span class="text-sm font-bold text-on-surface">{{ peak_confidence_bracket }}</span>
+                  </div>
+                </div>
+
+                <!-- Insight 3: Xu hướng so với kỳ trước -->
+                <div class="flex items-center gap-3">
+                  <div class="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center flex-shrink-0">
+                    <span class="material-symbols-outlined text-[20px]">trending_up</span>
+                  </div>
+                  <div class="flex flex-col min-w-0">
+                    <span class="text-xs text-on-surface-variant font-medium" data-i18n="statsComparisonLabel">So với kỳ trước</span>
+                    <span class="text-sm font-bold text-on-surface">
+                      {% if selected_days == '0' %}
+                        <span data-i18n="all">Tất cả</span>
+                      {% elif scans_diff_pct is not none %}
+                        {% if scans_diff_pct > 0 %}+{{ scans_diff_pct }}%{% else %}{{ scans_diff_pct }}%{% endif %}
+                      {% else %}
+                        --
+                      {% endif %}
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Insight 4: Ngày hoạt động nhiều nhất -->
+                <div class="flex items-center gap-3">
+                  <div class="w-9 h-9 rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center flex-shrink-0">
+                    <span class="material-symbols-outlined text-[20px]">calendar_today</span>
+                  </div>
+                  <div class="flex flex-col min-w-0">
+                    <span class="text-xs text-on-surface-variant font-medium" data-i18n="statsPeakActiveDay">Ngày hoạt động nhiều nhất</span>
+                    <span class="text-sm font-bold text-on-surface">{{ peak_active_date }}</span>
+                  </div>
+                </div>
+              </div>
+            {% else %}
+              <div class="flex-grow flex flex-col items-center justify-center py-12 text-center">
+                <span class="material-symbols-outlined text-[36px] text-slate-300 dark:text-slate-650 mb-2">insights</span>
+                <span class="text-xs text-on-surface-variant font-medium" data-i18n="statsNoData">Chưa có dữ liệu để tính toán</span>
+              </div>
             {% endif %}
+            
+            <div class="mt-4 border-t border-outline-variant/10 pt-3 flex justify-center">
+              <span class="text-xs text-on-surface-variant/70 font-medium" data-i18n="deepAnalysis">Phân tích sâu lịch sử của bạn</span>
+            </div>
           </div>
         </section>
 
-        <!-- Kết quả gần đây -->
-        <section>
+        <!-- ══════════ Recent Results Section ══════════ -->
+        <section class="mb-6">
           <div class="flex items-center justify-between mb-4">
             <h2
               class="headline-md font-semibold text-on-surface"
               data-i18n="recentResults"
             >
-              <span data-i18n="recentResults">Kết quả gần đây</span>
+              Kết quả gần đây
             </h2>
             <a
-              class="text-primary font-semibold label-sm hover:underline"
+              class="text-primary hover:text-primary-container dark:text-blue-400 font-semibold label-sm flex items-center gap-0.5"
               href="{{ url_for('history.history') }}"
-              data-i18n="viewAll"
-              ><span data-i18n="viewAll">Xem tất cả</span></a
             >
+              <span data-i18n="viewAll">Xem tất cả</span>
+              <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+            </a>
           </div>
+
           <div
             class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-xl shadow-sm overflow-hidden"
           >
             {% if recent_predictions %}
-            <div class="divide-y divide-outline-variant/10">
-              {% for p in recent_predictions[:5] %} {% set conf_pct =
-              (p.confidence * 100)|round|int %} {% if conf_pct >= 70 %} {% set
-              pill_cls = 'confidence-high' %} {% elif conf_pct >= 30 %} {% set
-              pill_cls = 'confidence-mid' %} {% else %} {% set pill_cls =
-              'confidence-low' %} {% endif %}
-              <div
-                class="activity-item p-4 flex items-center justify-between gap-4"
-              >
-                <div class="flex items-center gap-3.5 min-w-0">
-                  {% if p.image_path %}
-                  <img
-                    alt="{{ p.breed }}"
-                    class="activity-thumb"
-                    src="{{ p.image_path if p.image_path.startswith('http') else '/' ~ p.image_path }}"
-                    onerror="this.src='{{ default_logo }}'"
-                  >
-                  {% else %}
-                  <div
-                    class="activity-thumb bg-surface-container flex items-center justify-center"
-                  >
-                    <span
-                      class="material-symbols-outlined text-outline text-[24px]"
-                      >pets</span
-                    >
-                  </div>
-                  {% endif %}
-                  <div class="min-w-0">
-                    <h4 class="font-semibold text-on-surface body-md truncate" data-i18n-breed="{{ p.breed or '' }}">
-                      {{ p.breed or 'Chưa xác định' }}
-                    </h4>
-                    <p
-                      class="label-sm text-on-surface-variant flex items-center gap-1 mt-0.5"
-                    >
-                      <span class="material-symbols-outlined text-[13px]"
-                        >schedule</span
-                      >
-                      {{ p.created_at.strftime('%d/%m/%Y %H:%M') if p.created_at
-                      else '' }}
-                    </p>
-                  </div>
-                </div>
-                <div class="confidence-pill {{ pill_cls }}">
-                  {{ conf_pct }}%
-                </div>
+              <div class="overflow-x-auto w-full">
+                <table class="w-full text-left border-collapse">
+                  <thead>
+                    <tr class="border-b border-outline-variant/10 bg-slate-50/50 dark:bg-slate-900/50 text-[11px] font-bold text-on-surface-variant uppercase tracking-wider select-none">
+                      <th class="px-6 py-4" data-i18n="imageScanCount">Ảnh</th>
+                      <th class="px-6 py-4" data-i18n="modalBreedLabel">Giống chó</th>
+                      <th class="px-6 py-4" data-i18n="modalConfLabel">Độ tin cậy</th>
+                      <th class="px-6 py-4" data-i18n="modalDateLabel">Thời gian</th>
+                      <th class="px-6 py-4 text-right">Thao tác</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-outline-variant/10">
+                    {% for p in recent_predictions[:5] %}
+                      {% set conf_pct = (p.confidence * 100)|round|int %}
+                      {% if conf_pct >= 70 %}
+                        {% set pill_cls = 'confidence-high' %}
+                      {% elif conf_pct >= 30 %}
+                        {% set pill_cls = 'confidence-mid' %}
+                      {% else %}
+                        {% set pill_cls = 'confidence-low' %}
+                      {% endif %}
+                      {% set formatted_date = p.created_at.strftime('%d/%m/%Y %H:%M') if p.created_at else '' %}
+                      
+                      <tr class="activity-item hover:bg-slate-50/30 dark:hover:bg-slate-800/20 transition-colors">
+                        <td class="px-6 py-4.5 whitespace-nowrap">
+                          {% if p.image_path %}
+                            <img
+                              alt="{{ p.breed }}"
+                              class="activity-thumb cursor-zoom-in"
+                              src="{{ p.image_path if p.image_path.startswith('http') else '/' ~ p.image_path }}"
+                              onerror="this.src='{{ default_logo }}'"
+                              onclick="openDetailModal('{{ p.image_path }}', '{{ p.breed|escape }}', '{{ (p.confidence*100)|round(1) }}', '{{ p.species|escape }}', '{{ formatted_date }}')"
+                            >
+                          {% else %}
+                            <div
+                              class="activity-thumb bg-surface-container flex items-center justify-center"
+                            >
+                              <span
+                                class="material-symbols-outlined text-outline text-[22px]"
+                                >pets</span
+                              >
+                            </div>
+                          {% endif %}
+                        </td>
+                        <td class="px-6 py-4.5 whitespace-nowrap">
+                          <h4 class="font-bold text-on-surface body-md truncate max-w-xs" data-i18n-breed="{{ p.breed or '' }}">
+                            {{ p.breed or 'Chưa xác định' }}
+                          </h4>
+                          <span class="text-[11px] text-on-surface-variant/80 font-semibold uppercase tracking-wider block mt-0.5" data-i18n-auto>{{ p.species or 'Chó' }}</span>
+                        </td>
+                        <td class="px-6 py-4.5 whitespace-nowrap">
+                          <span class="confidence-pill {{ pill_cls }} inline-block">
+                            {{ conf_pct }}%
+                          </span>
+                        </td>
+                        <td class="px-6 py-4.5 whitespace-nowrap text-xs text-on-surface-variant font-medium">
+                          <div class="flex items-center gap-1.5">
+                            <span class="material-symbols-outlined text-[15px] text-on-surface-variant/70">schedule</span>
+                            <span>{{ formatted_date }}</span>
+                          </div>
+                        </td>
+                        <td class="px-6 py-4.5 whitespace-nowrap text-right text-xs">
+                          <button
+                            type="button"
+                            onclick="openDetailModal('{{ p.image_path }}', '{{ p.breed|escape }}', '{{ (p.confidence*100)|round(1) }}', '{{ p.species|escape }}', '{{ formatted_date }}')"
+                            class="p-2 rounded-full bg-slate-100 hover:bg-primary/10 text-on-surface-variant hover:text-primary dark:bg-slate-800 dark:hover:bg-slate-700/60 dark:hover:text-blue-400 transition-all cursor-pointer inline-flex items-center justify-center shadow-sm"
+                            title="Xem chi tiết"
+                            data-i18n-title="viewDetail"
+                          >
+                            <span class="material-symbols-outlined text-[18px]">visibility</span>
+                          </button>
+                        </td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
               </div>
-              {% endfor %}
-            </div>
             {% else %}
-            <div class="flex flex-col items-center justify-center py-14 gap-3">
-              <span
-                class="material-symbols-outlined text-[48px] text-slate-300 dark:text-slate-600"
-                >history</span
-              >
-              <p
-                class="body-md font-semibold text-on-surface-variant"
-                data-i18n="noActivity"
-              >
-                <span data-i18n="noActivity">Chưa có hoạt động nào!</span>
-              </p>
-              <p
-                class="label-sm text-on-surface-variant text-center max-w-xs"
-                data-i18n="noActivityDesc"
-              >
-                <span data-i18n="noActivityDesc"
-                  >Hãy tải ảnh thú cưng lên để bắt đầu nhận diện giống
-                  chó.</span
+              <!-- Empty State -->
+              <div class="flex flex-col items-center justify-center py-16 px-4 gap-3 text-center">
+                <span
+                  class="material-symbols-outlined text-[48px] text-slate-300 dark:text-slate-600 animate-pulse"
+                  >history</span
                 >
-              </p>
-              <a
-                href="{{ url_for('predict.upload_page') }}"
-                class="bg-primary text-on-primary px-5 py-2.5 rounded-lg label-sm font-semibold hover:opacity-90 transition-opacity flex items-center gap-2 mt-1"
-              >
-                <span class="material-symbols-outlined text-[18px]"
-                  >upload_file</span
-                ><span data-i18n="identifyNow">Nhận diện ngay</span></a
-              >
-            </div>
+                <p
+                  class="body-md font-bold text-on-surface"
+                  data-i18n="noActivity"
+                >
+                  Chưa có hoạt động nào!
+                </p>
+                <p
+                  class="label-sm text-on-surface-variant text-center max-w-xs leading-relaxed"
+                  data-i18n="noActivityDesc"
+                >
+                  Hãy tải ảnh thú cưng lên để bắt đầu nhận diện giống chó.
+                </p>
+                <a
+                  href="{{ url_for('predict.upload_page') }}"
+                  class="bg-primary hover:bg-primary/95 text-on-primary px-5 py-2.5 rounded-xl label-sm font-semibold transition-colors flex items-center gap-2 mt-2 shadow-md hover:shadow-lg"
+                >
+                  <span class="material-symbols-outlined text-[18px]"
+                    >upload_file</span
+                  ><span data-i18n="identifyNow">Nhận diện ngay</span></a
+                >
+              </div>
             {% endif %}
           </div>
         </section>
 
+        <!-- Dynamic top breed helper payload -->
         <script id="topBreedsData" type="application/json">
           {{ (stats.top_breeds or []) | tojson | safe }}
         </script>
       </div>
     </main>
 
-<script>
-      /* ── Animated counter for stat cards ── */
-      (function () {
-        const DURATION = 1200;
-        const els = document.querySelectorAll("[data-counter]");
-        if (!els.length) return;
+    <!-- Modal Detail Popup (PJAX và Router tương thích hoàn toàn) -->
+    <div
+      id="detailModal"
+      class="fixed inset-0 z-[1050] hidden items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm transition-all duration-300"
+    >
+      <div
+        class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl max-w-2xl w-full border border-outline-variant/30 dark:border-slate-800 overflow-hidden shadow-2xl transition-transform transform scale-95 duration-300 flex flex-col md:flex-row md:h-[420px]"
+      >
+        <!-- Image Panel -->
+        <div
+          class="w-full md:w-1/2 bg-slate-950 flex items-center justify-center relative min-h-[250px] md:min-h-0"
+        >
+          <img
+            id="modalImage"
+            class="w-full h-full object-cover absolute inset-0"
+            src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'%3E%3C/svg%3E"
+            alt="Detection image"
+          >
+          <!-- Species Badge -->
+          <div
+            class="absolute bottom-4 left-4 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full text-white text-xs font-semibold flex items-center gap-1.5 z-10 border border-white/10"
+          >
+            <span class="material-symbols-outlined text-[14px]">pets</span>
+            <span id="modalSpecies" data-i18n="speciesDog">Chó</span>
+          </div>
+        </div>
 
+        <!-- Info Panel -->
+        <div
+          class="w-full md:w-1/2 p-6 flex flex-col justify-between text-slate-800 dark:text-slate-100"
+        >
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <!-- Type Badge -->
+              <span
+                id="modalTypeBadge"
+                class="px-2.5 py-1 rounded-full text-xs font-bold"
+              ></span>
+              <!-- Close Button -->
+              <button
+                type="button"
+                onclick="closeModal()"
+                class="w-8 h-8 rounded-full bg-surface-container-low dark:bg-slate-800 hover:bg-surface-container-high dark:hover:bg-slate-700 flex items-center justify-center text-on-surface-variant transition-colors cursor-pointer"
+              >
+                <span class="material-symbols-outlined text-[20px]">close</span>
+              </button>
+            </div>
+
+            <h3
+              id="modalBreed"
+              class="text-xl font-bold text-slate-900 dark:text-white leading-snug mb-3"
+            >&nbsp;</h3>
+
+            <!-- Parent mix info (Only shown for hybrid) -->
+            <div
+              id="modalHybridInfo"
+              class="mb-4 hidden p-3 rounded-xl bg-surface-container-low dark:bg-slate-800/50 border border-outline-variant/20 dark:border-slate-800"
+            >
+              <span
+                class="text-xs font-semibold text-slate-505 dark:text-slate-400 block mb-1.5"
+                data-i18n="hybridRatioExpected"
+                >Tỷ lệ lai dự kiến</span
+              >
+              <div class="flex items-center justify-between text-xs font-semibold mb-1">
+                <span id="modalParent1" class="text-slate-800 dark:text-slate-200"></span>
+                <span id="modalParent2" class="text-slate-850 dark:text-slate-200"></span>
+              </div>
+            </div>
+
+            <!-- Confidence Score -->
+            <div class="mb-5">
+              <div class="flex items-center justify-between label-sm mb-1.5">
+                <span
+                  class="text-slate-550 dark:text-slate-400 font-semibold"
+                  data-i18n="confidence"
+                  >Độ tin cậy</span
+                >
+                <span
+                  id="modalConfText"
+                  class="font-bold text-primary dark:text-blue-400"
+                ></span>
+              </div>
+              <div
+                class="h-2 rounded-full bg-surface-container-low dark:bg-slate-850 overflow-hidden"
+              >
+                <div
+                  id="modalConfBar"
+                  class="h-full bg-gradient-to-r from-primary/80 to-primary dark:from-blue-500/80 dark:to-blue-400 rounded-full transition-all duration-500 w-0"
+                ></div>
+              </div>
+            </div>
+
+            <!-- Date and Time -->
+            <div
+              class="flex items-center gap-2 text-slate-500 dark:text-slate-400 text-xs"
+            >
+              <span class="material-symbols-outlined text-[16px]">schedule</span>
+              <span data-i18n="identificationTimeLabel">Thời gian nhận diện:</span>
+              <span
+                id="modalDate"
+                class="font-medium text-slate-700 dark:text-slate-300"
+              ></span>
+            </div>
+          </div>
+
+          <!-- Footer Button -->
+          <div class="mt-6">
+            <button
+              type="button"
+              onclick="closeModal()"
+              class="w-full py-2.5 bg-primary hover:bg-primary/95 text-on-primary font-semibold rounded-xl text-sm transition-colors cursor-pointer shadow-sm hover:shadow-md flex items-center justify-center gap-2"
+              data-i18n="closeWindowBtn"
+            >
+              <span data-i18n="closeWindowBtn">Đóng cửa sổ</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Redesigned custom stats i18n variables registration -->
+    <script>
+      window.PetAI_DynamicSettings = {
+        vi: {
+          statsHighlights: "Thông tin nổi bật",
+          statsHighlightsDesc: "Các chỉ số quan trọng trong kỳ",
+          statsMostCommonBreed: "Giống phổ biến nhất",
+          statsPeakConfidence: "Khoảng tin cậy phổ biến nhất",
+          statsComparisonLabel: "So với kỳ trước",
+          statsPeakActiveDay: "Ngày hoạt động nhiều nhất",
+          statsAllTime: "Tất cả",
+          statsCustomRange: "Tùy chọn...",
+          statsNoData: "Chưa có dữ liệu để tính toán",
+          statsReportTime: "Thời gian xuất báo cáo",
+          statsDogMixed: "Nghi lai:",
+          statsDogPure: "Chó thuần",
+          statsActiveDays: "Số ngày hoạt động",
+          statsLastScan: "Quét gần nhất",
+          statsScanDiff: "Chênh lệch lượt quét",
+          statsNewBreedsBadge: "+{{ code }} giống mới",
+          comparedToLastPeriodLabel: "so với {{ code }} ngày trước"
+        },
+        en: {
+          statsHighlights: "Key Highlights",
+          statsHighlightsDesc: "Important metrics of this period",
+          statsMostCommonBreed: "Most common breed",
+          statsPeakConfidence: "Peak confidence range",
+          statsComparisonLabel: "Compared to previous period",
+          statsPeakActiveDay: "Most active day",
+          statsAllTime: "All Time",
+          statsCustomRange: "Custom Range...",
+          statsNoData: "No data available to calculate highlights",
+          statsReportTime: "Exported time",
+          statsDogMixed: "Crossbreed:",
+          statsDogPure: "Purebred",
+          statsActiveDays: "Active days",
+          statsLastScan: "Latest scan",
+          statsScanDiff: "Scan difference",
+          statsNewBreedsBadge: "+{{ code }} new breeds",
+          comparedToLastPeriodLabel: "vs last {{ code }} days"
+        }
+      };
+    </script>
+
+    <!-- UI Interaction Scripts -->
+    <script>
+      (function () {
+        // Date range picker toggle logic
+        const customDateBtn = document.getElementById("customDateBtn");
+        const customDatePopover = document.getElementById("customDatePopover");
+        if (customDateBtn && customDatePopover) {
+          customDateBtn.addEventListener("click", function (e) {
+            e.stopPropagation();
+            customDatePopover.classList.toggle("hidden");
+          });
+          customDatePopover.addEventListener("click", function (e) {
+            e.stopPropagation();
+          });
+          document.addEventListener("click", function () {
+            customDatePopover.classList.add("hidden");
+          });
+        }
+
+        // Animated counter values
+        const DURATION = 1200;
+        const counterEls = document.querySelectorAll("[data-counter]");
+        
         function easeOutExpo(t) {
           return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
         }
 
         function animateValue(el) {
+          if (el.dataset.animated === "true") return;
+          el.dataset.animated = "true";
           const target = parseFloat(el.getAttribute("data-counter"));
           const suffix = el.getAttribute("data-suffix") || "";
           const isFloat = String(target).includes(".");
@@ -1136,14 +1563,12 @@
             if (!start) start = ts;
             const progress = Math.min((ts - start) / DURATION, 1);
             const value = easeOutExpo(progress) * target;
-            el.textContent =
-              (isFloat ? value.toFixed(decimals) : Math.round(value)) + suffix;
+            el.textContent = (isFloat ? value.toFixed(decimals) : Math.round(value)) + suffix;
             if (progress < 1) requestAnimationFrame(step);
           }
           requestAnimationFrame(step);
         }
 
-        /* Use IntersectionObserver so counters animate when visible */
         if ("IntersectionObserver" in window) {
           const observer = new IntersectionObserver(
             (entries) => {
@@ -1154,17 +1579,15 @@
                 }
               });
             },
-            { threshold: 0.3 },
+            { threshold: 0.2 },
           );
-          els.forEach((el) => observer.observe(el));
+          counterEls.forEach((el) => observer.observe(el));
         } else {
-          els.forEach(animateValue);
+          counterEls.forEach(animateValue);
         }
 
-        /* Animate progress bars when visible */
-        const progressBars = document.querySelectorAll(
-          ".progress-fill[data-width]",
-        );
+        // Animate progress bars
+        const progressBars = document.querySelectorAll(".progress-fill[data-width]");
         if (progressBars.length) {
           if ("IntersectionObserver" in window) {
             const progressObserver = new IntersectionObserver(
@@ -1187,14 +1610,98 @@
           }
         }
       })();
+
+      // Detail modal operations
+      function openDetailModal(imagePath, breed, confidence, species, date) {
+        const modal = document.getElementById("detailModal");
+        const modalImage = document.getElementById("modalImage");
+        const modalBreed = document.getElementById("modalBreed");
+        const modalSpecies = document.getElementById("modalSpecies");
+        const modalTypeBadge = document.getElementById("modalTypeBadge");
+        const modalConfText = document.getElementById("modalConfText");
+        const modalConfBar = document.getElementById("modalConfBar");
+        const modalDate = document.getElementById("modalDate");
+        const modalHybridInfo = document.getElementById("modalHybridInfo");
+        const modalParent1 = document.getElementById("modalParent1");
+        const modalParent2 = document.getElementById("modalParent2");
+
+        modalImage.src = imagePath.startsWith("http") ? imagePath : "/" + imagePath;
+        modalBreed.setAttribute("data-i18n-breed", breed);
+        
+        modalBreed.innerText = breed;
+        modalSpecies.innerText = species || "Chó";
+        modalConfText.innerText = confidence + "%";
+        modalConfBar.style.width = confidence + "%";
+        modalDate.innerText = date;
+
+        if (breed.startsWith("Nghi lai:")) {
+          modalTypeBadge.setAttribute("data-i18n", "hybridDog");
+          modalTypeBadge.innerText = typeof window.PetAI_i18n !== "undefined"
+            ? window.PetAI_i18n.t("hybridDog")
+            : "Chó lai";
+          modalTypeBadge.className =
+            "px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 dark:bg-amber-950/50 dark:text-amber-400 border border-amber-200 dark:border-amber-900/30";
+
+          const parentPart = breed.replace("Nghi lai:", "").trim();
+          const parents = parentPart.split("x");
+          if (parents.length >= 2) {
+            const p1 = parents[0].trim();
+            const p2 = parents[1].trim();
+            modalParent1.setAttribute("data-i18n-breed", p1);
+            modalParent2.setAttribute("data-i18n-breed", p2);
+            modalParent1.innerText = p1;
+            modalParent2.innerText = p2;
+            modalHybridInfo.classList.remove("hidden");
+          } else {
+            modalHybridInfo.classList.add("hidden");
+          }
+        } else {
+          modalTypeBadge.setAttribute("data-i18n", "pureDog");
+          modalTypeBadge.innerText = typeof window.PetAI_i18n !== "undefined"
+            ? window.PetAI_i18n.t("pureDog")
+            : "Chó thuần";
+          modalTypeBadge.className =
+            "px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900/30";
+          modalHybridInfo.classList.add("hidden");
+        }
+
+        if (typeof window.PetAI_i18n !== "undefined") {
+          window.PetAI_i18n.applyToElement(modal, window.PetAI_i18n.getCurrentLang());
+        }
+
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+        setTimeout(() => {
+          modal.querySelector(".max-w-2xl").classList.remove("scale-95");
+          modal.querySelector(".max-w-2xl").classList.add("scale-100");
+        }, 10);
+      }
+
+      function closeModal() {
+        const modal = document.getElementById("detailModal");
+        if (!modal) return;
+        modal.querySelector(".max-w-2xl").classList.remove("scale-100");
+        modal.querySelector(".max-w-2xl").classList.add("scale-95");
+        setTimeout(() => {
+          modal.classList.remove("flex");
+          modal.classList.add("hidden");
+        }, 150);
+      }
+
+      window.addEventListener("click", function (e) {
+        const modal = document.getElementById("detailModal");
+        if (e.target === modal) {
+          closeModal();
+        }
+      });
     </script>
 
+    <!-- CSV Export script -->
     <script>
       (function () {
         const exportBtn = document.getElementById("exportReportBtn");
         if (exportBtn) {
           exportBtn.addEventListener("click", function () {
-            // Get stats values from cards
             const stats = document.querySelectorAll("[data-counter]");
             const totalPredictions = stats[0]
               ? stats[0].getAttribute("data-counter") || "0"
@@ -1211,15 +1718,13 @@
 
             let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
             csvContent += "BÁO CÁO THỐNG KÊ NHẬN DIỆN PETAI\n";
-            csvContent +=
-              "Thời gian xuất: ," + new Date().toLocaleString("vi-VN") + "\n\n";
+            csvContent += "Thời gian xuất: ," + new Date().toLocaleString("vi-VN") + "\n\n";
             csvContent += "CHỈ SỐ TỔNG QUAN\n";
             csvContent += "Tổng lượt nhận diện," + totalPredictions + "\n";
             csvContent += "Độ tin cậy trung bình," + avgConfidence + "%\n";
             csvContent += "Số giống đã khám phá," + uniqueBreeds + "\n";
             csvContent += "Lượt nhận diện gần nhất," + recentActivity + "\n\n";
 
-            // Add top breeds if available
             csvContent += "DANH SÁCH GIỐNG CHÓ PHỔ BIẾN NHẤT\n";
             csvContent += "Hạng,Giống chó,Số lần nhận diện\n";
 
@@ -1233,8 +1738,7 @@
 
             if (topBreeds && topBreeds.length > 0) {
               topBreeds.forEach((item, index) => {
-                csvContent +=
-                  index + 1 + ',"' + item.breed + '",' + item.count + "\n";
+                csvContent += index + 1 + ',"' + item.breed + '",' + item.count + "\n";
               });
             } else {
               csvContent += ",Chưa có dữ liệu,\n";
@@ -1245,9 +1749,7 @@
             link.setAttribute("href", encodedUri);
             link.setAttribute(
               "download",
-              "BaoCaoThongKe_PetAI_" +
-                new Date().toISOString().slice(0, 10) +
-                ".csv",
+              "BaoCaoThongKe_PetAI_" + new Date().toISOString().slice(0, 10) + ".csv",
             );
             document.body.appendChild(link);
             link.click();
@@ -1257,21 +1759,18 @@
       })();
     </script>
 
+    <!-- Chart.js setup with Light/Dark and Bilingual support -->
     <script>
-      /* ══════════ Chart.js – Data from Jinja2 ══════════ */
       (function () {
-        /* Detect dark mode */
         const isDark = document.documentElement.classList.contains("dark");
-        const gridColor = isDark
-          ? "rgba(148,163,184,0.12)"
-          : "rgba(15,23,42,0.07)";
+        const gridColor = isDark ? "rgba(148,163,184,0.12)" : "rgba(15,23,42,0.07)";
         const textColor = isDark ? "#94a3b8" : "#64748b";
         const tooltipBg = isDark ? "#1e293b" : "#ffffff";
         const tooltipText = isDark ? "#e2e8f0" : "#0f172a";
 
         Chart.defaults.color = textColor;
         Chart.defaults.font.family = "Inter, sans-serif";
-        Chart.defaults.font.size = 12;
+        Chart.defaults.font.size = 11;
 
         let trendChartInstance = null;
         let breedDonutChartInstance = null;
@@ -1282,7 +1781,7 @@
         const barEl = document.getElementById("confBarChart");
 
         function initCharts() {
-          /* ── 1. Line / Area chart – Trend ── */
+          /* ── 1. Line/Area Chart – Trend ── */
           if (trendEl && !trendChartInstance) {
             const trendLabels = JSON.parse(trendEl.dataset.labels || "[]");
             const trendData = JSON.parse(trendEl.dataset.values || "[]");
@@ -1292,20 +1791,17 @@
                 labels: trendLabels,
                 datasets: [
                   {
-                    label:
-                      typeof window.PetAI_i18n !== "undefined"
-                        ? window.PetAI_i18n.t("scansCount")
-                        : "Lượt nhận diện",
+                    label: typeof window.PetAI_i18n !== "undefined"
+                      ? window.PetAI_i18n.t("scansCount")
+                      : "Lượt nhận diện",
                     data: trendData,
                     fill: true,
-                    tension: 0.42,
+                    tension: 0.4,
                     borderColor: "#2563eb",
                     borderWidth: 2.5,
-                    backgroundColor: isDark
-                      ? "rgba(37,99,235,0.13)"
-                      : "rgba(37,99,235,0.08)",
+                    backgroundColor: isDark ? "rgba(37,99,235,0.13)" : "rgba(37,99,235,0.08)",
                     pointBackgroundColor: "#2563eb",
-                    pointBorderColor: isDark ? "#1e293b" : "#fff",
+                    pointBorderColor: isDark ? "#0f172a" : "#fff",
                     pointRadius: 4,
                     pointHoverRadius: 6,
                   },
@@ -1326,14 +1822,9 @@
                     padding: 10,
                     callbacks: {
                       label: function (ctx) {
-                        return (
-                          " " +
-                          ctx.parsed.y +
-                          " " +
-                          (typeof window.PetAI_i18n !== "undefined"
-                            ? window.PetAI_i18n.t("scansUnit")
-                            : "lượt")
-                        );
+                        return " " + ctx.parsed.y + " " + (typeof window.PetAI_i18n !== "undefined"
+                          ? window.PetAI_i18n.t("scansUnit")
+                          : "lượt");
                       },
                     },
                   },
@@ -1341,7 +1832,7 @@
                 scales: {
                   x: {
                     grid: { color: gridColor },
-                    ticks: { maxTicksLimit: 8 },
+                    ticks: { maxTicksLimit: 12 },
                   },
                   y: {
                     grid: { color: gridColor },
@@ -1362,20 +1853,9 @@
               });
             }
             const breedCounts = JSON.parse(donutEl.dataset.values || "[]");
-            const donutColors = [
-              "#2563eb",
-              "#f59e0b",
-              "#ea580c",
-              "#6366f1",
-              "#10b981",
-            ];
-            const donutDark = [
-              "#60a5fa",
-              "#fbbf24",
-              "#fb923c",
-              "#a5b4fc",
-              "#34d399",
-            ];
+            const donutColors = ["#2563eb", "#f59e0b", "#ea580c", "#6366f1", "#10b981"];
+            const donutDark = ["#60a5fa", "#fbbf24", "#fb923c", "#a5b4fc", "#34d399"];
+            
             breedDonutChartInstance = new Chart(donutEl, {
               type: "doughnut",
               data: {
@@ -1386,24 +1866,23 @@
                     backgroundColor: isDark ? donutDark : donutColors,
                     borderColor: isDark ? "#0f172a" : "#ffffff",
                     borderWidth: 3,
-                    hoverOffset: 8,
+                    hoverOffset: 6,
                   },
                 ],
               },
               options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                cutout: "65%",
+                cutout: "70%",
                 plugins: {
                   legend: {
                     position: "bottom",
                     labels: {
-                      boxWidth: 10,
-                      boxHeight: 10,
-                      borderRadius: 4,
-                      padding: 8,
-                      font: { size: 11 },
-                      maxLength: 16,
+                      boxWidth: 8,
+                      boxHeight: 8,
+                      borderRadius: 3,
+                      padding: 6,
+                      font: { size: 10 },
                     },
                   },
                   tooltip: {
@@ -1412,19 +1891,12 @@
                     bodyColor: tooltipText,
                     borderColor: gridColor,
                     borderWidth: 1,
-                    padding: 10,
+                    padding: 8,
                     callbacks: {
                       label: function (ctx) {
-                        return (
-                          " " +
-                          ctx.label +
-                          ": " +
-                          ctx.parsed +
-                          " " +
-                          (typeof window.PetAI_i18n !== "undefined"
-                            ? window.PetAI_i18n.t("timesCount")
-                            : "lần")
-                        );
+                        return " " + ctx.label + ": " + ctx.parsed + " " + (typeof window.PetAI_i18n !== "undefined"
+                          ? window.PetAI_i18n.t("timesCount")
+                          : "lần");
                       },
                     },
                   },
@@ -1439,19 +1911,19 @@
             const barColors = isDark
               ? ["#f87171", "#fbbf24", "#60a5fa", "#34d399", "#a78bfa"]
               : ["#ef4444", "#f59e0b", "#2563eb", "#10b981", "#8b5cf6"];
+              
             confBarChartInstance = new Chart(barEl, {
               type: "bar",
               data: {
                 labels: ["0–20%", "20–40%", "40–60%", "60–80%", "80–100%"],
                 datasets: [
                   {
-                    label:
-                      typeof window.PetAI_i18n !== "undefined"
-                        ? window.PetAI_i18n.t("scansCount")
-                        : "Số lượt",
+                    label: typeof window.PetAI_i18n !== "undefined"
+                      ? window.PetAI_i18n.t("scansCount")
+                      : "Số lượt",
                     data: confDist,
                     backgroundColor: barColors,
-                    borderRadius: 6,
+                    borderRadius: 5,
                     borderSkipped: false,
                   },
                 ],
@@ -1470,14 +1942,9 @@
                     padding: 10,
                     callbacks: {
                       label: function (ctx) {
-                        return (
-                          " " +
-                          ctx.parsed.y +
-                          " " +
-                          (typeof window.PetAI_i18n !== "undefined"
-                            ? window.PetAI_i18n.t("scansUnit")
-                            : "lượt")
-                        );
+                        return " " + ctx.parsed.y + " " + (typeof window.PetAI_i18n !== "undefined"
+                          ? window.PetAI_i18n.t("scansUnit")
+                          : "lượt");
                       },
                     },
                   },
@@ -1495,7 +1962,6 @@
           }
         }
 
-        // Initialize when i18n is ready, or immediately if already loaded
         if (typeof window.PetAI_i18n !== "undefined") {
           initCharts();
         } else {
@@ -1509,10 +1975,8 @@
           const tooltipBg = isDark ? "#1e293b" : "#ffffff";
           const tooltipText = isDark ? "#e2e8f0" : "#0f172a";
 
-          // 1. Update defaults
           Chart.defaults.color = text;
 
-          // 2. Update scales ticks and grid colors
           if (chart.options.scales) {
             Object.values(chart.options.scales).forEach(scale => {
               if (scale.ticks) scale.ticks.color = text;
@@ -1520,12 +1984,10 @@
             });
           }
 
-          // 3. Update legend labels color
           if (chart.options.plugins && chart.options.plugins.legend && chart.options.plugins.legend.labels) {
             chart.options.plugins.legend.labels.color = text;
           }
 
-          // 4. Update tooltip styles
           if (chart.options.plugins && chart.options.plugins.tooltip) {
             const tt = chart.options.plugins.tooltip;
             tt.backgroundColor = tooltipBg;
@@ -1535,7 +1997,6 @@
             tt.borderWidth = 1;
           }
 
-          // 5. Update dataset-specific values based on canvas ID
           const canvasId = chart.canvas ? chart.canvas.id : "";
           if (chart.data.datasets && chart.data.datasets[0]) {
             const ds = chart.data.datasets[0];
@@ -1544,7 +2005,7 @@
               ds.backgroundColor = isDark
                 ? "rgba(37,99,235,0.13)"
                 : "rgba(37,99,235,0.08)";
-              ds.pointBorderColor = isDark ? "#1e293b" : "#fff";
+              ds.pointBorderColor = isDark ? "#0f172a" : "#fff";
             } else if (canvasId === "breedDonutChart") {
               const donutColors = ["#2563eb", "#f59e0b", "#ea580c", "#6366f1", "#10b981"];
               const donutDark = ["#60a5fa", "#fbbf24", "#fb923c", "#a5b4fc", "#34d399"];
@@ -1561,7 +2022,6 @@
           chart.update();
         }
 
-        // Listen for dark mode theme changes dynamically via MutationObserver
         const themeObserver = new MutationObserver(function (mutations) {
           mutations.forEach(function (mutation) {
             if (mutation.attributeName === "class" || mutation.attributeName === "data-theme") {
@@ -1576,20 +2036,16 @@
         });
         themeObserver.observe(document.documentElement, { attributes: true });
 
-        // Listen for language changes dynamically
         document.addEventListener("i18nChanged", function (e) {
           const lang = e.detail.lang;
           
-          // Update Trend Chart dataset label
           if (trendChartInstance) {
-            trendChartInstance.data.datasets[0].label = 
-              typeof window.PetAI_i18n !== "undefined"
-                ? window.PetAI_i18n.t("scansCount")
-                : (lang === "en" ? "Scans" : "Lượt nhận diện");
+            trendChartInstance.data.datasets[0].label = typeof window.PetAI_i18n !== "undefined"
+              ? window.PetAI_i18n.t("scansCount")
+              : (lang === "en" ? "Scans" : "Lượt nhận diện");
             trendChartInstance.update();
           }
 
-          // Update Donut Chart labels
           if (breedDonutChartInstance && donutEl) {
             let originalLabels = JSON.parse(donutEl.dataset.labels || "[]");
             if (lang === "en") {
@@ -1602,12 +2058,10 @@
             breedDonutChartInstance.update();
           }
 
-          // Update Confidence Bar Chart dataset label
           if (confBarChartInstance) {
-            confBarChartInstance.data.datasets[0].label = 
-              typeof window.PetAI_i18n !== "undefined"
-                ? window.PetAI_i18n.t("scansCount")
-                : (lang === "en" ? "Scans" : "Số lượt");
+            confBarChartInstance.data.datasets[0].label = typeof window.PetAI_i18n !== "undefined"
+              ? window.PetAI_i18n.t("scansCount")
+              : (lang === "en" ? "Scans" : "Số lượt");
             confBarChartInstance.update();
           }
         });

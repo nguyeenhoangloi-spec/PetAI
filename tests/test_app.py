@@ -29,9 +29,10 @@ from app import app
 from werkzeug.security import generate_password_hash
 
 class SmartMockCursor:
-    def __init__(self, pwd_hash, cursor_class=None, *args, **kwargs):
+    def __init__(self, pwd_hash, cursor_class=None, test_case=None, *args, **kwargs):
         self.pwd_hash = pwd_hash
         self.cursor_class = cursor_class
+        self.test_case = test_case
         # Check if this cursor is a DictCursor
         self.is_dict_cursor = False
         if cursor_class is not None:
@@ -93,7 +94,10 @@ class SmartMockCursor:
             }]
         # 10. General aggregation queries (always return 1 row, 1 column)
         elif any(agg in self.last_query for agg in ["count(", "sum(", "avg("]):
-            self.results = [{"val": 5}]
+            if "role = 'admin'" in self.last_query and self.test_case and hasattr(self.test_case, "mock_other_admins_count"):
+                self.results = [{"cnt": self.test_case.mock_other_admins_count}]
+            else:
+                self.results = [{"val": 5}]
         # 11. User block inactive status check in middleware.py
         elif "select is_active, force_change_password" in self.last_query:
             self.results = [{"is_active": 1, "force_change_password": 0}]
@@ -151,7 +155,16 @@ class SmartMockCursor:
             self.results = [{"id": 2, "username": "testuser"}]
         # 19. Simple select email, fullname
         elif "select email, fullname, username, account_status" in self.last_query:
-            self.results = [{"email": "test@example.com", "fullname": "Test User", "username": "testuser", "account_status": "active"}]
+            role = "user"
+            if self.test_case and hasattr(self.test_case, "mock_user_role"):
+                role = self.test_case.mock_user_role
+            self.results = [{
+                "email": "test@example.com",
+                "fullname": "Test User",
+                "username": "testuser",
+                "account_status": "active",
+                "role": role
+            }]
         elif "select email, fullname" in self.last_query:
             self.results = [{"email": "test@example.com", "fullname": "Test User"}]
         elif "select account_status, delete_requested_at" in self.last_query:
@@ -253,7 +266,8 @@ class FlaskSystemTestCase(unittest.TestCase):
         # Configure the mock connection to return our smart cursor
         mock_conn.reset_mock()
         def get_mock_cursor(*args, **kwargs):
-            self.last_cursor = SmartMockCursor(self.pwd_hash, *args, **kwargs)
+            cursor_class = args[0] if args else kwargs.get("cursor_class", None)
+            self.last_cursor = SmartMockCursor(self.pwd_hash, cursor_class=cursor_class, test_case=self)
             return self.last_cursor
         mock_conn.cursor.side_effect = get_mock_cursor
 
@@ -523,6 +537,55 @@ class FlaskSystemTestCase(unittest.TestCase):
 
         response = self._post_with_csrf('/account/delete/confirm', data={
             'otp': '123456'
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'"success":true', response.data.replace(b' ', b''))
+
+    def test_admin_delete_request_blocked(self):
+        self.mock_user_role = "admin"
+        self.mock_other_admins_count = 0
+        with self.client.session_transaction() as sess:
+            sess['user_id'] = 1
+            sess['username'] = 'admin'
+            sess['email'] = 'admin@example.com'
+
+        response = self._post_with_csrf('/account/delete/request', data={
+            'reason': 'Only admin deleting'
+        })
+        self.assertEqual(response.status_code, 400)
+        import json
+        data = json.loads(response.data.decode('utf-8'))
+        self.assertEqual(data["success"], False)
+        self.assertIn("Quản trị viên (Admin) hoạt động duy nhất", data["message"])
+
+    def test_admin_delete_request_blocked_en(self):
+        self.mock_user_role = "admin"
+        self.mock_other_admins_count = 0
+        with self.client.session_transaction() as sess:
+            sess['user_id'] = 1
+            sess['username'] = 'admin'
+            sess['email'] = 'admin@example.com'
+
+        self.client.set_cookie('siteLanguage', 'en')
+        response = self._post_with_csrf('/account/delete/request', data={
+            'reason': 'Only admin deleting'
+        })
+        self.assertEqual(response.status_code, 400)
+        import json
+        data = json.loads(response.data.decode('utf-8'))
+        self.assertEqual(data["success"], False)
+        self.assertIn("You are the only active Administrator", data["message"])
+
+    def test_admin_delete_request_allowed(self):
+        self.mock_user_role = "admin"
+        self.mock_other_admins_count = 1
+        with self.client.session_transaction() as sess:
+            sess['user_id'] = 1
+            sess['username'] = 'admin'
+            sess['email'] = 'admin@example.com'
+
+        response = self._post_with_csrf('/account/delete/request', data={
+            'reason': 'One of many admins'
         })
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'"success":true', response.data.replace(b' ', b''))

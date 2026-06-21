@@ -42,10 +42,10 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 
 def _get_user_info(conn, user_id: int) -> dict | None:
-    """Lấy thông tin cơ bản của user (email, fullname)."""
+    """Lấy thông tin cơ bản của user (email, fullname, role)."""
     with conn.cursor() as cur:
         cur.execute(
-            "SELECT email, fullname, username, account_status FROM users WHERE id = %s",
+            "SELECT email, fullname, username, account_status, role FROM users WHERE id = %s",
             (user_id,),
         )
         row = cur.fetchone()
@@ -55,6 +55,7 @@ def _get_user_info(conn, user_id: int) -> dict | None:
         "email": row[0],
         "fullname": row[1] or row[2] or "",
         "account_status": row[3] or "active",
+        "role": row[4] if len(row) > 4 else "user",
     }
 
 
@@ -107,6 +108,22 @@ def delete_request():
 
         if user["account_status"] == "deleted":
             return jsonify({"success": False, "message": "Tài khoản đã bị xóa."}), 400
+
+        # Giải pháp 2: Chặn xóa tài khoản nếu là Admin hoạt động duy nhất
+        if user.get("role") == "admin":
+            with conn.cursor() as cur:
+                cur.execute(
+                    "SELECT COUNT(*) FROM users WHERE role = 'admin' AND account_status = 'active' AND is_active = 1 AND id != %s",
+                    (user_id,)
+                )
+                other_admins_count = cur.fetchone()[0]
+            if other_admins_count == 0:
+                lang = request.cookies.get("siteLanguage", "vi")
+                if lang == "en":
+                    msg = "You are the only active Administrator (Admin) on the system. Please promote another account to Admin before requesting account deletion."
+                else:
+                    msg = "Bạn là Quản trị viên (Admin) hoạt động duy nhất trên hệ thống. Vui lòng nâng quyền (promote) cho tài khoản khác làm Admin trước khi yêu cầu xóa tài khoản."
+                return jsonify({"success": False, "message": msg}), 400
 
         # Tạo OTP và ghi vào DB
         otp = _generate_otp()

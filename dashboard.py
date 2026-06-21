@@ -7,7 +7,7 @@ from datetime import datetime, time, timedelta
 from flask import Blueprint, render_template, session, redirect, url_for, flash, request, jsonify
 
 from connect import get_connection
-from models import PredictionHistory
+from models import PredictionHistory, UserQuota, SystemConfig
 from breed_names import to_common_vietnamese_breed_name
 
 PREDICTIONS_PER_PAGE = 10
@@ -55,6 +55,42 @@ def dashboard():
         conn = get_connection()
         is_admin = (session.get("role") == "admin")
         query_user_id = None if is_admin else user_id
+
+        # Get quota details
+        quota = UserQuota.get_or_create(conn, user_id)
+        plan_name = (quota.get("plan") or "free").strip().lower()
+        plan_expire = quota.get("plan_expire")
+        paid_uses_remaining = quota.get("paid_uses_remaining")
+
+        # Check if active
+        now = datetime.now()
+        is_active = (plan_name != "free" and (plan_expire is None or plan_expire > now))
+        is_out_of_uses = (paid_uses_remaining is not None and int(paid_uses_remaining) <= 0)
+
+        if plan_name != "free" and (not is_active or is_out_of_uses):
+            active_plan = "free"
+        else:
+            active_plan = plan_name
+
+        # Get total limit
+        total_uses = None
+        if active_plan != "free":
+            limit_val = UserQuota._paid_plan_limit(conn, active_plan)
+            total_uses = limit_val
+        else:
+            total_uses = UserQuota.FREE_PREDICTIONS
+
+        # Total predictions for user
+        user_scans = PredictionHistory.count_by_user(conn, user_id)
+
+        quota_info = {
+            "plan": active_plan,
+            "plan_expire": plan_expire.strftime("%d/%m/%Y") if plan_expire else None,
+            "paid_uses_remaining": paid_uses_remaining,
+            "total_uses": total_uses,
+            "user_scans": user_scans,
+            "ad_unlocks_remaining": quota.get("ad_unlocks_remaining", 0)
+        }
 
         recent_predictions_count = PredictionHistory.count_by_user_in_range(
             conn,
@@ -239,6 +275,7 @@ def dashboard():
 
         return render_template(
             "dashboard.html",
+            quota_info=quota_info,
             recent_predictions=recent_predictions,
             recent_predictions_count=recent_predictions_count,
             avg_confidence=avg_confidence,
@@ -285,10 +322,20 @@ def dashboard():
             subscription_data_json=json.dumps(subscription_data),
         )
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         print(f"Error loading dashboard: {e}")
         flash("Không thể tải dashboard. Vui lòng thử lại.", "error")
         return render_template(
             "dashboard.html",
+            quota_info={
+                "plan": "free",
+                "plan_expire": None,
+                "paid_uses_remaining": 0,
+                "total_uses": 10,
+                "user_scans": 0,
+                "ad_unlocks_remaining": 0
+            },
             recent_predictions=[],
             recent_predictions_count=0,
             avg_confidence=0.0,

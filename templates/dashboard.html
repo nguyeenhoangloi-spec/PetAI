@@ -385,944 +385,532 @@
       class="flex-grow w-full px-4 md:px-6 py-margin grid grid-cols-1 gap-0"
     >
       {% set active_page = 'dashboard' %} {% include '_sidebar.html' %}
-
       <div class="col-span-1 flex flex-col min-w-0">
-        <section class="mb-8">
-          <div class="flex flex-col gap-2">
-            <h1 class="headline-lg font-semibold text-on-surface">
-              <span data-i18n="welcomePrefix">Xin chào</span>
-              <span data-i18n-auto
-                >{{ session.get('fullname') or session.get('username') or 'bạn'
-                }}</span
-              >
-            </h1>
-            <p
-              class="body-md text-on-surface-variant"
-              data-i18n="dashWelcomeDesc"
-            >
-              <span data-i18n="dashWelcomeDesc"
-                >Theo dõi nhanh hoạt động nhận diện, lịch sử và hiệu suất dự
-                đoán của bạn.</span
-              >
-            </p>
-          </div>
-          <div class="mt-4 flex flex-wrap gap-3">
-            <a
-              class="bg-primary text-on-primary px-4 py-2 rounded-lg label-sm shadow-sm hover:shadow-md transition-all flex items-center gap-2"
-              href="{{ url_for('predict.upload_page') }}"
-            >
-              <span class="material-symbols-outlined text-[18px]"
-                >add_a_photo</span
-              ><span data-i18n="uploadNew">Tải ảnh mới</span></a
-            >
-            <a
-              class="bg-surface-container-lowest text-on-surface px-4 py-2 rounded-lg label-sm border border-outline-variant hover:border-primary hover:text-primary transition-colors flex items-center gap-2"
-              href="{{ url_for('history.history') }}"
-            >
-              <span class="material-symbols-outlined text-[18px]"
-                >manage_search</span
-              ><span data-i18n="viewHistory">Xem lịch sử</span></a
-            >
-          </div>
-        </section>
-
-        {% if is_admin %}
-        <!-- Admin Dashboard Stat Cards (Global metrics) -->
-        <section
-          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10"
-        >
-          <!-- Card 1: Tổng doanh thu (VND) -->
-          <div
-            class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[140px]"
-          >
-            <div class="flex items-center justify-between">
-              <span
-                class="label-sm text-on-surface-variant font-semibold uppercase tracking-wider"
-                data-i18n="totalRevenue"
-                >Tổng doanh thu</span
-              >
-              <div
-                class="w-10 h-10 rounded-lg bg-green-500/10 dark:bg-green-500/20 flex items-center justify-center text-green-600 dark:text-green-400"
-              >
-                <span class="material-symbols-outlined">payments</span>
-              </div>
-            </div>
-            <div class="mt-4 flex flex-col">
-              <span
-                class="text-3xl font-bold text-on-surface tracking-tight"
-                data-counter="{{ total_revenue }}"
-                data-suffix="đ"
-                data-use-commas="true"
-                data-i18n="planFreePrice"
-                >0đ</span
-              >
-              <span
-                class="label-sm text-on-surface-variant/70 mt-2 flex flex-wrap items-center justify-between gap-1.5"
-              >
-                <span data-i18n="revenueFromPaid"
-                  >Từ các gói đã thanh toán</span
-                >
-                <span
-                  class="text-xs text-emerald-600 dark:text-emerald-400 font-semibold bg-emerald-500/10 dark:bg-emerald-500/20 px-2 py-0.5 rounded flex items-center gap-0.5"
-                  title="Doanh thu được ghi nhận trong tháng này"
-                  data-i18n-title="revenueThisMonthTooltip"
-                >
-                  <span class="material-symbols-outlined text-[13px] font-bold"
-                    >trending_up</span
-                  >
-                  +{{ '{:,}'.format(revenue_this_month).replace(',', '.') }}đ
-                  <span data-i18n="thisMonth">tháng này</span>
-                </span>
-              </span>
-            </div>
-          </div>
-
-          <!-- Card 2: Tổng số người dùng -->
-          <div
-            class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[140px]"
-          >
-            <div class="flex items-center justify-between">
-              <span
-                class="label-sm text-on-surface-variant font-semibold uppercase tracking-wider"
-                data-i18n="totalUsers"
-                >Tổng người dùng</span
-              >
-              <div
-                class="w-10 h-10 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center text-primary"
-              >
-                <span class="material-symbols-outlined">groups</span>
-              </div>
-            </div>
-            <div class="mt-4 flex flex-col">
-              <span
-                class="text-3xl font-bold text-on-surface tracking-tight"
-                data-counter="{{ total_users }}"
-              >
-                0
-              </span>
-              <span
-                class="label-sm text-on-surface-variant/70 mt-2 flex flex-wrap items-center justify-between gap-1.5"
-              >
-                <span data-i18n="registeredAccounts">Tài khoản đã đăng ký</span>
-                <span
-                  class="text-xs text-blue-600 dark:text-blue-400 font-semibold bg-blue-500/10 dark:bg-blue-500/20 px-2 py-0.5 rounded flex items-center gap-0.5"
-                  title="Số tài khoản mới đăng ký trong 7 ngày qua"
-                  data-i18n-title="newUsersThisWeekTooltip"
-                >
-                  <span class="material-symbols-outlined text-[13px] font-bold"
-                    >person_add</span
-                  >
-                  +{{ new_users_this_week }}
-                  <span data-i18n="newThisWeek">mới tuần này</span>
-                </span>
-              </span>
-            </div>
-          </div>
-
-          <!-- Card 3: Đơn hàng chờ duyệt -->
-          <a
-            class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[140px] hover:border-yellow-500/50 transition-colors group"
-            href="{{ url_for('users.confirmations_list') }}"
-          >
-            <div class="flex items-center justify-between">
-              <span
-                class="label-sm text-on-surface-variant font-semibold uppercase tracking-wider"
-                data-i18n="pendingOrders"
-                >Đơn chờ duyệt</span
-              >
-              <div
-                class="w-10 h-10 rounded-lg bg-yellow-500/10 dark:bg-yellow-500/20 flex items-center justify-center text-yellow-650 dark:text-yellow-400"
-              >
-                <span class="material-symbols-outlined">pending_actions</span>
-              </div>
-            </div>
-            <div class="mt-4 flex flex-col">
-              <span
-                class="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-2"
-              >
-                <span data-counter="{{ pending_orders_count }}">0</span>
-                {% if pending_orders_count > 0 %}
-                <span class="flex h-2.5 w-2.5 relative">
-                  <span
-                    class="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"
-                  ></span>
-                  <span
-                    class="relative inline-flex rounded-full h-2.5 w-2.5 bg-yellow-500"
-                  ></span>
-                </span>
-                {% endif %}
-              </span>
-              <div
-                class="label-sm text-on-surface-variant/70 mt-2 flex flex-wrap items-center justify-between gap-1.5"
-              >
-                <span
-                  class="text-primary group-hover:underline flex items-center gap-0.5"
-                  ><span data-i18n="viewPendingList"
-                    >Xem danh sách chờ duyệt</span
-                  ><span class="material-symbols-outlined text-[14px]"
-                    >chevron_right</span
-                  >
-                </span>
-                {% if new_orders_today > 0 %}
-                <span
-                  class="text-xs text-amber-600 dark:text-amber-400 font-semibold bg-amber-500/10 dark:bg-amber-500/20 px-2 py-0.5 rounded flex items-center gap-0.5"
-                  title="Các đơn hàng mới tạo ngày hôm nay"
-                  data-i18n-title="newOrdersTodayTooltip"
-                >
-                  <span class="material-symbols-outlined text-[13px] font-bold"
-                    >notifications_active</span
-                  >
-                  +{{ new_orders_today }}
-                  <span data-i18n="todayCount">hôm nay</span>
-                </span>
-                {% endif %}
-              </div>
-            </div>
-          </a>
-
-          <!-- Card 4: Tổng dự đoán hệ thống -->
-          <div
-            class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[140px]"
-          >
-            <div class="flex items-center justify-between">
-              <span
-                class="label-sm text-on-surface-variant font-semibold uppercase tracking-wider"
-                data-i18n="totalSystemPredictions"
-                >Tổng dự đoán hệ thống</span
-              >
-              <div
-                class="w-10 h-10 rounded-lg bg-purple-500/10 dark:bg-purple-500/20 flex items-center justify-center text-purple-600 dark:text-purple-400"
-              >
-                <span class="material-symbols-outlined">analytics</span>
-              </div>
-            </div>
-            <div class="mt-4 flex flex-col">
-              <span
-                class="text-3xl font-bold text-on-surface tracking-tight"
-                data-counter="{{ total_all_time }}"
-              >
-                0
-              </span>
-              <span
-                class="label-sm text-on-surface-variant/70 mt-2 flex flex-wrap items-center justify-between gap-1.5"
-              >
-                <span data-i18n="allSystemScans"
-                  >Toàn bộ lượt quét của hệ thống</span
-                >
-                <span
-                  class="text-xs text-purple-600 dark:text-purple-400 font-semibold bg-purple-500/10 dark:bg-purple-500/20 px-2 py-0.5 rounded flex items-center gap-0.5"
-                  title="Số lượt dự đoán thực hiện hôm nay"
-                  data-i18n-title="predictionsTodayTooltip"
-                >
-                  <span class="material-symbols-outlined text-[13px] font-bold"
-                    >monitoring</span
-                  >
-                  +{{ predictions_today }}
-                  <span data-i18n="todayCount">hôm nay</span>
-                </span>
-              </span>
-            </div>
-          </div>
-        </section>
-        {% else %}
-        <!-- Regular User Dashboard Stat Cards (Personal metrics) -->
-        <section
-          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10"
-        >
-          <!-- Card 1: Tổng dự đoán cá nhân -->
-          <div
-            class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[140px]"
-          >
-            <div class="flex items-center justify-between">
-              <span
-                class="label-sm text-on-surface-variant font-semibold uppercase tracking-wider"
-                data-i18n="totalPredictions"
-                >Tổng dự đoán</span
-              >
-              <div
-                class="w-10 h-10 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center text-primary"
-              >
-                <span class="material-symbols-outlined">analytics</span>
-              </div>
-            </div>
-            <div class="mt-4 flex flex-col">
-              <span
-                class="text-3xl font-bold text-on-surface tracking-tight"
-                data-counter="{{ total_all_time }}"
-              >
-                0
-              </span>
-              <span
-                class="label-sm text-on-surface-variant/70 mt-1"
-                data-i18n="yourScans"
-                >Lượt quét của riêng bạn</span
-              >
-            </div>
-          </div>
-
-          <!-- Card 2: Độ tin cậy trung bình cá nhân -->
-          <div
-            class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[140px]"
-          >
-            <div class="flex items-center justify-between">
-              <span
-                class="label-sm text-on-surface-variant font-semibold uppercase tracking-wider"
-                data-i18n="avgConfidence"
-                >Độ tin cậy TB</span
-              >
-              <div
-                class="w-10 h-10 rounded-lg bg-yellow-500/10 dark:bg-yellow-500/20 flex items-center justify-center text-yellow-650 dark:text-yellow-400"
-              >
-                <span class="material-symbols-outlined">bolt</span>
-              </div>
-            </div>
-            <div class="mt-4 flex flex-col">
-              <span
-                class="text-3xl font-bold text-on-surface tracking-tight"
-                data-counter="{{ ((avg_confidence or 0) * 100)|round(1) }}"
-                data-suffix="%"
-              >
-                0%
-              </span>
-              <span
-                class="label-sm text-on-surface-variant/70 mt-1"
-                data-i18n="avgAccuracy"
-                >Độ chính xác trung bình</span
-              >
-            </div>
-          </div>
-
-          <!-- Card 3: Số giống đã nhận diện cá nhân -->
-          <div
-            class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[140px]"
-          >
-            <div class="flex items-center justify-between">
-              <span
-                class="label-sm text-on-surface-variant font-semibold uppercase tracking-wider"
-                data-i18n="breedsAnalyzed"
-                >Giống đã phân tích</span
-              >
-              <div
-                class="w-10 h-10 rounded-lg bg-green-500/10 dark:bg-green-500/20 flex items-center justify-center text-green-600 dark:text-green-400"
-              >
-                <span class="material-symbols-outlined">pets</span>
-              </div>
-            </div>
-            <div class="mt-4 flex flex-col">
-              <span
-                class="text-3xl font-bold text-on-surface tracking-tight"
-                data-counter="{{ unique_breeds }}"
-              >
-                0
-              </span>
-              <span
-                class="label-sm text-on-surface-variant/70 mt-1"
-                data-i18n="uniqueBreedsFound"
-                >Giống chó khác nhau bạn nhận diện</span
-              >
-            </div>
-          </div>
-
-          <!-- Card 4: Xem báo cáo chi tiết cá nhân -->
-          <a
-            class="stat-card group p-6 bg-gradient-to-br from-primary to-blue-700 dark:from-primary/90 dark:to-blue-850 rounded-xl flex flex-col justify-between text-white shadow-sm hover:shadow-md transition-all min-h-[140px]"
-            href="{{ url_for('statistics.statistics') }}"
-          >
-            <div class="flex items-center justify-between">
-              <span
-                class="label-sm font-semibold uppercase tracking-wider opacity-90"
-                data-i18n="viewReport"
-                >Xem báo cáo</span
-              >
-              <span
-                class="material-symbols-outlined group-hover:translate-x-1 transition-transform"
-                >arrow_forward</span
-              >
-            </div>
-            <div class="mt-4">
-              <p
-                class="text-xl font-bold leading-tight"
-                data-i18n="detailedStats"
-              >
-                <span data-i18n="detailedStats">Thống kê chi tiết</span>
-              </p>
-              <p
-                class="label-sm opacity-80 leading-relaxed mt-1"
-                data-i18n="deepAnalysis"
-              >
-                <span data-i18n="deepAnalysis"
-                  >Phân tích sâu về lịch sử quét của bạn</span
-                >
-              </p>
-            </div>
-          </a>
-        </section>
-        {% endif %} {% if is_admin %}
-        <!-- ===== Admin: Financial Analytics Section ===== -->
-        <section class="mb-10 flex flex-col gap-6">
-          <div class="flex items-center justify-between">
+        <!-- Section: Chào mừng & Thao tác nhanh / Card Gói hiện tại -->
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+          <!-- Welcome and Quick Actions (2/3 width) -->
+          <div class="lg:col-span-2 flex flex-col justify-between bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-2xl p-6 shadow-sm">
             <div>
-              <h2
-                class="headline-md font-semibold text-on-surface"
-                data-i18n="financialAnalytics"
-              >
-                <span data-i18n="financialAnalytics">Phân tích Tài chính</span>
-              </h2>
-              <p
-                class="text-xs text-on-surface-variant mt-0.5"
-                data-i18n="revenueAndPlans"
-              >
-                <span data-i18n="revenueAndPlans"
-                  >Doanh thu &amp; phân bổ gói dịch vụ</span
-                >
+              <h1 class="headline-lg font-semibold text-on-surface flex items-center gap-2">
+                <span data-i18n="welcomePrefix">Xin chào</span>
+                <span data-i18n-auto>{{ session.get('fullname') or session.get('username') or 'bạn' }}</span>!
+                <span class="inline-block animate-bounce origin-bottom-right">👋</span>
+              </h1>
+              <p class="body-md text-on-surface-variant mt-2" data-i18n="dashWelcomeDesc">
+                Theo dõi nhanh hoạt động nhận diện, lịch sử và hiệu suất dự đoán của bạn.
               </p>
             </div>
-            <span
-              class="text-xs text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30 px-3 py-1 rounded-full flex items-center gap-1.5 font-semibold border border-emerald-200 dark:border-emerald-800"
-            >
-              <span class="material-symbols-outlined text-[14px]"
-                >monitoring</span
-              >
-              Financial Analytics
-            </span>
+            
+            <div class="mt-6 flex flex-wrap gap-3">
+              <a class="bg-primary text-on-primary px-4 py-2.5 rounded-xl label-sm shadow-sm hover:shadow-md transition-all flex items-center gap-2 font-semibold" href="{{ url_for('predict.upload_page') }}">
+                <span class="material-symbols-outlined text-[18px]">add_a_photo</span>
+                <span data-i18n="uploadNew">Tải ảnh mới</span>
+              </a>
+              <a class="bg-surface-container-lowest text-on-surface px-4 py-2.5 rounded-xl label-sm border border-outline-variant hover:border-primary hover:text-primary transition-colors flex items-center gap-2 font-semibold" href="{{ url_for('history.history') }}">
+                <span class="material-symbols-outlined text-[18px]">manage_search</span>
+                <span data-i18n="viewHistory">Xem lịch sử</span>
+              </a>
+              {% if is_admin %}
+                <a class="bg-surface-container-lowest text-on-surface px-4 py-2.5 rounded-xl label-sm border border-outline-variant hover:border-yellow-500 hover:text-yellow-600 transition-colors flex items-center gap-2 font-semibold" href="{{ url_for('users.confirmations_list') }}">
+                  <span class="material-symbols-outlined text-[18px]">pending_actions</span>
+                  <span data-i18n="pendingOrders">Đơn chờ duyệt</span>
+                  {% if pending_confirmations_count > 0 %}
+                    <span class="bg-red-500 text-white rounded-full text-[10px] w-5 h-5 flex items-center justify-center font-bold">{{ pending_confirmations_count }}</span>
+                  {% endif %}
+                </a>
+                <a class="bg-surface-container-lowest text-on-surface px-4 py-2.5 rounded-xl label-sm border border-outline-variant hover:border-primary hover:text-primary transition-colors flex items-center gap-2 font-semibold" href="{{ url_for('users.list_users') }}">
+                  <span class="material-symbols-outlined text-[18px]">groups</span>
+                  <span data-i18n="manageUsers">Người dùng</span>
+                </a>
+                <a class="bg-surface-container-lowest text-on-surface px-4 py-2.5 rounded-xl label-sm border border-outline-variant hover:border-primary hover:text-primary transition-colors flex items-center gap-2 font-semibold" href="{{ url_for('users.system_config') }}">
+                  <span class="material-symbols-outlined text-[18px]">settings_applications</span>
+                  <span data-i18n="systemConfig">Cấu hình</span>
+                </a>
+              {% endif %}
+            </div>
           </div>
 
-          <!-- Revenue Trend Line Chart -->
-          <div
-            class="chart-card bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-xl p-6 shadow-sm"
-          >
-            <div
-              class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5"
-            >
-              <div>
-                <h3
-                  class="text-lg font-bold text-on-surface"
-                  data-i18n="revenueTrend"
-                >
-                  <span data-i18n="revenueTrend">Xu hướng Doanh thu</span>
-                </h3>
-                <p
-                  class="text-xs text-on-surface-variant mt-0.5"
-                  id="revenueTrendSubtitle"
-                  data-i18n="revenueTrendSubtitle"
-                >
-                  <span data-i18n="revenueTrendSubtitle"
-                    >Tổng tiền từ đơn đã thanh toán (VND)</span
-                  >
-                </p>
-              </div>
-              <!-- Period Tabs Wrapper to contain Popover absolutely -->
-              <div class="relative">
-                <div
-                  class="flex flex-wrap items-center gap-1 p-1 bg-surface-container-low dark:bg-slate-800 rounded-lg"
-                  id="revenuePeriodTabs"
-                >
-                  <button
-                    type="button"
-                    data-period="7days"
-                    class="rev-tab px-3 py-1.5 rounded-md label-sm font-semibold transition-all bg-primary text-white shadow-sm"
-                    data-i18n="days7"
-                  >
-                    <span data-i18n="homePricing7Days">7 ngày</span>
-                  </button>
-                  <button
-                    type="button"
-                    data-period="30days"
-                    class="rev-tab px-3 py-1.5 rounded-md label-sm font-medium transition-all text-on-surface-variant hover:bg-surface-container-high"
-                    data-i18n="days30"
-                  >
-                    <span data-i18n="homePricing30Days">30 ngày</span>
-                  </button>
-                  <button
-                    type="button"
-                    data-period="90days"
-                    class="rev-tab px-3 py-1.5 rounded-md label-sm font-medium transition-all text-on-surface-variant hover:bg-surface-container-high"
-                    data-i18n="days90"
-                  >
-                    <span data-i18n="homePricing90Days">90 ngày</span>
-                  </button>
-                  <button
-                    type="button"
-                    data-period="12months"
-                    class="rev-tab px-3 py-1.5 rounded-md label-sm font-medium transition-all text-on-surface-variant hover:bg-surface-container-high"
-                    data-i18n="months12"
-                  >
-                    <span data-i18n="months12">12 tháng</span>
-                  </button>
-                  <button
-                    type="button"
-                    data-period="custom"
-                    id="revenueCustomBtn"
-                    class="rev-tab px-3 py-1.5 rounded-md label-sm font-medium transition-all text-on-surface-variant hover:bg-surface-container-high flex items-center gap-1.5"
-                  >
-                    <span class="material-symbols-outlined text-[16px]"
-                      >calendar_today</span
-                    >
-                    <span data-i18n="custom">Tùy chọn</span>
-                  </button>
+          <!-- Current Plan Card (1/3 width) -->
+          <div class="lg:col-span-1">
+            <div class="h-full bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 dark:from-indigo-950 dark:via-indigo-900 dark:to-purple-950 rounded-2xl p-6 text-white flex flex-col justify-between shadow-lg relative overflow-hidden min-h-[175px]">
+              <!-- Decorative background elements -->
+              <div class="absolute -right-10 -bottom-10 w-32 h-32 bg-white/5 rounded-full blur-xl pointer-events-none"></div>
+              <div class="absolute -left-10 -top-10 w-24 h-24 bg-white/10 rounded-full blur-lg pointer-events-none"></div>
+              
+              <div class="flex items-start justify-between z-10">
+                <div class="flex flex-col">
+                  <span class="text-[11px] font-medium text-white/80 uppercase tracking-wider" data-i18n="currentPlanLabel">Gói hiện tại</span>
+                  <h2 class="text-xl font-bold flex items-center gap-1.5 mt-0.5">
+                    <span class="material-symbols-outlined text-yellow-400 text-xl font-bold">crown</span>
+                    <span class="capitalize">{{ quota_info.plan }}</span>
+                  </h2>
                 </div>
-
-                <!-- Custom Date Range Popover for Revenue -->
-                <div
-                  id="revenueCustomPopover"
-                  class="hidden absolute right-0 top-full mt-2 p-4 bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-xl shadow-lg z-50 min-w-[280px] flex flex-col gap-3"
-                >
-                  <div
-                    class="text-sm font-bold text-on-surface"
-                    data-i18n="selectDateRange"
-                  >
-                    <span data-i18n="selectDateRange"
-                      >Chọn khoảng thời gian</span
-                    >
-                  </div>
-                  <div class="grid grid-cols-2 gap-2">
-                    <div class="flex flex-col gap-1">
-                      <label
-                        class="text-[10px] uppercase font-semibold text-on-surface-variant"
-                        data-i18n="fromDate"
-                        ><span data-i18n="fromDate">Từ ngày</span></label
-                      >
-                      <input
-                        type="date"
-                        id="revenueStartDate"
-                        class="px-2 py-1.5 rounded-md border border-outline-variant bg-surface-container-low dark:bg-slate-800 text-on-surface text-xs focus:outline-none focus:border-primary"
-                      >
-                    </div>
-                    <div class="flex flex-col gap-1">
-                      <label
-                        class="text-[10px] uppercase font-semibold text-on-surface-variant"
-                        data-i18n="toDate"
-                        ><span data-i18n="toDate">Đến ngày</span></label
-                      >
-                      <input
-                        type="date"
-                        id="revenueEndDate"
-                        class="px-2 py-1.5 rounded-md border border-outline-variant bg-surface-container-low dark:bg-slate-800 text-on-surface text-xs focus:outline-none focus:border-primary"
-                      >
-                    </div>
-                  </div>
-                  <button
-                    type="button"
-                    id="applyRevenueCustom"
-                    class="w-full py-1.5 bg-primary text-white rounded-md text-xs font-semibold hover:bg-primary/95 transition-all shadow-sm"
-                    data-i18n="apply"
-                  >
-                    <span data-i18n="apply">Áp dụng</span>
-                  </button>
-                </div>
+                <a href="{{ url_for('predict.upgrade') }}" class="bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold text-xs px-3 py-2 rounded-xl transition-all shadow-sm flex items-center gap-1">
+                  <span data-i18n="upgradePlan">Nâng cấp gói</span>
+                  <span class="material-symbols-outlined text-[12px] font-bold">arrow_forward</span>
+                </a>
               </div>
-            </div>
-            <div
-              class="chart-container relative h-[300px]"
-            >
-              <canvas id="revenueTrendChart"></canvas>
-            </div>
-          </div>
-
-          <!-- Subscription Distribution -->
-          <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
-            <!-- Doughnut: subscription split -->
-            <div
-              class="lg:col-span-2 chart-card bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-xl p-6 shadow-sm"
-            >
-              <div class="mb-4">
-                <h3
-                  class="text-lg font-bold text-on-surface"
-                  data-i18n="subscriptionDistribution"
-                >
-                  <span data-i18n="subscriptionDistribution"
-                    >Phân bổ Gói đăng ký</span
-                  >
-                </h3>
-                <p
-                  class="text-xs text-on-surface-variant mt-0.5"
-                  data-i18n="subscriptionByUser"
-                >
-                  <span data-i18n="subscriptionByUser"
-                    >Tỷ lệ người dùng theo từng gói</span
-                  >
-                </p>
-              </div>
-              <div
-                class="chart-container relative h-[240px]"
-              >
-                <canvas id="subscriptionChart"></canvas>
-              </div>
-            </div>
-
-            <!-- Plan breakdown legend/table -->
-            <div
-              class="lg:col-span-3 chart-card bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-xl p-6 shadow-sm flex flex-col justify-center"
-            >
-              <h3
-                class="text-lg font-bold text-on-surface mb-4"
-                data-i18n="planDetails"
-              >
-                <span data-i18n="planDetails">Chi tiết gói dịch vụ</span>
-              </h3>
-              <div class="space-y-3" id="subscriptionBreakdown">
-                <!-- Filled by JS -->
-              </div>
-            </div>
-          </div>
-        </section>
-        {% endif %}
-
-        <!-- Section: Charts and Analytics -->
-        <section class="mb-10 flex flex-col gap-6">
-          <div
-            class="flex flex-col sm:flex-row sm:items-center justify-between gap-3"
-          >
-            <h2
-              class="headline-md font-semibold text-on-surface"
-              data-i18n="activityCharts"
-            >
-              <span data-i18n="activityCharts">Biểu đồ hoạt động</span>
-            </h2>
-            <div class="flex items-center flex-wrap gap-2">
-              <!-- Timeframe selector Wrapper to contain Popover absolutely -->
-              <div class="relative">
-                <div
-                  class="flex flex-wrap items-center gap-1 p-1 bg-surface-container-low dark:bg-slate-800 rounded-lg"
-                  id="activityPeriodTabs"
-                >
-                  <button
-                    type="button"
-                    data-period="7days"
-                    class="act-tab px-3 py-1.5 rounded-md label-sm font-semibold transition-all bg-primary text-white shadow-sm"
-                    data-i18n="days7"
-                  >
-                    <span data-i18n="homePricing7Days">7 ngày</span>
-                  </button>
-                  <button
-                    type="button"
-                    data-period="30days"
-                    class="act-tab px-3 py-1.5 rounded-md label-sm font-medium transition-all text-on-surface-variant hover:bg-surface-container-high"
-                    data-i18n="days30"
-                  >
-                    <span data-i18n="homePricing30Days">30 ngày</span>
-                  </button>
-                  <button
-                    type="button"
-                    data-period="90days"
-                    class="act-tab px-3 py-1.5 rounded-md label-sm font-medium transition-all text-on-surface-variant hover:bg-surface-container-high"
-                    data-i18n="days90"
-                  >
-                    <span data-i18n="homePricing90Days">90 ngày</span>
-                  </button>
-                  <button
-                    type="button"
-                    data-period="12months"
-                    class="act-tab px-3 py-1.5 rounded-md label-sm font-medium transition-all text-on-surface-variant hover:bg-surface-container-high"
-                    data-i18n="months12"
-                  >
-                    <span data-i18n="months12">12 tháng</span>
-                  </button>
-                  <button
-                    type="button"
-                    data-period="custom"
-                    id="activityCustomBtn"
-                    class="act-tab px-3 py-1.5 rounded-md label-sm font-medium transition-all text-on-surface-variant hover:bg-surface-container-high flex items-center gap-1.5"
-                  >
-                    <span class="material-symbols-outlined text-[16px]"
-                      >calendar_today</span
-                    >
-                    <span data-i18n="custom">Tùy chọn</span>
-                  </button>
-                </div>
-
-                <!-- Custom Date Range Popover for Activity -->
-                <div
-                  id="activityCustomPopover"
-                  class="hidden absolute right-0 top-full mt-2 p-4 bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-xl shadow-lg z-50 min-w-[280px] flex flex-col gap-3"
-                >
-                  <div
-                    class="text-sm font-bold text-on-surface"
-                    data-i18n="selectDateRange"
-                  >
-                    <span data-i18n="selectDateRange"
-                      >Chọn khoảng thời gian</span
-                    >
-                  </div>
-                  <div class="grid grid-cols-2 gap-2">
-                    <div class="flex flex-col gap-1">
-                      <label
-                        class="text-[10px] uppercase font-semibold text-on-surface-variant"
-                        data-i18n="fromDate"
-                        ><span data-i18n="fromDate">Từ ngày</span></label
-                      >
-                      <input
-                        type="date"
-                        id="activityStartDate"
-                        class="px-2 py-1.5 rounded-md border border-outline-variant bg-surface-container-low dark:bg-slate-800 text-on-surface text-xs focus:outline-none focus:border-primary"
-                      >
-                    </div>
-                    <div class="flex flex-col gap-1">
-                      <label
-                        class="text-[10px] uppercase font-semibold text-on-surface-variant"
-                        data-i18n="toDate"
-                        ><span data-i18n="toDate">Đến ngày</span></label
-                      >
-                      <input
-                        type="date"
-                        id="activityEndDate"
-                        class="px-2 py-1.5 rounded-md border border-outline-variant bg-surface-container-low dark:bg-slate-800 text-on-surface text-xs focus:outline-none focus:border-primary"
-                      >
-                    </div>
-                  </div>
-                  <button
-                    type="button"
-                    id="applyActivityCustom"
-                    class="w-full py-1.5 bg-primary text-white rounded-md text-xs font-semibold hover:bg-primary/95 transition-all shadow-sm"
-                    data-i18n="apply"
-                  >
-                    <span data-i18n="apply">Áp dụng</span>
-                  </button>
-                </div>
-              </div>
-              <span
-                class="text-xs text-on-surface-variant/70 bg-surface-container/50 dark:bg-slate-800 px-3 py-1.5 rounded-lg flex items-center gap-1.5 font-medium"
-              >
-                <span
-                  class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"
-                ></span>
-                <span data-i18n="liveUpdate">Cập nhật trực tiếp</span>
-              </span>
-            </div>
-          </div>
-
-          <!-- Row 1: Line Chart (Daily Predictions Trend) -->
-          <div
-            class="chart-card bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-xl p-6 shadow-sm"
-          >
-            <div class="flex items-center justify-between mb-4">
-              <div>
-                <h3
-                  class="text-lg font-bold text-on-surface"
-                  id="predictionTrendTitle"
-                  data-i18n="predTrend7"
-                >
-                  <span data-i18n="predTrend7"
-                    >Xu hướng dự đoán 7 ngày gần đây</span
-                  >
-                </h3>
-                <p
-                  class="text-xs text-on-surface-variant mt-0.5"
-                  id="predictionTrendSubtitle"
-                  data-i18n="predTrendSubtitle"
-                >
-                  <span data-i18n="predTrendSubtitle"
-                    >Số lượng ảnh đã nhận diện mỗi ngày</span
-                  >
-                </p>
-              </div>
-              <div
-                class="text-primary bg-primary/10 dark:bg-primary/20 px-3 py-1 rounded-lg text-xs font-semibold"
-                id="predictionTrendBadge"
-                data-i18n="last7days"
-              >
-                <span data-i18n="last7days">7 ngày qua</span>
-              </div>
-            </div>
-            <div
-              class="chart-container relative h-[320px]"
-            >
-              <canvas id="dailyPredictionsChart"></canvas>
-            </div>
-          </div>
-
-          <!-- Row 2: Two columns for Doughnut and Bar charts -->
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <!-- Doughnut Chart: Top Breeds -->
-            <div
-              class="chart-card bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-xl p-6 shadow-sm"
-            >
-              <div class="mb-4">
-                <h3
-                  class="text-lg font-bold text-on-surface"
-                  data-i18n="top5Breeds"
-                >
-                  <span data-i18n="top5Breeds">Top 5 giống phổ biến nhất</span>
-                </h3>
-                <p
-                  class="text-xs text-on-surface-variant mt-0.5"
-                  data-i18n="top5BreedsSubtitle"
-                >
-                  <span data-i18n="top5BreedsSubtitle"
-                    >Các giống chó được nhận diện nhiều nhất</span
-                  >
-                </p>
-              </div>
-              <div
-                class="chart-container relative h-[260px]"
-              >
-                <canvas id="topBreedsChart"></canvas>
-              </div>
-            </div>
-
-            <!-- Bar Chart: Confidence Distribution -->
-            <div
-              class="chart-card bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-xl p-6 shadow-sm"
-            >
-              <div class="mb-4">
-                <h3
-                  class="text-lg font-bold text-on-surface"
-                  data-i18n="confidenceDist"
-                >
-                  <span data-i18n="confidenceDist">Phân bố độ tin cậy</span>
-                </h3>
-                <p
-                  class="text-xs text-on-surface-variant mt-0.5"
-                  data-i18n="confidenceDistSubtitle"
-                >
-                  <span data-i18n="confidenceDistSubtitle"
-                    >Mức độ tin cậy của thuật toán phân loại</span
-                  >
-                </p>
-              </div>
-              <div
-                class="chart-container relative h-[260px]"
-              >
-                <canvas id="confidenceDistChart"></canvas>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section>
-          <div class="flex items-center justify-between mb-4">
-            <h2
-              class="headline-md font-semibold text-on-surface"
-              data-i18n="recentResults"
-            >
-              <span data-i18n="recentResults">Kết quả gần đây</span>
-            </h2>
-            <a
-              class="text-primary font-semibold label-sm hover:underline"
-              href="{{ url_for('history.history') }}"
-              data-i18n="viewAll"
-              ><span data-i18n="viewAll">Xem tất cả</span></a
-            >
-          </div>
-          <div
-            class="flex items-center gap-2 mb-8 p-1.5 bg-surface-container-low dark:bg-surface-container-high rounded-xl w-fit"
-          >
-            <a
-              class="px-5 py-2 rounded-lg label-sm transition-all {% if active_range == 'today' %}bg-primary text-white shadow-sm font-semibold{% else %}text-on-surface-variant hover:bg-surface-container-high font-medium{% endif %}"
-              href="{{ url_for('dashboard.dashboard', range='today') }}"
-              data-i18n="todayNew"
-              ><span data-i18n="todayNew">hôm nay</span></a
-            >
-            <a
-              class="px-5 py-2 rounded-lg label-sm transition-all {% if active_range == 'yesterday' %}bg-primary text-white shadow-sm font-semibold{% else %}text-on-surface-variant hover:bg-surface-container-high font-medium{% endif %}"
-              href="{{ url_for('dashboard.dashboard', range='yesterday') }}"
-              data-i18n="yesterday"
-              ><span data-i18n="yesterday">Hôm qua</span></a
-            >
-            <a
-              class="px-5 py-2 rounded-lg label-sm transition-all {% if active_range == '7days' %}bg-primary text-white shadow-sm font-semibold{% else %}text-on-surface-variant hover:bg-surface-container-high font-medium{% endif %}"
-              href="{{ url_for('dashboard.dashboard', range='7days') }}"
-              data-i18n="last7daysTab"
-              ><span data-i18n="last7daysTab">7 ngày gần đây</span></a
-            >
-          </div>
-          {% if recent_predictions and recent_predictions|length > 0 %}
-          <div
-            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 dashboard-grid"
-          >
-            {% for pred in recent_predictions %}
-            <div
-              class="soft-panel bg-surface-container-lowest rounded-xl overflow-hidden group shadow-sm hover:shadow-md transition-all duration-300 border border-slate-100"
-            >
-              <div class="aspect-square relative overflow-hidden">
-                <img
-                  alt="Pet image"
-                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  src="/{{ pred.image_path }}"
-                >
-                <div
-                  class="absolute top-3 right-3 px-2 py-1 bg-surface-container-lowest/90 backdrop-blur rounded-md label-sm font-bold text-primary shadow-sm uppercase tracking-tight"
-                >
-                  {% if pred.confidence is not none %} {{
-                  '%.1f'|format((pred.confidence or 0) * 100) }}% {% else %}
-                  0.0% {% endif %}
-                </div>
-              </div>
-              <div class="p-5">
-                <h3 class="headline-md font-bold text-on-surface truncate">
-                  <span data-i18n-breed="{{ pred.breed or '' }}"
-                    >{% if pred.breed %}{{ pred.breed }}{% else %}Chưa xác
-                    định{% endif %}</span
-                  >
-                </h3>
-                <p class="label-sm text-on-surface-variant mt-1">
-                  <span data-i18n="predictionLabel">Dự đoán:</span>
-                  <span data-i18n-breed="{{ pred.breed or '' }}"
-                    >{% if pred.breed %}{{ pred.breed }}{% else %}Chưa xác
-                    định{% endif %}</span
-                  >
-                </p>
-                <div
-                  class="mt-8 flex items-center justify-between border-t border-outline-variant/20 pt-4"
-                >
-                  <span
-                    class="label-sm text-on-surface-variant uppercase font-medium"
-                  >
-                    {{ pred.created_at.strftime('%d/%m/%Y %H:%M') if
-                    pred.created_at else '' }}
+              
+              <div class="mt-4 z-10">
+                <div class="flex items-center justify-between text-xs mb-1.5">
+                  <span data-i18n="predictionsRemaining">Lượt nhận diện còn lại</span>
+                  <span class="font-bold">
+                    {% if quota_info.plan == 'free' %}
+                      {% if quota_info.user_scans < 10 %}
+                        {{ 10 - quota_info.user_scans }} / 10
+                      {% else %}
+                        {{ quota_info.ad_unlocks_remaining }} (Ads)
+                      {% endif %}
+                    {% else %}
+                      {% if quota_info.total_uses is none %}
+                        <span data-i18n="unlimited">Vô hạn</span>
+                      {% else %}
+                        {{ quota_info.paid_uses_remaining }} / {{ quota_info.total_uses }}
+                      {% endif %}
+                    {% endif %}
                   </span>
-                  <span
-                    class="material-symbols-outlined text-[18px] text-primary"
-                    >open_in_new</span
-                  >
+                </div>
+                
+                <!-- Progress Bar -->
+                <div class="w-full h-2 bg-white/20 rounded-full overflow-hidden">
+                  {% set pct = 100 %}
+                  {% if quota_info.plan == 'free' %}
+                    {% if quota_info.user_scans < 10 %}
+                      {% set pct = (((10 - quota_info.user_scans) / 10) * 100)|round|int %}
+                    {% else %}
+                      {% set pct = 0 %}
+                    {% endif %}
+                  {% else %}
+                    {% if quota_info.total_uses is not none and quota_info.total_uses > 0 %}
+                      {% set pct = ((quota_info.paid_uses_remaining / quota_info.total_uses) * 100)|round|int %}
+                    {% endif %}
+                  {% endif %}
+                  <div class="h-full bg-white rounded-full transition-all duration-500" style="width: {{ pct }}%"></div>
+                </div>
+                
+                <div class="flex items-center justify-between mt-3 text-[11px] text-white/70">
+                  <div class="flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[12px]">info</span>
+                    <span>
+                      {% if quota_info.plan == 'free' and quota_info.user_scans >= 10 %}
+                        +{{ quota_info.ad_unlocks_remaining }} lượt từ Ads
+                      {% elif quota_info.plan == 'free' %}
+                        Tối đa 10 lượt miễn phí
+                      {% else %}
+                        Đang sử dụng
+                      {% endif %}
+                    </span>
+                  </div>
+                  <div>
+                    <span data-i18n="expirationLabel">Hạn gói:</span>
+                    <span class="font-semibold">{{ quota_info.plan_expire or 'Vĩnh viễn' }}</span>
+                  </div>
                 </div>
               </div>
             </div>
-            {% endfor %}
           </div>
-          {% if total_pages and total_pages > 1 %}
-          <div class="flex justify-center mt-8">
-            <nav
-              aria-label="Pagination"
-              class="soft-panel inline-flex items-center gap-1 rounded-md bg-surface-container-lowest px-2 py-1"
-            >
-              <a
-                aria-label="Trang truoc"
-                data-i18n-aria="prevPage"
-                class="px-2 py-1 label-sm rounded-md {% if page <= 1 %}text-slate-500/40 pointer-events-none{% else %}text-on-surface-variant hover:text-primary hover:bg-surface-container-low{% endif %}"
-                href="{{ url_for('dashboard.dashboard', range=active_range, page=page-1) }}"
-              >
-                &lsaquo;
-              </a>
-              {% for p in range(1, total_pages + 1) %}
-              <a
-                class="px-2.5 py-1 label-sm rounded-md {% if p == page %}bg-primary text-white font-semibold{% else %}text-on-surface-variant hover:text-primary hover:bg-surface-container-low{% endif %}"
-                href="{{ url_for('dashboard.dashboard', range=active_range, page=p) }}"
-              >
-                {{ p }}
-              </a>
-              {% endfor %}
-              <a
-                aria-label="Trang sau"
-                data-i18n-aria="nextPage"
-                class="px-2 py-1 label-sm rounded-md {% if page >= total_pages %}text-slate-500/40 pointer-events-none{% else %}text-on-surface-variant hover:text-primary hover:bg-surface-container-low{% endif %}"
-                href="{{ url_for('dashboard.dashboard', range=active_range, page=page+1) }}"
-              >
-                &rsaquo;
-              </a>
-            </nav>
-          </div>
-          {% endif %} {% else %}
-          <div
-            class="soft-panel bg-surface-container-lowest rounded-xl p-6 text-on-surface-variant"
-            data-i18n="emptyDashboard"
-          >
-            <span data-i18n="emptyDashboard"
-              >Bạn chưa có lịch sử nhận diện nào. Hãy bắt đầu bằng cách tải ảnh
-              mới.</span
-            >
-          </div>
+        </section>
+
+        <!-- Section: Thống kê tổng quan -->
+        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          {% if is_admin %}
+            <!-- Card 1: Tổng doanh thu -->
+            <div class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-2xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[140px]">
+              <div class="flex items-center justify-between">
+                <span class="label-sm text-on-surface-variant font-semibold uppercase tracking-wider" data-i18n="totalRevenue">Tổng doanh thu</span>
+                <div class="w-10 h-10 rounded-xl bg-emerald-500/10 dark:bg-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                  <span class="material-symbols-outlined">payments</span>
+                </div>
+              </div>
+              <div class="mt-4 flex flex-col">
+                <span class="text-3xl font-bold text-on-surface tracking-tight" data-counter="{{ total_revenue }}" data-suffix="đ" data-use-commas="true">0đ</span>
+                <span class="label-sm text-on-surface-variant/70 mt-2 flex items-center justify-between">
+                  <span data-i18n="revenueFromPaid">Từ các gói đã thanh toán</span>
+                  <span class="text-xs text-emerald-600 dark:text-emerald-400 font-semibold bg-emerald-500/10 dark:bg-emerald-500/20 px-2 py-0.5 rounded flex items-center gap-0.5" title="Doanh thu ghi nhận trong tháng này">
+                    <span class="material-symbols-outlined text-[13px] font-bold">trending_up</span>
+                    +{{ '{:,}'.format(revenue_this_month).replace(',', '.') }}đ
+                  </span>
+                </span>
+              </div>
+            </div>
+
+            <!-- Card 2: Tổng người dùng -->
+            <div class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-2xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[140px]">
+              <div class="flex items-center justify-between">
+                <span class="label-sm text-on-surface-variant font-semibold uppercase tracking-wider" data-i18n="totalUsers">Tổng người dùng</span>
+                <div class="w-10 h-10 rounded-xl bg-blue-500/10 dark:bg-blue-500/20 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                  <span class="material-symbols-outlined">groups</span>
+                </div>
+              </div>
+              <div class="mt-4 flex flex-col">
+                <span class="text-3xl font-bold text-on-surface tracking-tight" data-counter="{{ total_users }}">0</span>
+                <span class="label-sm text-on-surface-variant/70 mt-2 flex items-center justify-between">
+                  <span data-i18n="registeredAccounts">Tài khoản đã đăng ký</span>
+                  <span class="text-xs text-blue-600 dark:text-blue-400 font-semibold bg-blue-500/10 dark:bg-blue-500/20 px-2 py-0.5 rounded flex items-center gap-0.5">
+                    <span class="material-symbols-outlined text-[13px] font-bold">person_add</span>
+                    +{{ new_users_this_week }}
+                  </span>
+                </span>
+              </div>
+            </div>
+
+            <!-- Card 3: Đơn chờ duyệt -->
+            <a class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-2xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[140px] hover:border-yellow-500/50 transition-colors group" href="{{ url_for('users.confirmations_list') }}">
+              <div class="flex items-center justify-between">
+                <span class="label-sm text-on-surface-variant font-semibold uppercase tracking-wider" data-i18n="pendingOrders">Đơn chờ duyệt</span>
+                <div class="w-10 h-10 rounded-xl bg-yellow-500/10 dark:bg-yellow-500/20 flex items-center justify-center text-yellow-600 dark:text-yellow-400">
+                  <span class="material-symbols-outlined">pending_actions</span>
+                </div>
+              </div>
+              <div class="mt-4 flex flex-col">
+                <span class="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-2">
+                  <span data-counter="{{ pending_orders_count }}">0</span>
+                  {% if pending_orders_count > 0 %}
+                    <span class="flex h-2.5 w-2.5 relative">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-yellow-500"></span>
+                    </span>
+                  {% endif %}
+                </span>
+                <div class="label-sm text-on-surface-variant/70 mt-2 flex items-center justify-between">
+                  <span class="text-primary group-hover:underline flex items-center gap-0.5">
+                    <span data-i18n="viewPendingList">Xem danh sách</span>
+                    <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+                  </span>
+                  {% if new_orders_today > 0 %}
+                    <span class="text-xs text-amber-600 dark:text-amber-400 font-semibold bg-amber-500/10 dark:bg-amber-500/20 px-2 py-0.5 rounded">+{{ new_orders_today }}</span>
+                  {% endif %}
+                </div>
+              </div>
+            </a>
+
+            <!-- Card 4: Tổng lượt nhận diện -->
+            <div class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-2xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[140px]">
+              <div class="flex items-center justify-between">
+                <span class="label-sm text-on-surface-variant font-semibold uppercase tracking-wider" data-i18n="totalSystemPredictions">Tổng lượt nhận diện</span>
+                <div class="w-10 h-10 rounded-xl bg-purple-500/10 dark:bg-purple-500/20 flex items-center justify-center text-purple-600 dark:text-purple-400">
+                  <span class="material-symbols-outlined">analytics</span>
+                </div>
+              </div>
+              <div class="mt-4 flex flex-col">
+                <span class="text-3xl font-bold text-on-surface tracking-tight" data-counter="{{ total_all_time }}">0</span>
+                <span class="label-sm text-on-surface-variant/70 mt-2 flex items-center justify-between">
+                  <span data-i18n="allSystemScans">Toàn bộ lượt dự đoán</span>
+                  <span class="text-xs text-purple-600 dark:text-purple-400 font-semibold bg-purple-500/10 dark:bg-purple-500/20 px-2 py-0.5 rounded">
+                    <span class="material-symbols-outlined text-[13px] font-bold">monitoring</span>
+                    +{{ predictions_today }}
+                  </span>
+                </span>
+              </div>
+            </div>
+
+          {% else %}
+            <!-- Card 1: Tổng dự đoán cá nhân -->
+            <div class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-2xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[140px]">
+              <div class="flex items-center justify-between">
+                <span class="label-sm text-on-surface-variant font-semibold uppercase tracking-wider" data-i18n="totalPredictions">Tổng dự đoán</span>
+                <div class="w-10 h-10 rounded-xl bg-primary/10 dark:bg-primary/20 flex items-center justify-center text-primary">
+                  <span class="material-symbols-outlined">analytics</span>
+                </div>
+              </div>
+              <div class="mt-4 flex flex-col">
+                <span class="text-3xl font-bold text-on-surface tracking-tight" data-counter="{{ total_all_time }}">0</span>
+                <span class="label-sm text-on-surface-variant/70 mt-1" data-i18n="yourScans">Lượt quét của riêng bạn</span>
+              </div>
+            </div>
+
+            <!-- Card 2: Độ tin cậy trung bình cá nhân -->
+            <div class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-2xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[140px]">
+              <div class="flex items-center justify-between">
+                <span class="label-sm text-on-surface-variant font-semibold uppercase tracking-wider" data-i18n="avgConfidence">Độ tin cậy TB</span>
+                <div class="w-10 h-10 rounded-xl bg-yellow-500/10 dark:bg-yellow-500/20 flex items-center justify-center text-yellow-600 dark:text-yellow-450">
+                  <span class="material-symbols-outlined">bolt</span>
+                </div>
+              </div>
+              <div class="mt-4 flex flex-col">
+                <span class="text-3xl font-bold text-on-surface tracking-tight" data-counter="{{ ((avg_confidence or 0) * 100)|round(1) }}" data-suffix="%">0%</span>
+                <span class="label-sm text-on-surface-variant/70 mt-1" data-i18n="avgAccuracy">Độ chính xác trung bình</span>
+              </div>
+            </div>
+
+            <!-- Card 3: Số giống đã nhận diện cá nhân -->
+            <div class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-2xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[140px]">
+              <div class="flex items-center justify-between">
+                <span class="label-sm text-on-surface-variant font-semibold uppercase tracking-wider" data-i18n="breedsAnalyzed">Giống đã phân tích</span>
+                <div class="w-10 h-10 rounded-xl bg-green-500/10 dark:bg-green-500/20 flex items-center justify-center text-green-600 dark:text-green-400">
+                  <span class="material-symbols-outlined">pets</span>
+                </div>
+              </div>
+              <div class="mt-4 flex flex-col">
+                <span class="text-3xl font-bold text-on-surface tracking-tight" data-counter="{{ unique_breeds }}">0</span>
+                <span class="label-sm text-on-surface-variant/70 mt-1" data-i18n="uniqueBreedsFound">Giống chó khác nhau bạn nhận diện</span>
+              </div>
+            </div>
+
+            <!-- Card 4: Xem báo cáo chi tiết cá nhân -->
+            <a class="stat-card group p-6 bg-gradient-to-br from-primary to-blue-700 dark:from-primary/95 dark:to-blue-900 rounded-2xl flex flex-col justify-between text-white shadow-sm hover:shadow-md transition-all min-h-[140px]" href="{{ url_for('statistics.statistics') }}">
+              <div class="flex items-center justify-between">
+                <span class="label-sm font-semibold uppercase tracking-wider opacity-90" data-i18n="viewReport">Xem báo cáo</span>
+                <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+              </div>
+              <div class="mt-4">
+                <p class="text-xl font-bold leading-tight" data-i18n="detailedStats">Thống kê chi tiết</p>
+                <p class="label-sm opacity-80 leading-relaxed mt-1" data-i18n="deepAnalysis">Phân tích sâu về lịch sử quét</p>
+              </div>
+            </a>
           {% endif %}
+        </section>
+
+        <!-- Section: Biểu đồ chính (Xu hướng & Phân bố độ tin cậy) -->
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+          <!-- Line Chart: Xu hướng Doanh thu (Admin) hoặc Xu hướng Nhận diện (User) (2/3 width) -->
+          <div class="lg:col-span-2 chart-card bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
+              <div>
+                {% if is_admin %}
+                  <h3 class="text-lg font-bold text-on-surface" data-i18n="revenueTrend">Xu hướng Doanh thu</h3>
+                  <p class="text-xs text-on-surface-variant mt-0.5" id="revenueTrendSubtitle" data-i18n="revenueTrendSubtitle">
+                    Tổng tiền từ đơn đã thanh toán (VND)
+                  </p>
+                {% else %}
+                  <h3 class="text-lg font-bold text-on-surface" id="predictionTrendTitle" data-i18n="predTrend7">Xu hướng dự đoán 7 ngày gần đây</h3>
+                  <p class="text-xs text-on-surface-variant mt-0.5" id="predictionTrendSubtitle" data-i18n="predTrendSubtitle">
+                    Số lượng ảnh đã nhận diện mỗi ngày
+                  </p>
+                {% endif %}
+              </div>
+              
+              <!-- Filter pill buttons -->
+              <div class="relative">
+                <div class="flex flex-wrap items-center gap-1 p-1 bg-surface-container-low dark:bg-slate-800 rounded-xl" id="{% if is_admin %}revenuePeriodTabs{% else %}activityPeriodTabs{% endif %}">
+                  <button type="button" data-period="7days" class="{% if is_admin %}rev-tab{% else %}act-tab{% endif %} px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-primary text-white shadow-sm" data-i18n="days7">
+                    <span>7 ngày</span>
+                  </button>
+                  <button type="button" data-period="30days" class="{% if is_admin %}rev-tab{% else %}act-tab{% endif %} px-3 py-1.5 rounded-lg text-xs font-medium transition-all text-on-surface-variant hover:bg-surface-container-high" data-i18n="days30">
+                    <span>30 ngày</span>
+                  </button>
+                  <button type="button" data-period="90days" class="{% if is_admin %}rev-tab{% else %}act-tab{% endif %} px-3 py-1.5 rounded-lg text-xs font-medium transition-all text-on-surface-variant hover:bg-surface-container-high" data-i18n="days90">
+                    <span>90 ngày</span>
+                  </button>
+                  <button type="button" data-period="12months" class="{% if is_admin %}rev-tab{% else %}act-tab{% endif %} px-3 py-1.5 rounded-lg text-xs font-medium transition-all text-on-surface-variant hover:bg-surface-container-high" data-i18n="months12">
+                    <span>12 tháng</span>
+                  </button>
+                  <button type="button" data-period="custom" id="{% if is_admin %}revenueCustomBtn{% else %}activityCustomBtn{% endif %}" class="{% if is_admin %}rev-tab{% else %}act-tab{% endif %} px-3 py-1.5 rounded-lg text-xs font-medium transition-all text-on-surface-variant hover:bg-surface-container-high flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[14px]">calendar_today</span>
+                    <span data-i18n="custom">Tùy chọn</span>
+                  </button>
+                </div>
+
+                <!-- Custom Date Range Popover -->
+                <div id="{% if is_admin %}revenueCustomPopover{% else %}activityCustomPopover{% endif %}" class="hidden absolute right-0 top-full mt-2 p-4 bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-xl shadow-lg z-50 min-w-[280px] flex flex-col gap-3">
+                  <div class="text-sm font-bold text-on-surface" data-i18n="selectDateRange">Chọn khoảng thời gian</div>
+                  <div class="grid grid-cols-2 gap-2">
+                    <div class="flex flex-col gap-1">
+                      <label class="text-[10px] uppercase font-semibold text-on-surface-variant" data-i18n="fromDate">Từ ngày</label>
+                      <input type="date" id="{% if is_admin %}revenueStartDate{% else %}activityStartDate{% endif %}" class="px-2 py-1.5 rounded-md border border-outline-variant bg-surface-container-low dark:bg-slate-800 text-on-surface text-xs focus:outline-none focus:border-primary">
+                    </div>
+                    <div class="flex flex-col gap-1">
+                      <label class="text-[10px] uppercase font-semibold text-on-surface-variant" data-i18n="toDate">Đến ngày</label>
+                      <input type="date" id="{% if is_admin %}revenueEndDate{% else %}activityEndDate{% endif %}" class="px-2 py-1.5 rounded-md border border-outline-variant bg-surface-container-low dark:bg-slate-800 text-on-surface text-xs focus:outline-none focus:border-primary">
+                    </div>
+                  </div>
+                  <button type="button" id="{% if is_admin %}applyRevenueCustom{% else %}applyActivityCustom{% endif %}" class="w-full py-1.5 bg-primary text-white rounded-md text-xs font-semibold hover:bg-primary/95 transition-all shadow-sm" data-i18n="apply">
+                    <span>Áp dụng</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <div class="chart-container relative h-[320px]">
+              {% if is_admin %}
+                <canvas id="revenueTrendChart"></canvas>
+              {% else %}
+                <canvas id="dailyPredictionsChart"></canvas>
+              {% endif %}
+            </div>
+          </div>
+
+          <!-- Bar Chart: Phân bố độ tin cậy (1/3 width) -->
+          <div class="lg:col-span-1 chart-card bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
+            <div class="mb-4">
+              <h3 class="text-lg font-bold text-on-surface" data-i18n="confidenceDist">Phân bố độ tin cậy</h3>
+              <p class="text-xs text-on-surface-variant mt-0.5" data-i18n="confidenceDistSubtitle">
+                Mức độ tin cậy của thuật toán phân loại
+              </p>
+            </div>
+            <div class="chart-container relative h-[320px]">
+              <canvas id="confidenceDistChart"></canvas>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section: Biểu đồ phụ & Kết quả gần đây (Top 5 giống & Lịch sử) -->
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- Doughnut Chart: Top 5 giống phổ biến (1/3 width) -->
+          <div class="lg:col-span-1 chart-card bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
+            <div class="mb-4">
+              <h3 class="text-lg font-bold text-on-surface" data-i18n="top5Breeds">Top 5 giống phổ biến nhất</h3>
+              <p class="text-xs text-on-surface-variant mt-0.5" data-i18n="top5BreedsSubtitle">
+                Các giống chó được nhận diện nhiều nhất
+              </p>
+            </div>
+            <div class="chart-container relative h-[260px] flex items-center justify-center">
+              <canvas id="topBreedsChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Table/Card List: Kết quả nhận diện gần đây (2/3 width) -->
+          <div class="lg:col-span-2 bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
+            <div class="flex items-center justify-between mb-6">
+              <div>
+                <h3 class="text-lg font-bold text-on-surface" data-i18n="recentResults">Kết quả nhận diện gần đây</h3>
+                <p class="text-xs text-on-surface-variant mt-0.5" data-i18n="recentPredictionsDesc">
+                  Danh sách ảnh chó vừa nhận diện trong hệ thống
+                </p>
+              </div>
+              <div class="flex items-center gap-2">
+                <div class="flex items-center gap-1.5 p-1 bg-surface-container-low dark:bg-slate-800 rounded-xl">
+                  <a class="px-3 py-1 rounded-lg text-xs transition-all {% if active_range == 'today' %}bg-primary text-white shadow-sm font-semibold{% else %}text-on-surface-variant hover:bg-surface-container-high font-medium{% endif %}" href="{{ url_for('dashboard.dashboard', range='today') }}">
+                    <span data-i18n="todayNew">hôm nay</span>
+                  </a>
+                  <a class="px-3 py-1 rounded-lg text-xs transition-all {% if active_range == 'yesterday' %}bg-primary text-white shadow-sm font-semibold{% else %}text-on-surface-variant hover:bg-surface-container-high font-medium{% endif %}" href="{{ url_for('dashboard.dashboard', range='yesterday') }}">
+                    <span data-i18n="yesterday">Hôm qua</span>
+                  </a>
+                  <a class="px-3 py-1 rounded-lg text-xs transition-all {% if active_range == '7days' %}bg-primary text-white shadow-sm font-semibold{% else %}text-on-surface-variant hover:bg-surface-container-high font-medium{% endif %}" href="{{ url_for('dashboard.dashboard', range='7days') }}">
+                    <span data-i18n="last7daysTab">7 ngày gần đây</span>
+                  </a>
+                </div>
+                <a class="text-primary font-semibold text-xs hover:underline flex items-center gap-0.5 ml-2" href="{{ url_for('history.history') }}">
+                  <span data-i18n="viewAll">Xem tất cả</span>
+                  <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+                </a>
+              </div>
+            </div>
+
+            {% if recent_predictions and recent_predictions|length > 0 %}
+              <!-- Desktop/Tablet Table -->
+              <div class="hidden sm:block overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                  <thead>
+                    <tr class="border-b border-outline-variant/20 text-xs font-semibold text-on-surface-variant/80">
+                      <th class="pb-3" data-i18n="imageCol">Ảnh</th>
+                      <th class="pb-3" data-i18n="breedCol">Giống chó</th>
+                      <th class="pb-3" data-i18n="confidenceCol">Độ tin cậy</th>
+                      <th class="pb-3" data-i18n="timeCol">Thời gian</th>
+                      <th class="pb-3 text-right" data-i18n="actionsCol">Thao tác</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-outline-variant/10">
+                    {% for pred in recent_predictions %}
+                      <tr class="text-sm text-on-surface hover:bg-surface-container-low/30 transition-colors">
+                        <td class="py-3">
+                          <img src="/{{ pred.image_path }}" alt="Dog" class="w-10 h-10 rounded-lg object-cover border border-outline-variant/15">
+                        </td>
+                        <td class="py-3 font-semibold">
+                          <span data-i18n-breed="{{ pred.breed or '' }}">{{ pred.breed or 'Chưa xác định' }}</span>
+                        </td>
+                        <td class="py-3">
+                          {% set conf = (pred.confidence or 0) * 100 %}
+                          {% if conf >= 85 %}
+                            {% set badge_class = "bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400" %}
+                            {% set level = "Rất cao" %}
+                            {% set level_en = "Very High" %}
+                          {% elif conf >= 70 %}
+                            {% set badge_class = "bg-blue-500/10 text-blue-600 dark:bg-blue-500/20 dark:text-blue-400" %}
+                            {% set level = "Cao" %}
+                            {% set level_en = "High" %}
+                          {% elif conf >= 50 %}
+                            {% set badge_class = "bg-amber-500/10 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400" %}
+                            {% set level = "Trung bình" %}
+                            {% set level_en = "Medium" %}
+                          {% else %}
+                            {% set badge_class = "bg-rose-500/10 text-rose-600 dark:bg-rose-500/20 dark:text-rose-400" %}
+                            {% set level = "Thấp" %}
+                            {% set level_en = "Low" %}
+                          {% endif %}
+                          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold {{ badge_class }}">
+                            <span class="current-lang-text">{{ level if ui_language == 'vi' else level_en }}</span>
+                            <span class="ml-1 font-bold">{{ '%.1f'|format(conf) }}%</span>
+                          </span>
+                        </td>
+                        <td class="py-3 text-on-surface-variant/90 text-xs">
+                          {{ pred.created_at.strftime('%d/%m/%Y %H:%M') if pred.created_at else '' }}
+                        </td>
+                        <td class="py-3 text-right">
+                          <button type="button" onclick="openDetailModal('{{ pred.image_path|escape }}', '{{ (pred.breed or "Chưa xác định")|escape }}', '{{ "%.1f"|format((pred.confidence or 0)*100) }}', '{{ (pred.species or "Chó")|escape }}', '{{ pred.created_at.strftime("%d/%m/%Y %H:%M") if pred.created_at else "" }}')" class="text-primary hover:bg-surface-container-high p-1.5 rounded-lg inline-flex items-center justify-center transition-colors cursor-pointer" title="Xem chi tiết" data-i18n-title="viewDetail">
+                            <span class="material-symbols-outlined text-[18px]">visibility</span>
+                          </button>
+                        </td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Mobile Card List -->
+              <div class="sm:hidden space-y-3">
+                {% for pred in recent_predictions %}
+                  <div class="flex items-center justify-between p-3 bg-surface-container-low dark:bg-slate-800/50 border border-outline-variant/20 rounded-xl">
+                    <div class="flex items-center gap-3 overflow-hidden">
+                      <img src="/{{ pred.image_path }}" alt="Dog" class="w-12 h-12 rounded-lg object-cover border border-outline-variant/15 flex-shrink-0">
+                      <div class="flex flex-col justify-center overflow-hidden">
+                        <span class="text-sm font-semibold truncate" data-i18n-breed="{{ pred.breed or '' }}">{{ pred.breed or 'Chưa xác định' }}</span>
+                        <span class="text-[11px] text-on-surface-variant mt-0.5">{{ pred.created_at.strftime('%d/%m/%Y %H:%M') if pred.created_at else '' }}</span>
+                      </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      {% set conf = (pred.confidence or 0) * 100 %}
+                      {% if conf >= 85 %}
+                        {% set badge_class = "bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400" %}
+                      {% elif conf >= 70 %}
+                        {% set badge_class = "bg-blue-500/10 text-blue-600 dark:bg-blue-500/20 dark:text-blue-400" %}
+                      {% elif conf >= 50 %}
+                        {% set badge_class = "bg-amber-500/10 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400" %}
+                      {% else %}
+                        {% set badge_class = "bg-rose-500/10 text-rose-600 dark:bg-rose-500/20 dark:text-rose-400" %}
+                      {% endif %}
+                      <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold {{ badge_class }}">
+                        {{ '%.1f'|format(conf) }}%
+                      </span>
+                      <button type="button" onclick="openDetailModal('{{ pred.image_path|escape }}', '{{ (pred.breed or "Chưa xác định")|escape }}', '{{ "%.1f"|format((pred.confidence or 0)*100) }}', '{{ (pred.species or "Chó")|escape }}', '{{ pred.created_at.strftime("%d/%m/%Y %H:%M") if pred.created_at else "" }}')" class="text-primary hover:bg-surface-container-high p-1.5 rounded-lg inline-flex items-center justify-center transition-colors cursor-pointer" title="Xem chi tiết" data-i18n-title="viewDetail">
+                        <span class="material-symbols-outlined text-[18px]">visibility</span>
+                      </button>
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
+
+              <!-- Pagination -->
+              {% if total_pages and total_pages > 1 %}
+                <div class="flex justify-center mt-6">
+                  <nav aria-label="Pagination" class="inline-flex items-center gap-1 rounded-xl bg-surface-container-low dark:bg-slate-800 p-1">
+                    <a aria-label="Trang truoc" data-i18n-aria="prevPage" class="px-2 py-1 label-sm rounded-lg {% if page <= 1 %}text-slate-500/40 pointer-events-none{% else %}text-on-surface-variant hover:text-primary hover:bg-surface-container-high{% endif %}" href="{{ url_for('dashboard.dashboard', range=active_range, page=page-1) }}">
+                      &lsaquo;
+                    </a>
+                    {% for p in range(1, total_pages + 1) %}
+                      <a class="px-2.5 py-1 label-sm rounded-lg {% if p == page %}bg-primary text-white font-semibold{% else %}text-on-surface-variant hover:text-primary hover:bg-surface-container-high{% endif %}" href="{{ url_for('dashboard.dashboard', range=active_range, page=p) }}">
+                        {{ p }}
+                      </a>
+                    {% endfor %}
+                    <a aria-label="Trang sau" data-i18n-aria="nextPage" class="px-2 py-1 label-sm rounded-lg {% if page >= total_pages %}text-slate-500/40 pointer-events-none{% else %}text-on-surface-variant hover:text-primary hover:bg-surface-container-high{% endif %}" href="{{ url_for('dashboard.dashboard', range=active_range, page=page+1) }}">
+                      &rsaquo;
+                    </a>
+                  </nav>
+                </div>
+              {% endif %}
+
+            {% else %}
+              <!-- Empty State -->
+              <div class="flex flex-col items-center justify-center py-12 text-center text-on-surface-variant/80">
+                <span class="material-symbols-outlined text-5xl text-outline-variant/40 mb-3">pets</span>
+                <p class="label-sm font-medium" data-i18n="emptyDashboard">Bạn chưa có lịch sử nhận diện nào.</p>
+                <a class="mt-4 bg-primary text-on-primary px-4 py-2.5 rounded-xl label-sm shadow-sm hover:shadow-md transition-all flex items-center gap-2 font-semibold" href="{{ url_for('predict.upload_page') }}">
+                  <span class="material-symbols-outlined text-[18px]">add_a_photo</span>
+                  <span data-i18n="uploadNew">Tải ảnh mới</span>
+                </a>
+              </div>
+            {% endif %}
+          </div>
         </section>
 
         <!-- Pass dashboard stats safely to Javascript via data-attributes -->
@@ -1330,29 +918,29 @@
           id="dashboardStatsData"
           class="hidden"
           data-is-admin="{{ 'true' if is_admin else 'false' }}"
-          data-daily-labels7="{{ chart_labels_7_json }}"
-          data-daily-data7="{{ chart_data_7_json }}"
-          data-top-breeds7="{{ top_breeds_7_json }}"
-          data-top-breeds-counts7="{{ top_breeds_counts_7_json }}"
-          data-confidence-dist7="{{ confidence_dist_7_json }}"
-          data-daily-labels30="{{ chart_labels_30_json }}"
-          data-daily-data30="{{ chart_data_30_json }}"
-          data-top-breeds30="{{ top_breeds_30_json }}"
-          data-top-breeds-counts30="{{ top_breeds_counts_30_json }}"
-          data-confidence-dist30="{{ confidence_dist_30_json }}"
-          data-daily-labels-all="{{ chart_labels_all_json }}"
-          data-daily-data-all="{{ chart_data_all_json }}"
-          data-top-breeds-all="{{ top_breeds_all_json }}"
-          data-top-breeds-counts-all="{{ top_breeds_counts_all_json }}"
-          data-confidence-dist-all="{{ confidence_dist_all_json }}"
-          data-rev-daily-labels="{{ revenue_daily_labels_json }}"
-          data-rev-daily-data="{{ revenue_daily_data_json }}"
-          data-rev-monthly-labels="{{ revenue_monthly_labels_json }}"
-          data-rev-monthly-data="{{ revenue_monthly_data_json }}"
-          data-rev-yearly-labels="{{ revenue_yearly_labels_json }}"
-          data-rev-yearly-data="{{ revenue_yearly_data_json }}"
-          data-sub-labels="{{ subscription_labels_json }}"
-          data-sub-data="{{ subscription_data_json }}"
+          data-daily-labels7="{{ chart_labels_7_json | forceescape | safe }}"
+          data-daily-data7="{{ chart_data_7_json | forceescape | safe }}"
+          data-top-breeds7="{{ top_breeds_7_json | forceescape | safe }}"
+          data-top-breeds-counts7="{{ top_breeds_counts_7_json | forceescape | safe }}"
+          data-confidence-dist7="{{ confidence_dist_7_json | forceescape | safe }}"
+          data-daily-labels30="{{ chart_labels_30_json | forceescape | safe }}"
+          data-daily-data30="{{ chart_data_30_json | forceescape | safe }}"
+          data-top-breeds30="{{ top_breeds_30_json | forceescape | safe }}"
+          data-top-breeds-counts30="{{ top_breeds_counts_30_json | forceescape | safe }}"
+          data-confidence-dist30="{{ confidence_dist_30_json | forceescape | safe }}"
+          data-daily-labels-all="{{ chart_labels_all_json | forceescape | safe }}"
+          data-daily-data-all="{{ chart_data_all_json | forceescape | safe }}"
+          data-top-breeds-all="{{ top_breeds_all_json | forceescape | safe }}"
+          data-top-breeds-counts-all="{{ top_breeds_counts_all_json | forceescape | safe }}"
+          data-confidence-dist-all="{{ confidence_dist_all_json | forceescape | safe }}"
+          data-rev-daily-labels="{{ revenue_daily_labels_json | forceescape | safe }}"
+          data-rev-daily-data="{{ revenue_daily_data_json | forceescape | safe }}"
+          data-rev-monthly-labels="{{ revenue_monthly_labels_json | forceescape | safe }}"
+          data-rev-monthly-data="{{ revenue_monthly_data_json | forceescape | safe }}"
+          data-rev-yearly-labels="{{ revenue_yearly_labels_json | forceescape | safe }}"
+          data-rev-yearly-data="{{ revenue_yearly_data_json | forceescape | safe }}"
+          data-sub-labels="{{ subscription_labels_json | forceescape | safe }}"
+          data-sub-data="{{ subscription_data_json | forceescape | safe }}"
         ></div>
       </div>
     </main>
@@ -2452,8 +2040,234 @@
               topBreedsChartInstance.data.labels = displayLabels;
             }
             topBreedsChartInstance.update();
-          }
         });
+      });
+    </script>
+
+    <!-- Modal Detail Popup -->
+    <div
+      id="detailModal"
+      class="fixed inset-0 z-[1050] hidden items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm transition-all duration-300"
+    >
+      <div
+        class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl max-w-2xl w-full border border-outline-variant/30 dark:border-slate-800 overflow-hidden shadow-2xl transition-transform transform scale-95 duration-300 flex flex-col md:flex-row md:h-[420px]"
+      >
+        <!-- Image Panel -->
+        <div
+          class="w-full md:w-1/2 bg-slate-950 flex items-center justify-center relative min-h-[250px] md:min-h-0"
+        >
+          <img
+            id="modalImage"
+            class="w-full h-full object-cover absolute inset-0"
+            src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'%3E%3C/svg%3E"
+            alt="Detection image"
+          >
+          <!-- Species Badge -->
+          <div
+            class="absolute bottom-4 left-4 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full text-white text-xs font-semibold flex items-center gap-1.5 z-10 border border-white/10"
+          >
+            <span class="material-symbols-outlined text-[14px]">pets</span>
+            <span id="modalSpecies" data-i18n="speciesDog">Chó</span>
+          </div>
+        </div>
+
+        <!-- Info Panel -->
+        <div
+          class="w-full md:w-1/2 p-6 flex flex-col justify-between text-slate-800 dark:text-slate-100"
+        >
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <!-- Type Badge -->
+              <span
+                id="modalTypeBadge"
+                class="px-2.5 py-1 rounded-full text-xs font-bold"
+              ></span>
+              <!-- Close Button -->
+              <button
+                type="button"
+                onclick="closeModal()"
+                class="w-8 h-8 rounded-full bg-surface-container-low dark:bg-slate-800 hover:bg-surface-container-high dark:hover:bg-slate-700 flex items-center justify-center text-on-surface-variant transition-colors cursor-pointer"
+              >
+                <span class="material-symbols-outlined text-[20px]">close</span>
+              </button>
+            </div>
+
+            <h3
+              id="modalBreed"
+              class="text-xl font-bold text-slate-900 dark:text-white leading-snug mb-3"
+            >&nbsp;</h3>
+
+            <!-- Parent mix info (Only shown for hybrid) -->
+            <div
+              id="modalHybridInfo"
+              class="mb-4 hidden p-3 rounded-xl bg-surface-container-low dark:bg-slate-800/50 border border-outline-variant/20 dark:border-slate-800"
+            >
+              <span
+                class="text-xs font-semibold text-slate-500 dark:text-slate-400 block mb-1.5"
+                data-i18n="hybridRatioExpected"
+                >Tỷ lệ lai dự kiến</span
+              >
+              <div class="flex items-center justify-between text-xs font-semibold mb-1">
+                <span id="modalParent1" class="text-slate-800 dark:text-slate-200"></span>
+                <span id="modalParent2" class="text-slate-850 dark:text-slate-200"></span>
+              </div>
+            </div>
+
+            <!-- Confidence Score -->
+            <div class="mb-5">
+              <div class="flex items-center justify-between label-sm mb-1.5">
+                <span
+                  class="text-slate-550 dark:text-slate-400 font-semibold"
+                  data-i18n="confidence"
+                  >Độ tin cậy</span
+                >
+                <span
+                  id="modalConfText"
+                  class="font-bold text-primary dark:text-blue-400"
+                ></span>
+              </div>
+              <div
+                class="h-2 rounded-full bg-surface-container-low dark:bg-slate-850 overflow-hidden"
+              >
+                <div
+                  id="modalConfBar"
+                  class="h-full bg-gradient-to-r from-primary/80 to-primary dark:from-blue-500/80 dark:to-blue-400 rounded-full transition-all duration-505 w-0"
+                ></div>
+              </div>
+            </div>
+
+            <!-- Date and Time -->
+            <div
+              class="flex items-center gap-2 text-slate-500 dark:text-slate-400 text-xs"
+            >
+              <span class="material-symbols-outlined text-[16px]"
+                >schedule</span
+              >
+              <span data-i18n="identificationTimeLabel"
+                >Thời gian nhận diện:</span
+              >
+              <span
+                id="modalDate"
+                class="font-medium text-slate-700 dark:text-slate-300"
+              ></span>
+            </div>
+          </div>
+
+          <!-- Footer Button -->
+          <div class="mt-6">
+            <button
+              type="button"
+              onclick="closeModal()"
+              class="w-full py-2.5 bg-primary hover:bg-primary/95 text-on-primary font-semibold rounded-xl text-sm transition-colors cursor-pointer shadow-sm hover:shadow-md flex items-center justify-center gap-2"
+              data-i18n="closeWindowBtn"
+            >
+              <span data-i18n="closeWindowBtn">Đóng cửa sổ</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      window.openDetailModal = function(imagePath, breed, confidence, species, date) {
+        const modal = document.getElementById("detailModal");
+        const modalImage = document.getElementById("modalImage");
+        const modalBreed = document.getElementById("modalBreed");
+        const modalSpecies = document.getElementById("modalSpecies");
+        const modalTypeBadge = document.getElementById("modalTypeBadge");
+        const modalConfText = document.getElementById("modalConfText");
+        const modalConfBar = document.getElementById("modalConfBar");
+        const modalDate = document.getElementById("modalDate");
+        const modalHybridInfo = document.getElementById("modalHybridInfo");
+        const modalParent1 = document.getElementById("modalParent1");
+        const modalParent2 = document.getElementById("modalParent2");
+
+        // Set basic data
+        modalImage.src = "/" + imagePath;
+        modalBreed.setAttribute("data-i18n-breed", breed);
+        if (typeof window.PetAI_i18n !== "undefined") {
+          modalBreed.innerText = breed;
+          modalSpecies.innerText = species || "Chó";
+        } else {
+          modalBreed.innerText = breed;
+          modalSpecies.innerText = species || "Chó";
+        }
+        modalConfText.innerText = confidence + "%";
+        modalConfBar.style.width = confidence + "%";
+        modalDate.innerText = date;
+
+        // Set type badge & check for hybrid
+        if (breed.startsWith("Nghi lai:")) {
+          modalTypeBadge.setAttribute("data-i18n", "hybridDog");
+          modalTypeBadge.innerText =
+            typeof window.PetAI_i18n !== "undefined"
+              ? window.PetAI_i18n.t("hybridDog")
+              : "Chó lai";
+          modalTypeBadge.className =
+            "px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 dark:bg-amber-950/50 dark:text-amber-400 border border-amber-200 dark:border-amber-900/30";
+
+          // Parse parents
+          const parentPart = breed.replace("Nghi lai:", "").trim();
+          const parents = parentPart.split("x");
+          if (parents.length >= 2) {
+            const p1 = parents[0].trim();
+            const p2 = parents[1].trim();
+            modalParent1.setAttribute("data-i18n-breed", p1);
+            modalParent2.setAttribute("data-i18n-breed", p2);
+            modalParent1.innerText = p1;
+            modalParent2.innerText = p2;
+            modalHybridInfo.classList.remove("hidden");
+          } else {
+            modalHybridInfo.classList.add("hidden");
+          }
+        } else {
+          modalTypeBadge.setAttribute("data-i18n", "pureDog");
+          modalTypeBadge.innerText =
+            typeof window.PetAI_i18n !== "undefined"
+              ? window.PetAI_i18n.t("pureDog")
+              : "Chó thuần";
+          modalTypeBadge.className =
+            "px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-400 border border-emerald-250 dark:border-emerald-900/30";
+          modalHybridInfo.classList.add("hidden");
+        }
+
+        // Apply translations
+        if (typeof window.PetAI_i18n !== "undefined") {
+          window.PetAI_i18n.applyToElement(modal, window.PetAI_i18n.getCurrentLang());
+        }
+
+        // Show modal
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+        setTimeout(() => {
+          const container = modal.querySelector(".max-w-2xl");
+          if (container) {
+            container.classList.remove("scale-95");
+            container.classList.add("scale-100");
+          }
+        }, 10);
+      };
+
+      window.closeModal = function() {
+        const modal = document.getElementById("detailModal");
+        if (!modal) return;
+        const container = modal.querySelector(".max-w-2xl");
+        if (container) {
+          container.classList.remove("scale-100");
+          container.classList.add("scale-95");
+        }
+        setTimeout(() => {
+          modal.classList.remove("flex");
+          modal.classList.add("hidden");
+        }, 150);
+      };
+
+      // Close on click outside
+      window.addEventListener("click", function (e) {
+        const modal = document.getElementById("detailModal");
+        if (e.target === modal) {
+          closeModal();
+        }
       });
     </script>
   </body>
