@@ -508,11 +508,14 @@
                 <form
                   onsubmit="
                     event.preventDefault();
-                    alert(
-                      typeof window.PetAI_i18n !== 'undefined'
-                        ? window.PetAI_i18n.t('msgSendSuccessDemo')
-                        : 'Bạn đã bấm Gửi thành công! (Dữ liệu Demo)',
-                    );
+                    var msgText = typeof window.PetAI_i18n !== 'undefined'
+                      ? window.PetAI_i18n.t('msgSendSuccessDemo')
+                      : 'Bạn đã bấm Gửi thành công! (Dữ liệu Demo)';
+                    if (window.PetAI_alert) {
+                      window.PetAI_alert({ text: msgText, type: 'success' });
+                    } else {
+                      alert(msgText);
+                    }
                   "
                   class="space-y-5"
                 >

@@ -1303,11 +1303,11 @@
             );
             console.log("payment_status response status:", res.status);
             if (!res.ok) {
-              alert(
-                typeof window.PetAI_i18n !== "undefined" && typeof window.PetAI_i18n.t === "function"
-                  ? window.PetAI_i18n.t("actionFailed")
-                  : "Không thể tải thông tin hóa đơn.",
-              );
+              const errMsg = typeof window.PetAI_i18n !== "undefined" && typeof window.PetAI_i18n.t === "function"
+                ? window.PetAI_i18n.t("actionFailed")
+                : "Không thể tải thông tin hóa đơn.";
+              if (window.PetAI_alert) window.PetAI_alert({ text: errMsg, type: "danger" });
+              else alert(errMsg);
               return;
             }
             const data = await res.json();
@@ -1315,19 +1315,19 @@
             if (data && data.success) {
               showPaymentSuccessBill(data);
             } else {
-              alert(
-                typeof window.PetAI_i18n !== "undefined" && typeof window.PetAI_i18n.t === "function"
-                  ? window.PetAI_i18n.t("actionFailed")
-                  : "Không thể tải thông tin hóa đơn.",
-              );
+              const errMsg = typeof window.PetAI_i18n !== "undefined" && typeof window.PetAI_i18n.t === "function"
+                ? window.PetAI_i18n.t("actionFailed")
+                : "Không thể tải thông tin hóa đơn.";
+              if (window.PetAI_alert) window.PetAI_alert({ text: errMsg, type: "danger" });
+              else alert(errMsg);
             }
           } catch (e) {
             console.error("viewInvoice exception:", e);
-            alert(
-              typeof window.PetAI_i18n !== "undefined" && typeof window.PetAI_i18n.t === "function"
-                ? window.PetAI_i18n.t("actionFailed")
-                : "Có lỗi xảy ra khi tải hóa đơn.",
-            );
+            const errMsg = typeof window.PetAI_i18n !== "undefined" && typeof window.PetAI_i18n.t === "function"
+              ? window.PetAI_i18n.t("actionFailed")
+              : "Có lỗi xảy ra khi tải hóa đơn.";
+            if (window.PetAI_alert) window.PetAI_alert({ text: errMsg, type: "danger" });
+            else alert(errMsg);
           }
         };
 

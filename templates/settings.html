@@ -867,10 +867,18 @@
                   document.querySelectorAll('#delete-otp-boxes .otp-input')[0]?.focus();
                   startDelCountdown();
                 } else {
-                  alert(data.message || (window.PetAI_i18n ? window.PetAI_i18n.t('error') : 'Gặp lỗi. Vui lòng thử lại.'));
+                  if (window.PetAI_alert) {
+                    window.PetAI_alert(data.message || (window.PetAI_i18n ? window.PetAI_i18n.t('error') : 'Gặp lỗi. Vui lòng thử lại.'));
+                  } else {
+                    alert(data.message || (window.PetAI_i18n ? window.PetAI_i18n.t('error') : 'Gặp lỗi. Vui lòng thử lại.'));
+                  }
                 }
               } catch (e) {
-                alert(window.PetAI_i18n ? window.PetAI_i18n.t('error') : 'Lỗi kết nối. Vui lòng thử lại.');
+                if (window.PetAI_alert) {
+                  window.PetAI_alert(window.PetAI_i18n ? window.PetAI_i18n.t('error') : 'Lỗi kết nối. Vui lòng thử lại.');
+                } else {
+                  alert(window.PetAI_i18n ? window.PetAI_i18n.t('error') : 'Lỗi kết nối. Vui lòng thử lại.');
+                }
               } finally {
                 btn.disabled = false;
                 btn.textContent = window.PetAI_i18n ? window.PetAI_i18n.t('sendOtpBtn') : 'Gửi mã xác nhận';
@@ -1153,8 +1161,16 @@
             const t_func = typeof window.PetAI_i18n !== 'undefined' ? window.PetAI_i18n.t : (x) => x;
 
             if (submitter && submitter.id === 'clearHistoryBtn') {
-              const ok = confirm(t_func("clearHistoryConfirm") || "Bạn có chắc muốn xóa toàn bộ lịch sử nhận diện? Hành động này không thể hoàn tác.");
-              if (!ok) return;
+              if (window.PetAI_confirm) {
+                const ok = await window.PetAI_confirm({
+                  text: t_func("confirmClearHistoryText") || t_func("clearHistoryConfirm") || "Bạn có chắc muốn xóa toàn bộ lịch sử nhận diện? Hành động này không thể hoàn tác.",
+                  type: "danger"
+                });
+                if (!ok) return;
+              } else {
+                const ok = confirm(t_func("clearHistoryConfirm") || "Bạn có chắc muốn xóa toàn bộ lịch sử nhận diện? Hành động này không thể hoàn tác.");
+                if (!ok) return;
+              }
 
               const originalText = clearBtn ? clearBtn.innerHTML : "";
               if (clearBtn) {

@@ -1061,6 +1061,14 @@
         form.addEventListener('submit', async function(e) {
           e.preventDefault();
           
+          if (window.PetAI_confirm) {
+            const confirmed = await window.PetAI_confirm({
+              text: window.PetAI_i18n ? window.PetAI_i18n.t("confirmSaveConfigText") : "Thay đổi cấu hình có thể ảnh hưởng đến hoạt động của toàn hệ thống. Bạn có chắc muốn lưu?",
+              type: "warning"
+            });
+            if (!confirmed) return;
+          }
+
           const submitBtn = form.querySelector('button[type="submit"]');
           if (!submitBtn) return;
           const originalBtnHtml = submitBtn.innerHTML;
@@ -1137,6 +1145,11 @@
           } catch (err) {
             if (window.showToast) {
               window.showToast("error", "Lỗi: " + err.message);
+            } else if (window.PetAI_alert) {
+              window.PetAI_alert({
+                text: "Lỗi khi lưu: " + err.message,
+                type: "danger"
+              });
             } else {
               alert("Lỗi khi lưu: " + err.message);
             }

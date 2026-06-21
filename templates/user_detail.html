@@ -642,84 +642,11 @@
     </div>
   </main>
 
-  <div class="fixed inset-0 z-[1050] hidden items-center justify-center bg-slate-950/60 backdrop-blur-sm p-4"
-    id="confirmModal">
-    <div
-      class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 dark:border-slate-800 rounded-xl max-w-md w-full p-6 shadow-xl">
-      <h3 id="modalTitle" class="headline-md font-semibold text-on-surface dark:text-slate-100 flex items-center gap-2">
-        <span class="material-symbols-outlined text-amber-500 dark:text-amber-400">warning</span><span
-          data-i18n="confirm">Xác nhận</span>
-      </h3>
-      <p id="modalText" class="body-md text-on-surface-variant dark:text-slate-300 mt-2" data-i18n="confirmDialogText">
-        <span data-i18n="confirmDialogText">Bạn có chắc?</span></p>
-      <div id="modalInputWrap" class="hidden mt-3">
-        <label class="body-md text-on-surface-variant dark:text-slate-400" for="modalConfirmInput"><span
-            data-i18n="enterWord">Nhập</span><code
-            class="text-rose-500 font-semibold dark:text-rose-400 bg-rose-500/10 px-1 py-0.5 rounded">DELETE</code><span
-            data-i18n="confirmInputPlaceholderSuffix">hoặc tên đăng nhập để xác nhận</span></label>
-        <input id="modalConfirmInput" type="text"
-          class="mt-2 w-full bg-surface-container-lowest dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-800 rounded-lg px-3 py-2 label-sm text-on-surface dark:text-slate-100 focus:ring-primary focus:border-primary dark:focus:ring-blue-500 transition-colors"
-          placeholder="DELETE hoặc username" data-i18n-placeholder="deleteOrUsernamePlaceholder">
-      </div>
-      <div class="mt-6 flex items-center justify-end gap-3">
-        <button
-          class="px-4 py-2 rounded-lg border border-outline-variant/45 dark:border-slate-700 text-on-surface dark:text-slate-300 label-sm font-semibold hover:bg-surface-container-low dark:hover:bg-slate-800 transition-colors"
-          type="button" id="modalCancel" data-i18n="cancel"><span data-i18n="cancel">Huỷ</span></button>
-        <button
-          class="px-4 py-2 rounded-lg bg-primary hover:bg-primary/95 text-on-primary label-sm font-semibold shadow-sm hover:shadow-md transition-colors"
-          type="button" id="modalOk" data-i18n="confirm"><span data-i18n="confirm">Xác nhận</span></button>
-      </div>
-    </div>
-  </div>
-
-<script src="{{ url_for('static', filename='js/toasts.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/toasts.js') }}"></script>
   <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
   <script src="{{ url_for('static', filename='js/script.js') }}"></script>
   <script>
     (function () {
-      const modal = document.getElementById("confirmModal");
-      const modalText = document.getElementById("modalText");
-      const modalInputWrap = document.getElementById("modalInputWrap");
-      const modalInput = document.getElementById("modalConfirmInput");
-      const modalCancel = document.getElementById("modalCancel");
-      const modalOk = document.getElementById("modalOk");
-
-      let resolver = null;
-
-      function openModal({ text, needInput = false }) {
-        modalText.textContent = text || (typeof window.PetAI_i18n !== 'undefined' ? window.PetAI_i18n.t("confirmAction") : "Xác nhận thao tác");
-        if (modalInputWrap) {
-          modalInputWrap.classList.toggle("hidden", !needInput);
-        }
-        if (!needInput && modalInput) modalInput.value = "";
-        modal.classList.remove("hidden");
-        modal.classList.add("flex");
-        modal.setAttribute("aria-hidden", "false");
-        return new Promise((resolve) => {
-          resolver = resolve;
-        });
-      }
-
-      function closeModal(payload) {
-        modal.classList.add("hidden");
-        modal.classList.remove("flex");
-        modal.setAttribute("aria-hidden", "true");
-        if (resolver) resolver(payload);
-        resolver = null;
-      }
-
-      if (modalCancel) modalCancel.addEventListener("click", () => closeModal({ ok: false }));
-      if (modalOk) {
-        modalOk.addEventListener("click", () =>
-          closeModal({ ok: true, value: (modalInput?.value || "").trim() }),
-        );
-      }
-      if (modal) {
-        modal.addEventListener("click", (e) => {
-          if (e.target === modal) closeModal({ ok: false });
-        });
-      }
-
       async function postJson(url, body) {
         const csrfToken =
           window.CSRF_TOKEN ||
@@ -741,119 +668,137 @@
 
       const setPlanForm = document.getElementById("setPlanForm");
       if (setPlanForm) {
-        setPlanForm.addEventListener("submit", async function (e) {
+        setPlanForm.addEventListener("submit", function (e) {
           e.preventDefault();
-          const plan = this.querySelector('select[name="plan"]')?.value || "free";
-          const ans = await openModal({
-            text: (typeof window.PetAI_i18n !== 'undefined' ? window.PetAI_i18n.t("confirmAssignPlanText").replace("{plan}", plan.toUpperCase()).replace("{username}", "người dùng") : `Cấp gói ${plan.toUpperCase()} cho người dùng này?`),
-          });
-          if (ans.ok) {
-            const formData = new FormData(this);
-            try {
-              const res = await fetch(this.action || window.location.href, {
-                method: "POST",
-                body: formData,
-                headers: {
-                  "X-Requested-With": "XMLHttpRequest"
+          const form = this;
+          const plan = form.querySelector('select[name="plan"]')?.value || "free";
+          const isEn = typeof window.PetAI_i18n !== 'undefined' && window.PetAI_i18n.getCurrentLang() === 'en';
+          const usernamePlaceholder = isEn ? "this user" : "người dùng";
+          const confirmText = typeof window.PetAI_i18n !== 'undefined'
+            ? window.PetAI_i18n.t("confirmAssignPlanText").replace("{plan}", plan.toUpperCase()).replace("{username}", usernamePlaceholder)
+            : `Cấp gói ${plan.toUpperCase()} cho người dùng này?`;
+
+          if (window.PetAI_confirm) {
+            window.PetAI_confirm({
+              text: confirmText,
+              type: "warning",
+              onConfirm: async function () {
+                const formData = new FormData(form);
+                try {
+                  const res = await fetch(form.action || window.location.href, {
+                    method: "POST",
+                    body: formData,
+                    headers: {
+                      "X-Requested-With": "XMLHttpRequest"
+                    }
+                  });
+                  if (res.ok) {
+                    const html = await res.text();
+                    if (window.loadPagePjax) {
+                      window.loadPagePjax(res.url, true, html);
+                    } else {
+                      window.location.href = res.url;
+                    }
+                  } else {
+                    console.error("Failed to update plan");
+                  }
+                } catch (err) {
+                  console.error(err);
                 }
-              });
-              if (res.ok) {
-                const html = await res.text();
-                if (window.loadPagePjax) {
-                  window.loadPagePjax(res.url, true, html);
-                } else {
-                  window.location.href = res.url;
-                }
-              } else {
-                console.error("Failed to update plan");
               }
-            } catch (err) {
-              console.error(err);
-            }
+            });
           }
         });
       }
 
       const toggleBtn = document.getElementById("toggleUserBtn");
       if (toggleBtn) {
-        toggleBtn.addEventListener("click", async () => {
+        toggleBtn.addEventListener("click", () => {
           const userId = toggleBtn.dataset.userId;
-          const username = toggleBtn.dataset.username || "người dùng";
+          const isEn = typeof window.PetAI_i18n !== 'undefined' && window.PetAI_i18n.getCurrentLang() === 'en';
+          const username = toggleBtn.dataset.username || (isEn ? "user" : "người dùng");
           const isActive = toggleBtn.dataset.active === "1";
-          const ans = await openModal({
-            text: isActive
-              ? `Khoá tài khoản ${username}?`
-              : `Mở khoá tài khoản ${username}?`,
-          });
-          if (!ans.ok) return;
-          const url = isActive ? `/users/lock/${userId}` : `/users/unlock/${userId}`;
-          const { res, data } = await postJson(url);
-          if (!res.ok || !data?.success) {
-            if (typeof window.showToast === "function") {
-              window.showToast(
-                "error",
-                data?.error || (typeof window.PetAI_i18n !== 'undefined' ? window.PetAI_i18n.t("actionFailed") : "Thao tác thất bại."),
-              );
-            } else {
-              alert(data?.error || (typeof window.PetAI_i18n !== 'undefined' ? window.PetAI_i18n.t("actionFailed") : "Thao tác thất bại."));
-            }
-            return;
-          }
-          const successMsg = isActive ? `Đã khóa tài khoản ${username} thành công.` : `Đã mở khóa tài khoản ${username} thành công.`;
-          if (window.loadPagePjax) {
-            await window.loadPagePjax(window.location.href, true);
-            if (typeof window.showToast === "function") {
-              window.showToast("success", successMsg);
-            }
-          } else {
-            location.reload();
+          const modalText = isEn
+            ? (isActive ? `Lock account ${username}?` : `Unlock account ${username}?`)
+            : (isActive ? `Khoá tài khoản ${username}?` : `Mở khoá tài khoản ${username}?`);
+
+          if (window.PetAI_confirm) {
+            window.PetAI_confirm({
+              text: modalText,
+              type: "warning",
+              onConfirm: async function () {
+                const url = isActive ? `/users/lock/${userId}` : `/users/unlock/${userId}`;
+                const { res, data } = await postJson(url);
+                if (!res.ok || !data?.success) {
+                  const errorMsg = data?.error || (typeof window.PetAI_i18n !== 'undefined' ? window.PetAI_i18n.t("actionFailed") : "Thao tác thất bại.");
+                  if (typeof window.showToast === "function") {
+                    window.showToast("error", errorMsg);
+                  } else if (window.PetAI_alert) {
+                    window.PetAI_alert({ text: errorMsg, type: "danger" });
+                  } else {
+                    alert(errorMsg);
+                  }
+                  return;
+                }
+                const successMsg = isEn
+                  ? (isActive ? `Successfully locked account ${username}.` : `Successfully unlocked account ${username}.`)
+                  : (isActive ? `Đã khóa tài khoản ${username} thành công.` : `Đã mở khóa tài khoản ${username} thành công.`);
+                
+                if (window.loadPagePjax) {
+                  await window.loadPagePjax(window.location.href, true);
+                  if (typeof window.showToast === "function") {
+                    window.showToast("success", successMsg);
+                  }
+                } else {
+                  location.reload();
+                }
+              }
+            });
           }
         });
       }
 
       const delBtn = document.getElementById("deleteUserBtn");
       if (delBtn) {
-        delBtn.addEventListener("click", async () => {
+        delBtn.addEventListener("click", () => {
           const userId = delBtn.dataset.userId;
-          const username = delBtn.dataset.username || "người dùng";
-          const ans = await openModal({
-            text: `Xóa người dùng ${username}? Hành động không thể hoàn tác.`,
-            needInput: true,
-          });
-          if (!ans.ok) return;
-          const typed = (ans.value || "").trim();
-          const valid = typed.toUpperCase() === "DELETE" || typed.toLowerCase() === username.toLowerCase();
-          if (!valid) {
-            if (typeof window.showToast === "function") {
-              window.showToast(
-                "warning",
-                typeof window.PetAI_i18n !== 'undefined' ? window.PetAI_i18n.t("invalidConfirmation") : "Xác nhận không đúng.",
-              );
-            } else {
-              alert(typeof window.PetAI_i18n !== 'undefined' ? window.PetAI_i18n.t("invalidConfirmation") : "Xác nhận không đúng.");
-            }
-            return;
-          }
-          const { res, data } = await postJson(`/users/delete/${userId}`, { confirm: typed });
-          if (!res.ok || !data?.success) {
-            if (typeof window.showToast === "function") {
-              window.showToast(
-                "error",
-                data?.error || (typeof window.PetAI_i18n !== 'undefined' ? window.PetAI_i18n.t("deleteFailed") : "Xóa thất bại."),
-              );
-            } else {
-              alert(data?.error || (typeof window.PetAI_i18n !== 'undefined' ? window.PetAI_i18n.t("deleteFailed") : "Xóa thất bại."));
-            }
-            return;
-          }
-          const listUrl = "{{ url_for('users.list_users') }}";
-          if (window.loadPagePjax) {
-            await window.loadPagePjax(listUrl);
-            if (typeof window.showToast === "function") {
-              window.showToast("success", `Đã xóa người dùng ${username} thành công.`);
-            }
-          } else {
-            window.location.href = listUrl;
+          const isEn = typeof window.PetAI_i18n !== 'undefined' && window.PetAI_i18n.getCurrentLang() === 'en';
+          const username = delBtn.dataset.username || (isEn ? "user" : "người dùng");
+          const modalText = isEn
+            ? `Delete user ${username}? This action cannot be undone.`
+            : `Xóa người dùng ${username}? Hành động không thể hoàn tác.`;
+
+          if (window.PetAI_confirm) {
+            window.PetAI_confirm({
+              text: modalText,
+              type: "danger",
+              onConfirm: async function () {
+                const { res, data } = await postJson(`/users/delete/${userId}`, { confirm: username });
+                if (!res.ok || !data?.success) {
+                  const errorMsg = data?.error || (typeof window.PetAI_i18n !== 'undefined' ? window.PetAI_i18n.t("deleteFailed") : "Xóa thất bại.");
+                  if (typeof window.showToast === "function") {
+                    window.showToast("error", errorMsg);
+                  } else if (window.PetAI_alert) {
+                    window.PetAI_alert({ text: errorMsg, type: "danger" });
+                  } else {
+                    alert(errorMsg);
+                  }
+                  return;
+                }
+                const listUrl = "{{ url_for('users.list_users') }}";
+                const successMsg = isEn
+                  ? `Successfully deleted user ${username}.`
+                  : `Đã xóa người dùng ${username} thành công.`;
+                if (window.loadPagePjax) {
+                  await window.loadPagePjax(listUrl);
+                  if (typeof window.showToast === "function") {
+                    window.showToast("success", successMsg);
+                  }
+                } else {
+                  window.location.href = listUrl;
+                }
+              }
+            });
           }
         });
       }

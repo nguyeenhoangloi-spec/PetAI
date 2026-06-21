@@ -10,6 +10,7 @@ def register_context_processors(app):
             ui_language = "vi"
         ui_theme = "light"
         ui_avatar_url = "https://lh3.googleusercontent.com/aida-public/AB6AXuABdf7zKSVKEqdGUUjqEkF9ftdFTrLW87Tb24r2IiZiv_JP0LrItrCxl23SH-gYj2Mqtkma0ak9DZbUtKM5nW747pmivDYGVbYhNr1PZbxbFuOrZdGJvnbhdSurFLfL3BcmhN2p1h9wv_6geT-x8eoTG1TDoLL40P8wDiaymvRT--SA4jYjU9A77WIji5FmOi99mPDXw7xS6dUyUNJYU2gHLk4-smzFrCuBbQbgtpATDvNo6hq3YR-cfSaNblImtCnDXIb8np7J4HA"
+        pending_confirmations_count = 0
 
         user_id_raw = session.get("user_id")
         if user_id_raw is not None:
@@ -47,6 +48,12 @@ def register_context_processors(app):
                         row = cur.fetchone()
                         if row and row[0]:
                             ui_avatar_url = row[0]
+                    
+                    # Fetch live confirmations count for admin notification badge
+                    if session.get("role") == "admin":
+                        with conn.cursor() as cur:
+                            cur.execute("SELECT COUNT(*) FROM payment_orders WHERE status = 'user_confirmed'")
+                            pending_confirmations_count = int(cur.fetchone()[0] or 0)
                 finally:
                     conn.close()
             except Exception:
@@ -57,6 +64,7 @@ def register_context_processors(app):
             "current_plan": current_plan,
             "ui_language": ui_language,
             "ui_avatar_url": ui_avatar_url,
+            "pending_confirmations_count": pending_confirmations_count,
         }
     @app.context_processor
     def inject_system_config():

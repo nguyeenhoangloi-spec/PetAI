@@ -1003,8 +1003,16 @@
     pushToHistory(); renderVisualSections();
   }
 
-  function removeVisualSection(id) {
-    if (!confirm("Bạn có chắc muốn xóa mục này?")) return;
+  async function removeVisualSection(id) {
+    if (window.PetAI_confirm) {
+      const ok = await window.PetAI_confirm({
+        text: "Bạn có chắc muốn xóa mục này?",
+        type: "danger"
+      });
+      if (!ok) return;
+    } else {
+      if (!confirm("Bạn có chắc muốn xóa mục này?")) return;
+    }
     sections = sections.filter(s => s.id !== id);
     pushToHistory(); renderVisualSections();
   }
@@ -1252,7 +1260,10 @@
       const res = await fetch("/users/system-config/save-legal", { method: "POST", body: fd });
       if (res.ok) {
         if (window.showToast) window.showToast("Đã lưu nội dung trang thành công!", "success");
-        else alert("Lưu trang thành công!");
+        else {
+          if (window.PetAI_alert) window.PetAI_alert({ text: "Lưu trang thành công!", type: "success" });
+          else alert("Lưu trang thành công!");
+        }
         
         setTimeout(() => {
           const card = document.getElementById("legal-content-card");
@@ -1273,7 +1284,8 @@
         }, 650);
       } else throw new Error("HTTP " + res.status);
     } catch(e) {
-      alert("Lỗi khi lưu trang: " + e.message);
+      if (window.PetAI_alert) window.PetAI_alert({ text: "Lỗi khi lưu trang: " + e.message, type: "danger" });
+      else alert("Lỗi khi lưu trang: " + e.message);
     }
   }
 
@@ -1299,7 +1311,15 @@
 
   /* FIX 2: Reset – clears DB entry, reloads page to show original template */
   async function resetToDefault() {
-    if (!confirm("Khôi phục về nội dung mặc định từ template?\n\nToàn bộ nội dung đã chỉnh sửa trong DB sẽ bị xoá. Trang sẽ hiển thị lại nội dung gốc.")) return;
+    if (window.PetAI_confirm) {
+      const ok = await window.PetAI_confirm({
+        text: "Khôi phục về nội dung mặc định từ template?\n\nToàn bộ nội dung đã chỉnh sửa trong DB sẽ bị xoá. Trang sẽ hiển thị lại nội dung gốc.",
+        type: "danger"
+      });
+      if (!ok) return;
+    } else {
+      if (!confirm("Khôi phục về nội dung mặc định từ template?\n\nToàn bộ nội dung đã chỉnh sửa trong DB sẽ bị xoá. Trang sẽ hiển thị lại nội dung gốc.")) return;
+    }
     const fd = new FormData();
     const csrfMeta = document.querySelector('meta[name="csrf-token"]');
     fd.append("csrf_token", csrfMeta ? csrfMeta.getAttribute("content") : "");
@@ -1311,9 +1331,13 @@
         if (window.showToast) window.showToast("Đã khôi phục nội dung gốc!", "success");
         setTimeout(() => window.location.reload(), 800);
       } else {
-        alert("Lỗi: " + (data.error || "Không thể khôi phục"));
+        if (window.PetAI_alert) window.PetAI_alert({ text: "Lỗi: " + (data.error || "Không thể khôi phục"), type: "danger" });
+        else alert("Lỗi: " + (data.error || "Không thể khôi phục"));
       }
-    } catch(e) { alert("Lỗi kết nối: " + e.message); }
+    } catch(e) {
+      if (window.PetAI_alert) window.PetAI_alert({ text: "Lỗi kết nối: " + e.message, type: "danger" });
+      else alert("Lỗi kết nối: " + e.message);
+    }
   }
 
   /* ═══════════════════════════════════════════════
@@ -1464,7 +1488,15 @@
   }
 
   async function restoreVersion(versionId) {
-    if (!confirm("Khôi phục phiên bản này?\n\nNội dung hiện tại sẽ bị thay thế bởi phiên bản đã chọn.")) return;
+    if (window.PetAI_confirm) {
+      const ok = await window.PetAI_confirm({
+        text: "Khôi phục phiên bản này?\n\nNội dung hiện tại sẽ bị thay thế bởi phiên bản đã chọn.",
+        type: "warning"
+      });
+      if (!ok) return;
+    } else {
+      if (!confirm("Khôi phục phiên bản này?\n\nNội dung hiện tại sẽ bị thay thế bởi phiên bản đã chọn.")) return;
+    }
     const fd = new FormData();
     const csrfMeta = document.querySelector('meta[name="csrf-token"]');
     fd.append("csrf_token", csrfMeta ? csrfMeta.getAttribute("content") : "");
@@ -1476,9 +1508,13 @@
         if (window.showToast) window.showToast("Đã khôi phục phiên bản thành công!", "success");
         setTimeout(() => window.location.reload(), 800);
       } else {
-        alert("Lỗi: " + (data.error || "Không thể khôi phục"));
+        if (window.PetAI_alert) window.PetAI_alert({ text: "Lỗi: " + (data.error || "Không thể khôi phục"), type: "danger" });
+        else alert("Lỗi: " + (data.error || "Không thể khôi phục"));
       }
-    } catch(e) { alert("Lỗi kết nối: " + e.message); }
+    } catch(e) {
+      if (window.PetAI_alert) window.PetAI_alert({ text: "Lỗi kết nối: " + e.message, type: "danger" });
+      else alert("Lỗi kết nối: " + e.message);
+    }
   }
 
   /* ═══════════════════════════════════════════════

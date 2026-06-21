@@ -1051,3 +1051,178 @@ html.dark .nav-login-btn:hover {
   transition: none !important;
 }
 
+/* --- Sidebar Preferences & Header Switchers Hiding --- */
+
+/* Hide header theme switcher and language switcher on pages with sidebar */
+body:has(.sidebar) #headerThemeToggle,
+body:has(.sidebar) #languageSwitcher,
+html:has(#sidebar) #headerThemeToggle,
+html:has(#sidebar) #languageSwitcher {
+  display: none !important;
+}
+
+/* Specific styling for preference rows inside sidebar */
+.sidebar-menu-item .theme-switch-wrapper {
+  margin: 0 !important;
+}
+
+.sidebar-menu-item .theme-switch-btn {
+  transform: scale(0.85); /* Slightly smaller switcher for compact sidebar fit */
+  transform-origin: right center;
+  margin-right: -4px;
+}
+
+/* Sidebar Language Dropdown Styling */
+.sidebar-lang-dropdown {
+  position: relative;
+  display: inline-flex;
+}
+
+.sidebar-lang-trigger {
+  background-color: #f8fafc !important; /* Slate-50 */
+  border: 1px solid #cbd5e1 !important; /* Slate-300 */
+  border-radius: 8px !important;
+  padding: 4px 10px !important;
+  font-family: "Inter", sans-serif;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: #475569 !important; /* Slate-600 */
+  height: 32px !important;
+  width: 68px !important;
+  cursor: pointer;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  outline: none !important;
+  transition: all 0.2s ease !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+  margin-right: -4px;
+}
+
+.sidebar-lang-trigger:hover {
+  background-color: #ffffff !important;
+  border-color: #94a3b8 !important; /* Slate-400 */
+}
+
+.sidebar-lang-trigger:focus,
+.sidebar-lang-trigger.is-active {
+  border-color: #2563eb !important; /* Brand Blue */
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15) !important;
+}
+
+.sidebar-lang-trigger .dropdown-arrow-icon {
+  font-size: 16px !important;
+  color: #64748b !important; /* Slate-500 */
+  font-weight: bold;
+  transition: transform 0.2s ease !important;
+}
+
+.sidebar-lang-trigger.is-active .dropdown-arrow-icon {
+  transform: rotate(180deg) !important;
+}
+
+/* Custom Dropdown Options Menu */
+.sidebar-lang-menu {
+  position: absolute;
+  bottom: calc(100% + 6px); /* Pop up above the trigger */
+  right: 0;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  width: 82px;
+  z-index: 100;
+  padding: 4px;
+  display: none; /* Controlled via JS toggling class 'show' */
+  flex-direction: column;
+  gap: 2px;
+  animation: slideUpSidebarLang 0.15s ease;
+}
+
+.sidebar-lang-menu.show {
+  display: flex;
+}
+
+@keyframes slideUpSidebarLang {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.sidebar-lang-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  color: #475569 !important;
+  transition: all 0.15s ease;
+}
+
+.sidebar-lang-option:hover {
+  background-color: #f1f5f9 !important; /* Slate-100 */
+  color: #0f172a !important; /* Slate-900 */
+}
+
+.sidebar-lang-option.is-active {
+  background-color: #eff6ff !important; /* Blue-50 */
+  color: #2563eb !important; /* Brand Blue */
+  font-weight: 600 !important;
+}
+
+.sidebar-lang-option .lang-flag {
+  font-size: 14px;
+  line-height: 1;
+}
+
+/* Dark mode specific styles */
+html.dark .sidebar-lang-trigger {
+  background-color: #1e293b !important; /* Slate-800 */
+  border-color: #334155 !important; /* Slate-700 */
+  color: #cbd5e1 !important; /* Slate-300 */
+}
+
+html.dark .sidebar-lang-trigger:hover {
+  background-color: #334155 !important; /* Slate-700 */
+  border-color: #475569 !important;
+}
+
+html.dark .sidebar-lang-trigger:focus,
+html.dark .sidebar-lang-trigger.is-active {
+  border-color: #3b82f6 !important; /* Light blue */
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2) !important;
+}
+
+html.dark .sidebar-lang-trigger .dropdown-arrow-icon {
+  color: #94a3b8 !important;
+}
+
+html.dark .sidebar-lang-menu {
+  background-color: #1e293b !important; /* Slate-800 */
+  border-color: #334155 !important; /* Slate-700 */
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2) !important;
+}
+
+html.dark .sidebar-lang-option {
+  color: #cbd5e1 !important;
+}
+
+html.dark .sidebar-lang-option:hover {
+  background-color: #334155 !important; /* Slate-700 */
+  color: #ffffff !important;
+}
+
+html.dark .sidebar-lang-option.is-active {
+  background-color: #1e3a8a !important; /* Blue-900 / dark blue */
+  color: #60a5fa !important; /* Light blue */
+}
+
+

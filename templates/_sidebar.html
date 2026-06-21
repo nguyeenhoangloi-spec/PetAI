@@ -95,17 +95,59 @@
         <span data-i18n="systemConfig">Cấu hình</span>
       </a>
       {% endif %}
-
-      <hr class="sidebar-divider">
-
-      <div class="sidebar-menu-group">
-        <a class="sidebar-menu-item {%if active_page=='settings'%}active{%endif%}"
-          href="{{ url_for('settings.settings') }}">
-          <span class="material-symbols-outlined">settings</span>
-          <span data-i18n="accountSettings">Cài đặt</span>
-        </a>
-      </div>
       {% endif %}
+
+      <!-- Preferences / Tùy chọn -->
+      <hr class="sidebar-divider">
+      <div class="sidebar-group-title" data-i18n="sidebarPreferencesTitle">TÙY CHỌN</div>
+
+      {% if not is_settings %}
+      <a class="sidebar-menu-item {%if active_page=='settings'%}active{%endif%}"
+        href="{{ url_for('settings.settings') }}">
+        <span class="material-symbols-outlined">settings</span>
+        <span data-i18n="accountSettings">Cài đặt</span>
+      </a>
+      {% endif %}
+
+      <!-- Language Option -->
+      <div class="sidebar-menu-item flex items-center justify-between" style="pointer-events: none;">
+        <div class="flex items-center gap-3">
+          <span class="material-symbols-outlined">language</span>
+          <span data-i18n="sidebarLanguageLabel">Ngôn ngữ</span>
+        </div>
+        <div class="sidebar-lang-dropdown relative" id="sidebarLangDropdown" style="pointer-events: auto;">
+          <button type="button" class="sidebar-lang-trigger" id="sidebarLangTrigger" aria-haspopup="listbox" aria-expanded="false">
+            <span class="current-lang-text">{{ 'VI' if ui_language == 'vi' else 'EN' }}</span>
+            <span class="material-symbols-outlined dropdown-arrow-icon">keyboard_arrow_down</span>
+          </button>
+          <div class="sidebar-lang-menu" id="sidebarLangMenu" role="listbox">
+            <div class="sidebar-lang-option {{ 'is-active' if ui_language == 'vi' }}" data-value="vi" role="option">
+              <span class="lang-flag">🇻🇳</span>
+              <span class="lang-label">VI</span>
+            </div>
+            <div class="sidebar-lang-option {{ 'is-active' if ui_language == 'en' }}" data-value="en" role="option">
+              <span class="lang-flag">🇺🇸</span>
+              <span class="lang-label">EN</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Night Mode Option -->
+      <div class="sidebar-menu-item flex items-center justify-between" style="pointer-events: none; margin-bottom: 8px;">
+        <div class="flex items-center gap-3">
+          <span class="material-symbols-outlined">dark_mode</span>
+          <span data-i18n="sidebarNightModeLabel">Chế độ tối</span>
+        </div>
+        <div class="theme-switch-wrapper" style="pointer-events: auto;" id="sidebarThemeToggle">
+          <button type="button" class="theme-switch-btn {{ 'is-dark' if ui_theme == 'dark' else 'is-light' }}" aria-label="Toggle theme">
+            <span class="theme-switch-knob">
+              <span class="material-symbols-outlined sun-icon">light_mode</span>
+              <span class="material-symbols-outlined moon-icon">dark_mode</span>
+            </span>
+          </button>
+        </div>
+      </div>
     </nav>
 
     <!-- User Card -->

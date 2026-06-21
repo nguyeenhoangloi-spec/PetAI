@@ -246,6 +246,13 @@
       upgradePlan: "Nâng cấp",
       personalInfo: "Thông tin cá nhân",
       accountSettings: "Cài đặt",
+      sidebarPreferencesTitle: "TÙY CHỌN",
+      sidebarLanguageLabel: "Ngôn ngữ",
+      sidebarNightModeLabel: "Chế độ tối",
+
+      /* ── Header ── */
+      searchPlaceholder: "Tìm kiếm...",
+      uploadPhotoBtn: "Nhận diện",
 
       /* ── Avatar dropdown ── */
       role: "Vai trò:",
@@ -1829,7 +1836,20 @@
       toastAutoTranslateSuccess: "Đã tự động dịch thành công!",
       toastSavePageSuccess: "Đã lưu nội dung trang thành công!",
       toastRestoreOriginalSuccess: "Đã khôi phục nội dung gốc!",
-      toastRestoreVersionSuccess: "Đã khôi phục phiên bản thành công!"
+      toastRestoreVersionSuccess: "Đã khôi phục phiên bản thành công!",
+      confirmTitle: "Xác nhận",
+      alertTitle: "Thông báo",
+      warningTitle: "Cảnh báo",
+      dangerTitle: "Cảnh báo nguy hiểm",
+      successTitle: "Thành công",
+      infoTitle: "Thông tin",
+      confirm: "Xác nhận",
+      cancel: "Hủy",
+      loading: "Đang xử lý...",
+      confirmLogoutText: "Bạn có chắc chắn muốn đăng xuất tài khoản?",
+      confirmRestoreAccountText: "Khôi phục tài khoản này sẽ hủy bỏ yêu cầu xóa. Bạn có chắc chắn không?",
+      confirmClearHistoryText: "Bạn có chắc muốn xóa toàn bộ lịch sử nhận diện? Hành động này không thể hoàn tác.",
+      confirmSaveConfigText: "Thay đổi cấu hình có thể ảnh hưởng đến hoạt động của toàn hệ thống. Bạn có chắc muốn lưu?"
     },
 
     en: {
@@ -2072,6 +2092,13 @@
       upgradePlan: "Upgrade",
       personalInfo: "Personal Info",
       accountSettings: "Settings",
+      sidebarPreferencesTitle: "PREFERENCES",
+      sidebarLanguageLabel: "Language",
+      sidebarNightModeLabel: "Dark Mode",
+
+      /* ── Header ── */
+      searchPlaceholder: "Search...",
+      uploadPhotoBtn: "Upload Photo",
 
       /* ── Avatar dropdown ── */
       role: "Role:",
@@ -3479,7 +3506,20 @@
       toastAutoTranslateSuccess: "Automatically translated successfully!",
       toastSavePageSuccess: "Page content saved successfully!",
       toastRestoreOriginalSuccess: "Original content restored!",
-      toastRestoreVersionSuccess: "Version restored successfully!"
+      toastRestoreVersionSuccess: "Version restored successfully!",
+      confirmTitle: "Confirmation",
+      alertTitle: "Notification",
+      warningTitle: "Warning",
+      dangerTitle: "Danger Alert",
+      successTitle: "Success",
+      infoTitle: "Information",
+      confirm: "Confirm",
+      cancel: "Cancel",
+      loading: "Processing...",
+      confirmLogoutText: "Are you sure you want to log out?",
+      confirmRestoreAccountText: "Restoring this account will cancel the deletion request. Are you sure?",
+      confirmClearHistoryText: "Are you sure you want to clear all identification history? This action cannot be undone.",
+      confirmSaveConfigText: "Changing system configurations may affect the entire system operation. Are you sure you want to save?"
     },
   };
 
@@ -3527,6 +3567,71 @@
     const matchPlan = text.match(/Đã cấp gói (.*?) cho người dùng thành công\./);
     if (matchPlan) {
       return "Successfully assigned package " + matchPlan[1] + " to user.";
+    }
+
+    // 7b. Đã cấp gói {plan} cho user #{user_id}.
+    const matchPlanUser = text.match(/Đã cấp gói (.*?) cho user #(\d+)\./);
+    if (matchPlanUser) {
+      return "Successfully assigned package " + matchPlanUser[1] + " to user #" + matchPlanUser[2] + ".";
+    }
+
+    // 7c. Đã khóa tài khoản {username} thành công.
+    if (text.startsWith("Đã khóa tài khoản ") && text.endsWith(" thành công.")) {
+      const username = text.substring("Đã khóa tài khoản ".length, text.length - " thành công.".length);
+      return "Successfully locked account " + username + ".";
+    }
+
+    // 7d. Đã mở khóa tài khoản {username} thành công.
+    if (text.startsWith("Đã mở khóa tài khoản ") && text.endsWith(" thành công.")) {
+      const username = text.substring("Đã mở khóa tài khoản ".length, text.length - " thành công.".length);
+      return "Successfully unlocked account " + username + ".";
+    }
+
+    // Lock/Unlock/Delete backend errors
+    if (text === "Không thể tự khóa tài khoản đang đăng nhập.") {
+      return "Cannot lock the currently logged in account.";
+    }
+    if (text === "Không thể tự xóa tài khoản đang đăng nhập.") {
+      return "Cannot delete the currently logged in account.";
+    }
+    if (text === "Thiếu xác nhận xóa (confirm).") {
+      return "Missing deletion confirmation.";
+    }
+    if (text === "Xác nhận xóa không đúng.") {
+      return "Incorrect deletion confirmation.";
+    }
+    if (text === "Không thể mở khóa người dùng.") {
+      return "Failed to unlock user.";
+    }
+    if (text === "Không thể khóa người dùng.") {
+      return "Failed to lock user.";
+    }
+    if (text === "Không thể xóa người dùng.") {
+      return "Failed to delete user.";
+    }
+    if (text === "Lỗi tải thông tin người dùng.") {
+      return "Failed to load user details.";
+    }
+    if (text === "Chỉ cho phép xóa user chưa có dữ liệu liên quan (lịch sử nhận diện/đơn thanh toán).") {
+      return "Only users with no related history or orders can be deleted.";
+    }
+    if (text === "Vui lòng đăng nhập.") {
+      return "Please log in.";
+    }
+    if (text === "Invalid page") {
+      return "Invalid page";
+    }
+    if (text === "Version not found") {
+      return "Version not found";
+    }
+    if (text === "Unauthorized") {
+      return "Unauthorized";
+    }
+    if (text === "Server error") {
+      return "Server error";
+    }
+    if (text === "Missing version_id") {
+      return "Missing version_id";
     }
 
     // 8. Đã cập nhật nội dung trang {page}.
@@ -3959,13 +4064,18 @@
         if (!text) return;
 
         var viDict = TRANSLATIONS.vi;
+        var matched = false;
         for (var key in viDict) {
           if (viDict[key] === text) {
             if (dict[key] !== undefined) {
               el.textContent = dict[key];
             }
+            matched = true;
             break;
           }
+        }
+        if (!matched && lang === "en" && el.classList.contains("toast__message")) {
+          el.textContent = translateDynamicToast(text, lang);
         }
       });
 
@@ -4115,8 +4225,76 @@
           return;
         }
       }
+
+      var logoutBtn = e.target.closest(".logout-btn-link");
+      if (logoutBtn) {
+        e.preventDefault();
+        var url = logoutBtn.getAttribute("href");
+        if (url) {
+          window.PetAI_confirm({
+            text: TRANSLATIONS[currentLang || "vi"].confirmLogoutText || "Bạn có chắc chắn muốn đăng xuất tài khoản?",
+            type: "warning"
+          }).then(function (confirmed) {
+            if (confirmed) {
+              window.location.href = url;
+            }
+          });
+        }
+        return;
+      }
     });
 
+    // Custom language dropdown logic
+    document.addEventListener("click", function (e) {
+      var trigger = e.target.closest("#sidebarLangTrigger");
+      var menu = document.getElementById("sidebarLangMenu");
+      
+      if (trigger) {
+        e.stopPropagation();
+        if (menu) {
+          var isExpanded = menu.classList.contains("show");
+          if (isExpanded) {
+            menu.classList.remove("show");
+            trigger.classList.remove("is-active");
+            trigger.setAttribute("aria-expanded", "false");
+          } else {
+            menu.classList.add("show");
+            trigger.classList.add("is-active");
+            trigger.setAttribute("aria-expanded", "true");
+          }
+        }
+        return;
+      }
+
+      var option = e.target.closest(".sidebar-lang-option");
+      if (option) {
+        e.stopPropagation();
+        var lang = option.getAttribute("data-value");
+        if (lang) {
+          console.log("i18n custom sidebar option clicked: " + lang);
+          setLanguage(lang);
+        }
+        if (menu) {
+          menu.classList.remove("show");
+        }
+        var trig = document.getElementById("sidebarLangTrigger");
+        if (trig) {
+          trig.classList.remove("is-active");
+          trig.setAttribute("aria-expanded", "false");
+        }
+        return;
+      }
+
+      // Click outside -> close menu
+      if (menu && menu.classList.contains("show")) {
+        menu.classList.remove("show");
+        var trig = document.getElementById("sidebarLangTrigger");
+        if (trig) {
+          trig.classList.remove("is-active");
+          trig.setAttribute("aria-expanded", "false");
+        }
+      }
+    });
 
     try {
       var saved = getSavedLang();
@@ -4128,6 +4306,19 @@
       // to prevent FOUC / translation flash on subsequent page reloads (F5) or PJAX request triggers.
       saveLang(saved);
       loadRemoteTranslations(saved);
+
+      // Sync custom sidebar dropdown values
+      var triggerText = document.querySelector("#sidebarLangTrigger .current-lang-text");
+      if (triggerText) {
+        triggerText.textContent = saved.toUpperCase();
+      }
+      document.querySelectorAll(".sidebar-lang-option").forEach(function (opt) {
+        if (opt.getAttribute("data-value") === saved) {
+          opt.classList.add("is-active");
+        } else {
+          opt.classList.remove("is-active");
+        }
+      });
     } catch (err) {
       console.error("i18n initialization error:", err);
     } finally {
@@ -4225,6 +4416,169 @@
   document.addEventListener("i18nReady", function (e) {
     updateDynamicContentVisibility(e.detail.lang);
   });
+
+  function createDynamicModal(options, isConfirm) {
+    var lang = currentLang || "vi";
+    var tDict = TRANSLATIONS[lang] || TRANSLATIONS.vi;
+
+    var type = options.type || "warning"; // warning, danger, success, info
+    var title = options.title || "";
+    if (!title) {
+      if (type === "danger") title = tDict.dangerTitle || (lang === "en" ? "Danger Alert" : "Cảnh báo nguy hiểm");
+      else if (type === "success") title = tDict.successTitle || (lang === "en" ? "Success" : "Thành công");
+      else if (type === "info") title = tDict.infoTitle || (lang === "en" ? "Information" : "Thông tin");
+      else title = tDict.warningTitle || (lang === "en" ? "Confirmation" : "Xác nhận");
+    }
+
+    var text = options.text || "";
+    var confirmText = options.confirmText || tDict.confirm || (lang === "en" ? "Confirm" : "Xác nhận");
+    var cancelText = options.cancelText || tDict.cancel || (lang === "en" ? "Cancel" : "Hủy");
+
+    // Icon & colors mapping
+    var iconName = "warning";
+    var iconClass = "text-amber-500 dark:text-amber-450";
+    var btnClass = "bg-primary hover:bg-primary/95 text-on-primary";
+    
+    if (type === "danger") {
+      iconName = "error";
+      iconClass = "text-red-500 dark:text-red-450";
+      btnClass = "bg-red-650 hover:bg-red-750 dark:bg-red-600 dark:hover:bg-red-700 text-white";
+    } else if (type === "success") {
+      iconName = "check_circle";
+      iconClass = "text-emerald-500 dark:text-emerald-450";
+      btnClass = "bg-emerald-650 hover:bg-emerald-750 dark:bg-emerald-600 dark:hover:bg-emerald-700 text-white";
+    } else if (type === "info") {
+      iconName = "info";
+      iconClass = "text-blue-500 dark:text-blue-450";
+      btnClass = "bg-blue-650 hover:bg-blue-755 dark:bg-blue-600 dark:hover:bg-blue-700 text-white";
+    }
+
+    var modalId = "petai-global-modal-" + Date.now();
+    var modalDiv = document.createElement("div");
+    modalDiv.id = modalId;
+    modalDiv.className = "fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/60 backdrop-blur-sm p-4 transition-opacity duration-300 opacity-0 pointer-events-none";
+    modalDiv.setAttribute("role", "dialog");
+    modalDiv.setAttribute("aria-modal", "true");
+
+    var modalContent = 
+      '<div class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 dark:border-slate-800 rounded-xl max-w-md w-full p-6 shadow-xl transform scale-95 transition-transform duration-300">' +
+        '<h3 class="headline-md font-semibold text-on-surface dark:text-slate-100 flex items-center gap-2">' +
+          '<span class="material-symbols-outlined ' + iconClass + '">' + iconName + '</span>' +
+          '<span>' + title + '</span>' +
+        '</h3>' +
+        '<div class="body-md text-on-surface-variant dark:text-slate-300 mt-3 whitespace-pre-line">' + text + '</div>' +
+        '<div class="mt-6 flex items-center justify-end gap-3">';
+    
+    if (isConfirm) {
+      modalContent += 
+          '<button class="px-4 py-2 rounded-lg border border-outline-variant/45 dark:border-slate-700 text-on-surface dark:text-slate-300 label-sm font-semibold hover:bg-surface-container-low dark:hover:bg-slate-800 transition-colors" type="button" id="global-modal-cancel">' + cancelText + '</button>' +
+          '<button class="px-4 py-2 rounded-lg ' + btnClass + ' label-sm font-semibold shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-2" type="button" id="global-modal-confirm">' +
+            '<span class="btn-spinner hidden w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>' +
+            '<span class="btn-text">' + confirmText + '</span>' +
+          '</button>';
+    } else {
+      modalContent += 
+          '<button class="px-5 py-2 rounded-lg ' + btnClass + ' label-sm font-semibold shadow-sm hover:shadow-md transition-all" type="button" id="global-modal-ok">' + confirmText + '</button>';
+    }
+
+    modalContent += '</div></div>';
+    modalDiv.innerHTML = modalContent;
+    document.body.appendChild(modalDiv);
+
+    // Fade in
+    setTimeout(function() {
+      modalDiv.classList.remove("opacity-0", "pointer-events-none");
+      modalDiv.querySelector("div").classList.remove("scale-95");
+    }, 10);
+
+    return {
+      element: modalDiv,
+      close: function() {
+        modalDiv.classList.add("opacity-0", "pointer-events-none");
+        modalDiv.querySelector("div").classList.add("scale-95");
+        setTimeout(function() {
+          if (modalDiv.parentNode) modalDiv.parentNode.removeChild(modalDiv);
+        }, 300);
+      }
+    };
+  }
+
+  window.PetAI_confirm = function (options) {
+    if (typeof options === "string") {
+      options = { text: options };
+    }
+    return new Promise(function (resolve) {
+      var modal = createDynamicModal(options, true);
+      var confirmBtn = modal.element.querySelector("#global-modal-confirm");
+      var cancelBtn = modal.element.querySelector("#global-modal-cancel");
+      var spinner = confirmBtn.querySelector(".btn-spinner");
+
+      function handleCancel() {
+        modal.close();
+        resolve(false);
+      }
+
+      cancelBtn.addEventListener("click", handleCancel);
+
+      confirmBtn.addEventListener("click", function () {
+        if (options.onConfirm) {
+          // Show spinner, disable buttons
+          confirmBtn.disabled = true;
+          cancelBtn.disabled = true;
+          if (spinner) spinner.classList.remove("hidden");
+          
+          Promise.resolve(options.onConfirm())
+            .then(function (res) {
+              modal.close();
+              resolve(res !== false);
+            })
+            .catch(function (err) {
+              console.error("onConfirm error:", err);
+              confirmBtn.disabled = false;
+              cancelBtn.disabled = false;
+              if (spinner) spinner.classList.add("hidden");
+            });
+        } else {
+          modal.close();
+          resolve(true);
+        }
+      });
+
+      // Close on clicking backdrop
+      modal.element.addEventListener("click", function (e) {
+        if (e.target === modal.element && !confirmBtn.disabled) {
+          handleCancel();
+        }
+      });
+    });
+  };
+
+  window.PetAI_alert = function (options) {
+    if (typeof options === "string") {
+      options = { text: options };
+    }
+    return new Promise(function (resolve) {
+      var modal = createDynamicModal(options, false);
+      var okBtn = modal.element.querySelector("#global-modal-ok");
+
+      function handleClose() {
+        modal.close();
+        resolve(true);
+        if (options.onClose) {
+          try { options.onClose(); } catch (e) { console.error(e); }
+        }
+      }
+
+      okBtn.addEventListener("click", handleClose);
+
+      // Close on clicking backdrop
+      modal.element.addEventListener("click", function (e) {
+        if (e.target === modal.element) {
+          handleClose();
+        }
+      });
+    });
+  };
 
   window.PetAI_i18n = {
     t: t,

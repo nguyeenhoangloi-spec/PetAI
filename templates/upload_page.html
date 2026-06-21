@@ -893,6 +893,13 @@
                   ? window.PetAI_i18n.t("onlySupportJpgPng")
                   : "Chỉ hỗ trợ ảnh JPG, JPEG hoặc PNG.",
               );
+            } else if (window.PetAI_alert) {
+              window.PetAI_alert({
+                text: typeof window.PetAI_i18n !== "undefined"
+                  ? window.PetAI_i18n.t("onlySupportJpgPng")
+                  : "Chỉ hỗ trợ ảnh JPG, JPEG hoặc PNG.",
+                type: "warning"
+              });
             } else {
               alert(
                 typeof window.PetAI_i18n !== "undefined"

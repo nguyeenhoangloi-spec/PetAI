@@ -695,36 +695,14 @@
             </div>
           </div>
           {% else %}
-          <div class="p-6 text-on-surface-variant" data-i18n="noUserData"><span data-i18n="noUserData">Chưa có dữ liệu
-              người dùng.</span></div>
+          <div class="p-6 text-on-surface-variant" data-i18n="noUserData"><span data-i18n="noUserData">Chưa có dữ liệu người dùng.</span></div>
           {% endif %}
         </section>
       </div>
     </div>
   </main>
 
-  <div class="fixed inset-0 z-[1050] hidden items-center justify-center bg-slate-950/60 backdrop-blur-sm p-4"
-    id="confirmModal">
-    <div
-      class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 dark:border-slate-800 rounded-xl max-w-md w-full p-6 shadow-xl">
-      <h3 id="modalTitle" class="headline-md font-semibold text-on-surface dark:text-slate-100 flex items-center gap-2">
-        <span class="material-symbols-outlined text-amber-500 dark:text-amber-400">warning</span><span
-          data-i18n="confirmActionTitle">Xác nhận thao tác</span>
-      </h3>
-      <p id="modalText" class="body-md text-on-surface-variant dark:text-slate-300 mt-3" data-i18n="confirmActionText">
-        <span data-i18n="confirmActionText">Bạn có chắc muốn thực hiện hành động này?</span></p>
-      <div class="mt-6 flex items-center justify-end gap-3">
-        <button type="button"
-          class="px-4 py-2 rounded-lg border border-outline-variant/40 dark:border-slate-700 label-sm font-semibold text-on-surface dark:text-slate-300 hover:bg-surface-container-low dark:hover:bg-slate-800 transition-colors"
-          id="modalCancel" data-i18n="cancel"><span data-i18n="cancel">Huỷ</span></button>
-        <button type="button"
-          class="px-4 py-2 rounded-lg bg-primary hover:bg-primary/95 text-on-primary label-sm font-semibold hover:opacity-90 shadow-sm transition-colors"
-          id="modalOk" data-i18n="confirm"><span data-i18n="confirm">Xác nhận</span></button>
-      </div>
-    </div>
-  </div>
-
-<script>
+  <script>
     (function () {
       const table = document.getElementById("usersTable");
       const searchEl = document.getElementById("usersSearch");
@@ -736,39 +714,6 @@
       const statAdmins = document.getElementById("statAdmins");
       const statActive = document.getElementById("statActive");
       const statLocked = document.getElementById("statLocked");
-
-      const modal = document.getElementById("confirmModal");
-      const modalText = document.getElementById("modalText");
-      const modalCancel = document.getElementById("modalCancel");
-      const modalOk = document.getElementById("modalOk");
-
-      let modalResolver = null;
-
-      function openModal({ text }) {
-        modalText.textContent = text || (typeof window.PetAI_i18n !== 'undefined' ? window.PetAI_i18n.t("confirmActionText") : "Bạn có chắc?");
-        modal.classList.remove("hidden");
-        modal.classList.add("flex");
-        modal.setAttribute("aria-hidden", "false");
-        return new Promise((resolve) => {
-          modalResolver = resolve;
-        });
-      }
-
-      function closeModal(payload) {
-        modal.classList.add("hidden");
-        modal.classList.remove("flex");
-        modal.setAttribute("aria-hidden", "true");
-        if (modalResolver) modalResolver(payload);
-        modalResolver = null;
-      }
-
-      if (modalCancel) modalCancel.addEventListener("click", () => closeModal({ ok: false }));
-      if (modalOk) modalOk.addEventListener("click", () => closeModal({ ok: true }));
-      if (modal) {
-        modal.addEventListener("click", (e) => {
-          if (e.target === modal) closeModal({ ok: false });
-        });
-      }
 
       function rows() {
         if (!table) return [];
@@ -832,32 +777,52 @@
       }
 
       document.querySelectorAll(".set-plan-form").forEach((form) => {
-        form.addEventListener("submit", async function (e) {
+        form.addEventListener("submit", function (e) {
           e.preventDefault();
-          const username = this.dataset.username || "user";
-          const plan = this.querySelector('select[name="plan"]')?.value || "free";
-          const answer = await openModal({
-            text: (typeof window.PetAI_i18n !== 'undefined' ? window.PetAI_i18n.t("confirmAssignPlanText").replace("{plan}", plan.toUpperCase()).replace("{username}", username) : `Cấp gói ${plan.toUpperCase()} cho ${username}?`),
-          });
-          if (answer.ok) {
-            const formData = new FormData(this);
-            try {
-              const res = await fetch(this.action || window.location.href, {
-                method: "POST",
-                body: formData,
-                headers: {
-                  "X-Requested-With": "XMLHttpRequest"
+          const targetForm = this;
+          const username = targetForm.dataset.username || "user";
+          const plan = targetForm.querySelector('select[name="plan"]')?.value || "free";
+          const confirmText = typeof window.PetAI_i18n !== 'undefined'
+            ? window.PetAI_i18n.t("confirmAssignPlanText").replace("{plan}", plan.toUpperCase()).replace("{username}", username)
+            : `Cấp gói ${plan.toUpperCase()} cho ${username}?`;
+
+          if (window.PetAI_confirm) {
+            window.PetAI_confirm({
+              text: confirmText,
+              type: "warning",
+              onConfirm: async function () {
+                const formData = new FormData(targetForm);
+                try {
+                  const res = await fetch(targetForm.action || window.location.href, {
+                    method: "POST",
+                    body: formData,
+                    headers: {
+                      "X-Requested-With": "XMLHttpRequest"
+                    }
+                  });
+                  if (res.ok) {
+                    const html = await res.text();
+                    if (window.loadPagePjax) {
+                      window.loadPagePjax(res.url, true, html);
+                    } else {
+                      window.location.href = res.url;
+                    }
+                  } else {
+                    console.error("Failed to update plan");
+                  }
+                } catch (err) {
+                  console.error(err);
                 }
-              });
-              if (res.ok) {
-                const html = await res.text();
-                if (window.loadPagePjax) {
-                  window.loadPagePjax(res.url, true, html);
-                } else {
-                  window.location.href = res.url;
-                }
-              } else {
-                console.error("Failed to update plan");
+              }
+            });
+          }
+        });
+      });
+
+      updateStats();
+      applyFilters();
+    })();
+  </script>Failed to update plan");
               }
             } catch (err) {
               console.error(err);

@@ -133,7 +133,7 @@
 
           <a
             href="{{ url_for('logout.logout') }}"
-            class="w-full py-3.5 border border-slate-200 text-slate-600 hover:bg-slate-50 font-semibold rounded-xl transition-all active:scale-95 flex items-center justify-center gap-2">
+            class="logout-btn-link w-full py-3.5 border border-slate-200 text-slate-600 hover:bg-slate-50 font-semibold rounded-xl transition-all active:scale-95 flex items-center justify-center gap-2">
             <span class="material-symbols-outlined">logout</span>
             <span data-i18n="logoutBtn">Đăng xuất</span>
           </a>
@@ -234,6 +234,14 @@
     let otpSecondsLeft = 300;
 
     async function startRestore() {
+      if (window.PetAI_confirm) {
+        const confirmed = await window.PetAI_confirm({
+          text: window.PetAI_i18n ? window.PetAI_i18n.t("confirmRestoreAccountText") : "Khôi phục tài khoản này sẽ hủy bỏ yêu cầu xóa. Bạn có chắc chắn không?",
+          type: "warning"
+        });
+        if (!confirmed) return;
+      }
+
       const btn = document.getElementById('restore-btn');
       btn.disabled = true;
       btn.innerHTML = '<span class="material-symbols-outlined animate-spin">progress_activity</span> ' + (window.PetAI_i18n ? window.PetAI_i18n.t('sendingOtp') : 'Đang gửi OTP...');
@@ -396,6 +404,11 @@
     function showToastMsg(type, message) {
       if (typeof window.showToast === 'function') {
         window.showToast(type, message);
+      } else if (window.PetAI_alert) {
+        window.PetAI_alert({
+          text: message,
+          type: type === 'success' ? 'success' : 'info'
+        });
       } else {
         alert(message);
       }

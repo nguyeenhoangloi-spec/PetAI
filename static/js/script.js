@@ -26,70 +26,70 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Dynamic Theme Switcher Injection
   function injectThemeToggle() {
-    let wrapper = document.getElementById("headerThemeToggle");
-    if (!wrapper) return;
+    const buttons = document.querySelectorAll(".theme-switch-btn");
+    buttons.forEach(btn => {
+      if (btn.hasAttribute("data-has-listener")) return;
+      btn.setAttribute("data-has-listener", "true");
 
-    let btn = wrapper.querySelector(".theme-switch-btn");
+      // Event listener for click
+      btn.addEventListener("click", function () {
+        const currentlyDark = root.classList.contains("dark") || root.getAttribute("data-theme") === "dark";
+        const newTheme = currentlyDark ? "light" : "dark";
 
-    if (!btn || btn.hasAttribute("data-has-listener")) return;
-    btn.setAttribute("data-has-listener", "true");
+        // Apply theme visually with transitions disabled for instant switch
+        root.classList.add("no-transitions");
 
-    // Event listener for click
-    btn.addEventListener("click", function () {
-      const currentlyDark = root.classList.contains("dark") || root.getAttribute("data-theme") === "dark";
-      const newTheme = currentlyDark ? "light" : "dark";
+        root.classList.toggle("dark", newTheme === "dark");
+        root.classList.toggle("light", newTheme !== "dark");
+        root.setAttribute("data-theme", newTheme);
 
-      // Apply theme visually with transitions disabled for instant switch
-      root.classList.add("no-transitions");
+        // Update all button classes on the page
+        document.querySelectorAll(".theme-switch-btn").forEach(b => {
+          b.classList.toggle("is-dark", newTheme === "dark");
+          b.classList.toggle("is-light", newTheme !== "dark");
+        });
 
-      root.classList.toggle("dark", newTheme === "dark");
-      root.classList.toggle("light", newTheme !== "dark");
-      root.setAttribute("data-theme", newTheme);
+        // Force reflow to apply style changes instantly without animation
+        window.getComputedStyle(root).opacity;
 
-      // Update button classes
-      btn.classList.toggle("is-dark", newTheme === "dark");
-      btn.classList.toggle("is-light", newTheme !== "dark");
+        requestAnimationFrame(() => {
+          root.classList.remove("no-transitions");
+        });
 
-      // Force reflow to apply style changes instantly without animation
-      window.getComputedStyle(root).opacity;
-
-      requestAnimationFrame(() => {
-        root.classList.remove("no-transitions");
-      });
-
-      // Save to localStorage
-      try {
-        localStorage.setItem("theme", newTheme);
-        for (let i = 0; i < localStorage.length; i++) {
-          const key = localStorage.key(i);
-          if (key && key.startsWith("theme:")) {
-            localStorage.setItem(key, newTheme);
+        // Save to localStorage
+        try {
+          localStorage.setItem("theme", newTheme);
+          for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key && key.startsWith("theme:")) {
+              localStorage.setItem(key, newTheme);
+            }
           }
+        } catch (e) {
+          console.error("localStorage error:", e);
         }
-      } catch (e) {
-        console.error("localStorage error:", e);
-      }
 
-      // Sync settings page radio buttons if user is on settings page
-      syncSettingsPageUI(newTheme);
+        // Sync settings page radio buttons if user is on settings page
+        syncSettingsPageUI(newTheme);
 
-      // Send AJAX request to save to server
-      const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || "";
-      fetch("/settings/update-theme", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-CSRF-Token": csrfToken
-        },
-        body: JSON.stringify({ theme: newTheme })
-      })
-        .then(r => r.json())
-        .then(data => {
-          if (!data.success) {
-            console.error("Failed to save theme setting on server:", data.message);
-          }
+        // Send AJAX request to save to server
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || "";
+        fetch("/settings/update-theme", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-Token": csrfToken
+          },
+          body: JSON.stringify({ theme: newTheme })
         })
-        .catch(err => console.error("Error saving theme:", err));
+          .then(r => r.json())
+          .then(data => {
+            if (!data.success) {
+              console.error("Failed to save theme setting on server:", data.message);
+            }
+          })
+          .catch(err => console.error("Error saving theme:", err));
+      });
     });
   }
 

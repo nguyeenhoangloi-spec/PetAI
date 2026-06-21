@@ -1145,53 +1145,7 @@
   </div>
 </main>
 
-    <div
-      class="fixed inset-0 z-[1050] hidden items-center justify-center bg-slate-950/60 backdrop-blur-sm p-4"
-      id="confirmModal"
-      role="dialog"
-      aria-modal="true"
-    >
-      <div
-        class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 dark:border-slate-800 rounded-xl max-w-md w-full p-6 shadow-xl"
-      >
-        <h3
-          id="modalTitle"
-          class="headline-md font-semibold text-on-surface dark:text-slate-101 flex items-center gap-2"
-        >
-          <span
-            class="material-symbols-outlined text-amber-500 dark:text-amber-400"
-            >warning</span
-          ><span data-i18n="confirmActionTitle">Xác nhận thao tác</span>
-        </h3>
-        <p
-          id="modalText"
-          class="body-md text-on-surface-variant dark:text-slate-300 mt-3"
-          data-i18n="confirmActionText"
-        >
-          <span data-i18n="confirmActionText"
-            >Bạn có chắc muốn thực hiện hành động này?</span
-          >
-        </p>
-        <div class="mt-6 flex items-center justify-end gap-3">
-          <button
-            type="button"
-            class="px-4 py-2 rounded-lg border border-outline-variant/40 dark:border-slate-700 label-sm font-semibold text-on-surface dark:text-slate-300 hover:bg-surface-container-low dark:hover:bg-slate-800 transition-colors"
-            id="modalCancel"
-            data-i18n="cancel"
-          >
-            <span data-i18n="cancel">Huỷ</span>
-          </button>
-          <button
-            type="button"
-            class="px-4 py-2 rounded-lg bg-primary hover:bg-primary/95 text-on-primary label-sm font-semibold hover:opacity-90 shadow-sm transition-colors"
-            id="modalOk"
-            data-i18n="confirm"
-          >
-            <span data-i18n="confirm">Xác nhận</span>
-          </button>
-        </div>
-      </div>
-    </div>
+    <!-- Unified confirm modal is managed globally via window.PetAI_confirm -->
 
 <script>
       (function () {
@@ -1202,46 +1156,7 @@
         const pendingTable = document.getElementById("pendingOrdersTable");
         const recentTable = document.getElementById("recentPaymentsTable");
 
-        const modal = document.getElementById("confirmModal");
-        const modalText = document.getElementById("modalText");
-        const modalCancel = document.getElementById("modalCancel");
-        const modalOk = document.getElementById("modalOk");
-
-        let modalResolver = null;
-
-        function openModal({ text }) {
-          modalText.textContent =
-            text ||
-            (typeof window.PetAI_i18n !== "undefined"
-              ? window.PetAI_i18n.t("confirmActionText")
-              : "Bạn có chắc?");
-          modal.classList.remove("hidden");
-          modal.classList.add("flex");
-          modal.setAttribute("aria-hidden", "false");
-          return new Promise((resolve) => {
-            modalResolver = resolve;
-          });
-        }
-
-        function closeModal(payload) {
-          modal.classList.add("hidden");
-          modal.classList.remove("flex");
-          modal.setAttribute("aria-hidden", "true");
-          if (modalResolver) modalResolver(payload);
-          modalResolver = null;
-        }
-
-        if (modalCancel)
-          modalCancel.addEventListener("click", () =>
-            closeModal({ ok: false }),
-          );
-        if (modalOk)
-          modalOk.addEventListener("click", () => closeModal({ ok: true }));
-        if (modal) {
-          modal.addEventListener("click", (e) => {
-            if (e.target === modal) closeModal({ ok: false });
-          });
-        }
+        // Local confirmModal variables and functions removed to use global PetAI_confirm
 
         function getRows(tableEl) {
           if (!tableEl) return [];
@@ -1284,43 +1199,48 @@
         }
 
         document.querySelectorAll(".confirm-payment-form").forEach((form) => {
-          form.addEventListener("submit", async function (e) {
+          form.addEventListener("submit", function (e) {
             e.preventDefault();
-            const orderId = this.dataset.orderId || "";
-            const user = this.dataset.user || "";
-            const plan = this.dataset.plan || "";
-            const answer = await openModal({
-              text:
-                typeof window.PetAI_i18n !== "undefined"
-                  ? window.PetAI_i18n.t("confirmPaymentText")
-                      .replace("{orderId}", orderId)
-                      .replace("{user}", user)
-                      .replace("{plan}", plan)
-                  : `Xác nhận đã nhận tiền cho đơn ${orderId} (${user} - ${plan})?`,
-            });
-            if (answer.ok) {
-              const formData = new FormData(this);
-              try {
-                const res = await fetch(this.action || window.location.href, {
-                  method: "POST",
-                  body: formData,
-                  headers: {
-                    "X-Requested-With": "XMLHttpRequest"
+            const targetForm = this;
+            const orderId = targetForm.dataset.orderId || "";
+            const user = targetForm.dataset.user || "";
+            const plan = targetForm.dataset.plan || "";
+            const confirmText = typeof window.PetAI_i18n !== "undefined"
+              ? window.PetAI_i18n.t("confirmPaymentText")
+                  .replace("{orderId}", orderId)
+                  .replace("{user}", user)
+                  .replace("{plan}", plan)
+              : `Xác nhận đã nhận tiền cho đơn ${orderId} (${user} - ${plan})?`;
+
+            if (window.PetAI_confirm) {
+              window.PetAI_confirm({
+                text: confirmText,
+                type: "success",
+                onConfirm: async function () {
+                  const formData = new FormData(targetForm);
+                  try {
+                    const res = await fetch(targetForm.action || window.location.href, {
+                      method: "POST",
+                      body: formData,
+                      headers: {
+                        "X-Requested-With": "XMLHttpRequest"
+                      }
+                    });
+                    if (res.ok) {
+                      const html = await res.text();
+                      if (window.loadPagePjax) {
+                        window.loadPagePjax(res.url, true, html);
+                      } else {
+                        window.location.href = res.url;
+                      }
+                    } else {
+                      console.error("Failed to confirm payment");
+                    }
+                  } catch (err) {
+                    console.error(err);
                   }
-                });
-                if (res.ok) {
-                  const html = await res.text();
-                  if (window.loadPagePjax) {
-                    window.loadPagePjax(res.url, true, html);
-                  } else {
-                    window.location.href = res.url;
-                  }
-                } else {
-                  console.error("Failed to confirm payment");
                 }
-              } catch (err) {
-                console.error(err);
-              }
+              });
             }
           });
         });

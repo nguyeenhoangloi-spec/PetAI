@@ -1677,19 +1677,19 @@
                     document.getElementById("revenueStartDate").value;
                   const end = document.getElementById("revenueEndDate").value;
                   if (!start || !end) {
-                    alert(
-                      typeof window.PetAI_i18n !== "undefined"
-                        ? window.PetAI_i18n.t("pleaseSelectDates")
-                        : "Vui lòng chọn đầy đủ ngày bắt đầu và ngày kết thúc!",
-                    );
+                    const msg = typeof window.PetAI_i18n !== "undefined"
+                      ? window.PetAI_i18n.t("pleaseSelectDates")
+                      : "Vui lòng chọn đầy đủ ngày bắt đầu và ngày kết thúc!";
+                    if (window.PetAI_alert) window.PetAI_alert({ text: msg, type: "warning" });
+                    else alert(msg);
                     return;
                   }
                   if (new Date(start) > new Date(end)) {
-                    alert(
-                      typeof window.PetAI_i18n !== "undefined"
-                        ? window.PetAI_i18n.t("startDateAfterEndDate")
-                        : "Ngày bắt đầu không được lớn hơn ngày kết thúc!",
-                    );
+                    const msg = typeof window.PetAI_i18n !== "undefined"
+                      ? window.PetAI_i18n.t("startDateAfterEndDate")
+                      : "Ngày bắt đầu không được lớn hơn ngày kết thúc!";
+                    if (window.PetAI_alert) window.PetAI_alert({ text: msg, type: "warning" });
+                    else alert(msg);
                     return;
                   }
 
@@ -2256,19 +2256,19 @@
             const start = document.getElementById("activityStartDate").value;
             const end = document.getElementById("activityEndDate").value;
             if (!start || !end) {
-              alert(
-                typeof window.PetAI_i18n !== "undefined"
-                  ? window.PetAI_i18n.t("pleaseSelectDates")
-                  : "Vui lòng chọn đầy đủ ngày bắt đầu và ngày kết thúc!",
-              );
+              const msg = typeof window.PetAI_i18n !== "undefined"
+                ? window.PetAI_i18n.t("pleaseSelectDates")
+                : "Vui lòng chọn đầy đủ ngày bắt đầu và ngày kết thúc!";
+              if (window.PetAI_alert) window.PetAI_alert({ text: msg, type: "warning" });
+              else alert(msg);
               return;
             }
             if (new Date(start) > new Date(end)) {
-              alert(
-                typeof window.PetAI_i18n !== "undefined"
-                  ? window.PetAI_i18n.t("startDateAfterEndDate")
-                  : "Ngày bắt đầu không được lớn hơn ngày kết thúc!",
-              );
+              const msg = typeof window.PetAI_i18n !== "undefined"
+                ? window.PetAI_i18n.t("startDateAfterEndDate")
+                : "Ngày bắt đầu không được lớn hơn ngày kết thúc!";
+              if (window.PetAI_alert) window.PetAI_alert({ text: msg, type: "warning" });
+              else alert(msg);
               return;
             }
 
