@@ -83,7 +83,7 @@
         <!-- Countdown -->
         <div class="bg-red-50 border border-red-200 rounded-2xl p-4 mb-4 text-center">
           <p class="text-xs font-bold text-red-500 uppercase tracking-wider mb-1" data-i18n="deletePendingDateLabel">Tài khoản sẽ bị xóa vĩnh viễn vào</p>
-          <p class="text-lg font-bold text-red-700 mb-3" id="delete-date">
+          <p class="text-lg font-bold text-red-700 mb-3" id="delete-date" data-scheduled-at="{{ delete_scheduled_at.strftime('%Y-%m-%dT%H:%M:%S') if delete_scheduled_at else '' }}">
             {% if delete_scheduled_at %}
               {{ delete_scheduled_at.strftime('%d/%m/%Y lúc %H:%M') if delete_scheduled_at else 'N/A' }}
             {% else %}
@@ -200,11 +200,10 @@
     // Countdown đến ngày xóa tài khoản
     // =====================================================================
     (function () {
-      {% if delete_scheduled_at %}
-      const targetDate = new Date("{{ delete_scheduled_at.strftime('%Y-%m-%dT%H:%M:%S') }}");
-      {% else %}
-      const targetDate = null;
-      {% endif %}
+      const dateEl = document.getElementById("delete-date");
+      const dateStr = dateEl ? dateEl.getAttribute("data-scheduled-at") : "";
+      const targetDate = dateStr ? new Date(dateStr) : null;
+
 
       function updateCountdown() {
         if (!targetDate) return;
