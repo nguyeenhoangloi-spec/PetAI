@@ -26,34 +26,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Dynamic Theme Switcher Injection
   function injectThemeToggle() {
-    const languageSwitcher = document.getElementById("languageSwitcher") ||
-                             document.getElementById("languageSwitcherLogged") ||
-                             document.getElementById("languageSwitcherGuest");
-    if (!languageSwitcher) return;
+    let wrapper = document.getElementById("headerThemeToggle");
+    if (!wrapper) return;
 
-    if (document.getElementById("headerThemeToggle")) return; // already injected
+    let btn = wrapper.querySelector(".theme-switch-btn");
 
-    const wrapper = document.createElement("div");
-    wrapper.id = "headerThemeToggle";
-    wrapper.className = "theme-switch-wrapper";
-
-    // Detect initial theme
-    const isDark = root.classList.contains("dark") || root.getAttribute("data-theme") === "dark";
-    
-    // Create the button
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = `theme-switch-btn ${isDark ? "is-dark" : "is-light"}`;
-    btn.setAttribute("aria-label", "Toggle theme");
-    btn.innerHTML = `
-      <span class="theme-switch-knob">
-        <span class="material-symbols-outlined sun-icon">light_mode</span>
-        <span class="material-symbols-outlined moon-icon">dark_mode</span>
-      </span>
-    `;
-
-    wrapper.appendChild(btn);
-    languageSwitcher.parentNode.insertBefore(wrapper, languageSwitcher);
+    if (!btn || btn.hasAttribute("data-has-listener")) return;
+    btn.setAttribute("data-has-listener", "true");
 
     // Event listener for click
     btn.addEventListener("click", function () {

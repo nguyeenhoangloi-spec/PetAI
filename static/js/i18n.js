@@ -3444,7 +3444,7 @@
     if (VI_TO_EN_BREEDS[viName] !== undefined) {
       return VI_TO_EN_BREEDS[viName];
     }
-    
+
     // Try without "Chó " or "chó " prefix
     var cleanName = viName;
     if (cleanName.toLowerCase().startsWith("chó ")) {
@@ -3453,14 +3453,14 @@
     if (VI_TO_EN_BREEDS[cleanName] !== undefined) {
       return VI_TO_EN_BREEDS[cleanName];
     }
-    
+
     // Case-insensitive fallback lookup
     var lowerVi = viName.toLowerCase();
     var lowerClean = cleanName.toLowerCase();
     for (var key in VI_TO_EN_BREEDS) {
       var lowerKey = key.toLowerCase();
-      if (lowerKey === lowerVi || lowerKey === lowerClean || 
-          lowerKey === "chó " + lowerClean || lowerKey === "chó " + lowerVi) {
+      if (lowerKey === lowerVi || lowerKey === lowerClean ||
+        lowerKey === "chó " + lowerClean || lowerKey === "chó " + lowerVi) {
         return VI_TO_EN_BREEDS[key];
       }
     }
@@ -3482,7 +3482,7 @@
     try {
       localStorage.setItem(STORAGE_KEY, lang);
       document.cookie = STORAGE_KEY + "=" + lang + ";path=/;max-age=31536000;SameSite=Lax";
-    } catch (e) {}
+    } catch (e) { }
   }
 
   function t(key) {
@@ -3644,41 +3644,8 @@
     });
   }
 
-  function inject3DFlag() {
-    // Dynamic 3D Flag Injection for premium flipping flag toggle
-    document.querySelectorAll(".language-button").forEach(function (btn) {
-      if (!btn.querySelector(".language-flag-3d")) {
-        // Hide standard text / static flag / dropdown arrow spans
-        var flagSpan = btn.querySelector(".language-flag");
-        var textSpan = btn.querySelector(".language-current");
-        var arrowSpan = btn.querySelector(".language-arrow");
-        if (flagSpan) flagSpan.style.display = "none";
-        if (textSpan) textSpan.style.display = "none";
-        if (arrowSpan) arrowSpan.style.display = "none";
-
-        var wrapper = document.createElement("div");
-        wrapper.className = "language-flag-3d";
-        wrapper.innerHTML = 
-          '<div class="language-flag-card">' +
-            '<div class="language-flag-face language-flag-front">🇻🇳</div>' +
-            '<div class="language-flag-face language-flag-back">🇺🇸</div>' +
-          '</div>';
-        btn.appendChild(wrapper);
-      }
-    });
-  }
-
   function updateSwitcherUI(lang) {
-    var dict = TRANSLATIONS[lang];
-    if (!dict) return;
-
-    // Ensure the 3D Flag is injected (e.g. after PJAX page swaps replacement of navbar)
-    inject3DFlag();
-
-    // Update 3D Flip Card state
-    document.querySelectorAll(".language-flag-card").forEach(function (card) {
-      card.classList.toggle("flipped", lang === "en");
-    });
+    // CSS-based segmented control handles state updates via html[lang] selector
   }
 
   function setLanguage(lang) {
@@ -3686,13 +3653,19 @@
     currentLang = lang;
     saveLang(lang);
     applyTranslations(lang);
+    
+    // Sync lang attribute on HTML element to trigger CSS state changes instantly
+    try {
+      document.documentElement.setAttribute("lang", lang);
+    } catch (err) { }
+    
     updateSwitcherUI(lang);
 
     try {
       document.dispatchEvent(
         new CustomEvent("i18nChanged", { detail: { lang: lang } }),
       );
-    } catch (e) {}
+    } catch (e) { }
   }
 
   function bootstrap() {
@@ -3701,14 +3674,11 @@
       document.readyState,
     );
 
-    inject3DFlag();
-
     document.addEventListener("click", function (e) {
-      var langBtn = e.target.closest(".language-button");
-      if (langBtn) {
-        console.log("i18n clicked language button! Toggling language...");
+      var switcher = e.target.closest(".language-switcher");
+      if (switcher) {
+        console.log("i18n clicked language switcher! Toggling language...");
         e.stopPropagation();
-        // Toggle language directly (Option 2: 3D Flip Flag Toggle)
         var nextLang = currentLang === "vi" ? "en" : "vi";
         setLanguage(nextLang);
         return;
@@ -3726,6 +3696,7 @@
       }
     });
 
+
     try {
       var saved = getSavedLang();
       console.log("i18n saved language is:", saved);
@@ -3742,14 +3713,14 @@
       document.documentElement.classList.add("ready");
       try {
         document.documentElement.classList.remove("preload");
-      } catch (e) {}
+      } catch (e) { }
     }
 
     try {
       document.dispatchEvent(
         new CustomEvent("i18nReady", { detail: { lang: saved } }),
       );
-    } catch (e) {}
+    } catch (e) { }
   }
 
   // Apply translations to any DOM subtree (works on detached/off-DOM elements too)
@@ -3851,16 +3822,16 @@
   };
 
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function () {
       bootstrap();
       try {
         updateDynamicContentVisibility(currentLang);
-      } catch (e) {}
+      } catch (e) { }
     });
   } else {
     bootstrap();
     try {
       updateDynamicContentVisibility(currentLang);
-    } catch (e) {}
+    } catch (e) { }
   }
 })();

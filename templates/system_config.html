@@ -277,23 +277,16 @@
 
         <div class="flex items-center gap-md">
           <a class="hidden md:inline-flex bg-primary text-on-primary px-4 py-2 rounded-lg label-sm shadow-sm hover:shadow-md transition-all" href="{{ url_for('predict.upload_page') }}" data-i18n="predict">Nhận diện</a>
+          <div class="theme-switch-wrapper" id="headerThemeToggle">
+          <button type="button" class="theme-switch-btn {{ 'is-dark' if ui_theme == 'dark' else 'is-light' }}" aria-label="Toggle theme">
+          <span class="theme-switch-knob">
+          <span class="material-symbols-outlined sun-icon">light_mode</span>
+          <span class="material-symbols-outlined moon-icon">dark_mode</span>
+          </span>
+          </button>
+          </div>
           <div class="language-switcher mr-2" id="languageSwitcher">
-            <button class="language-button" id="languageButton" type="button" aria-haspopup="true" aria-expanded="false">
-              <span class="language-flag" data-i18n="languageFlag">🇻🇳</span>
-              <span class="language-current" data-i18n="languageLabel">Tiếng Việt</span>
-            </button>
-            <div class="language-menu" id="languageMenu">
-              <button class="language-option active" type="button" data-lang="vi">
-                <span class="language-check">✓</span>
-                <span class="language-flag" data-i18n="languageFlag">🇻🇳</span>
-                <span data-i18n="languageLabel">Tiếng Việt</span>
-              </button>
-              <button class="language-option" type="button" data-lang="en">
-                <span class="language-check"></span>
-                <span class="language-flag">🇺🇸</span>
-                <span>English</span>
-              </button>
-            </div>
+            <button class="language-button" id="languageButton" type="button"></button>
           </div>
           
         </div>
@@ -387,7 +380,7 @@
                     <div class="relative flex flex-col gap-2">
                       <label class="text-xs font-bold text-on-surface dark:text-slate-350" data-i18n="sysContactEmailLabel">Email liên hệ / hỗ trợ</label>
                       <div class="relative">
-                        <span class="material-symbols-outlined text-slate-400 absolute left-4.5 top-1/2 -translate-y-1/2 text-[20px]">mail</span>
+                        <span class="material-symbols-outlined text-slate-400 absolute left-4 top-1/2 -translate-y-1/2 text-[20px]">mail</span>
                         <input type="email" name="site_email" value="{{ configs.get('site_email', 'support@pet.ai') }}" required class="premium-input w-full pl-12 pr-4 py-3 bg-slate-50 dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary transition-all duration-300" />
                       </div>
                     </div>

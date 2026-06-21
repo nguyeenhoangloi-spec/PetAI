@@ -215,7 +215,7 @@ html[data-theme="dark"] .hover\:bg-surface-container-highest:hover {
   background-color: #222c45 !important;
 }
 
-/* Custom Header Theme Switcher Styles */
+/* Custom Header Theme Switcher Styles (Minimalist & Sleek) */
 .theme-switch-wrapper {
   display: flex;
   align-items: center;
@@ -225,59 +225,237 @@ html[data-theme="dark"] .hover\:bg-surface-container-highest:hover {
 .theme-switch-btn {
   position: relative;
   display: inline-flex;
-  height: 28px;
-  width: 52px;
+  height: 32px;
+  width: 56px;
   flex-shrink: 0;
   cursor: pointer;
   border-radius: 9999px;
-  border: 1.5px solid #e2e8f0;
-  transition: background-color 0.25s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  background-color: #fef9c3; /* Soft cream/yellow for light mode */
-  border-color: #fde047;
+  border: 1px solid #cbd5e1;
+  transition: all 0.2s ease;
+  background-color: #f1f5f9; /* Slate-100 (light gray) */
   outline: none;
   align-items: center;
   padding: 0;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.theme-switch-btn:hover {
+  border-color: #94a3b8;
+  background-color: #e2e8f0;
 }
 
 html.dark .theme-switch-btn {
-  background-color: #1e293b; /* Slate-800 for dark mode */
+  background-color: #1e293b; /* Slate-800 */
   border-color: #334155;
+}
+
+html.dark .theme-switch-btn:hover {
+  background-color: #334155;
+  border-color: #475569;
 }
 
 .theme-switch-knob {
   pointer-events: none;
   position: absolute;
-  left: 2px;
+  left: 3px;
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 22px;
-  width: 22px;
+  height: 24px;
+  width: 24px;
   border-radius: 9999px;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.15), 0 1px 2px 0 rgba(0, 0, 0, 0.1);
-  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.25s ease;
+  background-color: #ffffff;
 }
 
-/* Light mode state: knob on the right, filled with warm yellow */
+/* Light mode state: knob on the right, filled with glowing sun amber yellow */
 .theme-switch-btn.is-light .theme-switch-knob {
-  transform: translateX(24px);
-  background-color: #eab308; /* yellow-500 */
+  transform: translateX(25px);
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
 }
 
-/* Dark mode state: knob on the left, filled with clean white */
+/* Dark mode state: knob on the left, filled with moon slate-900 */
 .theme-switch-btn.is-dark .theme-switch-knob {
   transform: translateX(0);
-  background-color: #f8fafc; /* slate-50 */
+  background-color: #0f172a; /* Slate-900 */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
-.theme-switch-knob .sun-icon {
-  color: #ffffff !important;
-  font-size: 14px !important;
-  font-weight: bold;
-}
-
+.theme-switch-knob .sun-icon,
 .theme-switch-knob .moon-icon {
-  color: #0f172a !important;
-  font-size: 14px !important;
+  position: absolute;
+  font-size: 13px !important;
   font-weight: bold;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.theme-switch-btn.is-light .sun-icon {
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
+  color: #f59e0b !important; /* Soft sun amber */
+}
+
+.theme-switch-btn.is-light .moon-icon {
+  opacity: 0;
+  transform: scale(0) rotate(-45deg);
+}
+
+.theme-switch-btn.is-dark .sun-icon {
+  opacity: 0;
+  transform: scale(0) rotate(45deg);
+}
+
+.theme-switch-btn.is-dark .moon-icon {
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
+  color: #cbd5e1 !important; /* Slate-300 moon */
+}
+
+/* --- Premium "Nhận diện" Button Styles in Navigation (Minimalist & Sleek) --- */
+nav a[data-i18n="predict"] {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background-color: #004ac6 !important; /* Premium brand blue */
+  color: #ffffff !important;
+  font-weight: 500 !important;
+  border-radius: 10px !important; /* Sleek 10px rounded corners */
+  padding: 8px 18px !important;
+  box-shadow: 0 2px 8px rgba(0, 74, 198, 0.16) !important;
+  transition: all 0.2s ease !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  letter-spacing: 0.01em !important;
+}
+
+nav a[data-i18n="predict"]:hover {
+  background-color: #003ea8 !important; /* Slightly darker blue */
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(0, 74, 198, 0.25) !important;
+  opacity: 1 !important;
+}
+
+nav a[data-i18n="predict"]:active {
+  transform: translateY(1px) scale(0.98) !important;
+  box-shadow: 0 1px 3px rgba(0, 74, 198, 0.08) !important;
+}
+
+html.dark nav a[data-i18n="predict"] {
+  background-color: #2563eb !important; /* Bright blue for dark mode visibility */
+  color: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25) !important;
+}
+
+html.dark nav a[data-i18n="predict"]:hover {
+  background-color: #1d4ed8 !important;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.38) !important;
+}
+
+/* --- Premium Language Button Styles (Minimalist & Sleek) --- */
+.language-button {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  height: 32px !important;
+  padding: 4px 12px !important;
+  border-radius: 10px !important; /* Sleek 10px rounded corners */
+  border: 1px solid #cbd5e1 !important;
+  background-color: #ffffff !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+  transition: all 0.2s ease !important;
+  cursor: pointer !important;
+}
+
+.language-button:hover {
+  background-color: #f8fafc !important;
+  border-color: #94a3b8 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06) !important;
+}
+
+html.dark .language-button {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2) !important;
+}
+
+html.dark .language-button:hover {
+  background-color: #334155 !important;
+  border-color: #475569 !important;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Micro-interaction on hover */
+.language-button:hover .language-flag-card img {
+  transform: scale(1.05) !important;
+  filter: brightness(1.05) !important;
+}
+
+/* --- Premium 3D Coin Flip Spring & Glossy Shine --- */
+.language-flag-3d,
+.language-flag-card,
+.language-flag-face {
+  border-radius: 50% !important;
+}
+
+.language-flag-card {
+  transition: transform 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) !important; /* Spring physics elastic flip */
+}
+
+.language-flag-face {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backface-visibility: hidden;
+}
+
+.flag-gloss {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.22) 0%, rgba(0, 0, 0, 0.04) 80%);
+  border-radius: 50%;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* Diagonally oriented white shine ray */
+.flag-gloss::after {
+  content: '';
+  position: absolute;
+  top: -100%;
+  left: -100%;
+  width: 300%;
+  height: 300%;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0) 40%,
+    rgba(255, 255, 255, 0.45) 50%,
+    rgba(255, 255, 255, 0) 60%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: translate(-100%, -100%) rotate(0deg);
+  transition: none;
+}
+
+/* Shine ray sweeps across the flag face on hover */
+.language-button:hover .flag-gloss::after {
+  transform: translate(100%, 100%) rotate(0deg);
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+/* Mobile viewport adjustments for language button to make it a perfect circle */
+@media (max-width: 767px) {
+  .language-button {
+    width: 32px !important;
+    height: 32px !important;
+    padding: 0 !important;
+    border-radius: 50% !important;
+  }
 }

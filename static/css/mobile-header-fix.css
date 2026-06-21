@@ -430,7 +430,7 @@ body>nav img[alt="PetAI New Logo"] {
   padding: 0 !important;
   margin: 0 !important;
   transform: translateX(0);
-  transition: transform 280ms ease-in-out, background-color 280ms ease-in-out, border-color 280ms ease-in-out !important;
+  transition: transform 280ms ease-in-out !important;
 }
 
 html.dark .sidebar {
@@ -850,124 +850,139 @@ main[class*="py-margin"] {
   }
 }
 
-/* --- Premium 3D Flip Language Switcher (Option 2) --- */
 
-/* Hide traditional language menu and text labels */
-.language-switcher .language-menu,
-.language-button .language-current,
-.language-button .language-arrow,
-.language-button .language-flag {
-  display: none !important;
-}
-
-/* Redesign button to be a premium circular capsule */
-.language-button {
-  width: 38px !important;
-  height: 38px !important;
-  padding: 0 !important;
-  border-radius: 50% !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  background: transparent !important;
-  border: 1px solid var(--outline-variant, rgba(195, 198, 215, 0.4)) !important;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  box-sizing: border-box !important;
-}
-
-.language-button:hover {
-  background: rgba(0, 74, 198, 0.08) !important;
-  border-color: var(--primary, #004ac6) !important;
-  transform: scale(1.08) !important;
-}
-
-.dark .language-button {
-  border-color: rgba(255, 255, 255, 0.15) !important;
-}
-
-.dark .language-button:hover {
-  background: rgba(255, 255, 255, 0.08) !important;
-  border-color: #ffffff !important;
-}
-
-/* 3D Flag viewport */
-.language-flag-3d {
-  perspective: 1000px;
-  width: 24px;
-  height: 24px;
-  display: inline-block;
-  vertical-align: middle;
-}
-
-/* Card container */
-.language-flag-card {
-  width: 100%;
-  height: 100%;
-  position: relative;
-  transform-style: preserve-3d;
-  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Card faces */
-.language-flag-face {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  backface-visibility: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-  line-height: 1;
-  user-select: none;
-}
-
-/* Back face starts rotated */
-.language-flag-back {
-  transform: rotateY(180deg);
-}
-
-/* Flipped class triggers 3D turn */
-.language-flag-card.flipped {
-  transform: rotateY(180deg);
-}
 
 /* --- Prevent header layout shift when translating navbar links --- */
 nav a[data-i18n="product"] { min-width: 80px; text-align: center; display: inline-block; }
 nav a[data-i18n="features"] { min-width: 80px; text-align: center; display: inline-block; }
 nav a[data-i18n="pricing"] { min-width: 70px; text-align: center; display: inline-block; }
 nav a[data-i18n="about"] { min-width: 85px; text-align: center; display: inline-block; }
-nav a[data-i18n="login"] { min-width: 85px; text-align: center; display: inline-block; }
+nav a[data-i18n="login"] { min-width: 120px; text-align: center; display: inline-block; }
 nav a[data-i18n="dashboard"] { min-width: 115px; text-align: center; display: inline-block; }
 
-/* --- Prevent header layout shift when injecting dynamic theme toggle --- */
-@keyframes themeToggleFadeIn {
-  from { opacity: 0; transform: scale(0.92); }
-  to { opacity: 1; transform: scale(1); }
+
+
+.language-switcher {
+  position: relative;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: space-between;
+  width: 68px !important;
+  height: 32px !important;
+  background-color: #f1f5f9 !important; /* Slate-100 */
+  border: 1px solid #cbd5e1 !important; /* Slate-300 */
+  padding: 2px !important;
+  border-radius: 10px !important;
+  box-sizing: border-box !important;
+  user-select: none;
+  cursor: pointer;
+  overflow: hidden;
+  transition: none !important;
 }
 
-.theme-switch-wrapper {
-  animation: themeToggleFadeIn 0.25s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+
+html.dark .language-switcher {
+  background-color: #1e293b !important; /* Slate-800 */
+  border-color: #334155 !important; /* Slate-700 */
 }
 
-@media (min-width: 768px) {
-  .language-switcher {
-    margin-left: 76px !important;
-    transition: margin-left 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  }
+
+.language-button {
+  position: relative;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  width: 31px !important;
+  height: 26px !important;
+  border: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 8px !important;
+  cursor: pointer;
+  z-index: 2 !important;
+  outline: none !important;
+  box-shadow: none !important;
+  transform: none !important;
 }
 
-@media (max-width: 767px) {
-  .language-switcher {
-    margin-left: 58px !important;
-    transition: margin-left 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  }
+
+/* VI label inside language-button */
+.language-button::before {
+  content: "VI";
+  font-family: "Inter", sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: #64748b;
+  transition: color 0.2s ease;
+}
+
+/* EN label inside language-switcher container */
+.language-switcher::after {
+  content: "EN";
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 31px;
+  height: 26px;
+  font-family: "Inter", sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: #64748b;
+  transition: color 0.2s ease;
+  z-index: 2;
+  margin-right: 0 !important;
+}
+
+/* Sliding active background indicator */
+.language-switcher::before {
+  content: "";
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  left: 2px;
+  width: 31px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1;
+}
+
+html.dark .language-switcher::before {
+  background-color: #0f172a; /* Slate-900 */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* Translate active background slider based on active language in HTML */
+html[lang="en"] .language-switcher::before {
+  transform: translateX(31px);
+}
+
+html[lang="vi"] .language-switcher::before {
+  transform: translateX(0);
+}
+
+/* Highlight active label */
+html[lang="vi"] .language-button::before {
+  color: #2563eb !important; /* Brand blue */
+}
+
+html[lang="en"] .language-switcher::after {
+  color: #2563eb !important; /* Brand blue */
+}
+
+html.dark[lang="vi"] .language-button::before {
+  color: #3b82f6 !important;
+}
+
+html.dark[lang="en"] .language-switcher::after {
+  color: #3b82f6 !important;
 }
 
 html:has(#headerThemeToggle) .language-switcher {
   margin-left: 0 !important;
+  transition: none !important;
 }
 
 /* Force scrollbar to prevent horizontal layout shifts/jumps across pages of varying lengths */
@@ -981,17 +996,51 @@ body {
   overflow-x: clip;
 }
 
-/* --- Smooth Sidebar Theme Transition --- */
-.sidebar,
-.sidebar *,
-.sidebar-menu-item,
-.sidebar-menu-item *,
-.sidebar-user-card,
-.sidebar-user-card *,
-.sidebar-divider,
-.sidebar-group-title {
-  transition: background-color 280ms cubic-bezier(0.4, 0, 0.2, 1), 
-              border-color 280ms cubic-bezier(0.4, 0, 0.2, 1), 
-              color 280ms cubic-bezier(0.4, 0, 0.2, 1), 
-              box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1) !important;
+/* Premium Login button styling matching switcher height & rounding */
+.nav-login-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 120px;
+  height: 32px !important;
+  padding: 0 16px !important;
+  font-family: "Inter", sans-serif;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: #ffffff !important;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8) !important; /* Premium Indigo-blue gradient */
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 10px !important; /* Matches exactly the language toggle rounding */
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15) !important; /* Soft colored glow */
+  outline: none !important;
+  box-sizing: border-box !important;
+  text-decoration: none !important;
 }
+
+.nav-login-btn:hover {
+  background: linear-gradient(135deg, #3b82f6, #2563eb) !important; /* Lighter on hover */
+  transform: translateY(-1px) !important;
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3) !important; /* Enhanced glow on hover */
+}
+
+.nav-login-btn:active {
+  transform: translateY(1px) scale(0.96) !important;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.15) !important;
+}
+
+html.dark .nav-login-btn {
+  background: linear-gradient(135deg, #3b82f6, #2563eb) !important;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25) !important;
+  border-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+html.dark .nav-login-btn:hover {
+  background: linear-gradient(135deg, #60a5fa, #3b82f6) !important;
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4) !important;
+}
+
+
+
+

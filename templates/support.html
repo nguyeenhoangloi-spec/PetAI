@@ -336,28 +336,22 @@
         <a class="body-md text-on-surface-variant hover:text-primary transition-colors duration-300"
           href="/#social-proof" data-i18n="about"><span data-i18n="about">Giới thiệu</span></a>
       </div>
-      {% endif %} {% if session.get('user_id') %}
+      {% endif %}       {% if session.get('user_id') %}
       <div class="flex items-center gap-6">
-        <div class="language-switcher mr-2" id="languageSwitcherLogged">
-          <button class="language-button" id="languageButtonLogged" type="button" aria-haspopup="true" aria-expanded="false">
-            <span class="language-flag" data-i18n="languageFlag">🇻🇳</span>
-            <span class="language-current" data-i18n="languageLabel">Tiếng Việt</span>
-          </button>
-          <div class="language-menu" id="languageMenuLogged">
-            <button class="language-option active" type="button" data-lang="vi">
-              <span class="language-check">✓</span>
-              <span class="language-flag" data-i18n="languageFlag">🇻🇳</span>
-              <span data-i18n="languageLabel">Tiếng Việt</span>
-            </button>
-            <button class="language-option" type="button" data-lang="en">
-              <span class="language-check"></span>
-              <span class="language-flag">🇺🇸</span>
-              <span>English</span>
-            </button>
-          </div>
+        <a class="body-md text-on-surface-variant hover:text-primary transition-colors duration-300 font-semibold"
+          href="{{ url_for('dashboard.dashboard') }}" data-i18n="dashboard"><span data-i18n="dashboard">Bảng điều
+            khiển</span></a>
+        <div class="theme-switch-wrapper" id="headerThemeToggle">
+        <button type="button" class="theme-switch-btn {{ 'is-dark' if ui_theme == 'dark' else 'is-light' }}" aria-label="Toggle theme">
+        <span class="theme-switch-knob">
+        <span class="material-symbols-outlined sun-icon">light_mode</span>
+        <span class="material-symbols-outlined moon-icon">dark_mode</span>
+        </span>
+        </button>
         </div>
-        <a class="hidden md:inline-flex bg-primary text-on-primary px-4 py-2 rounded-full label-sm font-semibold hover:shadow-lg active:scale-95 transition-all"
-          href="{{ url_for('predict.upload_page') }}" data-i18n="predict"><span data-i18n="predict">Nhận diện</span></a>
+        <div class="language-switcher mr-2" id="languageSwitcher">
+          <button class="language-button" id="languageButton" type="button"></button>
+        </div>
         <a class="flex items-center gap-1.5 label-sm text-red-600 hover:text-red-700 font-semibold transition-colors"
           href="{{ url_for('logout.logout') }}">
           <span class="material-symbols-outlined text-[18px]">logout</span>
@@ -365,29 +359,11 @@
         </a>
       </div>
       {% else %}
-      <div class="flex items-center gap-6">
-        <div class="language-switcher mr-2" id="languageSwitcherGuest">
-          <button class="language-button" id="languageButtonGuest" type="button" aria-haspopup="true" aria-expanded="false">
-      <span class="language-flag" data-i18n="languageFlag">🇻🇳</span>
-      <span class="language-current" data-i18n="languageLabel">Tiếng Việt</span>
-    </button>
-          <div class="language-menu" id="languageMenuGuest">
-            <button class="language-option active" type="button" data-lang="vi">
-              <span class="language-check">✓</span>
-              <span class="language-flag" data-i18n="languageFlag">🇻🇳</span>
-              <span data-i18n="languageLabel">Tiếng Việt</span>
-            </button>
-            <button class="language-option" type="button" data-lang="en">
-              <span class="language-check"></span>
-              <span class="language-flag">🇺🇸</span>
-              <span>English</span>
-            </button>
-          </div>
+<div class="flex items-center gap-6">
+<div class="language-switcher mr-2" id="languageSwitcherGuest">
+          <button class="language-button" id="languageButtonGuest" type="button"></button>
         </div>
-        <a class="label-sm text-on-surface-variant hover:text-primary font-semibold transition-colors duration-300"
-          href="{{ url_for('login.login') }}" data-i18n="login"><span data-i18n="login">Đăng nhập</span></a>
-        <a class="bg-primary text-on-primary px-6 py-2.5 rounded-full label-sm font-semibold hover:shadow-lg active:scale-95 transition-all"
-          href="{{ url_for('register.register') }}" data-i18n="register"><span data-i18n="register">Đăng ký</span></a>
+        <a class="nav-login-btn" href="{{ url_for('login.login') }}" data-i18n="login"><span data-i18n="login">Đăng nhập</span></a>
       </div>
       {% endif %}
     </div>
