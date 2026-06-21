@@ -439,6 +439,7 @@
         class="px-4 md:px-6 w-full py-16 mb-16 max-w-4xl mx-auto dashboard-width"
       >
         <div
+          id="legal-content-card"
           class="glass-card p-gutter rounded-3xl bg-surface-container-low border border-outline-variant/30"
         >
           <h1
@@ -776,5 +777,8 @@
     <script>
       document.body.style.opacity = "1";
     </script>
+    {% if session.get('role') == 'admin' and request.args.get('edit') == 'true' %}
+      {% include '_client_editor.html' %}
+    {% endif %}
   </body>
 </html>

@@ -24,6 +24,145 @@ document.addEventListener("DOMContentLoaded", function () {
   });
   themeObserver.observe(root, { attributes: true });
 
+  // Dynamic Theme Switcher Injection
+  function injectThemeToggle() {
+    const languageSwitcher = document.getElementById("languageSwitcher");
+    if (!languageSwitcher) return;
+
+    if (document.getElementById("headerThemeToggle")) return; // already injected
+
+    const wrapper = document.createElement("div");
+    wrapper.id = "headerThemeToggle";
+    wrapper.className = "theme-switch-wrapper";
+
+    // Detect initial theme
+    const isDark = root.classList.contains("dark") || root.getAttribute("data-theme") === "dark";
+    
+    // Create the button
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = `theme-switch-btn ${isDark ? "is-dark" : "is-light"}`;
+    btn.setAttribute("aria-label", "Toggle theme");
+    btn.innerHTML = `
+      <span class="theme-switch-knob">
+        <span class="material-symbols-outlined sun-icon">light_mode</span>
+        <span class="material-symbols-outlined moon-icon">dark_mode</span>
+      </span>
+    `;
+
+    wrapper.appendChild(btn);
+    languageSwitcher.parentNode.insertBefore(wrapper, languageSwitcher);
+
+    // Event listener for click
+    btn.addEventListener("click", function () {
+      const currentlyDark = root.classList.contains("dark") || root.getAttribute("data-theme") === "dark";
+      const newTheme = currentlyDark ? "light" : "dark";
+
+      // Apply theme visually
+      root.classList.toggle("dark", newTheme === "dark");
+      root.classList.toggle("light", newTheme !== "dark");
+      root.setAttribute("data-theme", newTheme);
+
+      // Update button classes
+      btn.classList.toggle("is-dark", newTheme === "dark");
+      btn.classList.toggle("is-light", newTheme !== "dark");
+
+      // Save to localStorage
+      try {
+        localStorage.setItem("theme", newTheme);
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key && key.startsWith("theme:")) {
+            localStorage.setItem(key, newTheme);
+          }
+        }
+      } catch (e) {
+        console.error("localStorage error:", e);
+      }
+
+      // Sync settings page radio buttons if user is on settings page
+      syncSettingsPageUI(newTheme);
+
+      // Send AJAX request to save to server
+      const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || "";
+      fetch("/settings/update-theme", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRF-Token": csrfToken
+        },
+        body: JSON.stringify({ theme: newTheme })
+      })
+      .then(r => r.json())
+      .then(data => {
+        if (!data.success) {
+          console.error("Failed to save theme setting on server:", data.message);
+        }
+      })
+      .catch(err => console.error("Error saving theme:", err));
+    });
+  }
+
+  function syncSettingsPageUI(theme) {
+    const lightRadio = document.getElementById("theme-light");
+    const darkRadio = document.getElementById("theme-dark");
+    const autoRadio = document.getElementById("theme-auto");
+    
+    if (lightRadio && darkRadio) {
+      if (theme === "light") {
+        lightRadio.checked = true;
+      } else if (theme === "dark") {
+        darkRadio.checked = true;
+      } else if (theme === "auto" && autoRadio) {
+        autoRadio.checked = true;
+      }
+    }
+  }
+
+  // Event delegation to watch theme settings radios changes on Settings page
+  document.addEventListener("change", function (e) {
+    const target = e.target;
+    if (target.name === "theme" && (target.id === "theme-light" || target.id === "theme-dark" || target.id === "theme-auto")) {
+      const themeVal = target.value; // 'light', 'dark', or 'auto'
+      
+      // Determine resolved theme (for 'auto' theme)
+      let resolvedTheme = themeVal;
+      if (themeVal === "auto") {
+        try {
+          resolvedTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        } catch (err) {
+          resolvedTheme = "light";
+        }
+      }
+
+      // Update header button class if it exists
+      const headerBtn = document.querySelector("#headerThemeToggle .theme-switch-btn");
+      if (headerBtn) {
+        headerBtn.classList.toggle("is-dark", resolvedTheme === "dark");
+        headerBtn.classList.toggle("is-light", resolvedTheme !== "dark");
+      }
+
+      // Apply theme visually
+      root.classList.toggle("dark", resolvedTheme === "dark");
+      root.classList.toggle("light", resolvedTheme !== "dark");
+      root.setAttribute("data-theme", resolvedTheme);
+
+      // Save to localStorage
+      try {
+        localStorage.setItem("theme", themeVal);
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key && key.startsWith("theme:")) {
+            localStorage.setItem(key, themeVal);
+          }
+        }
+      } catch (err) {}
+    }
+  });
+
+  // Initial call to inject theme toggle on load
+  injectThemeToggle();
+
   let lastLoadedPathname = window.location.pathname;
   let lastLoadedSearch = window.location.search;
 
@@ -396,6 +535,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (currentNav && newNav) {
           currentNav.parentNode.replaceChild(newNav, currentNav);
         }
+        injectThemeToggle();
 
         // 4.5 Update Page-Specific Style Blocks in Head (preventing layout flash)
         const oldPjaxStyles = Array.from(document.querySelectorAll("head style.pjax-style"));

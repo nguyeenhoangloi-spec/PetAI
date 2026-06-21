@@ -170,10 +170,22 @@ class SmartMockCursor:
         # 21. Avatar url query
         elif "select avatar_url" in self.last_query:
             self.results = [{"avatar_url": None}]
-        # 22. Check deletion safety (prediction_history, payment_orders)
+        # 22. Legal content versions detail query
+        elif "legal_content_versions" in self.last_query and "content_vi" in self.last_query:
+            self.results = [{
+                "id": 1,
+                "page": "privacy-policy",
+                "content_vi": "<p>Nội dung tiếng Việt</p>",
+                "content_en": "<p>English content</p>",
+                "saved_at": datetime.now()
+            }]
+        # 23. Legal content versions list query
+        elif "legal_content_versions" in self.last_query:
+            self.results = [{"id": 1, "page": "privacy-policy", "saved_at": datetime.now()}]
+        # 24. Check deletion safety (prediction_history, payment_orders)
         elif "prediction_history" in self.last_query or "payment_orders" in self.last_query:
             self.results = []
-        # 23. Default empty results
+        # 25. Default empty results
         else:
             self.results = []
 
@@ -432,6 +444,41 @@ class FlaskSystemTestCase(unittest.TestCase):
             'content_en': '<p>New privacy policy</p>'
         }, follow_redirects=False)
         self.assertEqual(response.status_code, 302)
+
+    def test_admin_reset_legal_config(self):
+        with self.client.session_transaction() as sess:
+            sess['user_id'] = 1
+            sess['username'] = 'admin'
+            sess['role'] = 'admin'
+
+        response = self._post_with_csrf('/users/system-config/reset-legal', data={
+            'page': 'privacy-policy'
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'"success":true', response.data.replace(b' ', b''))
+
+    def test_admin_get_legal_versions(self):
+        with self.client.session_transaction() as sess:
+            sess['user_id'] = 1
+            sess['username'] = 'admin'
+            sess['role'] = 'admin'
+
+        response = self.client.get('/users/system-config/legal-versions?page=privacy-policy')
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'"success":true', response.data.replace(b' ', b''))
+        self.assertIn(b'versions', response.data)
+
+    def test_admin_restore_legal_version(self):
+        with self.client.session_transaction() as sess:
+            sess['user_id'] = 1
+            sess['username'] = 'admin'
+            sess['role'] = 'admin'
+
+        response = self._post_with_csrf('/users/system-config/restore-version', data={
+            'version_id': '1'
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'"success":true', response.data.replace(b' ', b''))
 
 if __name__ == '__main__':
     unittest.main()

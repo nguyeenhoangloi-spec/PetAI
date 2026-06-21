@@ -183,9 +183,9 @@
       statistics: "Thống kê",
       upgrade: "Nâng cấp",
       payments: "Lịch sử thanh toán",
-      manageUsers: "Quản lý người dùng",
-      approveOrders: "Duyệt đơn",
-      systemConfig: "Cấu hình hệ thống",
+      manageUsers: "Người dùng",
+      approveOrders: "Đơn duyệt",
+      systemConfig: "Cấu hình",
       sysConfigTitle: "Cấu hình hệ thống",
       sysConfigPageTitle: "Cấu hình hệ thống - PetAI",
       sysConfigDesc: "Quản lý cài đặt logo, email liên hệ, gói cước dịch vụ và nội dung các trang điều khoản pháp lý.",
@@ -209,7 +209,7 @@
       sysPlanEntScanNote: "Hạn mức quét (Gõ 'unlimited' nếu không giới hạn)",
       sysPlanBasic: "Gói Cơ Bản (Basic)",
       sysPlanPro: "Gói Chuyên Nghiệp (Pro)",
-      sysPlanEnterprise: "Gói Doanh Nghiệp (Enterprise)",
+      sysPlanEnterprise: "Gói Doanh nghiệp (Enterprise)",
       sysSavePlansBtn: "Lưu cấu hình gói",
       sysLegalTitle: "Nội dung trang pháp lý & điều khoản",
       sysLegalDesc: "Biên soạn nội dung trực tiếp cho các trang pháp luật của hệ thống bằng mã HTML/Văn bản.",
@@ -227,16 +227,16 @@
       sysLegalContentLabel: "Nội dung HTML / Văn bản",
       sysLegalNote: "Lưu ý: Để trống sẽ tự phục hồi theo bản dịch mặc định trong i18n.js",
       sysSaveLegalBtn: "Lưu nội dung trang",
-      adminGroupTitle: "QUẢN TRỊ VIÊN",
+      adminGroupTitle: "QUẢN TRỊ",
 
       /* ── Sidebar ── */
       quickAccess: "Truy cập nhanh",
-      uploadAnalyze: "Tải ảnh & Phân tích",
-      predictionHistory: "Lịch sử nhận diện",
-      personalStats: "Thống kê cá nhân",
-      upgradePlan: "Nâng cấp gói",
+      uploadAnalyze: "Phân tích",
+      predictionHistory: "Lịch sử",
+      personalStats: "Thống kê",
+      upgradePlan: "Nâng cấp",
       personalInfo: "Thông tin cá nhân",
-      accountSettings: "Cài đặt tài khoản",
+      accountSettings: "Cài đặt",
 
       /* ── Avatar dropdown ── */
       role: "Vai trò:",
@@ -1843,9 +1843,9 @@
       statistics: "Statistics",
       upgrade: "Upgrade",
       payments: "Payment History",
-      manageUsers: "Manage Users",
-      approveOrders: "Approve Orders",
-      systemConfig: "System Configuration",
+      manageUsers: "Users",
+      approveOrders: "Orders",
+      systemConfig: "Configure",
       sysConfigTitle: "System Configuration",
       sysConfigPageTitle: "System Configuration - PetAI",
       sysConfigDesc: "Manage site logo, contact email, pricing subscription plans, and content for legal policy pages.",
@@ -1887,16 +1887,16 @@
       sysLegalContentLabel: "HTML / Text Content",
       sysLegalNote: "Note: Leaving it empty will restore to default translations defined in i18n.js",
       sysSaveLegalBtn: "Save Page Content",
-      adminGroupTitle: "ADMINISTRATOR",
+      adminGroupTitle: "ADMIN",
 
       /* ── Sidebar ── */
       quickAccess: "Quick Access",
-      uploadAnalyze: "Upload & Analyze",
-      predictionHistory: "Scan History",
+      uploadAnalyze: "Analyze",
+      predictionHistory: "History",
       personalStats: "Statistics",
-      upgradePlan: "Upgrade Plan",
+      upgradePlan: "Upgrade",
       personalInfo: "Personal Info",
-      accountSettings: "Account Settings",
+      accountSettings: "Settings",
 
       /* ── Avatar dropdown ── */
       role: "Role:",
@@ -3694,6 +3694,17 @@
         var nextLang = currentLang === "vi" ? "en" : "vi";
         setLanguage(nextLang);
         return;
+      }
+
+      var langOpt = e.target.closest(".language-option");
+      if (langOpt) {
+        var lang = langOpt.getAttribute("data-lang");
+        if (lang) {
+          console.log("i18n clicked language option: " + lang);
+          e.stopPropagation();
+          setLanguage(lang);
+          return;
+        }
       }
     });
 

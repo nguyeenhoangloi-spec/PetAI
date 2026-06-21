@@ -629,7 +629,7 @@ def save_legal_config():
     if not require_admin():
         return redirect(url_for("login.login"))
         
-    from models import SystemConfig
+    from models import SystemConfig, LegalContentVersion
     
     page = (request.form.get("page") or "").strip()
     content_vi = (request.form.get("content_vi") or "").strip()
@@ -648,6 +648,11 @@ def save_legal_config():
         conn = get_connection()
         SystemConfig.set(conn, db_key_vi, content_vi, f"Nội dung tiếng Việt trang {page}")
         SystemConfig.set(conn, db_key_en, content_en, f"Nội dung tiếng Anh trang {page}")
+        # Lưu phiên bản lịch sử
+        try:
+            LegalContentVersion.save_version(conn, page, content_vi, content_en)
+        except Exception:
+            logger.warning("[ADMIN] Could not save version snapshot for page: %s", page)
         flash(f"Đã cập nhật nội dung trang {page.upper()}.", "success")
     except Exception:
         logger.exception("[ADMIN] Save legal content error")
@@ -657,6 +662,91 @@ def save_legal_config():
             conn.close()
             
     return redirect(url_for("users.system_config") + f"?tab=legal&page_select={page}")
+
+
+@users_bp.route("/system-config/reset-legal", methods=["POST"])
+def reset_legal_config():
+    """Xoá nội dung DB của trang pháp lý để hiển thị lại template gốc"""
+    if not require_admin():
+        return jsonify({"error": "Unauthorized"}), 403
+
+    from models import SystemConfig
+    page = (request.form.get("page") or "").strip()
+    allowed_pages = {"privacy-policy", "terms-of-service", "payment-policy", "data-deletion", "support", "contact", "user-guide"}
+    if page not in allowed_pages:
+        return jsonify({"error": "Invalid page"}), 400
+
+    db_key_vi = f"{page.replace('-', '_')}_content_vi"
+    db_key_en = f"{page.replace('-', '_')}_content_en"
+    conn = None
+    try:
+        conn = get_connection()
+        SystemConfig.set(conn, db_key_vi, "", f"Nội dung tiếng Việt trang {page}")
+        SystemConfig.set(conn, db_key_en, "", f"Nội dung tiếng Anh trang {page}")
+        return jsonify({"success": True})
+    except Exception:
+        logger.exception("[ADMIN] Reset legal content error")
+        return jsonify({"error": "Server error"}), 500
+    finally:
+        if conn:
+            conn.close()
+
+
+@users_bp.route("/system-config/legal-versions", methods=["GET"])
+def get_legal_versions():
+    """Lấy danh sách lịch sử phiên bản của một trang"""
+    if not require_admin():
+        return jsonify({"error": "Unauthorized"}), 403
+
+    page = (request.args.get("page") or "").strip()
+    allowed_pages = {"privacy-policy", "terms-of-service", "payment-policy", "data-deletion", "support", "contact", "user-guide"}
+    if page not in allowed_pages:
+        return jsonify({"error": "Invalid page"}), 400
+
+    conn = None
+    try:
+        conn = get_connection()
+        from models import LegalContentVersion
+        versions = LegalContentVersion.get_versions(conn, page, limit=10)
+        return jsonify({"success": True, "versions": versions})
+    except Exception:
+        logger.exception("[ADMIN] Get legal versions error")
+        return jsonify({"error": "Server error"}), 500
+    finally:
+        if conn:
+            conn.close()
+
+
+@users_bp.route("/system-config/restore-version", methods=["POST"])
+def restore_legal_version():
+    """Khôi phục một phiên bản nội dung cũ vào SystemConfig"""
+    if not require_admin():
+        return jsonify({"error": "Unauthorized"}), 403
+
+    version_id_str = (request.form.get("version_id") or "").strip()
+    if not version_id_str:
+        return jsonify({"error": "Missing version_id"}), 400
+
+    conn = None
+    try:
+        conn = get_connection()
+        from models import LegalContentVersion, SystemConfig
+        version = LegalContentVersion.get_version_by_id(conn, int(version_id_str))
+        if not version:
+            return jsonify({"error": "Version not found"}), 404
+
+        page = version["page"]
+        db_key_vi = f"{page.replace('-', '_')}_content_vi"
+        db_key_en = f"{page.replace('-', '_')}_content_en"
+        SystemConfig.set(conn, db_key_vi, version["content_vi"], f"Nội dung tiếng Việt trang {page}")
+        SystemConfig.set(conn, db_key_en, version["content_en"], f"Nội dung tiếng Anh trang {page}")
+        return jsonify({"success": True, "page": page})
+    except Exception:
+        logger.exception("[ADMIN] Restore legal version error")
+        return jsonify({"error": "Server error"}), 500
+    finally:
+        if conn:
+            conn.close()
 
 
 @users_bp.route("/system-config/logo", methods=["POST"])

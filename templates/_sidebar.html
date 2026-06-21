@@ -66,13 +66,13 @@
       <a class="sidebar-menu-item {%if active_page in('upload','predict')%}active{%endif%}"
         href="{{ url_for('predict.upload_page') }}">
         <span class="material-symbols-outlined">upload_file</span>
-        <span data-i18n="uploadAnalyze">Tải ảnh &amp; Phân tích</span>
+        <span data-i18n="uploadAnalyze">Phân tích</span>
       </a>
 
       <a class="sidebar-menu-item {%if active_page=='history'%}active{%endif%}"
         href="{{ url_for('history.history') }}">
         <span class="material-symbols-outlined">history</span>
-        <span data-i18n="predictionHistory">Lịch sử nhận diện</span>
+        <span data-i18n="predictionHistory">Lịch sử</span>
       </a>
 
       {% if session.get('role') == 'user' %}
@@ -86,32 +86,32 @@
       <a class="sidebar-menu-item {%if active_page=='statistics'%}active{%endif%}"
         href="{{ url_for('statistics.statistics') }}">
         <span class="material-symbols-outlined">bar_chart</span>
-        <span data-i18n="personalStats">Thống kê cá nhân</span>
+        <span data-i18n="personalStats">Thống kê</span>
       </a>
 
       <a class="sidebar-menu-item {%if active_page=='upgrade'%}active{%endif%}"
         href="{{ url_for('predict.upgrade') }}">
         <span class="material-symbols-outlined">upgrade</span>
-        <span data-i18n="upgradePlan">Nâng cấp gói</span>
+        <span data-i18n="upgradePlan">Nâng cấp</span>
       </a>
 
       {% if session.get('role') == 'admin' %}
       <hr class="sidebar-divider">
-      <div class="sidebar-group-title" data-i18n="adminGroupTitle">QUẢN TRỊ VIÊN</div>
+      <div class="sidebar-group-title" data-i18n="adminGroupTitle">QUẢN TRỊ</div>
       <a class="sidebar-menu-item {%if active_page=='users'%}active{%endif%}"
         href="{{ url_for('users.list_users') }}">
         <span class="material-symbols-outlined">groups</span>
-        <span data-i18n="manageUsers">Quản lý người dùng</span>
+        <span data-i18n="manageUsers">Người dùng</span>
       </a>
       <a class="sidebar-menu-item {%if active_page=='confirmations'%}active{%endif%}"
         href="{{ url_for('users.confirmations_list') }}">
         <span class="material-symbols-outlined">receipt_long</span>
-        <span data-i18n="approveOrders">Duyệt đơn</span>
+        <span data-i18n="approveOrders">Đơn duyệt</span>
       </a>
       <a class="sidebar-menu-item {%if active_page=='system_config'%}active{%endif%}"
         href="{{ url_for('users.system_config') }}">
         <span class="material-symbols-outlined">settings_applications</span>
-        <span data-i18n="systemConfig">Cấu hình hệ thống</span>
+        <span data-i18n="systemConfig">Cấu hình</span>
       </a>
       {% endif %}
 
@@ -121,7 +121,7 @@
         <a class="sidebar-menu-item {%if active_page=='settings'%}active{%endif%}"
           href="{{ url_for('settings.settings') }}">
           <span class="material-symbols-outlined">settings</span>
-          <span data-i18n="accountSettings">Cài đặt tài khoản</span>
+          <span data-i18n="accountSettings">Cài đặt</span>
         </a>
       </div>
       {% endif %}

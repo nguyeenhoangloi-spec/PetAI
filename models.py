@@ -839,6 +839,93 @@ class SystemConfig:
                     SystemConfig.set(conn, k, v)
 
 
+class LegalContentVersion:
+    """Lưu lịch sử phiên bản nội dung các trang pháp lý (tối đa 10 phiên bản/trang)"""
+
+    @staticmethod
+    def create_table(conn):
+        with conn.cursor() as cur:
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS legal_content_versions (
+                    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+                    page VARCHAR(50) NOT NULL,
+                    content_vi LONGTEXT NOT NULL,
+                    content_en LONGTEXT NOT NULL,
+                    saved_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            """)
+            conn.commit()
+
+    @staticmethod
+    def save_version(conn, page: str, content_vi: str, content_en: str) -> int:
+        LegalContentVersion.create_table(conn)
+        with conn.cursor() as cur:
+            cur.execute("""
+                INSERT INTO legal_content_versions (page, content_vi, content_en)
+                VALUES (%s, %s, %s)
+            """, (page, content_vi, content_en))
+            conn.commit()
+            new_id = int(cur.lastrowid)
+            # Giữ tối đa 10 phiên bản gần nhất cho mỗi trang
+            cur.execute("""
+                SELECT id FROM legal_content_versions
+                WHERE page = %s
+                ORDER BY saved_at DESC
+                LIMIT 10
+            """, (page,))
+            rows = cur.fetchall()
+            if rows:
+                keep_ids = [r[0] for r in rows]
+                placeholders = ','.join(['%s'] * len(keep_ids))
+                cur.execute(
+                    f"DELETE FROM legal_content_versions WHERE page = %s AND id NOT IN ({placeholders})",
+                    [page] + keep_ids
+                )
+                conn.commit()
+            return new_id
+
+    @staticmethod
+    def get_versions(conn, page: str, limit: int = 10) -> List[Dict]:
+        LegalContentVersion.create_table(conn)
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT id, page, saved_at
+                FROM legal_content_versions
+                WHERE page = %s
+                ORDER BY saved_at DESC
+                LIMIT %s
+            """, (page, limit))
+            rows = cur.fetchall() or []
+            return [
+                {
+                    "id": r[0],
+                    "page": r[1],
+                    "saved_at": r[2].strftime("%H:%M  %d/%m/%Y") if r[2] else ""
+                }
+                for r in rows
+            ]
+
+    @staticmethod
+    def get_version_by_id(conn, version_id: int) -> Dict:
+        LegalContentVersion.create_table(conn)
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT id, page, content_vi, content_en, saved_at
+                FROM legal_content_versions
+                WHERE id = %s
+            """, (version_id,))
+            row = cur.fetchone()
+            if not row:
+                return {}
+            return {
+                "id": row[0],
+                "page": row[1],
+                "content_vi": row[2],
+                "content_en": row[3],
+                "saved_at": row[4].strftime("%H:%M  %d/%m/%Y") if row[4] else ""
+            }
+
+
 def init_database(conn):
     """Khởi tạo tất cả các bảng cần thiết"""
     SystemConfig.create_table(conn)
@@ -847,6 +934,7 @@ def init_database(conn):
     UserSettings.create_table(conn)
     UserQuota.create_table(conn)
     PaymentOrder.create_table(conn)
+    LegalContentVersion.create_table(conn)
     print("✅ Database tables initialized successfully!")
 
 

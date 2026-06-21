@@ -122,4 +122,21 @@
 - **Prevention**: Sử dụng tiếng Anh hoặc tiếng Việt không dấu cho thông tin in ra stdout trong các script chạy tự động trên terminal Windows.
 - **Status**: Fixed
 
+---
+
+## [2026-06-21 13:08] - Lỗi cú pháp Javascript vỡ hàm chuyển tab và chỉnh sửa trên trang Cấu hình hệ thống
+
+- **Type**: Agent
+- **Severity**: High
+- **File**: `templates/system_config.html:1586`
+- **Agent**: Antigravity Orchestrator
+- **Root Cause**: Trong lần cập nhật trước cho tính năng Inline Visual Editor, khi thay đổi hành vi nút "Chỉnh sửa trực quan" thành chuyển hướng trang, một phần thân hàm gốc của `openVisualEditor()` đã bị bỏ lại ngoài phạm vi hàm nhưng vẫn kết thúc bằng dấu đóng ngoặc `}`. Điều này tạo ra lỗi cú pháp Javascript `Uncaught SyntaxError: Unexpected token '}'`, khiến toàn bộ thẻ script không thể biên dịch và các nút (chuyển tab, chọn trang, lưu) bị vô hiệu hóa.
+- **Error Message**: 
+  ```text
+  Uncaught SyntaxError: Unexpected token '}' (at system_config:1586)
+  ```
+- **Fix Applied**: Tích hợp lại đoạn mã lơ lửng vào trong hàm `openVisualEditor()` bằng cách loại bỏ dấu đóng ngoặc sớm và thêm `return` sau khi chuyển hướng trang.
+- **Prevention**: Luôn kiểm tra tính toàn vẹn của ngoặc nhọn đóng/mở của các hàm khi thực hiện chỉnh sửa từng phần.
+- **Status**: Fixed
+
 

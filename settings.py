@@ -167,6 +167,33 @@ def settings():
         flash("Không thể tải cài đặt. Vui lòng thử lại.", "error")
         return redirect(url_for("dashboard.dashboard"))
 
+@settings_bp.route("/update-theme", methods=["POST"])
+def update_theme():
+    """Cập nhật theme nhanh qua AJAX"""
+    if not session.get("user_id"):
+        return {"success": False, "message": "Chưa đăng nhập"}, 401
+    
+    try:
+        user_id = int(session["user_id"])
+        data = request.get_json() or {}
+        theme = data.get("theme", "light").strip().lower()
+        if theme not in ("light", "dark", "auto"):
+            theme = "light"
+            
+        conn = get_connection()
+        try:
+            user_settings = UserSettings.get_or_create(conn, user_id)
+            user_settings["theme"] = theme
+            UserSettings.update(conn, user_id, user_settings)
+            conn.commit()
+        finally:
+            conn.close()
+            
+        return {"success": True, "theme": theme}
+    except Exception as e:
+        logger.exception("Error updating theme via AJAX")
+        return {"success": False, "message": str(e)}, 500
+
 
 @settings_bp.route("/clear-history", methods=["POST"])
 def clear_history():

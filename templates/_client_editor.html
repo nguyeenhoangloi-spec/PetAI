@@ -1,0 +1,1001 @@
+<!-- Premium Inline Page Visual Editor Overlay -->
+{% set current_page_key = request.path.strip('/').split('.')[0] %}
+
+<textarea id="raw-editor-content-vi" style="display: none;">{{ system_config.get(current_page_key.replace('-', '_') ~ '_content_vi', '') }}</textarea>
+<textarea id="raw-editor-content-en" style="display: none;">{{ system_config.get(current_page_key.replace('-', '_') ~ '_content_en', '') }}</textarea>
+
+<style>
+  /* ── Visual editor section wrappers ── */
+  .visual-sec-wrapper {
+    position: relative;
+    padding: 12px;
+    border: 1px dashed transparent;
+    border-radius: 12px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-bottom: 8px;
+  }
+  .visual-sec-wrapper:hover {
+    border-color: var(--primary, #0053db);
+    background-color: rgba(0, 83, 219, 0.02);
+  }
+  html.dark .visual-sec-wrapper:hover {
+    border-color: #3b82f6;
+    background-color: rgba(59, 130, 246, 0.02);
+  }
+  .visual-sec-controls {
+    position: absolute;
+    top: -12px;
+    right: 12px;
+    display: none;
+    gap: 4px;
+    z-index: 10;
+  }
+  .visual-sec-wrapper:hover .visual-sec-controls {
+    display: flex;
+  }
+  .visual-sec-btn {
+    background-color: #ffffff;
+    border: 1px solid #c3c6d7;
+    width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #434655;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: all 0.15s ease;
+  }
+  html.dark .visual-sec-btn { background-color: #1e293b; border-color: #334155; color: #cbd5e1; }
+  .visual-sec-btn:hover { background-color: #f1f5f9; color: var(--primary, #0053db); }
+  html.dark .visual-sec-btn:hover { background-color: #334155; color: #3b82f6; }
+  .visual-sec-btn.delete:hover { background-color: #fef2f2; color: #ef4444; border-color: #fca5a5; }
+  html.dark .visual-sec-btn.delete:hover { background-color: #450a0a; color: #f87171; border-color: #991b1b; }
+
+  [contenteditable="true"]:empty::before { content: attr(placeholder); color: #94a3b8; font-style: italic; }
+  [contenteditable="true"]:focus { outline: none; box-shadow: 0 0 0 2px rgba(0, 83, 219, 0.2); border-radius: 6px; }
+  html.dark [contenteditable="true"]:focus { box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); }
+
+  /* ── Selection Formatting Toolbar ── */
+  #inline-format-toolbar {
+    position: fixed;
+    background: #1e293b;
+    color: white;
+    padding: 4px 6px;
+    border-radius: 9px;
+    display: none;
+    gap: 1px;
+    z-index: 10001;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.05);
+    align-items: center;
+    pointer-events: auto;
+  }
+  .fmt-sep { width: 1px; height: 18px; background: rgba(255,255,255,0.15); margin: 0 2px; flex-shrink: 0; }
+  .format-btn {
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    min-width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+    transition: all 0.1s ease;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 0 4px;
+  }
+  .format-btn:hover { background: rgba(255,255,255,0.1); color: white; }
+  .format-btn .material-symbols-outlined { font-size: 16px !important; }
+
+  /* ── Editor bar action button variants ── */
+  .editor-action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    border: 1px solid transparent;
+    white-space: nowrap;
+    font-family: 'Inter', sans-serif;
+    line-height: 1;
+  }
+  .editor-action-btn .material-symbols-outlined { font-size: 14px !important; }
+  .editor-action-btn.ghost {
+    background: transparent;
+    border-color: #e2e8f0;
+    color: #64748b;
+  }
+  .editor-action-btn.ghost:hover { background: #f8fafc; color: #1e293b; border-color: #cbd5e1; }
+  html.dark .editor-action-btn.ghost { border-color: #334155; color: #94a3b8; }
+  html.dark .editor-action-btn.ghost:hover { background: #1e293b; color: #e2e8f0; }
+  .editor-action-btn.ghost:disabled { opacity: 0.35; cursor: not-allowed; pointer-events: none; }
+  .editor-action-btn.danger { background: transparent; border-color: #fca5a5; color: #ef4444; }
+  .editor-action-btn.danger:hover { background: #fef2f2; border-color: #ef4444; }
+  html.dark .editor-action-btn.danger { border-color: #7f1d1d; color: #f87171; }
+  html.dark .editor-action-btn.danger:hover { background: #450a0a; }
+  .editor-divider { width: 1px; height: 20px; background: #e2e8f0; flex-shrink: 0; }
+  html.dark .editor-divider { background: #334155; }
+
+  /* ── Version History Panel ── */
+  #version-history-panel {
+    position: fixed;
+    top: 0;
+    right: -400px;
+    width: 360px;
+    height: 100dvh;
+    background: #ffffff;
+    border-left: 1px solid #e2e8f0;
+    box-shadow: -12px 0 48px rgba(0,0,0,0.12);
+    z-index: 10002;
+    overflow-y: auto;
+    transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-family: 'Inter', sans-serif;
+  }
+  html.dark #version-history-panel { background: #0f172a; border-left-color: #1e293b; }
+  #version-history-panel.open { right: 0; }
+  #version-history-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.25);
+    backdrop-filter: blur(2px);
+    z-index: 10001;
+    display: none;
+    animation: fadeIn 0.2s ease;
+  }
+  #version-history-overlay.open { display: block; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  /* ── Preview Modal ── */
+  #preview-modal {
+    position: fixed; inset: 0;
+    background: rgba(2, 8, 23, 0.8);
+    backdrop-filter: blur(6px);
+    z-index: 10002;
+    display: none;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 32px 16px;
+    overflow-y: auto;
+  }
+  #preview-modal.open { display: flex; }
+  #preview-modal-inner {
+    background: white;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 820px;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.4);
+    animation: slideUp 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    margin: auto;
+  }
+  html.dark #preview-modal-inner { background: #0f172a; }
+  @keyframes slideUp { from { opacity: 0; transform: translateY(20px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+</style>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     FLOATING ADMIN EDITOR BAR
+══════════════════════════════════════════════════════════════════ -->
+<div id="admin-float-editor-bar" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[9999] bg-white/96 dark:bg-slate-900/96 backdrop-blur border border-slate-200 dark:border-slate-700/80 shadow-2xl rounded-2xl px-5 py-3 flex flex-wrap items-center justify-between gap-3 w-[93%] max-w-5xl transition-all duration-300 font-['Inter'] antialiased">
+  <!-- Identity -->
+  <div class="flex items-center gap-2.5 flex-shrink-0">
+    <span class="material-symbols-outlined text-primary text-2xl animate-pulse">edit_note</span>
+    <div>
+      <h4 class="text-sm font-bold text-slate-800 dark:text-slate-100 leading-tight" id="editor-page-heading">Chế độ Chỉnh sửa Trực tiếp</h4>
+      <p class="text-[10px] text-slate-400 dark:text-slate-500 leading-tight">Rà chuột vào mục để chỉnh sửa nội dung</p>
+    </div>
+  </div>
+
+  <!-- Controls -->
+  <div class="flex items-center gap-2 flex-wrap">
+    <!-- Language switcher -->
+    <div class="flex gap-0.5 bg-slate-100 dark:bg-slate-950 p-1 rounded-lg border border-slate-200 dark:border-slate-800">
+      <button type="button" id="editor-lang-vi-btn" onclick="switchEditorLanguage('vi')"
+        class="px-2.5 py-1 rounded-md text-xs font-bold bg-white dark:bg-slate-800 text-primary shadow-sm transition-all">VI</button>
+      <button type="button" id="editor-lang-en-btn" onclick="switchEditorLanguage('en')"
+        class="px-2.5 py-1 rounded-md text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-primary transition-all">EN</button>
+    </div>
+
+    <div class="editor-divider"></div>
+
+    <!-- Undo / Redo -->
+    <button type="button" id="undo-btn" onclick="undoEdit()" disabled title="Hoàn tác (Ctrl+Z)" class="editor-action-btn ghost">
+      <span class="material-symbols-outlined">undo</span>
+    </button>
+    <button type="button" id="redo-btn" onclick="redoEdit()" disabled title="Làm lại (Ctrl+Y)" class="editor-action-btn ghost">
+      <span class="material-symbols-outlined">redo</span>
+    </button>
+
+    <div class="editor-divider"></div>
+
+    <!-- Preview -->
+    <button type="button" onclick="openPreviewModal()" title="Xem trước trang như người dùng" class="editor-action-btn ghost">
+      <span class="material-symbols-outlined">preview</span>
+      <span class="hidden sm:inline">Xem trước</span>
+    </button>
+
+    <!-- Version History -->
+    <button type="button" onclick="openVersionHistory()" title="Lịch sử phiên bản" class="editor-action-btn ghost">
+      <span class="material-symbols-outlined">history</span>
+      <span class="hidden sm:inline">Lịch sử</span>
+    </button>
+
+    <div class="editor-divider"></div>
+
+    <!-- Auto translate -->
+    <label class="flex items-center gap-1.5 cursor-pointer select-none">
+      <input type="checkbox" id="editor-auto-translate" class="w-3.5 h-3.5 accent-primary" checked />
+      <span class="text-xs text-slate-500 dark:text-slate-400 font-medium hidden sm:inline">Tự động dịch</span>
+    </label>
+
+    <div class="editor-divider"></div>
+
+    <!-- Reset to default -->
+    <button type="button" onclick="resetToDefault()" title="Khôi phục nội dung gốc từ template" class="editor-action-btn danger">
+      <span class="material-symbols-outlined">restart_alt</span>
+      <span class="hidden sm:inline">Gốc</span>
+    </button>
+
+    <!-- Save -->
+    <button type="button" onclick="savePageChanges()"
+      class="flex items-center gap-1.5 bg-primary text-white hover:bg-primary/90 px-4 py-2 rounded-lg text-xs font-bold transition-all shadow-sm">
+      <span class="material-symbols-outlined !text-sm">save</span> Lưu trang
+    </button>
+
+    <!-- Cancel -->
+    <button type="button" onclick="cancelPageEdit()"
+      class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 px-3 py-2 rounded-lg text-xs font-bold transition-all">
+      Hủy
+    </button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     SELECTION RICH-TEXT TOOLBAR (floats near selection)
+══════════════════════════════════════════════════════════════════ -->
+<div id="inline-format-toolbar">
+  <button type="button" class="format-btn" onclick="applyFormat('bold')" title="In đậm (Ctrl+B)"><b>B</b></button>
+  <button type="button" class="format-btn" onclick="applyFormat('italic')" title="In nghiêng (Ctrl+I)"><i>I</i></button>
+  <button type="button" class="format-btn" onclick="applyFormat('underline')" title="Gạch chân (Ctrl+U)"><u>U</u></button>
+  <div class="fmt-sep"></div>
+  <button type="button" class="format-btn" onclick="applyFormatBlock('h2')" title="Tiêu đề H2" style="font-size:10px;">H2</button>
+  <button type="button" class="format-btn" onclick="applyFormatBlock('h3')" title="Tiêu đề H3" style="font-size:10px;">H3</button>
+  <button type="button" class="format-btn" onclick="applyFormatBlock('p')" title="Đoạn văn" style="font-size:10px;">P</button>
+  <div class="fmt-sep"></div>
+  <button type="button" class="format-btn" onclick="applyFormat('insertUnorderedList')" title="Danh sách dấu chấm">
+    <span class="material-symbols-outlined">format_list_bulleted</span>
+  </button>
+  <button type="button" class="format-btn" onclick="applyFormat('insertOrderedList')" title="Danh sách số">
+    <span class="material-symbols-outlined">format_list_numbered</span>
+  </button>
+  <div class="fmt-sep"></div>
+  <button type="button" class="format-btn" onclick="applyFormat('createLink')" title="Thêm liên kết">
+    <span class="material-symbols-outlined">link</span>
+  </button>
+  <button type="button" class="format-btn" onclick="applyFormat('unlink')" title="Gỡ liên kết">
+    <span class="material-symbols-outlined">link_off</span>
+  </button>
+  <div class="fmt-sep"></div>
+  <button type="button" class="format-btn" onclick="applyFormat('removeFormat')" title="Xóa định dạng">
+    <span class="material-symbols-outlined">format_clear</span>
+  </button>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     VERSION HISTORY PANEL (slide from right)
+══════════════════════════════════════════════════════════════════ -->
+<div id="version-history-overlay" onclick="closeVersionHistory()"></div>
+<div id="version-history-panel">
+  <!-- Header -->
+  <div class="sticky top-0 z-10 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-5 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-2.5">
+      <div class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+        <span class="material-symbols-outlined text-primary text-[18px]">history</span>
+      </div>
+      <div>
+        <h3 class="font-bold text-slate-800 dark:text-slate-100 text-sm leading-tight">Lịch sử phiên bản</h3>
+        <p class="text-[10px] text-slate-400 dark:text-slate-500 leading-tight">Tối đa 10 phiên bản gần nhất</p>
+      </div>
+    </div>
+    <button onclick="closeVersionHistory()"
+      class="w-7 h-7 flex items-center justify-center rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+      <span class="material-symbols-outlined text-lg">close</span>
+    </button>
+  </div>
+  <!-- Body -->
+  <div id="version-list-container" class="p-4 space-y-2">
+    <div class="flex flex-col items-center justify-center py-10 text-slate-400">
+      <span class="material-symbols-outlined text-3xl animate-spin mb-2">progress_activity</span>
+      <p class="text-xs">Đang tải...</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     PREVIEW MODAL (shows rendered page content)
+══════════════════════════════════════════════════════════════════ -->
+<div id="preview-modal" onclick="handlePreviewBackdropClick(event)">
+  <div id="preview-modal-inner">
+    <!-- Modal Header -->
+    <div class="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-700 sticky top-0 bg-white dark:bg-slate-900 rounded-t-2xl z-10">
+      <div class="flex items-center gap-2.5">
+        <div class="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center">
+          <span class="material-symbols-outlined text-primary text-[16px]">preview</span>
+        </div>
+        <div>
+          <h3 class="font-bold text-slate-800 dark:text-slate-100 text-sm leading-tight">Xem trước trang</h3>
+          <p class="text-[10px] text-slate-400 leading-tight">Chế độ người dùng (read-only)</p>
+        </div>
+      </div>
+      <button onclick="closePreviewModal()"
+        class="flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 px-3 py-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-all border border-transparent hover:border-slate-200 dark:hover:border-slate-700">
+        <span class="material-symbols-outlined text-sm">close</span> Đóng
+      </button>
+    </div>
+    <!-- Modal Content -->
+    <div id="preview-content-area" class="p-6 lg:p-10"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     INLINE VISUAL EDITOR SCRIPT
+══════════════════════════════════════════════════════════════════ -->
+<script>
+  /* ─── Core state ─── */
+  var pageKey = "{{ current_page_key }}";
+  var visualEditorLang = "{{ ui_language or 'vi' }}";
+  var sections = [];
+
+  /* ─── Undo/Redo history ─── */
+  var historyStack = [];
+  var historyIndex = -1;
+  var historyMaxSize = 30;
+  var historyDebounceTimer = null;
+
+  /* ─── DOM snapshot (Fix 1): captured before editor overwrites card ─── */
+  var originalDomHtml = '';
+
+  /* ═══════════════════════════════════════════════
+     HTML → Sections parser
+     Splits on H2/H3 headings; strips H1 titles
+  ═══════════════════════════════════════════════ */
+  function parseHtmlToSections(html) {
+    if (!html || !html.trim()) return [];
+    const tempDiv = document.createElement("div");
+    tempDiv.innerHTML = html.trim();
+    // Remove page-title H1 elements – they are not editable sections
+    tempDiv.querySelectorAll('h1').forEach(el => el.remove());
+
+    const parsed = [];
+    let currentSec = null;
+
+    Array.from(tempDiv.childNodes).forEach(node => {
+      if (node.nodeType === Node.ELEMENT_NODE && (node.tagName === "H2" || node.tagName === "H3")) {
+        if (currentSec) parsed.push(currentSec);
+        const titleText = (node.textContent || "").replace(/\s+/g, " ").trim();
+        currentSec = { title: titleText, content: "" };
+      } else {
+        if (!currentSec) currentSec = { title: "", content: "" };
+        if (node.nodeType === Node.TEXT_NODE) currentSec.content += node.textContent;
+        else if (node.nodeType === Node.ELEMENT_NODE) currentSec.content += node.outerHTML;
+      }
+    });
+
+    if (currentSec) parsed.push(currentSec);
+
+    return parsed
+      .map(sec => ({ title: sec.title.trim(), content: sec.content.trim() }))
+      .filter(sec => sec.title || sec.content);
+  }
+
+  /* ═══════════════════════════════════════════════
+     FIX 1: Load initial content
+     Priority: JSON from DB → DOM snapshot → empty
+  ═══════════════════════════════════════════════ */
+  function loadInitialContent() {
+    const rawVi = (document.getElementById("raw-editor-content-vi") || {}).value || "";
+    const rawEn = (document.getElementById("raw-editor-content-en") || {}).value || "";
+
+    let vi_array = null, en_array = null;
+
+    if (rawVi.trim().startsWith("[") && rawVi.trim().endsWith("]")) {
+      try { vi_array = JSON.parse(rawVi); } catch(e) {}
+    }
+    if (rawEn.trim().startsWith("[") && rawEn.trim().endsWith("]")) {
+      try { en_array = JSON.parse(rawEn); } catch(e) {}
+    }
+
+    if (Array.isArray(vi_array) && vi_array.length > 0) {
+      /* ── DB has saved content (JSON) ── */
+      const enList = Array.isArray(en_array) ? en_array : [];
+      sections = vi_array.map((item, idx) => {
+        const en_item = enList[idx] || {};
+        return {
+          id: genId(idx),
+          title_vi: item.title || "",
+          title_en: en_item.title || "",
+          content_vi: item.content || "",
+          content_en: en_item.content || ""
+        };
+      });
+    } else {
+      /* ── DB is empty → use full DOM template as source (Fix 1) ── */
+      const viSections = originalDomHtml ? parseHtmlToSections(originalDomHtml) : [];
+
+      let enSections = [];
+      if (Array.isArray(en_array) && en_array.length > 0) {
+        enSections = en_array.map(item => ({ title: item.title || "", content: item.content || "" }));
+      } else if (rawEn.trim() && !rawEn.trim().startsWith("[")) {
+        enSections = parseHtmlToSections(rawEn);
+      }
+
+      const maxLen = Math.max(viSections.length, enSections.length);
+      sections = [];
+      for (let i = 0; i < maxLen; i++) {
+        const vSec = viSections[i] || { title: "", content: "" };
+        const eSec = enSections[i] || { title: "", content: "" };
+        sections.push({
+          id: genId(i),
+          title_vi: vSec.title,
+          title_en: eSec.title,
+          content_vi: vSec.content,
+          content_en: eSec.content
+        });
+      }
+    }
+  }
+
+  function genId(idx) {
+    return "sec_" + idx + "_" + Math.random().toString(36).substr(2, 6);
+  }
+
+  /* ═══════════════════════════════════════════════
+     Auto Translation helpers
+  ═══════════════════════════════════════════════ */
+  async function translateText(text) {
+    if (!text || !text.trim()) return "";
+    try {
+      const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=vi&tl=en&dt=t&q=${encodeURIComponent(text)}`;
+      const res = await fetch(url);
+      if (!res.ok) return text;
+      const data = await res.json();
+      let out = "";
+      if (data && data[0]) data[0].forEach(item => { if (item && item[0]) out += item[0]; });
+      return out || text;
+    } catch (e) { return text; }
+  }
+
+  /**
+   * translateHTML – dịch HTML, giữ nguyên toàn bộ thẻ và định dạng.
+   * Đệ quy cây DOM: chỉ dịch text node lá, không chạm vào thẻ HTML.
+   *
+   * Ví dụ:
+   *   Input:  "<p>Đây là <strong>in đậm</strong> và <a href='x'>liên kết</a></p>"
+   *   Output: "<p>This is <strong>bold</strong> and <a href='x'>link</a></p>"
+   */
+  async function translateHTML(html) {
+    if (!html || !html.trim()) return "";
+    if (!html.includes("<") && !html.includes(">")) return await translateText(html);
+    try {
+      const tmp = document.createElement("div");
+      tmp.innerHTML = html;
+      await _translateNodeDeep(tmp);
+      return tmp.innerHTML;
+    } catch (e) { return html; }
+  }
+
+  /* Đệ quy: chỉ dịch Text node, giữ nguyên Element node */
+  async function _translateNodeDeep(node) {
+    for (const child of Array.from(node.childNodes)) {
+      if (child.nodeType === Node.TEXT_NODE) {
+        const text = child.textContent;
+        const trimmed = text.trim();
+        if (trimmed) {
+          // Bảo toàn khoảng trắng đầu/cuối
+          const leading  = text.match(/^\s*/)[0];
+          const trailing = text.match(/\s*$/)[0];
+          child.textContent = leading + await translateText(trimmed) + trailing;
+        }
+        // text node toàn whitespace → giữ nguyên
+      } else if (child.nodeType === Node.ELEMENT_NODE) {
+        // Không dịch nội dung các thẻ đặc biệt (code, pre, script, style)
+        const skip = ["CODE", "PRE", "SCRIPT", "STYLE", "KBD", "VAR", "SAMP"];
+        if (!skip.includes(child.tagName)) {
+          await _translateNodeDeep(child); // Đệ quy vào bên trong
+        }
+      }
+      // Các node loại khác (comment…) → bỏ qua
+    }
+  }
+
+  /* ═══════════════════════════════════════════════
+     Render Visual Sections into #legal-content-card
+  ═══════════════════════════════════════════════ */
+  function renderVisualSections() {
+    const card = document.getElementById("legal-content-card");
+    if (!card) return;
+
+    const h1 = card.querySelector("h1");
+    card.innerHTML = "";
+    if (h1) card.appendChild(h1);
+
+    const container = document.createElement("div");
+    container.id = "visual-sections-container";
+    container.className = "space-y-6 mt-8";
+    card.appendChild(container);
+
+    if (sections.length === 0) {
+      container.innerHTML = `
+        <div class="border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-2xl p-10 text-center">
+          <span class="material-symbols-outlined text-4xl text-slate-300 dark:text-slate-600 mb-3 block">article</span>
+          <p class="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-1">Chưa có mục nào</p>
+          <p class="text-xs text-slate-400 dark:text-slate-500">Nhấn "Thêm mục mới" bên dưới để bắt đầu soạn nội dung.</p>
+        </div>
+      `;
+    } else {
+      let html = "";
+      sections.forEach((sec) => {
+        const title = visualEditorLang === 'vi' ? sec.title_vi : sec.title_en;
+        const content = visualEditorLang === 'vi' ? sec.content_vi : sec.content_en;
+        const rendered = (content.includes("<") && content.includes(">"))
+          ? content
+          : content.replace(/\n/g, "<br>");
+
+        html += `
+          <div class="visual-sec-wrapper" data-id="${sec.id}">
+            <div class="visual-sec-controls">
+              <button type="button" onclick="moveVisualSectionUp('${sec.id}')" class="visual-sec-btn" title="Di chuyển lên">
+                <span class="material-symbols-outlined !text-sm">arrow_upward</span>
+              </button>
+              <button type="button" onclick="moveVisualSectionDown('${sec.id}')" class="visual-sec-btn" title="Di chuyển xuống">
+                <span class="material-symbols-outlined !text-sm">arrow_downward</span>
+              </button>
+              <button type="button" onclick="duplicateVisualSection('${sec.id}')" class="visual-sec-btn" title="Nhân đôi mục này (Duplicate)">
+                <span class="material-symbols-outlined !text-sm">content_copy</span>
+              </button>
+              <button type="button" onclick="removeVisualSection('${sec.id}')" class="visual-sec-btn delete" title="Xóa mục">
+                <span class="material-symbols-outlined !text-sm">delete</span>
+              </button>
+            </div>
+            <h2 contenteditable="true"
+                class="text-xl font-bold text-primary dark:text-blue-400 mt-6 mb-2"
+                placeholder="Nhập tiêu đề điều khoản..."
+                onblur="updateVisualSectionField('${sec.id}', 'title', this.innerText)"
+            >${escapeHtml(title)}</h2>
+            <div contenteditable="true"
+                 class="text-on-surface-variant dark:text-slate-300 body-md leading-relaxed legal-content-rich"
+                 placeholder="Nhập nội dung điều khoản..."
+                 onblur="updateVisualSectionField('${sec.id}', 'content', this.innerHTML)"
+            >${rendered}</div>
+          </div>`;
+      });
+      container.innerHTML = html;
+    }
+
+    // Add Section button
+    const addBtn = document.createElement("div");
+    addBtn.className = "flex items-center pt-6 mt-4 border-t border-slate-100 dark:border-slate-800";
+    addBtn.innerHTML = `
+      <button type="button" onclick="addSectionVisual()"
+        class="flex items-center gap-1.5 bg-primary/10 hover:bg-primary/20 text-primary py-2 px-4 rounded-xl text-xs font-bold transition-all">
+        <span class="material-symbols-outlined text-sm">add_circle</span>
+        Thêm mục mới (Add Section)
+      </button>`;
+    card.appendChild(addBtn);
+  }
+
+  function escapeHtml(text) {
+    if (!text) return "";
+    return text.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+               .replace(/"/g,"&quot;").replace(/'/g,"&#039;");
+  }
+
+  /* ═══════════════════════════════════════════════
+     Section CRUD
+  ═══════════════════════════════════════════════ */
+  async function updateVisualSectionField(id, field, value) {
+    const sec = sections.find(s => s.id === id);
+    if (!sec) return;
+
+    const v = value.replace(/&nbsp;/g, ' ').trim();
+    const autoTrans = document.getElementById("editor-auto-translate") && document.getElementById("editor-auto-translate").checked;
+
+    if (visualEditorLang === "vi") {
+      if (field === "title") {
+        sec.title_vi = v;
+        if (autoTrans && v) sec.title_en = await translateText(v);
+      } else {
+        sec.content_vi = v;
+        if (autoTrans && v) sec.content_en = await translateHTML(v);
+      }
+    } else {
+      if (field === "title") sec.title_en = v;
+      else sec.content_en = v;
+    }
+    schedulePushToHistory();
+  }
+
+  function addSectionVisual() {
+    sections.push({ id: "sec_" + Date.now() + "_" + Math.random().toString(36).substr(2,5),
+      title_vi:"", title_en:"", content_vi:"", content_en:"" });
+    pushToHistory();
+    renderVisualSections();
+    setTimeout(() => {
+      const w = document.querySelector(`.visual-sec-wrapper[data-id="${sections[sections.length-1].id}"] h2`);
+      if (w) w.focus();
+    }, 100);
+  }
+
+  function moveVisualSectionUp(id) {
+    const i = sections.findIndex(s => s.id === id);
+    if (i <= 0) return;
+    [sections[i], sections[i-1]] = [sections[i-1], sections[i]];
+    pushToHistory(); renderVisualSections();
+  }
+
+  function moveVisualSectionDown(id) {
+    const i = sections.findIndex(s => s.id === id);
+    if (i < 0 || i === sections.length - 1) return;
+    [sections[i], sections[i+1]] = [sections[i+1], sections[i]];
+    pushToHistory(); renderVisualSections();
+  }
+
+  function removeVisualSection(id) {
+    if (!confirm("Bạn có chắc muốn xóa mục này?")) return;
+    sections = sections.filter(s => s.id !== id);
+    pushToHistory(); renderVisualSections();
+  }
+
+  function duplicateVisualSection(id) {
+    const idx = sections.findIndex(s => s.id === id);
+    if (idx < 0) return;
+    const original = sections[idx];
+    const copy = {
+      id: "sec_" + Date.now() + "_" + Math.random().toString(36).substr(2, 5),
+      title_vi: original.title_vi + " (Bản sao)",
+      title_en: original.title_en + " (Copy)",
+      content_vi: original.content_vi,
+      content_en: original.content_en
+    };
+    sections.splice(idx + 1, 0, copy);
+    pushToHistory();
+    renderVisualSections();
+    // Scroll to & highlight the duplicated section
+    setTimeout(() => {
+      const el = document.querySelector(`.visual-sec-wrapper[data-id="${copy.id}"]`);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        el.style.outline = '2px solid var(--primary, #0053db)';
+        el.style.outlineOffset = '4px';
+        setTimeout(() => { el.style.outline = ''; el.style.outlineOffset = ''; }, 1500);
+      }
+    }, 120);
+  }
+
+  /* ═══════════════════════════════════════════════
+     Language Switcher
+  ═══════════════════════════════════════════════ */
+  function switchEditorLanguage(lang) {
+    visualEditorLang = lang;
+    const vi = document.getElementById("editor-lang-vi-btn");
+    const en = document.getElementById("editor-lang-en-btn");
+    const act = "px-2.5 py-1 rounded-md text-xs font-bold bg-white dark:bg-slate-800 text-primary shadow-sm transition-all";
+    const inact = "px-2.5 py-1 rounded-md text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-primary transition-all";
+    vi.className = lang === 'vi' ? act : inact;
+    en.className = lang === 'en' ? act : inact;
+    renderVisualSections();
+  }
+
+  /* ═══════════════════════════════════════════════
+     Save / Cancel / FIX 2: Reset to default
+  ═══════════════════════════════════════════════ */
+  async function savePageChanges() {
+    const viData = sections.map(s => ({ title: s.title_vi, content: s.content_vi }));
+    const enData = sections.map(s => ({ title: s.title_en, content: s.content_en }));
+
+    const fd = new FormData();
+    const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+    fd.append("csrf_token", csrfMeta ? csrfMeta.getAttribute("content") : "");
+    fd.append("page", pageKey);
+    fd.append("content_vi", JSON.stringify(viData));
+    fd.append("content_en", JSON.stringify(enData));
+
+    try {
+      const res = await fetch("/system-config/save-legal", { method: "POST", body: fd });
+      if (res.ok) {
+        if (window.showToast) window.showToast("Đã lưu nội dung trang thành công!", "success");
+        else alert("Lưu trang thành công!");
+        setTimeout(() => { window.location.href = "/system-config?page_select=" + pageKey; }, 900);
+      } else throw new Error("HTTP " + res.status);
+    } catch(e) {
+      alert("Lỗi khi lưu trang: " + e.message);
+    }
+  }
+
+  function cancelPageEdit() {
+    window.location.href = "/system-config?page_select=" + pageKey;
+  }
+
+  /* FIX 2: Reset – clears DB entry, reloads page to show original template */
+  async function resetToDefault() {
+    if (!confirm("Khôi phục về nội dung mặc định từ template?\n\nToàn bộ nội dung đã chỉnh sửa trong DB sẽ bị xoá. Trang sẽ hiển thị lại nội dung gốc.")) return;
+    const fd = new FormData();
+    const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+    fd.append("csrf_token", csrfMeta ? csrfMeta.getAttribute("content") : "");
+    fd.append("page", pageKey);
+    try {
+      const res = await fetch("/system-config/reset-legal", { method: "POST", body: fd });
+      const data = await res.json();
+      if (data.success) {
+        if (window.showToast) window.showToast("Đã khôi phục nội dung gốc!", "success");
+        setTimeout(() => window.location.reload(), 800);
+      } else {
+        alert("Lỗi: " + (data.error || "Không thể khôi phục"));
+      }
+    } catch(e) { alert("Lỗi kết nối: " + e.message); }
+  }
+
+  /* ═══════════════════════════════════════════════
+     PREMIUM 2: Undo / Redo with debounced push
+  ═══════════════════════════════════════════════ */
+  function deepClone() { return JSON.parse(JSON.stringify(sections)); }
+
+  function pushToHistory() {
+    clearTimeout(historyDebounceTimer);
+    if (historyIndex < historyStack.length - 1) {
+      historyStack = historyStack.slice(0, historyIndex + 1);
+    }
+    historyStack.push(deepClone());
+    if (historyStack.length > historyMaxSize) historyStack.shift();
+    historyIndex = historyStack.length - 1;
+    updateUndoRedoBtns();
+  }
+
+  function schedulePushToHistory() {
+    clearTimeout(historyDebounceTimer);
+    historyDebounceTimer = setTimeout(pushToHistory, 700);
+  }
+
+  function undoEdit() {
+    if (historyIndex <= 0) return;
+    historyIndex--;
+    sections = JSON.parse(JSON.stringify(historyStack[historyIndex]));
+    renderVisualSections();
+    updateUndoRedoBtns();
+  }
+
+  function redoEdit() {
+    if (historyIndex >= historyStack.length - 1) return;
+    historyIndex++;
+    sections = JSON.parse(JSON.stringify(historyStack[historyIndex]));
+    renderVisualSections();
+    updateUndoRedoBtns();
+  }
+
+  function updateUndoRedoBtns() {
+    const u = document.getElementById("undo-btn");
+    const r = document.getElementById("redo-btn");
+    if (u) u.disabled = (historyIndex <= 0);
+    if (r) r.disabled = (historyIndex >= historyStack.length - 1);
+  }
+
+  /* ═══════════════════════════════════════════════
+     PREMIUM 3: Preview Modal
+  ═══════════════════════════════════════════════ */
+  function openPreviewModal() {
+    const modal = document.getElementById("preview-modal");
+    const area = document.getElementById("preview-content-area");
+    if (!modal || !area) return;
+
+    let html = "";
+    sections.forEach(sec => {
+      const title = visualEditorLang === 'vi' ? sec.title_vi : sec.title_en;
+      const content = visualEditorLang === 'vi' ? sec.content_vi : sec.content_en;
+      if (title) html += `<h2 style="font-size:1.25rem;font-weight:700;color:var(--primary,#0053db);margin:2rem 0 0.75rem;">${title}</h2>`;
+      if (content) html += `<div style="color:#475569;line-height:1.75;margin-bottom:1rem;">${content}</div>`;
+    });
+
+    area.innerHTML = html || '<p style="text-align:center;padding:3rem;color:#94a3b8;font-style:italic;">Chưa có nội dung để xem trước</p>';
+    modal.classList.add("open");
+    document.body.style.overflow = "hidden";
+  }
+
+  function closePreviewModal() {
+    const m = document.getElementById("preview-modal");
+    if (m) m.classList.remove("open");
+    document.body.style.overflow = "";
+  }
+
+  function handlePreviewBackdropClick(e) {
+    if (e.target === document.getElementById("preview-modal")) closePreviewModal();
+  }
+
+  /* ═══════════════════════════════════════════════
+     PREMIUM 4: Version History Panel
+  ═══════════════════════════════════════════════ */
+  async function openVersionHistory() {
+    const panel = document.getElementById("version-history-panel");
+    const overlay = document.getElementById("version-history-overlay");
+    if (!panel || !overlay) return;
+    panel.classList.add("open");
+    overlay.classList.add("open");
+    document.body.style.overflow = "hidden";
+    await loadVersionHistory();
+  }
+
+  function closeVersionHistory() {
+    const panel = document.getElementById("version-history-panel");
+    const overlay = document.getElementById("version-history-overlay");
+    if (panel) panel.classList.remove("open");
+    if (overlay) overlay.classList.remove("open");
+    document.body.style.overflow = "";
+  }
+
+  async function loadVersionHistory() {
+    const container = document.getElementById("version-list-container");
+    if (!container) return;
+    container.innerHTML = `
+      <div class="flex flex-col items-center py-8 text-slate-400">
+        <span class="material-symbols-outlined text-2xl animate-spin mb-2">progress_activity</span>
+        <p class="text-xs">Đang tải...</p>
+      </div>`;
+    try {
+      const res = await fetch(`/system-config/legal-versions?page=${encodeURIComponent(pageKey)}`);
+      const data = await res.json();
+      if (!data.success || !data.versions || data.versions.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-10 px-4">
+            <span class="material-symbols-outlined text-4xl text-slate-300 dark:text-slate-600 mb-3 block">history_toggle_off</span>
+            <p class="text-sm font-semibold text-slate-500 dark:text-slate-400">Chưa có phiên bản nào</p>
+            <p class="text-xs text-slate-400 dark:text-slate-500 mt-1">Lưu trang lần đầu để tạo lịch sử tự động.</p>
+          </div>`;
+        return;
+      }
+      let html = `<p class="text-xs text-slate-400 dark:text-slate-500 mb-3 px-1">${data.versions.length} phiên bản được tìm thấy</p>`;
+      data.versions.forEach((v, i) => {
+        const isLatest = i === 0;
+        html += `
+          <div class="border border-slate-200 dark:border-slate-700/80 rounded-xl p-4 bg-white dark:bg-slate-800/50 hover:border-primary/40 transition-all group">
+            <div class="flex items-start justify-between gap-2">
+              <div class="flex items-start gap-2.5 min-w-0">
+                <div class="w-8 h-8 rounded-lg ${isLatest ? 'bg-primary/10' : 'bg-slate-100 dark:bg-slate-800'} flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <span class="material-symbols-outlined text-[16px] ${isLatest ? 'text-primary' : 'text-slate-400'}">restore_page</span>
+                </div>
+                <div class="min-w-0">
+                  <p class="text-sm font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-1.5">
+                    Phiên bản ${data.versions.length - i}
+                    ${isLatest ? '<span class="text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded font-bold">Mới nhất</span>' : ''}
+                  </p>
+                  <p class="text-xs text-slate-400 dark:text-slate-500 mt-0.5">${v.saved_at}</p>
+                </div>
+              </div>
+              <button onclick="restoreVersion(${v.id})"
+                class="flex-shrink-0 text-xs px-3 py-1.5 bg-primary/10 hover:bg-primary text-primary hover:text-white rounded-lg font-semibold transition-all whitespace-nowrap">
+                Khôi phục
+              </button>
+            </div>
+          </div>`;
+      });
+      container.innerHTML = html;
+    } catch(e) {
+      container.innerHTML = `<p class="text-sm text-red-500 p-4">Lỗi tải lịch sử: ${e.message}</p>`;
+    }
+  }
+
+  async function restoreVersion(versionId) {
+    if (!confirm("Khôi phục phiên bản này?\n\nNội dung hiện tại sẽ bị thay thế bởi phiên bản đã chọn.")) return;
+    const fd = new FormData();
+    const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+    fd.append("csrf_token", csrfMeta ? csrfMeta.getAttribute("content") : "");
+    fd.append("version_id", versionId);
+    try {
+      const res = await fetch("/system-config/restore-version", { method: "POST", body: fd });
+      const data = await res.json();
+      if (data.success) {
+        if (window.showToast) window.showToast("Đã khôi phục phiên bản thành công!", "success");
+        setTimeout(() => window.location.reload(), 800);
+      } else {
+        alert("Lỗi: " + (data.error || "Không thể khôi phục"));
+      }
+    } catch(e) { alert("Lỗi kết nối: " + e.message); }
+  }
+
+  /* ═══════════════════════════════════════════════
+     PREMIUM 1: Rich-Text Formatting Toolbar
+  ═══════════════════════════════════════════════ */
+  function applyFormat(command) {
+    if (command === 'createLink') {
+      const url = prompt("Nhập đường dẫn liên kết (URL):", "https://");
+      if (url) document.execCommand(command, false, url);
+    } else {
+      document.execCommand(command, false, null);
+    }
+    checkSelection();
+  }
+
+  function applyFormatBlock(tag) {
+    document.execCommand('formatBlock', false, tag);
+    checkSelection();
+  }
+
+  function checkSelection() {
+    const sel = window.getSelection();
+    const toolbar = document.getElementById("inline-format-toolbar");
+    if (!toolbar) return;
+
+    if (!sel.rangeCount || sel.isCollapsed) { toolbar.style.display = "none"; return; }
+
+    const range = sel.getRangeAt(0);
+    const rect = range.getBoundingClientRect();
+
+    /* Only show inside contenteditable elements */
+    let node = sel.anchorNode;
+    let inside = false;
+    while (node) {
+      if (node.nodeType === Node.ELEMENT_NODE && node.getAttribute("contenteditable") === "true") {
+        inside = true; break;
+      }
+      node = node.parentNode;
+    }
+    if (!inside) { toolbar.style.display = "none"; return; }
+
+    toolbar.style.display = "flex";
+    const tw = toolbar.offsetWidth || 300;
+    const left = Math.max(8, Math.min(
+      rect.left + window.scrollX + rect.width / 2 - tw / 2,
+      window.innerWidth - tw - 8
+    ));
+    toolbar.style.left = `${left}px`;
+    toolbar.style.top = `${Math.max(8, rect.top + window.scrollY - (toolbar.offsetHeight || 40) - 8)}px`;
+  }
+
+  /* ═══════════════════════════════════════════════
+     Keyboard Shortcuts
+  ═══════════════════════════════════════════════ */
+  document.addEventListener("keydown", function(e) {
+    const mod = e.ctrlKey || e.metaKey;
+    if (mod && e.key === 'z') {
+      e.preventDefault();
+      e.shiftKey ? redoEdit() : undoEdit();
+    }
+    if (mod && (e.key === 'y' || e.key === 'Y')) {
+      e.preventDefault(); redoEdit();
+    }
+    if (e.key === 'Escape') {
+      closePreviewModal();
+      closeVersionHistory();
+    }
+  });
+
+  /* ═══════════════════════════════════════════════
+     DOMContentLoaded – init sequence
+  ═══════════════════════════════════════════════ */
+  document.addEventListener("DOMContentLoaded", function() {
+    /* FIX 1: Capture full DOM content BEFORE the editor clears #legal-content-card */
+    const card = document.getElementById("legal-content-card");
+    if (card) {
+      const clone = card.cloneNode(true);
+      clone.querySelectorAll('h1').forEach(el => el.remove());
+      originalDomHtml = clone.innerHTML;
+    }
+
+    loadInitialContent();
+    pushToHistory();          /* push initial state so undo is always safe */
+    renderVisualSections();
+
+    document.addEventListener("selectionchange", checkSelection);
+
+    // Tự động đồng bộ ngôn ngữ soạn thảo của visual editor khi thay đổi ngôn ngữ toàn trang
+    document.addEventListener("i18nChanged", function(e) {
+      if (typeof switchEditorLanguage === "function") switchEditorLanguage(e.detail.lang);
+    });
+    document.addEventListener("i18nReady", function(e) {
+      if (typeof switchEditorLanguage === "function") switchEditorLanguage(e.detail.lang);
+    });
+  });
+</script>

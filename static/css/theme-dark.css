@@ -214,3 +214,70 @@ html.dark .hover\:bg-surface-container-highest:hover,
 html[data-theme="dark"] .hover\:bg-surface-container-highest:hover {
   background-color: #222c45 !important;
 }
+
+/* Custom Header Theme Switcher Styles */
+.theme-switch-wrapper {
+  display: flex;
+  align-items: center;
+  margin-right: 0.75rem;
+}
+
+.theme-switch-btn {
+  position: relative;
+  display: inline-flex;
+  height: 28px;
+  width: 52px;
+  flex-shrink: 0;
+  cursor: pointer;
+  border-radius: 9999px;
+  border: 1.5px solid #e2e8f0;
+  transition: background-color 0.25s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  background-color: #fef9c3; /* Soft cream/yellow for light mode */
+  border-color: #fde047;
+  outline: none;
+  align-items: center;
+  padding: 0;
+}
+
+html.dark .theme-switch-btn {
+  background-color: #1e293b; /* Slate-800 for dark mode */
+  border-color: #334155;
+}
+
+.theme-switch-knob {
+  pointer-events: none;
+  position: absolute;
+  left: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 22px;
+  width: 22px;
+  border-radius: 9999px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.15), 0 1px 2px 0 rgba(0, 0, 0, 0.1);
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Light mode state: knob on the right, filled with warm yellow */
+.theme-switch-btn.is-light .theme-switch-knob {
+  transform: translateX(24px);
+  background-color: #eab308; /* yellow-500 */
+}
+
+/* Dark mode state: knob on the left, filled with clean white */
+.theme-switch-btn.is-dark .theme-switch-knob {
+  transform: translateX(0);
+  background-color: #f8fafc; /* slate-50 */
+}
+
+.theme-switch-knob .sun-icon {
+  color: #ffffff !important;
+  font-size: 14px !important;
+  font-weight: bold;
+}
+
+.theme-switch-knob .moon-icon {
+  color: #0f172a !important;
+  font-size: 14px !important;
+  font-weight: bold;
+}
