@@ -7,11 +7,16 @@
 <head>
   <script>
     (function () {
-      var savedLang = "vi";
-      try {
-        savedLang = localStorage.getItem("siteLanguage") || "vi";
-      } catch (e) { }
-      document.documentElement.setAttribute("data-user-lang", savedLang);
+        var savedLang = "vi";
+        try {
+          var match = document.cookie.match(new RegExp('(^| )siteLanguage=([^;]+)'));
+          if (match) {
+            savedLang = match[2];
+          } else {
+            savedLang = localStorage.getItem("siteLanguage") || "vi";
+          }
+        } catch (e) {}
+        document.documentElement.setAttribute("data-user-lang", savedLang);
       if (savedLang === "en") {
         document.documentElement.classList.add("i18n-loading");
       }
@@ -40,7 +45,7 @@
   <script src="{{ url_for('static', filename='js/chart.umd.min.js') }}"></script>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/typography.css') }}" />
   <link rel="stylesheet" href="{{ url_for('static', filename='css/theme-dark.css') }}" />
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile-header-fix.css') }}?v=12" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile-header-fix.css') }}" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet" />
   <link
     href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
@@ -639,8 +644,8 @@
       </div>
     </div>
   </footer>
-  <script src="{{ url_for('static', filename='js/i18n.js?v=14') }}"></script>
-  <script src="{{ url_for('static', filename='js/script.js') }}?v=12"></script>
+  <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
     <script>
       document.body.style.opacity = "1";
     </script>

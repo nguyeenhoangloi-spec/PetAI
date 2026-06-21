@@ -131,12 +131,16 @@
   </style>
   <script>
     (function () {
-      document.documentElement.classList.add("preload");
-      var savedLang = "vi";
-      try {
-        savedLang = localStorage.getItem("siteLanguage") || "vi";
-      } catch (e) { }
-      document.documentElement.setAttribute("data-user-lang", savedLang);
+        var savedLang = "vi";
+        try {
+          var match = document.cookie.match(new RegExp('(^| )siteLanguage=([^;]+)'));
+          if (match) {
+            savedLang = match[2];
+          } else {
+            savedLang = localStorage.getItem("siteLanguage") || "vi";
+          }
+        } catch (e) {}
+        document.documentElement.setAttribute("data-user-lang", savedLang);
       if (savedLang === "en") {
         document.documentElement.classList.add("i18n-loading");
       }
@@ -223,7 +227,7 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/typography.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/theme-dark.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/toasts.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile-header-fix.css') }}?v=12">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile-header-fix.css') }}">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
     rel="stylesheet">
@@ -669,8 +673,8 @@
   </div>
 
 <script src="{{ url_for('static', filename='js/toasts.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/i18n.js?v=14') }}"></script>
-  <script src="{{ url_for('static', filename='js/script.js') }}?v=12"></script>
+  <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
   <script>
     (function () {
       const modal = document.getElementById("confirmModal");

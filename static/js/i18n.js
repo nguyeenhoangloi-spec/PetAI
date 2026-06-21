@@ -1695,7 +1695,7 @@
       confirmingStatus: "Đang xác nhận...",
       otpSentSuccess: "Mã OTP mới đã được gửi.",
       deletePendingPageTitle: "Tài khoản đang chờ xóa - PetAI",
-      deletePendingHeaderTitle": "Tài khoản đang chờ xóa",
+      deletePendingHeaderTitle: "Tài khoản đang chờ xóa",
       deletePendingHeaderDesc: "Yêu cầu xóa tài khoản đã được ghi nhận",
       deletePendingUserLabel: "Tài khoản:",
       deletePendingDateLabel: "Tài khoản sẽ bị xóa vĩnh viễn vào",
@@ -4037,6 +4037,7 @@
 
   function setLanguage(lang) {
     if (!TRANSLATIONS[lang]) lang = DEFAULT_LANG;
+    var oldLang = currentLang;
     currentLang = lang;
     saveLang(lang);
     applyTranslations(lang);
@@ -4053,6 +4054,39 @@
         new CustomEvent("i18nChanged", { detail: { lang: lang } }),
       );
     } catch (e) { }
+
+    if (oldLang !== lang) {
+      window.location.reload();
+    }
+  }
+
+  function loadRemoteTranslations(lang, callback) {
+    fetch("/static/locales/translations.json")
+      .then(function (res) {
+        if (!res.ok) throw new Error("Network response not ok");
+        return res.json();
+      })
+      .then(function (data) {
+        if (data) {
+          if (data.vi) {
+            for (var key in data.vi) {
+              TRANSLATIONS.vi[key] = data.vi[key];
+            }
+          }
+          if (data.en) {
+            for (var key in data.en) {
+              TRANSLATIONS.en[key] = data.en[key];
+            }
+          }
+          console.log("i18n successfully merged remote translations!");
+          applyTranslations(lang);
+        }
+        if (callback) callback();
+      })
+      .catch(function (err) {
+        console.warn("Failed to load remote translations, using local fallback:", err);
+        if (callback) callback();
+      });
   }
 
   function bootstrap() {
@@ -4093,6 +4127,7 @@
       // Ensure cookie is synced on initialization (e.g. if cookie was cleared/expired but localStorage exists)
       // to prevent FOUC / translation flash on subsequent page reloads (F5) or PJAX request triggers.
       saveLang(saved);
+      loadRemoteTranslations(saved);
     } catch (err) {
       console.error("i18n initialization error:", err);
     } finally {

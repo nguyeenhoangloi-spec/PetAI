@@ -209,6 +209,38 @@
 - **Prevention**: Luôn lưu giữ hoặc xử lý các tài nguyên động của trang ảo (inline scripts, stylesheets) trước khi thay đổi hoặc huỷ cấu trúc của trang đó.
 - **Status**: Fixed
 
+---
+
+## [2026-06-21 22:30] - Lỗi nút chuyển đổi Anh-Việt không làm mới trang để tải bản dịch từ Server
+
+- **Type**: Logic
+- **Severity**: High
+- **File**: `static/js/i18n.js:4055`
+- **Agent**: @frontend-specialist
+- **Root Cause**: Khi người dùng nhấn nút chuyển đổi ngôn ngữ, file JS thiết lập cookie ngôn ngữ mới (`siteLanguage`) và tiến hành dịch cục bộ các thẻ có thuộc tính `data-i18n`. Tuy nhiên, các nội dung động do server render (như dữ liệu từ cơ sở dữ liệu, các cảnh báo lỗi, thông tin cấu hình và gói dịch vụ) không có thuộc tính `data-i18n` vẫn hiển thị ở ngôn ngữ cũ. Việc này làm giao diện bị lai tạp nửa Anh nửa Việt, khiến người dùng cảm thấy tính năng không hoạt động.
+- **Error Message**: Không có lỗi console trực tiếp, nhưng giao diện hiển thị không đồng bộ và không dịch hết nội dung server-side.
+- **Fix Applied**: Bổ sung lệnh `window.location.reload()` vào hàm `setLanguage` trong `i18n.js` khi phát hiện ngôn ngữ thực sự thay đổi (`oldLang !== lang`). Việc này giúp tải lại toàn bộ trang từ Flask với cookie ngôn ngữ mới để server tự động biên dịch và trả về HTML sạch 100% tiếng Anh hoặc tiếng Việt.
+- **Prevention**: Với ứng dụng dùng cơ chế render song song (phía Server dịch HTML thô qua middleware và phía Client dịch thẻ tĩnh), việc chuyển đổi ngôn ngữ cần đi kèm lệnh reload trang hoặc PJAX reload để đồng bộ hoá trạng thái.
+- **Status**: Fixed
+
+---
+
+## [2026-06-21 22:52] - Lỗi cú pháp JavaScript trong i18n.js vô hiệu hóa nút chuyển đổi ngôn ngữ
+
+- **Type**: Syntax
+- **Severity**: High
+- **File**: `static/js/i18n.js:1698`
+- **Agent**: @frontend-specialist
+- **Root Cause**: Khai báo khóa `deletePendingHeaderTitle` trong danh sách dịch tiếng Việt bị thừa dấu đóng ngoặc kép (`deletePendingHeaderTitle"`), dẫn đến lỗi cú pháp `SyntaxError: Unexpected string` khiến trình duyệt không biên dịch và thực thi được file `i18n.js`.
+- **Error Message**:
+  ```text
+  SyntaxError: Unexpected string at static/js/i18n.js:1698
+  ```
+- **Fix Applied**: Loại bỏ dấu ngoặc kép dư thừa ở khóa `deletePendingHeaderTitle` tại dòng 1698.
+- **Prevention**: Sử dụng các công cụ lint hoặc lệnh kiểm tra cú pháp (như `node --check`) để phát hiện và ngăn chặn các lỗi đánh máy (typo) trước khi lưu/commit code.
+- **Status**: Fixed
+
+
 
 
 

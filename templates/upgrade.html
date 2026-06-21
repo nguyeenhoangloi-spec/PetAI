@@ -130,10 +130,14 @@
   </style>
     <script>
       (function () {
-        document.documentElement.classList.add("preload");
         var savedLang = "vi";
         try {
-          savedLang = localStorage.getItem("siteLanguage") || "vi";
+          var match = document.cookie.match(new RegExp('(^| )siteLanguage=([^;]+)'));
+          if (match) {
+            savedLang = match[2];
+          } else {
+            savedLang = localStorage.getItem("siteLanguage") || "vi";
+          }
         } catch (e) {}
         document.documentElement.setAttribute("data-user-lang", savedLang);
         if (savedLang === "en") {
@@ -237,7 +241,7 @@
     >
     <link
       rel="stylesheet"
-      href="{{ url_for('static', filename='css/mobile-header-fix.css') }}?v=12"
+      href="{{ url_for('static', filename='css/mobile-header-fix.css') }}"
     >
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
@@ -1606,7 +1610,7 @@
       };
     })();
   </script>
-    <script src="{{ url_for('static', filename='js/i18n.js?v=14') }}"></script>
-    <script src="{{ url_for('static', filename='js/script.js') }}?v=12"></script>
+    <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
   </body>
 </html>
