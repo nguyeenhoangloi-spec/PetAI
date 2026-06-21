@@ -253,20 +253,15 @@ class HTMLTranslator(HTMLParser):
                 # Mark as translated
                 self.tag_stack[-1][2] = True
                 stripped = data.strip()
-                translated = None
                 if stripped in vi_to_key:
                     key = vi_to_key[stripped]
                     translated = self.get_translation(key)
-                else:
-                    translated = translate_dynamic_toast(stripped, self.lang)
-                    if translated == stripped:
-                        translated = None
-                if translated:
-                    # Preserve surrounding whitespace
-                    leading = data[:len(data) - len(data.lstrip())]
-                    trailing = data[len(data.rstrip()):]
-                    self.result.append(f"{leading}{translated}{trailing}")
-                    return
+                    if translated:
+                        # Preserve surrounding whitespace
+                        leading = data[:len(data) - len(data.lstrip())]
+                        trailing = data[len(data.rstrip()):]
+                        self.result.append(f"{leading}{translated}{trailing}")
+                        return
                     
         self.result.append(data)
         
@@ -285,74 +280,6 @@ class HTMLTranslator(HTMLParser):
         
     def get_translation(self, key):
         return translations.get(self.lang, {}).get(key)
-
-
-def translate_dynamic_toast(text: str, lang: str) -> str:
-    if lang != "en":
-        return text
-    
-    # 1. Chào mừng trở lại, {fullname}!
-    if text.startswith("Chào mừng trở lại, ") and text.endswith("!"):
-        name = text[len("Chào mừng trở lại, "):-1]
-        return f"Welcome back, {name}!"
-        
-    # 2. Xin chào, {fullname}!
-    if text.startswith("Xin chào, ") and text.endswith("!"):
-        name = text[len("Xin chào, "):-1]
-        return f"Hello, {name}!"
-        
-    # 3. Đã xóa người dùng {username} thành công.
-    if text.startswith("Đã xóa người dùng ") and text.endswith(" thành công."):
-        username = text[len("Đã xóa người dùng "):-len(" thành công.")]
-        return f"Successfully deleted user {username}."
-        
-    # 4. Xác thực thành công! Chúc mừng {fullname}, tài khoản của bạn đã được kích hoạt. Vui lòng đăng nhập.
-    if text.startswith("Xác thực thành công! Chúc mừng ") and text.endswith(", tài khoản của bạn đã được kích hoạt. Vui lòng đăng nhập."):
-        fullname = text[len("Xác thực thành công! Chúc mừng "):-len(", tài khoản của bạn đã được kích hoạt. Vui lòng đăng nhập.")]
-        return f"Verification successful! Congratulations {fullname}, your account has been activated. Please log in."
-        
-    # 5. Đã xác nhận thanh toán cho đơn {order_id}.
-    if text.startswith("Đã xác nhận thanh toán cho đơn ") and text.endswith("."):
-        order_id = text[len("Đã xác nhận thanh toán cho đơn "):-1]
-        return f"Payment confirmed for order {order_id}."
-        
-    # 6. Đã xóa lịch sử nhận diện. (Đã xóa {deleted_files} ảnh lưu trữ)
-    match_history = re.match(r'Đã xóa lịch sử nhận diện\.\s*\(Đã xóa (\d+) ảnh lưu trữ\)', text)
-    if match_history:
-        count = match_history.group(1)
-        return f"Cleared prediction history. (Deleted {count} archived images)"
-        
-    # 7. Đã cấp gói {plan} cho người dùng thành công.
-    match_plan = re.match(r'Đã cấp gói (.*?) cho người dùng thành công\.', text)
-    if match_plan:
-        plan = match_plan.group(1)
-        return f"Successfully assigned package {plan} to user."
-        
-    # 8. Đã cập nhật nội dung trang {page}.
-    match_page = re.match(r'Đã cập nhật nội dung trang (.*?)\.', text)
-    if match_page:
-        page = match_page.group(1)
-        return f"Updated content for page {page}."
-        
-    # 9. Gói {plan_label} vừa mua thành công.
-    match_purchase = re.match(r'Gói (.*?) vừa mua thành công\.', text)
-    if match_purchase:
-        plan_label = match_purchase.group(1)
-        return f"Package {plan_label} purchased successfully."
-        
-    # 10. Mã OTP không chính xác. Bạn còn {attempts} lần nhập.
-    match_otp = re.match(r'Mã OTP không chính xác\.\s*Bạn còn (\d+) lần nhập\.', text)
-    if match_otp:
-        attempts = match_otp.group(1)
-        return f"Incorrect OTP. You have {attempts} attempts left."
-        
-    # 11. Lỗi: {error}
-    if text.startswith("Lỗi: "):
-        err_msg = text[len("Lỗi: "):]
-        return f"Error: {err_msg}"
-        
-    return text
-
 
 def translate_html(html_content: str, lang: str) -> str:
     if lang not in {"en", "vi"}:
