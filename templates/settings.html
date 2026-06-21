@@ -431,7 +431,8 @@
                     <span class="material-symbols-outlined text-[12px] mr-1">verified_user</span>{{ display_role }}
                   </span>
                   <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-400 text-slate-900 uppercase tracking-wider">
-                    <span class="material-symbols-outlined text-[12px] mr-1">workspace_premium</span>Gói {{ display_plan }}
+                    <span class="material-symbols-outlined text-[12px] mr-1">workspace_premium</span>
+                    <span data-i18n="userPlanLabel" data-code="{{ display_plan }}">Gói {{ display_plan }}</span>
                   </span>
                 </div>
               </div>
@@ -668,8 +669,8 @@
                   <span class="material-symbols-outlined">delete_forever</span>
                 </div>
                 <div>
-                  <h3 class="text-lg font-bold text-red-700 dark:text-red-400">Vùng nguy hiểm</h3>
-                  <p class="text-xs text-red-500/80 dark:text-red-500/60">Hành động không thể hoàn tác nếu quá thời hạn</p>
+                  <h3 class="text-lg font-bold text-red-700 dark:text-red-400" data-i18n="dangerZoneTitle">Vùng nguy hiểm</h3>
+                  <p class="text-xs text-red-500/80 dark:text-red-500/60" data-i18n="dangerZoneDesc">Hành động không thể hoàn tác nếu quá thời hạn</p>
                 </div>
               </div>
 
@@ -679,8 +680,8 @@
                     <span class="material-symbols-outlined text-[20px]">person_off</span>
                   </div>
                   <div class="space-y-1">
-                    <h4 class="text-sm font-bold text-red-800 dark:text-red-300">Yêu cầu xóa tài khoản</h4>
-                    <p class="text-xs text-red-700/80 dark:text-red-400/80 max-w-xl">
+                    <h4 class="text-sm font-bold text-red-800 dark:text-red-300" data-i18n="deleteAccountTitle">Yêu cầu xóa tài khoản</h4>
+                    <p class="text-xs text-red-700/80 dark:text-red-400/80 max-w-xl" data-i18n-html="deleteAccountDesc">
                       Tài khoản sẽ không bị xóa ngay mà chuyển sang <b>trạng thái chờ xóa trong 30 ngày</b>.
                       Trong thời gian này bạn có thể đăng nhập lại để khôi phục.
                     </p>
@@ -692,7 +693,7 @@
                   onclick="openDeleteModal()"
                   class="whitespace-nowrap px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white font-semibold text-sm rounded-xl transition-all flex items-center gap-2 active:scale-95 shadow-sm">
                   <span class="material-symbols-outlined text-[18px]">delete_forever</span>
-                  Yêu cầu xóa tài khoản
+                  <span data-i18n="deleteAccountTitle">Yêu cầu xóa tài khoản</span>
                 </button>
               </div>
             </section>
@@ -716,23 +717,24 @@
               <div class="w-16 h-16 rounded-full bg-red-100 dark:bg-red-900/40 mx-auto flex items-center justify-center mb-5">
                 <span class="material-symbols-outlined text-red-600 dark:text-red-400 text-4xl">warning</span>
               </div>
-              <h2 id="delete-modal-1-title" class="text-xl font-bold text-slate-800 dark:text-slate-100 text-center mb-2">Xác nhận yêu cầu xóa tài khoản</h2>
-              <p class="text-sm text-slate-500 dark:text-slate-400 text-center mb-5">
+              <h2 id="delete-modal-1-title" class="text-xl font-bold text-slate-800 dark:text-slate-100 text-center mb-2" data-i18n="deleteModalConfirmTitle">Xác nhận yêu cầu xóa tài khoản</h2>
+              <p class="text-sm text-slate-500 dark:text-slate-400 text-center mb-5" data-i18n-html="deleteModalConfirmDesc">
                 Tài khoản sẽ chuyển sang <b>trạng thái chờ xóa 30 ngày</b>.<br>
                 Trong thời gian này bạn vẫn có thể đăng nhập và khôi phục.
               </p>
 
               <!-- Cảnh báo đỏ -->
               <div class="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-xl p-4 mb-5 text-sm text-red-700 dark:text-red-300 space-y-1">
-                <p>⚠️ <b>Sau 30 ngày</b>, tất cả dữ liệu, lịch sử và quyền truy cập sẽ bị <b>vô hiệu hóa vĩnh viễn</b>.</p>
-                <p>⚠️ Quá trình này <b>yêu cầu xác nhận qua email</b> (OTP).</p>
+                <p data-i18n-html="deleteModalWarning1">⚠️ <b>Sau 30 ngày</b>, tất cả dữ liệu, lịch sử và quyền truy cập sẽ bị <b>vô hiệu hóa vĩnh viễn</b>.</p>
+                <p data-i18n-html="deleteModalWarning2">⚠️ Quá trình này <b>yêu cầu xác nhận qua email</b> (OTP).</p>
               </div>
 
               <!-- Lý do (tùy chọn) -->
               <div class="mb-5">
-                <label class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-2">Lý do xóa (tùy chọn)</label>
+                <label class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-2" data-i18n="deleteReasonLabel">Lý do xóa (tùy chọn)</label>
                 <textarea
                   id="delete-reason-input"
+                  data-i18n-placeholder="deleteReasonPlaceholder"
                   placeholder="Ví dụ: Tôi không còn sử dụng dịch vụ nữa..."
                   rows="3"
                   class="w-full px-4 py-3 text-sm bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-red-400/30 focus:border-red-400 dark:text-slate-100"
@@ -741,11 +743,11 @@
 
               <div class="flex gap-3">
                 <button type="button" onclick="closeDeleteModals()"
-                  class="flex-1 py-3 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-semibold rounded-xl transition-all hover:bg-slate-50 dark:hover:bg-slate-800">
+                  class="flex-1 py-3 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-semibold rounded-xl transition-all hover:bg-slate-50 dark:hover:bg-slate-800" data-i18n="cancel">
                   Hủy bỏ
                 </button>
                 <button type="button" id="delete-send-otp-btn" onclick="sendDeleteOtp()"
-                  class="flex-1 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl transition-all active:scale-95 shadow-sm">
+                  class="flex-1 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl transition-all active:scale-95 shadow-sm" data-i18n="sendOtpBtn">
                   Gửi mã xác nhận
                 </button>
               </div>
@@ -761,13 +763,13 @@
                 <span class="material-symbols-outlined text-primary dark:text-blue-400 text-4xl">mark_email_read</span>
               </div>
 
-              <h2 id="delete-modal-2-title" class="text-xl font-bold text-slate-800 dark:text-slate-100 mb-2">Nhập mã OTP xác nhận</h2>
-              <p class="text-sm text-slate-500 dark:text-slate-400 mb-1">Mã đã được gửi đến</p>
+              <h2 id="delete-modal-2-title" class="text-xl font-bold text-slate-800 dark:text-slate-100 mb-2" data-i18n="deleteModalOtpTitle">Nhập mã OTP xác nhận</h2>
+              <p class="text-sm text-slate-500 dark:text-slate-400 mb-1" data-i18n="deleteModalOtpDesc">Mã đã được gửi đến</p>
               <p class="font-semibold text-slate-700 dark:text-slate-200 text-sm mb-5">{{ session.get('email') or '' }}</p>
 
               <!-- Countdown -->
               <div class="mb-5">
-                <p class="text-xs text-slate-400 mb-2">Mã có hiệu lực trong <span id="delete-otp-countdown" class="font-semibold text-primary">05:00</span></p>
+                <p class="text-xs text-slate-400 mb-2"><span data-i18n="deleteModalOtpCountdown">Mã có hiệu lực trong</span> <span id="delete-otp-countdown" class="font-semibold text-primary">05:00</span></p>
                 <!-- OTP boxes -->
                 <div class="flex justify-center gap-2" id="delete-otp-boxes">
                   <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="one-time-code">
@@ -782,15 +784,15 @@
 
               <!-- Actions -->
               <button type="button" id="delete-confirm-btn" onclick="confirmDeleteOtp()"
-                class="w-full py-3 bg-primary hover:bg-blue-700 text-white font-semibold rounded-xl transition-all active:scale-95 mb-3 disabled:opacity-50">
+                class="w-full py-3 bg-primary hover:bg-blue-700 text-white font-semibold rounded-xl transition-all active:scale-95 mb-3 disabled:opacity-50" data-i18n="deleteConfirmBtn">
                 Xác nhận xóa tài khoản
               </button>
               <button type="button" id="delete-resend-btn" onclick="resendDeleteOtp()"
-                class="w-full py-2.5 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-sm font-medium rounded-xl transition-all hover:bg-slate-50 dark:hover:bg-slate-800 mb-2">
+                class="w-full py-2.5 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-sm font-medium rounded-xl transition-all hover:bg-slate-50 dark:hover:bg-slate-800 mb-2" data-i18n="deleteResendBtn">
                 Gửi lại mã OTP
               </button>
               <button type="button" onclick="closeDeleteModals()"
-                class="w-full py-2 text-slate-400 text-xs mt-2 hover:text-slate-600 transition-colors">
+                class="w-full py-2 text-slate-400 text-xs mt-2 hover:text-slate-600 transition-colors" data-i18n="close">
                 Đóng
               </button>
             </div>
@@ -803,13 +805,13 @@
               <div class="w-16 h-16 rounded-full bg-green-100 dark:bg-green-900/40 mx-auto flex items-center justify-center mb-4">
                 <span class="material-symbols-outlined text-green-600 dark:text-green-400 text-4xl">check_circle</span>
               </div>
-              <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 mb-2">Yêu cầu đã được ghi nhận</h2>
-              <p class="text-sm text-slate-500 dark:text-slate-400 mb-5">
+              <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 mb-2" data-i18n="deleteSuccessTitle">Yêu cầu đã được ghi nhận</h2>
+              <p class="text-sm text-slate-500 dark:text-slate-400 mb-5" data-i18n-html="deleteSuccessDesc">
                 Tài khoản của bạn đã được chuyển sang <b>trạng thái chờ xóa</b>.<br>
                 Kiểm tra email để biết thêm chi tiết.
               </p>
               <button type="button" onclick="window.location.reload()"
-                class="w-full py-3 bg-primary hover:bg-blue-700 text-white font-semibold rounded-xl transition-all active:scale-95">
+                class="w-full py-3 bg-primary hover:bg-blue-700 text-white font-semibold rounded-xl transition-all active:scale-95" data-i18n="close">
                 Đóng
               </button>
             </div>
@@ -841,7 +843,7 @@
               const reason = document.getElementById('delete-reason-input').value.trim();
               const btn = document.getElementById('delete-send-otp-btn');
               btn.disabled = true;
-              btn.textContent = 'Đang gửi...';
+              btn.textContent = window.PetAI_i18n ? window.PetAI_i18n.t('sendingStatus') : 'Đang gửi...';
 
               try {
                 const res = await fetch('/account/delete/request', {
@@ -860,13 +862,13 @@
                   document.querySelectorAll('#delete-otp-boxes .otp-input')[0]?.focus();
                   startDelCountdown();
                 } else {
-                  alert(data.message || 'Gặp lỗi. Vui lòng thử lại.');
+                  alert(data.message || (window.PetAI_i18n ? window.PetAI_i18n.t('error') : 'Gặp lỗi. Vui lòng thử lại.'));
                 }
               } catch (e) {
-                alert('Lỗi kết nối. Vui lòng thử lại.');
+                alert(window.PetAI_i18n ? window.PetAI_i18n.t('error') : 'Lỗi kết nối. Vui lòng thử lại.');
               } finally {
                 btn.disabled = false;
-                btn.textContent = 'Gửi mã xác nhận';
+                btn.textContent = window.PetAI_i18n ? window.PetAI_i18n.t('sendOtpBtn') : 'Gửi mã xác nhận';
               }
             }
 
@@ -917,7 +919,7 @@
               }
               const btn = document.getElementById('delete-confirm-btn');
               btn.disabled = true;
-              btn.textContent = 'Đang xác nhận...';
+              btn.textContent = window.PetAI_i18n ? window.PetAI_i18n.t('confirmingStatus') : 'Đang xác nhận...';
 
               try {
                 const res = await fetch('/account/delete/confirm', {
@@ -937,12 +939,12 @@
                 } else {
                   showDelOtpError(data.message || 'Mã OTP không đúng.');
                   btn.disabled = false;
-                  btn.textContent = 'Xác nhận xóa tài khoản';
+                  btn.textContent = window.PetAI_i18n ? window.PetAI_i18n.t('deleteConfirmBtn') : 'Xác nhận xóa tài khoản';
                 }
               } catch (e) {
                 showDelOtpError('Lỗi kết nối. Vui lòng thử lại.');
                 btn.disabled = false;
-                btn.textContent = 'Xác nhận xóa tài khoản';
+                btn.textContent = window.PetAI_i18n ? window.PetAI_i18n.t('deleteConfirmBtn') : 'Xác nhận xóa tài khoản';
               }
             }
 
@@ -950,7 +952,7 @@
               const reason = ''; // Lý do đã gửi từ modal 1
               const btn = document.getElementById('delete-resend-btn');
               btn.disabled = true;
-              btn.textContent = 'Đang gửi lại...';
+              btn.textContent = window.PetAI_i18n ? window.PetAI_i18n.t('sendingStatus') : 'Đang gửi lại...';
               try {
                 const res = await fetch('/account/delete/request', {
                   method: 'POST',
@@ -967,15 +969,15 @@
                   document.querySelectorAll('#delete-otp-boxes .otp-input')[0]?.focus();
                   hideDelOtpError();
                   startDelCountdown();
-                  if (typeof window.showToast === 'function') window.showToast('success', 'Mã OTP mới đã được gửi về email.');
+                  if (typeof window.showToast === 'function') window.showToast('success', window.PetAI_i18n ? window.PetAI_i18n.t('otpSentSuccess') : 'Mã OTP mới đã được gửi về email.');
                 } else {
-                  showDelOtpError(data.message || 'Không thể gửi lại OTP.');
+                  showDelOtpError(data.message || (window.PetAI_i18n ? window.PetAI_i18n.t('otpSendFailedError') : 'Không thể gửi lại OTP.'));
                 }
               } catch (e) {
-                showDelOtpError('Lỗi kết nối.');
+                showDelOtpError(window.PetAI_i18n ? window.PetAI_i18n.t('connectionFailedError') : 'Lỗi kết nối.');
               } finally {
                 btn.disabled = false;
-                btn.textContent = 'Gửi lại mã OTP';
+                btn.textContent = window.PetAI_i18n ? window.PetAI_i18n.t('deleteResendBtn') : 'Gửi lại mã OTP';
               }
             }
 
@@ -1320,7 +1322,7 @@
       })();
     </script>
     <script src="{{ url_for('static', filename='js/toasts.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/i18n.js?v=13') }}"></script>
     <script src="{{ url_for('static', filename='js/script.js') }}?v=12"></script>
 </body>
 </html>

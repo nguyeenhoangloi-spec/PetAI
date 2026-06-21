@@ -958,8 +958,7 @@
           </div>
           {% endif %}
         </section>
-      </div>
-    </main>
+
 
     <!-- Print styles relocated to head -->
     <div id="payment-auto-invoice" data-auto-invoice="{{ auto_show_invoice|tojson|forceescape if auto_show_invoice else '' }}"></div>
@@ -1534,8 +1533,10 @@
         })();
       })();
     </script>
+      </div>
+    </main>
     <script src="{{ url_for('static', filename='js/toasts.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/i18n.js?v=13') }}"></script>
     <script src="{{ url_for('static', filename='js/script.js') }}?v=12"></script>
 </body>
 </html>

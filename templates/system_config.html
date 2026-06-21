@@ -480,8 +480,8 @@
                         <span class="material-symbols-outlined text-[22px]" id="upload-icon">cloud_upload</span>
                       </div>
                       <div class="text-center">
-                        <p class="text-xs font-semibold text-on-surface dark:text-slate-200" id="upload-filename">Kéo thả logo vào đây hoặc nhấp để chọn</p>
-                        <p class="text-[10px] text-on-surface-variant dark:text-slate-400 mt-0.5">PNG, JPG, JPEG, SVG hoặc WEBP (Tối đa 2MB)</p>
+                        <p class="text-xs font-semibold text-on-surface dark:text-slate-200" id="upload-filename" data-i18n="sysLogoUploadDrag">Kéo thả logo vào đây hoặc nhấp để chọn</p>
+                        <p class="text-[10px] text-on-surface-variant dark:text-slate-400 mt-0.5" data-i18n="sysLogoUploadHelp">PNG, JPG, JPEG, SVG hoặc WEBP (Tối đa 2MB)</p>
                       </div>
                     </div>
                   </div>
@@ -537,7 +537,7 @@
                   <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
                     <div>
                       <h4 class="text-sm font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wider" data-i18n="sysPlanBasic">Gói Cơ Bản (Basic)</h4>
-                      <p class="text-[11px] text-on-surface-variant dark:text-slate-400 mt-0.5">Dành cho cá nhân dùng thử</p>
+                      <p class="text-[11px] text-on-surface-variant dark:text-slate-400 mt-0.5" data-i18n="sysPlanBasicDesc">Dành cho cá nhân dùng thử</p>
                     </div>
                     <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500">
                       <span class="material-symbols-outlined text-xl">star</span>
@@ -549,7 +549,7 @@
                       <label class="text-xs font-semibold text-on-surface-variant dark:text-slate-400" data-i18n="sysPlanPriceVnd">Giá gói (VNĐ)</label>
                       <div class="relative">
                         <input type="number" name="plan_basic_price" value="{{ configs.get('plan_basic_price', '1000') }}" required class="premium-input w-full pl-4 pr-12 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/30 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary transition-all" />
-                        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">đ</span>
+                        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400" data-i18n="currencySuffix">đ</span>
                       </div>
                     </div>
                     
@@ -557,7 +557,7 @@
                       <label class="text-xs font-semibold text-on-surface-variant dark:text-slate-400" data-i18n="sysPlanDurationDays">Thời gian dùng (Ngày)</label>
                       <div class="relative">
                         <input type="number" name="plan_basic_days" value="{{ configs.get('plan_basic_days', '7') }}" required class="premium-input w-full pl-4 pr-16 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/30 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary transition-all" />
-                        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">ngày</span>
+                        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400" data-i18n="daysLabel">ngày</span>
                       </div>
                     </div>
                     
@@ -565,7 +565,7 @@
                       <label class="text-xs font-semibold text-on-surface-variant dark:text-slate-400" data-i18n="sysPlanScanLimit">Hạn mức quét (Lượt)</label>
                       <div class="relative">
                         <input type="number" name="plan_basic_scans" value="{{ configs.get('plan_basic_scans', '50') }}" required class="premium-input w-full pl-4 pr-16 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/30 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary transition-all" />
-                        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">lượt</span>
+                        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400" data-i18n="scansLabel">lượt</span>
                       </div>
                     </div>
                   </div>
@@ -573,14 +573,14 @@
 
                 <!-- PRO PLAN CARD -->
                 <div class="glass-card bg-white dark:bg-slate-900/60 border-2 border-primary dark:border-blue-500 rounded-2xl p-6 flex flex-col gap-5 shadow-md hover:shadow-lg transition-all duration-300 relative group overflow-hidden">
-                  <div class="absolute top-0 right-0 bg-primary dark:bg-blue-500 text-on-primary text-[9px] font-bold px-3 py-1 rounded-bl-xl uppercase tracking-wider">
+                  <div class="absolute top-0 right-0 bg-primary dark:bg-blue-500 text-on-primary text-[9px] font-bold px-3 py-1 rounded-bl-xl uppercase tracking-wider" data-i18n="sysRecommended">
                     Khuyên dùng
                   </div>
 
                   <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
                     <div>
                       <h4 class="text-sm font-bold text-primary dark:text-blue-400 uppercase tracking-wider" data-i18n="sysPlanPro">Gói Chuyên Nghiệp (Pro)</h4>
-                      <p class="text-[11px] text-on-surface-variant dark:text-slate-400 mt-0.5">Lựa chọn phổ biến nhất</p>
+                      <p class="text-[11px] text-on-surface-variant dark:text-slate-400 mt-0.5" data-i18n="sysPlanProDesc">Lựa chọn phổ biến nhất</p>
                     </div>
                     <div class="w-10 h-10 rounded-xl bg-primary/10 dark:bg-blue-500/10 flex items-center justify-center text-primary dark:text-blue-400">
                       <span class="material-symbols-outlined text-xl">workspace_premium</span>
@@ -592,7 +592,7 @@
                       <label class="text-xs font-semibold text-on-surface-variant dark:text-slate-400" data-i18n="sysPlanPriceVnd">Giá gói (VNĐ)</label>
                       <div class="relative">
                         <input type="number" name="plan_pro_price" value="{{ configs.get('plan_pro_price', '5000') }}" required class="premium-input w-full pl-4 pr-12 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/30 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary transition-all" />
-                        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">đ</span>
+                        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400" data-i18n="currencySuffix">đ</span>
                       </div>
                     </div>
                     
@@ -600,7 +600,7 @@
                       <label class="text-xs font-semibold text-on-surface-variant dark:text-slate-400" data-i18n="sysPlanDurationDays">Thời gian dùng (Ngày)</label>
                       <div class="relative">
                         <input type="number" name="plan_pro_days" value="{{ configs.get('plan_pro_days', '30') }}" required class="premium-input w-full pl-4 pr-16 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/30 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary transition-all" />
-                        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">ngày</span>
+                        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400" data-i18n="daysLabel">ngày</span>
                       </div>
                     </div>
                     
@@ -608,7 +608,7 @@
                       <label class="text-xs font-semibold text-on-surface-variant dark:text-slate-400" data-i18n="sysPlanScanLimit">Hạn mức quét (Lượt)</label>
                       <div class="relative">
                         <input type="number" name="plan_pro_scans" value="{{ configs.get('plan_pro_scans', '200') }}" required class="premium-input w-full pl-4 pr-16 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/30 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary transition-all" />
-                        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">lượt</span>
+                        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400" data-i18n="scansLabel">lượt</span>
                       </div>
                     </div>
                   </div>
@@ -619,7 +619,7 @@
                   <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
                     <div>
                       <h4 class="text-sm font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wider" data-i18n="sysPlanEnterprise">Gói Doanh Nghiệp (Enterprise)</h4>
-                      <p class="text-[11px] text-on-surface-variant dark:text-slate-400 mt-0.5">Không giới hạn cho tổ chức</p>
+                      <p class="text-[11px] text-on-surface-variant dark:text-slate-400 mt-0.5" data-i18n="sysPlanEntDesc">Không giới hạn cho tổ chức</p>
                     </div>
                     <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500">
                       <span class="material-symbols-outlined text-xl">crown</span>
@@ -631,7 +631,7 @@
                       <label class="text-xs font-semibold text-on-surface-variant dark:text-slate-400" data-i18n="sysPlanPriceVnd">Giá gói (VNĐ)</label>
                       <div class="relative">
                         <input type="number" name="plan_enterprise_price" value="{{ configs.get('plan_enterprise_price', '15000') }}" required class="premium-input w-full pl-4 pr-12 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/30 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary transition-all" />
-                        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">đ</span>
+                        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400" data-i18n="currencySuffix">đ</span>
                       </div>
                     </div>
                     
@@ -639,7 +639,7 @@
                       <label class="text-xs font-semibold text-on-surface-variant dark:text-slate-400" data-i18n="sysPlanDurationDays">Thời gian dùng (Ngày)</label>
                       <div class="relative">
                         <input type="number" name="plan_enterprise_days" value="{{ configs.get('plan_enterprise_days', '90') }}" required class="premium-input w-full pl-4 pr-16 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/30 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary transition-all" />
-                        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">ngày</span>
+                        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400" data-i18n="daysLabel">ngày</span>
                       </div>
                     </div>
                     
@@ -647,7 +647,7 @@
                       <label class="text-xs font-semibold text-on-surface-variant dark:text-slate-400" data-i18n="sysPlanEntScanNote">Hạn mức quét (lượt hoặc 'unlimited')</label>
                       <div class="relative">
                         <input type="text" name="plan_enterprise_scans" value="{{ configs.get('plan_enterprise_scans', 'unlimited') }}" required class="premium-input w-full pl-4 pr-16 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/30 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary transition-all" />
-                        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">lượt</span>
+                        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400" data-i18n="scansLabel">lượt</span>
                       </div>
                     </div>
                   </div>
@@ -672,8 +672,8 @@
                   <span class="material-symbols-outlined text-[20px]">description</span>
                 </div>
                 <div>
-                  <span class="text-[10px] text-on-surface-variant dark:text-slate-400 block font-semibold uppercase tracking-wider">Tổng số trang</span>
-                  <span class="text-sm font-extrabold text-on-surface dark:text-slate-200">7 Trang</span>
+                  <span class="text-[10px] text-on-surface-variant dark:text-slate-400 block font-semibold uppercase tracking-wider" data-i18n="sysTotalPages">Tổng số trang</span>
+                  <span class="text-sm font-extrabold text-on-surface dark:text-slate-200">7 <span data-i18n="sysPagesUnit">Trang</span></span>
                 </div>
               </div>
               
@@ -683,9 +683,9 @@
                   <span class="material-symbols-outlined text-[20px] animate-pulse">online_prediction</span>
                 </div>
                 <div>
-                  <span class="text-[10px] text-on-surface-variant dark:text-slate-400 block font-semibold uppercase tracking-wider">Trạng thái</span>
+                  <span class="text-[10px] text-on-surface-variant dark:text-slate-400 block font-semibold uppercase tracking-wider" data-i18n="sysStatus">Trạng thái</span>
                   <span class="text-sm font-extrabold text-emerald-500 dark:text-emerald-400 flex items-center gap-1.5">
-                    Trực tuyến
+                    <span data-i18n="sysOnline">Trực tuyến</span>
                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
                   </span>
                 </div>
@@ -697,8 +697,8 @@
                   <span class="material-symbols-outlined text-[20px]">history</span>
                 </div>
                 <div>
-                  <span class="text-[10px] text-on-surface-variant dark:text-slate-400 block font-semibold uppercase tracking-wider">Lịch sử</span>
-                  <span class="text-sm font-extrabold text-on-surface dark:text-slate-200">Tự động lưu</span>
+                  <span class="text-[10px] text-on-surface-variant dark:text-slate-400 block font-semibold uppercase tracking-wider" data-i18n="sysHistory">Lịch sử</span>
+                  <span class="text-sm font-extrabold text-on-surface dark:text-slate-200" data-i18n="sysAutoSave">Tự động lưu</span>
                 </div>
               </div>
 
@@ -708,7 +708,7 @@
                   <span class="material-symbols-outlined text-[20px]">admin_panel_settings</span>
                 </div>
                 <div>
-                  <span class="text-[10px] text-on-surface-variant dark:text-slate-400 block font-semibold uppercase tracking-wider">Quyền hạn</span>
+                  <span class="text-[10px] text-on-surface-variant dark:text-slate-400 block font-semibold uppercase tracking-wider" data-i18n="sysPermission">Quyền hạn</span>
                   <span class="text-sm font-extrabold text-on-surface dark:text-slate-200">Admin Edit</span>
                 </div>
               </div>
@@ -730,9 +730,9 @@
                 </div>
                 <!-- Categories filter -->
                 <div class="flex gap-1 bg-slate-100 dark:bg-slate-950 p-1 rounded-xl border border-slate-200 dark:border-slate-800/80">
-                  <button type="button" class="legal-filter-btn px-3 py-1.5 rounded-lg text-[10px] font-bold bg-white dark:bg-slate-800 text-primary dark:text-blue-400 shadow-sm transition-all" onclick="setLegalFilter('all', this)">Tất cả</button>
-                  <button type="button" class="legal-filter-btn px-3 py-1.5 rounded-lg text-[10px] font-bold text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-blue-400 transition-all" onclick="setLegalFilter('policy', this)">Chính sách</button>
-                  <button type="button" class="legal-filter-btn px-3 py-1.5 rounded-lg text-[10px] font-bold text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-blue-400 transition-all" onclick="setLegalFilter('guide', this)">Hỗ trợ & HD</button>
+                  <button type="button" class="legal-filter-btn px-3 py-1.5 rounded-lg text-[10px] font-bold bg-white dark:bg-slate-800 text-primary dark:text-blue-400 shadow-sm transition-all" onclick="setLegalFilter('all', this)" data-i18n="all">Tất cả</button>
+                  <button type="button" class="legal-filter-btn px-3 py-1.5 rounded-lg text-[10px] font-bold text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-blue-400 transition-all" onclick="setLegalFilter('policy', this)" data-i18n="sysFilterPolicy">Chính sách</button>
+                  <button type="button" class="legal-filter-btn px-3 py-1.5 rounded-lg text-[10px] font-bold text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-blue-400 transition-all" onclick="setLegalFilter('guide', this)" data-i18n="sysFilterSupport">Hỗ trợ & HD</button>
                 </div>
               </div>
             </div>
@@ -948,7 +948,7 @@
       </div>
 
     <!-- Script imports -->
-    <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/i18n.js?v=13') }}"></script>
     <script src="{{ url_for('static', filename='js/script.js') }}?v=12"></script>
     <script src="{{ url_for('static', filename='js/toasts.js') }}"></script>
 

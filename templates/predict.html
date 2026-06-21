@@ -423,8 +423,11 @@
     <div id="system-notification-toast">
       <span class="material-symbols-outlined toast-icon">notifications_active</span>
       <div>
-        <p class="toast-title">Nhận diện hoàn tất!</p>
-        <p class="toast-body">Giống: <b>{{ result.breed }}</b> &mdash; Độ tin cậy: <b>{{ (result.breed_conf * 100)|int }}%</b></p>
+        <p class="toast-title toast__title" data-i18n="identifyCompleted">Nhận diện hoàn tất!</p>
+        <p class="toast-body toast__message">
+          <span data-i18n="modalBreedLabel">Giống:</span> <b><span data-i18n-breed="{{ result.breed }}">{{ result.breed }}</span></b> &mdash; 
+          <span data-i18n="modalConfLabel">Độ tin cậy:</span> <b>{{ (result.breed_conf * 100)|int }}%</b>
+        </p>
       </div>
       <button type="button" class="toast-close-btn" onclick="document.getElementById('system-notification-toast').remove()" aria-label="Đóng">&times;</button>
     </div>
@@ -1180,6 +1183,7 @@
               <span
                 id="gradcamModalLabel"
                 class="px-3 py-1 rounded-full text-xs font-bold bg-primary/10 text-primary dark:bg-primary/20 dark:text-blue-400 border border-primary/20"
+                data-i18n="top1Conclusion"
               >
                 Top-1 (kết luận)
               </span>
@@ -1349,7 +1353,7 @@
       });
     </script>
     <script src="{{ url_for('static', filename='js/toasts.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/i18n.js?v=13') }}"></script>
     <script src="{{ url_for('static', filename='js/script.js') }}?v=12"></script>
   </body>
 </html>

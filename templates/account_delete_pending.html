@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex,nofollow">
-  <title>Tài khoản đang chờ xóa - PetAI</title>
+<title data-i18n="deletePendingPageTitle">Tài khoản đang chờ xóa - PetAI</title>
   <script src="{{ url_for('static', filename='js/tailwindcss.js') }}"></script>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/typography.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/theme-dark.css') }}">
@@ -68,8 +68,8 @@
         <div class="w-16 h-16 rounded-full bg-white/20 mx-auto flex items-center justify-center mb-3 pulse-danger">
           <span class="material-symbols-outlined text-4xl">delete_forever</span>
         </div>
-        <h1 class="text-xl font-bold mb-1">Tài khoản đang chờ xóa</h1>
-        <p class="text-red-100 text-xs">Yêu cầu xóa tài khoản đã được ghi nhận</p>
+        <h1 class="text-xl font-bold mb-1" data-i18n="deletePendingHeaderTitle">Tài khoản đang chờ xóa</h1>
+        <p class="text-red-100 text-xs" data-i18n="deletePendingHeaderDesc">Yêu cầu xóa tài khoản đã được ghi nhận</p>
       </div>
 
       <!-- Nội dung -->
@@ -77,12 +77,12 @@
 
         <!-- Thông tin user -->
         <div class="text-center mb-6">
-          <p class="text-slate-600 text-sm">Tài khoản: <span class="font-semibold text-slate-800">{{ user_email }}</span></p>
+          <p class="text-slate-600 text-sm"><span data-i18n="deletePendingUserLabel">Tài khoản:</span> <span class="font-semibold text-slate-800">{{ user_email }}</span></p>
         </div>
 
         <!-- Countdown -->
         <div class="bg-red-50 border border-red-200 rounded-2xl p-4 mb-4 text-center">
-          <p class="text-xs font-bold text-red-500 uppercase tracking-wider mb-1">Tài khoản sẽ bị xóa vĩnh viễn vào</p>
+          <p class="text-xs font-bold text-red-500 uppercase tracking-wider mb-1" data-i18n="deletePendingDateLabel">Tài khoản sẽ bị xóa vĩnh viễn vào</p>
           <p class="text-lg font-bold text-red-700 mb-3" id="delete-date">
             {% if delete_scheduled_at %}
               {{ delete_scheduled_at.strftime('%d/%m/%Y lúc %H:%M') if delete_scheduled_at else 'N/A' }}
@@ -93,17 +93,17 @@
           <div class="flex justify-center gap-4">
             <div class="text-center">
               <div class="text-3xl font-bold text-red-700" id="days-left">--</div>
-              <div class="text-xs text-red-500">ngày</div>
+              <div class="text-xs text-red-500" data-i18n="daysLabel">ngày</div>
             </div>
             <div class="text-3xl font-bold text-red-300 self-start mt-1">:</div>
             <div class="text-center">
               <div class="text-3xl font-bold text-red-700" id="hours-left">--</div>
-              <div class="text-xs text-red-500">giờ</div>
+              <div class="text-xs text-red-500" data-i18n="hoursLabel">giờ</div>
             </div>
             <div class="text-3xl font-bold text-red-300 self-start mt-1">:</div>
             <div class="text-center">
               <div class="text-3xl font-bold text-red-700" id="mins-left">--</div>
-              <div class="text-xs text-red-500">phút</div>
+              <div class="text-xs text-red-500" data-i18n="minsLabel">phút</div>
             </div>
           </div>
         </div>
@@ -113,9 +113,9 @@
           <div class="flex gap-3">
             <span class="material-symbols-outlined text-amber-600 shrink-0 mt-0.5">info</span>
             <div class="text-sm text-amber-800 space-y-1">
-              <p><b>Bạn vẫn có thể đăng nhập</b> nhưng mọi tính năng sẽ bị tạm khóa.</p>
-              <p>Nếu bạn <b>không muốn xóa tài khoản</b>, hãy nhấn nút khôi phục bên dưới.</p>
-              <p>Sau 30 ngày, tất cả dữ liệu sẽ bị vô hiệu hóa vĩnh viễn.</p>
+              <p data-i18n-html="deletePendingWarningTitle"><b>Bạn vẫn có thể đăng nhập</b> nhưng mọi tính năng sẽ bị tạm khóa.</p>
+              <p data-i18n-html="deletePendingWarningDesc">Nếu bạn <b>không muốn xóa tài khoản</b>, hãy nhấn nút khôi phục bên dưới.</p>
+              <p data-i18n="deletePendingWarningPermanently">Sau 30 ngày, tất cả dữ liệu sẽ bị vô hiệu hóa vĩnh viễn.</p>
             </div>
           </div>
         </div>
@@ -128,14 +128,14 @@
             onclick="startRestore()"
             class="w-full py-3.5 bg-primary hover:bg-blue-700 text-white font-semibold rounded-xl transition-all active:scale-95 flex items-center justify-center gap-2 shadow-md shadow-primary/20">
             <span class="material-symbols-outlined">restore</span>
-            Khôi phục tài khoản
+            <span data-i18n="restoreAccountBtn">Khôi phục tài khoản</span>
           </button>
 
           <a
             href="{{ url_for('logout.logout') }}"
             class="w-full py-3.5 border border-slate-200 text-slate-600 hover:bg-slate-50 font-semibold rounded-xl transition-all active:scale-95 flex items-center justify-center gap-2">
             <span class="material-symbols-outlined">logout</span>
-            Đăng xuất
+            <span data-i18n="logoutBtn">Đăng xuất</span>
           </a>
         </div>
       </div>
@@ -143,7 +143,7 @@
 
     <!-- Footer -->
     <p class="text-center text-xs text-slate-400 mt-6">
-      Cần hỗ trợ? Liên hệ <a href="mailto:support@petai.vn" class="text-primary hover:underline">support@petai.vn</a>
+      <span data-i18n="needSupportPrefix">Cần hỗ trợ? Liên hệ</span> <a href="mailto:support@petai.vn" class="text-primary hover:underline">support@petai.vn</a>
     </p>
   </div>
 
@@ -160,13 +160,13 @@
         <span class="material-symbols-outlined text-primary text-4xl">shield_lock</span>
       </div>
 
-      <h2 id="restore-modal-title" class="text-xl font-bold text-slate-800 mb-2">Xác nhận khôi phục</h2>
-      <p class="text-sm text-slate-500 mb-1">Mã OTP đã được gửi đến</p>
+      <h2 id="restore-modal-title" class="text-xl font-bold text-slate-800 mb-2" data-i18n="restoreConfirmTitle">Xác nhận khôi phục</h2>
+      <p class="text-sm text-slate-500 mb-1" data-i18n="restoreConfirmDesc">Mã OTP đã được gửi đến</p>
       <p class="font-semibold text-slate-700 text-sm mb-5">{{ user_email }}</p>
 
       <!-- Countdown OTP -->
       <div class="mb-5">
-        <p class="text-xs text-slate-400 mb-2">Mã có hiệu lực trong <span id="otp-countdown" class="font-semibold text-primary">05:00</span></p>
+        <p class="text-xs text-slate-400 mb-2"><span data-i18n="otpCountdownLabel">Mã có hiệu lực trong</span> <span id="otp-countdown" class="font-semibold text-primary">05:00</span></p>
         <!-- OTP Input boxes -->
         <div class="flex justify-center gap-2" id="otp-boxes">
           <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="one-time-code">
@@ -181,15 +181,15 @@
 
       <!-- Actions -->
       <button id="restore-confirm-btn" type="button" onclick="confirmRestore()"
-        class="w-full py-3 bg-primary hover:bg-blue-700 text-white font-semibold rounded-xl transition-all active:scale-95 mb-3 disabled:opacity-50">
+        class="w-full py-3 bg-primary hover:bg-blue-700 text-white font-semibold rounded-xl transition-all active:scale-95 mb-3 disabled:opacity-50" data-i18n="restoreConfirmBtn">
         Xác nhận khôi phục
       </button>
       <button id="restore-resend-btn" type="button" onclick="resendRestoreOtp()"
-        class="w-full py-2.5 border border-slate-200 text-slate-600 hover:bg-slate-50 text-sm font-medium rounded-xl transition-all">
+        class="w-full py-2.5 border border-slate-200 text-slate-600 hover:bg-slate-50 text-sm font-medium rounded-xl transition-all" data-i18n="resendOtpBtn">
         Gửi lại mã OTP
       </button>
       <button type="button" onclick="closeRestoreModal()"
-        class="w-full py-2 text-slate-400 text-xs mt-2 hover:text-slate-600 transition-colors">
+        class="w-full py-2 text-slate-400 text-xs mt-2 hover:text-slate-600 transition-colors" data-i18n="close">
         Đóng
       </button>
     </div>
@@ -237,7 +237,7 @@
     async function startRestore() {
       const btn = document.getElementById('restore-btn');
       btn.disabled = true;
-      btn.innerHTML = '<span class="material-symbols-outlined animate-spin">progress_activity</span> Đang gửi OTP...';
+      btn.innerHTML = '<span class="material-symbols-outlined animate-spin">progress_activity</span> ' + (window.PetAI_i18n ? window.PetAI_i18n.t('sendingOtp') : 'Đang gửi OTP...');
 
       try {
         const res = await fetch('/account/delete/restore/request', {
@@ -253,13 +253,13 @@
         if (data.success) {
           openRestoreModal();
         } else {
-          showToastMsg('error', data.message || 'Gặp lỗi khi gửi OTP. Vui lòng thử lại.');
+          showToastMsg('error', data.message || (window.PetAI_i18n ? window.PetAI_i18n.t('error') : 'Gặp lỗi khi gửi OTP. Vui lòng thử lại.'));
         }
       } catch (e) {
-        showToastMsg('error', 'Lỗi kết nối. Vui lòng thử lại.');
+        showToastMsg('error', window.PetAI_i18n ? window.PetAI_i18n.t('error') : 'Lỗi kết nối. Vui lòng thử lại.');
       } finally {
         btn.disabled = false;
-        btn.innerHTML = '<span class="material-symbols-outlined">restore</span> Khôi phục tài khoản';
+        btn.innerHTML = '<span class="material-symbols-outlined">restore</span> ' + (window.PetAI_i18n ? window.PetAI_i18n.t('restoreAccountBtn') : 'Khôi phục tài khoản');
       }
     }
 
@@ -324,7 +324,7 @@
       }
       const btn = document.getElementById('restore-confirm-btn');
       btn.disabled = true;
-      btn.textContent = 'Đang xác nhận...';
+      btn.textContent = window.PetAI_i18n ? window.PetAI_i18n.t('confirmingStatus') : 'Đang xác nhận...';
 
       try {
         const res = await fetch('/account/delete/restore/confirm', {
@@ -339,24 +339,24 @@
         const data = await res.json();
         if (data.success) {
           closeRestoreModal();
-          showToastMsg('success', data.message || 'Tài khoản đã được khôi phục!');
+          showToastMsg('success', data.message || (window.PetAI_i18n ? window.PetAI_i18n.t('success') : 'Tài khoản đã được khôi phục!'));
           setTimeout(() => { window.location.href = data.redirect || '/dashboard'; }, 1800);
         } else {
           showOtpError(data.message || 'Mã OTP không đúng.');
           btn.disabled = false;
-          btn.textContent = 'Xác nhận khôi phục';
+          btn.textContent = window.PetAI_i18n ? window.PetAI_i18n.t('restoreConfirmBtn') : 'Xác nhận khôi phục';
         }
       } catch (e) {
         showOtpError('Lỗi kết nối. Vui lòng thử lại.');
         btn.disabled = false;
-        btn.textContent = 'Xác nhận khôi phục';
+        btn.textContent = window.PetAI_i18n ? window.PetAI_i18n.t('restoreConfirmBtn') : 'Xác nhận khôi phục';
       }
     }
 
     async function resendRestoreOtp() {
       const btn = document.getElementById('restore-resend-btn');
       btn.disabled = true;
-      btn.textContent = 'Đang gửi lại...';
+      btn.textContent = window.PetAI_i18n ? window.PetAI_i18n.t('sendingStatus') : 'Đang gửi lại...';
       try {
         const res = await fetch('/account/delete/restore/request', {
           method: 'POST',
@@ -373,7 +373,7 @@
           document.querySelectorAll('.otp-input')[0]?.focus();
           hideOtpError();
           startOtpCountdown();
-          showToastMsg('success', 'Mã OTP mới đã được gửi về email.');
+          showToastMsg('success', window.PetAI_i18n ? window.PetAI_i18n.t('otpSentSuccess') : 'Mã OTP mới đã được gửi về email.');
         } else {
           showOtpError(data.message || 'Không thể gửi lại OTP.');
         }
@@ -381,7 +381,7 @@
         showOtpError('Lỗi kết nối.');
       } finally {
         btn.disabled = false;
-        btn.textContent = 'Gửi lại mã OTP';
+        btn.textContent = window.PetAI_i18n ? window.PetAI_i18n.t('resendOtpBtn') : 'Gửi lại mã OTP';
       }
     }
 
@@ -402,5 +402,6 @@
       }
     }
   </script>
+  <script src="{{ url_for('static', filename='js/i18n.js?v=13') }}"></script>
 </body>
 </html>

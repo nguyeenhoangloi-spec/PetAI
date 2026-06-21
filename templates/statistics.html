@@ -844,8 +844,13 @@
               <div
                 class="text-primary bg-primary/10 dark:bg-primary/20 px-3 py-1 rounded-lg text-xs font-semibold"
               >
-                {% if selected_days == '7' %}7 ngày qua{% elif selected_days ==
-                '30' %}30 ngày qua{% else %}Tất cả{% endif %}
+                {% if selected_days == '7' %}
+                <span data-i18n="days7Ago">7 ngày qua</span>
+                {% elif selected_days == '30' %}
+                <span data-i18n="days30Ago">30 ngày qua</span>
+                {% else %}
+                <span data-i18n="all">Tất cả</span>
+                {% endif %}
               </div>
             </div>
             {% if daily_counts %}
@@ -918,6 +923,8 @@
                     >
                     <span
                       class="label-sm text-on-surface-variant font-bold tabular-nums"
+                      data-i18n="timesLabel"
+                      data-code="{{ item.count }}"
                       >{{ item.count }} lần</span
                     >
                   </div>
@@ -1647,7 +1654,7 @@
       })();
     </script>
     <script src="{{ url_for('static', filename='js/toasts.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/i18n.js?v=13') }}"></script>
     <script src="{{ url_for('static', filename='js/script.js') }}?v=12"></script>
   </body>
 </html>
