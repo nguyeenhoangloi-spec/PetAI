@@ -558,6 +558,9 @@
               <button type="button" onclick="duplicateVisualSection('${sec.id}')" class="visual-sec-btn" title="Nhân đôi mục này (Duplicate)">
                 <span class="material-symbols-outlined !text-sm">content_copy</span>
               </button>
+              <button type="button" onclick="toggleHtmlEdit('${sec.id}', this)" class="visual-sec-btn html-toggle" title="Chỉnh sửa mã HTML (Edit HTML)">
+                <span class="material-symbols-outlined !text-sm">code</span>
+              </button>
               <button type="button" onclick="removeVisualSection('${sec.id}')" class="visual-sec-btn delete" title="Xóa mục">
                 <span class="material-symbols-outlined !text-sm">delete</span>
               </button>
@@ -565,12 +568,12 @@
             <h2 contenteditable="true"
                 class="text-xl font-bold text-primary dark:text-blue-400 mt-6 mb-2"
                 placeholder="Nhập tiêu đề điều khoản..."
-                onblur="updateVisualSectionField('${sec.id}', 'title', this.innerText)"
+                onblur="handleSectionBlur('${sec.id}', 'title', this)"
             >${escapeHtml(title)}</h2>
             <div contenteditable="true"
                  class="text-on-surface-variant dark:text-slate-300 body-md leading-relaxed legal-content-rich"
                  placeholder="Nhập nội dung điều khoản..."
-                 onblur="updateVisualSectionField('${sec.id}', 'content', this.innerHTML)"
+                 onblur="handleSectionBlur('${sec.id}', 'content', this)"
             >${rendered}</div>
           </div>`;
       });
@@ -677,6 +680,53 @@
     }, 120);
   }
 
+  function handleSectionBlur(id, field, element) {
+    let val = "";
+    if (field === "title") {
+      val = element.innerText || "";
+    } else {
+      if (element.dataset.htmlMode === "true") {
+        val = element.textContent || "";
+      } else {
+        val = element.innerHTML || "";
+      }
+    }
+    updateVisualSectionField(id, field, val);
+  }
+
+  function toggleHtmlEdit(id, btn) {
+    const wrapper = document.querySelector(`.visual-sec-wrapper[data-id="${id}"]`);
+    if (!wrapper) return;
+    const contentDiv = wrapper.querySelector('.legal-content-rich');
+    if (!contentDiv) return;
+
+    const isHtmlMode = contentDiv.dataset.htmlMode === "true";
+    const iconSpan = btn.querySelector('.material-symbols-outlined');
+
+    if (!isHtmlMode) {
+      // Switch to HTML code edit mode: display innerHTML as textContent
+      const rawHtml = contentDiv.innerHTML;
+      contentDiv.textContent = rawHtml;
+      contentDiv.classList.add("font-mono", "text-xs", "bg-slate-100", "dark:bg-slate-900", "p-3", "border", "border-dashed", "border-primary/30", "rounded-lg", "whitespace-pre-wrap");
+      contentDiv.dataset.htmlMode = "true";
+      if (iconSpan) iconSpan.textContent = "text_fields";
+      btn.title = "Xem giao diện trực quan (Visual View)";
+      btn.classList.add("bg-primary/20", "text-primary");
+    } else {
+      // Switch back to rich text visual mode: parse textContent as innerHTML
+      const plainText = contentDiv.textContent;
+      contentDiv.innerHTML = plainText;
+      contentDiv.classList.remove("font-mono", "text-xs", "bg-slate-100", "dark:bg-slate-900", "p-3", "border", "border-dashed", "border-primary/30", "rounded-lg", "whitespace-pre-wrap");
+      delete contentDiv.dataset.htmlMode;
+      if (iconSpan) iconSpan.textContent = "code";
+      btn.title = "Chỉnh sửa mã HTML (Edit HTML)";
+      btn.classList.remove("bg-primary/20", "text-primary");
+
+      // Sync changes to the model
+      updateVisualSectionField(id, 'content', plainText);
+    }
+  }
+
   /* ═══════════════════════════════════════════════
      Language Switcher
   ═══════════════════════════════════════════════ */
@@ -695,6 +745,16 @@
      Save / Cancel / FIX 2: Reset to default
   ═══════════════════════════════════════════════ */
   async function savePageChanges() {
+    // Exit HTML mode for any active sections to ensure clean HTML content is saved
+    document.querySelectorAll('[data-html-mode="true"]').forEach(el => {
+      const wrapper = el.closest('.visual-sec-wrapper');
+      if (wrapper) {
+        const id = wrapper.dataset.id;
+        const btn = wrapper.querySelector('.html-toggle');
+        if (btn) toggleHtmlEdit(id, btn);
+      }
+    });
+
     const viData = sections.map(s => ({ title: s.title_vi, content: s.content_vi }));
     const enData = sections.map(s => ({ title: s.title_en, content: s.content_en }));
 
