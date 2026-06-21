@@ -192,5 +192,23 @@
 - **Prevention**: Khi tạo biểu mẫu hoặc yêu cầu thay đổi trạng thái (POST/PUT) qua fetch/ajax trong các phần tử nhúng hoặc dùng chung, cần đảm bảo thẻ meta CSRF luôn đồng hành hoặc khai báo dự phòng tại chính phần tử nhúng đó.
 - **Status**: Fixed
 
+---
+
+## [2026-06-21 19:01] - Lỗi không chạy Script trong trang Cài đặt (settings) do PJAX xoá Node trước khi truy vấn
+
+- **Type**: Logic
+- **Severity**: High
+- **File**: `static/js/script.js:452`
+- **Agent**: @frontend-specialist
+- **Root Cause**: Trong PJAX Router, sự kiện `updateDOM()` hoán đổi phân vùng `#content-area` mới vào live DOM trước khi `postUpdate()` truy vấn `doc.body.querySelectorAll("script:not([src])")` để lấy danh sách inline scripts cần thực thi. Do các inline scripts của trang settings được đặt trong `#content-area` để đồng hành cùng PJAX, khi `updateDOM()` chạy, nó di chuyển `#content-area` ra khỏi `doc.body` của document ảo. Điều này khiến `querySelectorAll` trong `postUpdate()` trả về kết quả trống rỗng, làm các inline scripts trong trang settings không bao giờ được biên dịch hay thực thi, khiến nút xóa tài khoản (gọi hàm `openDeleteModal`) bị tê liệt và báo lỗi `openDeleteModal is not defined`.
+- **Error Message**:
+  ```text
+  Uncaught ReferenceError: openDeleteModal is not defined
+  ```
+- **Fix Applied**: Truy vấn và lưu danh sách inline scripts từ `doc.body` vào biến `inlineScripts` ở đầu hàm `handleHtml()` trước khi chạy `updateDOM()`. Trong `postUpdate()`, sử dụng trực tiếp biến lưu trữ này thay vì truy vấn lại từ `doc.body`.
+- **Prevention**: Luôn lưu giữ hoặc xử lý các tài nguyên động của trang ảo (inline scripts, stylesheets) trước khi thay đổi hoặc huỷ cấu trúc của trang đó.
+- **Status**: Fixed
+
+
 
 

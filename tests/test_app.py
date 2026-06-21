@@ -3,7 +3,7 @@ from unittest.mock import patch, MagicMock
 import os
 import sys
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 import html
 
 # Ensure project root is in path
@@ -150,8 +150,30 @@ class SmartMockCursor:
         elif "select id, username" in self.last_query:
             self.results = [{"id": 2, "username": "testuser"}]
         # 19. Simple select email, fullname
+        elif "select email, fullname, username, account_status" in self.last_query:
+            self.results = [{"email": "test@example.com", "fullname": "Test User", "username": "testuser", "account_status": "active"}]
         elif "select email, fullname" in self.last_query:
             self.results = [{"email": "test@example.com", "fullname": "Test User"}]
+        elif "select account_status, delete_requested_at" in self.last_query:
+            self.results = [{
+                "account_status": "active",
+                "delete_requested_at": None,
+                "delete_scheduled_at": None,
+                "delete_reason": None,
+                "delete_cancelled_at": None,
+                "deleted_at": None
+            }]
+        elif "select delete_otp_attempts, delete_otp_locked_until" in self.last_query:
+            self.results = [{"delete_otp_attempts": 0, "delete_otp_locked_until": None}]
+        elif "select delete_otp_hash, delete_otp_expires_at" in self.last_query:
+            from werkzeug.security import generate_password_hash
+            otp_hash = generate_password_hash("123456")
+            self.results = [{
+                "delete_otp_hash": otp_hash,
+                "delete_otp_expires_at": datetime.now() + timedelta(seconds=300),
+                "delete_otp_type": "delete",
+                "delete_otp_attempts": 0
+            }]
         # 20. Payment orders queries
         elif "select order_id, plan, payment_method, amount_vnd, status" in self.last_query:
             self.results = [{"order_id": "ord123", "plan": "pro", "payment_method": "qr", "amount_vnd": 5000, "status": "pending", "created_at": None, "confirmed_at": None}]
@@ -476,6 +498,31 @@ class FlaskSystemTestCase(unittest.TestCase):
 
         response = self._post_with_csrf('/users/system-config/restore-version', data={
             'version_id': '1'
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'"success":true', response.data.replace(b' ', b''))
+
+    def test_user_delete_request(self):
+        with self.client.session_transaction() as sess:
+            sess['user_id'] = 1
+            sess['username'] = 'testuser'
+            sess['email'] = 'test@example.com'
+
+        response = self._post_with_csrf('/account/delete/request', data={
+            'reason': 'No longer needed'
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'"success":true', response.data.replace(b' ', b''))
+
+    def test_user_delete_confirm(self):
+        with self.client.session_transaction() as sess:
+            sess['user_id'] = 1
+            sess['username'] = 'testuser'
+            sess['email'] = 'test@example.com'
+            sess['delete_reason_pending'] = 'No longer needed'
+
+        response = self._post_with_csrf('/account/delete/confirm', data={
+            'otp': '123456'
         })
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'"success":true', response.data.replace(b' ', b''))

@@ -450,6 +450,9 @@ document.addEventListener("DOMContentLoaded", function () {
       const parser = new DOMParser();
       const doc = parser.parseFromString(html, "text/html");
 
+      // Capture inline scripts before updateDOM removes them from doc.body
+      const inlineScripts = doc.body ? Array.from(doc.body.querySelectorAll("script:not([src])")) : [];
+
       if (!isPopState) {
         history.pushState(null, "", url);
       }
@@ -690,8 +693,7 @@ document.addEventListener("DOMContentLoaded", function () {
           }
         };
 
-        // Run all inline scripts from the fetched document's body sequentially
-        const inlineScripts = Array.from(doc.body.querySelectorAll("script:not([src])"));
+        // Run all captured inline scripts sequentially
         inlineScripts.forEach(oldScript => {
           // Skip preload scripts that would re-hide the body or re-init sidebar
           if (oldScript.textContent.includes("sidebar-collapsed") && oldScript.textContent.includes("preload")) {
