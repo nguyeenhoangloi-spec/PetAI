@@ -290,6 +290,26 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
+    // 3b. Header Avatar Dropdown
+    const headerAvatarTrigger = e.target.closest("#headerAvatarTrigger");
+    const headerAvatarMenu = document.getElementById("headerAvatarMenu");
+    if (headerAvatarTrigger) {
+      e.stopPropagation();
+      if (headerAvatarMenu) {
+        const isShown = headerAvatarMenu.classList.contains("show");
+        if (isShown) {
+          headerAvatarMenu.classList.remove("show");
+          headerAvatarTrigger.classList.remove("is-active");
+          headerAvatarTrigger.setAttribute("aria-expanded", "false");
+        } else {
+          headerAvatarMenu.classList.add("show");
+          headerAvatarTrigger.classList.add("is-active");
+          headerAvatarTrigger.setAttribute("aria-expanded", "true");
+        }
+      }
+      return;
+    }
+
     // Close avatar dropdown when clicking outside
     document.querySelectorAll(".avatar-dropdown-menu").forEach(function (menu) {
       const wrapper = menu.closest(".avatar-wrapper");
@@ -297,6 +317,19 @@ document.addEventListener("DOMContentLoaded", function () {
         menu.classList.add("hidden");
       }
     });
+
+    // Close header avatar dropdown when clicking outside
+    if (headerAvatarMenu && headerAvatarMenu.classList.contains("show")) {
+      const dropdown = document.getElementById("headerAvatarDropdown");
+      if (dropdown && !dropdown.contains(e.target)) {
+        headerAvatarMenu.classList.remove("show");
+        const trigger = document.getElementById("headerAvatarTrigger");
+        if (trigger) {
+          trigger.classList.remove("is-active");
+          trigger.setAttribute("aria-expanded", "false");
+        }
+      }
+    }
 
     // Close sidebar when clicking outside on mobile
     const sidebar = document.getElementById("sidebar");

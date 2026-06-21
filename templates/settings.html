@@ -379,40 +379,7 @@
     {% set display_role = session.get('role') or 'Thanh vien' %}
     {% set display_plan = current_plan or 'free' %}
 
-    <nav class="bg-white/80 dark:bg-slate-950/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-200 dark:border-slate-800 shadow-sm font-['Inter'] antialiased">
-      <div class="flex items-center justify-between px-4 md:px-6 h-16 w-full">
-        <div class="flex items-center gap-gutter">
-          <a href="{{ url_for('home.index') }}" class="inline-flex items-center gap-0">
-            <img
-              alt="PetAI New Logo"
-              class="w-auto h-10 md:h-12"
-              src="{{ url_for('static', filename='images/logo.png') }}"
-            >
-            <span class="ml-0 text-lg md:text-2xl font-semibold text-primary"
-              >PetAI</span
-            >
-          </a>
-          <button id="menuToggle" type="button" aria-label="Toggle sidebar" aria-expanded="false" class="inline-flex items-center justify-center w-9 h-9 rounded-lg text-on-surface-variant dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-primary dark:hover:text-blue-400 transition-colors focus:outline-none mr-1">
-            <span class="material-symbols-outlined text-[22px]">menu</span>
-          </button>
-        </div>
-
-        <div class="flex items-center gap-md">
-          <a class="hidden md:inline-flex bg-primary text-on-primary px-4 py-2 rounded-lg label-sm hover:opacity-90 active:scale-95 duration-150 transition-all" href="{{ url_for('predict.upload_page') }}" data-i18n="predict"><span data-i18n="predict">Nhận diện</span></a>
-          <div class="theme-switch-wrapper" id="headerThemeToggle">
-          <button type="button" class="theme-switch-btn {{ 'is-dark' if ui_theme == 'dark' else 'is-light' }}" aria-label="Toggle theme">
-          <span class="theme-switch-knob">
-          <span class="material-symbols-outlined sun-icon">light_mode</span>
-          <span class="material-symbols-outlined moon-icon">dark_mode</span>
-          </span>
-          </button>
-          </div>
-          <div class="language-switcher mr-2" id="languageSwitcher">
-            <button class="language-button" id="languageButton" type="button" aria-label="Change language"></button>
-          </div>
-        </div>
-      </div>
-    </nav>
+    {% include '_header.html' %}
 
       <main class="flex-grow w-full px-4 md:px-6 py-margin grid grid-cols-1 gap-0">
         {% set is_settings = True %}

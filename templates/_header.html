@@ -1,0 +1,77 @@
+<nav class="header-navbar sticky top-0 z-50 w-full flex items-center justify-between px-5 md:px-7 font-['Inter'] antialiased transition-all duration-300" aria-label="Thanh điều hướng chính">
+  <!-- Left Side: Menu Toggle and Logo -->
+  <div class="flex items-center gap-4">
+    <button id="menuToggle" type="button" aria-label="Toggle sidebar" aria-expanded="false" class="header-menu-toggle flex items-center justify-center w-9 h-9 rounded-xl transition-all duration-300">
+      <span class="material-symbols-outlined text-[22px]">menu</span>
+    </button>
+    <a href="{{ url_for('home.index') }}" class="flex items-center gap-2">
+      <img alt="PetAI Logo" class="w-8 h-8 md:w-9 md:h-9 object-contain" src="{{ url_for('static', filename='images/logo.png') }}">
+      <span class="text-lg md:text-xl font-bold text-primary tracking-wide">PetAI</span>
+    </a>
+  </div>
+
+  <!-- Right Side: Search, Upload, Settings, Notifications, Avatar -->
+  <div class="flex items-center gap-3 md:gap-4">
+    <!-- Search box -->
+    <div class="header-search-wrapper relative hidden md:flex items-center">
+      <span class="material-symbols-outlined absolute left-3 text-[18px] text-slate-400 dark:text-slate-500">search</span>
+      <input type="text" id="headerSearchInput" class="header-search-input py-1.5 pl-9 pr-4 rounded-xl text-sm font-medium transition-all duration-300 focus:outline-none" placeholder="Search..." data-i18n-placeholder="searchPlaceholder">
+    </div>
+
+    <!-- Upload/Predict Action Button -->
+    <a href="{{ url_for('predict.upload_page') }}" class="header-upload-btn flex items-center gap-2 px-3.5 py-1.5 md:px-4 md:py-2 rounded-xl text-white font-semibold text-sm bg-blue-600 hover:bg-blue-750 dark:bg-blue-600 dark:hover:bg-blue-700 shadow-md hover:shadow-lg active:scale-95 duration-150 transition-all">
+      <span class="material-symbols-outlined text-[18px]">cloud_upload</span>
+      <span class="hidden sm:inline" data-i18n="uploadPhotoBtn">Nhận diện</span>
+    </a>
+
+    <!-- Settings shortcut -->
+    <a href="{{ url_for('settings.settings') }}" class="header-icon-btn flex items-center justify-center w-9 h-9 rounded-xl transition-all duration-300" title="Settings" data-i18n-title="accountSettings">
+      <span class="material-symbols-outlined text-[20px]">settings</span>
+    </a>
+
+    <!-- Notifications Bell -->
+    <div class="relative flex items-center">
+      <a href="{{ url_for('users.confirmations_list') if session.get('role') == 'admin' else '#' }}" class="header-icon-btn flex items-center justify-center w-9 h-9 rounded-xl transition-all duration-300 relative" title="Notifications">
+        <span class="material-symbols-outlined text-[20px]">notifications</span>
+        {% if session.get('role') == 'admin' and pending_confirmations_count > 0 %}
+          <span class="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white shadow-sm ring-2 ring-white dark:ring-slate-950 animate-pulse">
+            {{ pending_confirmations_count }}
+          </span>
+        {% endif %}
+      </a>
+    </div>
+
+    <!-- User Avatar Dropdown -->
+    <div class="header-avatar-dropdown relative" id="headerAvatarDropdown">
+      <button type="button" class="header-avatar-trigger flex items-center gap-1.5 focus:outline-none transition-all duration-300" id="headerAvatarTrigger" aria-haspopup="true" aria-expanded="false">
+        <img src="{{ ui_avatar_url }}" alt="Avatar" class="w-8 h-8 rounded-full object-cover ring-2 ring-slate-100 dark:ring-slate-800 transition-all duration-300">
+        <span class="material-symbols-outlined text-[16px] text-slate-400 dark:text-slate-500 dropdown-arrow transition-transform duration-200">keyboard_arrow_down</span>
+      </button>
+      <div class="header-avatar-menu absolute right-0 mt-2 w-48 rounded-xl shadow-xl py-2 hidden transition-all duration-300" id="headerAvatarMenu">
+        <div class="px-4 py-2 border-b">
+          <p class="text-[11px] text-slate-400 dark:text-slate-500 font-semibold uppercase tracking-wider">
+            <span data-i18n="role">Vai trò:</span> 
+            <span class="font-normal">{{ session.get('role')|capitalize }}</span>
+          </p>
+          <p class="text-[11px] text-slate-400 dark:text-slate-500 font-semibold uppercase tracking-wider">
+            <span data-i18n="plan">Gói:</span> 
+            <span class="font-normal">{{ current_plan|capitalize }}</span>
+          </p>
+        </div>
+        <a href="{{ url_for('settings.settings') }}" class="flex items-center gap-2.5 px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+          <span class="material-symbols-outlined text-[18px]">person</span>
+          <span data-i18n="personalInfo">Thông tin cá nhân</span>
+        </a>
+        <a href="{{ url_for('settings.settings') }}#appearance" class="flex items-center gap-2.5 px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+          <span class="material-symbols-outlined text-[18px]">palette</span>
+          <span data-i18n="appearanceSection">Giao diện</span>
+        </a>
+        <hr class="border-slate-100 dark:border-slate-800/60 my-1">
+        <a href="{{ url_for('logout.logout') }}" class="logout-btn-link flex items-center gap-2.5 px-4 py-2 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors">
+          <span class="material-symbols-outlined text-[18px]">logout</span>
+          <span data-i18n="logout">Đăng xuất</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</nav>
