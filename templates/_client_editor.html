@@ -425,7 +425,7 @@
       });
       if (currentSec) parsed.push(currentSec);
     } else {
-      const wrapper = tempDiv.querySelector('.space-y-6, #dynamic-content-vi, #dynamic-content-en');
+      const wrapper = tempDiv.querySelector('.space-y-6, .space-y-8, #dynamic-content-vi, #dynamic-content-en');
       const targetElements = wrapper ? Array.from(wrapper.children) : Array.from(tempDiv.children);
 
       targetElements.forEach(node => {
@@ -550,10 +550,10 @@
   /* ═══════════════════════════════════════════════
      Auto Translation helpers
   ═══════════════════════════════════════════════ */
-  async function translateText(text) {
+  async function translateText(text, fromLang = "vi", toLang = "en") {
     if (!text || !text.trim()) return "";
     try {
-      const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=vi&tl=en&dt=t&q=${encodeURIComponent(text)}`;
+      const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${fromLang}&tl=${toLang}&dt=t&q=${encodeURIComponent(text)}`;
       const res = await fetch(url);
       if (!res.ok) return text;
       const data = await res.json();
@@ -566,24 +566,20 @@
   /**
    * translateHTML – dịch HTML, giữ nguyên toàn bộ thẻ và định dạng.
    * Đệ quy cây DOM: chỉ dịch text node lá, không chạm vào thẻ HTML.
-   *
-   * Ví dụ:
-   *   Input:  "<p>Đây là <strong>in đậm</strong> và <a href='x'>liên kết</a></p>"
-   *   Output: "<p>This is <strong>bold</strong> and <a href='x'>link</a></p>"
    */
-  async function translateHTML(html) {
+  async function translateHTML(html, fromLang = "vi", toLang = "en") {
     if (!html || !html.trim()) return "";
-    if (!html.includes("<") && !html.includes(">")) return await translateText(html);
+    if (!html.includes("<") && !html.includes(">")) return await translateText(html, fromLang, toLang);
     try {
       const tmp = document.createElement("div");
       tmp.innerHTML = html;
-      await _translateNodeDeep(tmp);
+      await _translateNodeDeep(tmp, fromLang, toLang);
       return tmp.innerHTML;
     } catch (e) { return html; }
   }
 
   /* Đệ quy: chỉ dịch Text node, giữ nguyên Element node */
-  async function _translateNodeDeep(node) {
+  async function _translateNodeDeep(node, fromLang = "vi", toLang = "en") {
     for (const child of Array.from(node.childNodes)) {
       if (child.nodeType === Node.TEXT_NODE) {
         const text = child.textContent;
@@ -592,17 +588,15 @@
           // Bảo toàn khoảng trắng đầu/cuối
           const leading  = text.match(/^\s*/)[0];
           const trailing = text.match(/\s*$/)[0];
-          child.textContent = leading + await translateText(trimmed) + trailing;
+          child.textContent = leading + await translateText(trimmed, fromLang, toLang) + trailing;
         }
-        // text node toàn whitespace → giữ nguyên
       } else if (child.nodeType === Node.ELEMENT_NODE) {
         // Không dịch nội dung các thẻ đặc biệt (code, pre, script, style)
         const skip = ["CODE", "PRE", "SCRIPT", "STYLE", "KBD", "VAR", "SAMP"];
         if (!skip.includes(child.tagName)) {
-          await _translateNodeDeep(child); // Đệ quy vào bên trong
+          await _translateNodeDeep(child, fromLang, toLang); // Đệ quy vào bên trong
         }
       }
-      // Các node loại khác (comment…) → bỏ qua
     }
   }
 
@@ -688,18 +682,24 @@
           leftCol.appendChild(secWrapper);
         } else {
           // Accordion items in the right column
-          secWrapper.className = "visual-sec-wrapper relative border border-outline-variant/30 dark:border-slate-700 rounded-xl p-4 bg-white dark:bg-slate-800/50";
+          secWrapper.className = "visual-sec-wrapper relative";
           secWrapper.innerHTML += `
-            <h4 contenteditable="true"
-                class="font-bold text-on-surface dark:text-slate-105 select-none pr-10 mb-2"
-                placeholder="Câu hỏi (Title)..."
-                onblur="handleSectionBlur('${sec.id}', 'title', this)"
-            >${escapeHtml(title)}</h4>
-            <div contenteditable="true"
-                 class="mt-2 text-on-surface-variant dark:text-slate-300 text-sm leading-relaxed legal-content-rich"
-                 placeholder="Câu trả lời (Content)..."
-                 onblur="handleSectionBlur('${sec.id}', 'content', this)"
-            >${rendered}</div>
+            <details class="glass-card p-4 rounded-xl cursor-pointer bg-white dark:bg-slate-800/50 group border border-outline-variant/30 dark:border-slate-700">
+              <summary class="font-bold flex justify-between items-center text-on-surface dark:text-slate-100 select-none">
+                <span contenteditable="true"
+                    class="font-bold text-on-surface dark:text-slate-100 select-none pr-10 focus:outline-none flex-grow"
+                    placeholder="Câu hỏi (Title)..."
+                    onblur="handleSectionBlur('${sec.id}', 'title', this)"
+                    onclick="event.stopPropagation();"
+                >${escapeHtml(title)}</span>
+                <span class="group-open:rotate-180 transition-transform">▼</span>
+              </summary>
+              <div contenteditable="true"
+                   class="mt-2 text-on-surface-variant dark:text-slate-300 text-sm leading-relaxed legal-content-rich focus:outline-none"
+                   placeholder="Câu trả lời (Content)..."
+                   onblur="handleSectionBlur('${sec.id}', 'content', this)"
+              >${rendered}</div>
+            </details>
           `;
           rightCol.appendChild(secWrapper);
         }
@@ -807,14 +807,19 @@
     if (visualEditorLang === "vi") {
       if (field === "title") {
         sec.title_vi = v;
-        if (autoTrans && v) sec.title_en = await translateText(v);
+        if (autoTrans && v) sec.title_en = await translateText(v, "vi", "en");
       } else {
         sec.content_vi = v;
-        if (autoTrans && v) sec.content_en = await translateHTML(v);
+        if (autoTrans && v) sec.content_en = await translateHTML(v, "vi", "en");
       }
     } else {
-      if (field === "title") sec.title_en = v;
-      else sec.content_en = v;
+      if (field === "title") {
+        sec.title_en = v;
+        if (autoTrans && v) sec.title_vi = await translateText(v, "en", "vi");
+      } else {
+        sec.content_en = v;
+        if (autoTrans && v) sec.content_vi = await translateHTML(v, "en", "vi");
+      }
     }
     schedulePushToHistory();
   }
@@ -905,7 +910,7 @@
     let contentDiv = wrapper.querySelector('.legal-content-rich');
     let isHeading = false;
     if (!contentDiv) {
-      contentDiv = wrapper.querySelector('h2, h3, h4');
+      contentDiv = wrapper.querySelector('h2, h3, h4, summary span');
       if (contentDiv) isHeading = true;
     }
     if (!contentDiv) return;
@@ -954,14 +959,33 @@
   /* ═══════════════════════════════════════════════
      Language Switcher
   ═══════════════════════════════════════════════ */
-  function switchEditorLanguage(lang) {
+  async function switchEditorLanguage(lang) {
+    // Force save and await auto-translation for currently focused element before tab swap
+    const activeEl = document.activeElement;
+    if (activeEl && activeEl.getAttribute("contenteditable") === "true") {
+      const wrapper = activeEl.closest('.visual-sec-wrapper');
+      if (wrapper) {
+        const id = wrapper.dataset.id;
+        const isHeading = activeEl.tagName !== "DIV";
+        const field = isHeading ? "title" : "content";
+        let val = "";
+        if (activeEl.dataset.htmlMode === "true") {
+          val = activeEl.querySelector("textarea") ? activeEl.querySelector("textarea").value : activeEl.textContent;
+        } else {
+          val = activeEl.innerHTML;
+        }
+        await updateVisualSectionField(id, field, val);
+      }
+      activeEl.blur();
+    }
+
     visualEditorLang = lang;
     const vi = document.getElementById("editor-lang-vi-btn");
     const en = document.getElementById("editor-lang-en-btn");
     const act = "px-2.5 py-1 rounded-md text-xs font-bold bg-white dark:bg-slate-800 text-primary shadow-sm transition-all";
     const inact = "px-2.5 py-1 rounded-md text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-primary transition-all";
-    vi.className = lang === 'vi' ? act : inact;
-    en.className = lang === 'en' ? act : inact;
+    if (vi) vi.className = lang === 'vi' ? act : inact;
+    if (en) en.className = lang === 'en' ? act : inact;
     renderVisualSections();
   }
 
@@ -969,6 +993,25 @@
      Save / Cancel / FIX 2: Reset to default
   ═══════════════════════════════════════════════ */
   async function savePageChanges() {
+    // Force save and await auto-translation for currently focused element
+    const activeEl = document.activeElement;
+    if (activeEl && activeEl.getAttribute("contenteditable") === "true") {
+      const wrapper = activeEl.closest('.visual-sec-wrapper');
+      if (wrapper) {
+        const id = wrapper.dataset.id;
+        const isHeading = activeEl.tagName !== "DIV";
+        const field = isHeading ? "title" : "content";
+        let val = "";
+        if (activeEl.dataset.htmlMode === "true") {
+          val = activeEl.querySelector("textarea") ? activeEl.querySelector("textarea").value : activeEl.textContent;
+        } else {
+          val = activeEl.innerHTML;
+        }
+        await updateVisualSectionField(id, field, val);
+      }
+      activeEl.blur();
+    }
+
     // Exit HTML mode for any active sections to ensure clean HTML content is saved
     const htmlToggles = document.querySelectorAll('[data-html-mode="true"]');
     for (const el of htmlToggles) {

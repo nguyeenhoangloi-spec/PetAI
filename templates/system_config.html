@@ -220,19 +220,40 @@
           "GRAD" 0,
           "opsz" 24;
       }
+      .tab-btn {
+        transition: all 0.2s ease;
+      }
       .tab-btn.active {
-        border-color: #004ac6;
-        color: #004ac6;
-        font-weight: 650;
+        background-color: #ffffff;
+        color: #004ac6 !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02);
+      }
+      .dark .tab-btn.active {
+        background-color: #1e293b;
+        color: #3b82f6 !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
       }
       .tab-content {
         display: none;
+        opacity: 0;
+        transform: translateY(8px);
+        transition: opacity 0.25s ease, transform 0.25s ease;
       }
       .tab-content.active {
         display: block;
+        opacity: 1;
+        transform: translateY(0);
       }
-      
-
+      /* Custom input transitions */
+      .premium-input {
+        transition: all 0.2s ease;
+      }
+      .premium-input:focus {
+        box-shadow: 0 0 0 4px rgba(0, 74, 198, 0.12);
+      }
+      .dark .premium-input:focus {
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+      }
     </style>
   </head>
 
@@ -280,71 +301,99 @@
       {% set active_page = 'system_config' %}
       {% include '_sidebar.html' %}
 
+
       <div id="content-area" class="col-span-1 flex flex-col gap-6">
         <!-- Page Header -->
         <section class="flex flex-col gap-2 border-b border-outline-variant/20 dark:border-slate-800 pb-5">
-          <h1 class="headline-lg font-semibold text-on-surface dark:text-slate-105" data-i18n="sysConfigTitle">Cấu hình hệ thống</h1>
-          <p class="body-md text-on-surface-variant dark:text-slate-400" data-i18n="sysConfigDesc">Quản lý cài đặt logo, email liên hệ, gói cước dịch vụ và nội dung các trang điều khoản pháp lý.</p>
+          <h1 class="text-3xl font-extrabold text-on-surface dark:text-slate-100 tracking-tight" data-i18n="sysConfigTitle">Cấu hình hệ thống</h1>
+          <p class="text-sm text-on-surface-variant dark:text-slate-400" data-i18n="sysConfigDesc">Quản lý cài đặt logo, email liên hệ, gói cước dịch vụ và nội dung các trang điều khoản pháp lý.</p>
         </section>
 
-        <!-- Navigation Tabs -->
-        <section class="border-b border-outline-variant/20 dark:border-slate-800">
-          <div class="flex gap-8">
-            <button type="button" class="tab-btn pb-3 border-b-2 border-transparent text-on-surface-variant hover:text-primary transition-all label-sm font-semibold active" onclick="switchTab('general', this)" data-i18n="sysTabGeneral">
+        <!-- Navigation Tabs: Segmented Control -->
+        <section class="flex bg-slate-100 dark:bg-slate-950 p-1.5 rounded-2xl border border-outline-variant/25 dark:border-slate-800/80 w-fit">
+          <div class="flex gap-1">
+            <button type="button" class="tab-btn px-4 py-2.5 rounded-xl text-on-surface-variant dark:text-slate-400 hover:text-primary dark:hover:text-blue-400 transition-all text-xs font-bold active" onclick="switchTab('general', this)" data-i18n="sysTabGeneral">
               Cấu hình chung
             </button>
-            <button type="button" class="tab-btn pb-3 border-b-2 border-transparent text-on-surface-variant hover:text-primary transition-all label-sm font-semibold" onclick="switchTab('plans', this)" data-i18n="sysTabPlans">
+            <button type="button" class="tab-btn px-4 py-2.5 rounded-xl text-on-surface-variant dark:text-slate-400 hover:text-primary dark:hover:text-blue-400 transition-all text-xs font-bold" onclick="switchTab('plans', this)" data-i18n="sysTabPlans">
               Gói cước dịch vụ
             </button>
-            <button type="button" class="tab-btn pb-3 border-b-2 border-transparent text-on-surface-variant hover:text-primary transition-all label-sm font-semibold" id="tab-legal-btn" onclick="switchTab('legal', this)" data-i18n="sysTabLegal">
+            <button type="button" class="tab-btn px-4 py-2.5 rounded-xl text-on-surface-variant dark:text-slate-400 hover:text-primary dark:hover:text-blue-400 transition-all text-xs font-bold" id="tab-legal-btn" onclick="switchTab('legal', this)" data-i18n="sysTabLegal">
               Các trang chính sách &amp; điều khoản
             </button>
           </div>
         </section>
 
         <!-- Tab contents -->
-        <div>
+        <div class="relative">
 
           <!-- GENERAL TAB -->
           <div id="tab-general" class="tab-content active space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <!-- Site Logo configuration card -->
-              <div class="glass-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 border border-outline-variant/30 dark:border-slate-800 shadow-sm flex flex-col gap-6">
+              <div class="glass-card bg-white dark:bg-slate-900/60 rounded-2xl p-6 border border-outline-variant/30 dark:border-slate-800 shadow-sm flex flex-col gap-6">
                 <div>
-                  <h3 class="headline-md text-on-surface dark:text-slate-105 mb-1" data-i18n="sysLogoTitle">Logo website</h3>
-                  <p class="label-sm text-on-surface-variant dark:text-slate-400" data-i18n="sysLogoDesc">Thay đổi hình ảnh logo hiển thị trên thanh tiêu đề và chân trang website.</p>
+                  <h3 class="text-lg font-bold text-on-surface dark:text-slate-100 mb-1" data-i18n="sysLogoTitle">Logo website</h3>
+                  <p class="text-xs text-on-surface-variant dark:text-slate-400" data-i18n="sysLogoDesc">Thay đổi hình ảnh logo hiển thị trên thanh tiêu đề và chân trang website.</p>
                 </div>
 
-                <div class="flex flex-col items-center justify-center border-2 border-dashed border-outline-variant/50 dark:border-slate-700 rounded-xl p-8 bg-surface-container-low/40 dark:bg-slate-950/20 gap-4">
-                  <img src="{{ url_for('static', filename='images/logo.png') }}" class="h-16 w-auto object-contain dark:invert" alt="Logo hiện tại" id="logo-preview" />
-                  <span class="label-sm text-on-surface-variant dark:text-slate-400" data-i18n="sysLogoCurrent">Logo hiện hành</span>
+                <!-- Current Logo Preview Box -->
+                <div class="flex items-center gap-4 bg-slate-50 dark:bg-slate-950 p-4 rounded-xl border border-outline-variant/20 dark:border-slate-800/80">
+                  <div class="w-16 h-16 bg-white dark:bg-slate-900 rounded-lg p-2 border border-outline-variant/20 dark:border-slate-800 flex items-center justify-center">
+                    <img src="{{ url_for('static', filename='images/logo.png') }}" class="max-h-full max-w-full object-contain dark:invert" alt="Logo hiện tại" id="logo-preview" />
+                  </div>
+                  <div>
+                    <span class="text-xs text-on-surface-variant dark:text-slate-400 block" data-i18n="sysLogoCurrent">Logo hiện hành</span>
+                    <span class="text-sm font-semibold text-on-surface dark:text-slate-200">logo.png</span>
+                  </div>
                 </div>
 
-                <form action="{{ url_for('users.save_logo_config') }}" method="POST" enctype="multipart/form-data" class="flex flex-col gap-4">
+                <!-- Interactive Upload Dropzone -->
+                <form action="{{ url_for('users.save_logo_config') }}" method="POST" enctype="multipart/form-data" class="flex flex-col gap-5">
                   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                   <div class="flex flex-col gap-2">
-                    <label class="label-sm font-bold text-on-surface dark:text-slate-300" data-i18n="sysLogoUploadNew">Tải lên logo mới</label>
-                    <input type="file" name="logo" accept=".png,.jpg,.jpeg,.svg,.webp" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary file:hover:bg-primary/20 cursor-pointer" />
+                    <label class="text-xs font-bold text-on-surface dark:text-slate-350" data-i18n="sysLogoUploadNew">Tải lên logo mới</label>
+                    <div class="relative flex flex-col items-center justify-center border-2 border-dashed border-outline-variant/60 dark:border-slate-700 hover:border-primary/50 dark:hover:border-blue-500/50 rounded-2xl p-6 bg-surface-container-low/20 dark:bg-slate-950/20 hover:bg-primary/[0.02] transition-all duration-300 gap-3 cursor-pointer" onclick="document.getElementById('logo-file-input').click()">
+                      <input type="file" id="logo-file-input" name="logo" accept=".png,.jpg,.jpeg,.svg,.webp" class="hidden" onchange="previewLogoFile(this)" />
+                      <div class="w-10 h-10 rounded-xl bg-primary/10 dark:bg-blue-500/10 flex items-center justify-center text-primary dark:text-blue-400">
+                        <span class="material-symbols-outlined text-[22px]" id="upload-icon">cloud_upload</span>
+                      </div>
+                      <div class="text-center">
+                        <p class="text-xs font-semibold text-on-surface dark:text-slate-200" id="upload-filename">Kéo thả logo vào đây hoặc nhấp để chọn</p>
+                        <p class="text-[10px] text-on-surface-variant dark:text-slate-400 mt-0.5">PNG, JPG, JPEG, SVG hoặc WEBP (Tối đa 2MB)</p>
+                      </div>
+                    </div>
                   </div>
-                  <button type="submit" class="bg-primary text-on-primary py-2.5 px-4 rounded-lg label-sm font-semibold hover:shadow-md transition-all self-start" data-i18n="sysLogoUpdateBtn">Cập nhật logo</button>
+                  <button type="submit" class="w-full bg-primary hover:bg-primary/95 text-on-primary py-2.5 px-4 rounded-xl text-xs font-bold shadow-sm hover:shadow-md active:scale-98 transition-all flex items-center justify-center gap-2">
+                    <span class="material-symbols-outlined text-sm">cloud_sync</span>
+                    <span data-i18n="sysLogoUpdateBtn">Cập nhật logo</span>
+                  </button>
                 </form>
               </div>
 
               <!-- General Settings (Email) -->
-              <div class="glass-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 border border-outline-variant/30 dark:border-slate-800 shadow-sm">
-                <form action="{{ url_for('users.save_system_config') }}" method="POST" class="flex flex-col gap-6">
-                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-                  <div>
-                    <h3 class="headline-md text-on-surface dark:text-slate-105 mb-1" data-i18n="sysContactTitle">Cấu hình liên lạc</h3>
-                    <p class="label-sm text-on-surface-variant dark:text-slate-400" data-i18n="sysContactDesc">Thiết lập các thông tin liên lạc chính của website hiển thị tới người dùng.</p>
+              <div class="glass-card bg-white dark:bg-slate-900/60 rounded-2xl p-6 border border-outline-variant/30 dark:border-slate-800 shadow-sm flex flex-col gap-6">
+                <form action="{{ url_for('users.save_system_config') }}" method="POST" class="flex flex-col gap-6 h-full justify-between">
+                  <div class="flex flex-col gap-6">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                    <div>
+                      <h3 class="text-lg font-bold text-on-surface dark:text-slate-100 mb-1" data-i18n="sysContactTitle">Cấu hình liên lạc</h3>
+                      <p class="text-xs text-on-surface-variant dark:text-slate-400" data-i18n="sysContactDesc">Thiết lập các thông tin liên lạc chính của website hiển thị tới người dùng.</p>
+                    </div>
+
+                    <div class="relative flex flex-col gap-2">
+                      <label class="text-xs font-bold text-on-surface dark:text-slate-350" data-i18n="sysContactEmailLabel">Email liên hệ / hỗ trợ</label>
+                      <div class="relative">
+                        <span class="material-symbols-outlined text-slate-400 absolute left-4.5 top-1/2 -translate-y-1/2 text-[20px]">mail</span>
+                        <input type="email" name="site_email" value="{{ configs.get('site_email', 'support@pet.ai') }}" required class="premium-input w-full pl-12 pr-4 py-3 bg-slate-50 dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary transition-all duration-300" />
+                      </div>
+                    </div>
                   </div>
 
-                  <div class="flex flex-col gap-2">
-                    <label class="label-sm font-bold text-on-surface dark:text-slate-300" data-i18n="sysContactEmailLabel">Email liên hệ / hỗ trợ</label>
-                    <input type="email" name="site_email" value="{{ configs.get('site_email', 'support@pet.ai') }}" required class="w-full px-4 py-2.5 bg-surface dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-800 rounded-lg text-on-surface dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all" />
-                  </div>
-
-                  <button type="submit" class="bg-primary text-on-primary py-2.5 px-4 rounded-lg label-sm font-semibold hover:shadow-md transition-all self-start" data-i18n="sysSaveSettingsBtn">Lưu cài đặt</button>
+                  <button type="submit" class="bg-primary hover:bg-primary/95 text-on-primary py-2.5 px-5 rounded-xl text-xs font-bold shadow-sm hover:shadow-md active:scale-98 transition-all flex items-center gap-2 self-start mt-6">
+                    <span class="material-symbols-outlined text-sm">save</span>
+                    <span data-i18n="sysSaveSettingsBtn">Lưu cài đặt</span>
+                  </button>
                 </form>
               </div>
             </div>
@@ -352,102 +401,165 @@
 
           <!-- PLANS TAB -->
           <div id="tab-plans" class="tab-content space-y-6">
-            <form action="{{ url_for('users.save_system_config') }}" method="POST" class="glass-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 border border-outline-variant/30 dark:border-slate-800 shadow-sm flex flex-col gap-6">
+            <form action="{{ url_for('users.save_system_config') }}" method="POST" class="flex flex-col gap-6">
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
               <input type="hidden" name="site_email" value="{{ configs.get('site_email', 'support@pet.ai') }}" />
 
-              <div>
-                <h3 class="headline-md text-on-surface dark:text-slate-105 mb-1" data-i18n="sysPlansTitle">Gói cước dịch vụ</h3>
-                <p class="label-sm text-on-surface-variant dark:text-slate-400" data-i18n="sysPlansDesc">Thay đổi đơn giá, số ngày sử dụng và hạn mức lượt quét cho từng gói thành viên đăng ký.</p>
+              <div class="glass-card bg-white dark:bg-slate-900/60 rounded-2xl p-6 border border-outline-variant/30 dark:border-slate-800 shadow-sm">
+                <h3 class="text-lg font-bold text-on-surface dark:text-slate-105 mb-1" data-i18n="sysPlansTitle">Gói cước dịch vụ</h3>
+                <p class="text-xs text-on-surface-variant dark:text-slate-400" data-i18n="sysPlansDesc">Thay đổi đơn giá, số ngày sử dụng và hạn mức lượt quét cho từng gói thành viên đăng ký.</p>
               </div>
 
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <!-- BASIC PLAN CARD -->
-                <div class="flex flex-col border border-outline-variant/30 dark:border-slate-800 rounded-xl p-5 bg-surface-container-low/30 dark:bg-slate-950/20 gap-4">
-                  <h4 class="label-sm font-bold text-primary dark:text-blue-400 uppercase tracking-widest" data-i18n="sysPlanBasic">Gói Cơ Bản (Basic)</h4>
-
-                  <div class="flex flex-col gap-2">
-                    <label class="label-sm text-on-surface-variant dark:text-slate-400" data-i18n="sysPlanPriceVnd">Giá gói (VNĐ)</label>
-                    <input type="number" name="plan_basic_price" value="{{ configs.get('plan_basic_price', '1000') }}" required class="w-full px-3 py-2 bg-white dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-850 rounded-lg text-on-surface dark:text-slate-200 text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary" />
+                <div class="glass-card bg-white dark:bg-slate-900/60 border border-outline-variant/30 dark:border-slate-800 rounded-2xl p-6 flex flex-col gap-5 hover:border-primary/20 dark:hover:border-blue-500/20 hover:shadow-md transition-all duration-300 relative group overflow-hidden">
+                  <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
+                    <div>
+                      <h4 class="text-sm font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wider" data-i18n="sysPlanBasic">Gói Cơ Bản (Basic)</h4>
+                      <p class="text-[11px] text-on-surface-variant dark:text-slate-400 mt-0.5">Dành cho cá nhân dùng thử</p>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500">
+                      <span class="material-symbols-outlined text-xl">star</span>
+                    </div>
                   </div>
-
-                  <div class="flex flex-col gap-2">
-                    <label class="label-sm text-on-surface-variant dark:text-slate-400" data-i18n="sysPlanDurationDays">Thời gian dùng (Ngày)</label>
-                    <input type="number" name="plan_basic_days" value="{{ configs.get('plan_basic_days', '7') }}" required class="w-full px-3 py-2 bg-white dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-850 rounded-lg text-on-surface dark:text-slate-200 text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary" />
-                  </div>
-
-                  <div class="flex flex-col gap-2">
-                    <label class="label-sm text-on-surface-variant dark:text-slate-400" data-i18n="sysPlanScanLimit">Hạn mức quét (Lượt)</label>
-                    <input type="number" name="plan_basic_scans" value="{{ configs.get('plan_basic_scans', '50') }}" required class="w-full px-3 py-2 bg-white dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-850 rounded-lg text-on-surface dark:text-slate-200 text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary" />
+                  
+                  <div class="flex flex-col gap-4">
+                    <div class="flex flex-col gap-1.5">
+                      <label class="text-xs font-semibold text-on-surface-variant dark:text-slate-400" data-i18n="sysPlanPriceVnd">Giá gói (VNĐ)</label>
+                      <div class="relative">
+                        <input type="number" name="plan_basic_price" value="{{ configs.get('plan_basic_price', '1000') }}" required class="premium-input w-full pl-4 pr-12 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/30 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary transition-all" />
+                        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">đ</span>
+                      </div>
+                    </div>
+                    
+                    <div class="flex flex-col gap-1.5">
+                      <label class="text-xs font-semibold text-on-surface-variant dark:text-slate-400" data-i18n="sysPlanDurationDays">Thời gian dùng (Ngày)</label>
+                      <div class="relative">
+                        <input type="number" name="plan_basic_days" value="{{ configs.get('plan_basic_days', '7') }}" required class="premium-input w-full pl-4 pr-16 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/30 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary transition-all" />
+                        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">ngày</span>
+                      </div>
+                    </div>
+                    
+                    <div class="flex flex-col gap-1.5">
+                      <label class="text-xs font-semibold text-on-surface-variant dark:text-slate-400" data-i18n="sysPlanScanLimit">Hạn mức quét (Lượt)</label>
+                      <div class="relative">
+                        <input type="number" name="plan_basic_scans" value="{{ configs.get('plan_basic_scans', '50') }}" required class="premium-input w-full pl-4 pr-16 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/30 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary transition-all" />
+                        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">lượt</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
                 <!-- PRO PLAN CARD -->
-                <div class="flex flex-col border border-outline-variant/30 dark:border-slate-800 rounded-xl p-5 bg-surface-container-low/30 dark:bg-slate-950/20 gap-4">
-                  <h4 class="label-sm font-bold text-primary dark:text-blue-400 uppercase tracking-widest" data-i18n="sysPlanPro">Gói Chuyên Nghiệp (Pro)</h4>
-
-                  <div class="flex flex-col gap-2">
-                    <label class="label-sm text-on-surface-variant dark:text-slate-400" data-i18n="sysPlanPriceVnd">Giá gói (VNĐ)</label>
-                    <input type="number" name="plan_pro_price" value="{{ configs.get('plan_pro_price', '5000') }}" required class="w-full px-3 py-2 bg-white dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-850 rounded-lg text-on-surface dark:text-slate-200 text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary" />
+                <div class="glass-card bg-white dark:bg-slate-900/60 border-2 border-primary dark:border-blue-500 rounded-2xl p-6 flex flex-col gap-5 shadow-md hover:shadow-lg transition-all duration-300 relative group overflow-hidden">
+                  <div class="absolute top-0 right-0 bg-primary dark:bg-blue-500 text-on-primary text-[9px] font-bold px-3 py-1 rounded-bl-xl uppercase tracking-wider">
+                    Khuyên dùng
                   </div>
 
-                  <div class="flex flex-col gap-2">
-                    <label class="label-sm text-on-surface-variant dark:text-slate-400" data-i18n="sysPlanDurationDays">Thời gian dùng (Ngày)</label>
-                    <input type="number" name="plan_pro_days" value="{{ configs.get('plan_pro_days', '30') }}" required class="w-full px-3 py-2 bg-white dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-850 rounded-lg text-on-surface dark:text-slate-200 text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary" />
+                  <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
+                    <div>
+                      <h4 class="text-sm font-bold text-primary dark:text-blue-400 uppercase tracking-wider" data-i18n="sysPlanPro">Gói Chuyên Nghiệp (Pro)</h4>
+                      <p class="text-[11px] text-on-surface-variant dark:text-slate-400 mt-0.5">Lựa chọn phổ biến nhất</p>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-primary/10 dark:bg-blue-500/10 flex items-center justify-center text-primary dark:text-blue-400">
+                      <span class="material-symbols-outlined text-xl">workspace_premium</span>
+                    </div>
                   </div>
-
-                  <div class="flex flex-col gap-2">
-                    <label class="label-sm text-on-surface-variant dark:text-slate-400" data-i18n="sysPlanScanLimit">Hạn mức quét (Lượt)</label>
-                    <input type="number" name="plan_pro_scans" value="{{ configs.get('plan_pro_scans', '200') }}" required class="w-full px-3 py-2 bg-white dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-850 rounded-lg text-on-surface dark:text-slate-200 text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary" />
+                  
+                  <div class="flex flex-col gap-4">
+                    <div class="flex flex-col gap-1.5">
+                      <label class="text-xs font-semibold text-on-surface-variant dark:text-slate-400" data-i18n="sysPlanPriceVnd">Giá gói (VNĐ)</label>
+                      <div class="relative">
+                        <input type="number" name="plan_pro_price" value="{{ configs.get('plan_pro_price', '5000') }}" required class="premium-input w-full pl-4 pr-12 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/30 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary transition-all" />
+                        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">đ</span>
+                      </div>
+                    </div>
+                    
+                    <div class="flex flex-col gap-1.5">
+                      <label class="text-xs font-semibold text-on-surface-variant dark:text-slate-400" data-i18n="sysPlanDurationDays">Thời gian dùng (Ngày)</label>
+                      <div class="relative">
+                        <input type="number" name="plan_pro_days" value="{{ configs.get('plan_pro_days', '30') }}" required class="premium-input w-full pl-4 pr-16 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/30 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary transition-all" />
+                        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">ngày</span>
+                      </div>
+                    </div>
+                    
+                    <div class="flex flex-col gap-1.5">
+                      <label class="text-xs font-semibold text-on-surface-variant dark:text-slate-400" data-i18n="sysPlanScanLimit">Hạn mức quét (Lượt)</label>
+                      <div class="relative">
+                        <input type="number" name="plan_pro_scans" value="{{ configs.get('plan_pro_scans', '200') }}" required class="premium-input w-full pl-4 pr-16 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/30 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary transition-all" />
+                        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">lượt</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
                 <!-- ENTERPRISE PLAN CARD -->
-                <div class="flex flex-col border border-outline-variant/30 dark:border-slate-800 rounded-xl p-5 bg-surface-container-low/30 dark:bg-slate-950/20 gap-4">
-                  <h4 class="label-sm font-bold text-primary dark:text-blue-400 uppercase tracking-widest" data-i18n="sysPlanEnterprise">Gói Doanh Nghiệp (Enterprise)</h4>
-
-                  <div class="flex flex-col gap-2">
-                    <label class="label-sm text-on-surface-variant dark:text-slate-400" data-i18n="sysPlanPriceVnd">Giá gói (VNĐ)</label>
-                    <input type="number" name="plan_enterprise_price" value="{{ configs.get('plan_enterprise_price', '15000') }}" required class="w-full px-3 py-2 bg-white dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-850 rounded-lg text-on-surface dark:text-slate-200 text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary" />
+                <div class="glass-card bg-white dark:bg-slate-900/60 border border-outline-variant/30 dark:border-slate-800 rounded-2xl p-6 flex flex-col gap-5 hover:border-primary/20 dark:hover:border-blue-500/20 hover:shadow-md transition-all duration-300 relative group overflow-hidden">
+                  <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
+                    <div>
+                      <h4 class="text-sm font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wider" data-i18n="sysPlanEnterprise">Gói Doanh Nghiệp (Enterprise)</h4>
+                      <p class="text-[11px] text-on-surface-variant dark:text-slate-400 mt-0.5">Không giới hạn cho tổ chức</p>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500">
+                      <span class="material-symbols-outlined text-xl">crown</span>
+                    </div>
                   </div>
-
-                  <div class="flex flex-col gap-2">
-                    <label class="label-sm text-on-surface-variant dark:text-slate-400" data-i18n="sysPlanDurationDays">Thời gian dùng (Ngày)</label>
-                    <input type="number" name="plan_enterprise_days" value="{{ configs.get('plan_enterprise_days', '90') }}" required class="w-full px-3 py-2 bg-white dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-850 rounded-lg text-on-surface dark:text-slate-200 text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary" />
-                  </div>
-
-                  <div class="flex flex-col gap-2">
-                    <label class="label-sm text-on-surface-variant dark:text-slate-400" data-i18n="sysPlanEntScanNote">Hạn mức quét (Gõ 'unlimited' nếu không giới hạn)</label>
-                    <input type="text" name="plan_enterprise_scans" value="{{ configs.get('plan_enterprise_scans', 'unlimited') }}" required class="w-full px-3 py-2 bg-white dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-850 rounded-lg text-on-surface dark:text-slate-200 text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary" />
+                  
+                  <div class="flex flex-col gap-4">
+                    <div class="flex flex-col gap-1.5">
+                      <label class="text-xs font-semibold text-on-surface-variant dark:text-slate-400" data-i18n="sysPlanPriceVnd">Giá gói (VNĐ)</label>
+                      <div class="relative">
+                        <input type="number" name="plan_enterprise_price" value="{{ configs.get('plan_enterprise_price', '15000') }}" required class="premium-input w-full pl-4 pr-12 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/30 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary transition-all" />
+                        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">đ</span>
+                      </div>
+                    </div>
+                    
+                    <div class="flex flex-col gap-1.5">
+                      <label class="text-xs font-semibold text-on-surface-variant dark:text-slate-400" data-i18n="sysPlanDurationDays">Thời gian dùng (Ngày)</label>
+                      <div class="relative">
+                        <input type="number" name="plan_enterprise_days" value="{{ configs.get('plan_enterprise_days', '90') }}" required class="premium-input w-full pl-4 pr-16 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/30 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary transition-all" />
+                        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">ngày</span>
+                      </div>
+                    </div>
+                    
+                    <div class="flex flex-col gap-1.5">
+                      <label class="text-xs font-semibold text-on-surface-variant dark:text-slate-400" data-i18n="sysPlanEntScanNote">Hạn mức quét (lượt hoặc 'unlimited')</label>
+                      <div class="relative">
+                        <input type="text" name="plan_enterprise_scans" value="{{ configs.get('plan_enterprise_scans', 'unlimited') }}" required class="premium-input w-full pl-4 pr-16 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/30 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary transition-all" />
+                        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">lượt</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              <button type="submit" class="bg-primary text-on-primary py-2.5 px-4 rounded-lg label-sm font-semibold hover:shadow-md transition-all self-start" data-i18n="sysSavePlansBtn">Lưu cấu hình gói</button>
+              <button type="submit" class="bg-primary hover:bg-primary/95 text-on-primary py-2.5 px-5 rounded-xl text-xs font-bold shadow-sm hover:shadow-md active:scale-98 transition-all flex items-center gap-2 self-start mt-4">
+                <span class="material-symbols-outlined text-sm">save_as</span>
+                <span data-i18n="sysSavePlansBtn">Lưu cấu hình gói</span>
+              </button>
             </form>
           </div>
 
           <!-- LEGAL TAB -->
-          <!-- LEGAL TAB -->
           <div id="tab-legal" class="tab-content space-y-6">
-            <div class="glass-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 border border-outline-variant/30 dark:border-slate-800 shadow-sm flex flex-col gap-6">
+            <div class="glass-card bg-white dark:bg-slate-900/60 rounded-2xl p-6 border border-outline-variant/30 dark:border-slate-800 shadow-sm flex flex-col gap-6">
 
               <div>
-                <h3 class="headline-md text-on-surface dark:text-slate-105 mb-1" data-i18n="sysLegalTitle">Nội dung trang pháp lý &amp; điều khoản</h3>
-                <p class="label-sm text-on-surface-variant dark:text-slate-400" data-i18n="sysLegalDesc">Biên soạn nội dung trực tiếp cho các trang pháp luật của hệ thống bằng mã HTML/Văn bản.</p>
+                <h3 class="text-lg font-bold text-on-surface dark:text-slate-105 mb-1" data-i18n="sysLegalTitle">Nội dung trang pháp lý &amp; điều khoản</h3>
+                <p class="text-xs text-on-surface-variant dark:text-slate-400" data-i18n="sysLegalDesc">Biên soạn nội dung trực tiếp cho các trang pháp luật của hệ thống bằng mã HTML/Văn bản.</p>
               </div>
 
               <!-- 7 Pages Grid Layout -->
               <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 pt-2">
                 <!-- Card 1: Privacy Policy -->
-                <div class="glass-card bg-surface-container-lowest/50 dark:bg-slate-900/40 border border-outline-variant/20 dark:border-slate-800 rounded-2xl p-5 flex flex-col justify-between hover:border-primary/30 dark:hover:border-blue-500/30 hover:shadow-md transition-all duration-300 group">
+                <div class="glass-card bg-white dark:bg-slate-900 border border-outline-variant/20 dark:border-slate-800 rounded-2xl p-5 flex flex-col justify-between hover:border-primary/45 dark:hover:border-blue-500/45 hover:-translate-y-1 hover:shadow-lg transition-all duration-300 group">
                   <div class="flex flex-col gap-3">
                     <div class="flex items-center gap-3">
-                      <div class="w-10 h-10 rounded-xl bg-primary/10 dark:bg-blue-500/10 flex items-center justify-center text-primary dark:text-blue-400 group-hover:scale-110 transition-transform duration-300">
+                      <div class="w-10 h-10 rounded-xl bg-primary/10 dark:bg-blue-500/10 flex items-center justify-center text-primary dark:text-blue-400 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
                         <span class="material-symbols-outlined text-[22px] font-medium">shield_lock</span>
                       </div>
                       <div>
-                        <h4 class="text-sm font-bold text-on-surface dark:text-slate-205" data-i18n="sysLegalOptPrivacy">Chính sách quyền riêng tư</h4>
+                        <h4 class="text-sm font-bold text-on-surface dark:text-slate-100" data-i18n="sysLegalOptPrivacy">Chính sách quyền riêng tư</h4>
                         <span class="text-[11px] text-on-surface-variant dark:text-slate-400 font-mono">/privacy-policy</span>
                       </div>
                     </div>
@@ -460,7 +572,7 @@
                       <span class="material-symbols-outlined !text-sm">visibility</span>
                       <span data-i18n="sysViewPage">Xem trang</span>
                     </a>
-                    <a href="/privacy-policy?edit=true" target="_blank" class="flex-1 py-2 px-3 rounded-lg bg-primary hover:bg-primary-hover text-on-primary text-xs font-semibold text-center hover:shadow-sm transition-all flex items-center justify-center gap-1">
+                    <a href="/privacy-policy?edit=true" target="_blank" class="flex-1 py-2 px-3 rounded-lg bg-primary hover:bg-primary/95 text-on-primary text-xs font-semibold text-center hover:shadow-md transition-all flex items-center justify-center gap-1">
                       <span class="material-symbols-outlined !text-sm">edit</span>
                       <span data-i18n="sysEditPage">Chỉnh sửa</span>
                     </a>
@@ -468,14 +580,14 @@
                 </div>
 
                 <!-- Card 2: Terms of Service -->
-                <div class="glass-card bg-surface-container-lowest/50 dark:bg-slate-900/40 border border-outline-variant/20 dark:border-slate-800 rounded-2xl p-5 flex flex-col justify-between hover:border-primary/30 dark:hover:border-blue-500/30 hover:shadow-md transition-all duration-300 group">
+                <div class="glass-card bg-white dark:bg-slate-900 border border-outline-variant/20 dark:border-slate-800 rounded-2xl p-5 flex flex-col justify-between hover:border-primary/45 dark:hover:border-blue-500/45 hover:-translate-y-1 hover:shadow-lg transition-all duration-300 group">
                   <div class="flex flex-col gap-3">
                     <div class="flex items-center gap-3">
-                      <div class="w-10 h-10 rounded-xl bg-primary/10 dark:bg-blue-500/10 flex items-center justify-center text-primary dark:text-blue-400 group-hover:scale-110 transition-transform duration-300">
+                      <div class="w-10 h-10 rounded-xl bg-primary/10 dark:bg-blue-500/10 flex items-center justify-center text-primary dark:text-blue-400 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
                         <span class="material-symbols-outlined text-[22px] font-medium">gavel</span>
                       </div>
                       <div>
-                        <h4 class="text-sm font-bold text-on-surface dark:text-slate-205" data-i18n="sysLegalOptTerms">Điều khoản sử dụng</h4>
+                        <h4 class="text-sm font-bold text-on-surface dark:text-slate-100" data-i18n="sysLegalOptTerms">Điều khoản sử dụng</h4>
                         <span class="text-[11px] text-on-surface-variant dark:text-slate-400 font-mono">/terms-of-service</span>
                       </div>
                     </div>
@@ -488,7 +600,7 @@
                       <span class="material-symbols-outlined !text-sm">visibility</span>
                       <span data-i18n="sysViewPage">Xem trang</span>
                     </a>
-                    <a href="/terms-of-service?edit=true" target="_blank" class="flex-1 py-2 px-3 rounded-lg bg-primary hover:bg-primary-hover text-on-primary text-xs font-semibold text-center hover:shadow-sm transition-all flex items-center justify-center gap-1">
+                    <a href="/terms-of-service?edit=true" target="_blank" class="flex-1 py-2 px-3 rounded-lg bg-primary hover:bg-primary/95 text-on-primary text-xs font-semibold text-center hover:shadow-md transition-all flex items-center justify-center gap-1">
                       <span class="material-symbols-outlined !text-sm">edit</span>
                       <span data-i18n="sysEditPage">Chỉnh sửa</span>
                     </a>
@@ -496,14 +608,14 @@
                 </div>
 
                 <!-- Card 3: Payment Policy -->
-                <div class="glass-card bg-surface-container-lowest/50 dark:bg-slate-900/40 border border-outline-variant/20 dark:border-slate-800 rounded-2xl p-5 flex flex-col justify-between hover:border-primary/30 dark:hover:border-blue-500/30 hover:shadow-md transition-all duration-300 group">
+                <div class="glass-card bg-white dark:bg-slate-900 border border-outline-variant/20 dark:border-slate-800 rounded-2xl p-5 flex flex-col justify-between hover:border-primary/45 dark:hover:border-blue-500/45 hover:-translate-y-1 hover:shadow-lg transition-all duration-300 group">
                   <div class="flex flex-col gap-3">
                     <div class="flex items-center gap-3">
-                      <div class="w-10 h-10 rounded-xl bg-primary/10 dark:bg-blue-500/10 flex items-center justify-center text-primary dark:text-blue-400 group-hover:scale-110 transition-transform duration-300">
+                      <div class="w-10 h-10 rounded-xl bg-primary/10 dark:bg-blue-500/10 flex items-center justify-center text-primary dark:text-blue-400 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
                         <span class="material-symbols-outlined text-[22px] font-medium">payments</span>
                       </div>
                       <div>
-                        <h4 class="text-sm font-bold text-on-surface dark:text-slate-205" data-i18n="sysLegalOptPayment">Chính sách thanh toán</h4>
+                        <h4 class="text-sm font-bold text-on-surface dark:text-slate-100" data-i18n="sysLegalOptPayment">Chính sách thanh toán</h4>
                         <span class="text-[11px] text-on-surface-variant dark:text-slate-400 font-mono">/payment-policy</span>
                       </div>
                     </div>
@@ -516,7 +628,7 @@
                       <span class="material-symbols-outlined !text-sm">visibility</span>
                       <span data-i18n="sysViewPage">Xem trang</span>
                     </a>
-                    <a href="/payment-policy?edit=true" target="_blank" class="flex-1 py-2 px-3 rounded-lg bg-primary hover:bg-primary-hover text-on-primary text-xs font-semibold text-center hover:shadow-sm transition-all flex items-center justify-center gap-1">
+                    <a href="/payment-policy?edit=true" target="_blank" class="flex-1 py-2 px-3 rounded-lg bg-primary hover:bg-primary/95 text-on-primary text-xs font-semibold text-center hover:shadow-md transition-all flex items-center justify-center gap-1">
                       <span class="material-symbols-outlined !text-sm">edit</span>
                       <span data-i18n="sysEditPage">Chỉnh sửa</span>
                     </a>
@@ -524,14 +636,14 @@
                 </div>
 
                 <!-- Card 4: Data Deletion Policy -->
-                <div class="glass-card bg-surface-container-lowest/50 dark:bg-slate-900/40 border border-outline-variant/20 dark:border-slate-800 rounded-2xl p-5 flex flex-col justify-between hover:border-primary/30 dark:hover:border-blue-500/30 hover:shadow-md transition-all duration-300 group">
+                <div class="glass-card bg-white dark:bg-slate-900 border border-outline-variant/20 dark:border-slate-800 rounded-2xl p-5 flex flex-col justify-between hover:border-primary/45 dark:hover:border-blue-500/45 hover:-translate-y-1 hover:shadow-lg transition-all duration-300 group">
                   <div class="flex flex-col gap-3">
                     <div class="flex items-center gap-3">
-                      <div class="w-10 h-10 rounded-xl bg-primary/10 dark:bg-blue-500/10 flex items-center justify-center text-primary dark:text-blue-400 group-hover:scale-110 transition-transform duration-300">
+                      <div class="w-10 h-10 rounded-xl bg-primary/10 dark:bg-blue-500/10 flex items-center justify-center text-primary dark:text-blue-400 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
                         <span class="material-symbols-outlined text-[22px] font-medium">delete_forever</span>
                       </div>
                       <div>
-                        <h4 class="text-sm font-bold text-on-surface dark:text-slate-205" data-i18n="sysLegalOptDeletion">Chính sách xóa dữ liệu</h4>
+                        <h4 class="text-sm font-bold text-on-surface dark:text-slate-100" data-i18n="sysLegalOptDeletion">Chính sách xóa dữ liệu</h4>
                         <span class="text-[11px] text-on-surface-variant dark:text-slate-400 font-mono">/data-deletion</span>
                       </div>
                     </div>
@@ -544,7 +656,7 @@
                       <span class="material-symbols-outlined !text-sm">visibility</span>
                       <span data-i18n="sysViewPage">Xem trang</span>
                     </a>
-                    <a href="/data-deletion?edit=true" target="_blank" class="flex-1 py-2 px-3 rounded-lg bg-primary hover:bg-primary-hover text-on-primary text-xs font-semibold text-center hover:shadow-sm transition-all flex items-center justify-center gap-1">
+                    <a href="/data-deletion?edit=true" target="_blank" class="flex-1 py-2 px-3 rounded-lg bg-primary hover:bg-primary/95 text-on-primary text-xs font-semibold text-center hover:shadow-md transition-all flex items-center justify-center gap-1">
                       <span class="material-symbols-outlined !text-sm">edit</span>
                       <span data-i18n="sysEditPage">Chỉnh sửa</span>
                     </a>
@@ -552,14 +664,14 @@
                 </div>
 
                 <!-- Card 5: User Guide -->
-                <div class="glass-card bg-surface-container-lowest/50 dark:bg-slate-900/40 border border-outline-variant/20 dark:border-slate-800 rounded-2xl p-5 flex flex-col justify-between hover:border-primary/30 dark:hover:border-blue-500/30 hover:shadow-md transition-all duration-300 group">
+                <div class="glass-card bg-white dark:bg-slate-900 border border-outline-variant/20 dark:border-slate-800 rounded-2xl p-5 flex flex-col justify-between hover:border-primary/45 dark:hover:border-blue-500/45 hover:-translate-y-1 hover:shadow-lg transition-all duration-300 group">
                   <div class="flex flex-col gap-3">
                     <div class="flex items-center gap-3">
-                      <div class="w-10 h-10 rounded-xl bg-primary/10 dark:bg-blue-500/10 flex items-center justify-center text-primary dark:text-blue-400 group-hover:scale-110 transition-transform duration-300">
+                      <div class="w-10 h-10 rounded-xl bg-primary/10 dark:bg-blue-500/10 flex items-center justify-center text-primary dark:text-blue-400 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
                         <span class="material-symbols-outlined text-[22px] font-medium">menu_book</span>
                       </div>
                       <div>
-                        <h4 class="text-sm font-bold text-on-surface dark:text-slate-205" data-i18n="sysLegalOptUserGuide">Hướng dẫn sử dụng</h4>
+                        <h4 class="text-sm font-bold text-on-surface dark:text-slate-100" data-i18n="sysLegalOptUserGuide">Hướng dẫn sử dụng</h4>
                         <span class="text-[11px] text-on-surface-variant dark:text-slate-400 font-mono">/user-guide</span>
                       </div>
                     </div>
@@ -572,7 +684,7 @@
                       <span class="material-symbols-outlined !text-sm">visibility</span>
                       <span data-i18n="sysViewPage">Xem trang</span>
                     </a>
-                    <a href="/user-guide?edit=true" target="_blank" class="flex-1 py-2 px-3 rounded-lg bg-primary hover:bg-primary-hover text-on-primary text-xs font-semibold text-center hover:shadow-sm transition-all flex items-center justify-center gap-1">
+                    <a href="/user-guide?edit=true" target="_blank" class="flex-1 py-2 px-3 rounded-lg bg-primary hover:bg-primary/95 text-on-primary text-xs font-semibold text-center hover:shadow-md transition-all flex items-center justify-center gap-1">
                       <span class="material-symbols-outlined !text-sm">edit</span>
                       <span data-i18n="sysEditPage">Chỉnh sửa</span>
                     </a>
@@ -580,14 +692,14 @@
                 </div>
 
                 <!-- Card 6: Support -->
-                <div class="glass-card bg-surface-container-lowest/50 dark:bg-slate-900/40 border border-outline-variant/20 dark:border-slate-800 rounded-2xl p-5 flex flex-col justify-between hover:border-primary/30 dark:hover:border-blue-500/30 hover:shadow-md transition-all duration-300 group">
+                <div class="glass-card bg-white dark:bg-slate-900 border border-outline-variant/20 dark:border-slate-800 rounded-2xl p-5 flex flex-col justify-between hover:border-primary/45 dark:hover:border-blue-500/45 hover:-translate-y-1 hover:shadow-lg transition-all duration-300 group">
                   <div class="flex flex-col gap-3">
                     <div class="flex items-center gap-3">
-                      <div class="w-10 h-10 rounded-xl bg-primary/10 dark:bg-blue-500/10 flex items-center justify-center text-primary dark:text-blue-400 group-hover:scale-110 transition-transform duration-300">
+                      <div class="w-10 h-10 rounded-xl bg-primary/10 dark:bg-blue-500/10 flex items-center justify-center text-primary dark:text-blue-400 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
                         <span class="material-symbols-outlined text-[22px] font-medium">help_center</span>
                       </div>
                       <div>
-                        <h4 class="text-sm font-bold text-on-surface dark:text-slate-205" data-i18n="sysLegalOptSupport">Trang Hỗ trợ</h4>
+                        <h4 class="text-sm font-bold text-on-surface dark:text-slate-100" data-i18n="sysLegalOptSupport">Trang Hỗ trợ</h4>
                         <span class="text-[11px] text-on-surface-variant dark:text-slate-400 font-mono">/support</span>
                       </div>
                     </div>
@@ -600,7 +712,7 @@
                       <span class="material-symbols-outlined !text-sm">visibility</span>
                       <span data-i18n="sysViewPage">Xem trang</span>
                     </a>
-                    <a href="/support?edit=true" target="_blank" class="flex-1 py-2 px-3 rounded-lg bg-primary hover:bg-primary-hover text-on-primary text-xs font-semibold text-center hover:shadow-sm transition-all flex items-center justify-center gap-1">
+                    <a href="/support?edit=true" target="_blank" class="flex-1 py-2 px-3 rounded-lg bg-primary hover:bg-primary/95 text-on-primary text-xs font-semibold text-center hover:shadow-md transition-all flex items-center justify-center gap-1">
                       <span class="material-symbols-outlined !text-sm">edit</span>
                       <span data-i18n="sysEditPage">Chỉnh sửa</span>
                     </a>
@@ -608,14 +720,14 @@
                 </div>
 
                 <!-- Card 7: Contact -->
-                <div class="glass-card bg-surface-container-lowest/50 dark:bg-slate-900/40 border border-outline-variant/20 dark:border-slate-800 rounded-2xl p-5 flex flex-col justify-between hover:border-primary/30 dark:hover:border-blue-500/30 hover:shadow-md transition-all duration-300 group">
+                <div class="glass-card bg-white dark:bg-slate-900 border border-outline-variant/20 dark:border-slate-800 rounded-2xl p-5 flex flex-col justify-between hover:border-primary/45 dark:hover:border-blue-500/45 hover:-translate-y-1 hover:shadow-lg transition-all duration-300 group">
                   <div class="flex flex-col gap-3">
                     <div class="flex items-center gap-3">
-                      <div class="w-10 h-10 rounded-xl bg-primary/10 dark:bg-blue-500/10 flex items-center justify-center text-primary dark:text-blue-400 group-hover:scale-110 transition-transform duration-300">
+                      <div class="w-10 h-10 rounded-xl bg-primary/10 dark:bg-blue-500/10 flex items-center justify-center text-primary dark:text-blue-400 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
                         <span class="material-symbols-outlined text-[22px] font-medium">alternate_email</span>
                       </div>
                       <div>
-                        <h4 class="text-sm font-bold text-on-surface dark:text-slate-205" data-i18n="sysLegalOptContact">Trang Liên hệ</h4>
+                        <h4 class="text-sm font-bold text-on-surface dark:text-slate-100" data-i18n="sysLegalOptContact">Trang Liên hệ</h4>
                         <span class="text-[11px] text-on-surface-variant dark:text-slate-400 font-mono">/contact</span>
                       </div>
                     </div>
@@ -628,7 +740,7 @@
                       <span class="material-symbols-outlined !text-sm">visibility</span>
                       <span data-i18n="sysViewPage">Xem trang</span>
                     </a>
-                    <a href="/contact?edit=true" target="_blank" class="flex-1 py-2 px-3 rounded-lg bg-primary hover:bg-primary-hover text-on-primary text-xs font-semibold text-center hover:shadow-sm transition-all flex items-center justify-center gap-1">
+                    <a href="/contact?edit=true" target="_blank" class="flex-1 py-2 px-3 rounded-lg bg-primary hover:bg-primary/95 text-on-primary text-xs font-semibold text-center hover:shadow-md transition-all flex items-center justify-center gap-1">
                       <span class="material-symbols-outlined !text-sm">edit</span>
                       <span data-i18n="sysEditPage">Chỉnh sửa</span>
                     </a>
@@ -649,18 +761,42 @@
 
 
     <script>
+      function previewLogoFile(input) {
+        if (input.files && input.files[0]) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            document.getElementById('logo-preview').src = e.target.result;
+          };
+          reader.readAsDataURL(input.files[0]);
+          document.getElementById('upload-filename').textContent = input.files[0].name;
+          const icon = document.getElementById('upload-icon');
+          if (icon) {
+            icon.textContent = "task_alt";
+            icon.classList.add("text-emerald-500");
+          }
+        }
+      }
+
       function switchTab(tabId, btn, isInitial = false) {
         document.querySelectorAll(".tab-btn").forEach(b => {
-          b.classList.remove("active", "border-primary", "text-primary");
-          b.classList.add("border-transparent", "text-on-surface-variant");
+          b.classList.remove("active");
         });
-        btn.classList.add("active", "border-primary", "text-primary");
-        btn.classList.remove("border-transparent", "text-on-surface-variant");
+        btn.classList.add("active");
 
-        document.querySelectorAll(".tab-content").forEach(c => c.classList.remove("active"));
+        document.querySelectorAll(".tab-content").forEach(c => {
+          c.classList.remove("active");
+          c.style.display = "none";
+          c.style.opacity = "0";
+          c.style.transform = "translateY(8px)";
+        });
         const targetTab = document.getElementById("tab-" + tabId);
         if (targetTab) {
+          targetTab.style.display = "block";
+          // force reflow
+          targetTab.offsetHeight;
           targetTab.classList.add("active");
+          targetTab.style.opacity = "1";
+          targetTab.style.transform = "translateY(0)";
         }
         
         if (!isInitial) {
