@@ -942,6 +942,34 @@ nav a[data-i18n="about"] { min-width: 85px; text-align: center; display: inline-
 nav a[data-i18n="login"] { min-width: 85px; text-align: center; display: inline-block; }
 nav a[data-i18n="dashboard"] { min-width: 115px; text-align: center; display: inline-block; }
 
+/* --- Prevent header layout shift when injecting dynamic theme toggle --- */
+@keyframes themeToggleFadeIn {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.theme-switch-wrapper {
+  animation: themeToggleFadeIn 0.25s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@media (min-width: 768px) {
+  .language-switcher {
+    margin-left: 76px !important;
+    transition: margin-left 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .language-switcher {
+    margin-left: 58px !important;
+    transition: margin-left 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+}
+
+html:has(#headerThemeToggle) .language-switcher {
+  margin-left: 0 !important;
+}
+
 /* Force scrollbar to prevent horizontal layout shifts/jumps across pages of varying lengths */
 html {
   overflow-y: scroll;
@@ -951,4 +979,19 @@ html {
 /* Prevent horizontal overflow/scrollbar on body */
 body {
   overflow-x: clip;
+}
+
+/* --- Smooth Sidebar Theme Transition --- */
+.sidebar,
+.sidebar *,
+.sidebar-menu-item,
+.sidebar-menu-item *,
+.sidebar-user-card,
+.sidebar-user-card *,
+.sidebar-divider,
+.sidebar-group-title {
+  transition: background-color 280ms cubic-bezier(0.4, 0, 0.2, 1), 
+              border-color 280ms cubic-bezier(0.4, 0, 0.2, 1), 
+              color 280ms cubic-bezier(0.4, 0, 0.2, 1), 
+              box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1) !important;
 }

@@ -581,38 +581,40 @@ def save_system_config():
         
     from models import SystemConfig
     
-    site_email = (request.form.get("site_email") or "").strip()
-    
-    plan_basic_price = (request.form.get("plan_basic_price") or "").strip()
-    plan_basic_days = (request.form.get("plan_basic_days") or "").strip()
-    plan_basic_scans = (request.form.get("plan_basic_scans") or "").strip()
-    
-    plan_pro_price = (request.form.get("plan_pro_price") or "").strip()
-    plan_pro_days = (request.form.get("plan_pro_days") or "").strip()
-    plan_pro_scans = (request.form.get("plan_pro_scans") or "").strip()
-    
-    plan_enterprise_price = (request.form.get("plan_enterprise_price") or "").strip()
-    plan_enterprise_days = (request.form.get("plan_enterprise_days") or "").strip()
-    plan_enterprise_scans = (request.form.get("plan_enterprise_scans") or "").strip()
-    
     conn = None
     try:
         conn = get_connection()
-        if site_email:
-            SystemConfig.set(conn, "site_email", site_email, "Email liên hệ chính")
+        
+        if "site_email" in request.form:
+            site_email = (request.form.get("site_email") or "").strip()
+            if site_email:
+                SystemConfig.set(conn, "site_email", site_email, "Email liên hệ chính")
+                
+        if "plan_basic_price" in request.form:
+            plan_basic_price = (request.form.get("plan_basic_price") or "").strip()
+            plan_basic_days = (request.form.get("plan_basic_days") or "").strip()
+            plan_basic_scans = (request.form.get("plan_basic_scans") or "").strip()
             
-        SystemConfig.set(conn, "plan_basic_price", plan_basic_price, "Giá gói Basic (VND)")
-        SystemConfig.set(conn, "plan_basic_days", plan_basic_days, "Thời gian gói Basic (ngày)")
-        SystemConfig.set(conn, "plan_basic_scans", plan_basic_scans, "Lượt quét gói Basic")
-        
-        SystemConfig.set(conn, "plan_pro_price", plan_pro_price, "Giá gói Pro (VND)")
-        SystemConfig.set(conn, "plan_pro_days", plan_pro_days, "Thời gian gói Pro (ngày)")
-        SystemConfig.set(conn, "plan_pro_scans", plan_pro_scans, "Lượt quét gói Pro")
-        
-        SystemConfig.set(conn, "plan_enterprise_price", plan_enterprise_price, "Giá gói Enterprise (VND)")
-        SystemConfig.set(conn, "plan_enterprise_days", plan_enterprise_days, "Thời gian gói Enterprise (ngày)")
-        SystemConfig.set(conn, "plan_enterprise_scans", plan_enterprise_scans, "Lượt quét gói Enterprise")
-        
+            plan_pro_price = (request.form.get("plan_pro_price") or "").strip()
+            plan_pro_days = (request.form.get("plan_pro_days") or "").strip()
+            plan_pro_scans = (request.form.get("plan_pro_scans") or "").strip()
+            
+            plan_enterprise_price = (request.form.get("plan_enterprise_price") or "").strip()
+            plan_enterprise_days = (request.form.get("plan_enterprise_days") or "").strip()
+            plan_enterprise_scans = (request.form.get("plan_enterprise_scans") or "").strip()
+            
+            SystemConfig.set(conn, "plan_basic_price", plan_basic_price, "Giá gói Basic (VND)")
+            SystemConfig.set(conn, "plan_basic_days", plan_basic_days, "Thời gian gói Basic (ngày)")
+            SystemConfig.set(conn, "plan_basic_scans", plan_basic_scans, "Lượt quét gói Basic")
+            
+            SystemConfig.set(conn, "plan_pro_price", plan_pro_price, "Giá gói Pro (VND)")
+            SystemConfig.set(conn, "plan_pro_days", plan_pro_days, "Thời gian gói Pro (ngày)")
+            SystemConfig.set(conn, "plan_pro_scans", plan_pro_scans, "Lượt quét gói Pro")
+            
+            SystemConfig.set(conn, "plan_enterprise_price", plan_enterprise_price, "Giá gói Enterprise (VND)")
+            SystemConfig.set(conn, "plan_enterprise_days", plan_enterprise_days, "Thời gian gói Enterprise (ngày)")
+            SystemConfig.set(conn, "plan_enterprise_scans", plan_enterprise_scans, "Lượt quét gói Enterprise")
+            
         flash("Cập nhật cấu hình hệ thống thành công.", "success")
     except Exception:
         logger.exception("[ADMIN] Save system configs error")

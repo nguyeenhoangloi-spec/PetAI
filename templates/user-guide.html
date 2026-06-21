@@ -322,7 +322,7 @@
     <div class="flex justify-between items-center w-full px-4 md:px-6 h-16">
       <div class="flex items-center gap-gutter">
         <a href="{{ url_for('home.index') }}" class="inline-flex items-center gap-0">
-          <img alt="PetAI New Logo" class="w-auto h-10 md:h-24" src="{{ url_for('static', filename='images/logo.png') }}" />
+          <img alt="PetAI New Logo" class="w-auto h-10 md:h-12" src="{{ url_for('static', filename='images/logo.png') }}" />
           <span class="ml-0 text-lg md:text-2xl font-semibold text-primary">PetAI</span>
         </a>
       </div>
@@ -339,25 +339,31 @@
       </div>
       {% endif %} {% if session.get('user_id') %}
       <div class="flex items-center gap-6">
-<div class="language-switcher mr-2" id="languageSwitcherLogged">
-  <button class="language-button" id="languageButtonLogged" type="button" aria-haspopup="true" aria-expanded="false">
-      <span class="language-flag" data-i18n="languageFlag">🇻🇳</span>
-      <span class="language-current" data-i18n="languageLabel">Tiếng Việt</span>
-    </button>
-  <div class="language-menu" id="languageMenuLogged">
-    <button class="language-option active" type="button" data-lang="vi">
-      <span class="language-check">✓</span>
-      <span class="language-flag" data-i18n="languageFlag">🇻🇳</span>
-      <span data-i18n="languageLabel">Tiếng Việt</span>
-    </button>
-    <button class="language-option" type="button" data-lang="en">
-      <span class="language-check"></span>
-      <span class="language-flag">🇺🇸</span>
-      <span>English</span>
-    </button>
-  </div>
-</div>
-        
+        <div class="language-switcher mr-2" id="languageSwitcherLogged">
+          <button class="language-button" id="languageButtonLogged" type="button" aria-haspopup="true" aria-expanded="false">
+            <span class="language-flag" data-i18n="languageFlag">🇻🇳</span>
+            <span class="language-current" data-i18n="languageLabel">Tiếng Việt</span>
+          </button>
+          <div class="language-menu" id="languageMenuLogged">
+            <button class="language-option active" type="button" data-lang="vi">
+              <span class="language-check">✓</span>
+              <span class="language-flag" data-i18n="languageFlag">🇻🇳</span>
+              <span data-i18n="languageLabel">Tiếng Việt</span>
+            </button>
+            <button class="language-option" type="button" data-lang="en">
+              <span class="language-check"></span>
+              <span class="language-flag">🇺🇸</span>
+              <span>English</span>
+            </button>
+          </div>
+        </div>
+        <a class="hidden md:inline-flex bg-primary text-on-primary px-4 py-2 rounded-full label-sm font-semibold hover:shadow-lg active:scale-95 transition-all"
+          href="{{ url_for('predict.upload_page') }}" data-i18n="predict"><span data-i18n="predict">Nhận diện</span></a>
+        <a class="flex items-center gap-1.5 label-sm text-red-600 hover:text-red-700 font-semibold transition-colors"
+          href="{{ url_for('logout.logout') }}">
+          <span class="material-symbols-outlined text-[18px]">logout</span>
+          <span data-i18n="logout">Đăng xuất</span>
+        </a>
       </div>
       {% else %}
       <div class="flex items-center gap-6">
@@ -390,488 +396,207 @@
   <main class="relative z-10 pt-20">
     <section class="px-4 md:px-6 w-full py-16 mb-16 max-w-4xl mx-auto dashboard-width">
       <div id="legal-content-card" class="glass-card p-gutter rounded-3xl bg-surface-container-low border border-outline-variant/30">
+        {% set default_sections_vi = [
+          {
+            "title": "1. Giới thiệu về PetAI",
+            "content": 'PetAI là hệ thống nhận diện giống chó thông minh sử dụng trí tuệ nhân tạo (AI). Quy trình xử lý hình ảnh bao gồm:<br><br><strong>1. Phát hiện &amp; Khoanh vùng (YOLOv8):</strong> Quét và định vị đối tượng chú chó, cắt ảnh loại bỏ nhiễu.<br><strong>2. Phân tích &amp; Phân loại:</strong> Phân tích đặc trưng hình thái đối với hơn 120 giống chó.<br><strong>3. Xác định Thuần chủng/Chó lai:</strong> Trả về kết luận giống thuần hoặc ước tính tỷ lệ lai trong Top-3 giống.<br><strong>4. Giải thích trực quan (Grad-CAM):</strong> Hiển thị bản đồ nhiệt làm nổi bật vùng đặc trưng.'
+          },
+          {
+            "title": "2. Hướng dẫn đăng ký tài khoản",
+            "content": '<p class="text-on-surface-variant mb-4">Để bắt đầu lưu lịch sử nhận diện và quản lý hạn mức, bạn cần tạo tài khoản mới:</p><ul class="space-y-3 pl-1"><li class="flex items-start gap-3"><span class="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs mt-0.5">1</span><span class="text-on-surface-variant">Truy cập trang đăng ký từ menu góc trên bên phải hoặc vào route /register.</span></li><li class="flex items-start gap-3"><span class="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs mt-0.5">2</span><span class="text-on-surface-variant">Nhập đầy đủ thông tin cá nhân: Họ tên, Tên đăng nhập (username), Email hợp lệ và Mật khẩu bảo mật.</span></li><li class="flex items-start gap-3"><span class="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs mt-0.5">3</span><span class="text-on-surface-variant">Xác nhận đồng ý điều khoản dịch vụ và nhấp nút \'Tạo tài khoản\' để hoàn tất.</span></li></ul>'
+          },
+          {
+            "title": "3. Hướng dẫn đăng nhập",
+            "content": '<p class="text-on-surface-variant mb-4">Sau khi đăng ký thành công, bạn có thể đăng nhập vào hệ thống bằng hai cách:</p><ul class="space-y-3 pl-1"><li class="flex items-start gap-3"><span class="material-symbols-outlined text-primary/70 flex-shrink-0 mt-0.5">vpn_key</span><span class="text-on-surface-variant">Đăng nhập thông thường: Sử dụng Tên đăng nhập hoặc Email cùng Mật khẩu đã đăng ký.</span></li><li class="flex items-start gap-3"><span class="material-symbols-outlined text-primary/70 flex-shrink-0 mt-0.5">account_circle</span><span class="text-on-surface-variant">Đăng nhập nhanh: Chọn \'Đăng nhập bằng Google\' để liên kết và đăng nhập nhanh bằng tài khoản Google cá nhân.</span></li></ul>'
+          },
+          {
+            "title": "4. Giới thiệu Gói Miễn Phí (Free Plan)",
+            "content": '<p class="text-on-surface-variant mb-4">Mỗi người dùng mới đăng ký sẽ tự động được gán gói dịch vụ Miễn phí:</p><div class="grid grid-cols-1 md:grid-cols-3 gap-4"><div class="p-4 bg-surface-container rounded-xl border border-outline-variant/20"><h4 class="font-bold text-primary mb-2 flex items-center gap-1.5 text-sm"><span class="material-symbols-outlined text-[16px]">filter_1</span><span>10 lượt nhận diện</span></h4><p class="text-xs text-on-surface-variant leading-relaxed">Hạn mức mặc định: Bạn nhận được 10 lượt nhận diện giống chó miễn phí vĩnh viễn.</p></div><div class="p-4 bg-surface-container rounded-xl border border-outline-variant/20"><h4 class="font-bold text-primary mb-2 flex items-center gap-1.5 text-sm"><span class="material-symbols-outlined text-[16px]">ads_click</span><span>Xem quảng cáo</span></h4><p class="text-xs text-on-surface-variant leading-relaxed">Xem quảng cáo để nhận thêm lượt: Khi sử dụng hết 10 lượt mặc định, bạn có thể xem quảng cáo ngắn (tối đa 3 lần) để nhận thêm 3 lượt quét mỗi lần.</p></div><div class="p-4 bg-surface-container rounded-xl border border-outline-variant/20"><h4 class="font-bold text-primary mb-2 flex items-center gap-1.5 text-sm"><span class="material-symbols-outlined text-[16px]">warning</span><span>Khi hết lượt</span></h4><p class="text-xs text-on-surface-variant leading-relaxed">Khi hết lượt: Khi đã sử dụng hết cả lượt miễn phí và lượt từ quảng cáo, bạn cần nâng cấp gói dịch vụ để tiếp tục sử dụng hệ thống.</p></div></div>'
+          },
+          {
+            "title": "5. Hướng dẫn cách nhận diện",
+            "content": '<p class="text-on-surface-variant mb-4">Để thực hiện quét hình ảnh nhận diện giống chó, hãy làm theo quy trình dưới đây:</p><div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4"><div class="p-4 bg-surface-container-low rounded-xl border border-outline-variant/10 text-center"><span class="text-2xl font-bold text-primary mb-1 block">01</span><h5 class="font-bold text-sm mb-1">Tải ảnh lên</h5><p class="text-xs text-on-surface-variant leading-relaxed">Nhấp vào khu vực tải ảnh hoặc kéo thả tệp ảnh vào khung tải lên tại trang Nhận diện.</p></div><div class="p-4 bg-surface-container-low rounded-xl border border-outline-variant/10 text-center"><span class="text-2xl font-bold text-primary mb-1 block">02</span><h5 class="font-bold text-sm mb-1">Chọn ảnh phù hợp</h5><p class="text-xs text-on-surface-variant leading-relaxed">Hệ thống chỉ hỗ trợ định dạng JPG, JPEG hoặc PNG với dung lượng tối đa 10MB.</p></div><div class="p-4 bg-surface-container-low rounded-xl border border-outline-variant/10 text-center"><span class="text-2xl font-bold text-primary mb-1 block">03</span><h5 class="font-bold text-sm mb-1">Chờ AI xử lý</h5><p class="text-xs text-on-surface-variant leading-relaxed">Nhấn nút \'Phân tích ngay\' và đợi từ 2 đến 4 giây để hệ thống AI nhận diện đối tượng và chạy mô hình phân loại.</p></div><div class="p-4 bg-surface-container-low rounded-xl border border-outline-variant/10 text-center"><span class="text-2xl font-bold text-primary mb-1 block">04</span><h5 class="font-bold text-sm mb-1">Xem kết quả</h5><p class="text-xs text-on-surface-variant leading-relaxed">Giao diện sẽ tự động chuyển sang trang hiển thị kết quả chi tiết.</p></div></div><div class="mt-6 p-4 bg-primary/5 rounded-xl border border-primary/10"><h4 class="font-bold text-primary mb-2 flex items-center gap-1.5 text-sm">Mẹo chụp ảnh để có kết quả chính xác nhất</h4><ul class="list-disc pl-5 space-y-1.5 text-xs text-on-surface-variant"><li>Chụp ảnh cận cảnh, rõ nét khuôn mặt của chó.</li><li>Đảm bảo điều kiện ánh sáng tốt, tránh ngược sáng hoặc quá tối.</li><li>Tránh chụp ảnh có nhiều con chó cùng lúc hoặc quá nhiều vật thể gây nhiễu xung quanh.</li><li>Góc chụp chính diện khuôn mặt chó luôn mang lại kết quả tối ưu từ mô hình AI.</li></ul></div>'
+          },
+          {
+            "title": "6. Giải thích kết quả nhận diện",
+            "content": '<p class="text-on-surface-variant mb-4">Trang kết quả phân tích chứa nhiều thông tin chi tiết giúp bạn hiểu rõ về cún cưng của mình:</p><div class="grid grid-cols-1 sm:grid-cols-2 gap-4"><div class="flex gap-3 items-start p-3 bg-surface-container rounded-xl"><span class="material-symbols-outlined text-primary text-[20px] mt-0.5">pets</span><div><strong class="text-sm text-primary block">Tên giống chó</strong><span class="text-xs text-on-surface-variant leading-relaxed">Giống chó được nhận diện có độ tương đồng cao nhất.</span></div></div><div class="flex gap-3 items-start p-3 bg-surface-container rounded-xl"><span class="material-symbols-outlined text-primary text-[20px] mt-0.5">percent</span><div><strong class="text-sm text-primary block">Độ chính xác (Độ tin cậy)</strong><span class="text-xs text-on-surface-variant leading-relaxed">Thể hiện tỷ lệ phần trăm chắc chắn của AI đối với giống chó đó.</span></div></div><div class="flex gap-3 items-start p-3 bg-surface-container rounded-xl"><span class="material-symbols-outlined text-primary text-[20px] mt-0.5">description</span><div><strong class="text-sm text-primary block">Thông tin giống chó</strong><span class="text-xs text-on-surface-variant leading-relaxed">Các thông tin bách khoa toàn thư bao gồm: Nguồn gốc xuất xứ, Đặc điểm ngoại hình, Tính cách đặc trưng và Hướng dẫn chăm sóc sức khỏe.</span></div></div><div class="flex gap-3 items-start p-3 bg-surface-container rounded-xl"><span class="material-symbols-outlined text-primary text-[20px] mt-0.5">insights</span><div><strong class="text-sm text-primary block">Bản đồ nhiệt Grad-CAM</strong><span class="text-xs text-on-surface-variant leading-relaxed">Vùng màu sáng (đỏ/vàng) trên ảnh thể hiện vị trí đặc trưng (như tai, mắt, mõm...) mà AI tập trung phân tích để đưa ra quyết định.</span></div></div></div>'
+          },
+          {
+            "title": "7. Các chế độ nhận diện",
+            "content": '<p class="text-on-surface-variant mb-4">Hệ thống tự động phân loại kết quả nhận diện dựa trên độ tin cậy của mô hình:</p><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div class="p-4 bg-surface-container rounded-xl border border-outline-variant/20"><h4 class="font-bold text-primary mb-1.5 text-sm">Kết luận Thuần chủng</h4><p class="text-xs text-on-surface-variant leading-relaxed">Khi giống chó có tỷ lệ tin cậy vượt trội (thường trên 80%), hệ thống sẽ đưa ra kết quả kết luận giống chó thuần chủng.</p></div><div class="p-4 bg-surface-container rounded-xl border border-outline-variant/20"><h4 class="font-bold text-primary mb-1.5 text-sm">Phân tích Tỷ lệ Lai dự tính</h4><p class="text-xs text-on-surface-variant leading-relaxed">Trường hợp giống chó lai (hoặc khi Top-1 và Top-2 có xác suất gần sát nhau), hệ thống hiển thị Top 3 giống chó tương đồng nhất kèm theo biểu đồ ước tính tỷ lệ lai dựa trên phân tích hình thái học.</p></div></div>'
+          },
+          {
+            "title": "8. Nâng cấp gói dịch vụ",
+            "content": '<p class="text-on-surface-variant mb-4">Khi cần mở rộng giới hạn sử dụng, bạn có thể nâng cấp tài khoản của mình:</p><div class="space-y-4 pl-1"><div class="flex gap-3 items-start"><span class="material-symbols-outlined text-primary text-[20px] mt-0.5">event_busy</span><div><strong class="text-sm text-primary block">Khi nào cần nâng cấp</strong><span class="text-xs text-on-surface-variant leading-relaxed">Khi đã dùng hết hạn mức miễn phí hoặc muốn trải nghiệm tốc độ ưu tiên và không có quảng cáo.</span></div></div><div class="flex gap-3 items-start"><span class="material-symbols-outlined text-primary text-[20px] mt-0.5">widgets</span><div><strong class="text-sm text-primary block">Cách chọn gói</strong><span class="text-xs text-on-surface-variant leading-relaxed">Truy cập trang \'Nâng cấp gói\' và chọn một trong ba gói: Basic (50 lượt/7 ngày/1,000đ), Pro (200 lượt/30 ngày/5,000đ) hoặc Enterprise (Không giới hạn/90 ngày/15,000đ).</span></div></div><div class="flex gap-3 items-start"><span class="material-symbols-outlined text-primary text-[20px] mt-0.5">qr_code_2</span><div><strong class="text-sm text-primary block">Cách thanh toán (VietQR)</strong><span class="text-xs text-on-surface-variant leading-relaxed">Hệ thống tạo mã thanh toán QR tự động. Hãy mở ứng dụng ngân hàng và quét mã để chuyển khoản chính xác số tiền cùng nội dung chuyển khoản được hiển thị.</span></div></div><div class="flex gap-3 items-start"><span class="material-symbols-outlined text-primary text-[20px] mt-0.5">sync_saved_locally</span><div><strong class="text-sm text-primary block">Hệ thống xử lý</strong><span class="text-xs text-on-surface-variant leading-relaxed">Sau khi chuyển khoản thành công, hệ thống VietQR tự động ghi nhận và kích hoạt gói nâng cấp cho tài khoản của bạn sau 1-5 phút mà không cần admin duyệt thủ công.</span></div></div></div>'
+          },
+          {
+            "title": "9. Xem lịch sử nhận diện",
+            "content": '<p class="text-on-surface-variant mb-4">Tất cả kết quả quét ảnh được lưu tự động để tra cứu lại bất cứ lúc nào:</p><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div class="p-4 bg-surface-container rounded-xl border border-outline-variant/20 flex gap-3 items-start"><span class="material-symbols-outlined text-primary text-[20px]">list_alt</span><div><h5 class="font-bold text-primary mb-1 text-sm">Danh sách lịch sử</h5><p class="text-xs text-on-surface-variant leading-relaxed">Truy cập trang \'Lịch sử\' từ thanh bên trái để xem danh sách toàn bộ các lượt nhận diện đã thực hiện.</p></div></div><div class="p-4 bg-surface-container rounded-xl border border-outline-variant/20 flex gap-3 items-start"><span class="material-symbols-outlined text-primary text-[20px]">manage_search</span><div><h5 class="font-bold text-primary mb-1 text-sm">Quản lý lịch sử</h5><p class="text-xs text-on-surface-variant leading-relaxed">Bạn có thể tìm kiếm nhanh theo giống chó, xem chi tiết từng lượt quét hoặc chọn xóa các bản ghi không cần thiết.</p></div></div></div>'
+          },
+          {
+            "title": "10. Xem thống kê cá nhân",
+            "content": '<p class="text-on-surface-variant mb-4">Trang thống kê giúp bạn có cái nhìn tổng quan về lịch sử sử dụng của mình:</p><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div class="p-4 bg-surface-container rounded-xl border border-outline-variant/20 flex gap-3 items-start"><span class="material-symbols-outlined text-primary text-[20px]">analytics</span><div><h5 class="font-bold text-primary mb-1 text-sm">Tổng quan</h5><p class="text-xs text-on-surface-variant leading-relaxed">Xem tổng số lượt quét, độ tin cậy trung bình của các lần nhận diện và số lượng giống chó khác nhau bạn từng phát hiện.</p></div></div><div class="p-4 bg-surface-container rounded-xl border border-outline-variant/20 flex gap-3 items-start"><span class="material-symbols-outlined text-primary text-[20px]">insert_chart</span><div><h5 class="font-bold text-primary mb-1 text-sm">Biểu đồ trực quan</h5><p class="text-xs text-on-surface-variant leading-relaxed">Biểu đồ trực quan: Biểu đồ xu hướng nhận diện theo thời gian, biểu đồ Top 5 giống chó bạn quét nhiều nhất và biểu đồ phân bổ mức độ tin cậy của phân loại AI.</p></div></div></div>'
+          },
+          {
+            "title": "11. Các câu hỏi thường gặp (FAQ)",
+            "content": '<div class="space-y-3"><details class="group bg-surface-container-low rounded-xl p-4 border border-outline-variant/10 [&_summary::-webkit-details-marker]:hidden"><summary class="flex items-center justify-between cursor-pointer focus:outline-none"><h5 class="font-bold text-primary text-sm flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">help_outline</span><span>AI nhận diện có chính xác không?</span></h5><span class="relative flex-shrink-0 ml-1.5 w-5 h-5"><span class="material-symbols-outlined transition-transform duration-300 group-open:-rotate-180 text-primary">expand_more</span></span></summary><p class="mt-2 text-xs text-on-surface-variant pl-7 leading-relaxed">Mô hình AI nhận diện dựa trên đặc trưng hình thái học bên ngoài từ tập dữ liệu huấn luyện. Kết quả chỉ mang tính tham khảo khách quan, không thể thay thế cho các kiểm tra xét nghiệm di truyền (DNA).</p></details><details class="group bg-surface-container-low rounded-xl p-4 border border-outline-variant/10 [&_summary::-webkit-details-marker]:hidden"><summary class="flex items-center justify-between cursor-pointer focus:outline-none"><h5 class="font-bold text-primary text-sm flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">help_outline</span><span>Làm sao để có kết quả tốt nhất?</span></h5><span class="relative flex-shrink-0 ml-1.5 w-5 h-5"><span class="material-symbols-outlined transition-transform duration-300 group-open:-rotate-180 text-primary">expand_more</span></span></summary><p class="mt-2 text-xs text-on-surface-variant pl-7 leading-relaxed">Nên chụp ảnh cún cưng ở góc chính diện khuôn mặt, ánh sáng rõ ràng, ảnh không bị rung mờ và chỉ có duy nhất khuôn mặt của một chú chó trong khung hình.</p></details><details class="group bg-surface-container-low rounded-xl p-4 border border-outline-variant/10 [&_summary::-webkit-details-marker]:hidden"><summary class="flex items-center justify-between cursor-pointer focus:outline-none"><h5 class="font-bold text-primary text-sm flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">help_outline</span><span>Hết lượt miễn phí tôi phải làm gì?</span></h5><span class="relative flex-shrink-0 ml-1.5 w-5 h-5"><span class="material-symbols-outlined transition-transform duration-300 group-open:-rotate-180 text-primary">expand_more</span></span></summary><p class="mt-2 text-xs text-on-surface-variant pl-7 leading-relaxed">Bạn có thể chọn \'Xem quảng cáo\' ở khu vực nhận diện để nhận thêm lượt nhận diện hoặc tiến hành nâng cấp gói dịch vụ trả phí phù hợp.</p></details><details class="group bg-surface-container-low rounded-xl p-4 border border-outline-variant/10 [&_summary::-webkit-details-marker]:hidden"><summary class="flex items-center justify-between cursor-pointer focus:outline-none"><h5 class="font-bold text-primary text-sm flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">help_outline</span><span>Thanh toán không thành công thì phải làm sao?</span></h5><span class="relative flex-shrink-0 ml-1.5 w-5 h-5"><span class="material-symbols-outlined transition-transform duration-300 group-open:-rotate-180 text-primary">expand_more</span></span></summary><p class="mt-2 text-xs text-on-surface-variant pl-7 leading-relaxed">Giao dịch tự động có thể mất từ 1-5 phút để xử lý. Nếu quá thời gian trên tài khoản vẫn chưa được kích hoạt, vui lòng gửi yêu cầu hỗ trợ đính kèm mã đơn hàng hoặc ảnh chụp biên lai chuyển khoản.</p></details><details class="group bg-surface-container-low rounded-xl p-4 border border-outline-variant/10 [&_summary::-webkit-details-marker]:hidden"><summary class="flex items-center justify-between cursor-pointer focus:outline-none"><h5 class="font-bold text-primary text-sm flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">help_outline</span><span>Làm thế nào để liên hệ hỗ trợ?</span></h5><span class="relative flex-shrink-0 ml-1.5 w-5 h-5"><span class="material-symbols-outlined transition-transform duration-300 group-open:-rotate-180 text-primary">expand_more</span></span></summary><p class="mt-2 text-xs text-on-surface-variant pl-7 leading-relaxed">Bạn có thể gửi email trực tiếp tới support@pet.ai hoặc điền biểu mẫu liên hệ tại trang \'Liên hệ\' của website.</p></details></div>'
+          },
+          {
+            "title": "12. Thông tin liên hệ hỗ trợ",
+            "content": '<p class="text-on-surface-variant mb-4">Nếu gặp bất kỳ khó khăn hay sự cố nào trong quá trình sử dụng hệ thống PetAI, vui lòng liên hệ:</p><div class="space-y-3 text-sm"><div class="flex items-center gap-3"><span class="material-symbols-outlined text-primary text-[20px]">mail</span><span class="text-on-surface-variant">Email: support@pet.ai (Hỗ trợ 24/7)</span></div><div class="flex items-center gap-3"><span class="material-symbols-outlined text-primary text-[20px]">call</span><span class="text-on-surface-variant">Hotline: 0916 416 409</span></div><div class="flex items-center gap-3"><span class="material-symbols-outlined text-primary text-[20px]">location_on</span><span class="text-on-surface-variant">Địa chỉ: P16, Đường số 8, KDC lô 49, Khu đô thị Nam Cần Thơ, P. Cái Răng, TP. Cần Thơ</span></div></div>'
+          }
+        ] %}
+
+        {% set default_sections_en = [
+          {
+            "title": "1. Introduction to PetAI",
+            "content": 'PetAI is an intelligent dog breed identification system powered by Artificial Intelligence (AI). When you upload an image, the system processes it through the following automated pipeline:<br><br><strong>1. Detection &amp; Bounding Box (YOLOv8):</strong> The YOLOv8 model scans the image to identify the dog, draws a bounding box around its body, and automatically crops the region to focus solely on the dog and eliminate background noise.<br><strong>2. Feature Analysis &amp; Classification:</strong> The cropped image is fed into a custom deep learning classifier to analyze morphological features across 120+ popular dog breeds.<br><strong>3. Purebred vs. Mixed Breed Decision:</strong> If the top breed candidate has a dominant confidence score (typically &gt;80%), the AI concludes a purebred breed. If scores for the top candidates are close or moderate, the system visualizes estimated hybrid ratios using the Top-3 candidates.<br><strong>4. Visual Explanations (Grad-CAM):</strong> Generates a heatmap highlighting key regions (ears, eyes, snout) that the AI focused on to make its decision.'
+          },
+          {
+            "title": "2. Account Registration Guide",
+            "content": '<p class="text-on-surface-variant mb-4">To save your identification history and manage your usage limits, you need to create an account:</p><ul class="space-y-3 pl-1"><li class="flex items-start gap-3"><span class="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs mt-0.5">1</span><span class="text-on-surface-variant">Access the Registration page from the top-right header menu or navigate directly to /register.</span></li><li class="flex items-start gap-3"><span class="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs mt-0.5">2</span><span class="text-on-surface-variant">Fill in your details: Full Name, unique Username, a valid Email address, and a secure Password.</span></li><li class="flex items-start gap-3"><span class="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs mt-0.5">3</span><span class="text-on-surface-variant">Accept the Terms of Service and click \'Create Account\' to complete the registration.</span></li></ul>'
+          },
+          {
+            "title": "3. User Sign In Guide",
+            "content": '<p class="text-on-surface-variant mb-4">After successful registration, you can log into the system in two ways:</p><ul class="space-y-3 pl-1"><li class="flex items-start gap-3"><span class="material-symbols-outlined text-primary/70 flex-shrink-0 mt-0.5">vpn_key</span><span class="text-on-surface-variant">Standard Login: Enter your registered Username/Email and Password.</span></li><li class="flex items-start gap-3"><span class="material-symbols-outlined text-primary/70 flex-shrink-0 mt-0.5">account_circle</span><span class="text-on-surface-variant">Google Sign-In: Click \'Sign in with Google\' to authenticate instantly using your Google account.</span></li></ul>'
+          },
+          {
+            "title": "4. Free Plan Benefits & Limits",
+            "content": '<p class="text-on-surface-variant mb-4">Every newly registered account starts automatically on the Free plan:</p><div class="grid grid-cols-1 md:grid-cols-3 gap-4"><div class="p-4 bg-surface-container rounded-xl border border-outline-variant/20"><h4 class="font-bold text-primary mb-2 flex items-center gap-1.5 text-sm"><span class="material-symbols-outlined text-[16px]">filter_1</span><span>10 free AI scans</span></h4><p class="text-xs text-on-surface-variant leading-relaxed">Default scan limit: You receive 10 free AI scans forever.</p></div><div class="p-4 bg-surface-container rounded-xl border border-outline-variant/20"><h4 class="font-bold text-primary mb-2 flex items-center gap-1.5 text-sm"><span class="material-symbols-outlined text-[16px]">ads_click</span><span>Ad-supported scanning</span></h4><p class="text-xs text-on-surface-variant leading-relaxed">Watch ads to unlock extra scans: Once the 10 free scans run out, you can watch a short simulated ad (up to 3 times) to unlock 3 extra scans per view.</p></div><div class="p-4 bg-surface-container rounded-xl border border-outline-variant/20"><h4 class="font-bold text-primary mb-2 flex items-center gap-1.5 text-sm"><span class="material-symbols-outlined text-[16px]">warning</span><span>Quota exhaustion</span></h4><p class="text-xs text-on-surface-variant leading-relaxed">Once both the default and ad-unlocked limits are exhausted, you must purchase an upgrade package.</p></div></div>'
+          },
+          {
+            "title": "5. How to Identify Dog Breeds",
+            "content": '<p class="text-on-surface-variant mb-4">To identify a dog breed, follow this quick procedure:</p><div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4"><div class="p-4 bg-surface-container-low rounded-xl border border-outline-variant/10 text-center"><span class="text-2xl font-bold text-primary mb-1 block">01</span><h5 class="font-bold text-sm mb-1">Upload Photo</h5><p class="text-xs text-on-surface-variant leading-relaxed">Drag and drop or click to select a dog image file from your device on the Identify page.</p></div><div class="p-4 bg-surface-container-low rounded-xl border border-outline-variant/10 text-center"><span class="text-2xl font-bold text-primary mb-1 block">02</span><h5 class="font-bold text-sm mb-1">Supported Formats</h5><p class="text-xs text-on-surface-variant leading-relaxed">Ensure the file is in JPG, JPEG, or PNG format and does not exceed 10MB.</p></div><div class="p-4 bg-surface-container-low rounded-xl border border-outline-variant/10 text-center"><span class="text-2xl font-bold text-primary mb-1 block">03</span><h5 class="font-bold text-sm mb-1">Wait for AI Processing</h5><p class="text-xs text-on-surface-variant leading-relaxed">Click \'Analyze Now\' and wait 2-5 seconds for YOLOv8 and classification models to process.</p></div><div class="p-4 bg-surface-container-low rounded-xl border border-outline-variant/10 text-center"><span class="text-2xl font-bold text-primary mb-1 block">04</span><h5 class="font-bold text-sm mb-1">View Results</h5><p class="text-xs text-on-surface-variant leading-relaxed">The page will automatically load the detailed prediction results page.</p></div></div><div class="mt-6 p-4 bg-primary/5 rounded-xl border border-primary/10"><h4 class="font-bold text-primary mb-2 flex items-center gap-1.5 text-sm">Photo Tips for Best Accuracy</h4><ul class="list-disc pl-5 space-y-1.5 text-xs text-on-surface-variant"><li>Take close-up, clear photos of the dog\'s face.</li><li>Ensure good lighting conditions; avoid backlighting or overly dark settings.</li><li>Avoid photos with multiple dogs or cluttered backgrounds.</li><li>A straight-on shot of the dog\'s face always yields optimal AI results.</li></ul></div>'
+          },
+          {
+            "title": "6. Understanding Prediction Results",
+            "content": '<p class="text-on-surface-variant mb-4">The result page is packed with detailed AI insights about your pet:</p><div class="grid grid-cols-1 sm:grid-cols-2 gap-4"><div class="flex gap-3 items-start p-3 bg-surface-container rounded-xl"><span class="material-symbols-outlined text-primary text-[20px] mt-0.5">pets</span><div><strong class="text-sm text-primary block">Breed Name</strong><span class="text-xs text-on-surface-variant leading-relaxed">The primary identified breed with the highest confidence level.</span></div></div><div class="flex gap-3 items-start p-3 bg-surface-container rounded-xl"><span class="material-symbols-outlined text-primary text-[20px] mt-0.5">percent</span><div><strong class="text-sm text-primary block">Confidence Level</strong><span class="text-xs text-on-surface-variant leading-relaxed">Shows the percentage probability computed by the AI model.</span></div></div><div class="flex gap-3 items-start p-3 bg-surface-container rounded-xl"><span class="material-symbols-outlined text-primary text-[20px] mt-0.5">description</span><div><strong class="text-sm text-primary block">Breed Information</strong><span class="text-xs text-on-surface-variant leading-relaxed">Encyclopedia facts including Origin, Physical features, Temperament, and Care instructions.</span></div></div><div class="flex gap-3 items-start p-3 bg-surface-container rounded-xl"><span class="material-symbols-outlined text-primary text-[20px] mt-0.5">insights</span><div><strong class="text-sm text-primary block">Grad-CAM Heatmap</strong><span class="text-xs text-on-surface-variant leading-relaxed">Highlights the visual regions (e.g. ears, eyes, snout) the AI focused on to make its decision.</span></div></div></div>'
+          },
+          {
+            "title": "7. AI Recognition Modes",
+            "content": '<p class="text-on-surface-variant mb-4">The system automatically handles breed classifications based on model probabilities:</p><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div class="p-4 bg-surface-container rounded-xl border border-outline-variant/20"><h4 class="font-bold text-primary mb-1.5 text-sm">Purebred Classification</h4><p class="text-xs text-on-surface-variant leading-relaxed">If the top breed has a dominant probability (typically &gt;80%), the AI concludes a purebred breed.</p></div><div class="p-4 bg-surface-container rounded-xl border border-outline-variant/20"><h4 class="font-bold text-primary mb-1.5 text-sm">Estimated Hybrid Ratio Analysis</h4><p class="text-xs text-on-surface-variant leading-relaxed">For mixed/hybrid dogs, the system displays morphological similarities for the Top-3 breeds and visualizes an estimated hybrid ratio.</p></div></div>'
+          },
+          {
+            "title": "8. Upgrading Subscription Packages",
+            "content": '<p class="text-on-surface-variant mb-4">To extend scan limits and experience premium speed, you can upgrade your plan:</p><div class="space-y-4 pl-1"><div class="flex gap-3 items-start"><span class="material-symbols-outlined text-primary text-[20px] mt-0.5">event_busy</span><div><strong class="text-sm text-primary block">When to Upgrade</strong><span class="text-xs text-on-surface-variant leading-relaxed">When you run out of free scans, want ad-free usage, or require priority server response.</span></div></div><div class="flex gap-3 items-start"><span class="material-symbols-outlined text-primary text-[20px] mt-0.5">widgets</span><div><strong class="text-sm text-primary block">Choose a Plan</strong><span class="text-xs text-on-surface-variant leading-relaxed">Go to the Upgrade page and select a plan: Basic (50 scans / 7 days / 1,000 VND), Pro (200 scans / 30 days / 5,000 VND), or Enterprise (Unlimited scans / 90 days / 15,000 VND).</span></div></div><div class="flex gap-3 items-start"><span class="material-symbols-outlined text-primary text-[20px] mt-0.5">qr_code_2</span><div><strong class="text-sm text-primary block">Payment (VietQR)</strong><span class="text-xs text-on-surface-variant leading-relaxed">The system creates a dynamic payment invoice and VietQR code. Open your banking app, scan the code, and transfer the exact amount with the exact memo.</span></div></div><div class="flex gap-3 items-start"><span class="material-symbols-outlined text-primary text-[20px] mt-0.5">sync_saved_locally</span><div><strong class="text-sm text-primary block">Automatic Activation</strong><span class="text-xs text-on-surface-variant leading-relaxed">Once the transfer is completed, the VietQR gateway automatically confirms payment and upgrades your account in 1-5 minutes.</span></div></div></div>'
+          },
+          {
+            "title": "9. Viewing Scan History",
+            "content": '<p class="text-on-surface-variant mb-4">Every scanned photo is saved automatically to let you query them anytime:</p><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div class="p-4 bg-surface-container rounded-xl border border-outline-variant/20 flex gap-3 items-start"><span class="material-symbols-outlined text-primary text-[20px]">list_alt</span><div><h5 class="font-bold text-primary mb-1 text-sm">Viewing Scan History</h5><p class="text-xs text-on-surface-variant leading-relaxed">Navigate to the \'History\' page from the sidebar to view a chronological list of all scans.</p></div></div><div class="p-4 bg-surface-container rounded-xl border border-outline-variant/20 flex gap-3 items-start"><span class="material-symbols-outlined text-primary text-[20px]">manage_search</span><div><h5 class="font-bold text-primary mb-1 text-sm">Managing History</h5><p class="text-xs text-on-surface-variant leading-relaxed">You can filter the list by breed name, open details to view the full report, or delete individual records.</p></div></div></div>'
+          },
+          {
+            "title": "10. Exploring Personal Analytics",
+            "content": '<p class="text-on-surface-variant mb-4">The statistics page displays high-level trends of your scanning activity:</p><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div class="p-4 bg-surface-container rounded-xl border border-outline-variant/20 flex gap-3 items-start"><span class="material-symbols-outlined text-primary text-[20px]">analytics</span><div><h5 class="font-bold text-primary mb-1 text-sm">Overview</h5><p class="text-xs text-on-surface-variant leading-relaxed">Total scans performed, average AI confidence score, and unique breeds discovered.</p></div></div><div class="p-4 bg-surface-container rounded-xl border border-outline-variant/20 flex gap-3 items-start"><span class="material-symbols-outlined text-primary text-[20px]">insert_chart</span><div><h5 class="font-bold text-primary mb-1 text-sm">Charts</h5><p class="text-xs text-on-surface-variant leading-relaxed">Charts: Activity trend graph, top 5 identified breeds chart, and probability distribution breakdowns.</p></div></div></div>'
+          },
+          {
+            "title": "11. Frequently Asked Questions (FAQ)",
+            "content": '<div class="space-y-3"><details class="group bg-surface-container-low rounded-xl p-4 border border-outline-variant/10 [&_summary::-webkit-details-marker]:hidden"><summary class="flex items-center justify-between cursor-pointer focus:outline-none"><h5 class="font-bold text-primary text-sm flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">help_outline</span><span>Is the AI prediction 100% accurate?</span></h5><span class="relative flex-shrink-0 ml-1.5 w-5 h-5"><span class="material-symbols-outlined transition-transform duration-300 group-open:-rotate-180 text-primary">expand_more</span></span></summary><p class="mt-2 text-xs text-on-surface-variant pl-7 leading-relaxed">AI models predict based on morphological features learned from training data. The outputs are for objective reference and cannot replace genetic (DNA) tests.</p></details><details class="group bg-surface-container-low rounded-xl p-4 border border-outline-variant/10 [&_summary::-webkit-details-marker]:hidden"><summary class="flex items-center justify-between cursor-pointer focus:outline-none"><h5 class="font-bold text-primary text-sm flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">help_outline</span><span>How can I get the best results?</span></h5><span class="relative flex-shrink-0 ml-1.5 w-5 h-5"><span class="material-symbols-outlined transition-transform duration-300 group-open:-rotate-180 text-primary">expand_more</span></span></summary><p class="mt-2 text-xs text-on-surface-variant pl-7 leading-relaxed">Ensure the photo features a straight-on shot of the dog\'s face, has clear lighting, is not blurry, and contains only one dog.</p></details><details class="group bg-surface-container-low rounded-xl p-4 border border-outline-variant/10 [&_summary::-webkit-details-marker]:hidden"><summary class="flex items-center justify-between cursor-pointer focus:outline-none"><h5 class="font-bold text-primary text-sm flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">help_outline</span><span>What should I do when free scans run out?</span></h5><span class="relative flex-shrink-0 ml-1.5 w-5 h-5"><span class="material-symbols-outlined transition-transform duration-300 group-open:-rotate-180 text-primary">expand_more</span></span></summary><p class="mt-2 text-xs text-on-surface-variant pl-7 leading-relaxed">You can click \'Watch Ad\' in the pop-up to unlock additional scans or purchase a plan upgrade.</p></details><details class="group bg-surface-container-low rounded-xl p-4 border border-outline-variant/10 [&_summary::-webkit-details-marker]:hidden"><summary class="flex items-center justify-between cursor-pointer focus:outline-none"><h5 class="font-bold text-primary text-sm flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">help_outline</span><span>What if my payment is unsuccessful?</span></h5><span class="relative flex-shrink-0 ml-1.5 w-5 h-5"><span class="material-symbols-outlined transition-transform duration-300 group-open:-rotate-180 text-primary">expand_more</span></span></summary><p class="mt-2 text-xs text-on-surface-variant pl-7 leading-relaxed">VietQR transactions take 1-5 minutes to complete. If it takes longer, please contact us with your order ID or bank receipt.</p></details><details class="group bg-surface-container-low rounded-xl p-4 border border-outline-variant/10 [&_summary::-webkit-details-marker]:hidden"><summary class="flex items-center justify-between cursor-pointer focus:outline-none"><h5 class="font-bold text-primary text-sm flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">help_outline</span><span>How do I contact support?</span></h5><span class="relative flex-shrink-0 ml-1.5 w-5 h-5"><span class="material-symbols-outlined transition-transform duration-300 group-open:-rotate-180 text-primary">expand_more</span></span></summary><p class="mt-2 text-xs text-on-surface-variant pl-7 leading-relaxed">You can email us at support@pet.ai or use the contact form under the Contact page.</p></details></div>'
+          },
+          {
+            "title": "12. Support Contact Information",
+            "content": '<p class="text-on-surface-variant mb-4">If you encounter any issues while using the PetAI platform, feel free to contact us:</p><div class="space-y-3 text-sm"><div class="flex items-center gap-3"><span class="material-symbols-outlined text-primary text-[20px]">mail</span><span class="text-on-surface-variant">Email: support@pet.ai (24/7 Support)</span></div><div class="flex items-center gap-3"><span class="material-symbols-outlined text-primary text-[20px]">call</span><span class="text-on-surface-variant">Hotline: 0916 416 409</span></div><div class="flex items-center gap-3"><span class="material-symbols-outlined text-primary text-[20px]">location_on</span><span class="text-on-surface-variant">Address: P16, Street 8, Lot 49 residential area, Nam Can Tho Urban Area, Cai Rang District, Can Tho City, Vietnam</span></div></div>'
+          }
+        ] %}
+
         {% set sections_vi = get_legal_sections('user-guide', 'vi') %}
         {% set sections_en = get_legal_sections('user-guide', 'en') %}
-        {% if sections_vi or sections_en %}
-          <h1 class="headline-lg text-on-surface mb-6 font-bold" data-i18n="userGuideHeaderTitle">
-            <span data-i18n="userGuideHeaderTitle">Hướng dẫn sử dụng</span>
-          </h1>
-          <div id="dynamic-content-vi" class="space-y-6 text-on-surface-variant body-md leading-relaxed legal-content-rich {{ 'hidden' if ui_language == 'en' else '' }}">
-            {% for sec in sections_vi %}
-              {% if sec.title %}
-                <h2 class="text-xl font-bold text-primary mt-6 mb-2">{{ sec.title }}</h2>
-              {% endif %}
-              <div>{{ sec.content | safe }}</div>
-            {% endfor %}
-          </div>
-          <div id="dynamic-content-en" class="space-y-6 text-on-surface-variant body-md leading-relaxed legal-content-rich {{ 'hidden' if ui_language != 'en' else '' }}">
-            {% for sec in sections_en %}
-              {% if sec.title %}
-                <h2 class="text-xl font-bold text-primary mt-6 mb-2">{{ sec.title }}</h2>
-              {% endif %}
-              <div>{{ sec.content | safe }}</div>
-            {% endfor %}
-          </div>
-        {% else %}
-        <div class="text-center mb-10">
-          <h1 class="headline-lg text-on-surface mb-4 font-bold" data-i18n="userGuideHeaderTitle">
-            <span data-i18n="userGuideHeaderTitle">Hướng dẫn sử dụng</span>
-          </h1>
-          <p class="body-md text-on-surface-variant max-w-2xl mx-auto" data-i18n="userGuideSubtitle">
-            <span data-i18n="userGuideSubtitle">Tìm hiểu cách sử dụng PetAI để nhận diện giống chó nhanh chóng và chính xác nhất.</span>
-          </p>
-        </div>
 
-        <!-- Table of Contents / Quick Jump -->
-        <div class="mb-10 p-6 bg-white border border-outline-variant/20 rounded-2xl shadow-sm">
-          <h2 class="text-lg font-bold text-primary mb-4 flex items-center gap-2">
-            <span class="material-symbols-outlined text-[20px]">menu_book</span>
-            <span data-i18n="guideStepsTitle">Mục lục hướng dẫn</span>
-          </h2>
-          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 text-sm">
-            <a href="#intro" class="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors">
-              <span class="w-1.5 h-1.5 rounded-full bg-primary/60"></span>
-              <span data-i18n="guideIntroTitle">1. Giới thiệu về PetAI</span>
-            </a>
-            <a href="#register" class="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors">
-              <span class="w-1.5 h-1.5 rounded-full bg-primary/60"></span>
-              <span data-i18n="guideRegisterTitle">2. Hướng dẫn đăng ký</span>
-            </a>
-            <a href="#login" class="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors">
-              <span class="w-1.5 h-1.5 rounded-full bg-primary/60"></span>
-              <span data-i18n="guideLoginTitle">3. Hướng dẫn đăng nhập</span>
-            </a>
-            <a href="#freeplan" class="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors">
-              <span class="w-1.5 h-1.5 rounded-full bg-primary/60"></span>
-              <span data-i18n="guideFreePlanTitle">4. Gói Miễn Phí (Free Plan)</span>
-            </a>
-            <a href="#identify" class="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors">
-              <span class="w-1.5 h-1.5 rounded-full bg-primary/60"></span>
-              <span data-i18n="guideIdentifyTitle">5. Hướng dẫn nhận diện</span>
-            </a>
-            <a href="#result" class="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors">
-              <span class="w-1.5 h-1.5 rounded-full bg-primary/60"></span>
-              <span data-i18n="guideResultTitle">6. Giải thích kết quả</span>
-            </a>
-            <a href="#modes" class="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors">
-              <span class="w-1.5 h-1.5 rounded-full bg-primary/60"></span>
-              <span data-i18n="guideModesTitle">7. Các chế độ nhận diện</span>
-            </a>
-            <a href="#upgrade" class="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors">
-              <span class="w-1.5 h-1.5 rounded-full bg-primary/60"></span>
-              <span data-i18n="guideUpgradeTitle">8. Nâng cấp gói dịch vụ</span>
-            </a>
-            <a href="#history" class="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors">
-              <span class="w-1.5 h-1.5 rounded-full bg-primary/60"></span>
-              <span data-i18n="guideHistoryTitle">9. Xem lịch sử nhận diện</span>
-            </a>
-            <a href="#stats" class="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors">
-              <span class="w-1.5 h-1.5 rounded-full bg-primary/60"></span>
-              <span data-i18n="guideStatsTitle">10. Xem thống kê cá nhân</span>
-            </a>
-            <a href="#faq" class="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors">
-              <span class="w-1.5 h-1.5 rounded-full bg-primary/60"></span>
-              <span data-i18n="guideFaqTitle">11. Các câu hỏi thường gặp</span>
-            </a>
-            <a href="#contact" class="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors">
-              <span class="w-1.5 h-1.5 rounded-full bg-primary/60"></span>
-              <span data-i18n="guideContactTitle">12. Thông tin liên hệ</span>
-            </a>
-          </div>
-        </div>
+        {% set active_sections_vi = sections_vi if sections_vi else default_sections_vi %}
+        {% set active_sections_en = sections_en if sections_en else default_sections_en %}
 
-        <!-- Documentation Content -->
-        <div class="space-y-8 text-on-surface-variant body-md leading-relaxed">
-          <!-- Section 1: Introduction -->
-          <div id="intro" class="scroll-mt-24 bg-white border border-outline-variant/30 rounded-2xl p-6 shadow-sm">
-            <h3 class="text-xl font-bold text-primary mb-3 flex items-center gap-2">
-              <span class="material-symbols-outlined text-[24px]">info</span>
-              <span data-i18n="guideIntroTitle">1. Giới thiệu về PetAI</span>
-            </h3>
-            <p class="text-on-surface-variant" data-i18n-html="guideIntroDesc">
-              PetAI là hệ thống nhận diện giống chó thông minh sử dụng trí tuệ nhân tạo (AI). Quy trình xử lý hình ảnh bao gồm:
-              <br><br>
-              <strong>1. Phát hiện &amp; Khoanh vùng (YOLOv8):</strong> Quét và định vị đối tượng chú chó, cắt ảnh loại bỏ nhiễu.
-              <br>
-              <strong>2. Phân tích &amp; Phân loại:</strong> Phân tích đặc trưng hình thái đối với hơn 120 giống chó.
-              <br>
-              <strong>3. Xác định Thuần chủng/Chó lai:</strong> Trả về kết luận giống thuần hoặc ước tính tỷ lệ lai trong Top-3 giống.
-              <br>
-              <strong>4. Giải thích trực quan (Grad-CAM):</strong> Hiển thị bản đồ nhiệt làm nổi bật vùng đặc trưng.
+        <!-- Vietnamese View -->
+        <div id="dynamic-content-vi" class="space-y-6 text-on-surface-variant body-md leading-relaxed legal-content-rich {{ 'hidden' if ui_language == 'en' else '' }}">
+          <div class="text-center mb-10">
+            <h1 class="headline-lg text-on-surface mb-4 font-bold" data-i18n="userGuideHeaderTitle">
+              <span data-i18n="userGuideHeaderTitle">Hướng dẫn sử dụng</span>
+            </h1>
+            <p class="body-md text-on-surface-variant max-w-2xl mx-auto" data-i18n="userGuideSubtitle">
+              <span data-i18n="userGuideSubtitle">Tìm hiểu cách sử dụng PetAI để nhận diện giống chó nhanh chóng và chính xác nhất.</span>
             </p>
           </div>
 
-          <!-- Section 2: Account Registration -->
-          <div id="register" class="scroll-mt-24 bg-white border border-outline-variant/30 rounded-2xl p-6 shadow-sm">
-            <h3 class="text-xl font-bold text-primary mb-3 flex items-center gap-2">
-              <span class="material-symbols-outlined text-[24px]">person_add</span>
-              <span data-i18n="guideRegisterTitle">2. Hướng dẫn đăng ký tài khoản</span>
-            </h3>
-            <p class="text-on-surface-variant mb-4" data-i18n="guideRegisterDesc">Để bắt đầu lưu lịch sử nhận diện và quản lý hạn mức, bạn cần tạo tài khoản mới:</p>
-            <ul class="space-y-3 pl-1">
-              <li class="flex items-start gap-3">
-                <span class="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs mt-0.5">1</span>
-                <span class="text-on-surface-variant" data-i18n="guideRegisterStep1">Truy cập trang đăng ký từ menu góc trên bên phải hoặc vào route /register.</span>
-              </li>
-              <li class="flex items-start gap-3">
-                <span class="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs mt-0.5">2</span>
-                <span class="text-on-surface-variant" data-i18n="guideRegisterStep2">Nhập đầy đủ thông tin cá nhân: Họ tên, Tên đăng nhập (username), Email hợp lệ và Mật khẩu bảo mật.</span>
-              </li>
-              <li class="flex items-start gap-3">
-                <span class="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs mt-0.5">3</span>
-                <span class="text-on-surface-variant" data-i18n="guideRegisterStep3">Xác nhận đồng ý điều khoản dịch vụ và nhấp nút 'Tạo tài khoản' để hoàn tất.</span>
-              </li>
-            </ul>
-          </div>
-
-          <!-- Section 3: User Sign In -->
-          <div id="login" class="scroll-mt-24 bg-white border border-outline-variant/30 rounded-2xl p-6 shadow-sm">
-            <h3 class="text-xl font-bold text-primary mb-3 flex items-center gap-2">
-              <span class="material-symbols-outlined text-[24px]">login</span>
-              <span data-i18n="guideLoginTitle">3. Hướng dẫn đăng nhập</span>
-            </h3>
-            <p class="text-on-surface-variant mb-4" data-i18n="guideLoginDesc">Sau khi đăng ký thành công, bạn có thể đăng nhập vào hệ thống bằng hai cách:</p>
-            <ul class="space-y-3 pl-1">
-              <li class="flex items-start gap-3">
-                <span class="material-symbols-outlined text-primary/70 flex-shrink-0 mt-0.5">vpn_key</span>
-                <span class="text-on-surface-variant" data-i18n="guideLoginMethod1">Đăng nhập thông thường: Sử dụng Tên đăng nhập hoặc Email cùng Mật khẩu đã đăng ký.</span>
-              </li>
-              <li class="flex items-start gap-3">
-                <span class="material-symbols-outlined text-primary/70 flex-shrink-0 mt-0.5">account_circle</span>
-                <span class="text-on-surface-variant" data-i18n="guideLoginMethod2">Đăng nhập nhanh: Chọn 'Đăng nhập bằng Google' để liên kết và đăng nhập nhanh bằng tài khoản Google cá nhân.</span>
-              </li>
-            </ul>
-          </div>
-
-          <!-- Section 4: Free Plan -->
-          <div id="freeplan" class="scroll-mt-24 bg-white border border-outline-variant/30 rounded-2xl p-6 shadow-sm">
-            <h3 class="text-xl font-bold text-primary mb-3 flex items-center gap-2">
-              <span class="material-symbols-outlined text-[24px]">card_giftcard</span>
-              <span data-i18n="guideFreePlanTitle">4. Giới thiệu Gói Miễn Phí (Free Plan)</span>
-            </h3>
-            <p class="text-on-surface-variant mb-4" data-i18n="guideFreePlanDesc">Mỗi người dùng mới đăng ký sẽ tự động được gán gói dịch vụ Miễn phí:</p>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div class="p-4 bg-surface-container rounded-xl border border-outline-variant/20">
-                <h4 class="font-bold text-primary mb-2 flex items-center gap-1.5 text-sm">
-                  <span class="material-symbols-outlined text-[16px]">filter_1</span>
-                  <span data-i18n="freeScans10">10 lượt nhận diện</span>
-                </h4>
-                <p class="text-xs text-on-surface-variant leading-relaxed" data-i18n="guideFreePlanLimit">Hạn mức mặc định: Bạn nhận được 10 lượt nhận diện giống chó miễn phí vĩnh viễn.</p>
-              </div>
-              <div class="p-4 bg-surface-container rounded-xl border border-outline-variant/20">
-                <h4 class="font-bold text-primary mb-2 flex items-center gap-1.5 text-sm">
-                  <span class="material-symbols-outlined text-[16px]">ads_click</span>
-                  <span data-i18n="watchAdsMore">Xem quảng cáo</span>
-                </h4>
-                <p class="text-xs text-on-surface-variant leading-relaxed" data-i18n="guideFreePlanAds">Xem quảng cáo để nhận thêm lượt: Khi sử dụng hết 10 lượt mặc định, bạn có thể xem quảng cáo ngắn (tối đa 3 lần) để nhận thêm 3 lượt quét mỗi lần.</p>
-              </div>
-              <div class="p-4 bg-surface-container rounded-xl border border-outline-variant/20">
-                <h4 class="font-bold text-primary mb-2 flex items-center gap-1.5 text-sm">
-                  <span class="material-symbols-outlined text-[16px]">warning</span>
-                  <span data-i18n="quotaLimitLabel">Khi hết lượt</span>
-                </h4>
-                <p class="text-xs text-on-surface-variant leading-relaxed" data-i18n="guideFreePlanOut">Khi hết lượt: Khi đã sử dụng hết cả lượt miễn phí và lượt từ quảng cáo, bạn cần nâng cấp gói dịch vụ để tiếp tục sử dụng hệ thống.</p>
-              </div>
+          <!-- Table of Contents / Quick Jump -->
+          <div class="mb-10 p-6 bg-white border border-outline-variant/20 rounded-2xl shadow-sm">
+            <h2 class="text-lg font-bold text-primary mb-4 flex items-center gap-2">
+              <span class="material-symbols-outlined text-[20px]">menu_book</span>
+              <span data-i18n="guideStepsTitle">Mục lục hướng dẫn</span>
+            </h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 text-sm">
+              {% for sec in active_sections_vi %}
+                {% set target_ids = ["intro", "register", "login", "freeplan", "identify", "result", "modes", "upgrade", "history", "stats", "faq", "contact"] %}
+                {% set tid = target_ids[loop.index0] if loop.index0 < 12 else "sec_" ~ loop.index0 %}
+                <a href="#{{ tid }}" class="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors">
+                  <span class="w-1.5 h-1.5 rounded-full bg-primary/60"></span>
+                  <span>{{ sec.title }}</span>
+                </a>
+              {% endfor %}
             </div>
           </div>
 
-          <!-- Section 5: How to Identify -->
-          <div id="identify" class="scroll-mt-24 bg-white border border-outline-variant/30 rounded-2xl p-6 shadow-sm">
-            <h3 class="text-xl font-bold text-primary mb-3 flex items-center gap-2">
-              <span class="material-symbols-outlined text-[24px]">photo_camera</span>
-              <span data-i18n="guideIdentifyTitle">5. Hướng dẫn cách nhận diện</span>
-            </h3>
-            <p class="text-on-surface-variant mb-4" data-i18n="guideIdentifyDesc">Để thực hiện quét hình ảnh nhận diện giống chó, hãy làm theo quy trình dưới đây:</p>
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-              <div class="p-4 bg-surface-container-low rounded-xl border border-outline-variant/10 text-center">
-                <span class="text-2xl font-bold text-primary mb-1 block">01</span>
-                <h5 class="font-bold text-sm mb-1" data-i18n="uploadNewPhoto">Tải ảnh lên</h5>
-                <p class="text-xs text-on-surface-variant leading-relaxed" data-i18n="guideIdentifyStep1">Nhấp vào khu vực tải ảnh hoặc kéo thả tệp ảnh vào khung tải lên tại trang Nhận diện.</p>
+          <!-- Documentation Content -->
+          <div class="space-y-8 text-on-surface-variant body-md leading-relaxed">
+            {% set target_ids = ["intro", "register", "login", "freeplan", "identify", "result", "modes", "upgrade", "history", "stats", "faq", "contact"] %}
+            {% for sec in active_sections_vi %}
+              {% set tid = target_ids[loop.index0] if loop.index0 < 12 else "sec_" ~ loop.index0 %}
+              <div id="{{ tid }}" class="scroll-mt-24 bg-white border border-outline-variant/30 rounded-2xl p-6 shadow-sm">
+                <h3 class="text-xl font-bold text-primary mb-3 flex items-center gap-2">
+                  {% set icon_names = ["info", "person_add", "login", "card_giftcard", "photo_camera", "troubleshoot", "psychology", "upgrade", "history", "query_stats", "help", "contact_support"] %}
+                  {% set icon = icon_names[loop.index0] if loop.index0 < 12 else "article" %}
+                  <span class="material-symbols-outlined text-[24px]">{{ icon }}</span>
+                  <span>{{ sec.title }}</span>
+                </h3>
+                <div class="text-on-surface-variant">{{ sec.content | safe }}</div>
               </div>
-              <div class="p-4 bg-surface-container-low rounded-xl border border-outline-variant/10 text-center">
-                <span class="text-2xl font-bold text-primary mb-1 block">02</span>
-                <h5 class="font-bold text-sm mb-1" data-i18n="supportedFormats">Chọn ảnh phù hợp</h5>
-                <p class="text-xs text-on-surface-variant leading-relaxed" data-i18n="guideIdentifyStep2">Hệ thống chỉ hỗ trợ định dạng JPG, JPEG hoặc PNG với dung lượng tối đa 10MB.</p>
-              </div>
-              <div class="p-4 bg-surface-container-low rounded-xl border border-outline-variant/10 text-center">
-                <span class="text-2xl font-bold text-primary mb-1 block">03</span>
-                <h5 class="font-bold text-sm mb-1" data-i18n="analyzing">Chờ AI xử lý</h5>
-                <p class="text-xs text-on-surface-variant leading-relaxed" data-i18n="guideIdentifyStep3">Nhấn nút 'Phân tích ngay' và đợi từ 2 đến 4 giây để hệ thống AI nhận diện đối tượng và chạy mô hình phân loại.</p>
-              </div>
-              <div class="p-4 bg-surface-container-low rounded-xl border border-outline-variant/10 text-center">
-                <span class="text-2xl font-bold text-primary mb-1 block">04</span>
-                <h5 class="font-bold text-sm mb-1" data-i18n="resultTitle">Xem kết quả</h5>
-                <p class="text-xs text-on-surface-variant leading-relaxed" data-i18n="guideIdentifyStep4">Giao diện sẽ tự động chuyển sang trang hiển thị kết quả chi tiết.</p>
-              </div>
-            </div>
+            {% endfor %}
+          </div>
+        </div>
 
-            <!-- Image Tips -->
-            <div class="mt-6 p-4 bg-primary/5 rounded-xl border border-primary/10">
-              <h4 class="font-bold text-primary mb-2 flex items-center gap-1.5 text-sm" data-i18n="guideTipsTitle">Mẹo chụp ảnh để có kết quả chính xác nhất</h4>
-              <ul class="list-disc pl-5 space-y-1.5 text-xs text-on-surface-variant">
-                <li data-i18n="guideTip1">Chụp ảnh cận cảnh, rõ nét khuôn mặt của chó.</li>
-                <li data-i18n="guideTip2">Đảm bảo điều kiện ánh sáng tốt, tránh ngược sáng hoặc quá tối.</li>
-                <li data-i18n="guideTip3">Tránh chụp ảnh có nhiều con chó cùng lúc hoặc quá nhiều vật thể gây nhiễu xung quanh.</li>
-                <li data-i18n="guideTip4">Góc chụp chính diện khuôn mặt chó luôn mang lại kết quả tối ưu từ mô hình AI.</li>
-              </ul>
+        <!-- English View -->
+        <div id="dynamic-content-en" class="space-y-6 text-on-surface-variant body-md leading-relaxed legal-content-rich {{ 'hidden' if ui_language != 'en' else '' }}">
+          <div class="text-center mb-10">
+            <h1 class="headline-lg text-on-surface mb-4 font-bold">
+              <span>User Guide</span>
+            </h1>
+            <p class="body-md text-on-surface-variant max-w-2xl mx-auto">
+              <span>Learn how to use PetAI to identify dog breeds quickly and accurately.</span>
+            </p>
+          </div>
+
+          <!-- Table of Contents / Quick Jump -->
+          <div class="mb-10 p-6 bg-white border border-outline-variant/20 rounded-2xl shadow-sm">
+            <h2 class="text-lg font-bold text-primary mb-4 flex items-center gap-2">
+              <span class="material-symbols-outlined text-[20px]">menu_book</span>
+              <span>Guide Contents</span>
+            </h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 text-sm">
+              {% for sec in active_sections_en %}
+                {% set target_ids = ["intro", "register", "login", "freeplan", "identify", "result", "modes", "upgrade", "history", "stats", "faq", "contact"] %}
+                {% set tid = target_ids[loop.index0] if loop.index0 < 12 else "sec_" ~ loop.index0 %}
+                <a href="#{{ tid }}" class="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors">
+                  <span class="w-1.5 h-1.5 rounded-full bg-primary/60"></span>
+                  <span>{{ sec.title }}</span>
+                </a>
+              {% endfor %}
             </div>
           </div>
 
-          <!-- Section 6: Understanding Prediction Results -->
-          <div id="result" class="scroll-mt-24 bg-white border border-outline-variant/30 rounded-2xl p-6 shadow-sm">
-            <h3 class="text-xl font-bold text-primary mb-3 flex items-center gap-2">
-              <span class="material-symbols-outlined text-[24px]">troubleshoot</span>
-              <span data-i18n="guideResultTitle">6. Giải thích kết quả nhận diện</span>
-            </h3>
-            <p class="text-on-surface-variant mb-4" data-i18n="guideResultDesc">Trang kết quả phân tích chứa nhiều thông tin chi tiết giúp bạn hiểu rõ về cún cưng của mình:</p>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div class="flex gap-3 items-start p-3 bg-surface-container rounded-xl">
-                <span class="material-symbols-outlined text-primary text-[20px] mt-0.5">pets</span>
-                <div>
-                  <strong class="text-sm text-primary block" data-i18n="predictedBreed">Tên giống chó</strong>
-                  <span class="text-xs text-on-surface-variant leading-relaxed" data-i18n="guideResultItem1">Giống chó được nhận diện có độ tương đồng cao nhất.</span>
-                </div>
+          <!-- Documentation Content -->
+          <div class="space-y-8 text-on-surface-variant body-md leading-relaxed">
+            {% set target_ids = ["intro", "register", "login", "freeplan", "identify", "result", "modes", "upgrade", "history", "stats", "faq", "contact"] %}
+            {% for sec in active_sections_en %}
+              {% set tid = target_ids[loop.index0] if loop.index0 < 12 else "sec_" ~ loop.index0 %}
+              <div id="{{ tid }}" class="scroll-mt-24 bg-white border border-outline-variant/30 rounded-2xl p-6 shadow-sm">
+                <h3 class="text-xl font-bold text-primary mb-3 flex items-center gap-2">
+                  {% set icon_names = ["info", "person_add", "login", "card_giftcard", "photo_camera", "troubleshoot", "psychology", "upgrade", "history", "query_stats", "help", "contact_support"] %}
+                  {% set icon = icon_names[loop.index0] if loop.index0 < 12 else "article" %}
+                  <span class="material-symbols-outlined text-[24px]">{{ icon }}</span>
+                  <span>{{ sec.title }}</span>
+                </h3>
+                <div class="text-on-surface-variant">{{ sec.content | safe }}</div>
               </div>
-              <div class="flex gap-3 items-start p-3 bg-surface-container rounded-xl">
-                <span class="material-symbols-outlined text-primary text-[20px] mt-0.5">percent</span>
-                <div>
-                  <strong class="text-sm text-primary block" data-i18n="confidence">Độ chính xác (Độ tin cậy)</strong>
-                  <span class="text-xs text-on-surface-variant leading-relaxed" data-i18n="guideResultItem2">Thể hiện tỷ lệ phần trăm chắc chắn của AI đối với giống chó đó.</span>
-                </div>
-              </div>
-              <div class="flex gap-3 items-start p-3 bg-surface-container rounded-xl">
-                <span class="material-symbols-outlined text-primary text-[20px] mt-0.5">description</span>
-                <div>
-                  <strong class="text-sm text-primary block" data-i18n="infoTab">Thông tin giống chó</strong>
-                  <span class="text-xs text-on-surface-variant leading-relaxed" data-i18n="guideResultItem3">Các thông tin bách khoa toàn thư bao gồm: Nguồn gốc xuất xứ, Đặc điểm ngoại hình, Tính cách đặc trưng và Hướng dẫn chăm sóc sức khỏe.</span>
-                </div>
-              </div>
-              <div class="flex gap-3 items-start p-3 bg-surface-container rounded-xl">
-                <span class="material-symbols-outlined text-primary text-[20px] mt-0.5">insights</span>
-                <div>
-                  <strong class="text-sm text-primary block" data-i18n="visualProofTitle">Bản đồ nhiệt Grad-CAM</strong>
-                  <span class="text-xs text-on-surface-variant leading-relaxed" data-i18n="guideResultItem4">Vùng màu sáng (đỏ/vàng) trên ảnh thể hiện vị trí đặc trưng (như tai, mắt, mõm...) mà AI tập trung phân tích để đưa ra quyết định.</span>
-                </div>
-              </div>
-            </div>
+            {% endfor %}
           </div>
-
-          <!-- Section 7: AI Recognition Modes -->
-          <div id="modes" class="scroll-mt-24 bg-white border border-outline-variant/30 rounded-2xl p-6 shadow-sm">
-            <h3 class="text-xl font-bold text-primary mb-3 flex items-center gap-2">
-              <span class="material-symbols-outlined text-[24px]">psychology</span>
-              <span data-i18n="guideModesTitle">7. Giải thích các chế độ nhận diện</span>
-            </h3>
-            <p class="text-on-surface-variant mb-4" data-i18n="guideModesDesc">Hệ thống tự động phân loại kết quả nhận diện dựa trên độ tin cậy của mô hình:</p>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div class="p-4 bg-surface-container rounded-xl border border-outline-variant/20">
-                <h4 class="font-bold text-primary mb-1.5 text-sm" data-i18n="pureBreed">Kết luận Thuần chủng</h4>
-                <p class="text-xs text-on-surface-variant leading-relaxed" data-i18n="guideModesPure">Khi giống chó có tỷ lệ tin cậy vượt trội (thường trên 80%), hệ thống sẽ đưa ra kết quả kết luận giống chó thuần chủng.</p>
-              </div>
-              <div class="p-4 bg-surface-container rounded-xl border border-outline-variant/20">
-                <h4 class="font-bold text-primary mb-1.5 text-sm" data-i18n="hybridBreed">Phân tích Tỷ lệ Lai dự tính</h4>
-                <p class="text-xs text-on-surface-variant leading-relaxed" data-i18n="guideModesHybrid">Trường hợp giống chó lai (hoặc khi Top-1 và Top-2 có xác suất gần sát nhau), hệ thống hiển thị Top 3 giống chó tương đồng nhất kèm theo biểu đồ ước tính tỷ lệ lai dựa trên phân tích hình thái học.</p>
-              </div>
-            </div>
-          </div>
-
-          <!-- Section 8: Upgrading Subscription Packages -->
-          <div id="upgrade" class="scroll-mt-24 bg-white border border-outline-variant/30 rounded-2xl p-6 shadow-sm">
-            <h3 class="text-xl font-bold text-primary mb-3 flex items-center gap-2">
-              <span class="material-symbols-outlined text-[24px]">upgrade</span>
-              <span data-i18n="guideUpgradeTitle">8. Hướng dẫn nâng cấp gói dịch vụ</span>
-            </h3>
-            <p class="text-on-surface-variant mb-4" data-i18n="guideUpgradeDesc">Khi cần mở rộng giới hạn sử dụng, bạn có thể nâng cấp tài khoản của mình:</p>
-            <div class="space-y-4 pl-1">
-              <div class="flex gap-3 items-start">
-                <span class="material-symbols-outlined text-primary text-[20px] mt-0.5">event_busy</span>
-                <div>
-                  <strong class="text-sm text-primary block" data-i18n="upgradeTitle">Khi nào cần nâng cấp</strong>
-                  <span class="text-xs text-on-surface-variant leading-relaxed" data-i18n="guideUpgradeWhen">Khi đã dùng hết hạn mức miễn phí hoặc muốn trải nghiệm tốc độ ưu tiên và không có quảng cáo.</span>
-                </div>
-              </div>
-              <div class="flex gap-3 items-start">
-                <span class="material-symbols-outlined text-primary text-[20px] mt-0.5">widgets</span>
-                <div>
-                  <strong class="text-sm text-primary block" data-i18n="planDetails">Cách chọn gói</strong>
-                  <span class="text-xs text-on-surface-variant leading-relaxed" data-i18n="guideUpgradeChoose">Truy cập trang 'Nâng cấp gói' và chọn một trong ba gói: Basic (50 lượt/7 ngày/1,000đ), Pro (200 lượt/30 ngày/5,000đ) hoặc Enterprise (Không giới hạn/90 ngày/15,000đ).</span>
-                </div>
-              </div>
-              <div class="flex gap-3 items-start">
-                <span class="material-symbols-outlined text-primary text-[20px] mt-0.5">qr_code_2</span>
-                <div>
-                  <strong class="text-sm text-primary block" data-i18n="bankTransfer">Cách thanh toán (VietQR)</strong>
-                  <span class="text-xs text-on-surface-variant leading-relaxed" data-i18n="guideUpgradePay">Hệ thống tạo mã thanh toán QR tự động. Hãy mở ứng dụng ngân hàng và quét mã để chuyển khoản chính xác số tiền cùng nội dung chuyển khoản được hiển thị.</span>
-                </div>
-              </div>
-              <div class="flex gap-3 items-start">
-                <span class="material-symbols-outlined text-primary text-[20px] mt-0.5">sync_saved_locally</span>
-                <div>
-                  <strong class="text-sm text-primary block" data-i18n="checkingStatus">Hệ thống xử lý</strong>
-                  <span class="text-xs text-on-surface-variant leading-relaxed" data-i18n="guideUpgradeProcess">Sau khi chuyển khoản thành công, hệ thống VietQR tự động ghi nhận và kích hoạt gói nâng cấp cho tài khoản của bạn sau 1-5 phút mà không cần admin duyệt thủ công.</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Section 9: Viewing Scanning History -->
-          <div id="history" class="scroll-mt-24 bg-white border border-outline-variant/30 rounded-2xl p-6 shadow-sm">
-            <h3 class="text-xl font-bold text-primary mb-3 flex items-center gap-2">
-              <span class="material-symbols-outlined text-[24px]">history</span>
-              <span data-i18n="guideHistoryTitle">9. Hướng dẫn xem lịch sử nhận diện</span>
-            </h3>
-            <p class="text-on-surface-variant mb-4" data-i18n="guideHistoryDesc">Tất cả kết quả quét ảnh được lưu tự động để tra cứu lại bất cứ lúc nào:</p>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div class="p-4 bg-surface-container rounded-xl border border-outline-variant/20 flex gap-3 items-start">
-                <span class="material-symbols-outlined text-primary text-[20px]">list_alt</span>
-                <div>
-                  <h5 class="font-bold text-primary mb-1 text-sm" data-i18n="predictionHistory">Danh sách lịch sử</h5>
-                  <p class="text-xs text-on-surface-variant leading-relaxed" data-i18n="guideHistoryList">Truy cập trang 'Lịch sử' từ thanh bên trái để xem danh sách toàn bộ các lượt nhận diện đã thực hiện.</p>
-                </div>
-              </div>
-              <div class="p-4 bg-surface-container rounded-xl border border-outline-variant/20 flex gap-3 items-start">
-                <span class="material-symbols-outlined text-primary text-[20px]">manage_search</span>
-                <div>
-                  <h5 class="font-bold text-primary mb-1 text-sm" data-i18n="filter">Quản lý lịch sử</h5>
-                  <p class="text-xs text-on-surface-variant leading-relaxed" data-i18n="guideHistoryAction">Bạn có thể tìm kiếm nhanh theo giống chó, xem chi tiết từng lượt quét hoặc chọn xóa các bản ghi không cần thiết.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Section 10: Exploring Personal Analytics -->
-          <div id="stats" class="scroll-mt-24 bg-white border border-outline-variant/30 rounded-2xl p-6 shadow-sm">
-            <h3 class="text-xl font-bold text-primary mb-3 flex items-center gap-2">
-              <span class="material-symbols-outlined text-[24px]">query_stats</span>
-              <span data-i18n="guideStatsTitle">10. Hướng dẫn xem thống kê cá nhân</span>
-            </h3>
-            <p class="text-on-surface-variant mb-4" data-i18n="guideStatsDesc">Trang thống kê giúp bạn có cái nhìn tổng quan về lịch sử sử dụng của mình:</p>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div class="p-4 bg-surface-container rounded-xl border border-outline-variant/20 flex gap-3 items-start">
-                <span class="material-symbols-outlined text-primary text-[20px]">analytics</span>
-                <div>
-                  <h5 class="font-bold text-primary mb-1 text-sm" data-i18n="personalStats">Tổng quan</h5>
-                  <p class="text-xs text-on-surface-variant leading-relaxed" data-i18n="guideStatsOverview">Xem tổng số lượt quét, độ tin cậy trung bình của các lần nhận diện và số lượng giống chó khác nhau bạn từng phát hiện.</p>
-                </div>
-              </div>
-              <div class="p-4 bg-surface-container rounded-xl border border-outline-variant/20 flex gap-3 items-start">
-                <span class="material-symbols-outlined text-primary text-[20px]">insert_chart</span>
-                <div>
-                  <h5 class="font-bold text-primary mb-1 text-sm" data-i18n="activityCharts">Biểu đồ trực quan</h5>
-                  <p class="text-xs text-on-surface-variant leading-relaxed" data-i18n="guideStatsCharts">Biểu đồ trực quan: Biểu đồ xu hướng nhận diện theo thời gian, biểu đồ Top 5 giống chó bạn quét nhiều nhất và biểu đồ phân bổ mức độ tin cậy của phân loại AI.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Section 11: Frequently Asked Questions (FAQ) -->
-          <div id="faq" class="scroll-mt-24 bg-white border border-outline-variant/30 rounded-2xl p-6 shadow-sm">
-            <h3 class="text-xl font-bold text-primary mb-4 flex items-center gap-2">
-              <span class="material-symbols-outlined text-[24px]">help</span>
-              <span data-i18n="guideFaqTitle">11. Các câu hỏi thường gặp (FAQ)</span>
-            </h3>
-            <div class="space-y-3">
-              <details class="group bg-surface-container-low rounded-xl p-4 border border-outline-variant/10 [&_summary::-webkit-details-marker]:hidden">
-                <summary class="flex items-center justify-between cursor-pointer focus:outline-none">
-                  <h5 class="font-bold text-primary text-sm flex items-center gap-2">
-                    <span class="material-symbols-outlined text-[18px]">help_outline</span>
-                    <span data-i18n="guideFaqQ1">AI nhận diện có chính xác không?</span>
-                  </h5>
-                  <span class="relative flex-shrink-0 ml-1.5 w-5 h-5">
-                    <span class="material-symbols-outlined transition-transform duration-300 group-open:-rotate-180 text-primary">expand_more</span>
-                  </span>
-                </summary>
-                <p class="mt-2 text-xs text-on-surface-variant pl-7 leading-relaxed" data-i18n="guideFaqA1">
-                  Mô hình AI nhận diện dựa trên đặc trưng hình thái học bên ngoài từ tập dữ liệu huấn luyện. Kết quả chỉ mang tính tham khảo khách quan, không thể thay thế cho các kiểm tra xét nghiệm di truyền (DNA).
-                </p>
-              </details>
-
-              <details class="group bg-surface-container-low rounded-xl p-4 border border-outline-variant/10 [&_summary::-webkit-details-marker]:hidden">
-                <summary class="flex items-center justify-between cursor-pointer focus:outline-none">
-                  <h5 class="font-bold text-primary text-sm flex items-center gap-2">
-                    <span class="material-symbols-outlined text-[18px]">help_outline</span>
-                    <span data-i18n="guideFaqQ2">Làm sao để có kết quả tốt nhất?</span>
-                  </h5>
-                  <span class="relative flex-shrink-0 ml-1.5 w-5 h-5">
-                    <span class="material-symbols-outlined transition-transform duration-300 group-open:-rotate-180 text-primary">expand_more</span>
-                  </span>
-                </summary>
-                <p class="mt-2 text-xs text-on-surface-variant pl-7 leading-relaxed" data-i18n="guideFaqA2">
-                  Nên chụp ảnh cún cưng ở góc chính diện khuôn mặt, ánh sáng rõ ràng, ảnh không bị rung mờ và chỉ có duy nhất khuôn mặt của một chú chó trong khung hình.
-                </p>
-              </details>
-
-              <details class="group bg-surface-container-low rounded-xl p-4 border border-outline-variant/10 [&_summary::-webkit-details-marker]:hidden">
-                <summary class="flex items-center justify-between cursor-pointer focus:outline-none">
-                  <h5 class="font-bold text-primary text-sm flex items-center gap-2">
-                    <span class="material-symbols-outlined text-[18px]">help_outline</span>
-                    <span data-i18n="guideFaqQ3">Hết lượt miễn phí tôi phải làm gì?</span>
-                  </h5>
-                  <span class="relative flex-shrink-0 ml-1.5 w-5 h-5">
-                    <span class="material-symbols-outlined transition-transform duration-300 group-open:-rotate-180 text-primary">expand_more</span>
-                  </span>
-                </summary>
-                <p class="mt-2 text-xs text-on-surface-variant pl-7 leading-relaxed" data-i18n="guideFaqA3">
-                  Bạn có thể chọn 'Xem quảng cáo' ở khu vực nhận diện để nhận thêm lượt nhận diện hoặc tiến hành nâng cấp gói dịch vụ trả phí phù hợp.
-                </p>
-              </details>
-
-              <details class="group bg-surface-container-low rounded-xl p-4 border border-outline-variant/10 [&_summary::-webkit-details-marker]:hidden">
-                <summary class="flex items-center justify-between cursor-pointer focus:outline-none">
-                  <h5 class="font-bold text-primary text-sm flex items-center gap-2">
-                    <span class="material-symbols-outlined text-[18px]">help_outline</span>
-                    <span data-i18n="guideFaqQ4">Thanh toán không thành công thì phải làm sao?</span>
-                  </h5>
-                  <span class="relative flex-shrink-0 ml-1.5 w-5 h-5">
-                    <span class="material-symbols-outlined transition-transform duration-300 group-open:-rotate-180 text-primary">expand_more</span>
-                  </span>
-                </summary>
-                <p class="mt-2 text-xs text-on-surface-variant pl-7 leading-relaxed" data-i18n="guideFaqA4">
-                  Giao dịch tự động có thể mất từ 1-5 phút để xử lý. Nếu quá thời gian trên tài khoản vẫn chưa được kích hoạt, vui lòng gửi yêu cầu hỗ trợ đính kèm mã đơn hàng hoặc ảnh chụp biên lai chuyển khoản.
-                </p>
-              </details>
-
-              <details class="group bg-surface-container-low rounded-xl p-4 border border-outline-variant/10 [&_summary::-webkit-details-marker]:hidden">
-                <summary class="flex items-center justify-between cursor-pointer focus:outline-none">
-                  <h5 class="font-bold text-primary text-sm flex items-center gap-2">
-                    <span class="material-symbols-outlined text-[18px]">help_outline</span>
-                    <span data-i18n="guideFaqQ5">Làm thế nào để liên hệ hỗ trợ?</span>
-                  </h5>
-                  <span class="relative flex-shrink-0 ml-1.5 w-5 h-5">
-                    <span class="material-symbols-outlined transition-transform duration-300 group-open:-rotate-180 text-primary">expand_more</span>
-                  </span>
-                </summary>
-                <p class="mt-2 text-xs text-on-surface-variant pl-7 leading-relaxed" data-i18n="guideFaqA5">
-                  Bạn có thể gửi email trực tiếp tới support@pet.ai hoặc điền biểu mẫu liên hệ tại trang 'Liên hệ' của website.
-                </p>
-              </details>
-            </div>
-          </div>
-
-          <!-- Section 12: Support Contact Information -->
-          <div id="contact" class="scroll-mt-24 bg-white border border-outline-variant/30 rounded-2xl p-6 shadow-sm">
-            <h3 class="text-xl font-bold text-primary mb-3 flex items-center gap-2">
-              <span class="material-symbols-outlined text-[24px]">contact_support</span>
-              <span data-i18n="guideContactTitle">12. Thông tin liên hệ hỗ trợ</span>
-            </h3>
-            <p class="text-on-surface-variant mb-4" data-i18n="guideContactDesc">Nếu gặp bất kỳ khó khăn hay sự cố nào trong quá trình sử dụng hệ thống PetAI, vui lòng liên hệ:</p>
-            <div class="space-y-3 text-sm">
-              <div class="flex items-center gap-3">
-                <span class="material-symbols-outlined text-primary text-[20px]">mail</span>
-                <span class="text-on-surface-variant" data-i18n="guideContactEmail">Email: support@pet.ai (Hỗ trợ 24/7)</span>
-              </div>
-              <div class="flex items-center gap-3">
-                <span class="material-symbols-outlined text-primary text-[20px]">call</span>
-                <span class="text-on-surface-variant" data-i18n="guideContactPhone">Hotline: 0916 416 409</span>
-              </div>
-              <div class="flex items-center gap-3">
-                <span class="material-symbols-outlined text-primary text-[20px]">location_on</span>
-                <span class="text-on-surface-variant" data-i18n="guideContactAddress">Địa chỉ: P16, Đường số 8, KDC lô 49, Khu đô thị Nam Cần Thơ, P. Cái Răng, TP. Cần Thơ</span>
-              </div>
-            </div>
-          </div>
-        {% endif %}
-      </div>
+        </div>
       </div>
     </section>
   </main>

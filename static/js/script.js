@@ -26,7 +26,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Dynamic Theme Switcher Injection
   function injectThemeToggle() {
-    const languageSwitcher = document.getElementById("languageSwitcher");
+    const languageSwitcher = document.getElementById("languageSwitcher") ||
+                             document.getElementById("languageSwitcherLogged") ||
+                             document.getElementById("languageSwitcherGuest");
     if (!languageSwitcher) return;
 
     if (document.getElementById("headerThemeToggle")) return; // already injected
