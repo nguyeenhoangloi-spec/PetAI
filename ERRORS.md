@@ -240,7 +240,38 @@
 - **Prevention**: Sử dụng các công cụ lint hoặc lệnh kiểm tra cú pháp (như `node --check`) để phát hiện và ngăn chặn các lỗi đánh máy (typo) trước khi lưu/commit code.
 - **Status**: Fixed
 
+---
 
+## [2026-06-22 00:58] - Lỗi cú pháp Jinja2 và code rác làm hỏng trang Cài đặt (settings)
 
+- **Type**: Syntax
+- **Severity**: High
+- **File**: `templates/settings.html:382`
+- **Agent**: @frontend-specialist
+- **Root Cause**: Thiếu đóng ngoặc Jinja2 `{% include '_header.html ... %}` ở dòng 382 gây lỗi cú pháp Jinja2 (`TemplateSyntaxError: expected token 'end of statement block', got '_sidebar'`). Ngoài ra có đoạn code rác trùng lặp chèn vào cuối file sau thẻ đóng `</html>`.
+- **Error Message**:
+  ```text
+  jinja2.exceptions.TemplateSyntaxError: expected token 'end of statement block', got '_sidebar'
+  ```
+- **Fix Applied**: Đóng chuẩn cú pháp dòng 382 và xóa sạch đoạn code rác dư thừa ở cuối file.
+- **Prevention**: Luôn chạy bộ test unit tests hoặc biên dịch template sau khi chỉnh sửa HTML để phát hiện các thẻ Jinja2 bị mở mà chưa đóng.
+- **Status**: Fixed
 
+---
+
+## [2026-06-22 01:00] - Lỗi tiêu chuẩn HTML-Validate trong Trang Cài đặt (settings)
+
+- **Type**: Process
+- **Severity**: Low
+- **File**: `templates/settings.html:586`
+- **Agent**: @frontend-specialist
+- **Root Cause**: Trình kiểm tra cú pháp HTML báo lỗi: phần tử `<div>` không được phép nằm bên dưới phần tử `<label>` (cho các toggle switch thông báo và email). Ngoài ra có khoảng trắng dư thừa (trailing whitespace) ở dòng 387.
+- **Error Message**:
+  ```text
+  element-permitted-content: <div> element is not permitted as content under <label>
+  no-trailing-whitespace: Trailing whitespace
+  ```
+- **Fix Applied**: Đổi thẻ `<div>` thành `<span>` và thêm thuộc tính hiển thị `block` cho toggle switch. Dùng script Python để dọn dẹp toàn bộ khoảng trắng dư thừa trong file.
+- **Prevention**: Tránh lồng các thẻ block-level (như div) bên dưới thẻ label. Luôn sử dụng span và định dạng hiển thị flex/inline-block/block để tuân thủ chuẩn HTML.
+- **Status**: Fixed
 

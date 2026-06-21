@@ -956,6 +956,23 @@ document.addEventListener("DOMContentLoaded", function () {
     window.addEventListener("keydown", escHandler);
   }
 
+  // Handle enter key press on header search input
+  document.addEventListener("keypress", function (e) {
+    const searchInput = e.target.closest("#headerSearchInput");
+    if (searchInput && e.key === "Enter") {
+      e.preventDefault();
+      const query = searchInput.value.trim();
+      if (query) {
+        window.location.href = "/history/?q=" + encodeURIComponent(query);
+      } else {
+        // If query is cleared and on history page, load full history
+        if (window.location.pathname.startsWith("/history")) {
+          window.location.href = "/history/";
+        }
+      }
+    }
+  });
+
   window.showAvatarLightbox = showAvatarLightbox;
   window.loadPagePjax = loadPagePjax;
 });

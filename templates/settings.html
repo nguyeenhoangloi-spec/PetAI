@@ -25,14 +25,14 @@
     html.preload body {
       opacity: 0 !important;
     }
-    
+
     /* Early CSS to prevent F5 flicker before stylesheet loads */
     html.preload .sidebar,
     html.preload main,
     html.preload footer {
       transition: none !important;
     }
-    
+
     /* Stable header styles to prevent navigation bar shifting */
     body>nav .flex.items-center.gap-gutter {
       gap: 12px !important;
@@ -42,7 +42,7 @@
       margin-right: 0 !important;
       position: relative !important;
     }
-    
+
     /* Stable inner sidebar styles to prevent internal text/layout shifting */
     .sidebar-wrapper {
       display: flex !important;
@@ -68,7 +68,7 @@
       border-radius: 12px !important;
       box-sizing: border-box !important;
     }
-    
+
     @media (min-width: 768px) {
       .sidebar {
         position: fixed !important;
@@ -79,7 +79,7 @@
         height: calc(100vh - 64px) !important;
         z-index: 100 !important;
       }
-      
+
       /* Collapsed state */
       html.sidebar-collapsed .sidebar {
         transform: translateX(-100%) !important;
@@ -91,7 +91,7 @@
         margin-left: 0 !important;
         width: 100% !important;
       }
-      
+
       /* Expanded state (default) */
       html:not(.sidebar-collapsed) .sidebar {
         transform: translateX(0) !important;
@@ -103,14 +103,14 @@
         margin-left: 224px !important;
         width: calc(100% - 224px) !important;
       }
-      
+
       /* Force single-column grid immediately for main container on both states */
       html main {
         grid-template-columns: 1fr !important;
         gap: 0 !important;
       }
     }
-    
+
     @media (max-width: 767px) {
       .sidebar {
         position: fixed !important;
@@ -380,29 +380,30 @@
     {% set display_plan = current_plan or 'free' %}
 
     {% include '_header.html' %}
-
-      <main class="flex-grow w-full px-4 md:px-6 py-margin grid grid-cols-1 gap-0">
-        {% set is_settings = True %}
+    <main class="flex-grow w-full px-4 md:px-6 py-margin grid grid-cols-1 gap-0">
+        {% set active_page = 'settings' %}
+        {% set is_settings = False %}
         {% include '_sidebar.html' %}
-        <div id="content-area" class="col-span-1 flex flex-col gap-8">
-          <!-- Premium Hero Profile & Quota Card -->
-          <div class="bg-gradient-to-r from-blue-600 to-indigo-700 dark:from-slate-900 dark:to-slate-800 rounded-2xl p-6 text-white shadow-lg flex flex-col md:flex-row items-center justify-between gap-6">
+        <div id="content-area" class="col-span-1 flex flex-col gap-6 font-['Inter'] antialiased">
+
+          <!-- Premium Hero Profile Banner Card -->
+          <div class="bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-700 dark:from-slate-900 dark:to-slate-800 rounded-2xl p-6 text-white shadow-lg flex flex-col md:flex-row items-center justify-between gap-6 transition-all duration-300">
             <div class="flex flex-col md:flex-row items-center gap-6">
-              <div class="relative w-20 h-20 group">
-                <img id="profileAvatar" alt="Ảnh đại diện" class="w-full h-full rounded-full border-4 border-white/20 p-1 shadow-md cursor-pointer hover:scale-105 transition-transform duration-200 object-cover" src="{{ ui_avatar_url }}">
-                <button type="button" id="changeAvatarBtn" class="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-primary hover:bg-blue-700 text-white border-2 border-white dark:border-slate-900 shadow-md flex items-center justify-center cursor-pointer transition-all duration-200 hover:scale-110 active:scale-95" onclick="document.getElementById('avatarFileInput').click()" title="Thay đổi ảnh đại diện">
-                  <span class="material-symbols-outlined text-[16px]">photo_camera</span>
+              <div class="relative w-20 h-20 shrink-0">
+                <img id="profileAvatar" alt="Ảnh đại diện" class="w-full h-full rounded-full border-4 border-white/20 p-0.5 shadow-md cursor-pointer hover:scale-105 transition-transform duration-250 object-cover" src="{{ ui_avatar_url }}">
+                <button type="button" id="changeAvatarBtn" class="absolute bottom-0 right-0 w-7 h-7 rounded-full bg-primary hover:bg-blue-700 text-white border-2 border-white dark:border-slate-900 shadow-md flex items-center justify-center cursor-pointer transition-all duration-200 hover:scale-110 active:scale-95" onclick="document.getElementById('avatarFileInput').click()" title="Thay đổi ảnh đại diện">
+                  <span class="material-symbols-outlined text-[15px]">photo_camera</span>
                 </button>
                 <input type="file" id="avatarFileInput" accept="image/*" class="hidden">
               </div>
               <div class="text-center md:text-left space-y-1">
-                <h2 class="text-2xl font-bold tracking-tight">{{ display_name }}</h2>
-                <p class="text-white/85 text-sm font-medium">{{ display_email or '-' }}</p>
+                <h2 class="text-2xl font-bold tracking-tight text-white">{{ display_name }}</h2>
+                <p class="text-white/80 text-sm font-medium">{{ display_email or '-' }}</p>
                 <div class="flex flex-wrap justify-center md:justify-start gap-2 pt-1">
-                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-white/20 text-white uppercase tracking-wider">
+                  <span class="inline-flex items-center px-3 py-0.5 rounded-full text-[10px] font-bold bg-white/20 text-white uppercase tracking-wider">
                     <span class="material-symbols-outlined text-[12px] mr-1">verified_user</span>{{ display_role }}
                   </span>
-                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-400 text-slate-900 uppercase tracking-wider">
+                  <span class="inline-flex items-center px-3 py-0.5 rounded-full text-[10px] font-bold bg-amber-400 text-slate-900 uppercase tracking-wider">
                     <span class="material-symbols-outlined text-[12px] mr-1">workspace_premium</span>
                     <span data-i18n="userPlanLabel" data-code="{{ display_plan }}">Gói {{ display_plan }}</span>
                   </span>
@@ -418,262 +419,442 @@
             </div>
           </div>
 
+          <!-- Horizontal Settings Navigation Tab Bar -->
+          <div class="flex border-b border-slate-200 dark:border-slate-800/80 overflow-x-auto gap-2 md:gap-6 mt-2 scrollbar-none" id="settingsTabs" role="tablist">
+            <button type="button" role="tab" aria-selected="true" aria-controls="tab-panel-profile" id="tab-btn-profile" class="flex items-center gap-2 px-1 py-3 text-sm font-semibold border-b-2 border-primary text-primary transition-all duration-200 whitespace-nowrap focus:outline-none select-none">
+              <span class="material-symbols-outlined text-[18px]">person</span>
+              <span data-i18n="settingsTabProfile">Hồ sơ</span>
+            </button>
+            <button type="button" role="tab" aria-selected="false" aria-controls="tab-panel-security" id="tab-btn-security" class="flex items-center gap-2 px-1 py-3 text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-all duration-200 whitespace-nowrap focus:outline-none select-none">
+              <span class="material-symbols-outlined text-[18px]">security</span>
+              <span data-i18n="settingsTabSecurity">Bảo mật</span>
+            </button>
+            <button type="button" role="tab" aria-selected="false" aria-controls="tab-panel-notifications" id="tab-btn-notifications" class="flex items-center gap-2 px-1 py-3 text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-all duration-200 whitespace-nowrap focus:outline-none select-none">
+              <span class="material-symbols-outlined text-[18px]">notifications</span>
+              <span data-i18n="settingsTabNotifications">Thông báo</span>
+            </button>
+            <button type="button" role="tab" aria-selected="false" aria-controls="tab-panel-appearance" id="tab-btn-appearance" class="flex items-center gap-2 px-1 py-3 text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-all duration-200 whitespace-nowrap focus:outline-none select-none">
+              <span class="material-symbols-outlined text-[18px]">palette</span>
+              <span data-i18n="settingsTabAppearance">Giao diện</span>
+            </button>
+            <button type="button" role="tab" aria-selected="false" aria-controls="tab-panel-privacy" id="tab-btn-privacy" class="flex items-center gap-2 px-1 py-3 text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-all duration-200 whitespace-nowrap focus:outline-none select-none">
+              <span class="material-symbols-outlined text-[18px]">shield</span>
+              <span data-i18n="settingsTabPrivacy">Quyền riêng tư</span>
+            </button>
+          </div>
+
+          <!-- Main Settings Form Wrapper -->
           <form method="POST" id="settingsForm" action="{{ url_for('settings.settings') }}" class="flex flex-col gap-6">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
-            <!-- Profile and Notifications in a Two Column / Split Layout -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
-              <!-- Left Column: Personal Info -->
-              <section class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm flex flex-col gap-6" id="profile">
-                <div class="flex items-center gap-3 pb-4 border-b border-slate-100 dark:border-slate-850">
-                  <div class="w-9 h-9 rounded-lg bg-blue-500/10 text-primary dark:text-blue-400 flex items-center justify-center">
-                    <span class="material-symbols-outlined">person</span>
-                  </div>
-                  <h3 class="text-lg font-bold text-on-background dark:text-slate-100" data-i18n="personalInfo">Thông tin cá nhân</h3>
-                </div>
-
-                <div class="space-y-4">
-                  <div class="space-y-2">
-                    <label class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block" data-i18n="fullnameLabel">Họ và tên</label>
-                    <div class="flex items-center bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all">
-                      <input class="w-full bg-transparent border-none px-4 py-3 text-sm text-on-surface dark:text-slate-100 placeholder-slate-400 focus:ring-0" name="fullname" type="text" maxlength="128" value="{{ session.get('fullname') or session.get('username') or '' }}">
-                    </div>
-                  </div>
-
-                  <div class="space-y-2">
-                    <label class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block" data-i18n="usernameLabel">Tên đăng nhập</label>
-                    <div class="flex items-center bg-slate-100 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 rounded-xl cursor-not-allowed">
-                      <input class="w-full bg-transparent border-none px-4 py-3 text-sm text-slate-500 dark:text-slate-500 cursor-not-allowed" disabled type="text" value="{{ session.get('username', '') }}">
-                      <span class="material-symbols-outlined mr-4 text-slate-400 dark:text-slate-600 text-sm">lock</span>
-                    </div>
-                  </div>
-
-                  <div class="space-y-2">
-                    <label class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block" data-i18n="emailLabel">Địa chỉ Email</label>
-                    <div class="flex items-center bg-slate-100 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 rounded-xl cursor-not-allowed">
-                      <input class="w-full bg-transparent border-none px-4 py-3 text-sm text-slate-500 dark:text-slate-500 cursor-not-allowed" disabled type="text" value="{{ display_email or '-' }}">
-                      <span class="material-symbols-outlined mr-4 text-slate-400 dark:text-slate-600 text-sm">lock</span>
-                    </div>
-                  </div>
-                </div>
-              </section>
-
-              <!-- Right Column: Settings and Notification switches -->
-              <section class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm flex flex-col gap-6" id="notifications">
-                <div class="flex items-center gap-3 pb-4 border-b border-slate-100 dark:border-slate-850">
+            <!-- Hidden container for Notifications Card to prevent duplication of inputs -->
+            <div id="notifications-card-source" class="hidden">
+              <!-- Notifications Configuration Card -->
+              <section id="notifications-card" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm flex flex-col gap-6 w-full animate-fadeIn">
+                <div class="flex items-center gap-3 pb-4 border-b border-slate-100 dark:border-slate-800/80">
                   <div class="w-9 h-9 rounded-lg bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
                     <span class="material-symbols-outlined">notifications</span>
                   </div>
-                  <h3 class="text-lg font-bold text-on-background dark:text-slate-100" data-i18n="notificationsSection">Cài đặt thông báo</h3>
+                  <h3 class="text-base font-bold text-slate-800 dark:text-slate-100" data-i18n="notificationsTitle">Cài đặt thông báo</h3>
                 </div>
 
-                <div class="space-y-5">
-                  <div class="flex items-start gap-4 p-3.5 rounded-xl border border-slate-100 dark:border-slate-850 bg-slate-50/50 dark:bg-slate-950/30 hover:bg-slate-50 dark:hover:bg-slate-950/50 transition-colors">
-                    <input type="checkbox" id="notifications-toggle" name="notifications" class="w-4 h-4 text-primary border-slate-300 dark:border-slate-700 rounded focus:ring-primary focus:ring-offset-0 mt-1" {% if settings.notifications %}checked{% endif %}>
-                    <label for="notifications-toggle" class="space-y-0.5 cursor-pointer flex-1">
+                <div class="space-y-4">
+                  <!-- System notifications switch item -->
+                  <div class="flex items-center justify-between p-4 rounded-xl border border-slate-100 dark:border-slate-800/60 bg-slate-50/50 dark:bg-slate-950/30 hover:bg-slate-50 dark:hover:bg-slate-950/50 transition-colors">
+                    <div class="space-y-0.5 flex-1 pr-4">
                       <span class="text-sm font-semibold text-slate-800 dark:text-slate-200 block" data-i18n="systemNotificationsLabel">Thông báo hệ thống</span>
                       <span class="text-xs text-slate-500 dark:text-slate-400 block" data-i18n="systemNotificationsDesc">Nhận thông báo trực tiếp trên giao diện khi có hoạt động mới.</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer shrink-0 select-none">
+                      <input type="checkbox" name="notifications" class="sr-only peer" {% if settings.notifications %}checked{% endif %}>
+                      <span class="block w-11 h-6 bg-slate-200 dark:bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-650 peer-checked:bg-primary"></span>
                     </label>
                   </div>
 
-                  <div class="flex items-start gap-4 p-3.5 rounded-xl border border-slate-100 dark:border-slate-850 bg-slate-50/50 dark:bg-slate-950/30 hover:bg-slate-50 dark:hover:bg-slate-950/50 transition-colors">
-                    <input type="checkbox" id="email_notifications" name="email_notifications" class="w-4 h-4 text-primary border-slate-300 dark:border-slate-700 rounded focus:ring-primary focus:ring-offset-0 mt-1" {% if settings.email_notifications %}checked{% endif %}>
-                    <label for="email_notifications" class="space-y-0.5 cursor-pointer flex-1">
+                  <!-- Email notifications switch item -->
+                  <div class="flex items-center justify-between p-4 rounded-xl border border-slate-100 dark:border-slate-800/60 bg-slate-50/50 dark:bg-slate-950/30 hover:bg-slate-50 dark:hover:bg-slate-950/50 transition-colors">
+                    <div class="space-y-0.5 flex-1 pr-4">
                       <span class="text-sm font-semibold text-slate-800 dark:text-slate-200 block" data-i18n="emailNotificationsLabel">Thông báo qua Email</span>
                       <span class="text-xs text-slate-500 dark:text-slate-400 block" data-i18n="emailNotificationsDesc">Nhận các báo cáo thống kê và cập nhật tài khoản qua thư điện tử.</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer shrink-0 select-none">
+                      <input type="checkbox" name="email_notifications" class="sr-only peer" {% if settings.email_notifications %}checked{% endif %}>
+                      <span class="block w-11 h-6 bg-slate-200 dark:bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-650 peer-checked:bg-primary"></span>
                     </label>
                   </div>
                 </div>
               </section>
             </div>
 
-            <!-- Change Password Section -->
-            <section class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm flex flex-col gap-6" id="security">
-              <div class="flex items-center gap-3 pb-4 border-b border-slate-100 dark:border-slate-850">
-                <div class="w-9 h-9 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center">
-                  <span class="material-symbols-outlined">security</span>
-                </div>
-                <h3 class="text-lg font-bold text-on-background dark:text-slate-100" data-i18n="changePasswordTitle">Thay đổi mật khẩu</h3>
+            <!-- TAB 1: HỒ SƠ -->
+            <div id="tab-panel-profile" class="tab-panel flex flex-col gap-6" role="tabpanel" aria-labelledby="tab-btn-profile">
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Personal Info Card -->
+                <section class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm flex flex-col gap-6">
+                  <div class="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800/80">
+                    <div class="flex items-center gap-3">
+                      <div class="w-9 h-9 rounded-lg bg-blue-500/10 text-primary dark:text-blue-400 flex items-center justify-center">
+                        <span class="material-symbols-outlined">person</span>
+                      </div>
+                      <h3 class="text-base font-bold text-slate-800 dark:text-slate-100" data-i18n="personalInfoTitle">Thông tin cá nhân</h3>
+                    </div>
+                    <button type="button" id="editProfileBtn" class="px-3 py-1.5 border border-slate-200 dark:border-slate-850 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-350 font-semibold text-xs rounded-xl transition-colors flex items-center gap-1.5 focus:outline-none">
+                      <span class="material-symbols-outlined text-[14px]">edit</span>
+                      <span data-i18n="editBtn">Chỉnh sửa</span>
+                    </button>
+                  </div>
+
+                  <div class="space-y-4">
+                    <div class="space-y-2">
+                      <label class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block" data-i18n="fullnameLabel">Họ và tên</label>
+                      <div class="flex items-center bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all">
+                        <input id="fullnameInput" class="w-full bg-transparent border-none px-4 py-3 text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:ring-0 disabled:text-slate-400 dark:disabled:text-slate-500 disabled:cursor-not-allowed" name="fullname" type="text" maxlength="128" value="{{ session.get('fullname') or session.get('username') or '' }}" disabled>
+                      </div>
+                    </div>
+
+                    <div class="space-y-2">
+                      <label class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block" data-i18n="usernameLabel">Tên đăng nhập</label>
+                      <div class="flex items-center bg-slate-50 dark:bg-slate-950/40 border border-slate-200 dark:border-slate-800 rounded-xl cursor-not-allowed opacity-80">
+                        <input class="w-full bg-transparent border-none px-4 py-3 text-sm text-slate-500 dark:text-slate-500 cursor-not-allowed" disabled type="text" value="{{ session.get('username', '') }}">
+                        <span class="material-symbols-outlined mr-4 text-slate-400 dark:text-slate-655 text-[18px]">lock</span>
+                      </div>
+                    </div>
+
+                    <div class="space-y-2">
+                      <label class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block" data-i18n="emailLabel">Địa chỉ Email</label>
+                      <div class="flex items-center bg-slate-50 dark:bg-slate-950/40 border border-slate-200 dark:border-slate-800 rounded-xl cursor-not-allowed opacity-80">
+                        <input class="w-full bg-transparent border-none px-4 py-3 text-sm text-slate-500 dark:text-slate-500 cursor-not-allowed" disabled type="text" value="{{ display_email or '-' }}">
+                        <span class="material-symbols-outlined mr-4 text-slate-400 dark:text-slate-655 text-[18px]">lock</span>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                <!-- Right Column Placeholder for notifications card when on Tab 1 -->
+                <div id="profile-tab-right" class="flex flex-col gap-6 w-full animate-fadeIn"></div>
               </div>
 
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="space-y-2">
-                  <label class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block" data-i18n="currentPasswordLabel">Mật khẩu hiện tại</label>
-                  <div class="flex items-center {% if force_change_password %}bg-slate-100 dark:bg-slate-950/60 cursor-not-allowed text-slate-400{% else %}bg-slate-50 dark:bg-slate-950{% endif %} border border-slate-200 dark:border-slate-800 rounded-xl focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all">
-                    <input
-                      class="w-full bg-transparent border-none px-4 py-3 text-sm text-on-surface dark:text-slate-100 focus:ring-0 disabled:text-slate-400 disabled:cursor-not-allowed"
-                      name="current_password"
-                      type="password"
-                      placeholder="{% if force_change_password %}Không cần mật khẩu hiện tại{% else %}Nhập mật khẩu hiện tại{% endif %}"
-                      autocomplete="current-password"
-                      {% if force_change_password %}disabled{% endif %}
-                    >
-                  </div>
-                </div>
-
-                <div class="space-y-2">
-                  <label class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block" data-i18n="newPasswordLabel">Mật khẩu mới</label>
-                  <div class="flex items-center bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all">
-                    <input class="w-full bg-transparent border-none px-4 py-3 text-sm text-on-surface dark:text-slate-100 focus:ring-0" name="new_password" type="password" data-i18n-placeholder="newPasswordPlaceholder" placeholder="Nhập mật khẩu mới (>= 6 ký tự)" autocomplete="new-password">
-                  </div>
-                </div>
-
-                <div class="space-y-2">
-                  <label class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block" data-i18n="confirmNewPasswordLabel">Xác nhận mật khẩu mới</label>
-                  <div class="flex items-center bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all">
-                    <input class="w-full bg-transparent border-none px-4 py-3 text-sm text-on-surface dark:text-slate-100 focus:ring-0" name="confirm_new_password" type="password" data-i18n-placeholder="confirmNewPasswordPlaceholder" placeholder="Xác nhận mật khẩu mới" autocomplete="new-password">
-                  </div>
-                </div>
+              <!-- Profile save actions -->
+              <div id="profileActions" class="flex justify-end gap-3 pt-4 border-t border-slate-200 dark:border-slate-800/80 mt-2">
+                <button type="button" id="cancelEditBtn" class="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-950/60 text-sm font-semibold transition-colors hidden" data-i18n="cancel">Hủy</button>
+                <button class="px-6 py-2.5 rounded-xl bg-primary hover:bg-primary-container text-white text-sm font-semibold shadow-md shadow-primary/10 transition-all hover:-translate-y-[1px] active:translate-y-0 save-settings-btn" type="submit" data-i18n="saveChanges">Lưu thay đổi</button>
               </div>
-            </section>
+            </div>
 
-            <!-- Appearance Section -->
-            <section class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm flex flex-col gap-6" id="appearance">
-              <div class="flex items-center gap-3 pb-4 border-b border-slate-100 dark:border-slate-850">
-                <div class="w-9 h-9 rounded-lg bg-teal-500/10 text-teal-600 dark:text-teal-400 flex items-center justify-center">
-                  <span class="material-symbols-outlined">palette</span>
-                </div>
-                <h3 class="text-lg font-bold text-on-background dark:text-slate-100" data-i18n="appearanceSection">Giao diện</h3>
-              </div>
-
-              <div>
-                <h4 class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-4" data-i18n="themeLabel">Chủ đề hiển thị</h4>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                  <div class="relative group">
-                    {% set _light_checked = (settings.theme == 'light') %}
-                    <input class="peer sr-only" id="theme-light" name="theme" type="radio" value="light" {% if _light_checked %} checked{% endif %}>
-                    <label for="theme-light" class="block border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden bg-white shadow-sm transition-all hover:shadow-md peer-checked:border-primary peer-checked:ring-2 peer-checked:ring-primary/20 cursor-pointer">
-                      <span class="block h-28 bg-slate-50 p-4 border-b border-slate-100">
-                        <span class="block w-2/3 h-2 bg-slate-200 rounded mb-2"></span>
-                        <span class="block w-1/2 h-2 bg-slate-200 rounded mb-4"></span>
-                        <span class="flex gap-2">
-                          <span class="w-7 h-7 rounded bg-primary/20"></span>
-                          <span class="flex-1 h-7 rounded bg-white border border-slate-200"></span>
-                        </span>
-                      </span>
-                      <span class="p-4 flex items-center justify-between bg-white dark:bg-slate-900 block">
-                        <span class="text-sm font-semibold text-slate-800 dark:text-slate-200" data-i18n="themeLight">Sáng</span>
-                        <span class="material-symbols-outlined text-primary opacity-0 peer-checked:opacity-100 transition-opacity">check_circle</span>
-                      </span>
-                    </label>
+            <!-- TAB 2: BẢO MẬT -->
+            <div id="tab-panel-security" class="tab-panel flex flex-col gap-6 hidden" role="tabpanel" aria-labelledby="tab-btn-security">
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Change Password Card -->
+                <section class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm flex flex-col gap-6">
+                  <div class="flex items-center gap-3 pb-4 border-b border-slate-100 dark:border-slate-800/80">
+                    <div class="w-9 h-9 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+                      <span class="material-symbols-outlined">security</span>
+                    </div>
+                    <h3 class="text-base font-bold text-slate-800 dark:text-slate-100" data-i18n="changePasswordTitle">Thay đổi mật khẩu</h3>
                   </div>
 
-                  <div class="relative group">
-                    {% set _dark_checked = (settings.theme == 'dark') %}
-                    <input class="peer sr-only" id="theme-dark" name="theme" type="radio" value="dark" {% if _dark_checked %} checked{% endif %}>
-                    <label for="theme-dark" class="block border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden bg-slate-900 shadow-sm transition-all hover:shadow-md peer-checked:border-primary peer-checked:ring-2 peer-checked:ring-primary/20 cursor-pointer">
-                      <span class="block h-28 bg-slate-800 p-4 border-b border-slate-850">
-                        <span class="block w-2/3 h-2 bg-slate-700 rounded mb-2"></span>
-                        <span class="block w-1/2 h-2 bg-slate-700 rounded mb-4"></span>
-                        <span class="flex gap-2">
-                          <span class="w-7 h-7 rounded bg-primary/40"></span>
-                          <span class="flex-1 h-7 rounded bg-slate-700"></span>
-                        </span>
-                      </span>
-                      <span class="p-4 flex items-center justify-between bg-white dark:bg-slate-900 block">
-                        <span class="text-sm font-semibold text-slate-800 dark:text-slate-200" data-i18n="themeDark">Tối</span>
-                        <span class="material-symbols-outlined text-primary opacity-0 peer-checked:opacity-100 transition-opacity">check_circle</span>
-                      </span>
-                    </label>
+                  <div class="space-y-4">
+                    <div class="space-y-2">
+                      <label class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block" data-i18n="currentPasswordLabel">Mật khẩu hiện tại</label>
+                      <div class="flex items-center {% if force_change_password %}bg-slate-100 dark:bg-slate-950/60 cursor-not-allowed text-slate-400{% else %}bg-slate-50 dark:bg-slate-950{% endif %} border border-slate-200 dark:border-slate-800 rounded-xl focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all relative">
+                        <input
+                          id="currentPasswordInput"
+                          class="w-full bg-transparent border-none px-4 py-3 pr-10 text-sm text-slate-800 dark:text-slate-100 focus:ring-0 disabled:text-slate-400 disabled:cursor-not-allowed"
+                          name="current_password"
+                          type="password"
+                          placeholder="{% if force_change_password %}Không cần mật khẩu hiện tại{% else %}Nhập mật khẩu hiện tại{% endif %}"
+                          autocomplete="current-password"
+                          {% if force_change_password %}disabled{% endif %}
+                        >
+                        {% if not force_change_password %}
+                        <button type="button" class="absolute right-3 text-slate-400 hover:text-slate-600 dark:hover:text-slate-350 focus:outline-none flex items-center justify-center toggle-password-btn" data-target="currentPasswordInput">
+                          <span class="material-symbols-outlined text-[18px]">visibility</span>
+                        </button>
+                        {% endif %}
+                      </div>
+                    </div>
+
+                    <div class="space-y-2">
+                      <label class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block" data-i18n="newPasswordLabel">Mật khẩu mới</label>
+                      <div class="flex items-center bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all relative">
+                        <input id="newPasswordInput" class="w-full bg-transparent border-none px-4 py-3 pr-10 text-sm text-slate-800 dark:text-slate-100 focus:ring-0" name="new_password" type="password" data-i18n-placeholder="newPasswordPlaceholder" placeholder="Nhập mật khẩu mới (>= 6 ký tự)" autocomplete="new-password">
+                        <button type="button" class="absolute right-3 text-slate-400 hover:text-slate-600 dark:hover:text-slate-350 focus:outline-none flex items-center justify-center toggle-password-btn" data-target="newPasswordInput">
+                          <span class="material-symbols-outlined text-[18px]">visibility</span>
+                        </button>
+                      </div>
+                      <p class="text-[11px] text-slate-400 dark:text-slate-550" data-i18n="changePasswordDesc">Mật khẩu mới (tối thiểu 6 ký tự)</p>
+                    </div>
+
+                    <div class="space-y-2">
+                      <label class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block" data-i18n="confirmNewPasswordLabel">Xác nhận mật khẩu mới</label>
+                      <div class="flex items-center bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all relative">
+                        <input id="confirmPasswordInput" class="w-full bg-transparent border-none px-4 py-3 pr-10 text-sm text-slate-800 dark:text-slate-100 focus:ring-0" name="confirm_new_password" type="password" data-i18n-placeholder="confirmNewPasswordPlaceholder" placeholder="Xác nhận mật khẩu mới" autocomplete="new-password">
+                        <button type="button" class="absolute right-3 text-slate-400 hover:text-slate-600 dark:hover:text-slate-350 focus:outline-none flex items-center justify-center toggle-password-btn" data-target="confirmPasswordInput">
+                          <span class="material-symbols-outlined text-[18px]">visibility</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                <!-- Security Guidelines Card -->
+                <section class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm flex flex-col gap-6">
+                  <div class="flex items-center gap-3 pb-4 border-b border-slate-100 dark:border-slate-800/80">
+                    <div class="w-9 h-9 rounded-lg bg-blue-500/10 text-primary dark:text-blue-400 flex items-center justify-center">
+                      <span class="material-symbols-outlined">shield</span>
+                    </div>
+                    <h3 class="text-base font-bold text-slate-800 dark:text-slate-100" data-i18n="securityGuideTitle">Hướng dẫn bảo mật</h3>
                   </div>
 
-                  <div class="relative group">
-                    {% set _auto_checked = (settings.theme == 'auto') %}
-                    <input class="peer sr-only" id="theme-auto" name="theme" type="radio" value="auto" {% if _auto_checked %} checked{% endif %}>
-                    <label for="theme-auto" class="block border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden bg-white shadow-sm transition-all hover:shadow-md peer-checked:border-primary peer-checked:ring-2 peer-checked:ring-primary/20 cursor-pointer">
-                      <span class="block h-28 flex">
-                        <span class="block w-1/2 bg-slate-50 p-4 border-r border-slate-100">
-                          <span class="block w-full h-2 bg-slate-200 rounded mb-2"></span>
-                          <span class="block w-full h-2 bg-slate-200 rounded"></span>
-                        </span>
-                        <span class="block w-1/2 bg-slate-800 p-4">
-                          <span class="block w-full h-2 bg-slate-700 rounded mb-2"></span>
-                          <span class="block w-full h-2 bg-slate-700 rounded"></span>
-                        </span>
-                      </span>
-                      <span class="p-4 flex items-center justify-between bg-white dark:bg-slate-900 block">
-                        <span class="text-sm font-semibold text-slate-800 dark:text-slate-200" data-i18n="themeAuto">Tự động</span>
-                        <span class="material-symbols-outlined text-primary opacity-0 peer-checked:opacity-100 transition-opacity">check_circle</span>
-                      </span>
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </section>
+                  <div class="space-y-4">
+                    <!-- Rule 1: Password length -->
+                    <div class="flex items-start gap-4 p-4 rounded-xl border border-slate-100 dark:border-slate-800/60 bg-slate-50/50 dark:bg-slate-950/30 hover:bg-slate-50 dark:hover:bg-slate-950/50 transition-colors">
+                      <div class="mt-0.5 w-8 h-8 rounded-lg bg-blue-500/10 text-primary dark:text-blue-400 flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined text-[18px]">password</span>
+                      </div>
+                      <div class="space-y-1">
+                        <h4 class="text-sm font-semibold text-slate-800 dark:text-slate-200" data-i18n="pwdGuideLen">Độ dài mật khẩu</h4>
+                        <p class="text-xs text-slate-500 dark:text-slate-400" data-i18n="pwdGuideLenDesc">Mật khẩu phải chứa ít nhất 6 ký tự. Nên kết hợp chữ hoa, chữ thường, số và ký tự đặc biệt.</p>
+                      </div>
+                    </div>
 
-            <!-- Privacy Section (Delete History) -->
-            <section class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm flex flex-col gap-6" id="privacy">
-              <div class="flex items-center gap-3 pb-4 border-b border-slate-100 dark:border-slate-850">
-                <div class="w-9 h-9 rounded-lg bg-red-500/10 text-red-600 dark:text-red-400 flex items-center justify-center">
-                  <span class="material-symbols-outlined">shield</span>
-                </div>
-                <h3 class="text-lg font-bold text-on-background dark:text-slate-100" data-i18n="privacySection">Quyền riêng tư</h3>
+                    <!-- Rule 2: Password uniqueness -->
+                    <div class="flex items-start gap-4 p-4 rounded-xl border border-slate-100 dark:border-slate-800/60 bg-slate-50/50 dark:bg-slate-950/30 hover:bg-slate-50 dark:hover:bg-slate-950/50 transition-colors">
+                      <div class="mt-0.5 w-8 h-8 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined text-[18px]">lock_reset</span>
+                      </div>
+                      <div class="space-y-1">
+                        <h4 class="text-sm font-semibold text-slate-800 dark:text-slate-200" data-i18n="pwdGuideUnique">Không dùng lại mật khẩu cũ</h4>
+                        <p class="text-xs text-slate-500 dark:text-slate-400" data-i18n="pwdGuideUniqueDesc">Tránh sử dụng chung một mật khẩu cho nhiều tài khoản khác nhau trên Internet.</p>
+                      </div>
+                    </div>
+
+                    <!-- Rule 3: OTP -->
+                    <div class="flex items-start gap-4 p-4 rounded-xl border border-slate-100 dark:border-slate-800/60 bg-slate-50/50 dark:bg-slate-950/30 hover:bg-slate-50 dark:hover:bg-slate-950/50 transition-colors">
+                      <div class="mt-0.5 w-8 h-8 rounded-lg bg-green-500/10 text-green-600 dark:text-green-400 flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined text-[18px]">verified</span>
+                      </div>
+                      <div class="space-y-1">
+                        <h4 class="text-sm font-semibold text-slate-800 dark:text-slate-200" data-i18n="pwdGuideOtp">Bảo mật hai lớp</h4>
+                        <p class="text-xs text-slate-500 dark:text-slate-400" data-i18n="pwdGuideOtpDesc">Các hành động nhạy cảm như xóa tài khoản đều yêu cầu xác thực bằng mã OTP gửi về email đăng ký.</p>
+                      </div>
+                    </div>
+                  </div>
+                </section>
               </div>
 
-              <div class="bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900/30 rounded-2xl p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-                <div class="flex gap-4">
-                  <div class="mt-1 w-8 h-8 rounded-full bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-300 flex items-center justify-center shrink-0">
-                    <span class="material-symbols-outlined text-[20px]">warning</span>
-                  </div>
-                  <div class="space-y-1">
-                    <h4 class="text-sm font-bold text-red-800 dark:text-red-300" data-i18n="historyStorage">Lưu trữ lịch sử nhận diện</h4>
-                    <p class="text-xs text-red-700/80 dark:text-red-400/80 max-w-xl" data-i18n="historyStorageDesc">Dữ liệu ảnh và kết quả dự đoán được lưu trong lịch sử. Bạn có thể xóa toàn bộ bất cứ lúc nào.</p>
-                    <a class="text-red-600 dark:text-red-400 font-semibold text-xs inline-flex items-center pt-2 hover:underline group" href="{{ url_for('history.history') }}">
-                      <span data-i18n="viewHistory">Xem lịch sử</span>
-                      <span class="material-symbols-outlined text-xs ml-1 group-hover:translate-x-1 transition-transform">arrow_forward</span>
-                    </a>
-                  </div>
-                </div>
-                <button class="whitespace-nowrap px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white font-semibold text-sm rounded-xl transition-all flex items-center gap-2 active:scale-95 shadow-sm" id="clearHistoryBtn" type="submit" formaction="{{ url_for('settings.clear_history') }}" formmethod="POST">
-                  <span class="material-symbols-outlined text-[18px]">delete_forever</span>
-                  <span data-i18n="clearAllHistory">Xóa toàn bộ lịch sử</span>
-                </button>
+              <!-- Password save actions -->
+              <div class="flex justify-end gap-3 pt-4 border-t border-slate-200 dark:border-slate-800/80 mt-2">
+                <a class="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-950/60 text-sm font-semibold transition-colors" href="{{ url_for('dashboard.dashboard') }}" data-i18n="cancel">Hủy</a>
+                <button class="px-6 py-2.5 rounded-xl bg-primary hover:bg-primary-container text-white text-sm font-semibold shadow-md shadow-primary/10 transition-all hover:-translate-y-[1px] active:translate-y-0 save-settings-btn" type="submit" data-i18n="saveChanges">Lưu thay đổi</button>
               </div>
-            </section>
+            </div>
 
-            <!-- ============================================================
-                 Xóa tài khoản
-            ============================================================= -->
-            <section class="bg-white dark:bg-slate-900 border border-red-200 dark:border-red-900/40 rounded-2xl p-6 shadow-sm flex flex-col gap-6" id="danger-zone">
-              <div class="flex items-center gap-3 pb-4 border-b border-red-100 dark:border-red-900/30">
-                <div class="w-9 h-9 rounded-lg bg-red-500/10 text-red-600 dark:text-red-400 flex items-center justify-center">
-                  <span class="material-symbols-outlined">delete_forever</span>
-                </div>
-                <div>
-                  <h3 class="text-lg font-bold text-red-700 dark:text-red-400" data-i18n="dangerZoneTitle">Vùng nguy hiểm</h3>
-                  <p class="text-xs text-red-500/80 dark:text-red-500/60" data-i18n="dangerZoneDesc">Hành động không thể hoàn tác nếu quá thời hạn</p>
-                </div>
+            <!-- TAB 3: THÔNG BÁO -->
+            <div id="tab-panel-notifications" class="tab-panel flex flex-col gap-6 hidden" role="tabpanel" aria-labelledby="tab-btn-notifications">
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Left Placeholder for notifications card when on Tab 3 -->
+                <div id="notifications-tab-left" class="flex flex-col gap-6 w-full animate-fadeIn"></div>
+
+                <!-- Right Column: Notification Info Card -->
+                <section class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm flex flex-col gap-6">
+                  <div class="flex items-center gap-3 pb-4 border-b border-slate-100 dark:border-slate-800/80">
+                    <div class="w-9 h-9 rounded-lg bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+                      <span class="material-symbols-outlined">info</span>
+                    </div>
+                    <h3 class="text-base font-bold text-slate-800 dark:text-slate-100" data-i18n="notificationGuideTitle">Thông tin gửi nhận</h3>
+                  </div>
+
+                  <div class="space-y-4">
+                    <!-- Item 1: Email notifications info -->
+                    <div class="flex items-start gap-4 p-4 rounded-xl border border-slate-100 dark:border-slate-800/60 bg-slate-50/50 dark:bg-slate-950/30 hover:bg-slate-50 dark:hover:bg-slate-950/50 transition-colors">
+                      <div class="mt-0.5 w-8 h-8 rounded-lg bg-blue-500/10 text-primary dark:text-blue-400 flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined text-[18px]">mail</span>
+                      </div>
+                      <div class="space-y-1">
+                        <h4 class="text-sm font-semibold text-slate-800 dark:text-slate-200" data-i18n="emailActivityTitle">Email thông báo bảo mật</h4>
+                        <p class="text-xs text-slate-500 dark:text-slate-400" data-i18n="emailActivityDesc">Gửi cảnh báo tức thì qua email khi có thay đổi mật khẩu hoặc yêu cầu xóa tài khoản.</p>
+                      </div>
+                    </div>
+
+                    <!-- Item 2: System notifications info -->
+                    <div class="flex items-start gap-4 p-4 rounded-xl border border-slate-100 dark:border-slate-800/60 bg-slate-50/50 dark:bg-slate-950/30 hover:bg-slate-50 dark:hover:bg-slate-950/50 transition-colors">
+                      <div class="mt-0.5 w-8 h-8 rounded-lg bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined text-[18px]">campaign</span>
+                      </div>
+                      <div class="space-y-1">
+                        <h4 class="text-sm font-semibold text-slate-800 dark:text-slate-200" data-i18n="systemActivityTitle">Thông báo trên trình duyệt</h4>
+                        <p class="text-xs text-slate-500 dark:text-slate-400" data-i18n="systemActivityDesc">Hiển thị thông báo nổi (toasts) trực quan khi AI hoàn thành phân tích hoặc khi hệ thống được nâng cấp.</p>
+                      </div>
+                    </div>
+                  </div>
+                </section>
               </div>
 
-              <div class="bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900/30 rounded-2xl p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-                <div class="flex gap-4">
-                  <div class="mt-1 w-8 h-8 rounded-full bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-300 flex items-center justify-center shrink-0">
-                    <span class="material-symbols-outlined text-[20px]">person_off</span>
-                  </div>
-                  <div class="space-y-1">
-                    <h4 class="text-sm font-bold text-red-800 dark:text-red-300" data-i18n="deleteAccountTitle">Yêu cầu xóa tài khoản</h4>
-                    <p class="text-xs text-red-700/80 dark:text-red-400/80 max-w-xl" data-i18n-html="deleteAccountDesc">
-                      Tài khoản sẽ không bị xóa ngay mà chuyển sang <b>trạng thái chờ xóa trong 30 ngày</b>.
-                      Trong thời gian này bạn có thể đăng nhập lại để khôi phục.
-                    </p>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  id="deleteAccountBtn"
-                  onclick="openDeleteModal()"
-                  class="whitespace-nowrap px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white font-semibold text-sm rounded-xl transition-all flex items-center gap-2 active:scale-95 shadow-sm">
-                  <span class="material-symbols-outlined text-[18px]">delete_forever</span>
-                  <span data-i18n="deleteAccountTitle">Yêu cầu xóa tài khoản</span>
-                </button>
+              <!-- Notifications save actions -->
+              <div class="flex justify-end gap-3 pt-4 border-t border-slate-200 dark:border-slate-800/80 mt-2">
+                <a class="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-950/60 text-sm font-semibold transition-colors" href="{{ url_for('dashboard.dashboard') }}" data-i18n="cancel">Hủy</a>
+                <button class="px-6 py-2.5 rounded-xl bg-primary hover:bg-primary-container text-white text-sm font-semibold shadow-md shadow-primary/10 transition-all hover:-translate-y-[1px] active:translate-y-0 save-settings-btn" type="submit" data-i18n="saveChanges">Lưu thay đổi</button>
               </div>
-            </section>
+            </div>
 
-            <!-- Save and Cancel actions -->
-            <div class="flex justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-850">
-              <a class="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-950/60 text-sm font-semibold transition-colors" href="{{ url_for('dashboard.dashboard') }}" data-i18n="cancel">Hủy</a>
-              <button class="px-6 py-2.5 rounded-xl bg-primary hover:bg-primary-container text-white text-sm font-semibold shadow-md shadow-primary/10 transition-all hover:-translate-y-[1px] active:translate-y-0" type="submit" id="saveSettingsBtn" data-i18n="saveChanges">Lưu thay đổi</button>
+            <!-- TAB 4: GIAO DIỆN -->
+            <div id="tab-panel-appearance" class="tab-panel flex flex-col gap-6 hidden" role="tabpanel" aria-labelledby="tab-btn-appearance">
+              <div class="grid grid-cols-1 gap-6">
+                <!-- Theme Preferences Card -->
+                <section class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm flex flex-col gap-6">
+                  <div class="flex items-center gap-3 pb-4 border-b border-slate-100 dark:border-slate-800/80">
+                    <div class="w-9 h-9 rounded-lg bg-teal-500/10 text-teal-600 dark:text-teal-400 flex items-center justify-center">
+                      <span class="material-symbols-outlined">palette</span>
+                    </div>
+                    <h3 class="text-base font-bold text-slate-800 dark:text-slate-100" data-i18n="appearanceTitle">Giao diện</h3>
+                  </div>
+
+                  <div>
+                    <h4 class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-4" data-i18n="themeLabel">Chủ đề hiển thị</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                      <!-- Light theme option card -->
+                      <div class="relative group">
+                        {% set _light_checked = (settings.theme == 'light') %}
+                        <input class="peer sr-only" id="theme-light" name="theme" type="radio" value="light" {% if _light_checked %} checked{% endif %}>
+                        <label for="theme-light" class="block border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden bg-white shadow-sm transition-all hover:shadow-md peer-checked:border-primary peer-checked:ring-2 peer-checked:ring-primary/20 cursor-pointer">
+                          <span class="block h-28 bg-slate-50 p-4 border-b border-slate-100">
+                            <span class="block w-2/3 h-2 bg-slate-200 rounded mb-2"></span>
+                            <span class="block w-1/2 h-2 bg-slate-200 rounded mb-4"></span>
+                            <span class="flex gap-2">
+                              <span class="w-7 h-7 rounded bg-primary/20 flex items-center justify-center"><span class="material-symbols-outlined text-primary text-[16px]">light_mode</span></span>
+                              <span class="flex-1 h-7 rounded bg-white border border-slate-200"></span>
+                            </span>
+                          </span>
+                          <span class="p-4 flex items-center justify-between bg-white dark:bg-slate-900 block">
+                            <span class="text-sm font-semibold text-slate-800 dark:text-slate-200" data-i18n="themeLight">Sáng</span>
+                            <span class="material-symbols-outlined text-primary opacity-0 peer-checked:opacity-100 transition-opacity">check_circle</span>
+                          </span>
+                        </label>
+                      </div>
+
+                      <!-- Dark theme option card -->
+                      <div class="relative group">
+                        {% set _dark_checked = (settings.theme == 'dark') %}
+                        <input class="peer sr-only" id="theme-dark" name="theme" type="radio" value="dark" {% if _dark_checked %} checked{% endif %}>
+                        <label for="theme-dark" class="block border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden bg-slate-900 shadow-sm transition-all hover:shadow-md peer-checked:border-primary peer-checked:ring-2 peer-checked:ring-primary/20 cursor-pointer">
+                          <span class="block h-28 bg-slate-800 p-4 border-b border-slate-850">
+                            <span class="block w-2/3 h-2 bg-slate-700 rounded mb-2"></span>
+                            <span class="block w-1/2 h-2 bg-slate-700 rounded mb-4"></span>
+                            <span class="flex gap-2">
+                              <span class="w-7 h-7 rounded bg-primary/40 flex items-center justify-center"><span class="material-symbols-outlined text-primary text-[16px]">dark_mode</span></span>
+                              <span class="flex-1 h-7 rounded bg-slate-700"></span>
+                            </span>
+                          </span>
+                          <span class="p-4 flex items-center justify-between bg-white dark:bg-slate-900 block">
+                            <span class="text-sm font-semibold text-slate-800 dark:text-slate-200" data-i18n="themeDark">Tối</span>
+                            <span class="material-symbols-outlined text-primary opacity-0 peer-checked:opacity-100 transition-opacity">check_circle</span>
+                          </span>
+                        </label>
+                      </div>
+
+                      <!-- Auto theme option card -->
+                      <div class="relative group">
+                        {% set _auto_checked = (settings.theme == 'auto') %}
+                        <input class="peer sr-only" id="theme-auto" name="theme" type="radio" value="auto" {% if _auto_checked %} checked{% endif %}>
+                        <label for="theme-auto" class="block border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden bg-white shadow-sm transition-all hover:shadow-md peer-checked:border-primary peer-checked:ring-2 peer-checked:ring-primary/20 cursor-pointer">
+                          <span class="block h-28 flex">
+                            <span class="block w-1/2 bg-slate-50 p-4 border-r border-slate-100">
+                              <span class="block w-full h-2 bg-slate-200 rounded mb-2"></span>
+                              <span class="block w-full h-2 bg-slate-200 rounded"></span>
+                            </span>
+                            <span class="block w-1/2 bg-slate-800 p-4">
+                              <span class="block w-full h-2 bg-slate-700 rounded mb-2"></span>
+                              <span class="block w-full h-2 bg-slate-700 rounded"></span>
+                            </span>
+                          </span>
+                          <span class="p-4 flex items-center justify-between bg-white dark:bg-slate-900 block">
+                            <span class="text-sm font-semibold text-slate-800 dark:text-slate-200" data-i18n="themeAuto">Tự động</span>
+                            <span class="material-symbols-outlined text-primary opacity-0 peer-checked:opacity-100 transition-opacity">check_circle</span>
+                          </span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+              </div>
+
+              <!-- Appearance save actions -->
+              <div class="flex justify-end gap-3 pt-4 border-t border-slate-200 dark:border-slate-800/80 mt-2">
+                <a class="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-950/60 text-sm font-semibold transition-colors" href="{{ url_for('dashboard.dashboard') }}" data-i18n="cancel">Hủy</a>
+                <button class="px-6 py-2.5 rounded-xl bg-primary hover:bg-primary-container text-white text-sm font-semibold shadow-md shadow-primary/10 transition-all hover:-translate-y-[1px] active:translate-y-0 save-settings-btn" type="submit" data-i18n="saveChanges">Lưu thay đổi</button>
+              </div>
+            </div>
+
+            <!-- TAB 5: QUYỀN RIÊNG TƯ -->
+            <div id="tab-panel-privacy" class="tab-panel flex flex-col gap-6 hidden" role="tabpanel" aria-labelledby="tab-btn-privacy">
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Privacy configuration card -->
+                <section class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm flex flex-col gap-6">
+                  <div class="flex items-center gap-3 pb-4 border-b border-slate-100 dark:border-slate-800/80">
+                    <div class="w-9 h-9 rounded-lg bg-blue-500/10 text-primary dark:text-blue-400 flex items-center justify-center">
+                      <span class="material-symbols-outlined">shield</span>
+                    </div>
+                    <h3 class="text-base font-bold text-slate-800 dark:text-slate-100" data-i18n="privacyTitle">Quyền riêng tư</h3>
+                  </div>
+
+                  <div class="bg-red-50 dark:bg-red-950/20 border border-red-100/60 dark:border-red-900/30 rounded-2xl p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                    <div class="flex gap-4">
+                      <div class="mt-1 w-8 h-8 rounded-full bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-300 flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined text-[18px]">warning</span>
+                      </div>
+                      <div class="space-y-1">
+                        <h4 class="text-sm font-bold text-red-800 dark:text-red-300" data-i18n="historyStorage">Lưu trữ lịch sử nhận diện</h4>
+                        <p class="text-xs text-red-700/80 dark:text-red-400/80 max-w-xl" data-i18n="historyStorageDesc">Dữ liệu ảnh và kết quả dự đoán được lưu trong lịch sử. Bạn có thể xóa toàn bộ bất cứ lúc nào.</p>
+                        <a class="text-red-600 dark:text-red-400 font-semibold text-xs inline-flex items-center pt-2 hover:underline group" href="{{ url_for('history.history') }}">
+                          <span data-i18n="viewHistory">Xem lịch sử</span>
+                          <span class="material-symbols-outlined text-xs ml-1 group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                        </a>
+                      </div>
+                    </div>
+                    <button class="whitespace-nowrap px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white font-semibold text-sm rounded-xl transition-all flex items-center gap-2 active:scale-95 shadow-sm focus:outline-none" id="clearHistoryBtn" type="button">
+                      <span class="material-symbols-outlined text-[18px]">delete_forever</span>
+                      <span data-i18n="clearAllHistory">Xóa toàn bộ lịch sử</span>
+                    </button>
+                  </div>
+                </section>
+
+                <!-- Danger Zone Card -->
+                <section class="bg-white dark:bg-slate-900 border border-red-200 dark:border-red-900/40 rounded-2xl p-6 shadow-sm flex flex-col gap-6">
+                  <div class="flex items-center gap-3 pb-4 border-b border-red-100 dark:border-red-900/30">
+                    <div class="w-9 h-9 rounded-lg bg-red-500/10 text-red-600 dark:text-red-400 flex items-center justify-center">
+                      <span class="material-symbols-outlined">delete_forever</span>
+                    </div>
+                    <div>
+                      <h3 class="text-base font-bold text-red-700 dark:text-red-400" data-i18n="dangerZoneTitle">Vùng nguy hiểm</h3>
+                      <p class="text-[11px] text-red-500/80 dark:text-red-500/60" data-i18n="dangerZoneDesc">Hành động không thể hoàn tác nếu quá thời hạn</p>
+                    </div>
+                  </div>
+
+                  <div class="bg-red-50 dark:bg-red-950/20 border border-red-100/60 dark:border-red-900/30 rounded-2xl p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                    <div class="flex gap-4">
+                      <div class="mt-1 w-8 h-8 rounded-full bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-300 flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined text-[18px]">person_off</span>
+                      </div>
+                      <div class="space-y-1">
+                        <h4 class="text-sm font-bold text-red-800 dark:text-red-300" data-i18n="deleteAccountTitle">Yêu cầu xóa tài khoản</h4>
+                        <p class="text-xs text-red-700/80 dark:text-red-400/80 max-w-xl" data-i18n-html="deleteAccountDesc">
+                          Tài khoản sẽ không bị xóa ngay mà chuyển sang <b>trạng thái chờ xóa trong 30 ngày</b>.
+                          Trong thời gian này bạn có thể đăng nhập lại để khôi phục.
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      id="deleteAccountBtn"
+                      onclick="openDeleteModal()"
+                      class="whitespace-nowrap px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white font-semibold text-sm rounded-xl transition-all flex items-center gap-2 active:scale-95 shadow-sm focus:outline-none">
+                      <span class="material-symbols-outlined text-[18px]">delete_forever</span>
+                      <span data-i18n="deleteAccountTitle">Yêu cầu xóa tài khoản</span>
+                    </button>
+                  </div>
+                </section>
+              </div>
             </div>
           </form>
 
@@ -685,7 +866,6 @@
           <div id="delete-modal-1" class="fixed inset-0 z-[1050] flex items-center justify-center p-4 hidden" role="dialog" aria-modal="true" aria-labelledby="delete-modal-1-title">
             <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeDeleteModals()"></div>
             <div class="relative bg-white dark:bg-slate-900 rounded-3xl shadow-2xl w-full max-w-md p-8">
-              <!-- Icon cảnh báo -->
               <div class="w-16 h-16 rounded-full bg-red-100 dark:bg-red-900/40 mx-auto flex items-center justify-center mb-5">
                 <span class="material-symbols-outlined text-red-600 dark:text-red-400 text-4xl">warning</span>
               </div>
@@ -695,13 +875,11 @@
                 Trong thời gian này bạn vẫn có thể đăng nhập và khôi phục.
               </p>
 
-              <!-- Cảnh báo đỏ -->
               <div class="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-xl p-4 mb-5 text-sm text-red-700 dark:text-red-300 space-y-1">
                 <p data-i18n-html="deleteModalWarning1">⚠️ <b>Sau 30 ngày</b>, tất cả dữ liệu, lịch sử và quyền truy cập sẽ bị <b>vô hiệu hóa vĩnh viễn</b>.</p>
                 <p data-i18n-html="deleteModalWarning2">⚠️ Quá trình này <b>yêu cầu xác nhận qua email</b> (OTP).</p>
               </div>
 
-              <!-- Lý do (tùy chọn) -->
               <div class="mb-5">
                 <label class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-2" data-i18n="deleteReasonLabel">Lý do xóa (tùy chọn)</label>
                 <textarea
@@ -730,7 +908,6 @@
           <div id="delete-modal-2" class="fixed inset-0 z-[1050] flex items-center justify-center p-4 hidden" role="dialog" aria-modal="true" aria-labelledby="delete-modal-2-title">
             <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeDeleteModals()"></div>
             <div class="relative bg-white dark:bg-slate-900 rounded-3xl shadow-2xl w-full max-w-sm p-6 text-center">
-              <!-- Icon -->
               <div class="w-16 h-16 rounded-full bg-blue-100 dark:bg-blue-900/30 mx-auto flex items-center justify-center mb-4">
                 <span class="material-symbols-outlined text-primary dark:text-blue-400 text-4xl">mark_email_read</span>
               </div>
@@ -739,10 +916,8 @@
               <p class="text-sm text-slate-500 dark:text-slate-400 mb-1" data-i18n="deleteModalOtpDesc">Mã đã được gửi đến</p>
               <p class="font-semibold text-slate-700 dark:text-slate-200 text-sm mb-5">{{ session.get('email') or '' }}</p>
 
-              <!-- Countdown -->
               <div class="mb-5">
                 <p class="text-xs text-slate-400 mb-2"><span data-i18n="deleteModalOtpCountdown">Mã có hiệu lực trong</span> <span id="delete-otp-countdown" class="font-semibold text-primary">05:00</span></p>
-                <!-- OTP boxes -->
                 <div class="flex justify-center gap-2" id="delete-otp-boxes">
                   <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="one-time-code">
                   <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
@@ -754,7 +929,6 @@
                 <p id="delete-otp-error" class="text-red-500 text-xs mt-2 hidden"></p>
               </div>
 
-              <!-- Actions -->
               <button type="button" id="delete-confirm-btn" onclick="confirmDeleteOtp()"
                 class="w-full py-3 bg-primary hover:bg-blue-700 text-white font-semibold rounded-xl transition-all active:scale-95 mb-3 disabled:opacity-50" data-i18n="deleteConfirmBtn">
                 Xác nhận xóa tài khoản
@@ -789,29 +963,403 @@
             </div>
           </div>
 
+          <!-- Popup Xóa lịch sử tùy biến -->
+          <div id="clearHistoryConfirmModal" class="fixed inset-0 z-[1050] flex items-center justify-center p-4 hidden" role="dialog" aria-modal="true" aria-labelledby="clear-history-title">
+            <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeClearHistoryModal()"></div>
+            <div class="relative bg-white dark:bg-slate-900 rounded-3xl shadow-2xl w-full max-w-md p-8 text-center">
+              <div class="w-16 h-16 rounded-full bg-red-100 dark:bg-red-900/40 mx-auto flex items-center justify-center mb-5">
+                <span class="material-symbols-outlined text-red-600 dark:text-red-400 text-4xl">warning</span>
+              </div>
+              <h2 id="clear-history-title" class="text-xl font-bold text-slate-800 dark:text-slate-100 mb-2" data-i18n="clearHistoryConfirmTitle">Xác nhận xóa lịch sử</h2>
+              <p class="text-sm text-slate-500 dark:text-slate-400 mb-6" data-i18n="clearHistoryConfirmText">
+                Bạn có chắc muốn xóa toàn bộ lịch sử nhận diện? Hành động này sẽ xóa tất cả dữ liệu dự đoán và tệp ảnh liên quan trên máy chủ. Hành động này không thể hoàn tác.
+              </p>
+              <div class="flex gap-3">
+                <button type="button" onclick="closeClearHistoryModal()" class="flex-1 py-3 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-semibold rounded-xl transition-all hover:bg-slate-50 dark:hover:bg-slate-800" data-i18n="cancel">
+                  Hủy bỏ
+                </button>
+                <button type="button" id="confirmClearHistoryBtn" class="flex-1 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl transition-all active:scale-95 shadow-sm" data-i18n="confirmDelete">
+                  Xác nhận xóa
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- JavaScript Cấu hình điều khiển Trang Cài đặt -->
           <script>
-            // ==========================================================================
-            // Delete Account Modal Logic
-            // ==========================================================================
+            (function () {
+              const userId = "{{ session.get('user_id') or 'guest' }}";
+              const activeTabKey = "settings-active-tab:" + userId;
+
+              // 1. Logic chuyển đổi Tab
+              const tabButtons = {
+                profile: document.getElementById('tab-btn-profile'),
+                security: document.getElementById('tab-btn-security'),
+                notifications: document.getElementById('tab-btn-notifications'),
+                appearance: document.getElementById('tab-btn-appearance'),
+                privacy: document.getElementById('tab-btn-privacy')
+              };
+
+              const tabPanels = {
+                profile: document.getElementById('tab-panel-profile'),
+                security: document.getElementById('tab-panel-security'),
+                notifications: document.getElementById('tab-panel-notifications'),
+                appearance: document.getElementById('tab-panel-appearance'),
+                privacy: document.getElementById('tab-panel-privacy')
+              };
+
+              function switchTab(tabId) {
+                if (!tabButtons[tabId]) return;
+
+                // Move notifications card to the active tab placeholder to prevent duplicate DOM forms
+                const nCard = document.getElementById('notifications-card');
+                if (nCard) {
+                  if (tabId === 'profile') {
+                    const dest = document.getElementById('profile-tab-right');
+                    if (dest) dest.appendChild(nCard);
+                  } else if (tabId === 'notifications') {
+                    const dest = document.getElementById('notifications-tab-left');
+                    if (dest) dest.appendChild(nCard);
+                  } else {
+                    const dest = document.getElementById('notifications-card-source');
+                    if (dest) dest.appendChild(nCard);
+                  }
+                }
+
+                Object.keys(tabButtons).forEach(t => {
+                  const btn = tabButtons[t];
+                  const panel = tabPanels[t];
+                  if (t === tabId) {
+                    btn.classList.add('border-primary', 'text-primary');
+                    btn.classList.remove('border-transparent', 'text-slate-500', 'dark:text-slate-400');
+                    btn.setAttribute('aria-selected', 'true');
+                    panel.classList.remove('hidden');
+                    panel.style.opacity = '0';
+                    requestAnimationFrame(() => {
+                      panel.style.transition = 'opacity 180ms ease';
+                      panel.style.opacity = '1';
+                    });
+                  } else {
+                    btn.classList.remove('border-primary', 'text-primary');
+                    btn.classList.add('border-transparent', 'text-slate-500', 'dark:text-slate-400');
+                    btn.setAttribute('aria-selected', 'false');
+                    panel.classList.add('hidden');
+                  }
+                });
+                localStorage.setItem(activeTabKey, tabId);
+              }
+
+              Object.keys(tabButtons).forEach(tabId => {
+                tabButtons[tabId].addEventListener('click', () => {
+                  switchTab(tabId);
+                  // Update URL hash without causing page jump
+                  if (history.pushState) {
+                    history.pushState(null, null, '#' + tabId);
+                  } else {
+                    window.location.hash = tabId;
+                  }
+                });
+              });
+
+              // Initial tab check prioritizing URL hash
+              function checkHashAndSwitch() {
+                const hash = window.location.hash.replace('#', '');
+                if (hash && tabButtons[hash]) {
+                  switchTab(hash);
+                } else {
+                  const initialTab = localStorage.getItem(activeTabKey) || 'profile';
+                  switchTab(initialTab);
+                }
+              }
+
+              checkHashAndSwitch();
+              window.addEventListener('hashchange', checkHashAndSwitch);
+
+              // 2. Logic "Chỉnh sửa" Họ Tên của Hồ Sơ
+              const editBtn = document.getElementById('editProfileBtn');
+              const fullnameInput = document.getElementById('fullnameInput');
+              const cancelEditBtn = document.getElementById('cancelEditBtn');
+
+              let isEditing = false;
+              let originalName = fullnameInput ? fullnameInput.value : '';
+
+              if (editBtn && fullnameInput) {
+                editBtn.addEventListener('click', () => {
+                  isEditing = !isEditing;
+                  if (isEditing) {
+                    fullnameInput.removeAttribute('disabled');
+                    fullnameInput.focus();
+                    editBtn.innerHTML = `<span class="material-symbols-outlined text-[14px]">close</span><span data-i18n="cancelBtn">Hủy</span>`;
+                    if (cancelEditBtn) cancelEditBtn.classList.remove('hidden');
+                  } else {
+                    fullnameInput.value = originalName;
+                    fullnameInput.setAttribute('disabled', 'true');
+                    editBtn.innerHTML = `<span class="material-symbols-outlined text-[14px]">edit</span><span data-i18n="editBtn">Chỉnh sửa</span>`;
+                    if (cancelEditBtn) cancelEditBtn.classList.add('hidden');
+                  }
+                });
+              }
+
+              if (cancelEditBtn && fullnameInput && editBtn) {
+                cancelEditBtn.addEventListener('click', (e) => {
+                  e.preventDefault();
+                  isEditing = false;
+                  fullnameInput.value = originalName;
+                  fullnameInput.setAttribute('disabled', 'true');
+                  editBtn.innerHTML = `<span class="material-symbols-outlined text-[14px]">edit</span><span data-i18n="editBtn">Chỉnh sửa</span>`;
+                  cancelEditBtn.classList.add('hidden');
+                });
+              }
+
+              // 3. Logic Ẩn/Hiện mật khẩu trực quan
+              document.querySelectorAll('.toggle-password-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                  const targetId = btn.getAttribute('data-target');
+                  const input = document.getElementById(targetId);
+                  const icon = btn.querySelector('.material-symbols-outlined');
+                  if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.textContent = 'visibility_off';
+                  } else {
+                    input.type = 'password';
+                    icon.textContent = 'visibility';
+                  }
+                });
+              });
+
+              // 4. Đồng bộ Theme thời gian thực tức thì khi nhấn radio cards
+              let pendingTheme = "{{ settings.theme or 'light' }}";
+              document.querySelectorAll('input[name="theme"]').forEach(radio => {
+                radio.addEventListener('change', function () {
+                  pendingTheme = this.value;
+                  const resolved = pendingTheme === 'auto'
+                    ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+                    : pendingTheme;
+
+                  const root = document.documentElement;
+                  root.classList.add('no-transitions');
+                  root.setAttribute('data-theme', resolved);
+                  root.classList.toggle('dark', resolved === 'dark');
+                  root.classList.toggle('light', resolved !== 'dark');
+
+                  // Force reflow
+                  window.getComputedStyle(root).opacity;
+
+                  requestAnimationFrame(() => {
+                    root.classList.remove('no-transitions');
+                  });
+
+                  try {
+                    localStorage.setItem('theme', pendingTheme);
+                  } catch (e) {}
+
+                  // Tự động lưu qua AJAX mà không cần lưu cả form
+                  const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+                  const csrfToken = csrfMeta ? csrfMeta.getAttribute('content') : '';
+                  fetch('/settings/update-theme', {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                      'X-CSRF-Token': csrfToken,
+                      'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({ theme: pendingTheme })
+                  }).catch(err => console.error("Auto theme save failed:", err));
+                });
+              });
+
+              // 5. Popup Xóa lịch sử tùy biến (Custom Modal)
+              window.closeClearHistoryModal = function () {
+                const el = document.getElementById('clearHistoryConfirmModal');
+                if (el) el.classList.add('hidden');
+              };
+
+              const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+              if (clearHistoryBtn) {
+                clearHistoryBtn.addEventListener('click', (e) => {
+                  e.preventDefault();
+                  const el = document.getElementById('clearHistoryConfirmModal');
+                  if (el) el.classList.remove('hidden');
+                });
+              }
+
+              const confirmClearHistoryBtn = document.getElementById('confirmClearHistoryBtn');
+              const form = document.getElementById('settingsForm');
+              if (confirmClearHistoryBtn && form) {
+                confirmClearHistoryBtn.addEventListener('click', async () => {
+                  window.closeClearHistoryModal();
+                  const originalText = clearHistoryBtn.innerHTML;
+                  clearHistoryBtn.disabled = true;
+                  clearHistoryBtn.innerHTML = `<span class="material-symbols-outlined text-[18px] animate-spin">sync</span><span>Đang xóa...</span>`;
+
+                  try {
+                    const res = await fetch('{{ url_for("settings.clear_history") }}', {
+                      method: 'POST',
+                      body: new FormData(form),
+                      headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                      }
+                    });
+                    if (res.ok) {
+                      const html = await res.text();
+                      if (window.loadPagePjax) {
+                        window.loadPagePjax(res.url, true, html);
+                      } else {
+                        window.location.href = res.url;
+                      }
+                    } else {
+                      clearHistoryBtn.disabled = false;
+                      clearHistoryBtn.innerHTML = originalText;
+                      if (typeof window.showToast === 'function') window.showToast('error', 'Lỗi không thể xóa lịch sử.');
+                    }
+                  } catch (err) {
+                    console.error(err);
+                    clearHistoryBtn.disabled = false;
+                    clearHistoryBtn.innerHTML = originalText;
+                    if (typeof window.showToast === 'function') window.showToast('error', 'Lỗi kết nối máy chủ.');
+                  }
+                });
+              }
+
+              // 6. Trạng thái Loading và khóa nút bấm khi lưu form
+              if (form) {
+                form.addEventListener('submit', async function (e) {
+                  e.preventDefault();
+                  const submitter = e.submitter;
+
+                  // Bỏ qua nếu submitter là nút xóa lịch sử hoặc delete OTP
+                  if (submitter && (submitter.id === 'clearHistoryBtn' || submitter.id === 'delete-confirm-btn')) {
+                    return;
+                  }
+
+                  const activeSaveBtns = document.querySelectorAll('.save-settings-btn');
+                  const t_func = typeof window.PetAI_i18n !== 'undefined' ? window.PetAI_i18n.t : (x) => x;
+
+                  activeSaveBtns.forEach(btn => {
+                    btn.disabled = true;
+                    btn.textContent = t_func('saving') || 'Đang lưu...';
+                  });
+
+                  try {
+                    const res = await fetch(form.action || window.location.href, {
+                      method: 'POST',
+                      body: new FormData(form),
+                      headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                      }
+                    });
+                    if (res.ok) {
+                      const html = await res.text();
+                      if (window.loadPagePjax) {
+                        window.loadPagePjax(res.url, true, html);
+                      } else {
+                        window.location.href = res.url;
+                      }
+                    } else {
+                      activeSaveBtns.forEach(btn => {
+                        btn.disabled = false;
+                        btn.textContent = t_func('saveChanges') || 'Lưu thay đổi';
+                      });
+                      if (typeof window.showToast === 'function') window.showToast('error', 'Không thể lưu cài đặt.');
+                    }
+                  } catch (err) {
+                    console.error(err);
+                    activeSaveBtns.forEach(btn => {
+                      btn.disabled = false;
+                      btn.textContent = t_func('saveChanges') || 'Lưu thay đổi';
+                    });
+                    if (typeof window.showToast === 'function') window.showToast('error', 'Lỗi kết nối.');
+                  }
+                });
+              }
+
+              // 7. Tải ảnh đại diện AJAX
+              const avatarInput = document.getElementById('avatarFileInput');
+              const profileAvatar = document.getElementById('profileAvatar');
+              const navbarAvatar = document.getElementById('navbarAvatar');
+              const sidebarAvatar = document.querySelector('.user-avatar-img');
+
+              if (avatarInput) {
+                avatarInput.addEventListener('change', async function () {
+                  const file = this.files[0];
+                  if (!file) return;
+
+                  const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp', 'image/gif'];
+                  if (!allowedTypes.includes(file.type)) {
+                    if (typeof window.showToast === 'function') window.showToast('error', 'Định dạng file không được hỗ trợ.');
+                    return;
+                  }
+
+                  const originalSrc = profileAvatar ? profileAvatar.src : '';
+                  const objectUrl = URL.createObjectURL(file);
+                  if (profileAvatar) profileAvatar.src = objectUrl;
+
+                  const t_func = typeof window.PetAI_i18n !== 'undefined' ? window.PetAI_i18n.t : (x) => x;
+                  const formData = new FormData();
+                  formData.append('avatar', file);
+
+                  const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+                  const csrfToken = csrfMeta ? csrfMeta.getAttribute('content') : '';
+
+                  try {
+                    if (typeof window.showToast === 'function') window.showToast('info', t_func('uploading') || 'Đang tải ảnh lên...');
+                    const response = await fetch('/settings/upload-avatar', {
+                      method: 'POST',
+                      body: formData,
+                      headers: {
+                        'X-CSRF-Token': csrfToken,
+                        'X-Requested-With': 'XMLHttpRequest'
+                      }
+                    });
+
+                    const result = await response.json();
+                    if (response.ok && result.success) {
+                      const newUrl = result.avatar_url;
+                      if (profileAvatar) profileAvatar.src = newUrl;
+                      if (navbarAvatar) navbarAvatar.src = newUrl;
+                      if (sidebarAvatar) sidebarAvatar.src = newUrl;
+
+                      const dropdownAvatar = document.querySelector('.avatar-wrapper img');
+                      if (dropdownAvatar) dropdownAvatar.src = newUrl;
+
+                      if (typeof window.showToast === 'function') window.showToast('success', t_func('uploadSuccess') || 'Đã cập nhật ảnh đại diện thành công!');
+                    } else {
+                      throw new Error(result.message || 'Upload failed');
+                    }
+                  } catch (err) {
+                    console.error(err);
+                    if (profileAvatar) profileAvatar.src = originalSrc;
+                    if (typeof window.showToast === 'function') window.showToast('error', err.message || 'Không thể tải ảnh lên.');
+                  } finally {
+                    URL.revokeObjectURL(objectUrl);
+                    avatarInput.value = '';
+                  }
+                });
+              }
+            })();
+
+            // Xóa tài khoản OTP Modal Code (để trên window scope để khớp onclick inline)
             var _CSRF = document.querySelector('meta[name="csrf-token"]')?.content || '';
             var _delCountdownTimer = null;
             var _delSecondsLeft = 300;
 
-            function openDeleteModal() {
+            window.openDeleteModal = function () {
               document.getElementById('delete-modal-1').classList.remove('hidden');
               document.getElementById('delete-reason-input').value = '';
-            }
+            };
 
-            function closeDeleteModals() {
+            window.closeDeleteModals = function () {
               ['delete-modal-1', 'delete-modal-2', 'delete-modal-3'].forEach(id => {
-                document.getElementById(id).classList.add('hidden');
+                const el = document.getElementById(id);
+                if (el) el.classList.add('hidden');
               });
               clearInterval(_delCountdownTimer);
               document.querySelectorAll('#delete-otp-boxes .otp-input').forEach(inp => inp.value = '');
-              document.getElementById('delete-otp-error').classList.add('hidden');
-            }
+              const errEl = document.getElementById('delete-otp-error');
+              if (errEl) errEl.classList.add('hidden');
+            };
 
-            async function sendDeleteOtp() {
+            window.sendDeleteOtp = async function () {
               const reason = document.getElementById('delete-reason-input').value.trim();
               const btn = document.getElementById('delete-send-otp-btn');
               btn.disabled = true;
@@ -834,23 +1382,15 @@
                   document.querySelectorAll('#delete-otp-boxes .otp-input')[0]?.focus();
                   startDelCountdown();
                 } else {
-                  if (window.PetAI_alert) {
-                    window.PetAI_alert(data.message || (window.PetAI_i18n ? window.PetAI_i18n.t('error') : 'Gặp lỗi. Vui lòng thử lại.'));
-                  } else {
-                    alert(data.message || (window.PetAI_i18n ? window.PetAI_i18n.t('error') : 'Gặp lỗi. Vui lòng thử lại.'));
-                  }
+                  alert(data.message || 'Gặp lỗi khi yêu cầu OTP.');
                 }
               } catch (e) {
-                if (window.PetAI_alert) {
-                  window.PetAI_alert(window.PetAI_i18n ? window.PetAI_i18n.t('error') : 'Lỗi kết nối. Vui lòng thử lại.');
-                } else {
-                  alert(window.PetAI_i18n ? window.PetAI_i18n.t('error') : 'Lỗi kết nối. Vui lòng thử lại.');
-                }
+                alert('Lỗi kết nối. Vui lòng thử lại.');
               } finally {
                 btn.disabled = false;
                 btn.textContent = window.PetAI_i18n ? window.PetAI_i18n.t('sendOtpBtn') : 'Gửi mã xác nhận';
               }
-            }
+            };
 
             function startDelCountdown() {
               clearInterval(_delCountdownTimer);
@@ -870,7 +1410,7 @@
               if (el) el.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
             }
 
-            // OTP input auto-advance
+            // OTP Input focus shift
             document.querySelectorAll('#delete-otp-boxes .otp-input').forEach((inp, idx, inputs) => {
               inp.addEventListener('input', () => {
                 inp.value = inp.value.replace(/[^0-9]/g, '').slice(-1);
@@ -887,14 +1427,14 @@
               });
             });
 
-            function getDelOtp() {
-              return Array.from(document.querySelectorAll('#delete-otp-boxes .otp-input')).map(i => i.value).join('');
-            }
-
-            async function confirmDeleteOtp() {
-              const otp = getDelOtp();
+            window.confirmDeleteOtp = async function () {
+              const otp = Array.from(document.querySelectorAll('#delete-otp-boxes .otp-input')).map(i => i.value).join('');
               if (otp.length !== 6) {
-                showDelOtpError('Vui lòng nhập đủ 6 chữ số.');
+                const errEl = document.getElementById('delete-otp-error');
+                if (errEl) {
+                  errEl.textContent = 'Vui lòng nhập đủ 6 chữ số.';
+                  errEl.classList.remove('hidden');
+                }
                 return;
               }
               const btn = document.getElementById('delete-confirm-btn');
@@ -917,19 +1457,26 @@
                   document.getElementById('delete-modal-2').classList.add('hidden');
                   document.getElementById('delete-modal-3').classList.remove('hidden');
                 } else {
-                  showDelOtpError(data.message || 'Mã OTP không đúng.');
+                  const errEl = document.getElementById('delete-otp-error');
+                  if (errEl) {
+                    errEl.textContent = data.message || 'Mã OTP không đúng.';
+                    errEl.classList.remove('hidden');
+                  }
                   btn.disabled = false;
                   btn.textContent = window.PetAI_i18n ? window.PetAI_i18n.t('deleteConfirmBtn') : 'Xác nhận xóa tài khoản';
                 }
               } catch (e) {
-                showDelOtpError('Lỗi kết nối. Vui lòng thử lại.');
+                const errEl = document.getElementById('delete-otp-error');
+                if (errEl) {
+                  errEl.textContent = 'Lỗi kết nối.';
+                  errEl.classList.remove('hidden');
+                }
                 btn.disabled = false;
                 btn.textContent = window.PetAI_i18n ? window.PetAI_i18n.t('deleteConfirmBtn') : 'Xác nhận xóa tài khoản';
               }
-            }
+            };
 
-            async function resendDeleteOtp() {
-              const reason = ''; // Lý do đã gửi từ modal 1
+            window.resendDeleteOtp = async function () {
               const btn = document.getElementById('delete-resend-btn');
               btn.disabled = true;
               btn.textContent = window.PetAI_i18n ? window.PetAI_i18n.t('sendingStatus') : 'Đang gửi lại...';
@@ -941,377 +1488,32 @@
                     'X-Requested-With': 'XMLHttpRequest',
                     'X-CSRF-Token': _CSRF,
                   },
-                  body: JSON.stringify({ reason }),
+                  body: JSON.stringify({ reason: '' }),
                 });
                 const data = await res.json();
                 if (data.success) {
                   document.querySelectorAll('#delete-otp-boxes .otp-input').forEach(inp => inp.value = '');
                   document.querySelectorAll('#delete-otp-boxes .otp-input')[0]?.focus();
-                  hideDelOtpError();
+                  const errEl = document.getElementById('delete-otp-error');
+                  if (errEl) errEl.classList.add('hidden');
                   startDelCountdown();
-                  if (typeof window.showToast === 'function') window.showToast('success', window.PetAI_i18n ? window.PetAI_i18n.t('otpSentSuccess') : 'Mã OTP mới đã được gửi về email.');
+                  if (typeof window.showToast === 'function') window.showToast('success', 'Mã OTP mới đã được gửi.');
                 } else {
-                  showDelOtpError(data.message || (window.PetAI_i18n ? window.PetAI_i18n.t('otpSendFailedError') : 'Không thể gửi lại OTP.'));
+                  alert(data.message || 'Không thể gửi lại OTP.');
                 }
               } catch (e) {
-                showDelOtpError(window.PetAI_i18n ? window.PetAI_i18n.t('connectionFailedError') : 'Lỗi kết nối.');
+                alert('Lỗi kết nối.');
               } finally {
                 btn.disabled = false;
                 btn.textContent = window.PetAI_i18n ? window.PetAI_i18n.t('deleteResendBtn') : 'Gửi lại mã OTP';
               }
-            }
-
-            function showDelOtpError(msg) {
-              const el = document.getElementById('delete-otp-error');
-              el.textContent = msg;
-              el.classList.remove('hidden');
-            }
-            function hideDelOtpError() {
-              document.getElementById('delete-otp-error').classList.add('hidden');
-            }
+            };
           </script>
         </div>
       </main>
 
-
-    <script>
-      // Define these globally on window so they are accessible from _sidebar.html onclick handlers
-      window.isClickScroll = false;
-      window.clickScrollTimeout = null;
-
-      window.setActiveHighlight = function (sectionId) {
-        const items = document.querySelectorAll('.sidebar-menu a[href^="#"]');
-        items.forEach((item) => {
-          const targetHash = '#' + sectionId;
-          if (item.getAttribute('href') === targetHash) {
-            item.classList.add('active');
-          } else {
-            item.classList.remove('active');
-          }
-        });
-      };
-
-      window.handleSettingsSidebarClick = function (sectionId) {
-        window.isClickScroll = true;
-        window.targetSectionId = sectionId;
-
-        if (window.clickScrollTimeout) clearTimeout(window.clickScrollTimeout);
-        window.setActiveHighlight(sectionId);
-
-        // Lock scroll spy for 1.2 seconds to cover the full duration of smooth scrolling
-        window.clickScrollTimeout = setTimeout(() => {
-          window.isClickScroll = false;
-        }, 1200);
-      };
-
-      (function () {
-        // Dynamic Sidebar Scroll Spy & Active State Management
-        const settingsSections = ['profile', 'appearance', 'privacy'];
-
-        let scrollSpyTimeout = null;
-
-        function updateActiveSidebar() {
-          if (window.isClickScroll) {
-            return; // Still scrolling to target, do not update highlight!
-          }
-          if (scrollSpyTimeout) return; // Throttle scroll event processing
-
-          scrollSpyTimeout = setTimeout(() => {
-            scrollSpyTimeout = null;
-            if (window.isClickScroll) return;
-
-            let activeSection = 'profile';
-            const scrollY = window.scrollY !== undefined ? window.scrollY : window.pageYOffset;
-            const isAtBottom = (window.innerHeight + scrollY) >= (document.documentElement.scrollHeight - 80);
-            if (isAtBottom) {
-              activeSection = 'privacy';
-            } else {
-              const threshold = 160; // offset in px from viewport top
-              let closestSection = 'profile';
-              for (const secId of settingsSections) {
-                const el = document.getElementById(secId);
-                if (el) {
-                  const rect = el.getBoundingClientRect();
-                  if (rect.top <= threshold) {
-                    closestSection = secId;
-                  }
-                }
-              }
-              activeSection = closestSection;
-            }
-            window.setActiveHighlight(activeSection);
-          }, 80); // Limit execution frequency to prevent jumpiness
-        }
-
-        // Clean up previous event listeners if they exist to prevent duplicates under PJAX
-        if (window._settingsCleanupListeners) {
-          window._settingsCleanupListeners();
-        }
-
-        window._settingsScrollSpyHandler = updateActiveSidebar;
-        window.addEventListener('scroll', window._settingsScrollSpyHandler, true);
-
-        // Store cleanup function globally to remove listeners when navigating away
-        window._settingsCleanupListeners = () => {
-          if (window._settingsScrollSpyHandler) {
-            window.removeEventListener('scroll', window._settingsScrollSpyHandler, true);
-          }
-          if (window.clickScrollTimeout) clearTimeout(window.clickScrollTimeout);
-        };
-
-        // Direct Click Handling for instant highlight feedback
-        document.querySelectorAll('.sidebar-menu a[href^="#"]').forEach((item) => {
-          const lockSpy = function () {
-            const hash = item.getAttribute('href');
-            const targetSection = hash.substring(1);
-            window.handleSettingsSidebarClick(targetSection);
-          };
-          item.addEventListener('mousedown', lockSpy);
-          item.addEventListener('touchstart', lockSpy, { passive: true });
-          item.addEventListener('click', lockSpy);
-        });
-
-        if (window.location.hash) {
-          const targetSection = window.location.hash.substring(1);
-          if (settingsSections.includes(targetSection)) {
-            window.setActiveHighlight(targetSection);
-          }
-        }
-
-        setTimeout(updateActiveSidebar, 100);
-
-        let pendingTheme = (document.querySelector('input[name="theme"]:checked') || {}).value || 'light';
-        const form = document.getElementById('settingsForm');
-        const saveBtn = document.getElementById('saveSettingsBtn');
-        const clearBtn = document.getElementById('clearHistoryBtn');
-
-        function resolveTheme(theme) {
-          if (theme !== 'auto') return theme;
-          try {
-            return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-          } catch (e) {
-            return 'light';
-          }
-        }
-
-        function applyThemePreview(theme) {
-          const resolved = resolveTheme(theme);
-          const root = document.documentElement;
-
-          root.classList.add('no-transitions');
-
-          root.setAttribute('data-theme', resolved);
-          root.classList.toggle('dark', resolved === 'dark');
-          root.classList.toggle('light', resolved !== 'dark');
-
-          // Force reflow
-          window.getComputedStyle(root).opacity;
-
-          requestAnimationFrame(() => {
-            root.classList.remove('no-transitions');
-          });
-        }
-
-        applyThemePreview(pendingTheme);
-
-        document.querySelectorAll('input[name="theme"]').forEach((el) => {
-          el.addEventListener('change', function () {
-            pendingTheme = this.value;
-            applyThemePreview(pendingTheme);
-          });
-        });
-
-        if (form) {
-          form.addEventListener('submit', async function (e) {
-            e.preventDefault();
-            const submitter = e.submitter;
-            const t_func = typeof window.PetAI_i18n !== 'undefined' ? window.PetAI_i18n.t : (x) => x;
-
-            if (submitter && submitter.id === 'clearHistoryBtn') {
-              if (window.PetAI_confirm) {
-                const ok = await window.PetAI_confirm({
-                  text: t_func("confirmClearHistoryText") || t_func("clearHistoryConfirm") || "Bạn có chắc muốn xóa toàn bộ lịch sử nhận diện? Hành động này không thể hoàn tác.",
-                  type: "danger"
-                });
-                if (!ok) return;
-              } else {
-                const ok = confirm(t_func("clearHistoryConfirm") || "Bạn có chắc muốn xóa toàn bộ lịch sử nhận diện? Hành động này không thể hoàn tác.");
-                if (!ok) return;
-              }
-
-              const originalText = clearBtn ? clearBtn.innerHTML : "";
-              if (clearBtn) {
-                clearBtn.disabled = true;
-                clearBtn.innerHTML = `<span class="material-symbols-outlined text-[18px]">delete_forever</span>` + (t_func("deleting") || "Đang xóa...");
-              }
-
-              try {
-                const targetUrl = submitter.getAttribute('formaction') || form.action;
-                const res = await fetch(targetUrl, {
-                  method: 'POST',
-                  body: new FormData(form),
-                  headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                  }
-                });
-                if (res.ok) {
-                  const html = await res.text();
-                  if (window.loadPagePjax) {
-                    window.loadPagePjax(res.url, true, html);
-                  } else {
-                    window.location.href = res.url;
-                  }
-                } else {
-                  if (clearBtn) {
-                    clearBtn.disabled = false;
-                    clearBtn.innerHTML = originalText;
-                  }
-                  if (typeof window.showToast === "function") {
-                    window.showToast("error", "Đã xảy ra lỗi");
-                  }
-                }
-              } catch (err) {
-                console.error(err);
-                if (clearBtn) {
-                  clearBtn.disabled = false;
-                  clearBtn.innerHTML = originalText;
-                }
-                if (typeof window.showToast === "function") {
-                  window.showToast("error", "Đã xảy ra lỗi");
-                }
-              }
-              return;
-            }
-
-            // Normal save settings
-            try {
-              localStorage.setItem('theme', pendingTheme);
-            } catch (e) {}
-
-            const originalSaveText = saveBtn ? saveBtn.innerHTML : "";
-            if (saveBtn) {
-              saveBtn.disabled = true;
-              saveBtn.innerHTML = t_func("saving") || "Đang lưu...";
-            }
-
-            try {
-              const res = await fetch(form.action || window.location.href, {
-                method: 'POST',
-                body: new FormData(form),
-                headers: {
-                  'X-Requested-With': 'XMLHttpRequest'
-                }
-              });
-              if (res.ok) {
-                const html = await res.text();
-                if (window.loadPagePjax) {
-                  window.loadPagePjax(res.url, true, html);
-                } else {
-                  window.location.href = res.url;
-                }
-              } else {
-                if (saveBtn) {
-                  saveBtn.disabled = false;
-                  saveBtn.innerHTML = originalSaveText;
-                }
-                if (typeof window.showToast === "function") {
-                  window.showToast("error", "Đã xảy ra lỗi");
-                }
-              }
-            } catch (err) {
-              console.error(err);
-              if (saveBtn) {
-                saveBtn.disabled = false;
-                saveBtn.innerHTML = originalSaveText;
-              }
-              if (typeof window.showToast === "function") {
-                window.showToast("error", "Đã xảy ra lỗi");
-              }
-            }
-          });
-        }
-
-        // Avatar File Upload Handling
-        const avatarInput = document.getElementById('avatarFileInput');
-        const profileAvatar = document.getElementById('profileAvatar');
-        const navbarAvatar = document.getElementById('navbarAvatar');
-        const sidebarAvatar = document.querySelector('.user-avatar-img');
-
-        if (avatarInput) {
-          avatarInput.addEventListener('change', async function () {
-            const file = this.files[0];
-            if (!file) return;
-
-            // Validate client-side
-            const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp', 'image/gif'];
-            if (!allowedTypes.includes(file.type)) {
-              if (typeof window.showToast === "function") {
-                window.showToast("error", "Định dạng file không được hỗ trợ.");
-              }
-              return;
-            }
-
-            // Preview instantly
-            const originalSrc = profileAvatar ? profileAvatar.src : '';
-            const objectUrl = URL.createObjectURL(file);
-            if (profileAvatar) profileAvatar.src = objectUrl;
-
-            const t_func = typeof window.PetAI_i18n !== 'undefined' ? window.PetAI_i18n.t : (x) => x;
-
-            // Upload via fetch
-            const formData = new FormData();
-            formData.append('avatar', file);
-
-            // Get CSRF Token
-            const csrfMeta = document.querySelector('meta[name="csrf-token"]');
-            const csrfToken = csrfMeta ? csrfMeta.getAttribute('content') : '';
-
-            try {
-              if (typeof window.showToast === "function") {
-                window.showToast("info", t_func("uploading") || "Đang tải ảnh lên...");
-              }
-              const response = await fetch('/settings/upload-avatar', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                  'X-CSRF-Token': csrfToken,
-                  'X-Requested-With': 'XMLHttpRequest'
-                }
-              });
-
-              const result = await response.json();
-              if (response.ok && result.success) {
-                const newUrl = result.avatar_url;
-                if (profileAvatar) profileAvatar.src = newUrl;
-                if (navbarAvatar) navbarAvatar.src = newUrl;
-                if (sidebarAvatar) sidebarAvatar.src = newUrl;
-
-                const dropdownAvatar = document.querySelector('.avatar-wrapper img');
-                if (dropdownAvatar) dropdownAvatar.src = newUrl;
-
-                if (typeof window.showToast === "function") {
-                  window.showToast("success", t_func("uploadSuccess") || "Đã cập nhật ảnh đại diện thành công!");
-                }
-              } else {
-                throw new Error(result.message || "Upload failed");
-              }
-            } catch (err) {
-              console.error(err);
-              if (profileAvatar) profileAvatar.src = originalSrc;
-              if (typeof window.showToast === "function") {
-                window.showToast("error", err.message || "Không thể tải ảnh lên. Vui lòng thử lại.");
-              }
-            } finally {
-              URL.revokeObjectURL(objectUrl);
-              avatarInput.value = '';
-            }
-          });
-        }
-      })();
-    </script>
     <script src="{{ url_for('static', filename='js/toasts.js') }}"></script>
     <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>
-
