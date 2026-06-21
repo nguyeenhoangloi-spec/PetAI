@@ -4,30 +4,11 @@
 {% set display_plan = current_plan or 'free' %}
 
 <script>
-  // Add preload to prevent transition animations on page load
-  document.documentElement.classList.add("preload");
-
-  // Apply initial sidebar collapse state immediately on load to prevent transition animation
-  (function() {
-    try {
-      if (window.innerWidth >= 768) {
-        const isCollapsed = localStorage.getItem("sidebar-collapsed") === "true";
-        if (isCollapsed) {
-          document.documentElement.classList.add("sidebar-collapsed");
-        } else {
-          document.documentElement.classList.remove("sidebar-collapsed");
-        }
-      }
-    } catch (e) {
-      console.error(e);
-    }
-  })();
-
-  window.addEventListener("DOMContentLoaded", function() {
+  window.addEventListener("load", function() {
     setTimeout(function() {
       document.documentElement.classList.remove("preload");
       document.documentElement.classList.add("ready");
-    }, 150);
+    }, 50);
   });
 </script>
 

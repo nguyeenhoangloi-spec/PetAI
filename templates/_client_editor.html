@@ -176,6 +176,13 @@
   }
   html.dark #preview-modal-inner { background: #0f172a; }
   @keyframes slideUp { from { opacity: 0; transform: translateY(20px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+  /* Ẩn card nội dung gốc khi vừa load chế độ edit để tránh giật nháy */
+  #legal-content-card {
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1), transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
 </style>
 
 <!-- ══════════════════════════════════════════════════════════════════
@@ -1245,7 +1252,24 @@
       if (res.ok) {
         if (window.showToast) window.showToast("Đã lưu nội dung trang thành công!", "success");
         else alert("Lưu trang thành công!");
-        setTimeout(() => { window.location.href = "/users/system-config?tab=legal&page_select=" + pageKey; }, 900);
+        
+        setTimeout(() => {
+          const card = document.getElementById("legal-content-card");
+          const bar = document.getElementById("admin-float-editor-bar");
+          if (card) {
+            card.style.transition = 'opacity 0.25s cubic-bezier(0.4, 0, 1, 1), transform 0.25s cubic-bezier(0.4, 0, 1, 1)';
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(12px)';
+          }
+          if (bar) {
+            bar.style.transition = 'opacity 0.25s cubic-bezier(0.4, 0, 1, 1), transform 0.25s cubic-bezier(0.4, 0, 1, 1)';
+            bar.style.opacity = '0';
+            bar.style.transform = 'translate(-50%, 20px)';
+          }
+          setTimeout(() => {
+            window.location.href = "/users/system-config?tab=legal&page_select=" + pageKey;
+          }, 250);
+        }, 650);
       } else throw new Error("HTTP " + res.status);
     } catch(e) {
       alert("Lỗi khi lưu trang: " + e.message);
@@ -1253,7 +1277,23 @@
   }
 
   function cancelPageEdit() {
-    window.location.href = "/users/system-config?tab=legal&page_select=" + pageKey;
+    const card = document.getElementById("legal-content-card");
+    const bar = document.getElementById("admin-float-editor-bar");
+    
+    if (card) {
+      card.style.transition = 'opacity 0.25s cubic-bezier(0.4, 0, 1, 1), transform 0.25s cubic-bezier(0.4, 0, 1, 1)';
+      card.style.opacity = '0';
+      card.style.transform = 'translateY(12px)';
+    }
+    if (bar) {
+      bar.style.transition = 'opacity 0.25s cubic-bezier(0.4, 0, 1, 1), transform 0.25s cubic-bezier(0.4, 0, 1, 1)';
+      bar.style.opacity = '0';
+      bar.style.transform = 'translate(-50%, 20px)';
+    }
+    
+    setTimeout(() => {
+      window.location.href = "/users/system-config?tab=legal&page_select=" + pageKey;
+    }, 250);
   }
 
   /* FIX 2: Reset – clears DB entry, reloads page to show original template */
@@ -1519,6 +1559,14 @@
     loadInitialContent();
     pushToHistory();          /* push initial state so undo is always safe */
     renderVisualSections();
+
+    // Fade-in mượt mà sau khi editor đã render xong
+    if (card) {
+      requestAnimationFrame(() => {
+        card.style.opacity = "1";
+        card.style.transform = "translateY(0)";
+      });
+    }
 
     document.addEventListener("selectionchange", checkSelection);
 

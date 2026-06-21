@@ -7,6 +7,123 @@
   data-theme="{{ui_theme or'light'}}"
 >
   <head>
+  <script>
+    // Apply initial sidebar collapse state immediately on load to prevent transition animation
+    (function() {
+      document.documentElement.classList.add("preload");
+      try {
+        if (window.innerWidth >= 768) {
+          const isCollapsed = localStorage.getItem("sidebar-collapsed") === "true";
+          if (isCollapsed) {
+            document.documentElement.classList.add("sidebar-collapsed");
+          } else {
+            document.documentElement.classList.remove("sidebar-collapsed");
+          }
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <style id="early-sidebar-style">
+    /* Early CSS to prevent F5 flicker before stylesheet loads */
+    html.preload .sidebar,
+    html.preload main,
+    html.preload footer {
+      transition: none !important;
+    }
+    
+    /* Stable header styles to prevent navigation bar shifting */
+    body>nav .flex.items-center.gap-gutter {
+      gap: 12px !important;
+    }
+    body>nav #menuToggle {
+      margin-left: 4px !important;
+      margin-right: 0 !important;
+      position: relative !important;
+    }
+    
+    /* Stable inner sidebar styles to prevent internal text/layout shifting */
+    .sidebar-wrapper {
+      display: flex !important;
+      flex-direction: column !important;
+      height: 100% !important;
+      justify-content: space-between !important;
+      padding: 16px 10px 12px 10px !important;
+      box-sizing: border-box !important;
+      gap: 12px !important;
+    }
+    .sidebar-menu {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 6px !important;
+      flex-grow: 1 !important;
+    }
+    .sidebar-menu-item {
+      display: flex !important;
+      align-items: center !important;
+      gap: 10px !important;
+      height: 40px !important;
+      padding: 0 10px !important;
+      border-radius: 12px !important;
+      box-sizing: border-box !important;
+    }
+    
+    @media (min-width: 768px) {
+      .sidebar {
+        position: fixed !important;
+        top: 64px !important;
+        left: 0 !important;
+        bottom: 0 !important;
+        width: 224px !important;
+        height: calc(100vh - 64px) !important;
+        z-index: 100 !important;
+      }
+      
+      /* Collapsed state */
+      html.sidebar-collapsed .sidebar {
+        transform: translateX(-100%) !important;
+        opacity: 0 !important;
+        visibility: hidden !important;
+      }
+      html.sidebar-collapsed main,
+      html.sidebar-collapsed footer {
+        margin-left: 0 !important;
+        width: 100% !important;
+      }
+      
+      /* Expanded state (default) */
+      html:not(.sidebar-collapsed) .sidebar {
+        transform: translateX(0) !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+      }
+      html:not(.sidebar-collapsed) main,
+      html:not(.sidebar-collapsed) footer {
+        margin-left: 224px !important;
+        width: calc(100% - 224px) !important;
+      }
+      
+      /* Force single-column grid immediately for main container on both states */
+      html main {
+        grid-template-columns: 1fr !important;
+        gap: 0 !important;
+      }
+    }
+    
+    @media (max-width: 767px) {
+      .sidebar {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        height: 100vh !important;
+        width: 224px !important;
+        transform: translateX(-100%) !important;
+        z-index: 1000 !important;
+      }
+      .sidebar.active {
+        transform: translateX(0) !important;
+      }
+    }
+  </style>
     <script>
       (function () {
         document.documentElement.classList.add("preload");
@@ -272,6 +389,9 @@
               >PetAI</span
             >
           </a>
+          <button id="menuToggle" type="button" aria-label="Toggle sidebar" aria-expanded="false" class="inline-flex items-center justify-center w-9 h-9 rounded-lg text-on-surface-variant dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-primary dark:hover:text-blue-400 transition-colors focus:outline-none mr-1">
+            <span class="material-symbols-outlined" style="font-size:22px">menu</span>
+          </button>
         </div>
 
         <div class="flex items-center gap-md">
@@ -298,7 +418,7 @@
     </nav>
 
     <main
-      class="flex-grow w-full px-4 md:px-6 py-margin grid grid-cols-1 md:grid-cols-[230px_minmax(0,1fr)] gap-gutter"
+      class="flex-grow w-full px-4 md:px-6 py-margin grid grid-cols-1 gap-0"
     >
       {% set active_page = 'dashboard' %} {% include '_sidebar.html' %}
 

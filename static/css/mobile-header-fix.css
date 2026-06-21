@@ -168,7 +168,7 @@ html {
 
 /* Sidebar transition and state styling */
 .sidebar {
-  transition: transform 0.3s ease, opacity 0.3s ease, width 0.3s ease, padding 0.3s ease, margin 0.3s ease, border-color 0.3s ease;
+  transition: transform 300ms cubic-bezier(0.25, 1, 0.5, 1), opacity 300ms cubic-bezier(0.25, 1, 0.5, 1), visibility 300ms cubic-bezier(0.25, 1, 0.5, 1) !important;
 }
 
 /* Desktop behaviors */
@@ -186,14 +186,10 @@ html {
 
   .sidebar-collapsed .sidebar,
   main.sidebar-collapsed .sidebar {
-    width: 0 !important;
+    transform: translateX(-100%) !important;
     opacity: 0 !important;
-    overflow: hidden !important;
+    visibility: hidden !important;
     pointer-events: none !important;
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-    margin-left: 0 !important;
-    margin-right: 0 !important;
     border-color: transparent !important;
   }
 }
@@ -430,7 +426,7 @@ body>nav img[alt="PetAI New Logo"] {
   padding: 0 !important;
   margin: 0 !important;
   transform: translateX(0);
-  transition: transform 320ms cubic-bezier(0.34, 1.25, 0.64, 1) !important;
+  transition: transform 300ms cubic-bezier(0.25, 1, 0.5, 1), opacity 300ms cubic-bezier(0.25, 1, 0.5, 1), visibility 300ms cubic-bezier(0.25, 1, 0.5, 1) !important;
 }
 
 html.dark .sidebar {
@@ -573,11 +569,14 @@ html.dark .sidebar-divider {
 
   html:has(#sidebar) main,
   html:has(#sidebar) footer {
-    transition: margin-left 320ms cubic-bezier(0.34, 1.25, 0.64, 1), width 320ms cubic-bezier(0.34, 1.25, 0.64, 1) !important;
+    transition: margin-left 300ms cubic-bezier(0.25, 1, 0.5, 1), width 300ms cubic-bezier(0.25, 1, 0.5, 1) !important;
   }
 
   html:has(#sidebar):not(.sidebar-collapsed) .sidebar {
     transform: translateX(0) !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
   }
 
   html:has(#sidebar):not(.sidebar-collapsed) main {
@@ -594,6 +593,9 @@ html.dark .sidebar-divider {
 
   html:has(#sidebar).sidebar-collapsed .sidebar {
     transform: translateX(-100%) !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
   }
 
   html:has(#sidebar).sidebar-collapsed main {
@@ -650,25 +652,23 @@ body:has(#sidebar)>nav a[href*="upload_page"] {
    HEADER & SIDEBAR STABLE LAYOUT CONFIGURATION
    ========================================================== */
 
-/* Order elements in Header: ☰ button first, Logo PetAI second */
+/* Layout spacing for Logo and ☰ button in Header */
 body:has(#sidebar)>nav .flex.items-center.gap-gutter {
   display: flex !important;
   align-items: center !important;
   gap: 12px !important;
 }
 
-body:has(#sidebar)>nav .menu-toggle {
-  order: -2 !important;
-  margin-left: 0 !important;
-  margin-right: 0 !important;
-  position: relative !important;
-}
-
 body:has(#sidebar)>nav a:has(img[alt="PetAI New Logo"]) {
-  order: -1 !important;
   margin-left: 0 !important;
   display: inline-flex !important;
   align-items: center !important;
+}
+
+body:has(#sidebar)>nav #menuToggle {
+  margin-left: 4px !important;
+  margin-right: 0 !important;
+  position: relative !important;
 }
 
 /* Bring Header Navbar on top of Sidebar on mobile so menu toggle ☰ remains visible */
@@ -1043,4 +1043,4 @@ html.dark .nav-login-btn:hover {
 
 
 
-
+
