@@ -3711,9 +3711,6 @@
     } finally {
       document.documentElement.classList.remove("i18n-loading");
       document.documentElement.classList.add("ready");
-      try {
-        document.documentElement.classList.remove("preload");
-      } catch (e) { }
     }
 
     try {

@@ -1,5 +1,6 @@
 <!-- Premium Inline Page Visual Editor Overlay -->
-{% set current_page_key = request.path.strip('/').split('.')[0] %}
+{% set current_page_key = request.path.strip('/').split('/').pop().split('.')[0] %}
+<meta name="csrf-token" content="{{ csrf_token() }}">
 
 <textarea id="raw-editor-content-vi" style="display: none;">{{ system_config.get(current_page_key.replace('-', '_') ~ '_content_vi', '') }}</textarea>
 <textarea id="raw-editor-content-en" style="display: none;">{{ system_config.get(current_page_key.replace('-', '_') ~ '_content_en', '') }}</textarea>
@@ -236,7 +237,7 @@
 
     <!-- Auto translate -->
     <label class="flex items-center gap-1.5 cursor-pointer select-none">
-      <input type="checkbox" id="editor-auto-translate" class="w-3.5 h-3.5 accent-primary" checked onchange="handleAutoTranslateChange(this)" />
+      <input type="checkbox" id="editor-auto-translate" class="w-3.5 h-3.5 accent-primary" checked onchange="handleAutoTranslateChange(this)">
       <span class="text-xs text-slate-500 dark:text-slate-400 font-medium hidden sm:inline">Tự động dịch</span>
     </label>
 
@@ -270,9 +271,9 @@
   <button type="button" class="format-btn" onclick="applyFormat('italic')" title="In nghiêng (Ctrl+I)"><i>I</i></button>
   <button type="button" class="format-btn" onclick="applyFormat('underline')" title="Gạch chân (Ctrl+U)"><u>U</u></button>
   <div class="fmt-sep"></div>
-  <button type="button" class="format-btn" onclick="applyFormatBlock('h2')" title="Tiêu đề H2" style="font-size:10px;">H2</button>
-  <button type="button" class="format-btn" onclick="applyFormatBlock('h3')" title="Tiêu đề H3" style="font-size:10px;">H3</button>
-  <button type="button" class="format-btn" onclick="applyFormatBlock('p')" title="Đoạn văn" style="font-size:10px;">P</button>
+  <button type="button" class="format-btn text-[10px]" onclick="applyFormatBlock('h2')" title="Tiêu đề H2">H2</button>
+  <button type="button" class="format-btn text-[10px]" onclick="applyFormatBlock('h3')" title="Tiêu đề H3">H3</button>
+  <button type="button" class="format-btn text-[10px]" onclick="applyFormatBlock('p')" title="Đoạn văn">P</button>
   <div class="fmt-sep"></div>
   <button type="button" class="format-btn" onclick="applyFormat('insertUnorderedList')" title="Danh sách dấu chấm">
     <span class="material-symbols-outlined">format_list_bulleted</span>
@@ -309,7 +310,7 @@
         <p class="text-[10px] text-slate-400 dark:text-slate-500 leading-tight">Tối đa 10 phiên bản gần nhất</p>
       </div>
     </div>
-    <button onclick="closeVersionHistory()"
+    <button type="button" onclick="closeVersionHistory()"
       class="w-7 h-7 flex items-center justify-center rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
       <span class="material-symbols-outlined text-lg">close</span>
     </button>
@@ -339,7 +340,7 @@
           <p class="text-[10px] text-slate-400 leading-tight">Chế độ người dùng (read-only)</p>
         </div>
       </div>
-      <button onclick="closePreviewModal()"
+      <button type="button" onclick="closePreviewModal()"
         class="flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 px-3 py-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-all border border-transparent hover:border-slate-200 dark:hover:border-slate-700">
         <span class="material-symbols-outlined text-sm">close</span> Đóng
       </button>

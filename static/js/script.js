@@ -39,7 +39,9 @@ document.addEventListener("DOMContentLoaded", function () {
       const currentlyDark = root.classList.contains("dark") || root.getAttribute("data-theme") === "dark";
       const newTheme = currentlyDark ? "light" : "dark";
 
-      // Apply theme visually
+      // Apply theme visually with transitions disabled for instant switch
+      root.classList.add("no-transitions");
+
       root.classList.toggle("dark", newTheme === "dark");
       root.classList.toggle("light", newTheme !== "dark");
       root.setAttribute("data-theme", newTheme);
@@ -47,6 +49,13 @@ document.addEventListener("DOMContentLoaded", function () {
       // Update button classes
       btn.classList.toggle("is-dark", newTheme === "dark");
       btn.classList.toggle("is-light", newTheme !== "dark");
+
+      // Force reflow to apply style changes instantly without animation
+      window.getComputedStyle(root).opacity;
+
+      requestAnimationFrame(() => {
+        root.classList.remove("no-transitions");
+      });
 
       // Save to localStorage
       try {
@@ -74,13 +83,13 @@ document.addEventListener("DOMContentLoaded", function () {
         },
         body: JSON.stringify({ theme: newTheme })
       })
-      .then(r => r.json())
-      .then(data => {
-        if (!data.success) {
-          console.error("Failed to save theme setting on server:", data.message);
-        }
-      })
-      .catch(err => console.error("Error saving theme:", err));
+        .then(r => r.json())
+        .then(data => {
+          if (!data.success) {
+            console.error("Failed to save theme setting on server:", data.message);
+          }
+        })
+        .catch(err => console.error("Error saving theme:", err));
     });
   }
 
@@ -88,7 +97,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const lightRadio = document.getElementById("theme-light");
     const darkRadio = document.getElementById("theme-dark");
     const autoRadio = document.getElementById("theme-auto");
-    
+
     if (lightRadio && darkRadio) {
       if (theme === "light") {
         lightRadio.checked = true;
@@ -105,7 +114,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const target = e.target;
     if (target.name === "theme" && (target.id === "theme-light" || target.id === "theme-dark" || target.id === "theme-auto")) {
       const themeVal = target.value; // 'light', 'dark', or 'auto'
-      
+
       // Determine resolved theme (for 'auto' theme)
       let resolvedTheme = themeVal;
       if (themeVal === "auto") {
@@ -123,10 +132,19 @@ document.addEventListener("DOMContentLoaded", function () {
         headerBtn.classList.toggle("is-light", resolvedTheme !== "dark");
       }
 
-      // Apply theme visually
+      // Apply theme visually with transitions disabled for instant switch
+      root.classList.add("no-transitions");
+
       root.classList.toggle("dark", resolvedTheme === "dark");
       root.classList.toggle("light", resolvedTheme !== "dark");
       root.setAttribute("data-theme", resolvedTheme);
+
+      // Force reflow
+      window.getComputedStyle(root).opacity;
+
+      requestAnimationFrame(() => {
+        root.classList.remove("no-transitions");
+      });
 
       // Save to localStorage
       try {
@@ -137,7 +155,7 @@ document.addEventListener("DOMContentLoaded", function () {
             localStorage.setItem(key, themeVal);
           }
         }
-      } catch (err) {}
+      } catch (err) { }
     }
   });
 
@@ -428,8 +446,6 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function loadPagePjax(url, isPopState = false, htmlContent = null) {
-    document.documentElement.classList.add("preload");
-    document.documentElement.classList.remove("ready");
     const handleHtml = (html) => {
       const parser = new DOMParser();
       const doc = parser.parseFromString(html, "text/html");
@@ -461,7 +477,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const newMetaCsrf = doc.querySelector('meta[name="csrf-token"]');
 
       const updateDOM = () => {
-        
+
         // Clean up settings page event listeners to prevent leaks and scroll spy overlap on other pages
         if (window._settingsCleanupListeners) {
           try {
@@ -493,28 +509,64 @@ document.addEventListener("DOMContentLoaded", function () {
           currentPjaxContainer = newMainDiv;
         }
 
-        // 3. Update Sidebar (active state highlight)
+        // 3. Update Sidebar (active state highlight & selective replacement to prevent flicker)
         const currentSidebar = document.getElementById("sidebar");
         if (currentSidebar && newSidebar) {
-          // Preserve the active hash-link state if we are on a page with hash-based sidebar links
-          const activeHashLink = currentSidebar.querySelector('.sidebar-menu a.active[href^="#"]');
-          if (activeHashLink) {
-            const hash = activeHashLink.getAttribute('href');
-            const newActiveHashLink = newSidebar.querySelector(`.sidebar-menu a[href="${hash}"]`);
-            if (newActiveHashLink) {
-              newSidebar.querySelectorAll('.sidebar-menu a[href^="#"]').forEach(item => {
-                item.classList.remove('active');
-              });
-              newActiveHashLink.classList.add('active');
+          const isCurrentSettings = !!currentSidebar.querySelector('.sidebar-menu a[href^="#"]');
+          const isNewSettings = !!newSidebar.querySelector('.sidebar-menu a[href^="#"]');
+
+          if (isCurrentSettings !== isNewSettings) {
+            // Structural layout changed (Settings vs Normal pages) -> Replace entire sidebar
+            currentSidebar.parentNode.replaceChild(newSidebar, currentSidebar);
+          } else {
+            // Layout is identical -> Just sync active classes directly from newly fetched HTML to prevent any path matching collisions/flicker
+            currentSidebar.querySelectorAll('.sidebar-menu a').forEach(link => {
+              const href = link.getAttribute('href');
+              if (href) {
+                const newLink = newSidebar.querySelector(`.sidebar-menu a[href="${href}"]`);
+                if (newLink) {
+                  link.classList.toggle('active', newLink.classList.contains('active'));
+                }
+              }
+            });
+
+            // Dynamically sync user card inside sidebar
+            const newAvatar = newSidebar.querySelector('.user-avatar-img');
+            const currentAvatar = currentSidebar.querySelector('.user-avatar-img');
+            if (newAvatar && currentAvatar && currentAvatar.src !== newAvatar.src) {
+              currentAvatar.src = newAvatar.src;
+            }
+
+            const newName = newSidebar.querySelector('.user-name');
+            const currentName = currentSidebar.querySelector('.user-name');
+            if (newName && currentName && currentName.textContent !== newName.textContent) {
+              currentName.textContent = newName.textContent;
+            }
+
+            const newRole = newSidebar.querySelector('.user-role');
+            const currentRole = currentSidebar.querySelector('.user-role');
+            if (newRole && currentRole && currentRole.textContent !== newRole.textContent) {
+              currentRole.textContent = newRole.textContent;
             }
           }
-          currentSidebar.parentNode.replaceChild(newSidebar, currentSidebar);
         }
 
-        // 4. Update Header Navbar (for account status indicators)
+        // 4. Update Header Navbar (Sync theme switcher state dynamically, DO NOT replace DOM to prevent layout shifts)
         const currentNav = document.querySelector("body > nav");
         if (currentNav && newNav) {
-          currentNav.parentNode.replaceChild(newNav, currentNav);
+          // Sync user avatar in header if it changed
+          const newHeaderAvatar = newNav.querySelector('.user-avatar-img, #profileAvatar');
+          const currentHeaderAvatar = currentNav.querySelector('.user-avatar-img, #profileAvatar');
+          if (newHeaderAvatar && currentHeaderAvatar && currentHeaderAvatar.src !== newHeaderAvatar.src) {
+            currentHeaderAvatar.src = newHeaderAvatar.src;
+          }
+
+          // Sync theme switcher buttons class to keep switches accurate without rebuilding element
+          const newThemeBtn = newNav.querySelector('.theme-switch-btn');
+          const currentThemeBtn = currentNav.querySelector('.theme-switch-btn');
+          if (newThemeBtn && currentThemeBtn) {
+            currentThemeBtn.className = newThemeBtn.className;
+          }
         }
         injectThemeToggle();
 
@@ -654,6 +706,7 @@ document.addEventListener("DOMContentLoaded", function () {
           });
           newScript.textContent = oldScript.textContent;
           document.body.appendChild(newScript);
+          newScript.remove(); // Clean up dynamic script elements immediately after execution to prevent DOM cluttering
         });
 
         // Restore global event listeners
@@ -693,20 +746,22 @@ document.addEventListener("DOMContentLoaded", function () {
         // 8. Clear loading state
         document.documentElement.classList.remove("pjax-loading");
         document.documentElement.classList.remove("i18n-loading");
-        setTimeout(function() {
-          document.documentElement.classList.remove("preload");
+
+        setTimeout(function () {
           if (!document.documentElement.classList.contains("ready")) {
             document.documentElement.classList.add("ready");
           }
         }, 150);
 
-        // 9. Force Tailwind to scan the DOM for new classes
+        // 9. Force Tailwind to scan the DOM for new classes asynchronously
         if (window.tailwind && typeof window.tailwind.process === "function") {
-          try {
-            window.tailwind.process();
-          } catch (e) {
-            console.error("Tailwind process failed:", e);
-          }
+          setTimeout(function () {
+            try {
+              window.tailwind.process();
+            } catch (e) {
+              console.error("Tailwind process failed:", e);
+            }
+          }, 0);
         }
       };
 
@@ -770,9 +825,6 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    // Show a subtle loading state while fetching (CSS-driven, no flicker)
-    document.documentElement.classList.add("pjax-loading");
-
     fetch(url, {
       headers: {
         "X-Requested-With": "XMLHttpRequest"
@@ -832,7 +884,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const img = lightbox.querySelector("#lightboxImage");
     const downloadBtn = lightbox.querySelector("#downloadAvatarBtn");
-    
+
     img.src = src;
     downloadBtn.href = src;
     downloadBtn.download = downloadName;

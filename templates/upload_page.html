@@ -25,6 +25,11 @@
     })();
   </script>
   <style id="early-sidebar-style">
+    /* Prevent FOUC (Flash of Unstyled Content) during Tailwind compiler startup */
+    html.preload body {
+      opacity: 0 !important;
+    }
+    
     /* Early CSS to prevent F5 flicker before stylesheet loads */
     html.preload .sidebar,
     html.preload main,
@@ -233,7 +238,7 @@
     />
     <link
       rel="stylesheet"
-      href="{{ url_for('static', filename='css/mobile-header-fix.css') }}?v=4"
+      href="{{ url_for('static', filename='css/mobile-header-fix.css') }}?v=12"
     />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
@@ -758,7 +763,7 @@
 
 <script src="{{ url_for('static', filename='js/toasts.js') }}"></script>
     <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}?v=12"></script>
     <script>
       (function () {
         const dropZone = document.getElementById("dropZone");

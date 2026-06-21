@@ -156,5 +156,41 @@
 - **Prevention**: Kiểm tra cẩn thận cấu trúc ngoặc đóng mở sau khi thay thế các đoạn mã phức tạp hoặc chạy test render thử.
 - **Status**: Fixed
 
+---
+
+## [2026-06-21 18:45] - Lỗi không mở được Modal xóa tài khoản khi điều hướng qua PJAX
+
+- **Type**: Logic
+- **Severity**: High
+- **File**: `templates/settings.html:706`
+- **Agent**: Antigravity Orchestrator
+- **Root Cause**: Các modal (`delete-modal-1`, `delete-modal-2`, `delete-modal-3`) và block script xử lý sự kiện tương ứng của chức năng xóa tài khoản được đặt ở ngoài container `#content-area`. Khi người dùng truy cập trang Cài đặt từ trang khác thông qua liên kết động (PJAX), PJAX chỉ tải phần nội dung trong `#content-area`, dẫn đến việc các phần tử Modal và script xử lý bị mất khỏi DOM. Khi click nút "Yêu cầu xóa tài khoản", trình duyệt báo lỗi `TypeError` do gọi thuộc tính của `null`.
+- **Error Message**:
+  ```text
+  Uncaught TypeError: Cannot read properties of null (reading 'classList') at openDeleteModal (settings:829)
+  ```
+- **Fix Applied**: 
+  1. Di chuyển toàn bộ 3 modal và script block xử lý của Modal xóa tài khoản vào bên trong thẻ div `#content-area` để đảm bảo chúng luôn được PJAX tải cùng trang.
+  2. Sửa selector dọn dẹp giá trị OTP trong `closeDeleteModals()` từ `.del-otp-input` sang `#delete-otp-boxes .otp-input` để reset chính xác dữ liệu nhập dở.
+- **Prevention**: Đảm bảo tất cả các component động (Modal, Popup, Script liên quan) của trang con phải nằm hoàn toàn trong container chính được quản lý bởi bộ định tuyến PJAX.
+- **Status**: Fixed
+
+---
+
+## [2026-06-21 18:50] - Lỗi thiếu CSRF Token khi lưu chỉnh sửa 7 trang chính sách pháp lý
+
+- **Type**: Logic
+- **Severity**: High
+- **File**: `templates/_client_editor.html:2`
+- **Agent**: Antigravity Orchestrator
+- **Root Cause**: Giao diện soạn thảo trực quan (`_client_editor.html`) được nhúng trực tiếp vào 7 trang chính sách (như `/privacy-policy`, `/terms-of-service`, v.v.). Khi admin nhấn nút "Lưu thay đổi", script gọi hàm `savePageChanges()` gửi yêu cầu `POST` đến `/users/system-config/save-legal` kèm theo trường `csrf_token` được lấy từ thẻ `<meta name="csrf-token">`. Tuy nhiên, 7 trang chính sách này không hề khai báo thẻ `<meta name="csrf-token">` trong `<head>` của mình, dẫn đến giá trị CSRF truyền lên bị rỗng `""` và bị bộ lọc bảo mật chặn lại.
+- **Error Message**:
+  ```text
+  Lỗi Phiên thao tác không hợp lệ (CSRF). Vui lòng thử lại
+  ```
+- **Fix Applied**: Thêm thẻ `<meta name="csrf-token" content="{{ csrf_token() }}">` vào ngay đầu file `templates/_client_editor.html`. Vì file này chỉ được nhúng vào các trang chính sách khi admin mở chế độ chỉnh sửa (`?edit=true`), thẻ meta này sẽ tự động được inject vào DOM động và cung cấp token hợp lệ cho tất cả các thao tác lưu (`savePageChanges`), reset gốc (`resetToDefault`), và phục hồi phiên bản (`restoreVersion`).
+- **Prevention**: Khi tạo biểu mẫu hoặc yêu cầu thay đổi trạng thái (POST/PUT) qua fetch/ajax trong các phần tử nhúng hoặc dùng chung, cần đảm bảo thẻ meta CSRF luôn đồng hành hoặc khai báo dự phòng tại chính phần tử nhúng đó.
+- **Status**: Fixed
+
 
 
