@@ -314,4 +314,22 @@
 - **Prevention**: Luôn kiểm tra kỹ các cặp đóng mở ngoặc `{}` của Javascript khi chỉnh sửa hoặc copy-paste trong các file HTML template.
 - **Status**: Fixed
 
+---
+
+## [2026-06-22 12:05] - Lỗi cú pháp Javascript dư thừa ngoặc đóng trên trang Xác nhận thanh toán (Confirmations)
+
+- **Type**: Agent
+- **Severity**: High
+- **File**: `templates/confirmations.html:1697-1699`
+- **Agent**: @frontend-specialist
+- **Root Cause**: Khai báo thừa dấu đóng ngoặc nhọn/ngoặc tròn `}); }` ở dòng 1697-1699 của file `confirmations.html` (có khả năng do sự kiện click của nút `clearFilters` bị xóa nhầm một phần trong các đợt refactor trước). Điều này gây ra lỗi cú pháp Javascript, khiến trình duyệt từ chối biên dịch toàn bộ script trong thẻ `<script>`, dẫn đến việc các bảng xác nhận thanh toán không thể khởi tạo hay nạp dữ liệu (trang bị trống trơn).
+- **Error Message**:
+  ```text
+  Uncaught SyntaxError: Unexpected token '}' (compilation error in confirmations.html)
+  ```
+- **Fix Applied**: Thay thế phần code lỗi dư thừa bằng việc định nghĩa lại đầy đủ sự kiện click cho nút xóa lọc `clearBtn` (`id="clearFilters"`), đặt lại các giá trị lọc về mặc định và gọi hàm `refreshUI()` để tải lại dữ liệu.
+- **Prevention**: Sử dụng script kiểm tra cú pháp JS (`node --check`) tự động sau khi chỉnh sửa các template chứa khối script lớn để phát hiện lỗi cú pháp sớm.
+- **Status**: Fixed
+
+
 

@@ -1694,7 +1694,23 @@
           });
         }
 
-               refreshUI();
+        if (clearBtn) {
+          clearBtn.addEventListener("click", function () {
+            if (searchEl) searchEl.value = "";
+            if (planEl) planEl.value = "";
+            if (methodEl) methodEl.value = "";
+            if (timeEl) timeEl.value = "all";
+            if (sortEl) sortEl.value = "newest";
+
+            searchQuery = "";
+            selectedPlan = "";
+            selectedMethod = "";
+            selectedTime = "all";
+            selectedSort = "newest";
+
+            currentPage1 = 1;
+            currentPage2 = 1;
+            refreshUI();
           });
         }
 
