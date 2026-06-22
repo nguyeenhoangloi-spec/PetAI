@@ -331,5 +331,19 @@
 - **Prevention**: Sử dụng script kiểm tra cú pháp JS (`node --check`) tự động sau khi chỉnh sửa các template chứa khối script lớn để phát hiện lỗi cú pháp sớm.
 - **Status**: Fixed
 
+---
+
+## [2026-06-22 13:00] - Lỗi nút xác nhận (Confirm) của Modal động bị ẩn do dùng sai màu nền Tailwind
+
+- **Type**: Logic
+- **Severity**: High
+- **File**: `static/js/i18n.js:4855`
+- **Agent**: @frontend-specialist
+- **Root Cause**: Trong hàm tạo modal động `createDynamicModal()`, màu nền của nút xác nhận cho các trạng thái modal (`danger`, `success`, `info`) được cấu hình bằng các class Tailwind không tồn tại trong hệ thống như `bg-red-650`, `bg-emerald-650`, `bg-blue-650`. Do các class này không hợp lệ, nút bị mất màu nền (trở thành trong suốt) và khi kết hợp với màu chữ trắng (`text-white`) làm nút xác nhận bị ẩn hoàn toàn (trắng tinh) trên nền trắng của modal.
+- **Error Message**: Nút xác nhận trong hộp thoại "Hủy đơn hàng" bị hiển thị trống trơn không có chữ hay màu nền.
+- **Fix Applied**: Thay thế các màu nền bị lỗi bằng các class màu nền chuẩn trong thang điểm của Tailwind CSS như `bg-red-600`, `bg-emerald-600`, `bg-blue-600` và cập nhật các class hover và dark-mode tương ứng.
+- **Prevention**: Chỉ sử dụng các mã màu chuẩn của Tailwind CSS (các số từ 100-900 chia hết cho 100) trừ khi dự án cấu hình thêm các màu tùy chỉnh đặc biệt trong `tailwind.config`.
+- **Status**: Fixed
+
 
 

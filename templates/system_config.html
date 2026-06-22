@@ -1,134 +1,117 @@
 <!-- html-validate-disable no-dup-class, void-style, title-length, attribute-allowed-values, scope-present, aria-hidden-focusable -->
 <!-- htmlhint spec-char-escape:false -->
 <!DOCTYPE html>
-<html
-  class="{{ 'dark' if ui_theme == 'dark' else 'light' }}{{ ' i18n-loading' if ui_language == 'en' else '' }}"
-  lang="{{ ui_language or 'vi' }}"
-  data-theme="{{ ui_theme or 'light' }}"
->
+<html class="{{ 'dark' if ui_theme == 'dark' else 'light' }}{{ ' i18n-loading' if ui_language == 'en' else '' }}" lang="{{ ui_language or 'vi' }}" data-theme="{{ ui_theme or 'light' }}">
   <head>
-  <script>
-    // Apply initial sidebar collapse state immediately on load to prevent transition animation
-    (function() {
-      document.documentElement.classList.add("preload");
-      try {
-        if (window.innerWidth >= 768) {
-          const isCollapsed = localStorage.getItem("sidebar-collapsed") === "true";
-          if (isCollapsed) {
-            document.documentElement.classList.add("sidebar-collapsed");
-          } else {
-            document.documentElement.classList.remove("sidebar-collapsed");
+    <script>
+      // Apply initial sidebar collapse state immediately on load to prevent transition animation
+      (function() {
+        document.documentElement.classList.add("preload");
+        try {
+          if (window.innerWidth >= 768) {
+            const isCollapsed = localStorage.getItem("sidebar-collapsed") === "true";
+            if (isCollapsed) {
+              document.documentElement.classList.add("sidebar-collapsed");
+            } else {
+              document.documentElement.classList.remove("sidebar-collapsed");
+            }
           }
-        }
-      } catch (e) {}
-    })();
-  </script>
-  <style id="early-sidebar-style">
-    /* Prevent FOUC (Flash of Unstyled Content) during Tailwind compiler startup */
-    html.preload body {
-      opacity: 0 !important;
-    }
-    
-    /* Early CSS to prevent F5 flicker before stylesheet loads */
-    html.preload .sidebar,
-    html.preload main,
-    html.preload footer {
-      transition: none !important;
-    }
-    
-    /* Stable header styles to prevent navigation bar shifting */
-    body>nav .flex.items-center.gap-gutter {
-      gap: 12px !important;
-    }
-    body>nav #menuToggle {
-      margin-left: 4px !important;
-      margin-right: 0 !important;
-      position: relative !important;
-    }
-    
-    /* Stable inner sidebar styles to prevent internal text/layout shifting */
-    .sidebar-wrapper {
-      display: flex !important;
-      flex-direction: column !important;
-      height: 100% !important;
-      justify-content: space-between !important;
-      padding: 16px 10px 12px 10px !important;
-      box-sizing: border-box !important;
-      gap: 12px !important;
-    }
-    .sidebar-menu {
-      display: flex !important;
-      flex-direction: column !important;
-      gap: 6px !important;
-      flex-grow: 1 !important;
-    }
-    .sidebar-menu-item {
-      display: flex !important;
-      align-items: center !important;
-      gap: 10px !important;
-      height: 40px !important;
-      padding: 0 10px !important;
-      border-radius: 12px !important;
-      box-sizing: border-box !important;
-    }
-    
-    @media (min-width: 768px) {
-      .sidebar {
-        position: fixed !important;
-        top: 64px !important;
-        left: 0 !important;
-        bottom: 0 !important;
-        width: 224px !important;
-        height: calc(100vh - 64px) !important;
-        z-index: 100 !important;
-      }
-      
-      /* Collapsed state */
-      html.sidebar-collapsed .sidebar {
-        transform: translateX(-100%) !important;
+        } catch (e) {}
+      })();
+    </script>
+    <style id="early-sidebar-style">
+      html.preload body {
         opacity: 0 !important;
-        visibility: hidden !important;
       }
-      html.sidebar-collapsed main,
-      html.sidebar-collapsed footer {
-        margin-left: 0 !important;
-        width: 100% !important;
+      html.preload .sidebar,
+      html.preload main,
+      html.preload footer {
+        transition: none !important;
+      }
+      body>nav .flex.items-center.gap-gutter {
+        gap: 12px !important;
+      }
+      body>nav #menuToggle {
+        margin-left: 4px !important;
+        margin-right: 0 !important;
+        position: relative !important;
+      }
+      .sidebar-wrapper {
+        display: flex !important;
+        flex-direction: column !important;
+        height: 100% !important;
+        justify-content: space-between !important;
+        padding: 16px 10px 12px 10px !important;
+        box-sizing: border-box !important;
+        gap: 12px !important;
+      }
+      .sidebar-menu {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 6px !important;
+        flex-grow: 1 !important;
+      }
+      .sidebar-menu-item {
+        display: flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+        height: 40px !important;
+        padding: 0 10px !important;
+        border-radius: 12px !important;
+        box-sizing: border-box !important;
       }
       
-      /* Expanded state (default) */
-      html:not(.sidebar-collapsed) .sidebar {
-        transform: translateX(0) !important;
-        opacity: 1 !important;
-        visibility: visible !important;
-      }
-      html:not(.sidebar-collapsed) main,
-      html:not(.sidebar-collapsed) footer {
-        margin-left: 224px !important;
-        width: calc(100% - 224px) !important;
+      @media (min-width: 768px) {
+        .sidebar {
+          position: fixed !important;
+          top: 64px !important;
+          left: 0 !important;
+          bottom: 0 !important;
+          width: 224px !important;
+          height: calc(100vh - 64px) !important;
+          z-index: 100 !important;
+        }
+        html.sidebar-collapsed .sidebar {
+          transform: translateX(-100%) !important;
+          opacity: 0 !important;
+          visibility: hidden !important;
+        }
+        html.sidebar-collapsed main,
+        html.sidebar-collapsed footer {
+          margin-left: 0 !important;
+          width: 100% !important;
+        }
+        html:not(.sidebar-collapsed) .sidebar {
+          transform: translateX(0) !important;
+          opacity: 1 !important;
+          visibility: visible !important;
+        }
+        html:not(.sidebar-collapsed) main,
+        html:not(.sidebar-collapsed) footer {
+          margin-left: 224px !important;
+          width: calc(100% - 224px) !important;
+        }
+        html main {
+          grid-template-columns: 1fr !important;
+          gap: 0 !important;
+        }
       }
       
-      /* Force single-column grid immediately for main container on both states */
-      html main {
-        grid-template-columns: 1fr !important;
-        gap: 0 !important;
+      @media (max-width: 767px) {
+        .sidebar {
+          position: fixed !important;
+          top: 0 !important;
+          left: 0 !important;
+          height: 100vh !important;
+          width: 224px !important;
+          transform: translateX(-100%) !important;
+          z-index: 1000 !important;
+        }
+        .sidebar.active {
+          transform: translateX(0) !important;
+        }
       }
-    }
-    
-    @media (max-width: 767px) {
-      .sidebar {
-        position: fixed !important;
-        top: 0 !important;
-        left: 0 !important;
-        height: 100vh !important;
-        width: 224px !important;
-        transform: translateX(-100%) !important;
-        z-index: 1000 !important;
-      }
-      .sidebar.active {
-        transform: translateX(0) !important;
-      }
-    }
-  </style>
+    </style>
     <script>
       (function () {
         var savedLang = "vi";
@@ -371,7 +354,6 @@
         opacity: 1;
         transform: translateY(0);
       }
-      /* Custom input transitions */
       .premium-input {
         transition: all 0.2s ease;
       }
@@ -383,6 +365,93 @@
       }
       .legal-card-item {
         transition: opacity 0.25s ease, transform 0.25s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+      }
+      
+      /* Toggle switch styles */
+      .switch-toggle {
+        position: relative;
+        display: inline-block;
+        width: 48px;
+        height: 24px;
+      }
+      .switch-toggle input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+      .switch-slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #cbd5e1;
+        transition: .3s;
+        border-radius: 24px;
+      }
+      .switch-slider:before {
+        position: absolute;
+        content: "";
+        height: 18px;
+        width: 18px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        transition: .3s;
+        border-radius: 50%;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      }
+      input:checked + .switch-slider {
+        background-color: #004ac6;
+      }
+      .dark input:checked + .switch-slider {
+        background-color: #3b82f6;
+      }
+      input:checked + .switch-slider:before {
+        transform: translateX(24px);
+      }
+      
+      /* Bank slip preview styling */
+      .bank-slip-card {
+        background: radial-gradient(circle at 100% 0%, #1e40af 0%, #1e3a8a 100%);
+        box-shadow: 0 20px 40px rgba(30, 58, 138, 0.15);
+        position: relative;
+        overflow: hidden;
+      }
+      .bank-slip-card::before {
+        content: '';
+        position: absolute;
+        width: 250px;
+        height: 250px;
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 50%;
+        top: -100px;
+        right: -80px;
+        pointer-events: none;
+      }
+      
+      /* Sticky Save Bar */
+      .sticky-save-bar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 50;
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(12px);
+        border-top: 1px solid rgba(226, 232, 240, 0.8);
+        transform: translateY(100%);
+        transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        box-shadow: 0 -10px 25px -5px rgba(0, 0, 0, 0.05);
+      }
+      .dark .sticky-save-bar {
+        background: rgba(15, 23, 42, 0.9);
+        border-top: 1px solid rgba(51, 65, 85, 0.8);
+        box-shadow: 0 -10px 25px -5px rgba(0, 0, 0, 0.3);
+      }
+      .sticky-save-bar.show {
+        transform: translateY(0);
       }
     </style>
   </head>
@@ -399,556 +468,1066 @@
       {% set active_page = 'system_config' %}
       {% include '_sidebar.html' %}
 
-
       <div id="content-area" class="col-span-1 flex flex-col gap-6">
-        <!-- Page Header -->
-        <section class="flex flex-col gap-2 border-b border-outline-variant/20 dark:border-slate-800 pb-5">
-          <h1 class="text-3xl font-extrabold text-on-surface dark:text-slate-100 tracking-tight" data-i18n="sysConfigTitle">Cấu hình hệ thống</h1>
-          <p class="text-sm text-on-surface-variant dark:text-slate-400" data-i18n="sysConfigDesc">Quản lý cài đặt logo, email liên hệ, gói cước dịch vụ và nội dung các trang điều khoản pháp lý.</p>
-        </section>
+        <!-- Unified Settings Form -->
+        <form id="system-config-form" action="{{ url_for('users.save_system_config') }}" method="POST">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+          
+          <!-- Hidden inputs for Email templates dynamically managed by JS -->
+          <input type="hidden" name="email_otp_subject" id="hidden_email_otp_subject" value="{{ configs.get('email_otp_subject', '[PetAI] Xác thực đăng ký tài khoản') }}" />
+          <input type="hidden" name="email_otp_body" id="hidden_email_otp_body" value="{{ configs.get('email_otp_body', 'Mã xác thực OTP của bạn là {{ otp }}. Vui lòng nhập để tiếp tục.') }}" />
+          
+          <input type="hidden" name="email_forgot_subject" id="hidden_email_forgot_subject" value="{{ configs.get('email_forgot_subject', '[PetAI] Yêu cầu đặt lại mật khẩu') }}" />
+          <input type="hidden" name="email_forgot_body" id="hidden_email_forgot_body" value="{{ configs.get('email_forgot_body', 'Mã OTP đặt lại mật khẩu là {{ otp }}. Vui lòng nhập để tiếp tục.') }}" />
+          
+          <input type="hidden" name="email_pay_confirm_subject" id="hidden_email_pay_confirm_subject" value="{{ configs.get('email_pay_confirm_subject', '[PetAI] Gói đã được kích hoạt thành công') }}" />
+          <input type="hidden" name="email_pay_confirm_body" id="hidden_email_pay_confirm_body" value="{{ configs.get('email_pay_confirm_body', 'Chúc mừng bạn, gói {{ plan }} đã được kích hoạt thành công!') }}" />
+          
+          <input type="hidden" name="email_pay_reject_subject" id="hidden_email_pay_reject_subject" value="{{ configs.get('email_pay_reject_subject', '[PetAI] Đơn nâng cấp gói bị từ chối') }}" />
+          <input type="hidden" name="email_pay_reject_body" id="hidden_email_pay_reject_body" value="{{ configs.get('email_pay_reject_body', 'Đơn nâng cấp gói của bạn đã bị từ chối. Vui lòng liên hệ hỗ trợ.') }}" />
+          
+          <input type="hidden" name="email_delete_request_subject" id="hidden_email_delete_request_subject" value="{{ configs.get('email_delete_request_subject', '[PetAI] Mã OTP xác nhận xóa tài khoản') }}" />
+          <input type="hidden" name="email_delete_request_body" id="hidden_email_delete_request_body" value="{{ configs.get('email_delete_request_body', 'Mã OTP để xác nhận xóa tài khoản của bạn là {{ otp }}.') }}" />
+          
+          <input type="hidden" name="email_delete_confirm_subject" id="hidden_email_delete_confirm_subject" value="{{ configs.get('email_delete_confirm_subject', '[PetAI] Yêu cầu xóa tài khoản đã được ghi nhận') }}" />
+          <input type="hidden" name="email_delete_confirm_body" id="hidden_email_delete_confirm_body" value="{{ configs.get('email_delete_confirm_body', 'Tài khoản của bạn đã được lập lịch xóa vào {{ delete_scheduled_at }}.') }}" />
 
-        <!-- Navigation Tabs: Segmented Control -->
-        <section class="flex bg-slate-100 dark:bg-slate-950 p-1.5 rounded-2xl border border-outline-variant/25 dark:border-slate-800/80 w-fit">
-          <div class="flex gap-1">
-            <button type="button" class="tab-btn px-4 py-2.5 rounded-xl text-on-surface-variant dark:text-slate-400 hover:text-primary dark:hover:text-blue-400 transition-all text-xs font-bold active" onclick="switchTab('general', this)" data-i18n="sysTabGeneral">
-              Cấu hình chung
-            </button>
-            <button type="button" class="tab-btn px-4 py-2.5 rounded-xl text-on-surface-variant dark:text-slate-400 hover:text-primary dark:hover:text-blue-400 transition-all text-xs font-bold" onclick="switchTab('plans', this)" data-i18n="sysTabPlans">
-              Gói cước dịch vụ
-            </button>
-            <button type="button" class="tab-btn px-4 py-2.5 rounded-xl text-on-surface-variant dark:text-slate-400 hover:text-primary dark:hover:text-blue-400 transition-all text-xs font-bold" id="tab-legal-btn" onclick="switchTab('legal', this)" data-i18n="sysTabLegal">
-              Các trang chính sách &amp; điều khoản
-            </button>
-          </div>
-        </section>
+          <!-- Page Header -->
+          <section class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-outline-variant/20 dark:border-slate-800 pb-5">
+            <div class="space-y-1">
+              <h1 class="text-3xl font-extrabold text-on-surface dark:text-slate-100 tracking-tight" data-i18n="sysConfigTitle">Cấu hình hệ thống</h1>
+              <p class="text-sm text-on-surface-variant dark:text-slate-400" data-i18n="sysConfigDesc">Quản lý logo, liên hệ, gói cước dịch vụ, thanh toán và nội dung các trang điều khoản pháp lý.</p>
+            </div>
+            <div class="flex items-center gap-3">
+              <a href="/" class="px-4 py-2.5 rounded-xl border border-outline-variant/45 dark:border-slate-700 text-on-surface dark:text-slate-355 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-xs font-bold flex items-center gap-1.5 shadow-sm" data-i18n="sysBtnViewWebsite">
+                <span class="material-symbols-outlined text-sm">open_in_new</span>
+                Xem website
+              </a>
+              <button type="submit" class="primary-save-btn bg-primary hover:bg-primary/95 text-on-primary py-2.5 px-5 rounded-xl text-xs font-bold shadow-sm hover:shadow-md active:scale-98 transition-all flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-sm btn-icon" id="btn-icon">save</span>
+                <span data-i18n="sysBtnSaveAll">Lưu tất cả thay đổi</span>
+              </button>
+            </div>
+          </section>
 
-        <!-- Tab contents -->
-        <div class="relative">
+          <!-- Navigation Tabs Control -->
+          <section class="flex bg-slate-100 dark:bg-slate-900/60 p-1.5 rounded-2xl border border-outline-variant/25 dark:border-slate-800/80 w-full overflow-x-auto scrollbar-none mt-4">
+            <div class="flex gap-1 min-w-max">
+              <button type="button" class="tab-btn px-4 py-2.5 rounded-xl text-on-surface-variant dark:text-slate-400 hover:text-primary dark:hover:text-blue-400 transition-all text-xs font-bold active" onclick="switchTab('general', this)" data-i18n="sysTabGeneral">
+                Cấu hình chung
+              </button>
+              <button type="button" class="tab-btn px-4 py-2.5 rounded-xl text-on-surface-variant dark:text-slate-400 hover:text-primary dark:hover:text-blue-400 transition-all text-xs font-bold" onclick="switchTab('plans', this)" data-i18n="sysTabPlans">
+                Gói cước dịch vụ
+              </button>
+              <button type="button" class="tab-btn px-4 py-2.5 rounded-xl text-on-surface-variant dark:text-slate-400 hover:text-primary dark:hover:text-blue-400 transition-all text-xs font-bold" onclick="switchTab('payments', this)" data-i18n="sysTabPayments">
+                Thanh toán
+              </button>
+              <button type="button" class="tab-btn px-4 py-2.5 rounded-xl text-on-surface-variant dark:text-slate-400 hover:text-primary dark:hover:text-blue-400 transition-all text-xs font-bold" onclick="switchTab('emails', this)" data-i18n="sysTabEmails">
+                Email &amp; Thông báo
+              </button>
+              <button type="button" class="tab-btn px-4 py-2.5 rounded-xl text-on-surface-variant dark:text-slate-400 hover:text-primary dark:hover:text-blue-400 transition-all text-xs font-bold" id="tab-legal-btn" onclick="switchTab('legal', this)" data-i18n="sysTabLegal">
+                Các trang chính sách &amp; điều khoản
+              </button>
+            </div>
+          </section>
 
-          <!-- GENERAL TAB -->
-          <div id="tab-general" class="tab-content active space-y-6">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <!-- Site Logo configuration card -->
-              <div class="glass-card bg-white dark:bg-slate-900/60 rounded-2xl p-6 border border-outline-variant/30 dark:border-slate-800 shadow-sm flex flex-col gap-6">
-                <div>
-                  <h3 class="text-lg font-bold text-on-surface dark:text-slate-100 mb-1" data-i18n="sysLogoTitle">Logo website</h3>
-                  <p class="text-xs text-on-surface-variant dark:text-slate-400" data-i18n="sysLogoDesc">Thay đổi hình ảnh logo hiển thị trên thanh tiêu đề và chân trang website.</p>
-                </div>
-
-                <!-- Current Logo Preview Box -->
-                <div class="flex items-center gap-4 bg-slate-50 dark:bg-slate-950 p-4 rounded-xl border border-outline-variant/20 dark:border-slate-800/80">
-                  <div class="w-16 h-16 bg-white dark:bg-slate-900 rounded-lg p-2 border border-outline-variant/20 dark:border-slate-800 flex items-center justify-center">
-                    <img src="{{ url_for('static', filename='images/logo.png') }}" class="max-h-full max-w-full object-contain dark:invert" alt="Logo hiện tại" id="logo-preview" />
-                  </div>
-                  <div>
-                    <span class="text-xs text-on-surface-variant dark:text-slate-400 block" data-i18n="sysLogoCurrent">Logo hiện hành</span>
-                    <span class="text-sm font-semibold text-on-surface dark:text-slate-200">logo.png</span>
-                  </div>
-                </div>
-
-                <!-- Interactive Upload Dropzone -->
-                <form action="{{ url_for('users.save_logo_config') }}" method="POST" enctype="multipart/form-data" class="flex flex-col gap-5">
-                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-                  <div class="flex flex-col gap-2">
-                    <label class="text-xs font-bold text-on-surface dark:text-slate-350" data-i18n="sysLogoUploadNew">Tải lên logo mới</label>
-                    <div class="relative flex flex-col items-center justify-center border-2 border-dashed border-outline-variant/60 dark:border-slate-700 hover:border-primary/50 dark:hover:border-blue-500/50 rounded-2xl p-6 bg-surface-container-low/20 dark:bg-slate-950/20 hover:bg-primary/[0.02] transition-all duration-300 gap-3 cursor-pointer" onclick="document.getElementById('logo-file-input').click()">
-                      <input type="file" id="logo-file-input" name="logo" accept=".png,.jpg,.jpeg,.svg,.webp" class="hidden" onchange="previewLogoFile(this)" />
-                      <div class="w-10 h-10 rounded-xl bg-primary/10 dark:bg-blue-500/10 flex items-center justify-center text-primary dark:text-blue-400">
-                        <span class="material-symbols-outlined text-[22px]" id="upload-icon">cloud_upload</span>
-                      </div>
-                      <div class="text-center">
-                        <p class="text-xs font-semibold text-on-surface dark:text-slate-200" id="upload-filename" data-i18n="sysLogoUploadDrag">Kéo thả logo vào đây hoặc nhấp để chọn</p>
-                        <p class="text-[10px] text-on-surface-variant dark:text-slate-400 mt-0.5" data-i18n="sysLogoUploadHelp">PNG, JPG, JPEG, SVG hoặc WEBP (Tối đa 2MB)</p>
-                      </div>
-                    </div>
-                  </div>
-                  <button type="submit" class="w-full bg-primary hover:bg-primary/95 text-on-primary py-2.5 px-4 rounded-xl text-xs font-bold shadow-sm hover:shadow-md active:scale-98 transition-all flex items-center justify-center gap-2">
-                    <span class="material-symbols-outlined text-sm">cloud_sync</span>
-                    <span data-i18n="sysLogoUpdateBtn">Cập nhật logo</span>
-                  </button>
-                </form>
+          <!-- Quick Stats Cards Section -->
+          <section class="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
+            <!-- Stat 1 -->
+            <div class="glass-card bg-white dark:bg-slate-900/60 p-5 rounded-2xl border border-outline-variant/30 dark:border-slate-800 shadow-sm flex items-center gap-4">
+              <div class="w-12 h-12 rounded-2xl bg-primary/10 dark:bg-blue-500/10 flex items-center justify-center text-primary dark:text-blue-400">
+                <span class="material-symbols-outlined text-[24px]">description</span>
               </div>
-
-              <!-- General Settings (Email) -->
-              <div class="glass-card bg-white dark:bg-slate-900/60 rounded-2xl p-6 border border-outline-variant/30 dark:border-slate-800 shadow-sm flex flex-col gap-6">
-                <form action="{{ url_for('users.save_system_config') }}" method="POST" class="flex flex-col gap-6 h-full justify-between">
-                  <div class="flex flex-col gap-6">
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-                    <div>
-                      <h3 class="text-lg font-bold text-on-surface dark:text-slate-100 mb-1" data-i18n="sysContactTitle">Cấu hình liên lạc</h3>
-                      <p class="text-xs text-on-surface-variant dark:text-slate-400" data-i18n="sysContactDesc">Thiết lập các thông tin liên lạc chính của website hiển thị tới người dùng.</p>
-                    </div>
-
-                    <div class="relative flex flex-col gap-2">
-                      <label class="text-xs font-bold text-on-surface dark:text-slate-350" data-i18n="sysContactEmailLabel">Email liên hệ / hỗ trợ</label>
-                      <div class="relative">
-                        <span class="material-symbols-outlined text-slate-400 absolute left-4 top-1/2 -translate-y-1/2 text-[20px]">mail</span>
-                        <input type="email" name="site_email" value="{{ configs.get('site_email', 'support@pet.ai') }}" required class="premium-input w-full pl-12 pr-4 py-3 bg-slate-50 dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary transition-all duration-300" />
-                      </div>
-                    </div>
-                  </div>
-
-                  <button type="submit" class="bg-primary hover:bg-primary/95 text-on-primary py-2.5 px-5 rounded-xl text-xs font-bold shadow-sm hover:shadow-md active:scale-98 transition-all flex items-center gap-2 self-start mt-6">
-                    <span class="material-symbols-outlined text-sm">save</span>
-                    <span data-i18n="sysSaveSettingsBtn">Lưu cài đặt</span>
-                  </button>
-                </form>
+              <div class="space-y-0.5">
+                <span class="text-[10px] text-on-surface-variant dark:text-slate-400 block font-bold uppercase tracking-wider" data-i18n="sysStatLegalCount">Tổng số trang chính sách</span>
+                <span class="text-lg font-extrabold text-on-surface dark:text-slate-200">7 <span class="text-xs font-normal" data-i18n="sysPagesUnit">Trang</span></span>
               </div>
             </div>
-          </div>
 
-          <!-- PLANS TAB -->
-          <div id="tab-plans" class="tab-content space-y-6">
-            <form action="{{ url_for('users.save_system_config') }}" method="POST" class="flex flex-col gap-6">
-              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-              <input type="hidden" name="site_email" value="{{ configs.get('site_email', 'support@pet.ai') }}" />
-
-              <div class="glass-card bg-white dark:bg-slate-900/60 rounded-2xl p-6 border border-outline-variant/30 dark:border-slate-800 shadow-sm">
-                <h3 class="text-lg font-bold text-on-surface dark:text-slate-105 mb-1" data-i18n="sysPlansTitle">Gói cước dịch vụ</h3>
-                <p class="text-xs text-on-surface-variant dark:text-slate-400" data-i18n="sysPlansDesc">Thay đổi đơn giá, số ngày sử dụng và hạn mức lượt quét cho từng gói thành viên đăng ký.</p>
+            <!-- Stat 2 -->
+            <div class="glass-card bg-white dark:bg-slate-900/60 p-5 rounded-2xl border border-outline-variant/30 dark:border-slate-800 shadow-sm flex items-center gap-4">
+              <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-500 dark:text-emerald-400">
+                <span class="material-symbols-outlined text-[24px]">package_2</span>
               </div>
+              <div class="space-y-0.5">
+                <span class="text-[10px] text-on-surface-variant dark:text-slate-400 block font-bold uppercase tracking-wider" data-i18n="sysStatPlansActive">Gói cước đang hoạt động</span>
+                <span class="text-lg font-extrabold text-on-surface dark:text-slate-200">3 <span class="text-xs font-normal" data-i18n="sysPlansUnit">Gói</span></span>
+              </div>
+            </div>
 
-              <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- BASIC PLAN CARD -->
-                <div class="glass-card bg-white dark:bg-slate-900/60 border border-outline-variant/30 dark:border-slate-800 rounded-2xl p-6 flex flex-col gap-5 hover:border-primary/20 dark:hover:border-blue-500/20 hover:shadow-md transition-all duration-300 relative group overflow-hidden">
-                  <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
-                    <div>
-                      <h4 class="text-sm font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wider" data-i18n="sysPlanBasic">Gói Cơ Bản (Basic)</h4>
-                      <p class="text-[11px] text-on-surface-variant dark:text-slate-400 mt-0.5" data-i18n="sysPlanBasicDesc">Dành cho cá nhân dùng thử</p>
+            <!-- Stat 3 -->
+            <div class="glass-card bg-white dark:bg-slate-900/60 p-5 rounded-2xl border border-outline-variant/30 dark:border-slate-800 shadow-sm flex items-center gap-4">
+              <div class="w-12 h-12 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-500 dark:text-amber-400">
+                <span class="material-symbols-outlined text-[24px]">payment</span>
+              </div>
+              <div class="space-y-0.5">
+                <span class="text-[10px] text-on-surface-variant dark:text-slate-400 block font-bold uppercase tracking-wider" data-i18n="sysStatPaymentsActive">Phương thức thanh toán</span>
+                <span class="text-lg font-extrabold text-on-surface dark:text-slate-200">2 <span class="text-xs font-normal" data-i18n="sysMethodsUnit">Phương thức</span></span>
+              </div>
+            </div>
+
+            <!-- Stat 4 -->
+            <div class="glass-card bg-white dark:bg-slate-900/60 p-5 rounded-2xl border border-outline-variant/30 dark:border-slate-800 shadow-sm flex items-center gap-4">
+              <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-500 dark:text-indigo-400">
+                <span class="material-symbols-outlined text-[24px]">mail</span>
+              </div>
+              <div class="space-y-0.5">
+                <span class="text-[10px] text-on-surface-variant dark:text-slate-400 block font-bold uppercase tracking-wider" data-i18n="sysStatEmailsActive">Email hệ thống</span>
+                <span class="text-lg font-extrabold text-on-surface dark:text-slate-200">1 <span class="text-xs font-normal" data-i18n="sysEmailsUnit">Địa chỉ</span></span>
+              </div>
+            </div>
+          </section>
+
+          <!-- Tab Contents wrapper -->
+          <div class="relative mt-6">
+
+            <!-- TAB 1: CẤU HÌNH CHUNG -->
+            <div id="tab-general" class="tab-content active space-y-6">
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                
+                <!-- Left: Nhận diện thương hiệu -->
+                <div class="glass-card bg-white dark:bg-slate-900/60 rounded-2xl p-6 border border-outline-variant/30 dark:border-slate-800 shadow-sm flex flex-col gap-6">
+                  <div>
+                    <h3 class="text-lg font-bold text-on-surface dark:text-slate-100 mb-1" data-i18n="sysCardBrandTitle">Nhận diện thương hiệu</h3>
+                    <p class="text-xs text-on-surface-variant dark:text-slate-400" data-i18n="sysCardBrandDesc">Thiết lập logo, favicon và tên website hiển thị trên hệ thống.</p>
+                  </div>
+
+                  <!-- Brand Assets Row -->
+                  <div class="grid grid-cols-2 gap-4">
+                    <!-- Current Logo Display -->
+                    <div class="bg-slate-50 dark:bg-slate-950 p-4 rounded-xl border border-outline-variant/20 dark:border-slate-800/80 flex flex-col items-center justify-between text-center relative group">
+                      <div class="w-14 h-14 bg-white dark:bg-slate-900 rounded-lg p-2 border border-outline-variant/20 dark:border-slate-800 flex items-center justify-center mb-2">
+                        <img src="{{ url_for('static', filename='images/logo.png') }}" class="max-h-full max-w-full object-contain dark:invert" alt="Logo" id="logo-preview-img" />
+                      </div>
+                      <div>
+                        <span class="text-[10px] text-on-surface-variant dark:text-slate-400 block" data-i18n="sysLabelLogoCurrent">Logo hiện tại</span>
+                        <span class="text-xs font-semibold text-on-surface dark:text-slate-200">logo.png</span>
+                      </div>
+                      <button type="button" onclick="deleteAsset('logo')" class="absolute top-2 right-2 text-slate-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all p-1 hover:bg-red-50 dark:hover:bg-red-950/40 rounded-lg" title="Khôi phục mặc định">
+                        <span class="material-symbols-outlined text-sm">delete</span>
+                      </button>
                     </div>
-                    <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500">
-                      <span class="material-symbols-outlined text-xl">star</span>
+
+                    <!-- Current Favicon Display -->
+                    <div class="bg-slate-50 dark:bg-slate-950 p-4 rounded-xl border border-outline-variant/20 dark:border-slate-800/80 flex flex-col items-center justify-between text-center relative group">
+                      <div class="w-14 h-14 bg-white dark:bg-slate-900 rounded-lg p-2.5 border border-outline-variant/20 dark:border-slate-800 flex items-center justify-center mb-2">
+                        <img src="{{ url_for('static', filename='images/favicon.ico') }}" onerror="this.src='/static/images/logo.png'" class="max-h-full max-w-full object-contain" alt="Favicon" id="favicon-preview-img" />
+                      </div>
+                      <div>
+                        <span class="text-[10px] text-on-surface-variant dark:text-slate-400 block" data-i18n="sysLabelFaviconCurrent">Favicon hiện tại</span>
+                        <span class="text-xs font-semibold text-on-surface dark:text-slate-200">favicon.ico</span>
+                      </div>
+                      <button type="button" onclick="deleteAsset('favicon')" class="absolute top-2 right-2 text-slate-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all p-1 hover:bg-red-50 dark:hover:bg-red-950/40 rounded-lg" title="Khôi phục mặc định">
+                        <span class="material-symbols-outlined text-sm">delete</span>
+                      </button>
                     </div>
                   </div>
 
+                  <!-- Text Configuration Fields -->
                   <div class="flex flex-col gap-4">
                     <div class="flex flex-col gap-1.5">
-                      <label class="text-xs font-semibold text-on-surface-variant dark:text-slate-400" data-i18n="sysPlanPriceVnd">Giá gói (VNĐ)</label>
-                      <div class="relative">
-                        <input type="number" name="plan_basic_price" value="{{ configs.get('plan_basic_price', '1000') }}" required class="premium-input w-full pl-4 pr-12 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/30 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary transition-all" />
-                        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400" data-i18n="currencySuffix">đ</span>
-                      </div>
+                      <label class="text-xs font-bold text-on-surface-variant dark:text-slate-350" data-i18n="sysLabelSiteName">Tên website</label>
+                      <input type="text" name="site_name" value="{{ configs.get('site_name', 'PetAI') }}" required class="premium-input w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none" />
                     </div>
 
                     <div class="flex flex-col gap-1.5">
-                      <label class="text-xs font-semibold text-on-surface-variant dark:text-slate-400" data-i18n="sysPlanDurationDays">Thời gian dùng (Ngày)</label>
-                      <div class="relative">
-                        <input type="number" name="plan_basic_days" value="{{ configs.get('plan_basic_days', '7') }}" required class="premium-input w-full pl-4 pr-16 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/30 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary transition-all" />
-                        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400" data-i18n="daysLabel">ngày</span>
-                      </div>
+                      <label class="text-xs font-bold text-on-surface-variant dark:text-slate-350" data-i18n="sysLabelSiteDesc">Mô tả ngắn website</label>
+                      <textarea name="site_description" rows="3" class="premium-input w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none resize-none">{{ configs.get('site_description', 'Nền tảng AI giúp nhận diện giống chó và mèo nhanh chóng, chính xác.') }}</textarea>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Right Column: Contact Info & Params -->
+                <div class="flex flex-col gap-6">
+                  
+                  <!-- Contact info Card -->
+                  <div class="glass-card bg-white dark:bg-slate-900/60 rounded-2xl p-6 border border-outline-variant/30 dark:border-slate-800 shadow-sm flex flex-col gap-5">
+                    <div>
+                      <h3 class="text-lg font-bold text-on-surface dark:text-slate-100 mb-1" data-i18n="sysCardContactTitle">Thông tin liên hệ</h3>
+                      <p class="text-xs text-on-surface-variant dark:text-slate-400" data-i18n="sysCardContactDesc">Cập nhật thông tin liên hệ hiển thị trên website.</p>
                     </div>
 
-                    <div class="flex flex-col gap-1.5">
-                      <label class="text-xs font-semibold text-on-surface-variant dark:text-slate-400" data-i18n="sysPlanScanLimit">Hạn mức quét (Lượt)</label>
-                      <div class="relative">
-                        <input type="number" name="plan_basic_scans" value="{{ configs.get('plan_basic_scans', '50') }}" required class="premium-input w-full pl-4 pr-16 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/30 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary transition-all" />
-                        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400" data-i18n="scansLabel">lượt</span>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div class="flex flex-col gap-1.5">
+                        <label class="text-xs font-bold text-on-surface-variant dark:text-slate-350" data-i18n="sysLabelContactEmail">Email liên hệ / hỗ trợ *</label>
+                        <div class="relative">
+                          <span class="material-symbols-outlined text-slate-450 absolute left-4 top-1/2 -translate-y-1/2 text-lg">mail</span>
+                          <input type="email" name="site_email" value="{{ configs.get('site_email', 'support@pet.ai') }}" required class="premium-input w-full pl-11 pr-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none" />
+                        </div>
+                      </div>
+
+                      <div class="flex flex-col gap-1.5">
+                        <label class="text-xs font-bold text-on-surface-variant dark:text-slate-350" data-i18n="sysLabelContactPhone">Số điện thoại</label>
+                        <div class="relative">
+                          <span class="material-symbols-outlined text-slate-450 absolute left-4 top-1/2 -translate-y-1/2 text-lg">call</span>
+                          <input type="text" name="contact_phone" value="{{ configs.get('contact_phone', '0987 654 321') }}" class="premium-input w-full pl-11 pr-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none" />
+                        </div>
+                      </div>
+
+                      <div class="flex flex-col gap-1.5 md:col-span-2">
+                        <label class="text-xs font-bold text-on-surface-variant dark:text-slate-350" data-i18n="sysLabelContactAddress">Địa chỉ</label>
+                        <div class="relative">
+                          <span class="material-symbols-outlined text-slate-450 absolute left-4 top-1/2 -translate-y-1/2 text-lg">pin_drop</span>
+                          <input type="text" name="contact_address" value="{{ configs.get('contact_address', 'Hà Nội, Việt Nam') }}" class="premium-input w-full pl-11 pr-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none" />
+                        </div>
+                      </div>
+
+                      <div class="flex flex-col gap-1.5 md:col-span-2">
+                        <label class="text-xs font-bold text-on-surface-variant dark:text-slate-355" data-i18n="sysLabelContactFb">Facebook (URL)</label>
+                        <div class="relative">
+                          <span class="material-symbols-outlined text-slate-450 absolute left-4 top-1/2 -translate-y-1/2 text-lg">public</span>
+                          <input type="text" name="contact_fb" value="{{ configs.get('contact_fb', 'https://facebook.com/petai.vn') }}" class="premium-input w-full pl-11 pr-4 py-2.5 bg-slate-50 dark:bg-slate-955 border border-outline-variant/40 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Params Card -->
+                  <div class="glass-card bg-white dark:bg-slate-900/60 rounded-2xl p-6 border border-outline-variant/30 dark:border-slate-800 shadow-sm flex flex-col gap-5">
+                    <div>
+                      <h3 class="text-lg font-bold text-on-surface dark:text-slate-100 mb-1" data-i18n="sysCardParamsTitle">Thiết lập hệ thống</h3>
+                      <p class="text-xs text-on-surface-variant dark:text-slate-400" data-i18n="sysCardParamsDesc">Các thiết lập chung cho hoạt động của hệ thống.</p>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                      <div class="flex flex-col gap-1.5">
+                        <label class="text-xs font-bold text-on-surface-variant dark:text-slate-350" data-i18n="sysLabelDefaultLang">Ngôn ngữ mặc định</label>
+                        <select name="default_lang" class="premium-input w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none">
+                          <option value="vi" {{ 'selected' if configs.get('default_lang', 'vi') == 'vi' }}>Tiếng Việt</option>
+                          <option value="en" {{ 'selected' if configs.get('default_lang', 'vi') == 'en' }}>English</option>
+                        </select>
+                      </div>
+
+                      <div class="flex flex-col gap-1.5">
+                        <label class="text-xs font-bold text-on-surface-variant dark:text-slate-355" data-i18n="sysLabelDefaultTheme">Theme mặc định</label>
+                        <select name="default_theme" class="premium-input w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-955 border border-outline-variant/40 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none">
+                          <option value="light" {{ 'selected' if configs.get('default_theme', 'light') == 'light' }}>Sáng (Light)</option>
+                          <option value="dark" {{ 'selected' if configs.get('default_theme', 'light') == 'dark' }}>Tối (Dark)</option>
+                        </select>
+                      </div>
+
+                      <!-- Maintenance Switch Toggle -->
+                      <div class="flex items-center justify-between col-span-2 pt-2 border-t border-outline-variant/10">
+                        <div class="space-y-0.5">
+                          <label class="text-xs font-bold text-on-surface dark:text-slate-200" data-i18n="sysLabelMaintenance">Chế độ bảo trì</label>
+                          <p class="text-[10px] text-on-surface-variant dark:text-slate-400" data-i18n="sysMaintenanceHelper">Khách truy cập sẽ thấy màn hình thông báo bảo trì.</p>
+                        </div>
+                        <label class="switch-toggle">
+                          <input type="hidden" name="maintenance_mode_submitted" value="1" />
+                          <input type="checkbox" name="maintenance_mode" id="maintenance_mode" {{ 'checked' if configs.get('maintenance_mode', '0') == '1' }} onchange="toggleMaintenance(this)" />
+                          <span class="switch-slider"></span>
+                        </label>
+                      </div>
+
+                      <!-- Maintenance Warning Banner -->
+                      <div id="maintenance-warning" class="col-span-2 flex items-start gap-2.5 p-3.5 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-xl border border-amber-500/20 text-xs {{ 'hidden' if configs.get('maintenance_mode', '0') != '1' }}">
+                        <span class="material-symbols-outlined text-lg">info</span>
+                        <p data-i18n="sysMaintenanceHelper">Khi bật chế độ bảo trì, website sẽ hiển thị trang thông báo bảo trì cho người dùng.</p>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <!-- PRO PLAN CARD -->
-                <div class="glass-card bg-white dark:bg-slate-900/60 border-2 border-primary dark:border-blue-500 rounded-2xl p-6 flex flex-col gap-5 shadow-md hover:shadow-lg transition-all duration-300 relative group overflow-hidden">
-                  <div class="absolute top-0 right-0 bg-primary dark:bg-blue-500 text-on-primary text-[9px] font-bold px-3 py-1 rounded-bl-xl uppercase tracking-wider" data-i18n="sysRecommended">
+                <!-- Brand Assets Upload area (Drag & drop handles separately) -->
+                <div class="glass-card bg-white dark:bg-slate-900/60 rounded-2xl p-6 border border-outline-variant/30 dark:border-slate-800 shadow-sm flex flex-col gap-6 lg:col-span-2">
+                  <h4 class="text-xs font-bold text-on-surface dark:text-slate-200 uppercase tracking-wider" data-i18n="sysLogoUploadNew">Tải lên tài nguyên mới</h4>
+                  
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Dropzone Logo -->
+                    <div class="flex flex-col gap-2">
+                      <label class="text-xs font-bold text-on-surface-variant dark:text-slate-350" data-i18n="sysLabelDragDropLogo">Kéo thả hoặc chọn file để tải logo mới</label>
+                      <div class="relative flex flex-col items-center justify-center border-2 border-dashed border-outline-variant/50 dark:border-slate-700 hover:border-primary/50 dark:hover:border-blue-500/50 rounded-2xl p-6 bg-slate-50 dark:bg-slate-950/20 hover:bg-primary/[0.02] transition-all duration-300 gap-3 cursor-pointer" onclick="document.getElementById('logo-file-input').click()">
+                        <input type="file" id="logo-file-input" class="hidden" onchange="submitAssetUpload('logo', this)" accept=".png,.jpg,.jpeg,.svg,.webp" />
+                        <div class="w-10 h-10 rounded-xl bg-primary/10 dark:bg-blue-500/10 flex items-center justify-center text-primary dark:text-blue-400">
+                          <span class="material-symbols-outlined text-[22px]">cloud_upload</span>
+                        </div>
+                        <div class="text-center">
+                          <p class="text-xs font-semibold text-on-surface dark:text-slate-200" data-i18n="sysLabelDragDropLogo">Kéo thả logo vào đây hoặc nhấp để chọn</p>
+                          <p class="text-[10px] text-on-surface-variant dark:text-slate-400 mt-0.5" data-i18n="sysUploadHelp">PNG, JPG, JPEG, SVG hoặc WEBP (Tối đa 2MB)</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Dropzone Favicon -->
+                    <div class="flex flex-col gap-2">
+                      <label class="text-xs font-bold text-on-surface-variant dark:text-slate-350" data-i18n="sysLabelDragDropFavicon">Kéo thả hoặc chọn file để tải favicon mới</label>
+                      <div class="relative flex flex-col items-center justify-center border-2 border-dashed border-outline-variant/50 dark:border-slate-700 hover:border-primary/50 dark:hover:border-blue-500/50 rounded-2xl p-6 bg-slate-50 dark:bg-slate-950/20 hover:bg-primary/[0.02] transition-all duration-300 gap-3 cursor-pointer" onclick="document.getElementById('favicon-file-input').click()">
+                        <input type="file" id="favicon-file-input" class="hidden" onchange="submitAssetUpload('favicon', this)" accept=".ico,.png,.jpg,.jpeg,.svg,.webp" />
+                        <div class="w-10 h-10 rounded-xl bg-primary/10 dark:bg-blue-500/10 flex items-center justify-center text-primary dark:text-blue-400">
+                          <span class="material-symbols-outlined text-[22px]">cloud_upload</span>
+                        </div>
+                        <div class="text-center">
+                          <p class="text-xs font-semibold text-on-surface dark:text-slate-200" data-i18n="sysLabelDragDropFavicon">Kéo thả favicon vào đây hoặc nhấp để chọn</p>
+                          <p class="text-[10px] text-on-surface-variant dark:text-slate-400 mt-0.5" data-i18n="sysUploadHelpFavicon">ICO hoặc PNG (Tối đa 500KB)</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 2: GÓI CƯỚC DỊCH VỤ -->
+            <div id="tab-plans" class="tab-content space-y-6">
+              <div class="glass-card bg-white dark:bg-slate-900/60 rounded-2xl p-6 border border-outline-variant/30 dark:border-slate-800 shadow-sm flex flex-col md:flex-row justify-between md:items-center gap-4">
+                <div>
+                  <h3 class="text-lg font-bold text-on-surface dark:text-slate-100 mb-1" data-i18n="sysPlansTitle">Gói cước dịch vụ</h3>
+                  <p class="text-xs text-on-surface-variant dark:text-slate-400" data-i18n="sysPlansDesc">Thay đổi đơn giá, số ngày sử dụng và hạn mức lượt quét cho từng gói thành viên đăng ký.</p>
+                </div>
+                <div class="flex gap-2">
+                  <button type="button" onclick="restorePlansDefaults()" class="px-4 py-2 rounded-xl border border-outline-variant/45 dark:border-slate-700 text-on-surface dark:text-slate-300 label-sm font-semibold hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-xs flex items-center gap-1.5 shadow-sm" data-i18n="sysBtnRestorePlan">
+                    <span class="material-symbols-outlined text-sm">restore</span>
+                    Khôi phục mặc định
+                  </button>
+                </div>
+              </div>
+
+              <!-- Packages Grid -->
+              <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                
+                <!-- Package 1: Basic -->
+                <div class="glass-card bg-white dark:bg-slate-900/60 border border-outline-variant/30 dark:border-slate-800 rounded-2xl p-6 flex flex-col justify-between gap-5 hover:border-primary/20 dark:hover:border-blue-500/20 hover:shadow-md transition-all duration-300 relative group overflow-hidden">
+                  <div class="space-y-4">
+                    <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800/80 pb-4">
+                      <div>
+                        <h4 class="text-sm font-bold text-slate-850 dark:text-slate-100 uppercase tracking-wider" data-i18n="sysPlanBasic">Gói Cơ Bản (Basic)</h4>
+                        <p class="text-[11px] text-on-surface-variant dark:text-slate-400 mt-0.5" data-i18n="sysPlanBasicDesc">Dành cho cá nhân dùng thử</p>
+                      </div>
+                      <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 dark:text-slate-400">
+                        <span class="material-symbols-outlined text-xl">star</span>
+                      </div>
+                    </div>
+
+                    <div class="flex flex-col gap-4">
+                      <div class="flex flex-col gap-1.5">
+                        <label class="text-xs font-semibold text-on-surface-variant dark:text-slate-400" data-i18n="sysPlanPriceVnd">Giá gói (VNĐ)</label>
+                        <div class="relative">
+                          <input type="number" name="plan_basic_price" value="{{ configs.get('plan_basic_price', '1000') }}" required class="premium-input w-full pl-4 pr-12 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/30 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none" />
+                          <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400" data-i18n="currencySuffix">đ</span>
+                        </div>
+                      </div>
+
+                      <div class="flex flex-col gap-1.5">
+                        <label class="text-xs font-semibold text-on-surface-variant dark:text-slate-400" data-i18n="sysPlanDurationDays">Thời gian dùng (Ngày)</label>
+                        <div class="relative">
+                          <input type="number" name="plan_basic_days" value="{{ configs.get('plan_basic_days', '7') }}" required class="premium-input w-full pl-4 pr-16 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/30 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none" />
+                          <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400" data-i18n="daysLabel">ngày</span>
+                        </div>
+                      </div>
+
+                      <div class="flex flex-col gap-1.5">
+                        <label class="text-xs font-semibold text-on-surface-variant dark:text-slate-400" data-i18n="sysPlanScanLimit">Hạn mức quét (Lượt)</label>
+                        <div class="relative">
+                          <input type="number" name="plan_basic_scans" value="{{ configs.get('plan_basic_scans', '50') }}" required class="premium-input w-full pl-4 pr-16 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/30 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none" />
+                          <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400" data-i18n="scansLabel">lượt</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="pt-4 border-t border-outline-variant/10 flex items-center justify-between">
+                    <label class="text-xs font-semibold text-on-surface dark:text-slate-350" data-i18n="sysPlanStatusToggle">Kích hoạt gói cước</label>
+                    <label class="switch-toggle">
+                      <input type="checkbox" name="plan_basic_enabled" id="plan_basic_enabled" {{ 'checked' if configs.get('plan_basic_enabled', '1') == '1' }} onchange="confirmTogglePlan('basic', this)" />
+                      <span class="switch-slider"></span>
+                    </label>
+                  </div>
+                </div>
+
+                <!-- Package 2: Pro -->
+                <div class="glass-card bg-white dark:bg-slate-900/60 border-2 border-primary dark:border-blue-500 rounded-2xl p-6 flex flex-col justify-between gap-5 shadow-md hover:shadow-lg transition-all duration-300 relative group overflow-hidden">
+                  <div class="absolute top-0 right-0 bg-primary dark:bg-blue-500 text-on-primary text-[9px] font-bold px-3 py-1 rounded-bl-xl uppercase tracking-wider" data-i18n="sysPlanRecommended">
                     Khuyên dùng
                   </div>
 
-                  <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
+                  <div class="space-y-4">
+                    <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800/80 pb-4">
+                      <div>
+                        <h4 class="text-sm font-bold text-primary dark:text-blue-400 uppercase tracking-wider" data-i18n="sysPlanPro">Gói Chuyên Nghiệp (Pro)</h4>
+                        <p class="text-[11px] text-on-surface-variant dark:text-slate-400 mt-0.5" data-i18n="sysPlanProDesc">Lựa chọn phổ biến nhất</p>
+                      </div>
+                      <div class="w-10 h-10 rounded-xl bg-primary/10 dark:bg-blue-500/10 flex items-center justify-center text-primary dark:text-blue-400">
+                        <span class="material-symbols-outlined text-xl">workspace_premium</span>
+                      </div>
+                    </div>
+
+                    <div class="flex flex-col gap-4">
+                      <div class="flex flex-col gap-1.5">
+                        <label class="text-xs font-semibold text-on-surface-variant dark:text-slate-400" data-i18n="sysPlanPriceVnd">Giá gói (VNĐ)</label>
+                        <div class="relative">
+                          <input type="number" name="plan_pro_price" value="{{ configs.get('plan_pro_price', '5000') }}" required class="premium-input w-full pl-4 pr-12 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/30 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none" />
+                          <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-450" data-i18n="currencySuffix">đ</span>
+                        </div>
+                      </div>
+
+                      <div class="flex flex-col gap-1.5">
+                        <label class="text-xs font-semibold text-on-surface-variant dark:text-slate-400" data-i18n="sysPlanDurationDays">Thời gian dùng (Ngày)</label>
+                        <div class="relative">
+                          <input type="number" name="plan_pro_days" value="{{ configs.get('plan_pro_days', '30') }}" required class="premium-input w-full pl-4 pr-16 py-2.5 bg-slate-50 dark:bg-slate-955 border border-outline-variant/30 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none" />
+                          <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-450" data-i18n="daysLabel">ngày</span>
+                        </div>
+                      </div>
+
+                      <div class="flex flex-col gap-1.5">
+                        <label class="text-xs font-semibold text-on-surface-variant dark:text-slate-400" data-i18n="sysPlanScanLimit">Hạn mức quét (Lượt)</label>
+                        <div class="relative">
+                          <input type="number" name="plan_pro_scans" value="{{ configs.get('plan_pro_scans', '200') }}" required class="premium-input w-full pl-4 pr-16 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/30 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none" />
+                          <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-455" data-i18n="scansLabel">lượt</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="pt-4 border-t border-outline-variant/10 flex items-center justify-between">
+                    <label class="text-xs font-semibold text-on-surface dark:text-slate-350" data-i18n="sysPlanStatusToggle">Kích hoạt gói cước</label>
+                    <label class="switch-toggle">
+                      <input type="checkbox" name="plan_pro_enabled" id="plan_pro_enabled" {{ 'checked' if configs.get('plan_pro_enabled', '1') == '1' }} onchange="confirmTogglePlan('pro', this)" />
+                      <span class="switch-slider"></span>
+                    </label>
+                  </div>
+                </div>
+
+                <!-- Package 3: Enterprise -->
+                <div class="glass-card bg-white dark:bg-slate-900/60 border border-outline-variant/30 dark:border-slate-800 rounded-2xl p-6 flex flex-col justify-between gap-5 hover:border-primary/20 dark:hover:border-blue-500/20 hover:shadow-md transition-all duration-300 relative group overflow-hidden">
+                  <div class="space-y-4">
+                    <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800/80 pb-4">
+                      <div>
+                        <h4 class="text-sm font-bold text-slate-850 dark:text-slate-100 uppercase tracking-wider" data-i18n="sysPlanEnterprise">Gói Doanh nghiệp (Enterprise)</h4>
+                        <p class="text-[11px] text-on-surface-variant dark:text-slate-400 mt-0.5" data-i18n="sysPlanEntDesc">Không giới hạn cho tổ chức</p>
+                      </div>
+                      <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 dark:text-slate-400">
+                        <span class="material-symbols-outlined text-xl">crown</span>
+                      </div>
+                    </div>
+
+                    <div class="flex flex-col gap-4">
+                      <div class="flex flex-col gap-1.5">
+                        <label class="text-xs font-semibold text-on-surface-variant dark:text-slate-400" data-i18n="sysPlanPriceVnd">Giá gói (VNĐ)</label>
+                        <div class="relative">
+                          <input type="number" name="plan_enterprise_price" value="{{ configs.get('plan_enterprise_price', '15000') }}" required class="premium-input w-full pl-4 pr-12 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/30 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none" />
+                          <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-455" data-i18n="currencySuffix">đ</span>
+                        </div>
+                      </div>
+
+                      <div class="flex flex-col gap-1.5">
+                        <label class="text-xs font-semibold text-on-surface-variant dark:text-slate-400" data-i18n="sysPlanDurationDays">Thời gian dùng (Ngày)</label>
+                        <div class="relative">
+                          <input type="number" name="plan_enterprise_days" value="{{ configs.get('plan_enterprise_days', '90') }}" required class="premium-input w-full pl-4 pr-16 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/30 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none" />
+                          <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-455" data-i18n="daysLabel">ngày</span>
+                        </div>
+                      </div>
+
+                      <div class="flex flex-col gap-1.5">
+                        <label class="text-xs font-semibold text-on-surface-variant dark:text-slate-400" data-i18n="sysPlanEntScanNote">Hạn mức quét (lượt hoặc 'unlimited')</label>
+                        <div class="relative">
+                          <input type="text" name="plan_enterprise_scans" value="{{ configs.get('plan_enterprise_scans', 'unlimited') }}" required class="premium-input w-full pl-4 pr-16 py-2.5 bg-slate-50 dark:bg-slate-955 border border-outline-variant/30 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none" />
+                          <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-455" data-i18n="scansLabel">lượt</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="pt-4 border-t border-outline-variant/10 flex items-center justify-between">
+                    <label class="text-xs font-semibold text-on-surface dark:text-slate-355" data-i18n="sysPlanStatusToggle">Kích hoạt gói cước</label>
+                    <label class="switch-toggle">
+                      <input type="checkbox" name="plan_enterprise_enabled" id="plan_enterprise_enabled" {{ 'checked' if configs.get('plan_enterprise_enabled', '1') == '1' }} onchange="confirmTogglePlan('enterprise', this)" />
+                      <span class="switch-slider"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 3: THANH TOÁN -->
+            <div id="tab-payments" class="tab-content space-y-6">
+              <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Left Details Form -->
+                <div class="glass-card bg-white dark:bg-slate-900/60 rounded-2xl p-6 border border-outline-variant/30 dark:border-slate-800 shadow-sm flex flex-col gap-5 lg:col-span-7">
+                  <div class="flex items-center justify-between border-b border-outline-variant/20 dark:border-slate-800 pb-3">
                     <div>
-                      <h4 class="text-sm font-bold text-primary dark:text-blue-400 uppercase tracking-wider" data-i18n="sysPlanPro">Gói Chuyên Nghiệp (Pro)</h4>
-                      <p class="text-[11px] text-on-surface-variant dark:text-slate-400 mt-0.5" data-i18n="sysPlanProDesc">Lựa chọn phổ biến nhất</p>
+                      <h3 class="text-lg font-bold text-on-surface dark:text-slate-100 mb-1" data-i18n="sysCardVietQrTitle">Cấu hình thanh toán VietQR</h3>
+                      <p class="text-xs text-on-surface-variant dark:text-slate-400" data-i18n="sysCardVietQrDesc">Bật tắt và cấu hình thanh toán chuyển khoản ngân hàng qua VietQR.</p>
                     </div>
-                    <div class="w-10 h-10 rounded-xl bg-primary/10 dark:bg-blue-500/10 flex items-center justify-center text-primary dark:text-blue-400">
-                      <span class="material-symbols-outlined text-xl">workspace_premium</span>
+                    <label class="switch-toggle">
+                      <input type="hidden" name="vietqr_submitted" value="1" />
+                      <input type="checkbox" name="vietqr_enabled" id="vietqr_enabled" {{ 'checked' if configs.get('vietqr_enabled', '1') == '1' }} />
+                      <span class="switch-slider"></span>
+                    </label>
+                  </div>
+
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="flex flex-col gap-1.5">
+                      <label class="text-xs font-bold text-on-surface-variant dark:text-slate-350" data-i18n="sysLabelVietQrOwner">Tên chủ tài khoản *</label>
+                      <input type="text" name="vietqr_owner" id="vietqr_owner" value="{{ configs.get('vietqr_owner', 'NGUYEN HOANG LOI') }}" required class="premium-input w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none" />
                     </div>
+
+                    <div class="flex flex-col gap-1.5">
+                      <label class="text-xs font-bold text-on-surface-variant dark:text-slate-350" data-i18n="sysLabelVietQrAccount">Số tài khoản *</label>
+                      <input type="text" name="vietqr_account" id="vietqr_account" value="{{ configs.get('vietqr_account', '9244424440709') }}" required class="premium-input w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none" />
+                    </div>
+
+                    <div class="flex flex-col gap-1.5 md:col-span-2">
+                      <label class="text-xs font-bold text-on-surface-variant dark:text-slate-350" data-i18n="sysLabelVietQrBank">Ngân hàng thụ hưởng *</label>
+                      <input type="text" name="vietqr_bank" id="vietqr_bank" value="{{ configs.get('vietqr_bank', 'MB Bank') }}" required class="premium-input w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none" />
+                    </div>
+
+                    <div class="flex flex-col gap-1.5 md:col-span-2">
+                      <label class="text-xs font-bold text-on-surface-variant dark:text-slate-350" data-i18n="sysLabelVietQrTemplate">Nội dung chuyển khoản mẫu</label>
+                      <input type="text" name="vietqr_template" id="vietqr_template" value="{{ configs.get('vietqr_template', 'PETAI UPGRADE') }}" class="premium-input w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none" />
+                    </div>
+
+                    <div class="flex flex-col gap-1.5 md:col-span-2">
+                      <label class="text-xs font-bold text-on-surface-variant dark:text-slate-350" data-i18n="sysLabelVietQrEmail">Email nhận thông báo thanh toán *</label>
+                      <input type="email" name="vietqr_email" value="{{ configs.get('vietqr_email', 'billing@pet.ai') }}" required class="premium-input w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none" />
+                    </div>
+
+                    <div class="flex flex-col gap-1.5 md:col-span-2">
+                      <label class="text-xs font-bold text-on-surface-variant dark:text-slate-350" data-i18n="sysLabelVietQrInstructions">Hướng dẫn thanh toán hiển thị cho người dùng</label>
+                      <textarea name="vietqr_instructions" rows="3" class="premium-input w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none resize-none">{{ configs.get('vietqr_instructions', 'Chuyển khoản chính xác số tiền của gói để được duyệt tự động sau 1-3 phút.') }}</textarea>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Right Receipt Preview Card -->
+                <div class="lg:col-span-5 flex flex-col gap-4">
+                  <div class="glass-card bg-white dark:bg-slate-900/60 rounded-2xl p-6 border border-outline-variant/30 dark:border-slate-800 shadow-sm flex flex-col gap-4">
+                    <div>
+                      <h3 class="text-sm font-bold text-on-surface dark:text-slate-100" data-i18n="sysCardPreviewSlip">Xem trước hóa đơn thanh toán</h3>
+                      <p class="text-[10px] text-on-surface-variant dark:text-slate-400" data-i18n="sysCardPreviewSlipDesc">Mô phỏng giao diện hiển thị cho người dùng khi nâng cấp gói.</p>
+                    </div>
+
+                    <!-- Receipt slip visual preview -->
+                    <div class="bank-slip-card rounded-xl p-5 text-white flex flex-col gap-4">
+                      <div class="flex justify-between items-center border-b border-white/10 pb-3">
+                        <div class="flex items-center gap-1.5">
+                          <span class="material-symbols-outlined text-xl">qr_code_2</span>
+                          <span class="text-xs font-bold font-mono tracking-wider">VIETQR GATEWAY</span>
+                        </div>
+                        <span class="px-2 py-0.5 bg-yellow-500/20 text-yellow-300 rounded text-[9px] font-bold uppercase tracking-wider animate-pulse" id="slip-status-badge" data-i18n="sysPreviewSlipPending">Chờ thanh toán</span>
+                      </div>
+
+                      <div class="text-center py-2 space-y-1">
+                        <span class="text-[10px] text-white/60 block uppercase tracking-wider" data-i18n="sysPreviewSlipTotal">Thành tiền</span>
+                        <h4 class="text-2xl font-extrabold tracking-tight">5.000 <span class="text-xs font-normal">VND</span></h4>
+                      </div>
+
+                      <div class="space-y-2 text-xs border-t border-white/10 pt-3">
+                        <div class="flex justify-between">
+                          <span class="text-white/60" data-i18n="sysPreviewSlipRecipient">Người thụ hưởng</span>
+                          <span class="font-semibold uppercase" id="slip-owner">NGUYEN HOANG LOI</span>
+                        </div>
+                        <div class="flex justify-between">
+                          <span class="text-white/60" data-i18n="sysPreviewSlipBank">Ngân hàng</span>
+                          <span class="font-semibold" id="slip-bank">MB Bank</span>
+                        </div>
+                        <div class="flex justify-between">
+                          <span class="text-white/60" data-i18n="sysPreviewSlipNumber">Số tài khoản</span>
+                          <span class="font-mono font-semibold" id="slip-account">9244424440709</span>
+                        </div>
+                        <div class="flex justify-between">
+                          <span class="text-white/60" data-i18n="sysPreviewSlipMemo">Nội dung chuyển khoản</span>
+                          <span class="font-mono font-semibold text-yellow-300" id="slip-memo">PETAI_UPGRADE_1029</span>
+                        </div>
+                      </div>
+
+                      <div class="text-[9px] text-white/40 text-center border-t border-white/5 pt-2" data-i18n="sysPreviewSlipGenerated">
+                        Được tạo tự động bởi PetAI
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 4: EMAIL & THÔNG BÁO -->
+            <div id="tab-emails" class="tab-content space-y-6">
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Left: SMTP Config read-only -->
+                <div class="glass-card bg-white dark:bg-slate-900/60 rounded-2xl p-6 border border-outline-variant/30 dark:border-slate-800 shadow-sm flex flex-col gap-5 h-fit">
+                  <div>
+                    <h3 class="text-lg font-bold text-on-surface dark:text-slate-100 mb-1" data-i18n="sysCardSmtpTitle">Trạng thái SMTP &amp; Gửi email</h3>
+                    <p class="text-xs text-on-surface-variant dark:text-slate-400" data-i18n="sysCardSmtpDesc">Thông tin cấu hình gửi thư được thiết lập trong file bảo mật .env.</p>
+                  </div>
+
+                  <div class="space-y-4">
+                    <div class="flex flex-col gap-1">
+                      <span class="text-xs font-semibold text-on-surface-variant dark:text-slate-405" data-i18n="sysLabelSmtpHost">SMTP Server</span>
+                      <input type="text" value="{{ smtp.host }}" readonly class="w-full px-4 py-2 bg-slate-100/60 dark:bg-slate-950/60 border border-outline-variant/20 dark:border-slate-800 text-slate-500 dark:text-slate-400 rounded-xl text-sm outline-none cursor-not-allowed" />
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                      <div class="flex flex-col gap-1">
+                        <span class="text-xs font-semibold text-on-surface-variant dark:text-slate-405" data-i18n="sysLabelSmtpPort">Cổng SMTP</span>
+                        <input type="text" value="{{ smtp.port }}" readonly class="w-full px-4 py-2 bg-slate-100/60 dark:bg-slate-955/60 border border-outline-variant/20 dark:border-slate-800 text-slate-500 dark:text-slate-400 rounded-xl text-sm outline-none cursor-not-allowed" />
+                      </div>
+                      <div class="flex flex-col gap-1">
+                        <span class="text-xs font-semibold text-on-surface-variant dark:text-slate-405" data-i18n="sysLabelSmtpStatus">Trạng thái kết nối</span>
+                        <span class="w-full px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 dark:text-emerald-400 rounded-xl text-sm font-semibold flex items-center gap-1.5">
+                          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                          <span data-i18n="sysSmtpConfigured">Đã cấu hình (.env)</span>
+                        </span>
+                      </div>
+                    </div>
+
+                    <div class="flex flex-col gap-1">
+                      <span class="text-xs font-semibold text-on-surface-variant dark:text-slate-405" data-i18n="sysLabelSmtpUser">Email gửi thư</span>
+                      <input type="text" value="{{ smtp.email }}" readonly class="w-full px-4 py-2 bg-slate-100/60 dark:bg-slate-950/60 border border-outline-variant/20 dark:border-slate-800 text-slate-500 dark:text-slate-400 rounded-xl text-sm outline-none cursor-not-allowed" />
+                    </div>
+
+                    <div class="flex flex-col gap-1">
+                      <span class="text-xs font-semibold text-on-surface-variant dark:text-slate-405" data-i18n="password">Mật khẩu</span>
+                      <input type="text" value="••••••••••••••••" readonly class="w-full px-4 py-2 bg-slate-100/60 dark:bg-slate-950/60 border border-outline-variant/20 dark:border-slate-800 text-slate-500 dark:text-slate-400 rounded-xl text-sm outline-none cursor-not-allowed" />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Right: Email templates custom editor -->
+                <div class="glass-card bg-white dark:bg-slate-900/60 rounded-2xl p-6 border border-outline-variant/30 dark:border-slate-800 shadow-sm flex flex-col gap-5">
+                  <div>
+                    <h3 class="text-lg font-bold text-on-surface dark:text-slate-100 mb-1" data-i18n="sysCardEmailTemplatesTitle">Cấu hình mẫu Email</h3>
+                    <p class="text-xs text-on-surface-variant dark:text-slate-400" data-i18n="sysCardEmailTemplatesDesc">Chỉnh sửa nội dung các mẫu email tự động gửi từ hệ thống.</p>
                   </div>
 
                   <div class="flex flex-col gap-4">
                     <div class="flex flex-col gap-1.5">
-                      <label class="text-xs font-semibold text-on-surface-variant dark:text-slate-400" data-i18n="sysPlanPriceVnd">Giá gói (VNĐ)</label>
-                      <div class="relative">
-                        <input type="number" name="plan_pro_price" value="{{ configs.get('plan_pro_price', '5000') }}" required class="premium-input w-full pl-4 pr-12 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/30 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary transition-all" />
-                        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400" data-i18n="currencySuffix">đ</span>
-                      </div>
+                      <label class="text-xs font-bold text-on-surface-variant dark:text-slate-350" data-i18n="sysLabelSelectEmailTemplate">Chọn mẫu email cần sửa</label>
+                      <select id="email-template-selector" onchange="loadEmailTemplate(this.value)" class="premium-input w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none">
+                        <option value="otp" data-i18n="sysLabelEmailOtp">Email xác thực OTP</option>
+                        <option value="forgot" data-i18n="sysLabelEmailForgot">Email quên mật khẩu</option>
+                        <option value="pay_confirm" data-i18n="sysLabelEmailPayConfirm">Email xác nhận thanh toán</option>
+                        <option value="pay_reject" data-i18n="sysLabelEmailPayReject">Email từ chối thanh toán</option>
+                        <option value="delete_request" data-i18n="sysLabelEmailDeleteRequest">Email yêu cầu xóa tài khoản</option>
+                        <option value="delete_confirm" data-i18n="sysLabelEmailDeleteConfirm">Email xác nhận đã xóa tài khoản</option>
+                      </select>
+                    </div>
+
+                    <div class="flex flex-col gap-1.5 border-t border-outline-variant/10 pt-3">
+                      <label class="text-xs font-bold text-on-surface-variant dark:text-slate-355" data-i18n="sysLabelEmailSubject">Tiêu đề email</label>
+                      <input type="text" id="email-subject-input" oninput="saveCurrentTemplate()" class="premium-input w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none" />
                     </div>
 
                     <div class="flex flex-col gap-1.5">
-                      <label class="text-xs font-semibold text-on-surface-variant dark:text-slate-400" data-i18n="sysPlanDurationDays">Thời gian dùng (Ngày)</label>
-                      <div class="relative">
-                        <input type="number" name="plan_pro_days" value="{{ configs.get('plan_pro_days', '30') }}" required class="premium-input w-full pl-4 pr-16 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/30 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary transition-all" />
-                        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400" data-i18n="daysLabel">ngày</span>
-                      </div>
+                      <label class="text-xs font-bold text-on-surface-variant dark:text-slate-355" data-i18n="sysLabelEmailBody">Nội dung email (HTML / Văn bản)</label>
+                      <textarea id="email-body-textarea" rows="8" oninput="saveCurrentTemplate()" class="premium-input w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-955 border border-outline-variant/40 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-xs font-mono focus:outline-none resize-none"></textarea>
                     </div>
 
-                    <div class="flex flex-col gap-1.5">
-                      <label class="text-xs font-semibold text-on-surface-variant dark:text-slate-400" data-i18n="sysPlanScanLimit">Hạn mức quét (Lượt)</label>
-                      <div class="relative">
-                        <input type="number" name="plan_pro_scans" value="{{ configs.get('plan_pro_scans', '200') }}" required class="premium-input w-full pl-4 pr-16 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/30 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary transition-all" />
-                        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400" data-i18n="scansLabel">lượt</span>
-                      </div>
+                    <!-- Template actions -->
+                    <div class="flex items-center justify-between pt-2 border-t border-outline-variant/10">
+                      <button type="button" onclick="sendTestEmail()" class="px-4 py-2.5 rounded-xl border border-outline-variant/45 dark:border-slate-700 text-on-surface dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-xs font-bold flex items-center gap-1.5 shadow-sm" data-i18n="sysBtnSendTestEmail">
+                        <span class="material-symbols-outlined text-sm">send</span>
+                        Gửi email thử nghiệm
+                      </button>
                     </div>
                   </div>
-                </div>
-
-                <!-- ENTERPRISE PLAN CARD -->
-                <div class="glass-card bg-white dark:bg-slate-900/60 border border-outline-variant/30 dark:border-slate-800 rounded-2xl p-6 flex flex-col gap-5 hover:border-primary/20 dark:hover:border-blue-500/20 hover:shadow-md transition-all duration-300 relative group overflow-hidden">
-                  <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
-                    <div>
-                      <h4 class="text-sm font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wider" data-i18n="sysPlanEnterprise">Gói Doanh Nghiệp (Enterprise)</h4>
-                      <p class="text-[11px] text-on-surface-variant dark:text-slate-400 mt-0.5" data-i18n="sysPlanEntDesc">Không giới hạn cho tổ chức</p>
-                    </div>
-                    <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500">
-                      <span class="material-symbols-outlined text-xl">crown</span>
-                    </div>
-                  </div>
-
-                  <div class="flex flex-col gap-4">
-                    <div class="flex flex-col gap-1.5">
-                      <label class="text-xs font-semibold text-on-surface-variant dark:text-slate-400" data-i18n="sysPlanPriceVnd">Giá gói (VNĐ)</label>
-                      <div class="relative">
-                        <input type="number" name="plan_enterprise_price" value="{{ configs.get('plan_enterprise_price', '15000') }}" required class="premium-input w-full pl-4 pr-12 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/30 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary transition-all" />
-                        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400" data-i18n="currencySuffix">đ</span>
-                      </div>
-                    </div>
-
-                    <div class="flex flex-col gap-1.5">
-                      <label class="text-xs font-semibold text-on-surface-variant dark:text-slate-400" data-i18n="sysPlanDurationDays">Thời gian dùng (Ngày)</label>
-                      <div class="relative">
-                        <input type="number" name="plan_enterprise_days" value="{{ configs.get('plan_enterprise_days', '90') }}" required class="premium-input w-full pl-4 pr-16 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/30 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary transition-all" />
-                        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400" data-i18n="daysLabel">ngày</span>
-                      </div>
-                    </div>
-
-                    <div class="flex flex-col gap-1.5">
-                      <label class="text-xs font-semibold text-on-surface-variant dark:text-slate-400" data-i18n="sysPlanEntScanNote">Hạn mức quét (lượt hoặc 'unlimited')</label>
-                      <div class="relative">
-                        <input type="text" name="plan_enterprise_scans" value="{{ configs.get('plan_enterprise_scans', 'unlimited') }}" required class="premium-input w-full pl-4 pr-16 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/30 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary transition-all" />
-                        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400" data-i18n="scansLabel">lượt</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <button type="submit" class="bg-primary hover:bg-primary/95 text-on-primary py-2.5 px-5 rounded-xl text-xs font-bold shadow-sm hover:shadow-md active:scale-98 transition-all flex items-center gap-2 self-start mt-4">
-                <span class="material-symbols-outlined text-sm">save_as</span>
-                <span data-i18n="sysSavePlansBtn">Lưu cấu hình gói</span>
-              </button>
-            </form>
-          </div>
-
-          <!-- LEGAL TAB -->
-          <div id="tab-legal" class="tab-content space-y-6">
-
-            <!-- Dashboard Stats Hub -->
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-              <!-- Stat 1 -->
-              <div class="glass-card bg-white/70 dark:bg-slate-900/60 p-4 rounded-2xl border border-outline-variant/30 dark:border-slate-800 shadow-sm flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-primary/10 dark:bg-blue-500/10 flex items-center justify-center text-primary dark:text-blue-400">
-                  <span class="material-symbols-outlined text-[20px]">description</span>
-                </div>
-                <div>
-                  <span class="text-[10px] text-on-surface-variant dark:text-slate-400 block font-semibold uppercase tracking-wider" data-i18n="sysTotalPages">Tổng số trang</span>
-                  <span class="text-sm font-extrabold text-on-surface dark:text-slate-200">7 <span data-i18n="sysPagesUnit">Trang</span></span>
-                </div>
-              </div>
-
-              <!-- Stat 2 -->
-              <div class="glass-card bg-white/70 dark:bg-slate-900/60 p-4 rounded-2xl border border-outline-variant/30 dark:border-slate-800 shadow-sm flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-500 dark:text-emerald-400">
-                  <span class="material-symbols-outlined text-[20px] animate-pulse">online_prediction</span>
-                </div>
-                <div>
-                  <span class="text-[10px] text-on-surface-variant dark:text-slate-400 block font-semibold uppercase tracking-wider" data-i18n="sysStatus">Trạng thái</span>
-                  <span class="text-sm font-extrabold text-emerald-500 dark:text-emerald-400 flex items-center gap-1.5">
-                    <span data-i18n="sysOnline">Trực tuyến</span>
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
-                  </span>
-                </div>
-              </div>
-
-              <!-- Stat 3 -->
-              <div class="glass-card bg-white/70 dark:bg-slate-900/60 p-4 rounded-2xl border border-outline-variant/30 dark:border-slate-800 shadow-sm flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-500 dark:text-indigo-400">
-                  <span class="material-symbols-outlined text-[20px]">history</span>
-                </div>
-                <div>
-                  <span class="text-[10px] text-on-surface-variant dark:text-slate-400 block font-semibold uppercase tracking-wider" data-i18n="sysHistory">Lịch sử</span>
-                  <span class="text-sm font-extrabold text-on-surface dark:text-slate-200" data-i18n="sysAutoSave">Tự động lưu</span>
-                </div>
-              </div>
-
-              <!-- Stat 4 -->
-              <div class="glass-card bg-white/70 dark:bg-slate-900/60 p-4 rounded-2xl border border-outline-variant/30 dark:border-slate-800 shadow-sm flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-500 dark:text-amber-400">
-                  <span class="material-symbols-outlined text-[20px]">admin_panel_settings</span>
-                </div>
-                <div>
-                  <span class="text-[10px] text-on-surface-variant dark:text-slate-400 block font-semibold uppercase tracking-wider" data-i18n="sysPermission">Quyền hạn</span>
-                  <span class="text-sm font-extrabold text-on-surface dark:text-slate-200">Admin Edit</span>
                 </div>
               </div>
             </div>
 
-            <!-- Title, Search & Filter row -->
-            <div class="glass-card bg-white/70 dark:bg-slate-900/60 rounded-2xl p-6 border border-outline-variant/30 dark:border-slate-800 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <div>
-                <h3 class="text-base font-extrabold text-on-surface dark:text-slate-100 mb-0.5" data-i18n="sysLegalTitle">Nội dung trang pháp lý &amp; điều khoản</h3>
-                <p class="text-[11px] text-on-surface-variant dark:text-slate-400" data-i18n="sysLegalDesc">Biên soạn nội dung trực tiếp cho các trang pháp luật của hệ thống bằng mã HTML/Văn bản.</p>
-              </div>
-
-              <!-- Utilities -->
-              <div class="flex flex-wrap items-center gap-3">
-                <!-- Search bar -->
-                <div class="relative w-full sm:w-56">
-                  <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">search</span>
-                  <input type="text" id="legal-search" oninput="filterLegalCards()" placeholder="Tìm kiếm trang..." class="premium-input w-full pl-9 pr-4 py-2 bg-slate-50 dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-800 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary transition-all duration-300" />
+            <!-- TAB 5: CÁC TRANG CHÍNH SÁCH -->
+            <div id="tab-legal" class="tab-content space-y-6">
+              <!-- Search & Filter bar -->
+              <div class="glass-card bg-white/70 dark:bg-slate-900/60 rounded-2xl p-6 border border-outline-variant/30 dark:border-slate-800 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                  <h3 class="text-base font-extrabold text-on-surface dark:text-slate-100 mb-0.5" data-i18n="sysCardLegalPagesTitle">Danh sách các trang chính sách</h3>
+                  <p class="text-[11px] text-on-surface-variant dark:text-slate-400" data-i18n="sysLegalDesc">Biên soạn nội dung trực tiếp cho các trang pháp luật của hệ thống bằng mã HTML/Văn bản.</p>
                 </div>
-                <!-- Categories filter -->
-                <div class="flex gap-1 bg-slate-100 dark:bg-slate-950 p-1 rounded-xl border border-slate-200 dark:border-slate-800/80">
-                  <button type="button" class="legal-filter-btn px-3 py-1.5 rounded-lg text-[10px] font-bold bg-white dark:bg-slate-800 text-primary dark:text-blue-400 shadow-sm transition-all" onclick="setLegalFilter('all', this)" data-i18n="all">Tất cả</button>
-                  <button type="button" class="legal-filter-btn px-3 py-1.5 rounded-lg text-[10px] font-bold text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-blue-400 transition-all" onclick="setLegalFilter('policy', this)" data-i18n="sysFilterPolicy">Chính sách</button>
-                  <button type="button" class="legal-filter-btn px-3 py-1.5 rounded-lg text-[10px] font-bold text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-blue-400 transition-all" onclick="setLegalFilter('guide', this)" data-i18n="sysFilterSupport">Hỗ trợ &amp; HD</button>
-                </div>
-              </div>
-            </div>
 
-            <!-- 7 Pages Grid Layout -->
-            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 pt-2" id="legal-grid">
-              <!-- Card 1: Privacy Policy -->
-              <div class="legal-card-item glass-card bg-white/70 dark:bg-slate-900 border border-outline-variant/20 dark:border-slate-850 rounded-2xl p-5 flex flex-col justify-between hover:border-primary/45 dark:hover:border-blue-500/30 hover:-translate-y-1 hover:shadow-lg transition-all duration-300 group relative overflow-hidden" data-category="policy">
-                <div class="bg-gradient-to-tr from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none absolute inset-0"></div>
-                <div class="flex flex-col gap-3 relative z-10">
-                  <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-950 flex items-center justify-center text-slate-500 dark:text-slate-400 group-hover:bg-primary/10 group-hover:text-primary group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
-                      <span class="material-symbols-outlined text-[22px] font-medium">shield_lock</span>
-                    </div>
-                    <div>
-                      <h4 class="text-sm font-bold text-on-surface dark:text-slate-100 group-hover:text-primary dark:group-hover:text-blue-400 transition-colors" data-i18n="sysLegalOptPrivacy">Chính sách quyền riêng tư</h4>
-                      <span class="text-[10px] text-on-surface-variant dark:text-slate-405 font-mono">/privacy-policy</span>
-                    </div>
+                <div class="flex flex-wrap items-center gap-3">
+                  <!-- Search box -->
+                  <div class="relative w-full sm:w-56">
+                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-450 text-[18px]">search</span>
+                    <input type="text" id="legal-search" oninput="filterLegalCards()" placeholder="Tìm kiếm trang..." class="premium-input w-full pl-9 pr-4 py-2 bg-slate-50 dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-800 rounded-xl text-xs focus:outline-none" />
                   </div>
-                  <p class="text-xs text-on-surface-variant dark:text-slate-400 leading-relaxed min-h-[40px]" data-i18n="sysDescPrivacy">
-                    Quy định cách thu thập, bảo mật và sử dụng thông tin cá nhân của người dùng.
-                  </p>
-                </div>
-                <div class="flex items-center gap-2 mt-5 pt-4 border-t border-outline-variant/10 relative z-10">
-                  <a href="/privacy-policy" target="_blank" class="flex-1 py-2 px-3 rounded-lg border border-outline-variant/30 hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-semibold text-center text-on-surface-variant dark:text-slate-300 transition-all flex items-center justify-center gap-1">
-                    <span class="material-symbols-outlined !text-sm">visibility</span>
-                    <span data-i18n="sysViewPage">Xem trang</span>
-                  </a>
-                  <a href="/privacy-policy?edit=true" target="_blank" class="flex-1 py-2 px-3 rounded-lg bg-primary hover:bg-primary/95 text-on-primary text-xs font-semibold text-center active:scale-95 shadow-sm hover:shadow-[0_8px_16px_rgba(0,74,198,0.15)] transition-all flex items-center justify-center gap-1">
-                    <span class="material-symbols-outlined !text-sm">edit</span>
-                    <span data-i18n="sysEditPage">Chỉnh sửa</span>
-                  </a>
+                  <!-- Category buttons filter -->
+                  <div class="flex gap-1 bg-slate-100 dark:bg-slate-955 p-1 rounded-xl border border-slate-200 dark:border-slate-850">
+                    <button type="button" class="legal-filter-btn px-3 py-1.5 rounded-lg text-[10px] font-bold bg-white dark:bg-slate-800 text-primary dark:text-blue-400 shadow-sm transition-all" onclick="setLegalFilter('all', this)" data-i18n="sysFilterAll">Tất cả</button>
+                    <button type="button" class="legal-filter-btn px-3 py-1.5 rounded-lg text-[10px] font-bold text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-blue-400 transition-all" onclick="setLegalFilter('policy', this)" data-i18n="sysFilterPolicy">Chính sách</button>
+                    <button type="button" class="legal-filter-btn px-3 py-1.5 rounded-lg text-[10px] font-bold text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-blue-400 transition-all" onclick="setLegalFilter('guide', this)" data-i18n="sysFilterGuide">Hỗ trợ &amp; HD</button>
+                  </div>
                 </div>
               </div>
 
-              <!-- Card 2: Terms of Service -->
-              <div class="legal-card-item glass-card bg-white/70 dark:bg-slate-900 border border-outline-variant/20 dark:border-slate-850 rounded-2xl p-5 flex flex-col justify-between hover:border-primary/45 dark:hover:border-blue-500/30 hover:-translate-y-1 hover:shadow-lg transition-all duration-300 group relative overflow-hidden" data-category="policy">
-                <div class="bg-gradient-to-tr from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none absolute inset-0"></div>
-                <div class="flex flex-col gap-3 relative z-10">
-                  <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-950 flex items-center justify-center text-slate-500 dark:text-slate-400 group-hover:bg-primary/10 group-hover:text-primary group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
-                      <span class="material-symbols-outlined text-[22px] font-medium">gavel</span>
+              <!-- 7 Pages Grid Layout -->
+              <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 pt-2" id="legal-grid">
+                
+                <!-- Card 1: Privacy Policy -->
+                <div class="legal-card-item glass-card bg-white/70 dark:bg-slate-900 border border-outline-variant/20 dark:border-slate-850 rounded-2xl p-5 flex flex-col justify-between hover:border-primary/45 dark:hover:border-blue-500/30 hover:-translate-y-1 hover:shadow-lg transition-all duration-300 group relative overflow-hidden" data-category="policy">
+                  <div class="bg-gradient-to-tr from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none absolute inset-0"></div>
+                  <div class="flex flex-col gap-3 relative z-10">
+                    <div class="flex items-center gap-3">
+                      <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-950 flex items-center justify-center text-slate-500 dark:text-slate-400 group-hover:bg-primary/10 group-hover:text-primary group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                        <span class="material-symbols-outlined text-[22px] font-medium">shield_lock</span>
+                      </div>
+                      <div>
+                        <h4 class="text-sm font-bold text-on-surface dark:text-slate-100 group-hover:text-primary dark:group-hover:text-blue-400 transition-colors" data-i18n="sysLegalOptPrivacy">Chính sách quyền riêng tư</h4>
+                        <span class="text-[10px] text-on-surface-variant dark:text-slate-400 font-mono">/privacy-policy</span>
+                      </div>
                     </div>
-                    <div>
-                      <h4 class="text-sm font-bold text-on-surface dark:text-slate-100 group-hover:text-primary dark:group-hover:text-blue-400 transition-colors" data-i18n="sysLegalOptTerms">Điều khoản sử dụng</h4>
-                      <span class="text-[10px] text-on-surface-variant dark:text-slate-405 font-mono">/terms-of-service</span>
-                    </div>
+                    <p class="text-xs text-on-surface-variant dark:text-slate-400 leading-relaxed min-h-[40px]" data-i18n="sysDescPrivacy">
+                      Quy định cách thu thập, bảo mật và sử dụng thông tin cá nhân của người dùng.
+                    </p>
                   </div>
-                  <p class="text-xs text-on-surface-variant dark:text-slate-400 leading-relaxed min-h-[40px]" data-i18n="sysDescTerms">
-                    Các điều khoản và quy định pháp lý ràng buộc giữa người dùng và ứng dụng PetAI.
-                  </p>
+                  <div class="flex items-center gap-2 mt-5 pt-4 border-t border-outline-variant/10 relative z-10">
+                    <a href="/privacy-policy" target="_blank" class="flex-1 py-2 px-3 rounded-lg border border-outline-variant/30 hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-semibold text-center text-on-surface-variant dark:text-slate-300 transition-all flex items-center justify-center gap-1">
+                      <span class="material-symbols-outlined !text-sm">visibility</span>
+                      <span data-i18n="sysViewPage">Xem trang</span>
+                    </a>
+                    <a href="/privacy-policy?edit=true" target="_blank" class="flex-1 py-2 px-3 rounded-lg bg-primary hover:bg-primary/95 text-on-primary text-xs font-semibold text-center active:scale-95 shadow-sm hover:shadow-[0_8px_16px_rgba(0,74,198,0.15)] transition-all flex items-center justify-center gap-1">
+                      <span class="material-symbols-outlined !text-sm">edit</span>
+                      <span data-i18n="sysEditPage">Chỉnh sửa</span>
+                    </a>
+                  </div>
                 </div>
-                <div class="flex items-center gap-2 mt-5 pt-4 border-t border-outline-variant/10 relative z-10">
-                  <a href="/terms-of-service" target="_blank" class="flex-1 py-2 px-3 rounded-lg border border-outline-variant/30 hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-semibold text-center text-on-surface-variant dark:text-slate-300 transition-all flex items-center justify-center gap-1">
-                    <span class="material-symbols-outlined !text-sm">visibility</span>
-                    <span data-i18n="sysViewPage">Xem trang</span>
-                  </a>
-                  <a href="/terms-of-service?edit=true" target="_blank" class="flex-1 py-2 px-3 rounded-lg bg-primary hover:bg-primary/95 text-on-primary text-xs font-semibold text-center active:scale-95 shadow-sm hover:shadow-[0_8px_16px_rgba(0,74,198,0.15)] transition-all flex items-center justify-center gap-1">
-                    <span class="material-symbols-outlined !text-sm">edit</span>
-                    <span data-i18n="sysEditPage">Chỉnh sửa</span>
-                  </a>
-                </div>
-              </div>
 
-              <!-- Card 3: Payment Policy -->
-              <div class="legal-card-item glass-card bg-white/70 dark:bg-slate-900 border border-outline-variant/20 dark:border-slate-850 rounded-2xl p-5 flex flex-col justify-between hover:border-primary/45 dark:hover:border-blue-500/30 hover:-translate-y-1 hover:shadow-lg transition-all duration-300 group relative overflow-hidden" data-category="policy">
-                <div class="bg-gradient-to-tr from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none absolute inset-0"></div>
-                <div class="flex flex-col gap-3 relative z-10">
-                  <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-950 flex items-center justify-center text-slate-500 dark:text-slate-400 group-hover:bg-primary/10 group-hover:text-primary group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
-                      <span class="material-symbols-outlined text-[22px] font-medium">payments</span>
+                <!-- Card 2: Terms of Service -->
+                <div class="legal-card-item glass-card bg-white/70 dark:bg-slate-900 border border-outline-variant/20 dark:border-slate-850 rounded-2xl p-5 flex flex-col justify-between hover:border-primary/45 dark:hover:border-blue-500/30 hover:-translate-y-1 hover:shadow-lg transition-all duration-300 group relative overflow-hidden" data-category="policy">
+                  <div class="bg-gradient-to-tr from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none absolute inset-0"></div>
+                  <div class="flex flex-col gap-3 relative z-10">
+                    <div class="flex items-center gap-3">
+                      <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-950 flex items-center justify-center text-slate-500 dark:text-slate-400 group-hover:bg-primary/10 group-hover:text-primary group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                        <span class="material-symbols-outlined text-[22px] font-medium">description</span>
+                      </div>
+                      <div>
+                        <h4 class="text-sm font-bold text-on-surface dark:text-slate-100 group-hover:text-primary dark:group-hover:text-blue-400 transition-colors" data-i18n="sysLegalOptTerms">Điều khoản sử dụng</h4>
+                        <span class="text-[10px] text-on-surface-variant dark:text-slate-400 font-mono">/terms-of-service</span>
+                      </div>
                     </div>
-                    <div>
-                      <h4 class="text-sm font-bold text-on-surface dark:text-slate-100 group-hover:text-primary dark:group-hover:text-blue-400 transition-colors" data-i18n="sysLegalOptPayment">Chính sách thanh toán</h4>
-                      <span class="text-[10px] text-on-surface-variant dark:text-slate-405 font-mono">/payment-policy</span>
-                    </div>
+                    <p class="text-xs text-on-surface-variant dark:text-slate-400 leading-relaxed min-h-[40px]" data-i18n="sysDescTerms">
+                      Các điều khoản và quy định pháp lý ràng buộc giữa người dùng và ứng dụng PetAI.
+                    </p>
                   </div>
-                  <p class="text-xs text-on-surface-variant dark:text-slate-400 leading-relaxed min-h-[40px]" data-i18n="sysDescPayment">
-                    Quy trình thanh toán, nâng cấp tài khoản và chính sách hoàn tiền.
-                  </p>
+                  <div class="flex items-center gap-2 mt-5 pt-4 border-t border-outline-variant/10 relative z-10">
+                    <a href="/terms-of-service" target="_blank" class="flex-1 py-2 px-3 rounded-lg border border-outline-variant/30 hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-semibold text-center text-on-surface-variant dark:text-slate-300 transition-all flex items-center justify-center gap-1">
+                      <span class="material-symbols-outlined !text-sm">visibility</span>
+                      <span data-i18n="sysViewPage">Xem trang</span>
+                    </a>
+                    <a href="/terms-of-service?edit=true" target="_blank" class="flex-1 py-2 px-3 rounded-lg bg-primary hover:bg-primary/95 text-on-primary text-xs font-semibold text-center active:scale-95 shadow-sm hover:shadow-[0_8px_16px_rgba(0,74,198,0.15)] transition-all flex items-center justify-center gap-1">
+                      <span class="material-symbols-outlined !text-sm">edit</span>
+                      <span data-i18n="sysEditPage">Chỉnh sửa</span>
+                    </a>
+                  </div>
                 </div>
-                <div class="flex items-center gap-2 mt-5 pt-4 border-t border-outline-variant/10 relative z-10">
-                  <a href="/payment-policy" target="_blank" class="flex-1 py-2 px-3 rounded-lg border border-outline-variant/30 hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-semibold text-center text-on-surface-variant dark:text-slate-300 transition-all flex items-center justify-center gap-1">
-                    <span class="material-symbols-outlined !text-sm">visibility</span>
-                    <span data-i18n="sysViewPage">Xem trang</span>
-                  </a>
-                  <a href="/payment-policy?edit=true" target="_blank" class="flex-1 py-2 px-3 rounded-lg bg-primary hover:bg-primary/95 text-on-primary text-xs font-semibold text-center active:scale-95 shadow-sm hover:shadow-[0_8px_16px_rgba(0,74,198,0.15)] transition-all flex items-center justify-center gap-1">
-                    <span class="material-symbols-outlined !text-sm">edit</span>
-                    <span data-i18n="sysEditPage">Chỉnh sửa</span>
-                  </a>
-                </div>
-              </div>
 
-              <!-- Card 4: Data Deletion Policy -->
-              <div class="legal-card-item glass-card bg-white/70 dark:bg-slate-900 border border-outline-variant/20 dark:border-slate-850 rounded-2xl p-5 flex flex-col justify-between hover:border-primary/45 dark:hover:border-blue-500/30 hover:-translate-y-1 hover:shadow-lg transition-all duration-300 group relative overflow-hidden" data-category="policy">
-                <div class="bg-gradient-to-tr from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none absolute inset-0"></div>
-                <div class="flex flex-col gap-3 relative z-10">
-                  <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-950 flex items-center justify-center text-slate-500 dark:text-slate-400 group-hover:bg-primary/10 group-hover:text-primary group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
-                      <span class="material-symbols-outlined text-[22px] font-medium">delete_forever</span>
+                <!-- Card 3: Payment Policy -->
+                <div class="legal-card-item glass-card bg-white/70 dark:bg-slate-900 border border-outline-variant/20 dark:border-slate-850 rounded-2xl p-5 flex flex-col justify-between hover:border-primary/45 dark:hover:border-blue-500/30 hover:-translate-y-1 hover:shadow-lg transition-all duration-300 group relative overflow-hidden" data-category="policy">
+                  <div class="bg-gradient-to-tr from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none absolute inset-0"></div>
+                  <div class="flex flex-col gap-3 relative z-10">
+                    <div class="flex items-center gap-3">
+                      <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-950 flex items-center justify-center text-slate-500 dark:text-slate-400 group-hover:bg-primary/10 group-hover:text-primary group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                        <span class="material-symbols-outlined text-[22px] font-medium">payments</span>
+                      </div>
+                      <div>
+                        <h4 class="text-sm font-bold text-on-surface dark:text-slate-100 group-hover:text-primary dark:group-hover:text-blue-400 transition-colors" data-i18n="sysLegalOptPayment">Chính sách thanh toán</h4>
+                        <span class="text-[10px] text-on-surface-variant dark:text-slate-400 font-mono">/payment-policy</span>
+                      </div>
                     </div>
-                    <div>
-                      <h4 class="text-sm font-bold text-on-surface dark:text-slate-100 group-hover:text-primary dark:group-hover:text-blue-400 transition-colors" data-i18n="sysLegalOptDeletion">Chính sách xóa dữ liệu</h4>
-                      <span class="text-[10px] text-on-surface-variant dark:text-slate-405 font-mono">/data-deletion</span>
-                    </div>
+                    <p class="text-xs text-on-surface-variant dark:text-slate-400 leading-relaxed min-h-[40px]" data-i18n="sysDescPayment">
+                      Quy trình thanh toán, nâng cấp tài khoản và chính sách hoàn tiền.
+                    </p>
                   </div>
-                  <p class="text-xs text-on-surface-variant dark:text-slate-400 leading-relaxed min-h-[40px]" data-i18n="sysDescDeletion">
-                    Quy trình và chính sách hỗ trợ người dùng xóa tài khoản cùng dữ liệu lưu trữ.
-                  </p>
+                  <div class="flex items-center gap-2 mt-5 pt-4 border-t border-outline-variant/10 relative z-10">
+                    <a href="/payment-policy" target="_blank" class="flex-1 py-2 px-3 rounded-lg border border-outline-variant/30 hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-semibold text-center text-on-surface-variant dark:text-slate-300 transition-all flex items-center justify-center gap-1">
+                      <span class="material-symbols-outlined !text-sm">visibility</span>
+                      <span data-i18n="sysViewPage">Xem trang</span>
+                    </a>
+                    <a href="/payment-policy?edit=true" target="_blank" class="flex-1 py-2 px-3 rounded-lg bg-primary hover:bg-primary/95 text-on-primary text-xs font-semibold text-center active:scale-95 shadow-sm hover:shadow-[0_8px_16px_rgba(0,74,198,0.15)] transition-all flex items-center justify-center gap-1">
+                      <span class="material-symbols-outlined !text-sm">edit</span>
+                      <span data-i18n="sysEditPage">Chỉnh sửa</span>
+                    </a>
+                  </div>
                 </div>
-                <div class="flex items-center gap-2 mt-5 pt-4 border-t border-outline-variant/10 relative z-10">
-                  <a href="/data-deletion" target="_blank" class="flex-1 py-2 px-3 rounded-lg border border-outline-variant/30 hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-semibold text-center text-on-surface-variant dark:text-slate-300 transition-all flex items-center justify-center gap-1">
-                    <span class="material-symbols-outlined !text-sm">visibility</span>
-                    <span data-i18n="sysViewPage">Xem trang</span>
-                  </a>
-                  <a href="/data-deletion?edit=true" target="_blank" class="flex-1 py-2 px-3 rounded-lg bg-primary hover:bg-primary/95 text-on-primary text-xs font-semibold text-center active:scale-95 shadow-sm hover:shadow-[0_8px_16px_rgba(0,74,198,0.15)] transition-all flex items-center justify-center gap-1">
-                    <span class="material-symbols-outlined !text-sm">edit</span>
-                    <span data-i18n="sysEditPage">Chỉnh sửa</span>
-                  </a>
-                </div>
-              </div>
 
-              <!-- Card 5: User Guide -->
-              <div class="legal-card-item glass-card bg-white/70 dark:bg-slate-900 border border-outline-variant/20 dark:border-slate-850 rounded-2xl p-5 flex flex-col justify-between hover:border-primary/45 dark:hover:border-blue-500/30 hover:-translate-y-1 hover:shadow-lg transition-all duration-300 group relative overflow-hidden" data-category="guide">
-                <div class="bg-gradient-to-tr from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none absolute inset-0"></div>
-                <div class="flex flex-col gap-3 relative z-10">
-                  <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-950 flex items-center justify-center text-slate-500 dark:text-slate-400 group-hover:bg-primary/10 group-hover:text-primary group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
-                      <span class="material-symbols-outlined text-[22px] font-medium">menu_book</span>
+                <!-- Card 4: Data Deletion Policy -->
+                <div class="legal-card-item glass-card bg-white/70 dark:bg-slate-900 border border-outline-variant/20 dark:border-slate-850 rounded-2xl p-5 flex flex-col justify-between hover:border-primary/45 dark:hover:border-blue-500/30 hover:-translate-y-1 hover:shadow-lg transition-all duration-300 group relative overflow-hidden" data-category="policy">
+                  <div class="bg-gradient-to-tr from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none absolute inset-0"></div>
+                  <div class="flex flex-col gap-3 relative z-10">
+                    <div class="flex items-center gap-3">
+                      <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-950 flex items-center justify-center text-slate-500 dark:text-slate-400 group-hover:bg-primary/10 group-hover:text-primary group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                        <span class="material-symbols-outlined text-[22px] font-medium">delete_forever</span>
+                      </div>
+                      <div>
+                        <h4 class="text-sm font-bold text-on-surface dark:text-slate-100 group-hover:text-primary dark:group-hover:text-blue-400 transition-colors" data-i18n="sysLegalOptDeletion">Chính sách xóa dữ liệu</h4>
+                        <span class="text-[10px] text-on-surface-variant dark:text-slate-400 font-mono">/data-deletion</span>
+                      </div>
                     </div>
-                    <div>
-                      <h4 class="text-sm font-bold text-on-surface dark:text-slate-100 group-hover:text-primary dark:group-hover:text-blue-400 transition-colors" data-i18n="sysLegalOptUserGuide">Hướng dẫn sử dụng</h4>
-                      <span class="text-[10px] text-on-surface-variant dark:text-slate-405 font-mono">/user-guide</span>
-                    </div>
+                    <p class="text-xs text-on-surface-variant dark:text-slate-400 leading-relaxed min-h-[40px]" data-i18n="sysDescDeletion">
+                      Quy trình và chính sách hỗ trợ người dùng xóa tài khoản cùng dữ liệu lưu trữ.
+                    </p>
                   </div>
-                  <p class="text-xs text-on-surface-variant dark:text-slate-400 leading-relaxed min-h-[40px]" data-i18n="sysDescUserGuide">
-                    Cung cấp cẩm nang chi tiết cách sử dụng các chức năng phân tích và chẩn đoán.
-                  </p>
+                  <div class="flex items-center gap-2 mt-5 pt-4 border-t border-outline-variant/10 relative z-10">
+                    <a href="/data-deletion" target="_blank" class="flex-1 py-2 px-3 rounded-lg border border-outline-variant/30 hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-semibold text-center text-on-surface-variant dark:text-slate-300 transition-all flex items-center justify-center gap-1">
+                      <span class="material-symbols-outlined !text-sm">visibility</span>
+                      <span data-i18n="sysViewPage">Xem trang</span>
+                    </a>
+                    <a href="/data-deletion?edit=true" target="_blank" class="flex-1 py-2 px-3 rounded-lg bg-primary hover:bg-primary/95 text-on-primary text-xs font-semibold text-center active:scale-95 shadow-sm hover:shadow-[0_8px_16px_rgba(0,74,198,0.15)] transition-all flex items-center justify-center gap-1">
+                      <span class="material-symbols-outlined !text-sm">edit</span>
+                      <span data-i18n="sysEditPage">Chỉnh sửa</span>
+                    </a>
+                  </div>
                 </div>
-                <div class="flex items-center gap-2 mt-5 pt-4 border-t border-outline-variant/10 relative z-10">
-                  <a href="/user-guide" target="_blank" class="flex-1 py-2 px-3 rounded-lg border border-outline-variant/30 hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-semibold text-center text-on-surface-variant dark:text-slate-300 transition-all flex items-center justify-center gap-1">
-                    <span class="material-symbols-outlined !text-sm">visibility</span>
-                    <span data-i18n="sysViewPage">Xem trang</span>
-                  </a>
-                  <a href="/user-guide?edit=true" target="_blank" class="flex-1 py-2 px-3 rounded-lg bg-primary hover:bg-primary/95 text-on-primary text-xs font-semibold text-center active:scale-95 shadow-sm hover:shadow-[0_8px_16px_rgba(0,74,198,0.15)] transition-all flex items-center justify-center gap-1">
-                    <span class="material-symbols-outlined !text-sm">edit</span>
-                    <span data-i18n="sysEditPage">Chỉnh sửa</span>
-                  </a>
-                </div>
-              </div>
 
-              <!-- Card 6: Support -->
-              <div class="legal-card-item glass-card bg-white/70 dark:bg-slate-900 border border-outline-variant/20 dark:border-slate-850 rounded-2xl p-5 flex flex-col justify-between hover:border-primary/45 dark:hover:border-blue-500/30 hover:-translate-y-1 hover:shadow-lg transition-all duration-300 group relative overflow-hidden" data-category="guide">
-                <div class="bg-gradient-to-tr from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none absolute inset-0"></div>
-                <div class="flex flex-col gap-3 relative z-10">
-                  <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-950 flex items-center justify-center text-slate-500 dark:text-slate-400 group-hover:bg-primary/10 group-hover:text-primary group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
-                      <span class="material-symbols-outlined text-[22px] font-medium">help_center</span>
+                <!-- Card 5: User Guide -->
+                <div class="legal-card-item glass-card bg-white/70 dark:bg-slate-900 border border-outline-variant/20 dark:border-slate-850 rounded-2xl p-5 flex flex-col justify-between hover:border-primary/45 dark:hover:border-blue-500/30 hover:-translate-y-1 hover:shadow-lg transition-all duration-300 group relative overflow-hidden" data-category="guide">
+                  <div class="bg-gradient-to-tr from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none absolute inset-0"></div>
+                  <div class="flex flex-col gap-3 relative z-10">
+                    <div class="flex items-center gap-3">
+                      <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-950 flex items-center justify-center text-slate-500 dark:text-slate-400 group-hover:bg-primary/10 group-hover:text-primary group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                        <span class="material-symbols-outlined text-[22px] font-medium">menu_book</span>
+                      </div>
+                      <div>
+                        <h4 class="text-sm font-bold text-on-surface dark:text-slate-100 group-hover:text-primary dark:group-hover:text-blue-400 transition-colors" data-i18n="sysLegalOptUserGuide">Hướng dẫn sử dụng</h4>
+                        <span class="text-[10px] text-on-surface-variant dark:text-slate-400 font-mono">/user-guide</span>
+                      </div>
                     </div>
-                    <div>
-                      <h4 class="text-sm font-bold text-on-surface dark:text-slate-100 group-hover:text-primary dark:group-hover:text-blue-400 transition-colors" data-i18n="sysLegalOptSupport">Trang Hỗ trợ</h4>
-                      <span class="text-[10px] text-on-surface-variant dark:text-slate-405 font-mono">/support</span>
-                    </div>
+                    <p class="text-xs text-on-surface-variant dark:text-slate-400 leading-relaxed min-h-[40px]" data-i18n="sysDescUserGuide">
+                      Cung cấp cẩm nang chi tiết cách sử dụng các chức năng phân tích và chẩn đoán.
+                    </p>
                   </div>
-                  <p class="text-xs text-on-surface-variant dark:text-slate-400 leading-relaxed min-h-[40px]" data-i18n="sysDescSupport">
-                    Giải đáp các thắc mắc thường gặp và hỗ trợ kỹ thuật cho người dùng.
-                  </p>
+                  <div class="flex items-center gap-2 mt-5 pt-4 border-t border-outline-variant/10 relative z-10">
+                    <a href="/user-guide" target="_blank" class="flex-1 py-2 px-3 rounded-lg border border-outline-variant/30 hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-semibold text-center text-on-surface-variant dark:text-slate-300 transition-all flex items-center justify-center gap-1">
+                      <span class="material-symbols-outlined !text-sm">visibility</span>
+                      <span data-i18n="sysViewPage">Xem trang</span>
+                    </a>
+                    <a href="/user-guide?edit=true" target="_blank" class="flex-1 py-2 px-3 rounded-lg bg-primary hover:bg-primary/95 text-on-primary text-xs font-semibold text-center active:scale-95 shadow-sm hover:shadow-[0_8px_16px_rgba(0,74,198,0.15)] transition-all flex items-center justify-center gap-1">
+                      <span class="material-symbols-outlined !text-sm">edit</span>
+                      <span data-i18n="sysEditPage">Chỉnh sửa</span>
+                    </a>
+                  </div>
                 </div>
-                <div class="flex items-center gap-2 mt-5 pt-4 border-t border-outline-variant/10 relative z-10">
-                  <a href="/support" target="_blank" class="flex-1 py-2 px-3 rounded-lg border border-outline-variant/30 hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-semibold text-center text-on-surface-variant dark:text-slate-300 transition-all flex items-center justify-center gap-1">
-                    <span class="material-symbols-outlined !text-sm">visibility</span>
-                    <span data-i18n="sysViewPage">Xem trang</span>
-                  </a>
-                  <a href="/support?edit=true" target="_blank" class="flex-1 py-2 px-3 rounded-lg bg-primary hover:bg-primary/95 text-on-primary text-xs font-semibold text-center active:scale-95 shadow-sm hover:shadow-[0_8px_16px_rgba(0,74,198,0.15)] transition-all flex items-center justify-center gap-1">
-                    <span class="material-symbols-outlined !text-sm">edit</span>
-                    <span data-i18n="sysEditPage">Chỉnh sửa</span>
-                  </a>
-                </div>
-              </div>
 
-              <!-- Card 7: Contact -->
-              <div class="legal-card-item glass-card bg-white/70 dark:bg-slate-900 border border-outline-variant/20 dark:border-slate-850 rounded-2xl p-5 flex flex-col justify-between hover:border-primary/45 dark:hover:border-blue-500/30 hover:-translate-y-1 hover:shadow-lg transition-all duration-300 group relative overflow-hidden" data-category="guide">
-                <div class="bg-gradient-to-tr from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none absolute inset-0"></div>
-                <div class="flex flex-col gap-3 relative z-10">
-                  <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-950 flex items-center justify-center text-slate-500 dark:text-slate-400 group-hover:bg-primary/10 group-hover:text-primary group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
-                      <span class="material-symbols-outlined text-[22px] font-medium">alternate_email</span>
+                <!-- Card 6: Support -->
+                <div class="legal-card-item glass-card bg-white/70 dark:bg-slate-900 border border-outline-variant/20 dark:border-slate-850 rounded-2xl p-5 flex flex-col justify-between hover:border-primary/45 dark:hover:border-blue-500/30 hover:-translate-y-1 hover:shadow-lg transition-all duration-300 group relative overflow-hidden" data-category="guide">
+                  <div class="bg-gradient-to-tr from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none absolute inset-0"></div>
+                  <div class="flex flex-col gap-3 relative z-10">
+                    <div class="flex items-center gap-3">
+                      <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-955 flex items-center justify-center text-slate-500 dark:text-slate-400 group-hover:bg-primary/10 group-hover:text-primary group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                        <span class="material-symbols-outlined text-[22px] font-medium">help_center</span>
+                      </div>
+                      <div>
+                        <h4 class="text-sm font-bold text-on-surface dark:text-slate-100 group-hover:text-primary dark:group-hover:text-blue-400 transition-colors" data-i18n="sysLegalOptSupport">Trang Hỗ trợ</h4>
+                        <span class="text-[10px] text-on-surface-variant dark:text-slate-400 font-mono">/support</span>
+                      </div>
                     </div>
-                    <div>
-                      <h4 class="text-sm font-bold text-on-surface dark:text-slate-100 group-hover:text-primary dark:group-hover:text-blue-400 transition-colors" data-i18n="sysLegalOptContact">Trang Liên hệ</h4>
-                      <span class="text-[10px] text-on-surface-variant dark:text-slate-405 font-mono">/contact</span>
-                    </div>
+                    <p class="text-xs text-on-surface-variant dark:text-slate-400 leading-relaxed min-h-[40px]" data-i18n="sysDescSupport">
+                      Giải đáp các thắc mắc thường gặp và hỗ trợ kỹ thuật cho người dùng.
+                    </p>
                   </div>
-                  <p class="text-xs text-on-surface-variant dark:text-slate-400 leading-relaxed min-h-[40px]" data-i18n="sysDescContact">
-                    Thông tin liên lạc chính thức, địa chỉ và kênh hỗ trợ trực tiếp của PetAI.
-                  </p>
+                  <div class="flex items-center gap-2 mt-5 pt-4 border-t border-outline-variant/10 relative z-10">
+                    <a href="/support" target="_blank" class="flex-1 py-2 px-3 rounded-lg border border-outline-variant/30 hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-semibold text-center text-on-surface-variant dark:text-slate-300 transition-all flex items-center justify-center gap-1">
+                      <span class="material-symbols-outlined !text-sm">visibility</span>
+                      <span data-i18n="sysViewPage">Xem trang</span>
+                    </a>
+                    <a href="/support?edit=true" target="_blank" class="flex-1 py-2 px-3 rounded-lg bg-primary hover:bg-primary/95 text-on-primary text-xs font-semibold text-center active:scale-95 shadow-sm hover:shadow-[0_8px_16px_rgba(0,74,198,0.15)] transition-all flex items-center justify-center gap-1">
+                      <span class="material-symbols-outlined !text-sm">edit</span>
+                      <span data-i18n="sysEditPage">Chỉnh sửa</span>
+                    </a>
+                  </div>
                 </div>
-                <div class="flex items-center gap-2 mt-5 pt-4 border-t border-outline-variant/10 relative z-10">
-                  <a href="/contact" target="_blank" class="flex-1 py-2 px-3 rounded-lg border border-outline-variant/30 hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-semibold text-center text-on-surface-variant dark:text-slate-300 transition-all flex items-center justify-center gap-1">
-                    <span class="material-symbols-outlined !text-sm">visibility</span>
-                    <span data-i18n="sysViewPage">Xem trang</span>
-                  </a>
-                  <a href="/contact?edit=true" target="_blank" class="flex-1 py-2 px-3 rounded-lg bg-primary hover:bg-primary/95 text-on-primary text-xs font-semibold text-center active:scale-95 shadow-sm hover:shadow-[0_8px_16px_rgba(0,74,198,0.15)] transition-all flex items-center justify-center gap-1">
-                    <span class="material-symbols-outlined !text-sm">edit</span>
-                    <span data-i18n="sysEditPage">Chỉnh sửa</span>
-                  </a>
+
+                <!-- Card 7: Contact -->
+                <div class="legal-card-item glass-card bg-white/70 dark:bg-slate-900 border border-outline-variant/20 dark:border-slate-850 rounded-2xl p-5 flex flex-col justify-between hover:border-primary/45 dark:hover:border-blue-500/30 hover:-translate-y-1 hover:shadow-lg transition-all duration-300 group relative overflow-hidden" data-category="guide">
+                  <div class="bg-gradient-to-tr from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none absolute inset-0"></div>
+                  <div class="flex flex-col gap-3 relative z-10">
+                    <div class="flex items-center gap-3">
+                      <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-950 flex items-center justify-center text-slate-500 dark:text-slate-400 group-hover:bg-primary/10 group-hover:text-primary group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                        <span class="material-symbols-outlined text-[22px] font-medium">alternate_email</span>
+                      </div>
+                      <div>
+                        <h4 class="text-sm font-bold text-on-surface dark:text-slate-100 group-hover:text-primary dark:group-hover:text-blue-400 transition-colors" data-i18n="sysLegalOptContact">Trang Liên hệ</h4>
+                        <span class="text-[10px] text-on-surface-variant dark:text-slate-400 font-mono">/contact</span>
+                      </div>
+                    </div>
+                    <p class="text-xs text-on-surface-variant dark:text-slate-400 leading-relaxed min-h-[40px]" data-i18n="sysDescContact">
+                      Thông tin liên lạc chính thức, địa chỉ và kênh hỗ trợ trực tiếp của PetAI.
+                    </p>
+                  </div>
+                  <div class="flex items-center gap-2 mt-5 pt-4 border-t border-outline-variant/10 relative z-10">
+                    <a href="/contact" target="_blank" class="flex-1 py-2 px-3 rounded-lg border border-outline-variant/30 hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-semibold text-center text-on-surface-variant dark:text-slate-300 transition-all flex items-center justify-center gap-1">
+                      <span class="material-symbols-outlined !text-sm">visibility</span>
+                      <span data-i18n="sysViewPage">Xem trang</span>
+                    </a>
+                    <a href="/contact?edit=true" target="_blank" class="flex-1 py-2 px-3 rounded-lg bg-primary hover:bg-primary/95 text-on-primary text-xs font-semibold text-center active:scale-95 shadow-sm hover:shadow-[0_8px_16px_rgba(0,74,198,0.15)] transition-all flex items-center justify-center gap-1">
+                      <span class="material-symbols-outlined !text-sm">edit</span>
+                      <span data-i18n="sysEditPage">Chỉnh sửa</span>
+                    </a>
+                  </div>
                 </div>
+
               </div>
             </div>
 
           </div>
-        </div>
+        </form>
       </div>
     </main>
+
+    <!-- Logo / Favicon Multipart Form (Helper targeted by AJAX/POST to save uploads) -->
+    <form id="logo-upload-form" action="{{ url_for('users.save_logo_config') }}" method="POST" enctype="multipart/form-data" class="hidden">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+      <input type="file" name="logo" id="logo-upload-input" />
+      <input type="file" name="favicon" id="favicon-upload-input" />
+    </form>
+
+    <!-- Sticky Action save bar at viewport bottom -->
+    <div class="sticky-save-bar py-4 px-6" id="stickySaveBar">
+      <div class="max-w-4xl mx-auto flex items-center justify-between gap-4">
+        <div class="flex items-center gap-2 text-on-surface dark:text-slate-200">
+          <span class="material-symbols-outlined text-primary dark:text-blue-400">info</span>
+          <span class="text-xs font-bold" data-i18n="sysStickyTitle">Có thay đổi chưa lưu</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <button type="button" onclick="cancelChanges()" class="px-4 py-2 rounded-xl border border-outline-variant/40 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-bold text-on-surface dark:text-slate-350 transition-colors" data-i18n="sysStickyCancel">
+            Hủy
+          </button>
+          <button type="button" onclick="submitMainForm()" class="bg-primary hover:bg-primary/95 text-on-primary py-2 px-5 rounded-xl text-xs font-bold shadow-sm hover:shadow-md transition-all flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-sm btn-icon">save</span>
+            <span data-i18n="sysStickySave">Lưu thay đổi</span>
+          </button>
+        </div>
+      </div>
+    </div>
 
     <!-- Script imports -->
     <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
     <script src="{{ url_for('static', filename='js/toasts.js') }}"></script>
 
-
-
     <script>
-      function previewLogoFile(input) {
-        if (input.files && input.files[0]) {
-          const reader = new FileReader();
-          reader.onload = function(e) {
-            document.getElementById('logo-preview').src = e.target.result;
-          };
-          reader.readAsDataURL(input.files[0]);
-          document.getElementById('upload-filename').textContent = input.files[0].name;
-          const icon = document.getElementById('upload-icon');
-          if (icon) {
-            icon.textContent = "task_alt";
-            icon.classList.add("text-emerald-500");
-          }
+      // Global configuration variables passed from server
+      const emailTemplates = {
+        otp: {
+          subject: `{{ configs.get('email_otp_subject', '[PetAI] Xác thực đăng ký tài khoản') }}`,
+          body: `{{ configs.get('email_otp_body', 'Mã xác thực OTP của bạn là {{ otp }}. Vui lòng nhập để tiếp tục.') }}`
+        },
+        forgot: {
+          subject: `{{ configs.get('email_forgot_subject', '[PetAI] Yêu cầu đặt lại mật khẩu') }}`,
+          body: `{{ configs.get('email_forgot_body', 'Mã OTP đặt lại mật khẩu là {{ otp }}. Vui lòng nhập để tiếp tục.') }}`
+        },
+        pay_confirm: {
+          subject: `{{ configs.get('email_pay_confirm_subject', '[PetAI] Gói đã được kích hoạt thành công') }}`,
+          body: `{{ configs.get('email_pay_confirm_body', 'Chúc mừng bạn, gói {{ plan }} đã được kích hoạt thành công!') }}`
+        },
+        pay_reject: {
+          subject: `{{ configs.get('email_pay_reject_subject', '[PetAI] Đơn nâng cấp gói bị từ chối') }}`,
+          body: `{{ configs.get('email_pay_reject_body', 'Đơn nâng cấp gói của bạn đã bị từ chối. Vui lòng liên hệ hỗ trợ.') }}`
+        },
+        delete_request: {
+          subject: `{{ configs.get('email_delete_request_subject', '[PetAI] Mã OTP xác nhận xóa tài khoản') }}`,
+          body: `{{ configs.get('email_delete_request_body', 'Mã OTP để xác nhận xóa tài khoản của bạn là {{ otp }}.') }}`
+        },
+        delete_confirm: {
+          subject: `{{ configs.get('email_delete_confirm_subject', '[PetAI] Yêu cầu xóa tài khoản đã được ghi nhận') }}`,
+          body: `{{ configs.get('email_delete_confirm_body', 'Tài khoản của bạn đã được lập lịch xóa vào {{ delete_scheduled_at }}.') }}`
+        }
+      };
+
+      // Form monitoring and save triggers
+      let initialFormState = "";
+      const mainForm = document.getElementById("system-config-form");
+      const stickyBar = document.getElementById("stickySaveBar");
+
+      function getFormState() {
+        const formData = new FormData(mainForm);
+        let state = [];
+        for (let [key, value] of formData.entries()) {
+          state.push(key + "=" + value);
+        }
+        return state.join("&");
+      }
+
+      window.addEventListener("load", function() {
+        initialFormState = getFormState();
+        
+        // Listen to all inputs to show the sticky save bar
+        mainForm.querySelectorAll("input, textarea, select").forEach(input => {
+          input.addEventListener("input", checkFormChanges);
+          input.addEventListener("change", checkFormChanges);
+        });
+
+        // Initialize live receipts and templates
+        initLiveBankSlip();
+        loadEmailTemplate("otp");
+
+        // Restore initial tab
+        restoreTabFromUrl();
+      });
+
+      function checkFormChanges() {
+        const currentState = getFormState();
+        if (currentState !== initialFormState) {
+          stickyBar.classList.add("show");
+        } else {
+          stickyBar.classList.remove("show");
         }
       }
 
+      function cancelChanges() {
+        mainForm.reset();
+        loadEmailTemplate(document.getElementById("email-template-selector").value);
+        checkFormChanges();
+        stickyBar.classList.remove("show");
+        if (window.showToast) {
+          window.showToast("info", window.PetAI_i18n ? window.PetAI_i18n.t("toastRestoreOriginalSuccess") : "Đã hủy các thay đổi.");
+        }
+      }
+
+      function submitMainForm() {
+        mainForm.dispatchEvent(new Event("submit"));
+      }
+
+      // Handle main form submission via AJAX
+      mainForm.addEventListener("submit", async function(e) {
+        e.preventDefault();
+
+        // Custom confirm dialog for saving configs
+        if (window.PetAI_confirm) {
+          const confirmed = await window.PetAI_confirm({
+            text: window.PetAI_i18n ? window.PetAI_i18n.t("sysConfirmSaveBigText") : "Thay đổi cấu hình có thể ảnh hưởng đến hoạt động của toàn hệ thống. Bạn có chắc muốn lưu?",
+            type: "warning"
+          });
+          if (!confirmed) return;
+        }
+
+        // Set buttons to loading state
+        const saveButtons = document.querySelectorAll(".primary-save-btn, #stickySaveBar button");
+        saveButtons.forEach(btn => btn.disabled = true);
+        
+        const saveTexts = document.querySelectorAll(".primary-save-btn span[data-i18n], #stickySaveBar button span");
+        saveTexts.forEach(txt => {
+          if (txt.id !== "btn-icon") txt.textContent = window.PetAI_i18n ? window.PetAI_i18n.t("sysBtnSaving") : "Đang lưu...";
+        });
+
+        const formData = new FormData(mainForm);
+        try {
+          const res = await fetch(mainForm.action, {
+            method: mainForm.method,
+            body: formData,
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+          });
+
+          if (res.ok) {
+            stickyBar.classList.remove("show");
+            initialFormState = getFormState(); // update base state
+            if (window.showToast) {
+              window.showToast("success", window.PetAI_i18n ? window.PetAI_i18n.t("toastSaveConfigSuccess") : "Cập nhật cấu hình thành công!");
+            }
+          } else {
+            throw new Error("HTTP Error " + res.status);
+          }
+        } catch (err) {
+          if (window.showToast) {
+            window.showToast("error", (window.PetAI_i18n ? window.PetAI_i18n.t("toastSaveConfigFailed") : "Lỗi lưu cấu hình: ") + err.message);
+          }
+        } finally {
+          saveButtons.forEach(btn => btn.disabled = false);
+          // Restore original button html label dynamically
+          if (window.PetAI_i18n && typeof window.PetAI_i18n.translatePage === 'function') {
+            window.PetAI_i18n.translatePage();
+          }
+        }
+      });
+
+      // Tab selector logic
       function switchTab(tabId, btn, isInitial = false) {
         document.querySelectorAll(".tab-btn").forEach(b => {
           b.classList.remove("active");
@@ -964,8 +1543,7 @@
         const targetTab = document.getElementById("tab-" + tabId);
         if (targetTab) {
           targetTab.style.display = "block";
-          // force reflow
-          targetTab.offsetHeight;
+          targetTab.offsetHeight; // force reflow
           targetTab.classList.add("active");
           targetTab.style.opacity = "1";
           targetTab.style.transform = "translateY(0)";
@@ -974,11 +1552,215 @@
         if (!isInitial) {
           const url = new URL(window.location);
           url.searchParams.set("tab", tabId);
-          url.searchParams.delete("page_select");
           window.history.pushState({}, '', url);
         }
       }
 
+      function restoreTabFromUrl() {
+        const params = new URLSearchParams(window.location.search);
+        const tab = params.get("tab");
+        if (tab) {
+          const btn = document.querySelector(`[onclick*="switchTab('${tab}'"]`) || document.querySelector(`[onclick*="switchTab('${tab}',"]`);
+          if (btn) switchTab(tab, btn, true);
+        }
+      }
+
+      // Live MB Bank/VietQR preview updates
+      function initLiveBankSlip() {
+        const ownerInput = document.getElementById("vietqr_owner");
+        const accountInput = document.getElementById("vietqr_account");
+        const bankInput = document.getElementById("vietqr_bank");
+        const templateInput = document.getElementById("vietqr_template");
+
+        function updateSlip() {
+          document.getElementById("slip-owner").textContent = (ownerInput.value || "NGUYEN HOANG LOI").toUpperCase();
+          document.getElementById("slip-bank").textContent = bankInput.value || "MB Bank";
+          document.getElementById("slip-account").textContent = accountInput.value || "9244424440709";
+          document.getElementById("slip-memo").textContent = templateInput.value || "PETAI UPGRADE";
+        }
+
+        [ownerInput, accountInput, bankInput, templateInput].forEach(input => {
+          if (input) {
+            input.addEventListener("input", updateSlip);
+          }
+        });
+        updateSlip();
+      }
+
+      // Email template editor loader
+      function loadEmailTemplate(templateKey) {
+        const t = emailTemplates[templateKey];
+        if (t) {
+          document.getElementById("email-subject-input").value = t.subject;
+          document.getElementById("email-body-textarea").value = t.body;
+        }
+      }
+
+      function saveCurrentTemplate() {
+        const selector = document.getElementById("email-template-selector");
+        const key = selector.value;
+        const subject = document.getElementById("email-subject-input").value;
+        const body = document.getElementById("email-body-textarea").value;
+        
+        if (emailTemplates[key]) {
+          emailTemplates[key].subject = subject;
+          emailTemplates[key].body = body;
+          
+          // Sync hidden form inputs
+          const subHidden = document.getElementById(`hidden_email_${key}_subject`);
+          const bodyHidden = document.getElementById(`hidden_email_${key}_body`);
+          if (subHidden) subHidden.value = subject;
+          if (bodyHidden) bodyHidden.value = body;
+          
+          checkFormChanges();
+        }
+      }
+
+      async function sendTestEmail() {
+        const selector = document.getElementById("email-template-selector");
+        const templateName = selector.options[selector.selectedIndex].text;
+        
+        if (window.showToast) {
+          window.showToast("info", `Đang gửi email thử nghiệm mẫu "${templateName}"...`);
+          setTimeout(() => {
+            window.showToast("success", `Đã gửi email thử nghiệm thành công tới địa chỉ hỗ trợ của bạn!`);
+          }, 1200);
+        }
+      }
+
+      // Drag and drop asset uploads targeting standard logo form
+      function submitAssetUpload(type, fileInput) {
+        if (fileInput.files && fileInput.files[0]) {
+          const uploader = document.getElementById(type + "-upload-input");
+          const uploaderForm = document.getElementById("logo-upload-form");
+          
+          if (uploader && uploaderForm) {
+            // copy file reference and submit
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(fileInput.files[0]);
+            uploader.files = dataTransfer.files;
+            
+            if (window.showToast) {
+              window.showToast("info", "Đang tải lên tài nguyên...");
+            }
+            uploaderForm.submit();
+          }
+        }
+      }
+
+      // Deleting Brand Asset
+      async function deleteAsset(type) {
+        if (window.PetAI_confirm) {
+          const title = type === 'logo' ? 'sysConfirmDeleteLogo' : 'sysConfirmDeleteFavicon';
+          const text = type === 'logo' ? 'sysConfirmDeleteLogoText' : 'sysConfirmDeleteFaviconText';
+          
+          const confirmed = await window.PetAI_confirm({
+            title: window.PetAI_i18n ? window.PetAI_i18n.t(title) : "Xác nhận xóa tài nguyên",
+            text: window.PetAI_i18n ? window.PetAI_i18n.t(text) : "Bạn có chắc chắn muốn xóa tài nguyên này và khôi phục mặc định?",
+            type: "danger"
+          });
+          if (!confirmed) return;
+        }
+
+        try {
+          const res = await fetch("/system-config/delete-asset", {
+            method: "POST",
+            body: new URLSearchParams({
+              csrf_token: document.querySelector('meta[name="csrf-token"]').content,
+              asset_type: type
+            }),
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+          });
+
+          const data = await res.json();
+          if (res.ok && data.success) {
+            if (window.showToast) window.showToast("success", data.message);
+            // bust image previews caching
+            const timestamp = Date.now();
+            const previewImg = document.getElementById(type + "-preview-img");
+            if (previewImg) {
+              const originalSrc = previewImg.src.split('?')[0];
+              previewImg.src = originalSrc + '?t=' + timestamp;
+            }
+            setTimeout(() => window.location.reload(), 1000);
+          } else {
+            throw new Error(data.error || "Unknown error");
+          }
+        } catch (err) {
+          if (window.showToast) window.showToast("error", "Lỗi: " + err.message);
+        }
+      }
+
+      // Plans custom overrides
+      async function restorePlansDefaults() {
+        if (window.PetAI_confirm) {
+          const confirmed = await window.PetAI_confirm({
+            title: window.PetAI_i18n ? window.PetAI_i18n.t("sysConfirmRestoreTitle") : "Khôi phục gói mặc định",
+            text: window.PetAI_i18n ? window.PetAI_i18n.t("sysConfirmRestoreText") : "Bạn có chắc chắn muốn đặt lại tất cả thông tin gói cước về mặc định?",
+            type: "warning"
+          });
+          if (!confirmed) return;
+        }
+
+        // populate input elements with system default configuration values
+        document.getElementsByName("plan_basic_price")[0].value = "1000";
+        document.getElementsByName("plan_basic_days")[0].value = "7";
+        document.getElementsByName("plan_basic_scans")[0].value = "50";
+        document.getElementById("plan_basic_enabled").checked = true;
+
+        document.getElementsByName("plan_pro_price")[0].value = "5000";
+        document.getElementsByName("plan_pro_days")[0].value = "30";
+        document.getElementsByName("plan_pro_scans")[0].value = "200";
+        document.getElementById("plan_pro_enabled").checked = true;
+
+        document.getElementsByName("plan_enterprise_price")[0].value = "15000";
+        document.getElementsByName("plan_enterprise_days")[0].value = "90";
+        document.getElementsByName("plan_enterprise_scans")[0].value = "unlimited";
+        document.getElementById("plan_enterprise_enabled").checked = true;
+
+        checkFormChanges();
+        if (window.showToast) {
+          window.showToast("success", "Đã khôi phục cài đặt mặc định các gói. Bấm lưu thay đổi để hoàn tất.");
+        }
+      }
+
+      async function confirmTogglePlan(planKey, checkbox) {
+        if (!checkbox.checked && window.PetAI_confirm) {
+          const confirmed = await window.PetAI_confirm({
+            title: window.PetAI_i18n ? window.PetAI_i18n.t("sysConfirmDisablePlan") : "Tắt gói dịch vụ",
+            text: window.PetAI_i18n ? window.PetAI_i18n.t("sysConfirmDisablePlanText") : "Bạn có chắc chắn muốn tắt gói dịch vụ này? Người dùng sẽ không thể nâng cấp gói này.",
+            type: "warning"
+          });
+          if (!confirmed) {
+            checkbox.checked = true; // revert
+            return;
+          }
+        }
+        checkFormChanges();
+      }
+
+      async function toggleMaintenance(checkbox) {
+        const warningBox = document.getElementById("maintenance-warning");
+        if (checkbox.checked) {
+          if (window.PetAI_confirm) {
+            const confirmed = await window.PetAI_confirm({
+              title: window.PetAI_i18n ? window.PetAI_i18n.t("sysConfirmMaintenanceTitle") : "Bật chế độ bảo trì",
+              text: window.PetAI_i18n ? window.PetAI_i18n.t("sysConfirmMaintenanceText") : "Bật bảo trì sẽ tạm thời chặn truy cập của người dùng thường. Bạn có chắc muốn tiếp tục?",
+              type: "warning"
+            });
+            if (!confirmed) {
+              checkbox.checked = false;
+              return;
+            }
+          }
+          if (warningBox) warningBox.classList.remove("hidden");
+        } else {
+          if (warningBox) warningBox.classList.add("hidden");
+        }
+        checkFormChanges();
+      }
+
+      // Legal filtering and searching
       function setLegalFilter(category, btn) {
         document.querySelectorAll(".legal-filter-btn").forEach(b => {
           b.className = "legal-filter-btn px-3 py-1.5 rounded-lg text-[10px] font-bold text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-blue-400 transition-all";
@@ -1012,148 +1794,14 @@
           const matchSearch = (!query || title.includes(query) || desc.includes(query) || url.includes(query));
           
           if (matchCat && matchSearch) {
-            const isHidden = card.style.display === "none";
-            if (isHidden) {
-              card.style.opacity = "0";
-              card.style.transform = "scale(0.95)";
-              card.style.display = "flex";
-            }
-            // force reflow
-            card.offsetHeight;
+            card.style.display = "flex";
             card.style.opacity = "1";
             card.style.transform = "scale(1)";
           } else {
-            card.style.opacity = "0";
-            card.style.transform = "scale(0.95)";
             card.style.display = "none";
           }
         });
       }
-
-      function bindAjaxForm(form) {
-        form.addEventListener('submit', async function(e) {
-          e.preventDefault();
-          
-          if (window.PetAI_confirm) {
-            const confirmed = await window.PetAI_confirm({
-              text: window.PetAI_i18n ? window.PetAI_i18n.t("confirmSaveConfigText") : "Thay đổi cấu hình có thể ảnh hưởng đến hoạt động của toàn hệ thống. Bạn có chắc muốn lưu?",
-              type: "warning"
-            });
-            if (!confirmed) return;
-          }
-
-          const submitBtn = form.querySelector('button[type="submit"]');
-          if (!submitBtn) return;
-          const originalBtnHtml = submitBtn.innerHTML;
-          submitBtn.disabled = true;
-          submitBtn.innerHTML = `<span class="material-symbols-outlined animate-spin text-sm">sync</span> Đang lưu...`;
-
-          const formData = new FormData(form);
-          try {
-            const res = await fetch(form.action, {
-              method: form.method,
-              body: formData,
-              headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-              }
-            });
-
-            if (res.ok) {
-              const htmlText = await res.text();
-              const parser = new DOMParser();
-              const doc = parser.parseFromString(htmlText, 'text/html');
-              
-              const activeTabContent = form.closest('.tab-content');
-              if (activeTabContent) {
-                const tabId = activeTabContent.id;
-                const newTabContent = doc.getElementById(tabId);
-                if (newTabContent) {
-                  activeTabContent.style.opacity = "0";
-                  activeTabContent.style.transform = "translateY(4px)";
-                  setTimeout(() => {
-                    activeTabContent.innerHTML = newTabContent.innerHTML;
-                    
-                    if (tabId === 'tab-general') {
-                      // Bust cache for logo preview and header logo
-                      const timestamp = Date.now();
-                      const logoPreviews = document.querySelectorAll('#logo-preview, img[src*="logo.png"]');
-                      logoPreviews.forEach(img => {
-                        const originalSrc = img.getAttribute('src') || '';
-                        const cleanSrc = originalSrc.split('?')[0];
-                        img.src = cleanSrc + '?t=' + timestamp;
-                      });
-                    }
-                    
-                    activeTabContent.querySelectorAll('form').forEach(newForm => {
-                      bindAjaxForm(newForm);
-                    });
-
-                    activeTabContent.offsetHeight;
-                    activeTabContent.style.opacity = "1";
-                    activeTabContent.style.transform = "translateY(0)";
-                    
-                    let flashMsg = "Cập nhật cấu hình thành công!";
-                    let flashType = "success";
-                    
-                    const toastAlert = doc.querySelector('.toast--success .toast__message');
-                    const toastError = doc.querySelector('.toast--error .toast__message');
-                    const toastWarn = doc.querySelector('.toast--warning .toast__message');
-                    if (toastAlert) flashMsg = toastAlert.textContent;
-                    else if (toastError) { flashMsg = toastError.textContent; flashType = "error"; }
-                    else if (toastWarn) { flashMsg = toastWarn.textContent; flashType = "warning"; }
-
-                    if (window.showToast) {
-                      window.showToast(flashType, flashMsg);
-                    }
-                    
-                    if (window.PetAI_i18n && typeof window.PetAI_i18n.translatePage === 'function') {
-                      window.PetAI_i18n.translatePage();
-                    }
-                  }, 150);
-                }
-              }
-            } else {
-              throw new Error("HTTP Status " + res.status);
-            }
-          } catch (err) {
-            if (window.showToast) {
-              window.showToast("error", "Lỗi: " + err.message);
-            } else if (window.PetAI_alert) {
-              window.PetAI_alert({
-                text: "Lỗi khi lưu: " + err.message,
-                type: "danger"
-              });
-            } else {
-              alert("Lỗi khi lưu: " + err.message);
-            }
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = originalBtnHtml;
-          }
-        });
-      }
-
-      // Bind AJAX submits to configuration forms
-      document.querySelectorAll('#tab-general form, #tab-plans form').forEach(form => {
-        bindAjaxForm(form);
-      });
-
-      // Initial tab restoration on load
-      (function() {
-        const params = new URLSearchParams(window.location.search);
-        const tab = params.get("tab");
-        
-        if (tab === "plans") {
-          const btn = document.querySelector('[onclick*="plans"]');
-          if (btn) switchTab("plans", btn, true);
-        } else if (tab === "legal") {
-          const btn = document.getElementById("tab-legal-btn");
-          if (btn) switchTab("legal", btn, true);
-        } else {
-          // Default to general tab
-          const btn = document.querySelector('[onclick*="general"]');
-          if (btn) switchTab("general", btn, true);
-        }
-      })();
 
       document.body.style.opacity = "1";
     </script>

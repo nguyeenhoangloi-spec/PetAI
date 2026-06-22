@@ -4852,15 +4852,15 @@
     if (type === "danger") {
       iconName = "error";
       iconClass = "text-red-500 dark:text-red-450";
-      btnClass = "bg-red-650 hover:bg-red-750 dark:bg-red-600 dark:hover:bg-red-700 text-white";
+      btnClass = "bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 text-white";
     } else if (type === "success") {
       iconName = "check_circle";
       iconClass = "text-emerald-500 dark:text-emerald-450";
-      btnClass = "bg-emerald-650 hover:bg-emerald-750 dark:bg-emerald-600 dark:hover:bg-emerald-700 text-white";
+      btnClass = "bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600 text-white";
     } else if (type === "info") {
       iconName = "info";
       iconClass = "text-blue-500 dark:text-blue-450";
-      btnClass = "bg-blue-650 hover:bg-blue-755 dark:bg-blue-600 dark:hover:bg-blue-700 text-white";
+      btnClass = "bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white";
     }
 
     var modalId = "petai-global-modal-" + Date.now();

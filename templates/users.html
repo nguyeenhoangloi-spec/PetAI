@@ -787,9 +787,9 @@
           // Status Badge
           var statusBadge = "";
           if (u.is_active) {
-            statusBadge = '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 text-emerald-600 dark:text-emerald-400 font-semibold label-sm"><span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>' + statusActiveLabel + '</span>';
+            statusBadge = '<span class="inline-flex items-center px-2.5 py-1 text-emerald-600 dark:text-emerald-400 font-semibold label-sm whitespace-nowrap">' + statusActiveLabel + '</span>';
           } else {
-            statusBadge = '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 text-rose-600 dark:text-rose-400 font-semibold label-sm"><span class="w-2 h-2 rounded-full bg-rose-500"></span>' + statusLockedLabel + '</span>';
+            statusBadge = '<span class="inline-flex items-center px-2.5 py-1 text-rose-600 dark:text-rose-400 font-semibold label-sm whitespace-nowrap">' + statusLockedLabel + '</span>';
           }
 
           html += '<tr class="' + trClass + '" data-user-id="' + u.id + '">';
@@ -1330,8 +1330,9 @@
       // Under Development Add User Modal/Toast trigger
       if (addUserBtn) {
         addUserBtn.addEventListener("click", function () {
-          var title = t("addUserBtn", "+ Thêm người dùng");
-          var msg = t("en", "") === "en" 
+          var title = t("addUserBtn", "Thêm người dùng");
+          var currentLang = document.documentElement.getAttribute("lang") || "vi";
+          var msg = currentLang === "en" 
             ? "Manual user creation function has not been integrated on the backend system yet." 
             : "Chức năng thêm người dùng thủ công chưa được tích hợp trên backend hệ thống.";
           

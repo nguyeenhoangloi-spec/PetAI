@@ -1382,8 +1382,7 @@
               '<td class="px-6 py-4 text-center body-md font-bold text-on-surface dark:text-slate-100">' + formatMoney(o.amount_calc || 0) + '</td>' +
               '<td class="px-6 py-4 text-center label-sm text-on-surface-variant dark:text-slate-450">' + (o.created_str || o.created_at || "-") + '</td>' +
               '<td class="px-6 py-4 text-center">' +
-                '<span class="inline-flex items-center gap-1.5 px-3 py-1 label-sm font-medium rounded-full bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400 border border-amber-500/20">' +
-                  '<span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>' +
+                '<span class="inline-flex items-center px-3 py-1 label-sm font-medium rounded-full bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400 border border-amber-500/20 whitespace-nowrap">' +
                   '<span class="text-[13px]">' + translate("reportedTransferStatus", "Đã báo chuyển") + '</span>' +
                 '</span>' +
               '</td>' +
@@ -1493,24 +1492,20 @@
             var statusCol = "";
             var s = (o.status || "").toLowerCase();
             if (s === "paid") {
-              statusCol = '<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full label-sm font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">' +
-                '<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>' +
+              statusCol = '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full label-sm font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 whitespace-nowrap">' +
                 '<span class="text-[13px]">' + translate("statusApproved", "Đã duyệt") + '</span>' +
               '</span>';
             } else if (s === "rejected") {
-              statusCol = '<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full label-sm font-semibold bg-rose-500/10 text-rose-600 dark:text-rose-455 border border-rose-500/20">' +
-                '<span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>' +
+              statusCol = '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full label-sm font-semibold bg-rose-500/10 text-rose-600 dark:text-rose-455 border border-rose-500/20 whitespace-nowrap">' +
                 '<span class="text-[13px]">' + translate("statusRejected", "Từ chối") + '</span>' +
               '</span>';
             } else if (s === "cancelled") {
-              statusCol = '<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full label-sm font-semibold bg-slate-500/15 text-slate-600 dark:text-slate-400 border border-slate-500/20">' +
-                '<span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>' +
+              statusCol = '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full label-sm font-semibold bg-slate-500/15 text-slate-600 dark:text-slate-400 border border-slate-500/20 whitespace-nowrap">' +
                 '<span class="text-[13px]">' + translate("statusCancelled", "Đã hủy") + '</span>' +
               '</span>';
             } else {
               // Pending
-              statusCol = '<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full label-sm font-semibold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">' +
-                '<span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>' +
+              statusCol = '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full label-sm font-semibold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 whitespace-nowrap">' +
                 '<span class="text-[13px]">' + translate("statusPending", "Chờ duyệt") + '</span>' +
               '</span>';
             }
@@ -1760,15 +1755,15 @@
           var badgeHtml = "";
           var s = (o.status || "").toLowerCase();
           if (s === "user_confirmed") {
-            badgeHtml = '<span class="px-3 py-1 text-[13px] font-semibold rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/25">' + translate("statusPending", "Đang chờ duyệt") + '</span>';
+            badgeHtml = '<span class="px-3 py-1 text-[13px] font-semibold rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/25 whitespace-nowrap">' + translate("statusPending", "Đang chờ duyệt") + '</span>';
           } else if (s === "paid") {
-            badgeHtml = '<span class="px-3 py-1 text-[13px] font-semibold rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/25">' + translate("statusApproved", "Đã duyệt") + '</span>';
+            badgeHtml = '<span class="px-3 py-1 text-[13px] font-semibold rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/25 whitespace-nowrap">' + translate("statusApproved", "Đã duyệt") + '</span>';
           } else if (s === "rejected") {
-            badgeHtml = '<span class="px-3 py-1 text-[13px] font-semibold rounded-full bg-rose-500/10 text-rose-600 dark:text-rose-450 border border-rose-500/25">' + translate("statusRejected", "Từ chối") + '</span>';
+            badgeHtml = '<span class="px-3 py-1 text-[13px] font-semibold rounded-full bg-rose-500/10 text-rose-600 dark:text-rose-455 border border-rose-500/25 whitespace-nowrap">' + translate("statusRejected", "Từ chối") + '</span>';
           } else if (s === "cancelled") {
-            badgeHtml = '<span class="px-3 py-1 text-[13px] font-semibold rounded-full bg-slate-500/10 text-slate-500 dark:text-slate-400 border border-slate-500/25">' + translate("statusCancelled", "Đã hủy") + '</span>';
+            badgeHtml = '<span class="px-3 py-1 text-[13px] font-semibold rounded-full bg-slate-500/10 text-slate-500 dark:text-slate-400 border border-slate-500/25 whitespace-nowrap">' + translate("statusCancelled", "Đã hủy") + '</span>';
           } else {
-            badgeHtml = '<span class="px-3 py-1 text-[13px] font-semibold rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/25">' + translate("pendingStatus", "Khởi tạo") + '</span>';
+            badgeHtml = '<span class="px-3 py-1 text-[13px] font-semibold rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/25 whitespace-nowrap">' + translate("pendingStatus", "Khởi tạo") + '</span>';
           }
           document.getElementById("detailStatusBadge").innerHTML = badgeHtml;
 

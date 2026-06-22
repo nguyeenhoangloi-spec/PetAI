@@ -724,7 +724,12 @@ def system_config():
         if conn:
             conn.close()
             
-    return render_template("system_config.html", configs=configs)
+    smtp_details = {
+        "host": os.getenv("SMTP_SERVER", "smtp.gmail.com"),
+        "port": os.getenv("SMTP_PORT", "587"),
+        "email": os.getenv("SMTP_EMAIL", "nguyenhoangloi070904@gmail.com")
+    }
+    return render_template("system_config.html", configs=configs, smtp=smtp_details)
 
 
 @users_bp.route("/system-config/save", methods=["POST"])
@@ -738,35 +743,79 @@ def save_system_config():
     try:
         conn = get_connection()
         
+        # General configurations
+        if "site_name" in request.form:
+            SystemConfig.set(conn, "site_name", request.form.get("site_name", "").strip(), "Tên website")
+        if "site_description" in request.form:
+            SystemConfig.set(conn, "site_description", request.form.get("site_description", "").strip(), "Mô tả ngắn website")
         if "site_email" in request.form:
-            site_email = (request.form.get("site_email") or "").strip()
-            if site_email:
-                SystemConfig.set(conn, "site_email", site_email, "Email liên hệ chính")
-                
+            SystemConfig.set(conn, "site_email", request.form.get("site_email", "").strip(), "Email liên hệ chính")
+        if "contact_phone" in request.form:
+            SystemConfig.set(conn, "contact_phone", request.form.get("contact_phone", "").strip(), "Số điện thoại liên hệ")
+        if "contact_address" in request.form:
+            SystemConfig.set(conn, "contact_address", request.form.get("contact_address", "").strip(), "Địa chỉ liên hệ")
+        if "contact_fb" in request.form:
+            SystemConfig.set(conn, "contact_fb", request.form.get("contact_fb", "").strip(), "Facebook liên hệ")
+        if "default_lang" in request.form:
+            SystemConfig.set(conn, "default_lang", request.form.get("default_lang", "").strip(), "Ngôn ngữ mặc định")
+        if "default_theme" in request.form:
+            SystemConfig.set(conn, "default_theme", request.form.get("default_theme", "").strip(), "Theme mặc định")
+            
+        # Maintenance mode toggle
+        if "site_name" in request.form or "maintenance_mode_submitted" in request.form:
+            maintenance_mode = "1" if request.form.get("maintenance_mode") in ["on", "1", "true"] else "0"
+            SystemConfig.set(conn, "maintenance_mode", maintenance_mode, "Chế độ bảo trì (1=Bật, 0=Tắt)")
+
+        # Plans configurations
         if "plan_basic_price" in request.form:
-            plan_basic_price = (request.form.get("plan_basic_price") or "").strip()
-            plan_basic_days = (request.form.get("plan_basic_days") or "").strip()
-            plan_basic_scans = (request.form.get("plan_basic_scans") or "").strip()
+            SystemConfig.set(conn, "plan_basic_price", request.form.get("plan_basic_price", "").strip(), "Giá gói Basic (VND)")
+            SystemConfig.set(conn, "plan_basic_days", request.form.get("plan_basic_days", "").strip(), "Thời gian gói Basic (ngày)")
+            SystemConfig.set(conn, "plan_basic_scans", request.form.get("plan_basic_scans", "").strip(), "Lượt quét gói Basic")
+            plan_basic_enabled = "1" if request.form.get("plan_basic_enabled") in ["on", "1", "true"] else "0"
+            SystemConfig.set(conn, "plan_basic_enabled", plan_basic_enabled, "Trạng thái gói Basic (1=Bật, 0=Tắt)")
             
-            plan_pro_price = (request.form.get("plan_pro_price") or "").strip()
-            plan_pro_days = (request.form.get("plan_pro_days") or "").strip()
-            plan_pro_scans = (request.form.get("plan_pro_scans") or "").strip()
+            SystemConfig.set(conn, "plan_pro_price", request.form.get("plan_pro_price", "").strip(), "Giá gói Pro (VND)")
+            SystemConfig.set(conn, "plan_pro_days", request.form.get("plan_pro_days", "").strip(), "Thời gian gói Pro (ngày)")
+            SystemConfig.set(conn, "plan_pro_scans", request.form.get("plan_pro_scans", "").strip(), "Lượt quét gói Pro")
+            plan_pro_enabled = "1" if request.form.get("plan_pro_enabled") in ["on", "1", "true"] else "0"
+            SystemConfig.set(conn, "plan_pro_enabled", plan_pro_enabled, "Trạng thái gói Pro (1=Bật, 0=Tắt)")
             
-            plan_enterprise_price = (request.form.get("plan_enterprise_price") or "").strip()
-            plan_enterprise_days = (request.form.get("plan_enterprise_days") or "").strip()
-            plan_enterprise_scans = (request.form.get("plan_enterprise_scans") or "").strip()
-            
-            SystemConfig.set(conn, "plan_basic_price", plan_basic_price, "Giá gói Basic (VND)")
-            SystemConfig.set(conn, "plan_basic_days", plan_basic_days, "Thời gian gói Basic (ngày)")
-            SystemConfig.set(conn, "plan_basic_scans", plan_basic_scans, "Lượt quét gói Basic")
-            
-            SystemConfig.set(conn, "plan_pro_price", plan_pro_price, "Giá gói Pro (VND)")
-            SystemConfig.set(conn, "plan_pro_days", plan_pro_days, "Thời gian gói Pro (ngày)")
-            SystemConfig.set(conn, "plan_pro_scans", plan_pro_scans, "Lượt quét gói Pro")
-            
-            SystemConfig.set(conn, "plan_enterprise_price", plan_enterprise_price, "Giá gói Enterprise (VND)")
-            SystemConfig.set(conn, "plan_enterprise_days", plan_enterprise_days, "Thời gian gói Enterprise (ngày)")
-            SystemConfig.set(conn, "plan_enterprise_scans", plan_enterprise_scans, "Lượt quét gói Enterprise")
+            SystemConfig.set(conn, "plan_enterprise_price", request.form.get("plan_enterprise_price", "").strip(), "Giá gói Enterprise (VND)")
+            SystemConfig.set(conn, "plan_enterprise_days", request.form.get("plan_enterprise_days", "").strip(), "Thời gian gói Enterprise (ngày)")
+            SystemConfig.set(conn, "plan_enterprise_scans", request.form.get("plan_enterprise_scans", "").strip(), "Lượt quét gói Enterprise")
+            plan_enterprise_enabled = "1" if request.form.get("plan_enterprise_enabled") in ["on", "1", "true"] else "0"
+            SystemConfig.set(conn, "plan_enterprise_enabled", plan_enterprise_enabled, "Trạng thái gói Enterprise (1=Bật, 0=Tắt)")
+
+        # Payments configurations (VietQR)
+        if "vietqr_account" in request.form or "vietqr_owner" in request.form or "vietqr_submitted" in request.form:
+            SystemConfig.set(conn, "vietqr_owner", request.form.get("vietqr_owner", "").strip(), "Tên chủ tài khoản VietQR")
+            SystemConfig.set(conn, "vietqr_account", request.form.get("vietqr_account", "").strip(), "Số tài khoản VietQR")
+            SystemConfig.set(conn, "vietqr_bank", request.form.get("vietqr_bank", "").strip(), "Ngân hàng VietQR")
+            SystemConfig.set(conn, "vietqr_template", request.form.get("vietqr_template", "").strip(), "Nội dung chuyển khoản mẫu")
+            SystemConfig.set(conn, "vietqr_email", request.form.get("vietqr_email", "").strip(), "Email nhận thông báo thanh toán")
+            SystemConfig.set(conn, "vietqr_instructions", request.form.get("vietqr_instructions", "").strip(), "Hướng dẫn thanh toán")
+            vietqr_enabled = "1" if request.form.get("vietqr_enabled") in ["on", "1", "true"] else "0"
+            SystemConfig.set(conn, "vietqr_enabled", vietqr_enabled, "Bật thanh toán VietQR (1=Bật, 0=Tắt)")
+
+        # Email & Notifications templates
+        if "email_otp_subject" in request.form:
+            SystemConfig.set(conn, "email_otp_subject", request.form.get("email_otp_subject", "").strip(), "Tiêu đề email xác thực OTP")
+            SystemConfig.set(conn, "email_otp_body", request.form.get("email_otp_body", "").strip(), "Nội dung email xác thực OTP")
+        if "email_forgot_subject" in request.form:
+            SystemConfig.set(conn, "email_forgot_subject", request.form.get("email_forgot_subject", "").strip(), "Tiêu đề email quên mật khẩu")
+            SystemConfig.set(conn, "email_forgot_body", request.form.get("email_forgot_body", "").strip(), "Nội dung email quên mật khẩu")
+        if "email_pay_confirm_subject" in request.form:
+            SystemConfig.set(conn, "email_pay_confirm_subject", request.form.get("email_pay_confirm_subject", "").strip(), "Tiêu đề email xác nhận thanh toán")
+            SystemConfig.set(conn, "email_pay_confirm_body", request.form.get("email_pay_confirm_body", "").strip(), "Nội dung email xác nhận thanh toán")
+        if "email_pay_reject_subject" in request.form:
+            SystemConfig.set(conn, "email_pay_reject_subject", request.form.get("email_pay_reject_subject", "").strip(), "Tiêu đề email từ chối thanh toán")
+            SystemConfig.set(conn, "email_pay_reject_body", request.form.get("email_pay_reject_body", "").strip(), "Nội dung email từ chối thanh toán")
+        if "email_delete_request_subject" in request.form:
+            SystemConfig.set(conn, "email_delete_request_subject", request.form.get("email_delete_request_subject", "").strip(), "Tiêu đề email yêu cầu xóa tài khoản")
+            SystemConfig.set(conn, "email_delete_request_body", request.form.get("email_delete_request_body", "").strip(), "Nội dung email yêu cầu xóa tài khoản")
+        if "email_delete_confirm_subject" in request.form:
+            SystemConfig.set(conn, "email_delete_confirm_subject", request.form.get("email_delete_confirm_subject", "").strip(), "Tiêu đề email xác nhận xóa tài khoản")
+            SystemConfig.set(conn, "email_delete_confirm_body", request.form.get("email_delete_confirm_body", "").strip(), "Nội dung email xác nhận xóa tài khoản")
             
         flash("Cập nhật cấu hình hệ thống thành công.", "success")
     except Exception:
@@ -910,36 +959,101 @@ def save_logo_config():
         return redirect(url_for("login.login"))
         
     import os
-    if "logo" not in request.files:
-        flash("Không tìm thấy file logo.", "error")
-        return redirect(url_for("users.system_config"))
-        
-    file = request.files["logo"]
-    if file.filename == "":
+    
+    logo_file = request.files.get("logo")
+    favicon_file = request.files.get("favicon")
+    
+    if (not logo_file or logo_file.filename == "") and (not favicon_file or favicon_file.filename == ""):
         flash("Chưa chọn file upload.", "warning")
         return redirect(url_for("users.system_config"))
         
-    filename = file.filename.lower()
-    allowed_extensions = {".png", ".jpg", ".jpeg", ".svg", ".webp"}
-    _, ext = os.path.splitext(filename)
-    if ext not in allowed_extensions:
-        flash("Định dạng file không hỗ trợ. Chỉ cho phép PNG, JPG, JPEG, SVG, WEBP.", "error")
-        return redirect(url_for("users.system_config"))
-        
-    try:
-        static_dir = os.path.join(current_app.root_path, "static", "images")
-        logo_path = os.path.join(static_dir, "logo.png")
-        backup_path = os.path.join(static_dir, "logo_backup.png")
-        
-        # Backup original logo if backup doesn't exist
-        if os.path.exists(logo_path) and not os.path.exists(backup_path):
-            import shutil
-            shutil.copy2(logo_path, backup_path)
+    static_dir = os.path.join(current_app.root_path, "static", "images")
+    os.makedirs(static_dir, exist_ok=True)
+    
+    # Process logo upload
+    if logo_file and logo_file.filename != "":
+        filename = logo_file.filename.lower()
+        allowed_logo_exts = {".png", ".jpg", ".jpeg", ".svg", ".webp"}
+        _, ext = os.path.splitext(filename)
+        if ext not in allowed_logo_exts:
+            flash("Định dạng file logo không hỗ trợ. Chỉ cho phép PNG, JPG, JPEG, SVG, WEBP.", "error")
+            return redirect(url_for("users.system_config"))
             
-        file.save(logo_path)
-        flash("Thay đổi logo trang web thành công.", "success")
-    except Exception as e:
-        logger.exception("[ADMIN] Upload logo error")
-        flash(f"Lỗi tải lên logo: {str(e)}", "error")
-        
+        try:
+            logo_path = os.path.join(static_dir, "logo.png")
+            backup_path = os.path.join(static_dir, "logo_backup.png")
+            
+            # Backup original logo if backup doesn't exist
+            if os.path.exists(logo_path) and not os.path.exists(backup_path):
+                import shutil
+                shutil.copy2(logo_path, backup_path)
+                
+            logo_file.save(logo_path)
+            flash("Thay đổi logo trang web thành công.", "success")
+        except Exception as e:
+            logger.exception("[ADMIN] Upload logo error")
+            flash(f"Lỗi tải lên logo: {str(e)}", "error")
+
+    # Process favicon upload
+    if favicon_file and favicon_file.filename != "":
+        filename = favicon_file.filename.lower()
+        allowed_fav_exts = {".ico", ".png", ".jpg", ".jpeg", ".svg", ".webp"}
+        _, ext = os.path.splitext(filename)
+        if ext not in allowed_fav_exts:
+            flash("Định dạng file favicon không hỗ trợ. Chỉ cho phép ICO, PNG, JPG, JPEG, SVG, WEBP.", "error")
+            return redirect(url_for("users.system_config"))
+            
+        try:
+            fav_path = os.path.join(static_dir, "favicon.ico")
+            backup_path = os.path.join(static_dir, "favicon_backup.ico")
+            
+            # Backup original favicon if backup doesn't exist
+            if os.path.exists(fav_path) and not os.path.exists(backup_path):
+                import shutil
+                shutil.copy2(fav_path, backup_path)
+                
+            favicon_file.save(fav_path)
+            flash("Thay đổi favicon trang web thành công.", "success")
+        except Exception as e:
+            logger.exception("[ADMIN] Upload favicon error")
+            flash(f"Lỗi tải lên favicon: {str(e)}", "error")
+            
     return redirect(url_for("users.system_config"))
+
+
+@users_bp.route("/system-config/delete-asset", methods=["POST"])
+def delete_system_asset():
+    if not require_admin():
+        return jsonify({"error": "Unauthorized"}), 403
+        
+    asset_type = request.form.get("asset_type")
+    import os
+    static_dir = os.path.join(current_app.root_path, "static", "images")
+    
+    try:
+        if asset_type == "logo":
+            logo_path = os.path.join(static_dir, "logo.png")
+            backup_path = os.path.join(static_dir, "logo_backup.png")
+            if os.path.exists(backup_path):
+                import shutil
+                shutil.copy2(backup_path, logo_path)
+                return jsonify({"success": True, "message": "Đã khôi phục logo mặc định."})
+            elif os.path.exists(logo_path):
+                os.remove(logo_path)
+                return jsonify({"success": True, "message": "Đã xóa logo thành công."})
+                
+        elif asset_type == "favicon":
+            fav_path = os.path.join(static_dir, "favicon.ico")
+            backup_path = os.path.join(static_dir, "favicon_backup.ico")
+            if os.path.exists(backup_path):
+                import shutil
+                shutil.copy2(backup_path, fav_path)
+                return jsonify({"success": True, "message": "Đã khôi phục favicon mặc định."})
+            elif os.path.exists(fav_path):
+                os.remove(fav_path)
+                return jsonify({"success": True, "message": "Đã xóa favicon thành công."})
+                
+        return jsonify({"error": "Không tìm thấy tài nguyên."}), 404
+    except Exception as e:
+        logger.exception("[ADMIN] Delete asset error")
+        return jsonify({"error": f"Lỗi: {str(e)}"}), 500
