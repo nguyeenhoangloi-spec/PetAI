@@ -1,135 +1,134 @@
 <!-- html-validate-disable no-dup-class, void-style, title-length, attribute-allowed-values -->
 <!-- htmlhint spec-char-escape:false -->
 <!DOCTYPE html>
-
 <html
   class="{{ 'dark' if ui_theme == 'dark' else 'light' }}{{ ' i18n-loading' if ui_language == 'en' else '' }}"
   lang="{{ ui_language or 'vi' }}"
   data-theme="{{ ui_theme or 'light' }}"
 >
   <head>
-  <script>
-    // Apply initial sidebar collapse state immediately on load to prevent transition animation
-    (function() {
-      document.documentElement.classList.add("preload");
-      try {
-        if (window.innerWidth >= 768) {
-          const isCollapsed = localStorage.getItem("sidebar-collapsed") === "true";
-          if (isCollapsed) {
-            document.documentElement.classList.add("sidebar-collapsed");
-          } else {
-            document.documentElement.classList.remove("sidebar-collapsed");
+    <script>
+      // Apply initial sidebar collapse state immediately on load to prevent transition animation
+      (function() {
+        document.documentElement.classList.add("preload");
+        try {
+          if (window.innerWidth >= 768) {
+            const isCollapsed = localStorage.getItem("sidebar-collapsed") === "true";
+            if (isCollapsed) {
+              document.documentElement.classList.add("sidebar-collapsed");
+            } else {
+              document.documentElement.classList.remove("sidebar-collapsed");
+            }
           }
-        }
-      } catch (e) {}
-    })();
-  </script>
-  <style id="early-sidebar-style">
-    /* Prevent FOUC (Flash of Unstyled Content) during Tailwind compiler startup */
-    html.preload body {
-      opacity: 0 !important;
-    }
-    
-    /* Early CSS to prevent F5 flicker before stylesheet loads */
-    html.preload .sidebar,
-    html.preload main,
-    html.preload footer {
-      transition: none !important;
-    }
-    
-    /* Stable header styles to prevent navigation bar shifting */
-    body>nav .flex.items-center.gap-gutter {
-      gap: 12px !important;
-    }
-    body>nav #menuToggle {
-      margin-left: 4px !important;
-      margin-right: 0 !important;
-      position: relative !important;
-    }
-    
-    /* Stable inner sidebar styles to prevent internal text/layout shifting */
-    .sidebar-wrapper {
-      display: flex !important;
-      flex-direction: column !important;
-      height: 100% !important;
-      justify-content: space-between !important;
-      padding: 16px 10px 12px 10px !important;
-      box-sizing: border-box !important;
-      gap: 12px !important;
-    }
-    .sidebar-menu {
-      display: flex !important;
-      flex-direction: column !important;
-      gap: 6px !important;
-      flex-grow: 1 !important;
-    }
-    .sidebar-menu-item {
-      display: flex !important;
-      align-items: center !important;
-      gap: 10px !important;
-      height: 40px !important;
-      padding: 0 10px !important;
-      border-radius: 12px !important;
-      box-sizing: border-box !important;
-    }
-    
-    @media (min-width: 768px) {
-      .sidebar {
-        position: fixed !important;
-        top: 64px !important;
-        left: 0 !important;
-        bottom: 0 !important;
-        width: 224px !important;
-        height: calc(100vh - 64px) !important;
-        z-index: 100 !important;
-      }
-      
-      /* Collapsed state */
-      html.sidebar-collapsed .sidebar {
-        transform: translateX(-100%) !important;
+        } catch (e) {}
+      })();
+    </script>
+    <style id="early-sidebar-style">
+      /* Prevent FOUC (Flash of Unstyled Content) during Tailwind compiler startup */
+      html.preload body {
         opacity: 0 !important;
-        visibility: hidden !important;
-      }
-      html.sidebar-collapsed main,
-      html.sidebar-collapsed footer {
-        margin-left: 0 !important;
-        width: 100% !important;
       }
       
-      /* Expanded state (default) */
-      html:not(.sidebar-collapsed) .sidebar {
-        transform: translateX(0) !important;
-        opacity: 1 !important;
-        visibility: visible !important;
-      }
-      html:not(.sidebar-collapsed) main,
-      html:not(.sidebar-collapsed) footer {
-        margin-left: 224px !important;
-        width: calc(100% - 224px) !important;
+      /* Early CSS to prevent F5 flicker before stylesheet loads */
+      html.preload .sidebar,
+      html.preload main,
+      html.preload footer {
+        transition: none !important;
       }
       
-      /* Force single-column grid immediately for main container on both states */
-      html main {
-        grid-template-columns: 1fr !important;
-        gap: 0 !important;
+      /* Stable header styles to prevent navigation bar shifting */
+      body>nav .flex.items-center.gap-gutter {
+        gap: 12px !important;
       }
-    }
-    
-    @media (max-width: 767px) {
-      .sidebar {
-        position: fixed !important;
-        top: 0 !important;
-        left: 0 !important;
-        height: 100vh !important;
-        width: 224px !important;
-        transform: translateX(-100%) !important;
-        z-index: 1000 !important;
+      body>nav #menuToggle {
+        margin-left: 4px !important;
+        margin-right: 0 !important;
+        position: relative !important;
       }
-      .sidebar.active {
-        transform: translateX(0) !important;
+      
+      /* Stable inner sidebar styles to prevent internal text/layout shifting */
+      .sidebar-wrapper {
+        display: flex !important;
+        flex-direction: column !important;
+        height: 100% !important;
+        justify-content: space-between !important;
+        padding: 16px 10px 12px 10px !important;
+        box-sizing: border-box !important;
+        gap: 12px !important;
       }
-    }
-  </style>
+      .sidebar-menu {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 6px !important;
+        flex-grow: 1 !important;
+      }
+      .sidebar-menu-item {
+        display: flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+        height: 40px !important;
+        padding: 0 10px !important;
+        border-radius: 12px !important;
+        box-sizing: border-box !important;
+      }
+      
+      @media (min-width: 768px) {
+        .sidebar {
+          position: fixed !important;
+          top: 64px !important;
+          left: 0 !important;
+          bottom: 0 !important;
+          width: 224px !important;
+          height: calc(100vh - 64px) !important;
+          z-index: 100 !important;
+        }
+        
+        /* Collapsed state */
+        html.sidebar-collapsed .sidebar {
+          transform: translateX(-100%) !important;
+          opacity: 0 !important;
+          visibility: hidden !important;
+        }
+        html.sidebar-collapsed main,
+        html.sidebar-collapsed footer {
+          margin-left: 0 !important;
+          width: 100% !important;
+        }
+        
+        /* Expanded state (default) */
+        html:not(.sidebar-collapsed) .sidebar {
+          transform: translateX(0) !important;
+          opacity: 1 !important;
+          visibility: visible !important;
+        }
+        html:not(.sidebar-collapsed) main,
+        html:not(.sidebar-collapsed) footer {
+          margin-left: 224px !important;
+          width: calc(100% - 224px) !important;
+        }
+        
+        /* Force single-column grid immediately for main container on both states */
+        html main {
+          grid-template-columns: 1fr !important;
+          gap: 0 !important;
+        }
+      }
+      
+      @media (max-width: 767px) {
+        .sidebar {
+          position: fixed !important;
+          top: 0 !important;
+          left: 0 !important;
+          height: 100vh !important;
+          width: 224px !important;
+          transform: translateX(-100%) !important;
+          z-index: 1000 !important;
+        }
+        .sidebar.active {
+          transform: translateX(0) !important;
+        }
+      }
+    </style>
     <script>
       (function () {
         var savedLang = "vi";
@@ -226,9 +225,8 @@
         } catch (e) {}
       })();
     </script>
-    <title data-i18n="paymentsPageTitle">{{ 'Payments' if ui_language == 'en' else 'Thanh toán' }} - PetAI</title>
+    <title data-i18n="paymentHistoryTitle">{{ 'Payment History' if ui_language == 'en' else 'Lịch sử thanh toán' }} - PetAI</title>
     <script src="{{ url_for('static', filename='js/tailwindcss.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/chart.umd.min.js') }}"></script>
 
     <link
       rel="stylesheet"
@@ -380,7 +378,7 @@
       }
       .stat-card:hover {
         transform: translateY(-4px);
-        box-shadow: 0 12px 24px -10px rgba(0, 74, 198, 0.15);
+        box-shadow: 0 12px 24px -10px rgba(0, 74, 198, 0.12);
         border-color: rgba(0, 74, 198, 0.3) !important;
       }
 
@@ -427,17 +425,19 @@
   >
     {% include '_toasts.html' %}
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
-    {% set display_role = session.get('role') or 'user' %} {% set display_plan =
-    current_plan or 'free' %}
+    {% set display_role = session.get('role') or 'user' %}
+    {% set display_plan = current_plan or 'free' %}
 
     {% include '_header.html' %}
 
     <main
       class="flex-grow w-full px-4 md:px-6 py-margin grid grid-cols-1 gap-0"
     >
-      {% set active_page = 'payments' %} {% include '_sidebar.html' %}
+      {% set active_page = 'payments' %}
+      {% include '_sidebar.html' %}
 
       <div id="content-area" class="col-span-1 flex flex-col min-w-0 gap-8">
+        <!-- Page Title & Header Section -->
         <section
           class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-outline-variant/20 dark:border-slate-800 pb-5"
           data-purpose="page-header"
@@ -445,17 +445,15 @@
           <div class="flex flex-col gap-2">
             <h1
               class="headline-lg font-semibold text-on-surface dark:text-slate-100"
-              data-i18n="payments"
+              data-i18n="paymentHistoryTitle"
             >
-              <span data-i18n="payments">Lịch sử thanh toán</span>
+              Lịch sử thanh toán
             </h1>
             <p
               class="body-md text-on-surface-variant dark:text-slate-400"
-              data-i18n="paymentsUserDesc"
+              data-i18n="paymentHistoryDesc"
             >
-              <span data-i18n="paymentsUserDesc"
-                >Các đơn bạn đã tạo và trạng thái xử lý hiện tại.</span
-              >
+              Theo dõi các đơn nâng cấp gói và trạng thái xử lý.
             </p>
           </div>
           <div class="mt-4 md:mt-0 md:flex-none">
@@ -463,20 +461,22 @@
               class="bg-primary hover:bg-primary/95 text-on-primary px-4 py-2.5 rounded-lg label-sm shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-2 font-semibold active:scale-95 duration-100 cursor-pointer"
               href="{{ url_for('predict.upgrade') }}"
             >
-              <span class="material-symbols-outlined text-[18px]"
-                >workspace_premium</span
-              ><span data-i18n="upgradePlan">Nâng cấp gói</span></a
-            >
+              <span class="material-symbols-outlined text-[18px]">workspace_premium</span>
+              <span data-i18n="upgradePlan">Nâng cấp gói</span>
+            </a>
           </div>
         </section>
 
         <!-- Calculations of Sum & Counts -->
-        {% set paid_sum = namespace(value=0) %} {% set pending_count =
-        namespace(value=0) %} {% for o in orders %} {% if (o.status or '')|lower
-        == 'paid' %} {% set paid_sum.value = paid_sum.value + (o.amount_vnd or
-        0) %} {% elif (o.status or '')|lower in ['pending', 'user_confirmed'] %}
-        {% set pending_count.value = pending_count.value + 1 %} {% endif %} {%
-        endfor %}
+        {% set paid_sum = namespace(value=0) %}
+        {% set pending_count = namespace(value=0) %}
+        {% for o in orders %}
+          {% if (o.status or '')|lower == 'paid' %}
+            {% set paid_sum.value = paid_sum.value + (o.amount_vnd or 0) %}
+          {% elif (o.status or '')|lower in ['pending', 'user_confirmed'] %}
+            {% set pending_count.value = pending_count.value + 1 %}
+          {% endif %}
+        {% endfor %}
 
         <!-- Statistics Grid Overview -->
         <section
@@ -485,28 +485,27 @@
         >
           <!-- Card 1: Tổng đơn hàng -->
           <div
-            class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 dark:border-slate-800 shadow-sm min-h-[140px]"
+            class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-5 border border-outline-variant/30 dark:border-slate-800 shadow-sm flex items-center gap-4 min-h-[120px]"
           >
-            <div class="flex items-center justify-between">
+            <div
+              class="w-12 h-12 rounded-xl bg-primary/10 dark:bg-primary/20 flex items-center justify-center text-primary flex-shrink-0"
+            >
+              <span class="material-symbols-outlined text-2xl">receipt_long</span>
+            </div>
+            <div class="min-w-0">
               <span
-                class="label-sm text-on-surface-variant dark:text-slate-400 font-bold uppercase tracking-wider"
+                class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider block"
                 data-i18n="totalOrdersCard"
                 >Tổng đơn hàng</span
               >
-              <div
-                class="w-10 h-10 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center text-primary"
-              >
-                <span class="material-symbols-outlined">receipt_long</span>
-              </div>
-            </div>
-            <div class="mt-4 flex flex-col">
-              <span
-                class="text-3xl font-bold text-on-surface dark:text-slate-100 tracking-tight"
+              <h3
+                class="text-2xl font-bold text-slate-800 dark:text-slate-100 mt-1"
                 data-counter="{{ orders|length }}"
-                >0</span
               >
+                0
+              </h3>
               <span
-                class="label-sm text-on-surface-variant/70 dark:text-slate-400/80 mt-1"
+                class="text-[11px] text-slate-400 dark:text-slate-500 block mt-0.5"
                 data-i18n="ordersCreated"
                 >Đơn hàng đã tạo</span
               >
@@ -515,31 +514,29 @@
 
           <!-- Card 2: Đã thanh toán -->
           <div
-            class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 dark:border-slate-800 shadow-sm min-h-[140px]"
+            class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-5 border border-outline-variant/30 dark:border-slate-800 shadow-sm flex items-center gap-4 min-h-[120px]"
           >
-            <div class="flex items-center justify-between">
-              <span
-                class="label-sm text-on-surface-variant dark:text-slate-400 font-bold uppercase tracking-wider"
-                data-i18n="statusPaid"
-                >Đã thanh toán</span
-              >
-              <div
-                class="w-10 h-10 rounded-lg bg-emerald-500/10 dark:bg-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400"
-              >
-                <span class="material-symbols-outlined">payments</span>
-              </div>
+            <div
+              class="w-12 h-12 rounded-xl bg-emerald-500/10 dark:bg-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400 flex-shrink-0"
+            >
+              <span class="material-symbols-outlined text-2xl">payments</span>
             </div>
-            <div class="mt-4 flex flex-col">
+            <div class="min-w-0">
               <span
-                class="text-2xl font-bold text-on-surface dark:text-slate-100 tracking-tight"
+                class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider block"
+                data-i18n="paymentHistoryTotalPaid"
+                >Tổng tiền đã thanh toán</span
+              >
+              <h3
+                class="text-2xl font-bold text-slate-800 dark:text-slate-100 mt-1"
                 data-counter="{{ paid_sum.value }}"
                 data-suffix="đ"
                 data-use-commas="true"
-                data-i18n="planFreePrice"
-                >0đ</span
               >
+                0đ
+              </h3>
               <span
-                class="label-sm text-on-surface-variant/70 dark:text-slate-400/80 mt-1"
+                class="text-[11px] text-slate-400 dark:text-slate-500 block mt-0.5"
                 data-i18n="totalAmountPaid"
                 >Tổng tiền thanh toán</span
               >
@@ -548,28 +545,27 @@
 
           <!-- Card 3: Đơn đang chờ -->
           <div
-            class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 dark:border-slate-800 shadow-sm min-h-[140px]"
+            class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-5 border border-outline-variant/30 dark:border-slate-800 shadow-sm flex items-center gap-4 min-h-[120px]"
           >
-            <div class="flex items-center justify-between">
-              <span
-                class="label-sm text-on-surface-variant dark:text-slate-400 font-bold uppercase tracking-wider"
-                data-i18n="pendingOrdersCard"
-                >Đơn đang chờ</span
-              >
-              <div
-                class="w-10 h-10 rounded-lg bg-amber-500/10 dark:bg-amber-500/20 flex items-center justify-center text-amber-600 dark:text-amber-400"
-              >
-                <span class="material-symbols-outlined">hourglass_empty</span>
-              </div>
+            <div
+              class="w-12 h-12 rounded-xl bg-amber-500/10 dark:bg-amber-500/20 flex items-center justify-center text-amber-600 dark:text-amber-400 flex-shrink-0"
+            >
+              <span class="material-symbols-outlined text-2xl">hourglass_empty</span>
             </div>
-            <div class="mt-4 flex flex-col">
+            <div class="min-w-0">
               <span
-                class="text-3xl font-bold text-on-surface dark:text-slate-100 tracking-tight"
-                data-counter="{{ pending_count.value }}"
-                >0</span
+                class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider block"
+                data-i18n="pendingOrdersCard"
+                >Đơn chờ thanh toán</span
               >
+              <h3
+                class="text-2xl font-bold text-slate-800 dark:text-slate-100 mt-1"
+                data-counter="{{ pending_count.value }}"
+              >
+                0
+              </h3>
               <span
-                class="label-sm text-on-surface-variant/70 dark:text-slate-400/80 mt-1"
+                class="text-[11px] text-slate-400 dark:text-slate-500 block mt-0.5"
                 data-i18n="awaitingConfirm"
                 >Đang chờ xác nhận</span
               >
@@ -578,352 +574,327 @@
 
           <!-- Card 4: Gói hiện tại -->
           <div
-            class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 dark:border-slate-800 shadow-sm min-h-[140px]"
+            class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-5 border border-outline-variant/30 dark:border-slate-800 shadow-sm flex items-center gap-4 min-h-[120px]"
           >
-            <div class="flex items-center justify-between">
+            <div
+              class="w-12 h-12 rounded-xl bg-blue-500/10 dark:bg-blue-500/20 flex items-center justify-center text-blue-600 dark:text-blue-400 flex-shrink-0"
+            >
+              <span class="material-symbols-outlined text-2xl">workspace_premium</span>
+            </div>
+            <div class="min-w-0">
               <span
-                class="label-sm text-on-surface-variant dark:text-slate-400 font-bold uppercase tracking-wider"
-                data-i18n="currentPlan"
+                class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider block"
+                data-i18n="paymentHistoryCurrentPlan"
                 >Gói hiện tại</span
               >
-              <div
-                class="w-10 h-10 rounded-lg bg-blue-500/10 dark:bg-blue-500/20 flex items-center justify-center text-blue-600 dark:text-blue-400"
-              >
-                <span class="material-symbols-outlined">workspace_premium</span>
-              </div>
-            </div>
-            <div class="mt-4 flex flex-col">
-              <span
-                class="text-3xl font-bold text-on-surface dark:text-slate-100 tracking-tight"
+              <h3
+                class="text-2xl font-bold text-slate-800 dark:text-slate-100 mt-1"
                 id="currentPlanValue"
               >
-                {{ quota_info.plan|upper if quota_info and quota_info.plan else
-                'FREE' }}
-              </span>
+                {{ quota_info.plan|upper if quota_info and quota_info.plan else 'FREE' }}
+              </h3>
               <span
-                class="label-sm text-on-surface-variant/70 dark:text-slate-400/80 mt-1 truncate"
+                class="text-[11px] text-slate-400 dark:text-slate-500 block mt-0.5 truncate"
+                id="currentPlanExpireValue"
               >
                 {% if quota_info and quota_info.plan_expire %}
-                <span data-i18n="planExpireLabel">Hạn</span>: {{
-                quota_info.plan_expire.strftime('%d/%m/%Y') }} {% else %}
-                <span data-i18n="freeLimitPlan">Gói miễn phí giới hạn</span>
+                  <span data-i18n="planExpireLabel">Hạn</span>: {{ quota_info.plan_expire.strftime('%d/%m/%Y') }}
+                {% else %}
+                  <span data-i18n="freeLimitPlan">Gói miễn phí giới hạn</span>
                 {% endif %}
               </span>
             </div>
           </div>
         </section>
 
-        <!-- Payments Card List -->
-        <section class="space-y-4" data-purpose="payment-history-list">
-          <div class="flex items-center justify-between px-1">
-            <h2
-              class="headline-md font-semibold text-on-surface dark:text-slate-100"
-              data-i18n="recentOrders"
-            >
-              <span data-i18n="recentOrders">Đơn hàng gần đây</span>
-            </h2>
-            <span
-              class="px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200/50 dark:border-slate-700/50 shadow-sm"
-            >
-              {{ orders|length }} <span data-i18n="ordersCount">đơn</span>
-            </span>
+        <!-- Filters Section -->
+        <section class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 dark:border-slate-800 rounded-xl p-4 shadow-sm">
+          <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <!-- Filter Options -->
+            <div class="flex flex-wrap items-center gap-3 flex-grow">
+              <!-- Search Bar -->
+              <div class="relative min-w-[200px] flex-grow sm:flex-grow-0 sm:w-64">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 text-[18px]">search</span>
+                <input
+                  type="text"
+                  id="search-input"
+                  placeholder="Tìm theo mã đơn hoặc mã giao dịch..."
+                  class="w-full pl-9 pr-4 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-300 dark:text-slate-200"
+                />
+              </div>
+
+              <!-- Status Dropdown -->
+              <div class="relative w-full sm:w-auto">
+                <select
+                  id="filter-status"
+                  class="w-full sm:w-auto px-4 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-300 cursor-pointer dark:text-slate-200"
+                >
+                  <option value="all" data-i18n="paymentHistoryFilterAllStatus">Tất cả trạng thái</option>
+                  <option value="pending" data-i18n="paymentHistoryStatusPending">Chờ thanh toán</option>
+                  <option value="user_confirmed" data-i18n="paymentHistoryStatusProcessing">Đang xử lý</option>
+                  <option value="paid" data-i18n="paymentHistoryStatusPaid">Đã thanh toán</option>
+                  <option value="cancelled" data-i18n="paymentHistoryStatusCancelled">Đã hủy</option>
+                  <option value="failed" data-i18n="paymentHistoryStatusFailed">Thất bại</option>
+                </select>
+              </div>
+
+              <!-- Plan Dropdown -->
+              <div class="relative w-full sm:w-auto">
+                <select
+                  id="filter-plan"
+                  class="w-full sm:w-auto px-4 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-300 cursor-pointer dark:text-slate-200"
+                >
+                  <option value="all" data-i18n="paymentHistoryFilterAllPlans">Tất cả gói</option>
+                  <option value="basic">Basic</option>
+                  <option value="pro">Pro</option>
+                  <option value="enterprise">Enterprise</option>
+                </select>
+              </div>
+
+              <!-- Time Dropdown -->
+              <div class="relative w-full sm:w-auto">
+                <select
+                  id="filter-time"
+                  class="w-full sm:w-auto px-4 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-300 cursor-pointer dark:text-slate-200"
+                >
+                  <option value="all" data-i18n="paymentHistoryFilterAllTime">Tất cả thời gian</option>
+                  <option value="today" data-i18n="paymentHistoryFilterToday">Hôm nay</option>
+                  <option value="7days" data-i18n="paymentHistoryFilter7Days">7 ngày</option>
+                  <option value="30days" data-i18n="paymentHistoryFilter30Days">30 ngày</option>
+                </select>
+              </div>
+
+              <!-- Sorting Dropdown -->
+              <div class="relative w-full sm:w-auto">
+                <select
+                  id="sort-by"
+                  class="w-full sm:w-auto px-4 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-300 cursor-pointer dark:text-slate-200"
+                >
+                  <option value="newest" data-i18n="paymentHistorySortNewest">Mới nhất</option>
+                  <option value="oldest" data-i18n="paymentHistorySortOldest">Cũ nhất</option>
+                  <option value="amount-desc" data-i18n="paymentHistorySortAmountHighest">Số tiền cao nhất</option>
+                  <option value="amount-asc" data-i18n="paymentHistorySortAmountLowest">Số tiền thấp nhất</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Clear Filters Button -->
+            <div class="flex-shrink-0">
+              <button
+                type="button"
+                id="clear-filters-btn"
+                class="w-full lg:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2 border border-outline-variant/35 dark:border-slate-800 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 rounded-xl text-xs font-bold shadow-sm hover:bg-slate-50 dark:hover:bg-slate-800 active:scale-95 transition-all cursor-pointer"
+              >
+                <span class="material-symbols-outlined text-[16px]">close</span>
+                <span data-i18n="paymentHistoryClearFilters">Xóa bộ lọc</span>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Orders Table/Card Area -->
+        <section class="flex flex-col gap-4">
+          <!-- Desktop Table Layout -->
+          <div class="hidden md:block bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-slate-50/50 dark:bg-slate-900/50 border-b border-outline-variant/30 dark:border-slate-800">
+                  <th class="text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider text-[11px] py-4 px-5" data-i18n="paymentHistoryColOrderId">Mã đơn</th>
+                  <th class="text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider text-[11px] py-4 px-5" data-i18n="paymentHistoryColPlan">Gói đăng ký</th>
+                  <th class="text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider text-[11px] py-4 px-5" data-i18n="paymentHistoryColStatus">Trạng thái</th>
+                  <th class="text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider text-[11px] py-4 px-5" data-i18n="paymentHistoryColAmount">Số tiền</th>
+                  <th class="text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider text-[11px] py-4 px-5" data-i18n="paymentHistoryColMethod">Phương thức</th>
+                  <th class="text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider text-[11px] py-4 px-5" data-i18n="paymentHistoryColCreated">Thời gian tạo</th>
+                  <th class="text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider text-[11px] py-4 px-5 text-right" data-i18n="paymentHistoryColActions">Thao tác</th>
+                </tr>
+              </thead>
+              <tbody id="orders-table-body" class="divide-y divide-outline-variant/20 dark:divide-slate-800/80">
+                <!-- Javascript populated -->
+              </tbody>
+            </table>
           </div>
 
-          <div class="flex flex-col gap-3">
-            {% for o in orders %} {% set status = (o.status or 'pending')|lower
-            %}
+          <!-- Mobile Card Layout -->
+          <div id="orders-mobile-list" class="flex flex-col gap-4 md:hidden">
+            <!-- Javascript populated -->
+          </div>
+
+          <!-- Empty State (Shared) -->
+          <div
+            id="empty-state"
+            class="hidden bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 dark:border-slate-800 rounded-xl p-10 text-center flex flex-col items-center justify-center shadow-sm"
+          >
             <div
-              class="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 rounded-xl py-3.5 px-5 shadow-[0_2px_12px_rgba(0,0,0,0.015)] hover:shadow-md transition-all duration-200 flex flex-col lg:flex-row lg:items-center justify-between gap-4"
-              data-order-id="{{ o.order_id }}"
-              data-status="{{ status }}"
+              class="w-16 h-16 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 dark:text-slate-500 mb-4"
             >
-              <!-- Left Info: ID & Plan & Status -->
-              <div class="flex flex-col gap-1.5 min-w-[200px]">
-                <div class="flex items-center gap-2">
-                  <span
-                    class="font-mono text-xs px-2.5 py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-350 rounded-lg border border-slate-200/50 dark:border-slate-700/50 font-bold shadow-sm"
-                  >
-                    #{{ o.order_id }}
-                  </span>
+              <span class="material-symbols-outlined text-4xl">payments</span>
+            </div>
+            <h3
+              class="text-lg font-bold text-slate-800 dark:text-white"
+              data-i18n="paymentHistoryEmptyText"
+            >
+              Bạn chưa có đơn thanh toán nào.
+            </h3>
+            <p
+              class="text-sm text-slate-500 dark:text-slate-400 mt-2 max-w-sm"
+              data-i18n="paymentHistoryEmptySubtext"
+            >
+              Hãy chọn một gói dịch vụ để bắt đầu nâng cấp tài khoản.
+            </p>
+            <a
+              class="mt-5 inline-flex items-center gap-2 bg-primary text-on-primary px-4 py-2.5 rounded-lg label-sm font-bold hover:opacity-90 transition-all active:scale-95 duration-100 cursor-pointer shadow-sm"
+              href="{{ url_for('predict.upgrade') }}"
+            >
+              <span class="material-symbols-outlined text-[18px]">workspace_premium</span>
+              <span data-i18n="upgradeNowBtn">Nâng cấp gói ngay</span>
+            </a>
+          </div>
 
-                  <!-- Plan Badge -->
-                  {% if (o.plan or '').lower() == 'pro' %}
-                  <span
-                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-50 dark:bg-indigo-950/30 text-indigo-750 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-800/50 shadow-sm"
-                  >
-                    PRO
-                  </span>
-                  {% else %}
-                  <span
-                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700/80 shadow-sm"
-                  >
-                    {{ (o.plan or 'FREE').upper() }}
-                  </span>
-                  {% endif %}
-                </div>
+          <!-- Pagination Bar -->
+          <div id="pagination-container" class="flex flex-col sm:flex-row items-center justify-between gap-4 mt-4 px-1">
+            <div class="text-xs text-slate-500 dark:text-slate-400 font-medium">
+              <span data-i18n="paymentHistoryPaginationShow">Hiển thị</span>
+              <span id="pagination-start" class="font-bold">0</span>
+              <span data-i18n="paymentHistoryPaginationTo">đến</span>
+              <span id="pagination-end" class="font-bold">0</span>
+              <span data-i18n="paymentHistoryPaginationOf">trong tổng số</span>
+              <span id="pagination-total" class="font-bold">0</span>
+              <span data-i18n="paymentHistoryPaginationOrders">đơn hàng</span>
+            </div>
 
-                <!-- Status Badge Container -->
-                <div class="flex items-center">
-                  <span data-status-badge>
-                    {% if status == 'paid' %}
-                    <span
-                      class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-900/30"
-                    >
-                      <span
-                        class="w-1.5 h-1.5 rounded-full bg-emerald-500"
-                      ></span>
-                      <span data-i18n="paidStatus">Đã thanh toán</span>
-                    </span>
-                    {% elif status == 'cancelled' %}
-                    <span
-                      class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-rose-50 dark:bg-rose-950/20 text-rose-700 dark:text-rose-400 border border-rose-200/60 dark:border-rose-900/30"
-                    >
-                      <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
-                      <span data-i18n="cancelledStatus">Đã hủy</span>
-                    </span>
-                    {% elif status == 'expired' %}
-                    <span
-                      class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200/60 dark:border-slate-700/40"
-                    >
-                      <span
-                        class="w-1.5 h-1.5 rounded-full bg-slate-400"
-                      ></span>
-                      <span data-i18n="expiredStatus">Hết hạn</span>
-                    </span>
-                    {% else %}
-                    <span
-                      class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400 border border-amber-200/60 dark:border-amber-900/30"
-                    >
-                      <span class="relative flex h-1.5 w-1.5">
-                        <span
-                          class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"
-                        ></span>
-                        <span
-                          class="relative inline-flex rounded-full h-1.5 w-1.5 bg-amber-500"
-                        ></span>
-                      </span>
-                      <span data-i18n="pendingStatus">Đang chờ</span>
-                    </span>
-                    {% endif %}
-                  </span>
-                </div>
+            <div class="flex items-center gap-4 flex-wrap justify-center">
+              <!-- Page Size Select -->
+              <div class="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 font-medium">
+                <select
+                  id="page-size-select"
+                  class="px-2 py-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary cursor-pointer"
+                >
+                  <option value="10">10 / <span data-i18n="paymentHistoryPaginationPerPage">trang</span></option>
+                  <option value="20">20 / <span data-i18n="paymentHistoryPaginationPerPage">trang</span></option>
+                  <option value="50">50 / <span data-i18n="paymentHistoryPaginationPerPage">trang</span></option>
+                </select>
               </div>
 
-              <!-- Middle Info: Amount & Method -->
-              <div class="flex flex-col gap-0.5 min-w-[150px]">
-                <span
-                  class="text-[11px] text-slate-400 dark:text-slate-500 uppercase tracking-wider font-bold"
-                  data-i18n="amount"
-                  >Số tiền</span
-                >
-                <div
-                  class="text-lg font-bold text-slate-900 dark:text-white tracking-tight"
-                >
-                  {{ '{:,}'.format(o.amount_vnd or 0).replace(',', '.') }}<span
-                    data-i18n="currencySuffix"
-                    >đ</span
-                  >
-                </div>
-                <div
-                  class="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 font-medium"
-                >
-                  <span class="material-symbols-outlined text-[14px]"
-                    >credit_card</span
-                  >
-                  <span>{{ (o.payment_method or 'QR')|upper }}</span>
-                </div>
-              </div>
-
-              <!-- Right Info: Created & Confirmed Dates -->
-              <div
-                class="grid grid-cols-2 lg:flex lg:flex-col gap-x-4 gap-y-0.5 min-w-[200px]"
-              >
-                <div class="flex flex-col gap-0.5">
-                  <span
-                    class="text-[11px] text-slate-400 dark:text-slate-500 uppercase font-semibold"
-                    data-i18n="createdAt"
-                    >Tạo lúc</span
-                  >
-                  <span
-                    class="text-xs font-medium text-slate-700 dark:text-slate-350 flex items-center gap-1"
-                  >
-                    <span
-                      class="material-symbols-outlined text-[14px] text-slate-400"
-                      >calendar_today</span
-                    >
-                    {{ o.created_at.strftime('%d/%m/%Y %H:%M') if o.created_at
-                    and o.created_at.strftime is defined else (o.created_at or
-                    '-') }}
-                  </span>
-                </div>
-
-                {% if status == 'paid' %}
-                <div class="flex flex-col gap-0.5">
-                  <span
-                    class="text-[11px] text-slate-400 dark:text-slate-500 uppercase font-semibold"
-                    data-i18n="confirmedAt"
-                    >Xác nhận lúc</span
-                  >
-                  <span
-                    class="text-xs font-medium text-emerald-600 dark:text-emerald-400 flex items-center gap-1"
-                  >
-                    <span
-                      class="material-symbols-outlined text-[14px] text-emerald-500"
-                      >verified_user</span
-                    >
-                    {{ o.confirmed_at.strftime('%d/%m/%Y %H:%M') if
-                    o.confirmed_at and o.confirmed_at.strftime is defined else
-                    (o.confirmed_at or '-') }}
-                  </span>
-                </div>
-                {% endif %}
-              </div>
-
-              <!-- Action Area -->
-              <div
-                class="flex items-center justify-start lg:justify-end min-w-[120px]"
-                data-action-cell
-              >
-                {% if status == 'paid' %}
+              <!-- Button numbers list -->
+              <nav class="inline-flex -space-x-px rounded-lg shadow-sm" aria-label="Phân trang">
                 <button
                   type="button"
-                  onclick="viewInvoice('{{ o.order_id }}')"
-                  class="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-300 transition-all shadow-sm active:scale-95 duration-150 whitespace-nowrap cursor-pointer"
+                  id="btn-prev-page"
+                  class="relative inline-flex items-center rounded-l-lg px-3 py-2 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 focus:outline-none cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                 >
-                  <span class="material-symbols-outlined text-[16px]"
-                    >receipt_long</span
-                  ><span data-i18n="invoiceBtn">Hóa đơn</span>
+                  <span class="material-symbols-outlined text-[18px]">chevron_left</span>
                 </button>
-                {% elif status == 'pending' or status == 'user_confirmed' %}
-                <form
-                  method="post"
-                  action="{{ url_for('predict.checkout') }}"
-                  class="inline-block"
+                <div id="page-buttons" class="inline-flex">
+                  <!-- Generated dynamically -->
+                </div>
+                <button
+                  type="button"
+                  id="btn-next-page"
+                  class="relative inline-flex items-center rounded-r-lg px-3 py-2 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 focus:outline-none cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                 >
-                  <input
-                    type="hidden"
-                    name="csrf_token"
-                    value="{{ csrf_token() }}"
-                  />
-                  <input type="hidden" name="plan" value="{{ o.plan }}" />
-                  <button
-                    type="submit"
-                    class="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold rounded-lg bg-blue-600 hover:bg-blue-700 active:scale-95 text-white shadow-sm hover:shadow transition-all duration-150 whitespace-nowrap cursor-pointer"
-                  >
-                    <span class="material-symbols-outlined text-[16px]"
-                      >payment</span
-                    ><span data-i18n="continuePayBtn">Tiếp tục thanh toán</span>
-                  </button>
-                </form>
-                {% else %}
-                <span class="text-slate-400 dark:text-slate-600 text-xs"
-                  >-</span
-                >
-                {% endif %}
-              </div>
+                  <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+                </button>
+              </nav>
             </div>
-            {% else %}
-            <div
-              class="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 rounded-2xl p-10 text-center flex flex-col items-center justify-center shadow-[0_2px_12px_rgba(0,0,0,0.015)]"
-            >
-              <div
-                class="w-16 h-16 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 dark:text-slate-500 mb-4"
-              >
-                <span class="material-symbols-outlined text-4xl">payments</span>
-              </div>
-              <h3
-                class="text-lg font-bold text-slate-800 dark:text-white"
-                data-i18n="noPayments"
-              >
-                <span data-i18n="noPayments">Chưa có giao dịch nào</span>
-              </h3>
-              <p
-                class="text-sm text-slate-500 dark:text-slate-400 mt-2 max-w-sm"
-                data-i18n="noPaymentsMessage"
-              >
-                <span data-i18n="noPaymentsMessage"
-                  >Bạn chưa thực hiện giao dịch nâng cấp tài khoản nào trên
-                  PetAI.</span
-                >
-              </p>
-              <a
-                class="mt-5 inline-flex items-center gap-2 bg-primary text-on-primary px-4 py-2.5 rounded-lg label-sm font-bold hover:opacity-90 transition-all active:scale-95 duration-100 cursor-pointer shadow-sm"
-                href="{{ url_for('predict.upgrade') }}"
-              >
-                <span class="material-symbols-outlined text-[18px]"
-                  >workspace_premium</span
-                ><span data-i18n="upgradeNowBtn">Nâng cấp gói ngay</span></a
-              >
-            </div>
-            {% endfor %}
           </div>
-
-          {% if total_pages and total_pages > 1 %}
-          <div class="mt-8 flex items-center justify-center">
-            <nav
-              aria-label="Phân trang đơn hàng"
-              class="inline-flex -space-x-px rounded-md shadow-sm"
-              data-i18n-aria="orderPaginationAria"
-            >
-              {% if page > 1 %}
-              <a
-                class="relative inline-flex items-center rounded-l-lg px-3 py-2 text-slate-500 ring-1 ring-inset ring-slate-300 hover:bg-slate-50"
-                href="{{ url_for('predict.my_payments', page=page-1) }}"
-              >
-                <span class="material-symbols-outlined text-[18px]"
-                  >chevron_left</span
-                >
-              </a>
-              {% else %}
-              <span
-                class="relative inline-flex items-center rounded-l-lg px-3 py-2 text-slate-300 ring-1 ring-inset ring-slate-300 cursor-not-allowed"
-              >
-                <span class="material-symbols-outlined text-[18px]"
-                  >chevron_left</span
-                >
-              </span>
-              {% endif %} {% for p in range(1, total_pages + 1) %} {% if p ==
-              page %}
-              <span
-                class="relative inline-flex items-center px-4 py-2 body-md font-semibold text-white bg-primary"
-              >
-                {{ p }}
-              </span>
-              {% else %}
-              <a
-                class="relative inline-flex items-center px-4 py-2 body-md font-semibold text-slate-900 ring-1 ring-inset ring-slate-300 hover:bg-slate-50"
-                href="{{ url_for('predict.my_payments', page=p) }}"
-              >
-                {{ p }}
-              </a>
-              {% endif %} {% endfor %} {% if total_pages > page %}
-              <a
-                class="relative inline-flex items-center rounded-r-lg px-3 py-2 text-slate-500 ring-1 ring-inset ring-slate-300 hover:bg-slate-50"
-                href="{{ url_for('predict.my_payments', page=page+1) }}"
-              >
-                <span class="material-symbols-outlined text-[18px]"
-                  >chevron_right</span
-                >
-              </a>
-              {% else %}
-              <span
-                class="relative inline-flex items-center rounded-r-lg px-3 py-2 text-slate-300 ring-1 ring-inset ring-slate-300 cursor-not-allowed"
-              >
-                <span class="material-symbols-outlined text-[18px]"
-                  >chevron_right</span
-                >
-              </span>
-              {% endif %}
-            </nav>
-          </div>
-          {% endif %}
         </section>
+      </div>
+    </main>
 
-
-    <!-- Print styles relocated to head -->
+    <!-- Invoice Auto-Show Trigger -->
     <div id="payment-auto-invoice" data-auto-invoice="{{ auto_show_invoice|tojson|forceescape if auto_show_invoice else '' }}"></div>
 
-    <!-- Invoice Popup Modal Markup -->
+    <!-- Redesigned Modern Order Detail Modal / Banking Slip -->
+    <div
+      id="detailModal"
+      class="fixed inset-0 z-[1050] hidden items-center justify-center p-4 bg-slate-950/60 backdrop-blur-md transition-opacity duration-300"
+      role="dialog"
+      aria-modal="true"
+    >
+      <div
+        id="detailModalContainer"
+        class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 w-full max-w-md overflow-hidden transform transition-all duration-300 scale-95 opacity-0"
+      >
+        <!-- Header -->
+        <div class="px-6 py-4 border-b border-outline-variant/20 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-950">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary dark:text-blue-400 text-2xl">receipt_long</span>
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100" data-i18n="orderDetailTitle">Chi tiết đơn hàng</h3>
+          </div>
+          <button
+            onclick="closeDetailModal()"
+            type="button"
+            class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 focus:outline-none transition-colors cursor-pointer"
+            aria-label="Đóng"
+          >
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+
+        <!-- Body: simulated banking slip style -->
+        <div class="p-6 space-y-5 max-h-[70vh] overflow-y-auto">
+          <!-- Status Banner inside slip -->
+          <div id="detail-status-banner" class="rounded-2xl p-5 flex flex-col items-center justify-center text-center gap-2 shadow-sm border">
+            <div id="detail-status-icon" class="w-12 h-12 rounded-full flex items-center justify-center text-2xl font-bold"></div>
+            <h4 id="detail-status-label" class="text-md font-bold text-slate-800 dark:text-slate-100"></h4>
+            <p id="detail-status-sub" class="text-xs text-slate-500 dark:text-slate-400 mt-0.5"></p>
+          </div>
+
+          <!-- Transaction Fields Grid -->
+          <div class="border border-outline-variant/30 dark:border-slate-800 rounded-2xl p-4 bg-slate-50/50 dark:bg-slate-950/40 space-y-3.5">
+            <div class="flex justify-between items-center text-xs sm:text-sm">
+              <span class="text-slate-500 dark:text-slate-450" data-i18n="paymentHistoryColOrderId">Mã đơn hàng</span>
+              <span class="font-mono font-bold text-slate-850 dark:text-slate-200" id="detail-order-id">#--</span>
+            </div>
+            <div class="flex justify-between items-center text-xs sm:text-sm">
+              <span class="text-slate-500 dark:text-slate-450" data-i18n="paymentHistoryTransactionId">Mã giao dịch</span>
+              <span class="font-mono font-semibold text-slate-800 dark:text-slate-300" id="detail-txn-id">--</span>
+            </div>
+            <div class="flex justify-between items-center text-xs sm:text-sm">
+              <span class="text-slate-500 dark:text-slate-450" data-i18n="paymentHistoryColPlan">Gói đăng ký</span>
+              <span class="font-extrabold text-primary dark:text-blue-400" id="detail-plan">--</span>
+            </div>
+            <div class="flex justify-between items-center text-xs sm:text-sm">
+              <span class="text-slate-500 dark:text-slate-450" data-i18n="paymentHistoryColAmount">Số tiền</span>
+              <span class="font-extrabold text-slate-850 dark:text-slate-100 text-base" id="detail-amount">--</span>
+            </div>
+            <div class="flex justify-between items-center text-xs sm:text-sm">
+              <span class="text-slate-500 dark:text-slate-450" data-i18n="paymentHistoryColMethod">Phương thức</span>
+              <span class="font-semibold text-slate-800 dark:text-slate-250" id="detail-method">--</span>
+            </div>
+            <div class="h-px bg-outline-variant/25 dark:bg-slate-800/80 my-2"></div>
+            <div class="flex justify-between items-center text-xs sm:text-sm">
+              <span class="text-slate-500 dark:text-slate-450" data-i18n="paymentHistoryColCreated">Thời gian tạo</span>
+              <span class="font-semibold text-slate-800 dark:text-slate-250" id="detail-created-at">--</span>
+            </div>
+            <div id="detail-confirmed-row" class="flex justify-between items-center text-xs sm:text-sm hidden">
+              <span class="text-slate-500 dark:text-slate-450" data-i18n="confirmedTimeLabel">Thời gian xác nhận</span>
+              <span class="font-semibold text-slate-800 dark:text-slate-250" id="detail-confirmed-at">--</span>
+            </div>
+            <div id="detail-memo-row" class="flex justify-between items-center text-xs sm:text-sm hidden">
+              <span class="text-slate-500 dark:text-slate-450" data-i18n="transferNote">Nội dung chuyển khoản</span>
+              <span class="font-mono font-bold text-blue-600 dark:text-blue-400 select-all" id="detail-memo">--</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer actions -->
+        <div class="px-6 py-4 border-t border-outline-variant/20 dark:border-slate-800 flex justify-end gap-3 bg-slate-50 dark:bg-slate-950">
+          <div id="detail-modal-actions" class="flex items-center gap-2">
+            <!-- Populate checkout or cancel dynamically -->
+          </div>
+          <button
+            onclick="closeDetailModal()"
+            type="button"
+            class="px-4 py-2 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-350 bg-white dark:bg-slate-900 rounded-lg text-sm font-bold hover:bg-slate-50 dark:hover:bg-slate-800 active:scale-95 transition-all duration-150 cursor-pointer shadow-sm"
+          >
+            <span data-i18n="paymentHistoryModalClose">Đóng</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Print Invoice Modal Markup (Standard Receipt) -->
     <div
       id="invoiceModal"
       class="fixed inset-0 z-[1050] hidden items-center justify-center p-4 bg-slate-950/60 backdrop-blur-md transition-opacity duration-300"
@@ -939,14 +910,9 @@
           class="px-6 py-4 border-b border-slate-250/20 dark:border-slate-800/80 flex justify-between items-center bg-slate-50/80 dark:bg-slate-950/80"
         >
           <div class="flex items-center gap-2">
-            <span class="material-symbols-outlined text-primary text-2xl"
-              >receipt_long</span
-            >
-            <h3
-              class="text-lg font-bold text-slate-800 dark:text-slate-100"
-              data-i18n="invoiceModalTitle"
-            >
-              <span data-i18n="invoiceModalTitle">Hóa Đơn Thanh Toán</span>
+            <span class="material-symbols-outlined text-primary text-2xl">receipt_long</span>
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100" data-i18n="invoiceModalTitle">
+              Hóa Đơn Thanh Toán
             </h3>
           </div>
           <button
@@ -954,7 +920,6 @@
             type="button"
             class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 focus:outline-none transition-colors cursor-pointer"
             aria-label="Đóng"
-            data-i18n-aria="close"
           >
             <span class="material-symbols-outlined">close</span>
           </button>
@@ -962,133 +927,55 @@
 
         <!-- Body -->
         <div class="p-6 space-y-6 max-h-[70vh] overflow-y-auto">
-          <!-- Success Icon -->
           <div class="flex flex-col items-center text-center">
             <div
               class="w-12 h-12 rounded-full bg-emerald-100 dark:bg-emerald-950/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400 mb-2"
             >
-              <span class="material-symbols-outlined text-3xl font-bold"
-                >check</span
-              >
+              <span class="material-symbols-outlined text-3xl font-bold">check</span>
             </div>
-            <h4
-              class="text-md font-bold text-slate-800 dark:text-slate-100"
-              data-i18n="invoiceSuccess"
-            >
-              <span data-i18n="invoiceSuccess">Thanh toán thành công!</span>
+            <h4 class="text-md font-bold text-slate-800 dark:text-slate-100" data-i18n="invoiceSuccess">
+              Thanh toán thành công!
             </h4>
-            <p
-              class="text-xs text-slate-500 dark:text-slate-400 mt-1"
-              data-i18n="invoiceThankYou"
-            >
-              <span data-i18n="invoiceThankYou"
-                >Cảm ơn bạn đã sử dụng dịch vụ của PetAI</span
-              >
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1" data-i18n="invoiceThankYou">
+              Cảm ơn bạn đã sử dụng dịch vụ của PetAI
             </p>
           </div>
 
-          <!-- Invoice Details Grid -->
           <div
             class="border border-slate-200/60 dark:border-slate-800/80 rounded-xl p-4 bg-slate-50/30 dark:bg-slate-950/30 space-y-3"
           >
             <div class="flex justify-between items-center text-sm">
-              <span
-                class="text-slate-500 dark:text-slate-400"
-                data-i18n="orderIdLabel"
-                >Mã đơn hàng</span
-              >
-              <span
-                class="font-mono font-bold text-slate-800 dark:text-slate-200"
-                id="invoiceOrderId"
-                >#ORDER_ID</span
-              >
+              <span class="text-slate-500 dark:text-slate-400" data-i18n="orderIdLabel">Mã đơn hàng</span>
+              <span class="font-mono font-bold text-slate-800 dark:text-slate-200" id="invoiceOrderId">#ORDER_ID</span>
             </div>
             <div class="flex justify-between items-center text-sm">
-              <span
-                class="text-slate-500 dark:text-slate-400"
-                data-i18n="servicePlan"
-                >Gói dịch vụ</span
-              >
-              <span
-                class="font-bold text-primary dark:text-blue-400"
-                id="invoicePlanName"
-                >PRO</span
-              >
+              <span class="text-slate-500 dark:text-slate-400" data-i18n="servicePlan">Gói dịch vụ</span>
+              <span class="font-bold text-primary dark:text-blue-400" id="invoicePlanName">PRO</span>
             </div>
             <div class="flex justify-between items-center text-sm">
-              <span
-                class="text-slate-500 dark:text-slate-400"
-                data-i18n="paymentMethodCol"
-                >Phương thức</span
-              >
-              <span
-                class="font-semibold text-slate-800 dark:text-slate-200"
-                id="invoiceMethod"
-                data-i18n="paymentMethodQR"
-                >Chuyển khoản QR</span
-              >
+              <span class="text-slate-500 dark:text-slate-400" data-i18n="paymentMethodCol">Phương thức</span>
+              <span class="font-semibold text-slate-800 dark:text-slate-200" id="invoiceMethod" data-i18n="paymentMethodQR">Chuyển khoản QR</span>
             </div>
             <div class="flex justify-between items-center text-sm">
-              <span
-                class="text-slate-500 dark:text-slate-400"
-                data-i18n="amount"
-                >Số tiền</span
-              >
-              <span
-                class="font-bold text-secondary text-base"
-                id="invoiceAmount"
-                data-i18n="planProPrice"
-                >5.000đ</span
-              >
+              <span class="text-slate-500 dark:text-slate-400" data-i18n="amount">Số tiền</span>
+              <span class="font-bold text-secondary text-base" id="invoiceAmount">5.000đ</span>
             </div>
             <div class="h-px bg-slate-200 dark:bg-slate-800 my-2"></div>
             <div class="flex justify-between items-center text-sm">
-              <span
-                class="text-slate-500 dark:text-slate-400"
-                data-i18n="customerLabel"
-                >Khách hàng</span
-              >
-              <span
-                class="font-semibold text-slate-800 dark:text-slate-200"
-                id="invoiceCustomerName"
-                >Nguyen Van A</span
-              >
+              <span class="text-slate-500 dark:text-slate-400" data-i18n="customerLabel">Khách hàng</span>
+              <span class="font-semibold text-slate-800 dark:text-slate-200" id="invoiceCustomerName">Nguyen Van A</span>
             </div>
             <div class="flex justify-between items-center text-sm">
-              <span
-                class="text-slate-500 dark:text-slate-400"
-                data-i18n="emailLabel"
-                >Email</span
-              >
-              <span
-                class="font-semibold text-slate-800 dark:text-slate-200 truncate max-w-[200px]"
-                id="invoiceCustomerEmail"
-                >email@example.com</span
-              >
+              <span class="text-slate-500 dark:text-slate-400" data-i18n="emailLabel">Email</span>
+              <span class="font-semibold text-slate-800 dark:text-slate-200 truncate max-w-[200px]" id="invoiceCustomerEmail">email@example.com</span>
             </div>
             <div class="flex justify-between items-center text-sm">
-              <span
-                class="text-slate-500 dark:text-slate-400"
-                data-i18n="createdTimeLabel"
-                >Thời gian tạo</span
-              >
-              <span
-                class="font-semibold text-slate-800 dark:text-slate-200"
-                id="invoiceCreatedAt"
-                >17/06/2026 12:00</span
-              >
+              <span class="text-slate-500 dark:text-slate-400" data-i18n="createdTimeLabel">Thời gian tạo</span>
+              <span class="font-semibold text-slate-800 dark:text-slate-200" id="invoiceCreatedAt">17/06/2026 12:00</span>
             </div>
             <div class="flex justify-between items-center text-sm">
-              <span
-                class="text-slate-500 dark:text-slate-400"
-                data-i18n="confirmedTimeLabel"
-                >Thời gian xác nhận</span
-              >
-              <span
-                class="font-semibold text-slate-800 dark:text-slate-200"
-                id="invoiceConfirmedAt"
-                >17/06/2026 12:05</span
-              >
+              <span class="text-slate-500 dark:text-slate-400" data-i18n="confirmedTimeLabel">Thời gian xác nhận</span>
+              <span class="font-semibold text-slate-800 dark:text-slate-200" id="invoiceConfirmedAt">17/06/2026 12:05</span>
             </div>
           </div>
         </div>
@@ -1102,14 +989,13 @@
             type="button"
             class="px-4 py-2 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 rounded-lg text-sm font-bold flex items-center gap-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 active:scale-95 transition-all duration-150 cursor-pointer shadow-sm"
           >
-            <span class="material-symbols-outlined text-[18px]">print</span
-            ><span data-i18n="printInvoiceBtn">In hóa đơn</span>
+            <span class="material-symbols-outlined text-[18px]">print</span>
+            <span data-i18n="printInvoiceBtn">In hóa đơn</span>
           </button>
           <button
             id="closeInvoiceBtn"
             type="button"
             class="px-4 py-2 bg-primary text-on-primary rounded-lg text-sm font-bold hover:bg-primary/95 active:scale-95 transition-all duration-150 cursor-pointer shadow-sm"
-            data-i18n="close"
           >
             <span data-i18n="close">Đóng</span>
           </button>
@@ -1117,7 +1003,864 @@
       </div>
     </div>
 
-    <!-- Invoice Modal & Polling script for payments_user.html -->
+    <!-- Pass backend variables to Javascript -->
+    <script>
+      window.csrfToken = "{{ csrf_token() }}";
+      window.currentUserPlan = "{{ quota_info.plan|upper if quota_info and quota_info.plan else 'FREE' }}";
+      window.currentUserPlanExpire = "{{ quota_info.plan_expire.strftime('%d/%m/%Y') if quota_info and quota_info.plan_expire else '' }}";
+      
+      // Load payment orders safely into client memory
+      window.userOrders = [
+        {% for o in orders %}
+          {
+            "order_id": "{{ o.order_id }}",
+            "plan": "{{ o.plan }}",
+            "payment_method": "{{ o.payment_method }}",
+            "amount_vnd": {{ o.amount_vnd | default(0) | int }},
+            "status": "{{ o.status }}",
+            "created_at": "{{ o.created_at.strftime('%Y-%m-%d %H:%M:%S') if o.created_at else '' }}",
+            "confirmed_at": "{{ o.confirmed_at.strftime('%Y-%m-%d %H:%M:%S') if o.confirmed_at else '' }}"
+          }{% if not loop.last %},{% endif %}
+        {% endfor %}
+      ];
+    </script>
+
+    <!-- UI Logic, Filters, Pagination, Cancel actions and Modal Controllers -->
+    <script>
+      (function () {
+        // Elements
+        const searchInput = document.getElementById("search-input");
+        const statusFilter = document.getElementById("filter-status");
+        const planFilter = document.getElementById("filter-plan");
+        const timeFilter = document.getElementById("filter-time");
+        const sortBy = document.getElementById("sort-by");
+        const clearFiltersBtn = document.getElementById("clear-filters-btn");
+        
+        const tableBody = document.getElementById("orders-table-body");
+        const mobileList = document.getElementById("orders-mobile-list");
+        const emptyState = document.getElementById("empty-state");
+        const paginationContainer = document.getElementById("pagination-container");
+        
+        const pagStart = document.getElementById("pagination-start");
+        const pagEnd = document.getElementById("pagination-end");
+        const pagTotal = document.getElementById("pagination-total");
+        const pageSizeSelect = document.getElementById("page-size-select");
+        const btnPrevPage = document.getElementById("btn-prev-page");
+        const btnNextPage = document.getElementById("btn-next-page");
+        const pageButtonsContainer = document.getElementById("page-buttons");
+
+        const detailModal = document.getElementById("detailModal");
+        const detailModalContainer = document.getElementById("detailModalContainer");
+
+        // Pagination and filter states
+        let currentPage = 1;
+        let rowsPerPage = 10;
+        let filteredOrders = [...window.userOrders];
+
+        // Format Date string helper
+        function formatDate(dateStr) {
+          if (!dateStr) return "-";
+          try {
+            // Replace '-' with '/' for broad browser compatibility
+            const d = new Date(dateStr.replace(/-/g, "/"));
+            if (isNaN(d.getTime())) return dateStr;
+            const day = String(d.getDate()).padStart(2, '0');
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const year = d.getFullYear();
+            const hours = String(d.getHours()).padStart(2, '0');
+            const minutes = String(d.getMinutes()).padStart(2, '0');
+            return `${day}/${month}/${year} ${hours}:${minutes}`;
+          } catch (e) {
+            return dateStr;
+          }
+        }
+
+        // Format Currency VND helper
+        function formatCurrency(val) {
+          return new Intl.NumberFormat("vi-VN").format(val) + "đ";
+        }
+
+        // Badge styling mapping
+        function getPlanBadgeClass(plan) {
+          plan = (plan || "").toLowerCase();
+          if (plan === "pro") {
+            return "bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900/30";
+          } else if (plan === "enterprise") {
+            return "bg-purple-50 dark:bg-purple-950/30 text-purple-600 dark:text-purple-400 border border-purple-100 dark:border-purple-900/30";
+          } else {
+            return "bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30";
+          }
+        }
+
+        function getPlanDurationText(plan) {
+          plan = (plan || "").toLowerCase();
+          const isVi = document.documentElement.getAttribute("lang") !== "en";
+          if (plan === "pro") return isVi ? "30 ngày" : "30 days";
+          if (plan === "enterprise") return isVi ? "90 ngày" : "90 days";
+          return isVi ? "7 ngày" : "7 days";
+        }
+
+        function getStatusBadgeHtml(status, confirmedAt, createdAt) {
+          status = (status || "").toLowerCase();
+          const isVi = document.documentElement.getAttribute("lang") !== "en";
+          let colorClass = "";
+          let dotHtml = "";
+          let label = "";
+          let subtext = "";
+
+          if (status === "paid") {
+            colorClass = "bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30";
+            dotHtml = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>`;
+            label = isVi ? "Đã thanh toán" : "Paid";
+            if (confirmedAt) {
+              subtext = (isVi ? "Thanh toán: " : "Paid: ") + formatDate(confirmedAt);
+            }
+          } else if (status === "user_confirmed") {
+            colorClass = "bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900/30";
+            dotHtml = `
+              <span class="relative flex h-1.5 w-1.5">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-blue-500"></span>
+              </span>
+            `;
+            label = isVi ? "Đang xử lý" : "Processing";
+          } else if (status === "cancelled") {
+            colorClass = "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700/80";
+            dotHtml = `<span class="w-1.5 h-1.5 rounded-full bg-slate-450"></span>`;
+            label = isVi ? "Đã hủy" : "Cancelled";
+          } else if (status === "expired" || status === "failed") {
+            colorClass = "bg-rose-50 dark:bg-rose-950/30 text-rose-600 dark:text-rose-400 border border-rose-100 dark:border-rose-900/30";
+            dotHtml = `<span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>`;
+            label = status === "expired" ? (isVi ? "Hết hạn" : "Expired") : (isVi ? "Thất bại" : "Failed");
+          } else {
+            // pending
+            colorClass = "bg-amber-50 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400 border border-amber-100 dark:border-amber-900/30";
+            dotHtml = `
+              <span class="relative flex h-1.5 w-1.5">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-amber-500"></span>
+              </span>
+            `;
+            label = isVi ? "Chờ thanh toán" : "Pending Payment";
+            if (createdAt) {
+              const createdDate = new Date(createdAt.replace(/-/g, "/"));
+              createdDate.setDate(createdDate.getDate() + 3);
+              subtext = (isVi ? "Hết hạn: " : "Expires: ") + formatDate(
+                createdDate.getFullYear() + "-" +
+                String(createdDate.getMonth() + 1).padStart(2, '0') + "-" +
+                String(createdDate.getDate()).padStart(2, '0') + " " +
+                String(createdDate.getHours()).padStart(2, '0') + ":" +
+                String(createdDate.getMinutes()).padStart(2, '0') + ":" +
+                String(createdDate.getSeconds()).padStart(2, '0')
+              );
+            }
+          }
+
+          return `
+            <div class="flex flex-col gap-1">
+              <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold ${colorClass}">
+                ${dotHtml}
+                <span>${label}</span>
+              </span>
+              ${subtext ? `<span class="text-[10px] text-slate-400 dark:text-slate-500 font-medium block leading-none">${subtext}</span>` : ""}
+            </div>
+          `;
+        }
+
+        function getPaymentMethodHtml(method) {
+          method = (method || "").toUpperCase();
+          const isVi = document.documentElement.getAttribute("lang") !== "en";
+          let icon = "credit_card";
+          let title = method;
+          let sub = "";
+
+          if (method === "QR" || method === "VIETQR" || method.includes("QR")) {
+            icon = "qr_code_2";
+            title = "VietQR";
+            sub = "QR Code";
+          } else {
+            icon = "account_balance";
+            title = isVi ? "Chuyển khoản" : "Bank Transfer";
+            sub = "MB Bank";
+          }
+
+          return `
+            <div class="flex items-center gap-2.5">
+              <div class="w-8 h-8 rounded-lg bg-slate-50 dark:bg-slate-950 border border-slate-200/60 dark:border-slate-850 flex items-center justify-center text-slate-500 dark:text-slate-400">
+                <span class="material-symbols-outlined text-lg">${icon}</span>
+              </div>
+              <div class="min-w-0">
+                <span class="text-xs font-semibold text-slate-800 dark:text-slate-200 block leading-tight truncate">${title}</span>
+                <span class="text-[10px] text-slate-450 dark:text-slate-500 block leading-none mt-0.5 truncate">${sub}</span>
+              </div>
+            </div>
+          `;
+        }
+
+        // Action controls
+        function getActionsHtml(o) {
+          const status = (o.status || "").toLowerCase();
+          const isVi = document.documentElement.getAttribute("lang") !== "en";
+          
+          const detailBtn = `
+            <button onclick="openDetailModal('${o.order_id}')" class="inline-flex items-center justify-center px-2.5 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-350 rounded-lg text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-750 transition-all shadow-sm active:scale-95 duration-100 cursor-pointer">
+              ${isVi ? "Xem chi tiết" : "View Details"}
+            </button>
+          `;
+
+          if (status === "pending" || status === "user_confirmed") {
+            const payBtn = `
+              <form method="post" action="/predict/checkout" class="inline-block">
+                <input type="hidden" name="csrf_token" value="${window.csrfToken}" />
+                <input type="hidden" name="plan" value="${o.plan}" />
+                <button type="submit" class="inline-flex items-center justify-center px-2.5 py-1.5 bg-blue-600 hover:bg-blue-750 text-white rounded-lg text-xs font-bold shadow-sm hover:shadow active:scale-95 transition-all duration-100 cursor-pointer">
+                  ${isVi ? "Tiếp tục thanh toán" : "Proceed"}
+                </button>
+              </form>
+            `;
+            
+            const cancelBtn = `
+              <button onclick="cancelOrder('${o.order_id}')" class="inline-flex items-center justify-center px-2.5 py-1.5 border border-rose-200 hover:bg-rose-50 dark:border-rose-900/50 dark:hover:bg-rose-950/20 text-rose-600 dark:text-rose-400 rounded-lg text-xs font-bold transition-all shadow-sm active:scale-95 duration-100 cursor-pointer">
+                ${isVi ? "Hủy đơn" : "Cancel"}
+              </button>
+            `;
+            
+            return `
+              <div class="flex flex-wrap items-center justify-end gap-2">
+                ${detailBtn}
+                ${payBtn}
+                ${cancelBtn}
+              </div>
+            `;
+          }
+
+          if (status === "paid") {
+            return `
+              <div class="flex items-center justify-end gap-2">
+                ${detailBtn}
+                <button onclick="viewInvoice('${o.order_id}')" class="inline-flex items-center justify-center px-2.5 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-750 transition-all shadow-sm active:scale-95 duration-100 cursor-pointer">
+                  <span class="material-symbols-outlined text-[16px] mr-1">download</span>
+                  <span>${isVi ? "Hóa đơn" : "Invoice"}</span>
+                </button>
+              </div>
+            `;
+          }
+
+          return `
+            <div class="flex items-center justify-end gap-2">
+              ${detailBtn}
+            </div>
+          `;
+        }
+
+        // Render functions
+        function renderOrders() {
+          const total = filteredOrders.length;
+          
+          if (total === 0) {
+            tableBody.innerHTML = "";
+            mobileList.innerHTML = "";
+            document.querySelector(".md\\:block.bg-surface-container-lowest").classList.add("hidden");
+            emptyState.classList.remove("hidden");
+            paginationContainer.classList.add("hidden");
+            return;
+          }
+
+          document.querySelector(".md\\:block.bg-surface-container-lowest").classList.remove("hidden");
+          emptyState.classList.add("hidden");
+          paginationContainer.classList.remove("hidden");
+
+          const start = (currentPage - 1) * rowsPerPage;
+          const end = Math.min(start + rowsPerPage, total);
+          const paginated = filteredOrders.slice(start, end);
+
+          // Update Pagination Text
+          pagStart.textContent = total > 0 ? start + 1 : 0;
+          pagEnd.textContent = end;
+          pagTotal.textContent = total;
+
+          // Render Desktop Table Rows
+          tableBody.innerHTML = paginated.map(o => {
+            const mockTxn = `TXN${o.order_id.substring(0, 8).toUpperCase()}`;
+            return `
+              <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
+                <td class="py-3.5 px-5 align-middle">
+                  <div class="flex items-center gap-1.5">
+                    <span class="font-mono font-bold text-slate-850 dark:text-slate-200 text-xs">#${o.order_id}</span>
+                    <button onclick="copyToClipboard('${o.order_id}')" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-0.5 rounded hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer" title="Sao chép">
+                      <span class="material-symbols-outlined text-[14px]">content_copy</span>
+                    </button>
+                  </div>
+                  <span class="text-[10px] text-slate-400 dark:text-slate-500 block mt-0.5">Mã giao dịch: ${mockTxn}</span>
+                </td>
+                <td class="py-3.5 px-5 align-middle">
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold ${getPlanBadgeClass(o.plan)}">
+                    ${o.plan.toUpperCase()}
+                  </span>
+                  <span class="text-[10px] text-slate-450 dark:text-slate-500 block mt-1 leading-none">${getPlanDurationText(o.plan)}</span>
+                </td>
+                <td class="py-3.5 px-5 align-middle">
+                  ${getStatusBadgeHtml(o.status, o.confirmed_at, o.created_at)}
+                </td>
+                <td class="py-3.5 px-5 align-middle font-bold text-slate-850 dark:text-slate-100 text-xs">
+                  ${formatCurrency(o.amount_vnd)}
+                </td>
+                <td class="py-3.5 px-5 align-middle">
+                  ${getPaymentMethodHtml(o.payment_method)}
+                </td>
+                <td class="py-3.5 px-5 align-middle text-[11px] text-slate-500 dark:text-slate-400 whitespace-nowrap">
+                  <div class="flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[13px] text-slate-450">calendar_today</span>
+                    <span>${formatDate(o.created_at)}</span>
+                  </div>
+                </td>
+                <td class="py-3.5 px-5 align-middle text-right">
+                  ${getActionsHtml(o)}
+                </td>
+              </tr>
+            `;
+          }).join("");
+
+          // Render Mobile Card List
+          mobileList.innerHTML = paginated.map(o => {
+            const mockTxn = `TXN${o.order_id.substring(0, 8).toUpperCase()}`;
+            return `
+              <div class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/35 dark:border-slate-800 rounded-xl p-4 shadow-sm flex flex-col gap-3">
+                <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
+                  <div class="flex items-center gap-1.5">
+                    <span class="font-mono font-bold text-slate-850 dark:text-slate-200 text-xs">#${o.order_id}</span>
+                    <button onclick="copyToClipboard('${o.order_id}')" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-0.5 rounded hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer">
+                      <span class="material-symbols-outlined text-[13px]">content_copy</span>
+                    </button>
+                  </div>
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold ${getPlanBadgeClass(o.plan)}">
+                    ${o.plan.toUpperCase()}
+                  </span>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                  <div>
+                    <span class="text-slate-450 dark:text-slate-500 block text-[10px] uppercase font-bold">Mã giao dịch</span>
+                    <span class="font-mono text-slate-700 dark:text-slate-300 font-medium">${mockTxn}</span>
+                  </div>
+                  <div>
+                    <span class="text-slate-450 dark:text-slate-500 block text-[10px] uppercase font-bold">Số tiền</span>
+                    <span class="font-bold text-slate-800 dark:text-slate-100">${formatCurrency(o.amount_vnd)}</span>
+                  </div>
+                  <div>
+                    <span class="text-slate-450 dark:text-slate-500 block text-[10px] uppercase font-bold">Thời gian tạo</span>
+                    <span class="text-slate-700 dark:text-slate-300 font-medium">${formatDate(o.created_at)}</span>
+                  </div>
+                  <div>
+                    <span class="text-slate-450 dark:text-slate-500 block text-[10px] uppercase font-bold">Phương thức</span>
+                    <span class="text-slate-700 dark:text-slate-300 font-semibold">${o.payment_method.toUpperCase()}</span>
+                  </div>
+                </div>
+
+                <div class="flex items-center justify-between border-t border-slate-100 dark:border-slate-800 pt-3 mt-1">
+                  <div>
+                    ${getStatusBadgeHtml(o.status, o.confirmed_at, o.created_at)}
+                  </div>
+                  <div>
+                    ${getActionsHtml(o)}
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join("");
+
+          renderPaginationButtons();
+        }
+
+        function renderPaginationButtons() {
+          const totalPages = Math.ceil(filteredOrders.length / rowsPerPage);
+          pageButtonsContainer.innerHTML = "";
+
+          btnPrevPage.disabled = currentPage === 1;
+          btnNextPage.disabled = currentPage === totalPages || totalPages === 0;
+
+          // Generate numbers
+          for (let p = 1; p <= totalPages; p++) {
+            const isCurrent = p === currentPage;
+            const buttonClass = isCurrent
+              ? "relative z-10 inline-flex items-center bg-primary px-3 py-2 text-xs font-semibold text-white focus:outline-none cursor-default"
+              : "relative inline-flex items-center px-3 py-2 text-xs font-semibold text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 focus:outline-none cursor-pointer";
+            
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.className = buttonClass;
+            btn.textContent = p;
+            if (!isCurrent) {
+              btn.addEventListener("click", () => {
+                currentPage = p;
+                renderOrders();
+              });
+            }
+            pageButtonsContainer.appendChild(btn);
+          }
+        }
+
+        // Multi-level Filters logic
+        function applyFilters() {
+          const query = searchInput.value.trim().toLowerCase();
+          const status = statusFilter.value;
+          const plan = planFilter.value;
+          const time = timeFilter.value;
+          
+          let orders = [...window.userOrders];
+
+          // 1. Text Search
+          if (query) {
+            orders = orders.filter(o => {
+              const orderId = (o.order_id || "").toLowerCase();
+              const mockTxn = `txn${orderId.substring(0, 8)}`;
+              return orderId.includes(query) || mockTxn.includes(query);
+            });
+          }
+
+          // 2. Status filter
+          if (status !== "all") {
+            orders = orders.filter(o => (o.status || "").toLowerCase() === status);
+          }
+
+          // 3. Plan filter
+          if (plan !== "all") {
+            orders = orders.filter(o => (o.plan || "").toLowerCase() === plan);
+          }
+
+          // 4. Time range filter
+          if (time !== "all") {
+            const now = new Date();
+            const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+            
+            orders = orders.filter(o => {
+              if (!o.created_at) return false;
+              const dateVal = new Date(o.created_at.replace(/-/g, "/")).getTime();
+              
+              if (time === "today") {
+                return dateVal >= startOfDay;
+              } else if (time === "7days") {
+                const limit = startOfDay - (7 * 24 * 60 * 60 * 1000);
+                return dateVal >= limit;
+              } else if (time === "30days") {
+                const limit = startOfDay - (30 * 24 * 60 * 60 * 1000);
+                return dateVal >= limit;
+              }
+              return true;
+            });
+          }
+
+          // 5. Sorting
+          const sortVal = sortBy.value;
+          orders.sort((a, b) => {
+            const timeA = new Date(a.created_at.replace(/-/g, "/")).getTime() || 0;
+            const timeB = new Date(b.created_at.replace(/-/g, "/")).getTime() || 0;
+            const amountA = parseInt(a.amount_vnd || 0);
+            const amountB = parseInt(b.amount_vnd || 0);
+
+            if (sortVal === "newest") {
+              return timeB - timeA;
+            } else if (sortVal === "oldest") {
+              return timeA - timeB;
+            } else if (sortVal === "amount-desc") {
+              return amountB - amountA;
+            } else if (sortVal === "amount-asc") {
+              return amountA - amountB;
+            }
+            return 0;
+          });
+
+          filteredOrders = orders;
+          currentPage = 1;
+          renderOrders();
+        }
+
+        // Copy code helper
+        window.copyToClipboard = function (text) {
+          navigator.clipboard.writeText(text).then(() => {
+            const textVi = "Đã sao chép mã đơn vào clipboard!";
+            const textEn = "Order ID copied to clipboard!";
+            const msg = document.documentElement.getAttribute("lang") === "en" ? textEn : textVi;
+            if (window.PetAI_toast) window.PetAI_toast(msg, "success");
+            else alert(msg);
+          }).catch(err => {
+            console.error("Copy failed", err);
+          });
+        };
+
+        // Events listeners Setup
+        searchInput.addEventListener("input", applyFilters);
+        statusFilter.addEventListener("change", applyFilters);
+        planFilter.addEventListener("change", applyFilters);
+        timeFilter.addEventListener("change", applyFilters);
+        sortBy.addEventListener("change", applyFilters);
+
+        clearFiltersBtn.addEventListener("click", () => {
+          searchInput.value = "";
+          statusFilter.value = "all";
+          planFilter.value = "all";
+          timeFilter.value = "all";
+          sortBy.value = "newest";
+          applyFilters();
+        });
+
+        pageSizeSelect.addEventListener("change", (e) => {
+          rowsPerPage = parseInt(e.target.value);
+          currentPage = 1;
+          renderOrders();
+        });
+
+        btnPrevPage.addEventListener("click", () => {
+          if (currentPage > 1) {
+            currentPage--;
+            renderOrders();
+          }
+        });
+
+        btnNextPage.addEventListener("click", () => {
+          const totalPages = Math.ceil(filteredOrders.length / rowsPerPage);
+          if (currentPage < totalPages) {
+            currentPage++;
+            renderOrders();
+          }
+        });
+
+        // Cancel order action with custom window.PetAI_confirm dialog
+        window.cancelOrder = async function (orderId) {
+          const isVi = document.documentElement.getAttribute("lang") !== "en";
+          
+          const confirmTitle = isVi ? "Hủy đơn hàng" : "Cancel Order";
+          const confirmText = isVi 
+            ? `Bạn có chắc chắn muốn hủy đơn hàng #${orderId}?` 
+            : `Are you sure you want to cancel order #${orderId}?`;
+            
+          const confirmBtnText = isVi ? "Đồng ý hủy" : "Cancel Order";
+          const cancelBtnText = isVi ? "Bỏ qua" : "Keep Order";
+
+          if (window.PetAI_confirm) {
+            const confirmed = await window.PetAI_confirm({
+              title: confirmTitle,
+              text: confirmText,
+              confirmBtnText: confirmBtnText,
+              cancelBtnText: cancelBtnText,
+              type: "danger"
+            });
+
+            if (confirmed) {
+              performCancelRequest(orderId);
+            }
+          } else {
+            if (confirm(confirmText)) {
+              performCancelRequest(orderId);
+            }
+          }
+        };
+
+        async function performCancelRequest(orderId) {
+          const isVi = document.documentElement.getAttribute("lang") !== "en";
+          try {
+            const res = await fetch("/predict/payments/cancel", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+              },
+              body: new URLSearchParams({
+                "csrf_token": window.csrfToken,
+                "order_id": orderId
+              })
+            });
+
+            const data = await res.json();
+            if (res.ok && data.success) {
+              const successMsg = isVi ? "Đã hủy đơn hàng thành công." : "Order cancelled successfully.";
+              if (window.PetAI_toast) window.PetAI_toast(successMsg, "success");
+              else alert(successMsg);
+
+              // Update client memory array and stat counters
+              const idx = window.userOrders.findIndex(o => o.order_id === orderId);
+              if (idx !== -1) {
+                window.userOrders[idx].status = "cancelled";
+              }
+              
+              // Recalculate stats cards numbers dynamically
+              updateStatCounters();
+              applyFilters();
+              
+              // If detail modal is open for this order, refresh its status
+              if (!detailModal.classList.contains("hidden")) {
+                const openId = document.getElementById("detail-order-id").textContent.replace("#", "");
+                if (openId === orderId) {
+                  openDetailModal(orderId);
+                }
+              }
+            } else {
+              const errorMsg = isVi ? "Không thể hủy đơn hàng." : "Failed to cancel order.";
+              if (window.PetAI_toast) window.PetAI_toast(data.error || errorMsg, "error");
+              else alert(data.error || errorMsg);
+            }
+          } catch (err) {
+            console.error("Cancellation error:", err);
+            const errorMsg = isVi ? "Có lỗi xảy ra khi hủy đơn hàng." : "An error occurred while cancelling order.";
+            if (window.PetAI_toast) window.PetAI_toast(errorMsg, "error");
+            else alert(errorMsg);
+          }
+        }
+
+        // Dynamically update stat counters in UI
+        function updateStatCounters() {
+          let paidSum = 0;
+          let pendingCount = 0;
+          
+          window.userOrders.forEach(o => {
+            const status = (o.status || "").toLowerCase();
+            if (status === "paid") {
+              paidSum += parseInt(o.amount_vnd || 0);
+            } else if (status === "pending" || status === "user_confirmed") {
+              pendingCount++;
+            }
+          });
+
+          // Refresh statistical UI headers
+          const countTotal = document.querySelector("[data-purpose='statistics-overview'] div:nth-child(1) h3");
+          if (countTotal) countTotal.textContent = window.userOrders.length;
+          if (countTotal) countTotal.setAttribute("data-counter", window.userOrders.length);
+
+          const totalPaid = document.querySelector("[data-purpose='statistics-overview'] div:nth-child(2) h3");
+          if (totalPaid) {
+            totalPaid.textContent = formatCurrency(paidSum);
+            totalPaid.setAttribute("data-counter", paidSum);
+          }
+
+          const totalPending = document.querySelector("[data-purpose='statistics-overview'] div:nth-child(3) h3");
+          if (totalPending) {
+            totalPending.textContent = pendingCount;
+            totalPending.setAttribute("data-counter", pendingCount);
+          }
+        }
+
+        // Detailed transaction drawer modal loading
+        window.openDetailModal = async function(orderId) {
+          const isVi = document.documentElement.getAttribute("lang") !== "en";
+          try {
+            const res = await fetch(`/predict/payments/status?order_id=${encodeURIComponent(orderId)}`, {
+              cache: "no-store"
+            });
+            if (!res.ok) throw new Error("Status API fetch failed");
+            
+            const data = await res.json();
+            if (data && data.success) {
+              populateDetailModal(data);
+              
+              // Open modal animation
+              detailModal.classList.remove("hidden");
+              detailModal.classList.add("flex");
+              detailModal.style.display = "flex";
+              void detailModal.offsetWidth; // force reflow
+              detailModalContainer.classList.remove("scale-95", "opacity-0");
+              detailModalContainer.classList.add("scale-100", "opacity-100");
+            } else {
+              const errorMsg = isVi ? "Không thể tải chi tiết đơn hàng." : "Could not load order details.";
+              if (window.PetAI_toast) window.PetAI_toast(errorMsg, "error");
+              else alert(errorMsg);
+            }
+          } catch (err) {
+            console.error("Detail load exception:", err);
+            const errorMsg = isVi ? "Có lỗi xảy ra khi tải chi tiết đơn hàng." : "An error occurred loading order details.";
+            if (window.PetAI_toast) window.PetAI_toast(errorMsg, "error");
+            else alert(errorMsg);
+          }
+        };
+
+        window.closeDetailModal = function() {
+          detailModalContainer.classList.remove("scale-100", "opacity-100");
+          detailModalContainer.classList.add("scale-95", "opacity-0");
+          setTimeout(() => {
+            detailModal.classList.add("hidden");
+            detailModal.classList.remove("flex");
+            detailModal.style.display = "none";
+          }, 150);
+        };
+
+        function populateDetailModal(data) {
+          const isVi = document.documentElement.getAttribute("lang") !== "en";
+          const status = (data.status || "").toLowerCase();
+          
+          document.getElementById("detail-order-id").textContent = `#${data.order_id}`;
+          document.getElementById("detail-txn-id").textContent = `TXN${data.order_id.substring(0, 8).toUpperCase()}`;
+          document.getElementById("detail-plan").textContent = (data.order_plan || data.plan || "").toUpperCase();
+          document.getElementById("detail-amount").textContent = formatCurrency(data.amount_vnd || 0);
+          
+          // Payment method display
+          const rawMethod = (data.payment_method || "").toUpperCase();
+          document.getElementById("detail-method").textContent = 
+            (rawMethod === "QR" || rawMethod === "VIETQR" || rawMethod.includes("QR"))
+              ? "VietQR / QR Code"
+              : (isVi ? "Chuyển khoản (MB Bank)" : "Bank Transfer (MB Bank)");
+
+          document.getElementById("detail-created-at").textContent = formatDate(data.created_at);
+
+          // Confirmed Time Row
+          const confirmedRow = document.getElementById("detail-confirmed-row");
+          if (status === "paid" && data.confirmed_at) {
+            document.getElementById("detail-confirmed-at").textContent = formatDate(data.confirmed_at);
+            confirmedRow.classList.remove("hidden");
+          } else {
+            confirmedRow.classList.add("hidden");
+          }
+
+          // Transfer Memo Row (if pending/user_confirmed)
+          const memoRow = document.getElementById("detail-memo-row");
+          if (status === "pending" || status === "user_confirmed") {
+            document.getElementById("detail-memo").textContent = `PETAI ${data.order_id.toUpperCase()}`;
+            memoRow.classList.remove("hidden");
+          } else {
+            memoRow.classList.add("hidden");
+          }
+
+          // Status Banner visual styling
+          const banner = document.getElementById("detail-status-banner");
+          const iconBox = document.getElementById("detail-status-icon");
+          const label = document.getElementById("detail-status-label");
+          const subText = document.getElementById("detail-status-sub");
+          
+          // Clear classes
+          banner.className = "rounded-2xl p-5 flex flex-col items-center justify-center text-center gap-2 shadow-sm border ";
+          iconBox.className = "w-12 h-12 rounded-full flex items-center justify-center text-2xl font-bold ";
+
+          if (status === "paid") {
+            banner.classList.add("bg-emerald-50/50", "dark:bg-emerald-950/20", "border-emerald-100", "dark:border-emerald-900/40");
+            iconBox.classList.add("bg-emerald-100/60", "dark:bg-emerald-900/30", "text-emerald-600", "dark:text-emerald-400");
+            iconBox.innerHTML = `<span class="material-symbols-outlined">check</span>`;
+            label.textContent = isVi ? "Đã Thanh Toán Thành Công" : "Paid Successfully";
+            subText.textContent = isVi ? "Gói đã được kích hoạt trên hệ thống" : "Plan has been activated successfully";
+          } else if (status === "user_confirmed") {
+            banner.classList.add("bg-blue-50/50", "dark:bg-blue-950/20", "border-blue-100", "dark:border-blue-900/40");
+            iconBox.classList.add("bg-blue-100/60", "dark:bg-blue-900/30", "text-blue-600", "dark:text-blue-400");
+            iconBox.innerHTML = `<span class="material-symbols-outlined">hourglass_empty</span>`;
+            label.textContent = isVi ? "Hệ Thống Đang Đối Soát" : "Payment Under Verification";
+            subText.textContent = isVi ? "Đang chờ admin xác nhận giao dịch" : "Verification in progress by system admin";
+          } else if (status === "cancelled") {
+            banner.classList.add("bg-slate-50", "dark:bg-slate-950/20", "border-slate-200/80", "dark:border-slate-800");
+            iconBox.classList.add("bg-slate-100", "dark:bg-slate-900", "text-slate-500", "dark:text-slate-400");
+            iconBox.innerHTML = `<span class="material-symbols-outlined">close</span>`;
+            label.textContent = isVi ? "Giao Dịch Đã Bị Hủy" : "Order Cancelled";
+            subText.textContent = isVi ? "Đơn hàng này không còn hiệu lực" : "This order is no longer valid";
+          } else if (status === "expired" || status === "failed") {
+            banner.classList.add("bg-rose-50/50", "dark:bg-rose-950/20", "border-rose-100", "dark:border-rose-900/40");
+            iconBox.classList.add("bg-rose-100/60", "dark:bg-rose-900/30", "text-rose-600", "dark:text-rose-400");
+            iconBox.innerHTML = `<span class="material-symbols-outlined">close</span>`;
+            label.textContent = status === "expired" 
+              ? (isVi ? "Giao Dịch Đã Hết Hạn" : "Order Expired")
+              : (isVi ? "Giao Dịch Thất Bại" : "Payment Failed");
+            subText.textContent = isVi ? "Vui lòng tạo đơn hàng mới" : "Please create a new payment order";
+          } else {
+            // pending
+            banner.classList.add("bg-amber-50/50", "dark:bg-amber-950/20", "border-amber-100", "dark:border-amber-900/40");
+            iconBox.classList.add("bg-amber-100/60", "dark:bg-amber-900/30", "text-amber-600", "dark:text-amber-400");
+            iconBox.innerHTML = `<span class="material-symbols-outlined">hourglass_empty</span>`;
+            label.textContent = isVi ? "Chờ Thanh Toán Chuyển Khoản" : "Awaiting Bank Transfer";
+            subText.textContent = isVi ? "Quét VietQR để chuyển tiền" : "Please scan VietQR to transfer funds";
+          }
+
+          // Footer Contextual Actions inside modal
+          const actionBox = document.getElementById("detail-modal-actions");
+          actionBox.innerHTML = "";
+          
+          if (status === "pending" || status === "user_confirmed") {
+            actionBox.innerHTML = `
+              <form method="post" action="/predict/checkout" class="inline-block">
+                <input type="hidden" name="csrf_token" value="${window.csrfToken}" />
+                <input type="hidden" name="plan" value="${data.order_plan || data.plan}" />
+                <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-750 text-white rounded-lg text-sm font-bold shadow-sm hover:shadow active:scale-95 transition-all duration-150 cursor-pointer">
+                  ${isVi ? "Tiếp tục thanh toán" : "Proceed"}
+                </button>
+              </form>
+              <button onclick="cancelOrder('${data.order_id}')" class="px-4 py-2 border border-rose-200 hover:bg-rose-50 text-rose-600 dark:border-rose-900 dark:hover:bg-rose-950 rounded-lg text-sm font-bold active:scale-95 transition-all duration-150 cursor-pointer">
+                ${isVi ? "Hủy đơn" : "Cancel"}
+              </button>
+            `;
+          } else if (status === "paid") {
+            actionBox.innerHTML = `
+              <button onclick="viewInvoice('${data.order_id}')" class="px-4 py-2 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 rounded-lg text-sm font-bold hover:bg-slate-100 dark:hover:bg-slate-800 active:scale-95 transition-all duration-150 cursor-pointer flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-[18px]">download</span>
+                <span>${isVi ? "Hóa đơn" : "Invoice"}</span>
+              </button>
+            `;
+          }
+        }
+
+        // Close on clicking backdrop
+        detailModal.addEventListener("click", function (e) {
+          if (detailModalContainer && !detailModalContainer.contains(e.target)) {
+            closeDetailModal();
+          }
+        });
+
+        document.addEventListener("keydown", function (e) {
+          if (e.key === "Escape" && !detailModal.classList.contains("hidden")) {
+            closeDetailModal();
+          }
+        });
+
+        // Initialize Rendering and Stat Animations
+        applyFilters();
+
+        // ── Animated counters for stat cards ──
+        (function () {
+          const DURATION = 1000;
+          const els = document.querySelectorAll("[data-counter]");
+          if (!els.length) return;
+
+          function easeOutExpo(t) {
+            return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+          }
+
+          function formatNum(num, useCommas) {
+            let formatted = Math.round(num).toString();
+            if (useCommas) {
+              formatted = formatted.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            }
+            return formatted;
+          }
+
+          function animateValue(el) {
+            const target = parseFloat(el.getAttribute("data-counter"));
+            if (isNaN(target)) return;
+            const suffix = el.getAttribute("data-suffix") || "";
+            const useCommas = el.getAttribute("data-use-commas") === "true";
+            let start = null;
+
+            function step(ts) {
+              if (!start) start = ts;
+              const progress = Math.min((ts - start) / DURATION, 1);
+              const value = easeOutExpo(progress) * target;
+              el.textContent = formatNum(value, useCommas) + suffix;
+              if (progress < 1) requestAnimationFrame(step);
+            }
+            requestAnimationFrame(step);
+          }
+
+          if ("IntersectionObserver" in window) {
+            const observer = new IntersectionObserver(
+              (entries) => {
+                entries.forEach((e) => {
+                  if (e.isIntersecting) {
+                    animateValue(e.target);
+                    observer.unobserve(e.target);
+                  }
+                });
+              },
+              { threshold: 0.2 },
+            );
+            els.forEach((el) => observer.observe(el));
+          } else {
+            els.forEach(animateValue);
+          }
+        })();
+      })();
+    </script>
+
+    <!-- Original Invoice Modal Integration Script -->
     <script>
       (function () {
         const modal = document.getElementById("invoiceModal");
@@ -1126,16 +1869,7 @@
         const closeXBtn = document.getElementById("closeInvoiceXBtn");
         const printBtn = document.getElementById("printInvoiceBtn");
 
-        console.log("Invoice Script Initialized. Elements found:", {
-          modal: !!modal,
-          container: !!container,
-          closeBtn: !!closeBtn,
-          closeXBtn: !!closeXBtn,
-          printBtn: !!printBtn
-        });
-
         window.showPaymentSuccessBill = function (data) {
-          console.log("showPaymentSuccessBill triggered with data:", data);
           if (!data) return;
 
           try {
@@ -1200,7 +1934,6 @@
             document.getElementById("invoiceConfirmedAt").textContent =
               formatDate(data.confirmed_at);
 
-            console.log("Showing invoice modal elements...");
             modal.classList.remove("hidden");
             modal.classList.add("flex");
             modal.style.display = "flex";
@@ -1213,7 +1946,6 @@
         };
 
         window.hideInvoiceModal = function () {
-          console.log("hideInvoiceModal triggered");
           container.classList.remove("scale-100", "opacity-100");
           container.classList.add("scale-95", "opacity-0");
           setTimeout(() => {
@@ -1250,14 +1982,12 @@
         });
 
         window.viewInvoice = async function (orderId) {
-          console.log("viewInvoice clicked for orderId:", orderId);
           try {
             const res = await fetch(
-              "{{ url_for('predict.payment_status') }}?order_id=" +
+              "/predict/payments/status?order_id=" +
                 encodeURIComponent(orderId),
               { cache: "no-store" },
             );
-            console.log("payment_status response status:", res.status);
             if (!res.ok) {
               const errMsg = typeof window.PetAI_i18n !== "undefined" && typeof window.PetAI_i18n.t === "function"
                 ? window.PetAI_i18n.t("actionFailed")
@@ -1267,7 +1997,6 @@
               return;
             }
             const data = await res.json();
-            console.log("payment_status response data:", data);
             if (data && data.success) {
               showPaymentSuccessBill(data);
             } else {
@@ -1294,7 +2023,6 @@
           if (autoInvoiceRaw) {
             try {
               const autoData = JSON.parse(autoInvoiceRaw);
-              console.log("Auto showing invoice from backend redirect:", autoData);
               setTimeout(() => {
                 window.showPaymentSuccessBill(autoData);
               }, 100);
@@ -1303,200 +2031,10 @@
             }
           }
         }
-
-        const badgeClasses = {
-          paid: "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border border-emerald-250 dark:border-emerald-900/40 shadow-sm",
-          user_confirmed:
-            "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 border border-amber-250 dark:border-amber-900/40 shadow-sm",
-          pending:
-            "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 border border-amber-250 dark:border-amber-900/40 shadow-sm",
-          cancelled:
-            "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-rose-50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-400 border border-rose-250 dark:border-rose-900/40 shadow-sm",
-          expired:
-            "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700/85 shadow-sm",
-        };
-
-        const planValue = document.getElementById("currentPlanValue");
-        const rows = Array.from(
-          document.querySelectorAll("div[data-order-id]"),
-        );
-        if (!rows.length) return;
-
-        const setBadge = function (badge, status) {
-          if (!badge) return;
-          const key = status || "pending";
-          badge.className = badgeClasses[key] || badgeClasses.pending;
-
-          let dotHtml = "";
-          let labelText = "";
-          if (key === "paid") {
-            dotHtml = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>`;
-            labelText =
-              typeof window.PetAI_i18n !== "undefined"
-                ? window.PetAI_i18n.t("paidStatus")
-                : "Đã thanh toán";
-          } else if (key === "cancelled") {
-            dotHtml = `<span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>`;
-            labelText =
-              typeof window.PetAI_i18n !== "undefined"
-                ? window.PetAI_i18n.t("cancelledStatus")
-                : "Đã hủy";
-          } else if (key === "expired") {
-            dotHtml = `<span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>`;
-            labelText =
-              typeof window.PetAI_i18n !== "undefined"
-                ? window.PetAI_i18n.t("expiredStatus")
-                : "Hết hạn";
-          } else {
-            dotHtml = `
-              <span class="relative flex h-1.5 w-1.5">
-                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-amber-500"></span>
-              </span>
-            `;
-            labelText =
-              typeof window.PetAI_i18n !== "undefined"
-                ? window.PetAI_i18n.t("pendingStatus")
-                : "Đang chờ";
-          }
-          badge.innerHTML = dotHtml + labelText;
-        };
-
-        const setActionPaid = function (cell, orderId) {
-          if (!cell) return;
-          cell.innerHTML = `
-            <button
-              type="button"
-              onclick="viewInvoice('${orderId}')"
-              class="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-300 transition-all shadow-sm active:scale-95 duration-150 whitespace-nowrap cursor-pointer"
-            >
-              <span class="material-symbols-outlined text-[16px]">receipt_long</span>Hóa đơn
-            </button>
-          `;
-        };
-
-        const pollStatuses = async function () {
-          let pendingCount = 0;
-          for (const row of rows) {
-            const orderId = row.dataset.orderId;
-            if (!orderId) continue;
-            const currentStatus = (row.dataset.status || "").toLowerCase();
-            if (currentStatus === "paid") continue;
-            pendingCount += 1;
-            try {
-              const res = await fetch(
-                "{{ url_for('predict.payment_status') }}?order_id=" +
-                  encodeURIComponent(orderId),
-                { cache: "no-store" },
-              );
-              if (!res.ok) continue;
-              const data = await res.json();
-              if (!data || !data.success) continue;
-              const nextStatus = (data.status || "").toLowerCase();
-              if (nextStatus && nextStatus !== currentStatus) {
-                row.dataset.status = nextStatus;
-                setBadge(row.querySelector("[data-status-badge]"), nextStatus);
-                if (nextStatus === "paid") {
-                  setActionPaid(
-                    row.querySelector("[data-action-cell]"),
-                    orderId,
-                  );
-                  // Automatically pop up the invoice modal
-                  viewInvoice(orderId);
-                }
-              }
-              if (nextStatus === "paid" && planValue) {
-                const nextPlan = (
-                  data.current_plan ||
-                  data.order_plan ||
-                  "free"
-                ).toUpperCase();
-                planValue.textContent = nextPlan;
-              }
-            } catch (e) {}
-          }
-
-          if (pendingCount === 0) {
-            return false;
-          }
-          return true;
-        };
-
-        let active = true;
-        const tick = async function () {
-          if (!active) return;
-          const keepGoing = await pollStatuses();
-          if (!keepGoing) {
-            active = false;
-            return;
-          }
-          setTimeout(tick, 5000);
-        };
-
-        // ── Animated counter for stat cards ──
-        (function () {
-          const DURATION = 1200;
-          const els = document.querySelectorAll("[data-counter]");
-          if (!els.length) return;
-
-          function easeOutExpo(t) {
-            return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
-          }
-
-          function formatNumber(num, isFloat, decimals, useCommas) {
-            let formatted = isFloat
-              ? num.toFixed(decimals)
-              : Math.round(num).toString();
-            if (useCommas) {
-              const parts = formatted.split(".");
-              parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-              formatted = parts.join(".");
-            }
-            return formatted;
-          }
-
-          function animateValue(el) {
-            const target = parseFloat(el.getAttribute("data-counter"));
-            const suffix = el.getAttribute("data-suffix") || "";
-            const useCommas = el.getAttribute("data-use-commas") === "true";
-            const isFloat = String(target).includes(".") && !useCommas;
-            const decimals = isFloat ? String(target).split(".")[1].length : 0;
-            let start = null;
-
-            function step(ts) {
-              if (!start) start = ts;
-              const progress = Math.min((ts - start) / DURATION, 1);
-              const value = easeOutExpo(progress) * target;
-              el.textContent =
-                formatNumber(value, isFloat, decimals, useCommas) + suffix;
-              if (progress < 1) requestAnimationFrame(step);
-            }
-            requestAnimationFrame(step);
-          }
-
-          if ("IntersectionObserver" in window) {
-            const observer = new IntersectionObserver(
-              (entries) => {
-                entries.forEach((e) => {
-                  if (e.isIntersecting) {
-                    animateValue(e.target);
-                    observer.unobserve(e.target);
-                  }
-                });
-              },
-              { threshold: 0.3 },
-            );
-            els.forEach((el) => observer.observe(el));
-          } else {
-            els.forEach(animateValue);
-          }
-        })();
       })();
     </script>
-      </div>
-    </main>
     <script src="{{ url_for('static', filename='js/toasts.js') }}"></script>
     <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
-</body>
+  </body>
 </html>

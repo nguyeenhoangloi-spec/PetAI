@@ -756,11 +756,7 @@ def my_payments():
 
 	conn = None
 	orders = []
-	page = request.args.get("page", 1, type=int)
-	if page < 1:
-		page = 1
-	per_page = 10
-	offset = (page - 1) * per_page
+	page = 1
 	total_pages = 1
 	total_count = 0
 
@@ -772,9 +768,6 @@ def my_payments():
 			cur.execute("SELECT COUNT(*) FROM payment_orders WHERE user_id = %s", (user_id,))
 			total_count = cur.fetchone()[0] or 0
 
-		import math
-		total_pages = math.ceil(total_count / per_page) if total_count > 0 else 1
-
 		with conn.cursor() as cur:
 			cur.execute(
 				"""
@@ -782,9 +775,9 @@ def my_payments():
 				FROM payment_orders
 				WHERE user_id = %s
 				ORDER BY created_at DESC
-				LIMIT %s OFFSET %s
+				LIMIT 500
 				""",
-				(user_id, per_page, offset),
+				(user_id,),
 			)
 			rows = cur.fetchall() or []
 			orders = [
@@ -800,11 +793,54 @@ def my_payments():
 				for r in rows
 			]
 
+		import math
+		total_pages = math.ceil(total_count / 10) if total_count > 0 else 1
+
 		quota = UserQuota.get_or_create(conn, user_id)
 		quota_info = {
 			"plan": quota.get("plan", "free"),
 			"plan_expire": quota.get("plan_expire"),
 		}
+	finally:
+		if conn:
+			conn.close()
+
+@predict_bp.route("/payments/cancel", methods=["POST"])
+def cancel_payment():
+	user_id = _get_session_user_id()
+	if user_id is None:
+		return jsonify({"success": False, "error": "unauthorized"}), 401
+
+	# Support form fields or JSON parameters
+	order_id = request.form.get("order_id") or (request.json.get("order_id") if request.is_json else None)
+	if order_id:
+		order_id = order_id.strip()
+
+	if not order_id:
+		return jsonify({"success": False, "error": "missing_order_id"}), 400
+
+	conn = None
+	try:
+		conn = get_connection()
+		order = PaymentOrder.get_by_order_id(conn, order_id)
+		if not order or int(order.get("user_id") or 0) != int(user_id):
+			return jsonify({"success": False, "error": "not_found"}), 404
+
+		status = (order.get("status") or "").lower()
+		if status not in ["pending", "user_confirmed"]:
+			return jsonify({"success": False, "error": "invalid_status"}), 400
+
+		with conn.cursor() as cur:
+			cur.execute(
+				"UPDATE payment_orders SET status = 'cancelled' WHERE order_id = %s",
+				(order_id,),
+			)
+			conn.commit()
+
+		return jsonify({"success": True, "message": "Order cancelled successfully."})
+	except Exception as e:
+		print("[PAYMENT] cancel error:", e)
+		return jsonify({"success": False, "error": "internal_error"}), 500
 	finally:
 		if conn:
 			conn.close()
