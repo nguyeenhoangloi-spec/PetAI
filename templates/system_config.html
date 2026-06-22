@@ -1492,9 +1492,9 @@
         const saveButtons = document.querySelectorAll(".primary-save-btn, #stickySaveBar button");
         saveButtons.forEach(btn => btn.disabled = true);
         
-        const saveTexts = document.querySelectorAll(".primary-save-btn span[data-i18n], #stickySaveBar button span");
+        const saveTexts = document.querySelectorAll(".primary-save-btn span[data-i18n], #stickySaveBar button span[data-i18n]");
         saveTexts.forEach(txt => {
-          if (txt.id !== "btn-icon") txt.textContent = window.PetAI_i18n ? window.PetAI_i18n.t("sysBtnSaving") : "Đang lưu...";
+          txt.textContent = window.PetAI_i18n ? window.PetAI_i18n.t("sysBtnSaving") : "Đang lưu...";
         });
 
         const formData = new FormData(mainForm);

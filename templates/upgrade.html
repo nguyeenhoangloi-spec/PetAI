@@ -1456,7 +1456,11 @@
                 window.showToast("success", msg);
               }
               setTimeout(() => {
-                window.location.reload();
+                if (window.loadPagePjax) {
+                  window.loadPagePjax("{{ url_for('predict.my_payments') }}");
+                } else {
+                  window.location.href = "{{ url_for('predict.my_payments') }}";
+                }
               }, 1500);
             }
           }

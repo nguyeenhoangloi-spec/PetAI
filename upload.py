@@ -379,14 +379,9 @@ def checkout():
 			"qr_url": qr_url
 		})
 
-	return render_template(
-		"checkout.html",
-		order_id=order_id,
-		plan=plan,
-		payment_method=payment_method,
-		amount_vnd=amount_vnd,
-		qr_available=bool(qrcode),
-	)
+	# Fallback for direct POST without AJAX
+	flash("Vui lòng thực hiện thanh toán trực tiếp trên trang nâng cấp.", "info")
+	return redirect(url_for("predict.upgrade"))
 
 
 @predict_bp.route("/payment/qr.png", methods=["GET"])

@@ -273,14 +273,14 @@ class FlaskSystemTestCase(unittest.TestCase):
 
         utils.send_otp_email.reset_mock()
 
-    def _post_with_csrf(self, url, data=None, follow_redirects=True):
+    def _post_with_csrf(self, url, data=None, follow_redirects=True, headers=None):
         """Helper to post form data with a valid CSRF token."""
         with self.client.session_transaction() as sess:
             sess['_csrf_token'] = 'test_csrf_token'
         
         data = data or {}
         data['csrf_token'] = 'test_csrf_token'
-        return self.client.post(url, data=data, follow_redirects=follow_redirects)
+        return self.client.post(url, data=data, follow_redirects=follow_redirects, headers=headers)
 
     # ==================== 1. Basic Page Tests ====================
 
@@ -390,8 +390,9 @@ class FlaskSystemTestCase(unittest.TestCase):
 
         response = self._post_with_csrf('/predict/checkout', data={
             'plan': 'pro'
-        })
+        }, headers={'X-Requested-With': 'XMLHttpRequest'})
         self.assertEqual(response.status_code, 200)
+        self.assertIn('order_id', response.json)
         with self.client.session_transaction() as sess:
             self.assertIn('pending_payment', sess)
 
