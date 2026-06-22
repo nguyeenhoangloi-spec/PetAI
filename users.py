@@ -66,54 +66,78 @@ def list_users():
 
     conn = None
     users = []
-    page_raw = (request.args.get("page") or "1").strip()
-    try:
-        page = max(int(page_raw), 1)
-    except Exception:
-        page = 1
-    per_page = 10
     total_users = 0
     total_admins = 0
     total_active = 0
     total_locked = 0
-    total_pages = 0
+    total_paid = 0
+
+    # Trend stats
+    total_trend = {"has_data": False, "val": 0, "up": True}
+    active_trend = {"has_data": False, "val": 0, "up": True}
+    paid_trend = {"has_data": False, "val": 0, "up": True}
+    locked_trend = {"has_data": False, "val": 0, "up": True}
+
     try:
         conn = get_connection()
         with conn.cursor(DictCursor) as cur:
-            cur.execute(
-                """
-                SELECT 
-                    COUNT(*) AS total,
-                    SUM(CASE WHEN role = 'admin' THEN 1 ELSE 0 END) AS total_admins,
-                    SUM(CASE WHEN is_active = 1 THEN 1 ELSE 0 END) AS total_active,
-                    SUM(CASE WHEN is_active = 0 THEN 1 ELSE 0 END) AS total_locked
-                FROM users
-                """
-            )
-            stats_row = cur.fetchone() or {}
-            total_users = int(stats_row.get("total") or 0)
-            total_admins = int(stats_row.get("total_admins") or 0)
-            total_active = int(stats_row.get("total_active") or 0)
-            total_locked = int(stats_row.get("total_locked") or 0)
-
-            total_pages = (total_users + per_page - 1) // per_page
-            if total_pages > 0 and page > total_pages:
-                page = total_pages
-            offset = (page - 1) * per_page
-
+            # Query all users for client-side sorting/filtering/pagination
             cur.execute(
                 """
                 SELECT u.id, u.username, u.fullname, u.email, u.role, u.is_active, u.created_at,
-                       COALESCE(q.plan, 'free') AS plan
+                       COALESCE(q.plan, 'free') AS plan,
+                       q.plan_expire,
+                       q.ad_views_used,
+                       q.ad_unlocks_remaining,
+                       q.updated_at AS quota_updated_at
                 FROM users u
                 LEFT JOIN user_quota q ON q.user_id = u.id
-                ORDER BY created_at DESC
-                LIMIT %s OFFSET %s
+                ORDER BY u.created_at DESC
                 """
-                ,
-                (per_page, offset),
             )
             users = cur.fetchall() or []
+
+            total_users = len(users)
+            total_admins = sum(1 for u in users if u.get("role") == "admin")
+            total_active = sum(1 for u in users if u.get("is_active"))
+            total_locked = sum(1 for u in users if not u.get("is_active"))
+            total_paid = sum(1 for u in users if (u.get("plan") or "free") != "free")
+
+            # MoM calculations
+            from datetime import datetime
+            now = datetime.now()
+            current_month_start = datetime(now.year, now.month, 1)
+            if now.month == 1:
+                last_month_start = datetime(now.year - 1, 12, 1)
+            else:
+                last_month_start = datetime(now.year, now.month - 1, 1)
+            last_month_end = current_month_start
+
+            # Monthly totals
+            tm_total = sum(1 for u in users if u.get("created_at") and u["created_at"] >= current_month_start)
+            lm_total = sum(1 for u in users if u.get("created_at") and last_month_start <= u["created_at"] < last_month_end)
+
+            tm_active = sum(1 for u in users if u.get("is_active") and u.get("created_at") and u["created_at"] >= current_month_start)
+            lm_active = sum(1 for u in users if u.get("is_active") and u.get("created_at") and last_month_start <= u["created_at"] < last_month_end)
+
+            tm_locked = sum(1 for u in users if not u.get("is_active") and u.get("created_at") and u["created_at"] >= current_month_start)
+            lm_locked = sum(1 for u in users if not u.get("is_active") and u.get("created_at") and last_month_start <= u["created_at"] < last_month_end)
+
+            tm_paid = sum(1 for u in users if (u.get("plan") or "free") != "free" and u.get("quota_updated_at") and u["quota_updated_at"] >= current_month_start)
+            lm_paid = sum(1 for u in users if (u.get("plan") or "free") != "free" and u.get("quota_updated_at") and last_month_start <= u["quota_updated_at"] < last_month_end)
+
+            def calculate_growth(curr, prev):
+                if not prev or prev == 0:
+                    return {"has_data": False, "val": 0, "up": True}
+                diff = curr - prev
+                pct = round((diff / prev) * 100, 1)
+                return {"has_data": True, "val": abs(pct), "up": pct >= 0}
+
+            total_trend = calculate_growth(tm_total, lm_total)
+            active_trend = calculate_growth(tm_active, lm_active)
+            locked_trend = calculate_growth(tm_locked, lm_locked)
+            paid_trend = calculate_growth(tm_paid, lm_paid)
+
     except Exception:
         logger.exception("[USERS] Query error")
         flash("Không thể tải danh sách người dùng.", "error")
@@ -121,21 +145,25 @@ def list_users():
         if conn:
             conn.close()
 
-    start_index = ((page - 1) * per_page + 1) if total_users > 0 else 0
-    end_index = min(page * per_page, total_users) if total_users > 0 else 0
+    # Format datetime strings for JS compatibility
+    for u in users:
+        created = u.get("created_at")
+        u["created_str"] = created.strftime('%d/%m/%Y %H:%M') if created else ""
+        expire = u.get("plan_expire")
+        u["expire_str"] = expire.strftime('%d/%m/%Y %H:%M') if expire else ""
 
     return render_template(
         "users.html",
         users=users,
-        page=page,
-        per_page=per_page,
         total_users=total_users,
         total_admins=total_admins,
         total_active=total_active,
         total_locked=total_locked,
-        total_pages=total_pages,
-        start_index=start_index,
-        end_index=end_index,
+        total_paid=total_paid,
+        total_trend=total_trend,
+        active_trend=active_trend,
+        paid_trend=paid_trend,
+        locked_trend=locked_trend,
     )
 
 
@@ -576,15 +604,21 @@ def confirm_payment():
 @users_bp.route("/set-plan", methods=["POST"])
 def set_user_plan():
     if not require_admin():
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest" or request.is_json:
+            return jsonify({"success": False, "error": "Vui lòng đăng nhập."}), 401
         return redirect(url_for("login.login"))
 
-    user_id_raw = (request.form.get("user_id") or "").strip()
-    plan = (request.form.get("plan") or "free").strip().lower()
-    page_raw = (request.form.get("page") or "").strip()
+    # Support JSON payload or Form data
+    payload = request.get_json(silent=True) or {}
+    user_id_raw = (payload.get("user_id") or request.form.get("user_id") or "").strip()
+    plan = (payload.get("plan") or request.form.get("plan") or "free").strip().lower()
+    page_raw = (payload.get("page") or request.form.get("page") or "").strip()
+
     try:
         current_page = max(int(page_raw), 1) if page_raw else None
     except Exception:
         current_page = None
+
     allowed_plans = {"free", "basic", "pro", "enterprise"}
     if plan not in allowed_plans:
         plan = "free"
@@ -592,6 +626,8 @@ def set_user_plan():
     try:
         user_id = int(user_id_raw)
     except Exception:
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest" or request.is_json:
+            return jsonify({"success": False, "error": "User ID không hợp lệ."}), 400
         flash("User ID không hợp lệ.", "error")
         if current_page:
             return redirect(url_for("users.list_users", page=current_page))
@@ -612,9 +648,15 @@ def set_user_plan():
                 send_plan_activated_email(_row[0], _row[1] or _row[0], plan)
         except Exception:
             pass
-        flash(f"Đã cấp gói {plan.upper()} cho user #{user_id}.", "success")
+        
+        msg = f"Đã cấp gói {plan.upper()} cho user #{user_id}."
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest" or request.is_json:
+            return jsonify({"success": True, "message": msg}), 200
+        flash(msg, "success")
     except Exception:
         logger.exception("[USERS] set plan error")
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest" or request.is_json:
+            return jsonify({"success": False, "error": "Không thể cấp gói cho user."}), 500
         flash("Không thể cấp gói cho user. Vui lòng thử lại.", "error")
     finally:
         if conn:
@@ -623,6 +665,42 @@ def set_user_plan():
     if current_page:
         return redirect(url_for("users.list_users", page=current_page))
     return redirect(url_for("users.list_users"))
+
+
+@users_bp.route("/set-role/<int:user_id>", methods=["POST"])
+def set_user_role(user_id: int):
+    if not require_admin():
+        return jsonify({"success": False, "error": "Vui lòng đăng nhập."}), 401
+
+    try:
+        session_user_id = session.get("user_id")
+        if session_user_id is not None and int(session_user_id) == int(user_id):
+            return jsonify({"success": False, "error": "Không thể tự thay đổi vai trò của tài khoản đang đăng nhập."}), 400
+    except Exception:
+        pass
+
+    payload = request.get_json(silent=True) or {}
+    role = (payload.get("role") or request.form.get("role") or "").strip().lower()
+    if role not in {"admin", "user"}:
+        return jsonify({"success": False, "error": "Vai trò không hợp lệ."}), 400
+
+    conn = None
+    try:
+        conn = get_connection()
+        with conn.cursor() as cur:
+            cur.execute("UPDATE users SET role = %s WHERE id = %s", (role, user_id))
+            if cur.rowcount == 0:
+                return jsonify({"success": False, "error": "Không tìm thấy người dùng."}), 404
+        conn.commit()
+        return jsonify({"success": True}), 200
+    except Exception:
+        if conn:
+            conn.rollback()
+        logger.exception("[USERS] set role error")
+        return jsonify({"success": False, "error": "Không thể thay đổi vai trò."}), 500
+    finally:
+        if conn:
+            conn.close()
 
 
 @users_bp.route("/system-config", methods=["GET"])

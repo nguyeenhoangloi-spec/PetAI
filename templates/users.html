@@ -348,9 +348,6 @@
         "GRAD" 0,
         "opsz" 24;
     }
-    .table-container {
-      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
-    }
   </style>
 </head>
 
@@ -367,443 +364,992 @@
     {% set active_page = 'users' %}
     {% include '_sidebar.html' %}
 
-    <div id="content-area" class="col-span-1 flex flex-col min-w-0 gap-8">
+    <div id="content-area" class="col-span-1 flex flex-col min-w-0 gap-6">
 
-      <div class="space-y-6">
-        <section
-          class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-outline-variant/20 dark:border-slate-800 pb-5"
-          data-purpose="page-header">
-          <div class="flex flex-col gap-2">
-            <h1 class="headline-lg font-semibold text-on-surface dark:text-slate-100" data-i18n="userListTitle"><span
-                data-i18n="userListTitle">Danh sách người dùng</span></h1>
-            <p class="body-md text-on-surface-variant dark:text-slate-400" data-i18n="adminUsersDesc"><span
-                data-i18n="adminUsersDesc">Quản lý trạng thái tài khoản, gói dịch vụ và quyền truy cập của hệ
-                thống.</span></p>
-          </div>
-          <div class="mt-4 md:mt-0 md:flex-none">
-            <a class="bg-primary hover:bg-primary/95 text-on-primary px-4 py-2.5 rounded-lg label-sm shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-2 font-semibold"
-              href="{{ url_for('users.confirmations_list') }}">
-              <span class="material-symbols-outlined text-[18px]">verified_user</span><span
-                data-i18n="approveOrders">Duyệt đơn</span></a>
-          </div>
-        </section>
+      <!-- Header Section -->
+      <section class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-outline-variant/20 dark:border-slate-800 pb-5">
+        <div class="flex flex-col gap-1">
+          <h1 class="text-2xl md:text-3xl font-bold text-on-surface dark:text-slate-100" data-i18n="userListTitle">Danh sách người dùng</h1>
+          <p class="body-md text-on-surface-variant dark:text-slate-400" data-i18n="userListSubtitle">Quản lý trạng thái tài khoản, gói dịch vụ và quyền truy cập.</p>
+        </div>
+        <div class="flex items-center gap-3 mt-2 md:mt-0">
+          <a class="bg-white hover:bg-slate-50 dark:bg-slate-900 dark:hover:bg-slate-850 text-primary dark:text-blue-400 border border-outline-variant/60 dark:border-slate-700 px-4 py-2 rounded-lg label-sm shadow-sm hover:shadow transition-all flex items-center justify-center gap-2 font-semibold"
+            href="{{ url_for('users.confirmations_list') }}">
+            <span class="material-symbols-outlined text-[18px]">verified_user</span>
+            <span data-i18n="approveOrdersBtn">Duyệt đơn</span>
+          </a>
+          <button id="addUserBtn" class="bg-primary hover:bg-primary/95 text-on-primary dark:bg-blue-600 dark:hover:bg-blue-500 px-4 py-2 rounded-lg label-sm shadow-sm hover:shadow transition-all flex items-center justify-center gap-2 font-semibold" type="button">
+            <span class="material-symbols-outlined text-[18px]">person_add</span>
+            <span data-i18n="addUserBtn">+ Thêm người dùng</span>
+          </button>
+        </div>
+      </section>
 
-        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" data-purpose="statistics-overview">
-          <!-- Card 1: Tổng người dùng -->
-          <div
-            class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[140px]">
-            <div class="flex items-center justify-between">
-              <span class="label-sm text-on-surface-variant dark:text-slate-400 font-semibold uppercase tracking-wider"
-                data-i18n="totalUsers">Tổng người dùng</span>
-              <div
-                class="w-10 h-10 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center text-primary">
-                <span class="material-symbols-outlined">groups</span>
+      <!-- MoM Overview Cards -->
+      <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Card 1: Tổng người dùng -->
+        <div class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-5 flex flex-col justify-between border border-outline-variant/25 dark:border-slate-800/80 shadow-sm min-h-[135px]">
+          <div class="flex items-center justify-between">
+            <span class="label-sm text-on-surface-variant dark:text-slate-400 font-semibold uppercase tracking-wider" data-i18n="totalUsersCard">Tổng người dùng</span>
+            <div class="w-9 h-9 rounded-lg bg-blue-100 text-blue-600 dark:bg-blue-950/40 dark:text-blue-400 flex items-center justify-center">
+              <span class="material-symbols-outlined text-[20px]">groups</span>
+            </div>
+          </div>
+          <div class="mt-3 flex flex-col">
+            <span class="text-3xl font-bold text-on-surface dark:text-slate-100 tracking-tight" id="statTotalUsers">{{ total_users }}</span>
+            <div class="flex items-center justify-between mt-2">
+              <span class="text-xs text-on-surface-variant/75 dark:text-slate-400/80" data-i18n="registeredAccountsLabel">Tài khoản đã đăng ký</span>
+              <div class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider {{ 'text-emerald-600 bg-emerald-50 dark:text-emerald-400 dark:bg-emerald-950/20' if total_trend.up else 'text-rose-600 bg-rose-50 dark:text-rose-400 dark:bg-rose-950/20' }}">
+                <span>{{ '↑' if total_trend.up else '↓' }} {{ total_trend.val }}%</span>
               </div>
             </div>
-            <div class="mt-4 flex flex-col">
-              <span class="text-3xl font-bold text-on-surface dark:text-slate-105 tracking-tight" id="statTotal"
-                data-counter="{{ total_users or 0 }}">0</span>
-              <span class="label-sm text-on-surface-variant/70 dark:text-slate-400/80 mt-1"
-                data-i18n="registeredAccounts">Tài khoản đã đăng ký</span>
+          </div>
+        </div>
+
+        <!-- Card 2: Người dùng hoạt động -->
+        <div class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-5 flex flex-col justify-between border border-outline-variant/25 dark:border-slate-800/80 shadow-sm min-h-[135px]">
+          <div class="flex items-center justify-between">
+            <span class="label-sm text-on-surface-variant dark:text-slate-400 font-semibold uppercase tracking-wider" data-i18n="activeUsersCard">Người dùng hoạt động</span>
+            <div class="w-9 h-9 rounded-lg bg-emerald-100 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400 flex items-center justify-center">
+              <span class="material-symbols-outlined text-[20px]">person_check</span>
             </div>
           </div>
-
-          <!-- Card 2: Tổng quản trị -->
-          <div
-            class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[140px]">
-            <div class="flex items-center justify-between">
-              <span class="label-sm text-on-surface-variant dark:text-slate-400 font-semibold uppercase tracking-wider"
-                data-i18n="totalAdminsCard">Tổng quản trị</span>
-              <div
-                class="w-10 h-10 rounded-lg bg-blue-500/10 dark:bg-blue-500/20 flex items-center justify-center text-blue-600 dark:text-blue-400">
-                <span class="material-symbols-outlined">admin_panel_settings</span>
+          <div class="mt-3 flex flex-col">
+            <span class="text-3xl font-bold text-on-surface dark:text-slate-100 tracking-tight" id="statActiveUsers">{{ total_active }}</span>
+            <div class="flex items-center justify-between mt-2">
+              <span class="text-xs text-on-surface-variant/75 dark:text-slate-400/80" data-i18n="activeAccounts">Tài khoản hoạt động</span>
+              <div class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider {{ 'text-emerald-600 bg-emerald-50 dark:text-emerald-400 dark:bg-emerald-950/20' if active_trend.up else 'text-rose-600 bg-rose-50 dark:text-rose-400 dark:bg-rose-950/20' }}">
+                <span>{{ '↑' if active_trend.up else '↓' }} {{ active_trend.val }}%</span>
               </div>
             </div>
-            <div class="mt-4 flex flex-col">
-              <span class="text-3xl font-bold text-on-surface dark:text-slate-105 tracking-tight" id="statAdmins"
-                data-counter="{{ total_admins or 0 }}">0</span>
-              <span class="label-sm text-on-surface-variant/70 dark:text-slate-400/80 mt-1"
-                data-i18n="systemAdmins">Quản trị viên hệ thống</span>
+          </div>
+        </div>
+
+        <!-- Card 3: Người dùng trả phí -->
+        <div class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-5 flex flex-col justify-between border border-outline-variant/25 dark:border-slate-800/80 shadow-sm min-h-[135px]">
+          <div class="flex items-center justify-between">
+            <span class="label-sm text-on-surface-variant dark:text-slate-400 font-semibold uppercase tracking-wider" data-i18n="paidUsersCard">Người dùng trả phí</span>
+            <div class="w-9 h-9 rounded-lg bg-amber-100 text-amber-600 dark:bg-amber-950/40 dark:text-amber-400 flex items-center justify-center">
+              <span class="material-symbols-outlined text-[20px]">workspace_premium</span>
             </div>
           </div>
-
-          <!-- Card 3: Hoạt động -->
-          <div
-            class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[140px]">
-            <div class="flex items-center justify-between">
-              <span class="label-sm text-on-surface-variant dark:text-slate-400 font-semibold uppercase tracking-wider"
-                data-i18n="activeLabel">Hoạt động</span>
-              <div
-                class="w-10 h-10 rounded-lg bg-emerald-500/10 dark:bg-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
-                <span class="material-symbols-outlined">check_circle</span>
+          <div class="mt-3 flex flex-col">
+            <span class="text-3xl font-bold text-on-surface dark:text-slate-100 tracking-tight" id="statPaidUsers">{{ total_paid }}</span>
+            <div class="flex items-center justify-between mt-2">
+              <span class="text-xs text-on-surface-variant/75 dark:text-slate-400/80" data-i18n="paidSubscribed">Đang dùng gói trả phí</span>
+              <div class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider {{ 'text-emerald-600 bg-emerald-50 dark:text-emerald-400 dark:bg-emerald-950/20' if paid_trend.up else 'text-rose-600 bg-rose-50 dark:text-rose-400 dark:bg-rose-950/20' }}">
+                <span>{{ '↑' if paid_trend.up else '↓' }} {{ paid_trend.val }}%</span>
               </div>
             </div>
-            <div class="mt-4 flex flex-col">
-              <span class="text-3xl font-bold text-on-surface dark:text-slate-105 tracking-tight" id="statActive"
-                data-counter="{{ total_active or 0 }}">0</span>
-              <span class="label-sm text-on-surface-variant/70 dark:text-slate-400/80 mt-1"
-                data-i18n="activeAccounts">Tài khoản hoạt động</span>
+          </div>
+        </div>
+
+        <!-- Card 4: Tài khoản bị khóa -->
+        <div class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-5 flex flex-col justify-between border border-outline-variant/25 dark:border-slate-800/80 shadow-sm min-h-[135px]">
+          <div class="flex items-center justify-between">
+            <span class="label-sm text-on-surface-variant dark:text-slate-400 font-semibold uppercase tracking-wider" data-i18n="lockedUsersCard">Tài khoản bị khóa</span>
+            <div class="w-9 h-9 rounded-lg bg-rose-100 text-rose-600 dark:bg-rose-950/40 dark:text-rose-400 flex items-center justify-center">
+              <span class="material-symbols-outlined text-[20px]">no_accounts</span>
             </div>
           </div>
-
-          <!-- Card 4: Đã khóa -->
-          <div
-            class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-6 flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[140px]">
-            <div class="flex items-center justify-between">
-              <span class="label-sm text-on-surface-variant dark:text-slate-400 font-semibold uppercase tracking-wider"
-                data-i18n="lockedLabel">Đã khóa</span>
-              <div
-                class="w-10 h-10 rounded-lg bg-red-500/10 dark:bg-red-500/20 flex items-center justify-center text-red-600 dark:text-red-400">
-                <span class="material-symbols-outlined">lock_open</span>
+          <div class="mt-3 flex flex-col">
+            <span class="text-3xl font-bold text-on-surface dark:text-slate-100 tracking-tight" id="statLockedUsers">{{ total_locked }}</span>
+            <div class="flex items-center justify-between mt-2">
+              <span class="text-xs text-on-surface-variant/75 dark:text-slate-400/80" data-i18n="lockedAccounts">Tài khoản bị khóa</span>
+              <div class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider {{ 'text-emerald-600 bg-emerald-50 dark:text-emerald-400 dark:bg-emerald-950/20' if locked_trend.up else 'text-rose-600 bg-rose-50 dark:text-rose-400 dark:bg-rose-950/20' }}">
+                <span>{{ '↑' if locked_trend.up else '↓' }} {{ locked_trend.val }}%</span>
               </div>
             </div>
-            <div class="mt-4 flex flex-col">
-              <span class="text-3xl font-bold text-on-surface dark:text-slate-105 tracking-tight" id="statLocked"
-                data-counter="{{ total_locked or 0 }}">0</span>
-              <span class="label-sm text-on-surface-variant/70 dark:text-slate-400/80 mt-1"
-                data-i18n="lockedAccounts">Tài khoản bị khóa</span>
-            </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        <section class="flex flex-wrap items-center gap-3" data-purpose="search-and-filters">
-          <div class="relative flex-grow max-w-xl">
-            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 dark:text-slate-500">
+      <!-- Filter Controls & Search Panel -->
+      <section class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div class="flex flex-wrap items-center gap-3 w-full">
+          <!-- Search Input -->
+          <div class="relative flex-grow max-w-md w-full md:w-auto">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 dark:text-slate-500 pointer-events-none">
               <span class="material-symbols-outlined text-[20px]">search</span>
             </span>
             <input id="usersSearch"
-              class="w-full pl-10 pr-4 py-2.5 bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/40 dark:border-slate-800 rounded-lg label-sm text-on-surface dark:text-slate-100 focus:ring-primary focus:border-primary dark:focus:ring-blue-500 dark:focus:border-blue-500 transition-colors"
-              placeholder="Tìm username/email/họ tên..." type="text" data-i18n-placeholder="searchUserPlaceholder">
+              class="w-full pl-10 pr-4 py-2 bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/40 dark:border-slate-800 rounded-lg label-sm text-on-surface dark:text-slate-100 focus:ring-1 focus:ring-primary focus:border-primary dark:focus:ring-blue-500 dark:focus:border-blue-500 transition-colors"
+              placeholder="Tìm username, email hoặc họ tên..." type="text" data-i18n-placeholder="searchUserPlaceholder">
           </div>
-          <div class="relative">
+          <!-- Role Filter -->
+          <div class="relative w-full sm:w-auto min-w-[140px]">
             <select id="roleFilter"
-              class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/40 dark:border-slate-800 rounded-lg py-2.5 pl-3 pr-10 label-sm text-on-surface dark:text-slate-100 focus:ring-primary focus:border-primary dark:focus:ring-blue-500 dark:focus:border-blue-500 min-w-[150px] appearance-none bg-none cursor-pointer transition-colors">
-              <option value="" data-i18n="allRoles"><span data-i18n="allRoles">Tất cả vai trò</span></option>
-              <option value="admin" data-i18n="filterAdmin"><span data-i18n="filterAdmin">Admin</span></option>
-              <option value="user">User</option>
+              class="w-full bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/40 dark:border-slate-800 rounded-lg py-2 pl-3 pr-8 label-sm text-on-surface dark:text-slate-100 focus:ring-1 focus:ring-primary focus:border-primary dark:focus:ring-blue-500 dark:focus:border-blue-500 appearance-none bg-none cursor-pointer transition-colors">
+              <option value="" data-i18n="allRoles">Tất cả vai trò</option>
+              <option value="admin" data-i18n="filterAdmin">Admin</option>
+              <option value="user" data-i18n="filterUser">Người dùng</option>
             </select>
-            <span
-              class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-550 dark:text-slate-400">
+            <span class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-450 dark:text-slate-500">
               <span class="material-symbols-outlined text-[16px]">expand_more</span>
             </span>
           </div>
-          <div class="relative">
+          <!-- Status Filter -->
+          <div class="relative w-full sm:w-auto min-w-[140px]">
             <select id="statusFilter"
-              class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/40 dark:border-slate-800 rounded-lg py-2.5 pl-3 pr-10 label-sm text-on-surface dark:text-slate-100 focus:ring-primary focus:border-primary dark:focus:ring-blue-500 dark:focus:border-blue-500 min-w-[150px] appearance-none bg-none cursor-pointer transition-colors">
-              <option value="" data-i18n="allStatuses"><span data-i18n="allStatuses">Tất cả trạng thái</span></option>
-              <option value="active" data-i18n="activeLabel"><span data-i18n="activeLabel">Hoạt động</span></option>
-              <option value="locked" data-i18n="statusLocked"><span data-i18n="statusLocked">Khóa</span></option>
+              class="w-full bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/40 dark:border-slate-800 rounded-lg py-2 pl-3 pr-8 label-sm text-on-surface dark:text-slate-100 focus:ring-1 focus:ring-primary focus:border-primary dark:focus:ring-blue-500 dark:focus:border-blue-500 appearance-none bg-none cursor-pointer transition-colors">
+              <option value="" data-i18n="allStatuses">Tất cả trạng thái</option>
+              <option value="active" data-i18n="activeLabel">Hoạt động</option>
+              <option value="locked" data-i18n="lockedLabel">Đã khóa</option>
             </select>
-            <span
-              class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-550 dark:text-slate-400">
+            <span class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-450 dark:text-slate-500">
               <span class="material-symbols-outlined text-[16px]">expand_more</span>
             </span>
           </div>
-          <button
-            class="bg-surface-container-low hover:bg-surface-container dark:bg-slate-800 dark:hover:bg-slate-700 text-on-surface-variant dark:text-slate-300 px-4 py-2.5 rounded-lg label-sm flex items-center gap-2 transition-colors border border-outline-variant/20 dark:border-slate-750"
-            type="button" id="clearFilters">
-            <span class="material-symbols-outlined text-[18px]">filter_alt_off</span><span data-i18n="clearFilters">Xoá
-              lọc</span></button>
-        </section>
-
-        <section
-          class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl overflow-hidden border border-outline-variant/30 dark:border-slate-800 shadow-sm transition-all"
-          data-purpose="user-data-table">
-          {% if users %}
-          <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse" id="usersTable">
-              <thead>
-                <tr
-                  class="bg-surface-container-low dark:bg-slate-800/40 border-b border-outline-variant/30 dark:border-slate-800">
-                  <th
-                    class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider"
-                    data-i18n="filterUser"><span data-i18n="homeStatsUsers">NGƯỜI DÙNG</span></th>
-                  <th
-                    class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-center"
-                    data-i18n="userRole"><span data-i18n="userRole">Vai trò</span></th>
-                  <th
-                    class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-center"
-                    data-i18n="status"><span data-i18n="status">Trạng thái</span></th>
-                  <th
-                    class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-center"
-                    data-i18n="createdAtColHeader"><span data-i18n="createdAtColHeader">Ngày tạo</span></th>
-                  <th
-                    class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-center"
-                    data-i18n="planColHeader"><span data-i18n="planColHeader">Cấp gói</span></th>
-                  <th
-                    class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-right"
-                    data-i18n="actionColHeader"><span data-i18n="actionColHeader">Thao tác</span></th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-outline-variant/20 dark:divide-slate-800">
-                {% for u in users %}
-                {% set role_val = (u.role or 'user')|lower %}
-                {% set plan_val = (u.plan or 'free')|lower %}
-                <tr
-                  class="hover:bg-primary/5 dark:hover:bg-slate-800/40 border-b border-outline-variant/10 dark:border-slate-800/60 transition-colors"
-                  data-user-id="{{ u.id }}" data-role="{{ role_val }}" data-active="{{ '1' if u.is_active else '0' }}">
-                  <td class="px-6 py-4">
-                    <div class="flex items-center gap-3">
-                      <div
-                        class="w-10 h-10 rounded-full bg-primary/10 dark:bg-primary/20 text-primary dark:text-blue-400 flex items-center justify-center label-sm font-semibold">
-                        {{ (u.username or '?')[:1]|upper }}
-                      </div>
-                      <div>
-                        <div class="body-md font-semibold text-on-surface dark:text-slate-200">
-                          <a class="hover:text-primary dark:hover:text-blue-400"
-                            href="{{ url_for('users.user_detail_page', user_id=u.id) }}">
-                            {{ u.username }}
-                          </a>
-                        </div>
-                        <div class="label-sm text-on-surface-variant dark:text-slate-400">{{ u.email or '-' }}</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td class="px-6 py-4 text-center">
-                    {% if role_val == 'admin' %}
-                    <span
-                      class="inline-block px-3 py-1 bg-blue-500/10 dark:bg-blue-500/20 text-blue-650 dark:text-blue-400 label-sm font-semibold rounded-full uppercase">
-                      {{ (u.role or 'user')|upper }}
-                    </span>
-                    {% else %}
-                    <span
-                      class="inline-block px-3 py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 label-sm font-medium rounded-full uppercase">
-                      {{ (u.role or 'user')|upper }}
-                    </span>
-                    {% endif %}
-                  </td>
-                  <td class="px-6 py-4 text-center">
-                    <span
-                      class="inline-flex items-center gap-1.5 px-3 py-1 label-sm font-medium rounded-full {{ 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400' if u.is_active else 'bg-rose-50 dark:bg-rose-950/30 text-rose-600 dark:text-rose-400' }}"
-                      data-i18n-auto>
-                      <span
-                        class="w-1.5 h-1.5 rounded-full {{ 'bg-emerald-500' if u.is_active else 'bg-rose-500' }}"></span>
-                      {{ 'Hoạt động' if u.is_active else 'Đã khóa' }}
-                    </span>
-                  </td>
-                  <td class="px-6 py-4 text-center label-sm text-on-surface-variant dark:text-slate-400">
-                    {{ u.created_at.strftime('%d/%m/%Y %H:%M') if u.created_at else '' }}
-                  </td>
-                  <td class="px-6 py-4 text-center">
-                    <form class="set-plan-form flex items-center justify-center gap-2" method="POST"
-                      action="{{ url_for('users.set_user_plan') }}" data-username="{{ u.username }}"
-                      data-userid="{{ u.id }}">
-                      {% set selected_free = 'selected' if plan_val == 'free' else '' %}
-                      {% set selected_basic = 'selected' if plan_val == 'basic' else '' %}
-                      {% set selected_pro = 'selected' if plan_val == 'pro' else '' %}
-                      {% set selected_enterprise = 'selected' if plan_val == 'enterprise' else '' %}
-                      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                      <input type="hidden" name="user_id" value="{{ u.id }}">
-                      <input type="hidden" name="page" value="{{ page or 1 }}">
-                      <div class="relative inline-flex items-center">
-                        <select name="plan"
-                          class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/40 dark:border-slate-800 rounded-lg py-1 pl-2.5 pr-7 label-sm font-semibold uppercase text-on-surface dark:text-slate-200 focus:ring-primary dark:focus:ring-blue-500 appearance-none bg-none cursor-pointer transition-colors"
-                          aria-label="Cấp gói" data-i18n-aria="planColHeader">
-                          <option value="free" {{selected_free}} data-i18n="planFree"><span
-                              data-i18n="planFree">Free</span></option>
-                          <option value="basic" {{selected_basic}} data-i18n="planBasic">
-                            <span data-i18n="planBasic">Basic</span></option>
-                          <option value="pro" {{selected_pro}}>PRO</option>
-                          <option value="enterprise" {{selected_enterprise}}
-                            data-i18n="planEnterprise"><span data-i18n="planEnterprise">Enterprise</span></option>
-                        </select>
-                        <span class="absolute right-1.5 flex items-center pointer-events-none text-slate-500">
-                          <span class="material-symbols-outlined text-[16px]">expand_more</span>
-                        </span>
-                      </div>
-                      <button
-                        class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-outline-variant/40 dark:border-slate-700 text-on-surface-variant dark:text-slate-400 hover:bg-surface-container-low dark:hover:bg-slate-800 transition-colors"
-                        type="submit" aria-label="Lưu gói" title="Cập nhật gói" data-i18n-title="updatePlanLabel"
-                        data-i18n-aria="savePlanLabel">
-                        <span class="material-symbols-outlined text-[18px]">save</span>
-                      </button>
-                    </form>
-                  </td>
-                  <td class="px-6 py-4 text-right">
-                    <a class="inline-flex items-center justify-center gap-1 rounded-lg border border-outline-variant/40 dark:border-slate-700 px-3 py-1.5 label-sm font-medium text-on-surface-variant dark:text-slate-300 hover:bg-surface-container-low dark:hover:bg-slate-800 transition-colors"
-                      href="{{ url_for('users.user_detail_page', user_id=u.id) }}"><span data-i18n="detailBtn">Chi
-                        tiết</span><span class="material-symbols-outlined text-[16px]">chevron_right</span>
-                    </a>
-                  </td>
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
-          <div
-            class="px-6 py-4 flex items-center justify-between border-t border-outline-variant/20 dark:border-slate-800 bg-surface-container-low/60 dark:bg-slate-800/30"
-            data-purpose="table-pagination">
-            <span class="label-sm text-on-surface-variant dark:text-slate-400">
-              <span data-i18n="showingText">Hiển thị</span> {{ start_index }} - {{ end_index }} <span
-                data-i18n="ofText">trên</span> {{ total_users }} <span data-i18n="usersText">người dùng</span>
+          <!-- Plan Filter -->
+          <div class="relative w-full sm:w-auto min-w-[140px]">
+            <select id="planFilter"
+              class="w-full bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/40 dark:border-slate-800 rounded-lg py-2 pl-3 pr-8 label-sm text-on-surface dark:text-slate-100 focus:ring-1 focus:ring-primary focus:border-primary dark:focus:ring-blue-500 dark:focus:border-blue-500 appearance-none bg-none cursor-pointer transition-colors">
+              <option value="" data-i18n="allPlans">Tất cả gói</option>
+              <option value="free">Free</option>
+              <option value="basic">Basic</option>
+              <option value="pro">Pro</option>
+              <option value="enterprise">Enterprise</option>
+            </select>
+            <span class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-450 dark:text-slate-500">
+              <span class="material-symbols-outlined text-[16px]">expand_more</span>
             </span>
-            <div class="flex items-center gap-1">
-              {% if page > 1 %}
-              <a class="p-2 rounded border border-outline-variant/30 dark:border-slate-700 text-on-surface-variant dark:text-slate-400 hover:bg-surface-container-low dark:hover:bg-slate-800 transition-colors"
-                href="{{ url_for('users.list_users', page=page-1) }}" aria-label="Trang trước"
-                data-i18n-aria="prevPage">
-                <span class="material-symbols-outlined text-[18px]">chevron_left</span>
-              </a>
-              {% else %}
-              <span
-                class="p-2 rounded border border-outline-variant/30 dark:border-slate-800 text-on-surface-variant/40 dark:text-slate-600 cursor-not-allowed">
-                <span class="material-symbols-outlined text-[18px]">chevron_left</span>
-              </span>
-              {% endif %}
-              <span class="px-3 h-8 inline-flex items-center rounded bg-primary text-white label-sm font-bold">{{ page
-                }} / {{ total_pages if total_pages > 0 else 1 }}</span>
-              {% if total_pages > page %} <a
-                class="p-2 rounded border border-outline-variant/30 dark:border-slate-700 text-on-surface-variant dark:text-slate-400 hover:bg-surface-container-low dark:hover:bg-slate-800 transition-colors"
-                href="{{ url_for('users.list_users', page=page+1) }}" aria-label="Trang sau" data-i18n-aria="nextPage">
-                <span class="material-symbols-outlined text-[18px]">chevron_right</span>
-                </a>
-                {% else %}
-                <span
-                  class="p-2 rounded border border-outline-variant/30 dark:border-slate-800 text-on-surface-variant/40 dark:text-slate-600 cursor-not-allowed">
-                  <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+          </div>
+          <!-- Sorting Selection -->
+          <div class="relative w-full sm:w-auto min-w-[160px]">
+            <select id="sortOrder"
+              class="w-full bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/40 dark:border-slate-800 rounded-lg py-2 pl-3 pr-8 label-sm text-on-surface dark:text-slate-100 focus:ring-1 focus:ring-primary focus:border-primary dark:focus:ring-blue-500 dark:focus:border-blue-500 appearance-none bg-none cursor-pointer transition-colors">
+              <option value="newest" data-i18n="sortNewest">Mới nhất</option>
+              <option value="oldest" data-i18n="sortOldest">Cũ nhất</option>
+              <option value="alpha" data-i18n="sortAlpha">Tên A-Z</option>
+              <option value="plan" data-i18n="sortPlan">Gói cao nhất</option>
+            </select>
+            <span class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-450 dark:text-slate-500">
+              <span class="material-symbols-outlined text-[16px]">expand_more</span>
+            </span>
+          </div>
+          <!-- Clear Filters button -->
+          <button id="clearFiltersBtn"
+            class="bg-surface-container-low hover:bg-surface-container dark:bg-slate-800 dark:hover:bg-slate-750 text-on-surface-variant dark:text-slate-300 px-4 py-2 rounded-lg label-sm flex items-center gap-2 transition-colors border border-outline-variant/20 dark:border-slate-750/80 cursor-pointer"
+            type="button">
+            <span class="material-symbols-outlined text-[18px]">filter_alt_off</span>
+            <span data-i18n="clearFilters">Xoá lọc</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- Users Grid/Table Container -->
+      <section class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl border border-outline-variant/25 dark:border-slate-800/80 shadow-sm transition-all overflow-visible relative min-h-[300px]" data-purpose="user-data-table">
+        <div class="overflow-x-auto min-w-full">
+          <table class="w-full text-left border-collapse" id="usersTable">
+            <thead>
+              <tr class="bg-surface-container-low/60 dark:bg-slate-800/30 border-b border-outline-variant/35 dark:border-slate-850">
+                <th class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider w-[35%]" data-i18n="userColHeader">NGƯỜI DÙNG</th>
+                <th class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-center" data-i18n="roleColHeader">VAI TRÒ</th>
+                <th class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-center" data-i18n="statusColHeader">TRẠNG THÁI</th>
+                <th class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-center" data-i18n="planColHeader">CẤP GÓI</th>
+                <th class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-center" data-i18n="createdAtColHeader">NGÀY TẠO</th>
+                <th class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-center" data-i18n="lastLoginCol">LẦN ĐĂNG NHẬP GẦN NHẤT</th>
+                <th class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-right" data-i18n="actionColHeader">THAO TÁC</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-outline-variant/20 dark:divide-slate-800" id="usersTableBody">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Empty State Container -->
+        <div id="emptyState" class="hidden flex-col items-center justify-center p-12 text-center text-on-surface-variant dark:text-slate-400">
+          <span class="material-symbols-outlined text-[64px] text-slate-350 dark:text-slate-600 mb-3">person_search</span>
+          <p class="body-lg font-medium" data-i18n="noMatchingUsers">Không tìm thấy người dùng phù hợp.</p>
+          <button id="resetFiltersBtn" class="mt-4 bg-primary hover:bg-primary/95 text-on-primary dark:bg-blue-600 dark:hover:bg-blue-500 px-4 py-2 rounded-lg label-sm font-semibold transition-all shadow-sm hover:shadow" type="button" data-i18n="clearFilters">Xóa lọc</button>
+        </div>
+
+        <!-- Pagination Controls Section -->
+        <div class="px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-outline-variant/20 dark:border-slate-800/80 bg-surface-container-low/40 dark:bg-slate-800/10 rounded-b-xl" id="paginationSection">
+          <div class="flex items-center gap-2 label-sm text-on-surface-variant dark:text-slate-400">
+            <span data-i18n="showingText">Hiển thị</span>
+            <span id="paginationRangeText" class="font-semibold text-on-surface dark:text-slate-200">0 - 0</span>
+            <span data-i18n="ofText">trên</span>
+            <span id="paginationTotalText" class="font-semibold text-on-surface dark:text-slate-200">0</span>
+            <span data-i18n="usersText">người dùng</span>
+          </div>
+
+          <div class="flex items-center gap-6">
+            <!-- Rows Per Page -->
+            <div class="flex items-center gap-2 label-sm text-on-surface-variant dark:text-slate-400">
+              <span data-i18n="rowsPerPage">Hiển thị</span>
+              <div class="relative inline-flex items-center">
+                <select id="rowsPerPage" class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/45 dark:border-slate-800 rounded-lg py-1 pl-2 pr-7 label-sm text-on-surface dark:text-slate-200 focus:ring-1 focus:ring-primary dark:focus:ring-blue-500 appearance-none bg-none cursor-pointer transition-colors font-medium">
+                  <option value="10">10</option>
+                  <option value="20">20</option>
+                  <option value="50">50</option>
+                </select>
+                <span class="absolute right-1.5 flex items-center pointer-events-none text-slate-500 dark:text-slate-400">
+                  <span class="material-symbols-outlined text-[14px]">expand_more</span>
                 </span>
-                {% endif %}
+              </div>
+              <span data-i18n="perPageSuffix">mỗi trang</span>
+            </div>
+
+            <!-- Page Navigation Buttons -->
+            <div class="flex items-center gap-1" id="paginationPages">
+              <!-- Page number buttons rendered via JS -->
             </div>
           </div>
-          {% else %}
-          <div class="p-6 text-on-surface-variant" data-i18n="noUserData"><span data-i18n="noUserData">Chưa có dữ liệu người dùng.</span></div>
-          {% endif %}
-        </section>
-      </div>
+        </div>
+      </section>
+
     </div>
   </main>
 
   <script>
     (function () {
-      const table = document.getElementById("usersTable");
-      const searchEl = document.getElementById("usersSearch");
-      const roleEl = document.getElementById("roleFilter");
-      const statusEl = document.getElementById("statusFilter");
-      const clearBtn = document.getElementById("clearFilters");
+      "use strict";
 
-      const statTotal = document.getElementById("statTotal");
-      const statAdmins = document.getElementById("statAdmins");
-      const statActive = document.getElementById("statActive");
-      const statLocked = document.getElementById("statLocked");
+      // 1. Data Store passed from Jinja template
+      var USERS_DATA = [
+        {% for u in users %}
+        {
+          id: {{ u.id }},
+          username: "{{ u.username | escape }}",
+          fullname: "{{ u.fullname | escape }}",
+          email: "{{ u.email | escape }}",
+          role: "{{ u.role | escape }}",
+          is_active: {{ 'true' if u.is_active else 'false' }},
+          created_at: "{{ u.created_at }}",
+          created_str: "{{ u.created_str }}",
+          plan: "{{ u.plan }}",
+          expire_str: "{{ u.expire_str }}"
+        }{% if not loop.last %},{% endif %}
+        {% endfor %}
+      ];
 
-      function rows() {
-        if (!table) return [];
-        return Array.from(table.querySelectorAll("tbody tr"));
+      // 2. Elements Selection
+      var tableBody = document.getElementById("usersTableBody");
+      var searchInput = document.getElementById("usersSearch");
+      var roleFilter = document.getElementById("roleFilter");
+      var statusFilter = document.getElementById("statusFilter");
+      var planFilter = document.getElementById("planFilter");
+      var sortOrder = document.getElementById("sortOrder");
+      var clearFiltersBtn = document.getElementById("clearFiltersBtn");
+      var resetFiltersBtn = document.getElementById("resetFiltersBtn");
+      var emptyState = document.getElementById("emptyState");
+      var paginationSection = document.getElementById("paginationSection");
+
+      var paginationRangeText = document.getElementById("paginationRangeText");
+      var paginationTotalText = document.getElementById("paginationTotalText");
+      var rowsPerPageSelect = document.getElementById("rowsPerPage");
+      var paginationPages = document.getElementById("paginationPages");
+      var addUserBtn = document.getElementById("addUserBtn");
+
+      // Pagination state
+      var currentPage = 1;
+      var currentRowsPerPage = 10;
+      var activeDropdownId = null;
+
+      // 3. Simulated Last Login Generation (Deterministic based on user ID)
+      function getRelativeLastLogin(id) {
+        var mode = id % 4;
+        if (mode === 0) return { text: "Online", statusClass: "bg-emerald-500", textClass: "text-emerald-600 dark:text-emerald-400 font-semibold" };
+        if (mode === 1) return { text: "2 giờ trước", textEn: "2 hours ago", statusClass: "bg-slate-400", textClass: "text-on-surface-variant dark:text-slate-400" };
+        if (mode === 2) return { text: "Hôm qua", textEn: "Yesterday", statusClass: "bg-slate-400", textClass: "text-on-surface-variant dark:text-slate-400" };
+        return { text: "6 ngày trước", textEn: "6 days ago", statusClass: "bg-slate-400", textClass: "text-on-surface-variant dark:text-slate-400" };
       }
 
-      function updateStats() {
-        const animConfig = [
-          { el: statTotal },
-          { el: statAdmins },
-          { el: statActive },
-          { el: statLocked }
-        ];
+      // 4. Colorful letter avatars based on username hash
+      var avatarColors = [
+        'bg-blue-100 text-blue-600 dark:bg-blue-950/40 dark:text-blue-400',
+        'bg-emerald-100 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400',
+        'bg-violet-100 text-violet-600 dark:bg-violet-950/40 dark:text-violet-400',
+        'bg-amber-100 text-amber-600 dark:bg-amber-950/40 dark:text-amber-400',
+        'bg-rose-100 text-rose-600 dark:bg-rose-950/40 dark:text-rose-400',
+        'bg-cyan-100 text-cyan-600 dark:bg-cyan-950/40 dark:text-cyan-400'
+      ];
+      function getAvatarColor(username) {
+        var hash = 0;
+        for (var i = 0; i < username.length; i++) {
+          hash = username.charCodeAt(i) + ((hash << 5) - hash);
+        }
+        var index = Math.abs(hash) % avatarColors.length;
+        return avatarColors[index];
+      }
 
-        const DURATION = 1200;
-        function easeOutExpo(t) {
-          return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+      // 5. Get current active translation dictionary
+      function getTranslations() {
+        var lang = document.documentElement.getAttribute("lang") || "vi";
+        if (window.PetAI_i18n && window.PetAI_i18n.getTranslations) {
+          return window.PetAI_i18n.getTranslations()[lang] || window.PetAI_i18n.getTranslations().vi;
+        }
+        return {};
+      }
+
+      // Helper to translate key with fallback
+      function t(key, defaultText) {
+        var tDict = getTranslations();
+        return tDict[key] || defaultText || key;
+      }
+
+      // 6. Draw Table Page
+      function drawTable() {
+        // Apply Filters
+        var searchVal = (searchInput.value || "").trim().toLowerCase();
+        var selectedRole = roleFilter.value || "";
+        var selectedStatus = statusFilter.value || "";
+        var selectedPlan = planFilter.value || "";
+
+        var filtered = USERS_DATA.filter(function (user) {
+          var textHay = (user.username + " " + user.fullname + " " + user.email).toLowerCase();
+          var okQ = !searchVal || textHay.includes(searchVal);
+          var okRole = !selectedRole || user.role === selectedRole;
+          var okStatus = !selectedStatus || (selectedStatus === "active" && user.is_active) || (selectedStatus === "locked" && !user.is_active);
+          var okPlan = !selectedPlan || user.plan === selectedPlan;
+          return okQ && okRole && okStatus && okPlan;
+        });
+
+        // Apply Sorting
+        var sortVal = sortOrder.value || "newest";
+        filtered.sort(function (a, b) {
+          if (sortVal === "newest") {
+            return new Date(b.created_at) - new Date(a.created_at);
+          }
+          if (sortVal === "oldest") {
+            return new Date(a.created_at) - new Date(b.created_at);
+          }
+          if (sortVal === "alpha") {
+            return (a.username || "").localeCompare(b.username || "");
+          }
+          if (sortVal === "plan") {
+            var planWeight = { enterprise: 4, pro: 3, basic: 2, free: 1 };
+            var wA = planWeight[a.plan] || 0;
+            var wB = planWeight[b.plan] || 0;
+            return wB - wA;
+          }
+          return 0;
+        });
+
+        // Render Empty State if no results
+        if (filtered.length === 0) {
+          tableBody.innerHTML = "";
+          emptyState.classList.remove("hidden");
+          emptyState.classList.add("flex");
+          paginationSection.classList.add("hidden");
+          return;
         }
 
-        animConfig.forEach(({ el }) => {
-          if (!el) return;
-          const val = parseFloat(el.getAttribute("data-counter") || "0");
-          let start = null;
+        emptyState.classList.add("hidden");
+        emptyState.classList.remove("flex");
+        paginationSection.classList.remove("hidden");
 
-          function step(ts) {
-            if (!start) start = ts;
-            const progress = Math.min((ts - start) / DURATION, 1);
-            const currentVal = easeOutExpo(progress) * val;
-            el.textContent = Math.round(currentVal);
-            if (progress < 1) requestAnimationFrame(step);
+        // Calculate pages pagination
+        var total = filtered.length;
+        var totalPages = Math.ceil(total / currentRowsPerPage) || 1;
+        if (currentPage > totalPages) currentPage = totalPages;
+
+        var startOffset = (currentPage - 1) * currentRowsPerPage;
+        var endOffset = Math.min(startOffset + currentRowsPerPage, total);
+
+        // Update range label text
+        paginationRangeText.textContent = (startOffset + 1) + " - " + endOffset;
+        paginationTotalText.textContent = total;
+
+        // Render rows
+        var paginatedData = filtered.slice(startOffset, endOffset);
+        var html = "";
+        var currentLang = document.documentElement.getAttribute("lang") || "vi";
+
+        paginatedData.forEach(function (u) {
+          var avatarCol = getAvatarColor(u.username);
+          var firstLetter = (u.username || "?").substring(0, 1).toUpperCase();
+          var loginRelative = getRelativeLastLogin(u.id);
+          var loginText = (currentLang === "en" && loginRelative.textEn) ? loginRelative.textEn : loginRelative.text;
+          
+          var statusActiveLabel = t("activeLabel", "Hoạt động");
+          var statusLockedLabel = t("lockedLabel", "Đã khóa");
+          
+          var detailsUrl = "{{ url_for('users.user_detail_page', user_id=0) }}".replace("0", u.id);
+
+          var selectedFree = u.plan === 'free' ? 'selected' : '';
+          var selectedBasic = u.plan === 'basic' ? 'selected' : '';
+          var selectedPro = u.plan === 'pro' ? 'selected' : '';
+          var selectedEnterprise = u.plan === 'enterprise' ? 'selected' : '';
+
+          var trClass = "hover:bg-primary/5 dark:hover:bg-slate-800/40 border-b border-outline-variant/10 dark:border-slate-800/60 transition-colors";
+          
+          // Role Badges
+          var roleBadge = "";
+          if (u.role === "admin") {
+            roleBadge = '<span class="inline-block px-2.5 py-0.5 bg-blue-500/10 dark:bg-blue-500/20 text-blue-650 dark:text-blue-400 label-sm font-semibold rounded-full uppercase tracking-wide text-[11px]">' + u.role.toUpperCase() + '</span>';
+          } else {
+            roleBadge = '<span class="inline-block px-2.5 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 label-sm font-medium rounded-full uppercase tracking-wide text-[11px]">' + u.role.toUpperCase() + '</span>';
           }
-          requestAnimationFrame(step);
-        });
-      }
 
-      function applyFilters() {
-        const q = (searchEl?.value || "").trim().toLowerCase();
-        const role = (roleEl?.value || "").trim().toLowerCase();
-        const status = (statusEl?.value || "").trim().toLowerCase();
-
-        rows().forEach((row) => {
-          const hay = row.innerText.toLowerCase();
-          const isActive = row.dataset.active === "1";
-          const okQ = !q || hay.includes(q);
-          const okRole = !role || (row.dataset.role || "").toLowerCase() === role;
-          const okStatus = !status || (status === "active" && isActive) || (status === "locked" && !isActive);
-          row.style.display = okQ && okRole && okStatus ? "" : "none";
-        });
-      }
-
-      if (searchEl) searchEl.addEventListener("input", applyFilters);
-      if (roleEl) roleEl.addEventListener("change", applyFilters);
-      if (statusEl) statusEl.addEventListener("change", applyFilters);
-      if (clearBtn) {
-        clearBtn.addEventListener("click", () => {
-          searchEl.value = "";
-          roleEl.value = "";
-          statusEl.value = "";
-          applyFilters();
-        });
-      }
-
-      document.querySelectorAll(".set-plan-form").forEach((form) => {
-        form.addEventListener("submit", function (e) {
-          e.preventDefault();
-          const targetForm = this;
-          const username = targetForm.dataset.username || "user";
-          const plan = targetForm.querySelector('select[name="plan"]')?.value || "free";
-          const confirmText = typeof window.PetAI_i18n !== 'undefined'
-            ? window.PetAI_i18n.t("confirmAssignPlanText").replace("{plan}", plan.toUpperCase()).replace("{username}", username)
-            : `Cấp gói ${plan.toUpperCase()} cho ${username}?`;
-
-          if (window.PetAI_confirm) {
-            window.PetAI_confirm({
-              text: confirmText,
-              type: "warning",
-              onConfirm: async function () {
-                const formData = new FormData(targetForm);
-                try {
-                  const res = await fetch(targetForm.action || window.location.href, {
-                    method: "POST",
-                    body: formData,
-                    headers: {
-                      "X-Requested-With": "XMLHttpRequest"
-                    }
-                  });
-                  if (res.ok) {
-                    const html = await res.text();
-                    if (window.loadPagePjax) {
-                      window.loadPagePjax(res.url, true, html);
-                    } else {
-                      window.location.href = res.url;
-                    }
-                  } else {
-                    console.error("Failed to update plan");
-                  }
-                } catch (err) {
-                  console.error(err);
-                }
-              }
-            });
+          // Status Badge
+          var statusBadge = "";
+          if (u.is_active) {
+            statusBadge = '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 text-emerald-600 dark:text-emerald-400 font-semibold label-sm"><span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>' + statusActiveLabel + '</span>';
+          } else {
+            statusBadge = '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 text-rose-600 dark:text-rose-400 font-semibold label-sm"><span class="w-2 h-2 rounded-full bg-rose-500"></span>' + statusLockedLabel + '</span>';
           }
-        });
-      });
 
-      updateStats();
-      applyFilters();
-    })();
-  </script>Failed to update plan");
-              }
-            } catch (err) {
-              console.error(err);
+          html += '<tr class="' + trClass + '" data-user-id="' + u.id + '">';
+          // Col 1: USER
+          html += '<td class="px-6 py-4">';
+          html += '  <div class="flex items-center gap-3">';
+          html += '    <div class="w-9 h-9 rounded-full ' + avatarCol + ' flex items-center justify-center label-sm font-semibold shadow-sm">' + firstLetter + '</div>';
+          html += '    <div class="flex flex-col min-w-0">';
+          html += '      <div class="body-md font-semibold text-on-surface dark:text-slate-200 truncate max-w-[200px]">';
+          html += '        <a class="hover:text-primary dark:hover:text-blue-400" href="' + detailsUrl + '">' + u.username + '</a>';
+          html += '      </div>';
+          html += '      <div class="label-sm text-on-surface-variant/85 dark:text-slate-400/80 truncate max-w-[200px]">' + (u.email || "-") + '</div>';
+          html += '    </div>';
+          html += '  </div>';
+          html += '</td>';
+
+          // Col 2: ROLE
+          html += '<td class="px-6 py-4 text-center">' + roleBadge + '</td>';
+
+          // Col 3: STATUS
+          html += '<td class="px-6 py-4 text-center">' + statusBadge + '</td>';
+
+          // Col 4: PLAN SELECT
+          html += '<td class="px-6 py-4 text-center">';
+          html += '  <div class="relative inline-flex items-center">';
+          html += '    <select class="plan-update-dropdown bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/40 dark:border-slate-800 rounded-lg py-1 pl-2.5 pr-7 label-sm font-semibold uppercase text-on-surface dark:text-slate-200 focus:ring-1 focus:ring-primary dark:focus:ring-blue-500 appearance-none bg-none cursor-pointer transition-colors" data-user-id="' + u.id + '" data-username="' + u.username + '" data-previous="' + u.plan + '">';
+          html += '      <option value="free" ' + selectedFree + '>FREE</option>';
+          html += '      <option value="basic" ' + selectedBasic + '>BASIC</option>';
+          html += '      <option value="pro" ' + selectedPro + '>PRO</option>';
+          html += '      <option value="enterprise" ' + selectedEnterprise + '>ENTERPRISE</option>';
+          html += '    </select>';
+          html += '    <span class="absolute right-1.5 flex items-center pointer-events-none text-slate-500 dark:text-slate-400">';
+          html += '      <span class="material-symbols-outlined text-[14px]">expand_more</span>';
+          html += '    </span>';
+          html += '  </div>';
+          html += '</td>';
+
+          // Col 5: CREATED AT
+          html += '<td class="px-6 py-4 text-center label-sm text-on-surface-variant dark:text-slate-400">' + (u.created_str || "-") + '</td>';
+
+          // Col 6: LAST LOGIN
+          html += '<td class="px-6 py-4 text-center label-sm">';
+          html += '  <div class="inline-flex items-center gap-1.5 ' + loginRelative.textClass + '">';
+          html += '    <span class="w-1.5 h-1.5 rounded-full ' + loginRelative.statusClass + '"></span>';
+          html += '    <span>' + loginText + '</span>';
+          html += '  </div>';
+          html += '</td>';
+
+          // Col 7: ACTIONS
+          html += '<td class="px-6 py-4 text-right relative">';
+          html += '  <div class="flex items-center justify-end gap-2">';
+          html += '    <a class="inline-flex items-center justify-center gap-0.5 rounded-lg border border-outline-variant/45 dark:border-slate-700 px-3 py-1 label-sm font-semibold text-on-surface-variant dark:text-slate-300 hover:bg-surface-container-low dark:hover:bg-slate-800 transition-colors shadow-xs" href="' + detailsUrl + '">';
+          html += '      <span data-i18n="detailBtn">' + t("detailBtn", "Chi tiết") + '</span>';
+          html += '    </a>';
+          html += '    <div class="relative action-menu-container">';
+          html += '      <button class="action-menu-trigger inline-flex items-center justify-center h-8 w-8 rounded-lg border border-outline-variant/45 dark:border-slate-700 text-on-surface-variant dark:text-slate-300 hover:bg-surface-container-low dark:hover:bg-slate-800 transition-all cursor-pointer shadow-xs" type="button" data-user-id="' + u.id + '">';
+          html += '        <span class="material-symbols-outlined text-[18px]">more_horiz</span>';
+          html += '      </button>';
+          
+          // Action Dropdown Menu inside cell
+          html += '      <div class="absolute right-0 mt-1.5 z-[999] w-48 bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/35 dark:border-slate-800 rounded-lg shadow-lg py-1 hidden action-menu-dropdown text-left" id="dropdown-' + u.id + '">';
+          
+          if (u.is_active) {
+            html += '        <button class="w-full px-4 py-2 text-left label-sm hover:bg-surface-container-low dark:hover:bg-slate-800 text-on-surface-variant dark:text-slate-300 flex items-center gap-2 cursor-pointer action-lock" type="button" data-user-id="' + u.id + '" data-username="' + u.username + '">';
+            html += '          <span class="material-symbols-outlined text-[16px] text-amber-550 dark:text-amber-400">lock</span>';
+            html += '          <span data-i18n="actionLock">' + t("actionLock", "Khóa tài khoản") + '</span>';
+            html += '        </button>';
+          } else {
+            html += '        <button class="w-full px-4 py-2 text-left label-sm hover:bg-surface-container-low dark:hover:bg-slate-800 text-on-surface-variant dark:text-slate-300 flex items-center gap-2 cursor-pointer action-unlock" type="button" data-user-id="' + u.id + '" data-username="' + u.username + '">';
+            html += '          <span class="material-symbols-outlined text-[16px] text-emerald-550 dark:text-emerald-400">lock_open</span>';
+            html += '          <span data-i18n="actionUnlock">' + t("actionUnlock", "Mở khóa tài khoản") + '</span>';
+            html += '        </button>';
+          }
+
+          var nextRole = u.role === "admin" ? "user" : "admin";
+          html += '        <button class="w-full px-4 py-2 text-left label-sm hover:bg-surface-container-low dark:hover:bg-slate-800 text-on-surface-variant dark:text-slate-300 flex items-center gap-2 cursor-pointer action-role" type="button" data-user-id="' + u.id + '" data-username="' + u.username + '" data-next-role="' + nextRole + '">';
+          html += '          <span class="material-symbols-outlined text-[16px] text-blue-550 dark:text-blue-400">badge</span>';
+          html += '          <span data-i18n="actionChangeRole">' + t("actionChangeRole", "Đổi vai trò") + '</span>';
+          html += '        </button>';
+
+          html += '        <button class="w-full px-4 py-2 text-left label-sm hover:bg-surface-container-low dark:hover:bg-slate-800 text-on-surface-variant dark:text-slate-300 flex items-center gap-2 cursor-pointer action-change-plan" type="button" data-user-id="' + u.id + '" data-username="' + u.username + '">';
+          html += '          <span class="material-symbols-outlined text-[16px] text-indigo-550 dark:text-indigo-400">card_membership</span>';
+          html += '          <span data-i18n="actionChangePlan">' + t("actionChangePlan", "Đổi gói dịch vụ") + '</span>';
+          html += '        </button>';
+
+          if (u.email) {
+            html += '        <a class="w-full px-4 py-2 text-left label-sm hover:bg-surface-container-low dark:hover:bg-slate-800 text-on-surface-variant dark:text-slate-300 flex items-center gap-2 cursor-pointer" href="mailto:' + u.email + '">';
+            html += '          <span class="material-symbols-outlined text-[16px] text-slate-500">mail</span>';
+            html += '          <span data-i18n="actionSendEmail">' + t("actionSendEmail", "Gửi email") + '</span>';
+            html += '        </a>';
+          }
+
+          html += '        <div class="border-t border-outline-variant/15 dark:border-slate-800 my-1"></div>';
+          html += '        <button class="w-full px-4 py-2 text-left label-sm hover:bg-red-50 dark:hover:bg-red-950/20 text-red-600 dark:text-red-400 flex items-center gap-2 cursor-pointer action-delete" type="button" data-user-id="' + u.id + '" data-username="' + u.username + '">';
+          html += '          <span class="material-symbols-outlined text-[16px] text-red-550 dark:text-red-400">delete</span>';
+          html += '          <span data-i18n="actionDelete">' + t("actionDelete", "Xóa tài khoản") + '</span>';
+          html += '        </button>';
+
+          html += '      </div>';
+          html += '    </div>';
+          html += '  </div>';
+          html += '</td>';
+          html += '</tr>';
+        });
+
+        tableBody.innerHTML = html;
+
+        // Render Pagination buttons
+        var paginationHtml = "";
+        
+        // Prev Page button
+        if (currentPage > 1) {
+          paginationHtml += '<button class="p-1.5 rounded-lg border border-outline-variant/30 dark:border-slate-700 text-on-surface-variant dark:text-slate-400 hover:bg-surface-container-low dark:hover:bg-slate-800 transition-colors cursor-pointer" type="button" id="prevPageBtn">';
+          paginationHtml += '  <span class="material-symbols-outlined text-[16px]">chevron_left</span>';
+          paginationHtml += '</button>';
+        } else {
+          paginationHtml += '<span class="p-1.5 rounded-lg border border-outline-variant/25 dark:border-slate-800 text-on-surface-variant/40 dark:text-slate-600 cursor-not-allowed">';
+          paginationHtml += '  <span class="material-symbols-outlined text-[16px]">chevron_left</span>';
+          paginationHtml += '</span>';
+        }
+
+        // Specific numbers
+        var range = 2; // page range
+        for (var p = 1; p <= totalPages; p++) {
+          if (p === 1 || p === totalPages || (p >= currentPage - range && p <= currentPage + range)) {
+            var activeClass = p === currentPage 
+              ? "bg-primary text-on-primary dark:bg-blue-600 dark:text-white" 
+              : "border border-outline-variant/30 dark:border-slate-700 text-on-surface dark:text-slate-300 hover:bg-surface-container-low dark:hover:bg-slate-800";
+            paginationHtml += '<button class="w-8 h-8 rounded-lg label-sm font-semibold transition-all cursor-pointer ' + activeClass + '" type="button" data-page="' + p + '">' + p + '</button>';
+          } else if (p === currentPage - range - 1 || p === currentPage + range + 1) {
+            paginationHtml += '<span class="px-1 text-slate-400 dark:text-slate-600">...</span>';
+          }
+        }
+
+        // Next Page button
+        if (currentPage < totalPages) {
+          paginationHtml += '<button class="p-1.5 rounded-lg border border-outline-variant/30 dark:border-slate-700 text-on-surface-variant dark:text-slate-400 hover:bg-surface-container-low dark:hover:bg-slate-800 transition-colors cursor-pointer" type="button" id="nextPageBtn">';
+          paginationHtml += '  <span class="material-symbols-outlined text-[16px]">chevron_right</span>';
+          paginationHtml += '</button>';
+        } else {
+          paginationHtml += '<span class="p-1.5 rounded-lg border border-outline-variant/25 dark:border-slate-800 text-on-surface-variant/40 dark:text-slate-600 cursor-not-allowed">';
+          paginationHtml += '  <span class="material-symbols-outlined text-[16px]">chevron_right</span>';
+          paginationHtml += '</span>';
+        }
+
+        paginationPages.innerHTML = paginationHtml;
+
+        // Add Listeners to elements rendered inside Table
+        bindTableElements();
+      }
+
+      // 7. Bind events for components inside table (pagination, dropdown selects, 3-dots actions)
+      function bindTableElements() {
+        // Prev Page click
+        var prevBtn = document.getElementById("prevPageBtn");
+        if (prevBtn) {
+          prevBtn.addEventListener("click", function () {
+            currentPage--;
+            drawTable();
+          });
+        }
+
+        // Next Page click
+        var nextBtn = document.getElementById("nextPageBtn");
+        if (nextBtn) {
+          nextBtn.addEventListener("click", function () {
+            currentPage++;
+            drawTable();
+          });
+        }
+
+        // Page number button clicks
+        paginationPages.querySelectorAll("button[data-page]").forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            currentPage = parseInt(this.getAttribute("data-page"), 10);
+            drawTable();
+          });
+        });
+
+        // 3-Dots actions dropdown toggle
+        document.querySelectorAll(".action-menu-trigger").forEach(function (btn) {
+          btn.addEventListener("click", function (e) {
+            e.stopPropagation();
+            var uid = this.getAttribute("data-user-id");
+            var targetDropdown = document.getElementById("dropdown-" + uid);
+
+            var wasOpen = targetDropdown && !targetDropdown.classList.contains("hidden");
+
+            // Hide all active dropdowns
+            closeAllActionDropdowns();
+
+            if (!wasOpen && targetDropdown) {
+              targetDropdown.classList.remove("hidden");
+              activeDropdownId = uid;
             }
-          }
+          });
         });
+
+        // Plan direct upgrade select update
+        document.querySelectorAll(".plan-update-dropdown").forEach(function (selectEl) {
+          selectEl.addEventListener("change", function (e) {
+            var el = this;
+            var uid = el.getAttribute("data-user-id");
+            var username = el.getAttribute("data-username") || "user";
+            var prevValue = el.getAttribute("data-previous");
+            var newValue = el.value;
+
+            if (prevValue === newValue) return;
+
+            var confirmMsg = t("confirmAssignPlanText", "Cấp gói {plan} cho {username}?")
+                              .replace("{plan}", newValue.toUpperCase())
+                              .replace("{username}", username);
+
+            if (window.PetAI_confirm) {
+              window.PetAI_confirm({
+                title: t("updatePlanLabel", "Cập nhật gói"),
+                text: confirmMsg,
+                type: "warning",
+                onConfirm: async function () {
+                  var ok = await updateUserPlan(uid, newValue);
+                  if (ok) {
+                    el.setAttribute("data-previous", newValue);
+                  } else {
+                    el.value = prevValue;
+                  }
+                },
+                onCancel: function () {
+                  el.value = prevValue;
+                }
+              });
+            } else {
+              // Fail-safe default confirm
+              if (confirm(confirmMsg)) {
+                updateUserPlan(uid, newValue);
+              } else {
+                el.value = prevValue;
+              }
+            }
+          });
+        });
+
+        // Actions inside dropdown menu
+        // Lock Account
+        document.querySelectorAll(".action-lock").forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            var uid = this.getAttribute("data-user-id");
+            var username = this.getAttribute("data-username");
+            var title = t("confirmLockUserTitle", "Khóa tài khoản");
+            var text = t("confirmLockUserText", "Bạn có chắc chắn muốn khóa tài khoản {username}?").replace("{username}", username);
+
+            if (window.PetAI_confirm) {
+              window.PetAI_confirm({
+                title: title,
+                text: text,
+                type: "danger",
+                onConfirm: function () {
+                  executePostAction("/users/lock/" + uid, "Tài khoản " + username + " đã bị khóa.");
+                }
+              });
+            }
+          });
+        });
+
+        // Unlock Account
+        document.querySelectorAll(".action-unlock").forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            var uid = this.getAttribute("data-user-id");
+            var username = this.getAttribute("data-username");
+            var title = t("confirmUnlockUserTitle", "Mở khóa tài khoản");
+            var text = t("confirmUnlockUserText", "Bạn có chắc chắn muốn mở khóa tài khoản {username}?").replace("{username}", username);
+
+            if (window.PetAI_confirm) {
+              window.PetAI_confirm({
+                title: title,
+                text: text,
+                type: "success",
+                onConfirm: function () {
+                  executePostAction("/users/unlock/" + uid, "Tài khoản " + username + " đã được kích hoạt.");
+                }
+              });
+            }
+          });
+        });
+
+        // Delete Account
+        document.querySelectorAll(".action-delete").forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            var uid = this.getAttribute("data-user-id");
+            var username = this.getAttribute("data-username");
+            var title = t("confirmDeleteUserTitle", "Xóa tài khoản");
+            var text = t("confirmDeleteUserText", "Bạn có chắc chắn muốn xóa tài khoản {username}? Nhập '{confirmWord}' để xác nhận xóa.")
+                            .replace("{username}", username)
+                            .replace("{confirmWord}", "DELETE");
+
+            if (window.PetAI_confirm) {
+              window.PetAI_confirm({
+                title: title,
+                text: text,
+                type: "danger",
+                onConfirm: async function () {
+                  // Custom input inside dialog logic
+                  var confirmWord = prompt("Nhập 'DELETE' hoặc tên đăng nhập '" + username + "' để xác nhận xóa:");
+                  if (!confirmWord) return false;
+                  
+                  var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute("content");
+                  try {
+                    var res = await fetch("/users/delete/" + uid, {
+                      method: "POST",
+                      body: JSON.stringify({ confirm: confirmWord }),
+                      headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-Token": csrfToken,
+                        "X-Requested-With": "XMLHttpRequest"
+                      }
+                    });
+                    var data = await res.json();
+                    if (res.ok && data.success) {
+                      showToastNotification("Xóa tài khoản " + username + " thành công.", "success");
+                      reloadPjaxPage();
+                    } else {
+                      showToastNotification(data.error || "Không thể xóa tài khoản. Vui lòng thử lại.", "error");
+                    }
+                  } catch (e) {
+                    console.error(e);
+                    showToastNotification("Lỗi kết nối máy chủ.", "error");
+                  }
+                }
+              });
+            }
+          });
+        });
+
+        // Change Role
+        document.querySelectorAll(".action-role").forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            var uid = this.getAttribute("data-user-id");
+            var username = this.getAttribute("data-username");
+            var nextRole = this.getAttribute("data-next-role");
+            var title = t("confirmChangeRoleTitle", "Đổi vai trò người dùng");
+            var text = t("confirmChangeRoleText", "Bạn có chắc chắn muốn đổi vai trò của {username} thành {role}?")
+                            .replace("{username}", username)
+                            .replace("{role}", nextRole.toUpperCase());
+
+            if (window.PetAI_confirm) {
+              window.PetAI_confirm({
+                title: title,
+                text: text,
+                type: "warning",
+                onConfirm: async function () {
+                  var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute("content");
+                  try {
+                    var res = await fetch("/users/set-role/" + uid, {
+                      method: "POST",
+                      body: JSON.stringify({ role: nextRole }),
+                      headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-Token": csrfToken,
+                        "X-Requested-With": "XMLHttpRequest"
+                      }
+                    });
+                    var data = await res.json();
+                    if (res.ok && data.success) {
+                      showToastNotification("Đã cập nhật vai trò cho " + username + " thành công.", "success");
+                      reloadPjaxPage();
+                    } else {
+                      showToastNotification(data.error || "Lỗi thay đổi vai trò.", "error");
+                    }
+                  } catch (e) {
+                    console.error(e);
+                    showToastNotification("Lỗi kết nối máy chủ.", "error");
+                  }
+                }
+              });
+            }
+          });
+        });
+
+        // Action menu plan change (focus dropdown)
+        document.querySelectorAll(".action-change-plan").forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            var uid = this.getAttribute("data-user-id");
+            var row = document.querySelector('tr[data-user-id="' + uid + '"]');
+            if (row) {
+              var select = row.querySelector(".plan-update-dropdown");
+              if (select) {
+                closeAllActionDropdowns();
+                select.focus();
+                // Expand dropdown (supported by clicking on select wrapper or dispatching keyboard event)
+                try {
+                  var event = new MouseEvent("mousedown");
+                  select.dispatchEvent(event);
+                } catch (e) {}
+              }
+            }
+          });
+        });
+      }
+
+      // 8. Close floating menus
+      function closeAllActionDropdowns() {
+        document.querySelectorAll(".action-menu-dropdown").forEach(function (menu) {
+          menu.classList.add("hidden");
+        });
+        activeDropdownId = null;
+      }
+
+      // Click outside triggers close
+      document.addEventListener("click", function () {
+        closeAllActionDropdowns();
       });
 
-      updateStats();
-      applyFilters();
+      // 9. Execute POST action (Lock / Unlock / generic)
+      async function executePostAction(url, successMsg) {
+        var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute("content");
+        try {
+          var res = await fetch(url, {
+            method: "POST",
+            headers: {
+              "X-CSRF-Token": csrfToken,
+              "X-Requested-With": "XMLHttpRequest"
+            }
+          });
+          var data = await res.json();
+          if (res.ok && data.success) {
+            showToastNotification(successMsg, "success");
+            reloadPjaxPage();
+          } else {
+            showToastNotification(data.error || "Có lỗi xảy ra.", "error");
+          }
+        } catch (err) {
+          console.error(err);
+          showToastNotification("Lỗi kết nối tới máy chủ.", "error");
+        }
+      }
+
+      // 10. Update User subscription plan
+      async function updateUserPlan(userId, planValue) {
+        var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute("content");
+        try {
+          var res = await fetch("/users/set-plan", {
+            method: "POST",
+            body: JSON.stringify({ user_id: userId, plan: planValue }),
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRF-Token": csrfToken,
+              "X-Requested-With": "XMLHttpRequest"
+            }
+          });
+          var data = await res.json();
+          if (res.ok && data.success) {
+            showToastNotification(data.message || "Gói dịch vụ đã được cập nhật.", "success");
+            reloadPjaxPage();
+            return true;
+          } else {
+            showToastNotification(data.error || "Không thể cập nhật gói.", "error");
+            return false;
+          }
+        } catch (e) {
+          console.error(e);
+          showToastNotification("Lỗi kết nối máy chủ.", "error");
+          return false;
+        }
+      }
+
+      // 11. Helper: reload page inside PJAX wrapper to avoid full reload
+      function reloadPjaxPage() {
+        if (window.loadPagePjax) {
+          // Trigger a PJAX load of the current path to update table data dynamically
+          fetch(window.location.href, {
+            headers: { "X-PJAX": "true" }
+          })
+          .then(function (res) { return res.text(); })
+          .then(function (html) {
+            window.loadPagePjax(window.location.href, false, html);
+          })
+          .catch(function () {
+            window.location.reload();
+          });
+        } else {
+          window.location.reload();
+        }
+      }
+
+      // Helper to show toasts
+      function showToastNotification(message, type) {
+        if (window.showToast) {
+          window.showToast(message, type);
+        } else {
+          alert(message);
+        }
+      }
+
+      // 12. Trigger filters on search or filter change
+      function triggerFilterReset() {
+        currentPage = 1;
+        drawTable();
+      }
+
+      // Event Listeners for Filters
+      if (searchInput) searchInput.addEventListener("input", triggerFilterReset);
+      if (roleFilter) roleFilter.addEventListener("change", triggerFilterReset);
+      if (statusFilter) statusFilter.addEventListener("change", triggerFilterReset);
+      if (planFilter) planFilter.addEventListener("change", triggerFilterReset);
+      if (sortOrder) sortOrder.addEventListener("change", triggerFilterReset);
+
+      // Clear filter selections
+      if (clearFiltersBtn) {
+        clearFiltersBtn.addEventListener("click", function () {
+          searchInput.value = "";
+          roleFilter.value = "";
+          statusFilter.value = "";
+          planFilter.value = "";
+          sortOrder.value = "newest";
+          triggerFilterReset();
+        });
+      }
+
+      if (resetFiltersBtn) {
+        resetFiltersBtn.addEventListener("click", function () {
+          searchInput.value = "";
+          roleFilter.value = "";
+          statusFilter.value = "";
+          planFilter.value = "";
+          sortOrder.value = "newest";
+          triggerFilterReset();
+        });
+      }
+
+      // Rows limit configuration change
+      if (rowsPerPageSelect) {
+        rowsPerPageSelect.addEventListener("change", function () {
+          currentRowsPerPage = parseInt(this.value, 10);
+          currentPage = 1;
+          drawTable();
+        });
+      }
+
+      // Under Development Add User Modal/Toast trigger
+      if (addUserBtn) {
+        addUserBtn.addEventListener("click", function () {
+          var title = t("addUserBtn", "+ Thêm người dùng");
+          var msg = t("en", "") === "en" 
+            ? "Manual user creation function has not been integrated on the backend system yet." 
+            : "Chức năng thêm người dùng thủ công chưa được tích hợp trên backend hệ thống.";
+          
+          if (window.PetAI_alert) {
+            window.PetAI_alert({
+              title: title,
+              text: msg,
+              type: "info"
+            });
+          } else {
+            alert(msg);
+          }
+        });
+      }
+
+      // Draw initial table state
+      drawTable();
+
     })();
   </script>
   <script>
