@@ -221,7 +221,7 @@
     })();
   </script>
   <meta name="csrf-token" content="{{ csrf_token() }}">
-  {% set page_title = 'Admin User #' ~ user.id ~ ' - {{ get_config(\'site_name\', \'PetAI\') }}' if ui_language == 'en' else 'Quản trị Người dùng #' ~ user.id ~ ' - {{ get_config(\'site_name\', \'PetAI\') }}' %}
+  {% set page_title = 'Admin User #' ~ user.id ~ ' - ' ~ get_config('site_name', 'PetAI') if ui_language == 'en' else 'Quản trị Người dùng #' ~ user.id ~ ' - ' ~ get_config('site_name', 'PetAI') %}
   <title data-i18n="adminUserDetailPageTitle">{{ page_title }}</title>
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/typography.css') }}">
@@ -614,7 +614,7 @@
   </main>
 
   <script src="{{ url_for('static', filename='js/toasts.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/i18n.js') }}?v=15"></script>
   <script src="{{ url_for('static', filename='js/script.js') }}"></script>
   <script>
     (function () {

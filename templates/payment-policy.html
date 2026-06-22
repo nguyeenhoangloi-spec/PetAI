@@ -38,7 +38,7 @@
   </noscript>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  {% set page_title = 'Payment Policy | PetAI' if ui_language == 'en' else 'Chính sách thanh toán | PetAI' %}
+  {% set page_title = 'Payment Policy | ' ~ get_config('site_name', 'PetAI') if ui_language == 'en' else 'Chính sách thanh toán | ' ~ get_config('site_name', 'PetAI') %}
   <title data-i18n="paymentPolicyPageTitle">{{ page_title }}</title>
   <script src="{{ url_for('static', filename='js/tailwindcss.js') }}"></script>
   <script src="{{ url_for('static', filename='js/chart.umd.min.js') }}"></script>
@@ -315,7 +315,7 @@
       <div class="flex items-center gap-gutter">
         <a href="{{ url_for('home.index') }}" class="inline-flex items-center gap-0">
           <img alt="PetAI New Logo" class="w-auto h-10 md:h-12" src="{{ url_for('static', filename='images/logo.png') }}">
-          <span class="ml-0 text-lg md:text-2xl font-semibold text-primary">{{ get_config(\'site_name\', \'PetAI\') }}</span>
+          <span class="ml-0 text-lg md:text-2xl font-semibold text-primary">{{ get_config('site_name', 'PetAI') }}</span>
         </a>
       </div>
       <div class="flex items-center gap-6">
@@ -336,26 +336,6 @@
         <h1 class="headline-lg text-on-surface mb-6 font-bold" data-i18n="paymentPolicy">
           <span data-i18n="paymentPolicy">Chính sách thanh toán</span>
         </h1>
-        {% set sections_vi = get_legal_sections('payment-policy', 'vi') %}
-        {% set sections_en = get_legal_sections('payment-policy', 'en') %}
-        {% if sections_vi or sections_en %}
-          <div id="dynamic-content-vi" class="space-y-6 text-on-surface-variant body-md leading-relaxed legal-content-rich {{ 'hidden' if ui_language == 'en' else '' }}">
-            {% for sec in sections_vi %}
-              {% if sec.title %}
-                <h2 class="text-xl font-bold text-primary mt-6 mb-2">{{ sec.title }}</h2>
-              {% endif %}
-              <div>{{ sec.content | safe }}</div>
-            {% endfor %}
-          </div>
-          <div id="dynamic-content-en" class="space-y-6 text-on-surface-variant body-md leading-relaxed legal-content-rich {{ 'hidden' if ui_language != 'en' else '' }}">
-            {% for sec in sections_en %}
-              {% if sec.title %}
-                <h2 class="text-xl font-bold text-primary mt-6 mb-2">{{ sec.title }}</h2>
-              {% endif %}
-              <div>{{ sec.content | safe }}</div>
-            {% endfor %}
-          </div>
-        {% else %}
         <div class="space-y-6 text-on-surface-variant body-md leading-relaxed">
           <p class="mb-4 text-on-surface-variant" data-i18n="paymentUpdateDatePrefix">
             <span data-i18n="paymentUpdateDatePrefix">Ngày cập nhật: 20/06/2026</span>
@@ -401,15 +381,13 @@
           </h2>
           <p class="leading-loose">
             Email:
-            <a href="mailto:{{ get_config('site_email', '{{ get_config('site_email', 'support@pet.ai') }}') }}"
-              class="text-primary hover:underline font-medium">{{ get_config('site_email', '{{ get_config('site_email', 'support@pet.ai') }}') }}</a><br>
+            <a href="mailto:{{ get_config('site_email', 'support@pet.ai') }}"
+              class="text-primary hover:underline font-medium">{{ get_config('site_email', 'support@pet.ai') }}</a><br>
             Website:
             <a href="https://pet.ai" class="text-primary hover:underline font-medium" target="_blank"
-              rel="noopener noreferrer">https://pet.ai</a><br><span data-i18n="addressLabelPlaceholder">Địa chỉ:
-              P16, Đường số 8, KDC lô 49, Khu đô thị Nam Cần Thơ, P. Cái Răng, TP. Cần Thơ</span>
+              rel="noopener noreferrer">https://pet.ai</a><br><span ><span data-i18n="sysLabelContactAddress">Địa chỉ</span>: {{ get_config("contact_address_en" if ui_language == "en" else "contact_address_vi", get_config("contact_address", "P16, Đường số 8, KDC lô 49, Khu đô thị Nam Cần Thơ, Phường Cái Răng, TP. Cần Thơ")) }}</span>
           </p>
         </div>
-        {% endif %}
       </div>
     </section>
   </main>
@@ -420,7 +398,7 @@
         <div class="space-y-5">
           <div class="flex items-center gap-2">
             <img alt="PetAI Logo" class="h-9 w-auto hover:scale-105 transition-transform duration-300" src="{{ url_for('static', filename='images/logo.png') }}">
-            <span class="text-xl font-bold text-primary tracking-tight font-display">{{ get_config(\'site_name\', \'PetAI\') }}</span>
+            <span class="text-xl font-bold text-primary tracking-tight font-display">{{ get_config('site_name', 'PetAI') }}</span>
           </div>
           <p class="text-sm text-on-surface-variant leading-relaxed max-w-xs" data-i18n="footerDesc">
             Ứng dụng nhận diện giống chó bằng AI dành cho người yêu thú cưng. Kết quả chính xác, nhanh chóng.
@@ -477,15 +455,19 @@
           <ul class="space-y-3 text-sm text-on-surface-variant leading-relaxed">
             <li class="flex items-start gap-2">
               <span class="material-symbols-outlined text-primary text-base mt-0.5 contact-icon">mail</span>
-              <span data-i18n="contactEmail">Email: support@tienphongtech.vn</span>
+              <span><span data-i18n="contactEmailFooter">Email</span>: {{ get_config('site_email', 'support@pet.ai') }}</span>
             </li>
             <li class="flex items-start gap-2">
               <span class="material-symbols-outlined text-primary text-base mt-0.5 contact-icon">call</span>
-              <span data-i18n="contactPhone">Điện thoại: {{ get_config('contact_phone', '0916 416 409') }}</span>
+              <span><span data-i18n="contactPhoneFooter">Điện thoại</span>: {{ get_config('contact_phone', '0916 416 409') }}</span>
             </li>
             <li class="flex items-start gap-2">
               <span class="material-symbols-outlined text-primary text-base mt-0.5 contact-icon">pin_drop</span>
-              <span class="max-w-[240px]" data-i18n="contactAddress">Địa chỉ: P16, Đường số 8, KDC lô 49, Khu đô thị Nam Cần Thơ, Phường Cái Răng, TP. Cần Thơ</span>
+              <span class="max-w-[240px]">
+                <span data-i18n="sysLabelContactAddress">Địa chỉ</span>: 
+                <span class="footer-address-vi{% if ui_language == 'en' %} hidden{% endif %}">{{ get_config("contact_address_vi", get_config("contact_address", "P16, Đường số 8, KDC lô 49, Khu đô thị Nam Cần Thơ, Phường Cái Răng, TP. Cần Thơ")) }}</span>
+                <span class="footer-address-en{% if ui_language != 'en' %} hidden{% endif %}">{{ get_config("contact_address_en", get_config("contact_address", "P16, Street 8, Lot 49 residential area, Nam Can Tho Urban Area, Cai Rang District, Can Tho City, Vietnam")) }}</span>
+              </span>
             </li>
           </ul>
         </div>
@@ -507,7 +489,20 @@
       </div>
     </div>
   </footer>
-  <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
+  <script>
+    (function() {
+      window.PetAI_DynamicSettings = window.PetAI_DynamicSettings || { vi: {}, en: {} };
+      try {
+        const dbVi = JSON.parse({{ get_config('payment_policy_content_vi', '{}') | tojson | safe }} || '{}');
+        Object.assign(window.PetAI_DynamicSettings.vi, dbVi);
+      } catch(e) {}
+      try {
+        const dbEn = JSON.parse({{ get_config('payment_policy_content_en', '{}') | tojson | safe }} || '{}');
+        Object.assign(window.PetAI_DynamicSettings.en, dbEn);
+      } catch(e) {}
+    })();
+  </script>
+  <script src="{{ url_for('static', filename='js/i18n.js') }}?v=15"></script>
   <script src="{{ url_for('static', filename='js/script.js') }}"></script>
     <script>
       document.body.style.opacity = "1";

@@ -762,6 +762,22 @@ def system_config():
     return render_template("system_config.html", configs=configs, smtp=smtp_details)
 
 
+def translate_text_server_side(text, from_lang="vi", to_lang="en"):
+    import requests
+    import urllib.parse
+    try:
+        url = f"https://translate.googleapis.com/translate_a/single?client=gtx&sl={from_lang}&tl={to_lang}&dt=t&q={urllib.parse.quote(text)}"
+        headers = {"User-Agent": "Mozilla/5.0"}
+        r = requests.get(url, headers=headers, timeout=5)
+        if r.status_code == 200:
+            res = r.json()
+            translated = "".join(part[0] for part in res[0] if part[0])
+            return translated
+    except Exception as e:
+        logger.warning(f"[i18n] Server-side translation error: {e}")
+    return text
+
+
 @users_bp.route("/system-config/save", methods=["POST"])
 def save_system_config():
     if not require_admin():
@@ -782,8 +798,23 @@ def save_system_config():
             SystemConfig.set(conn, "site_email", request.form.get("site_email", "").strip(), "Email liên hệ chính")
         if "contact_phone" in request.form:
             SystemConfig.set(conn, "contact_phone", request.form.get("contact_phone", "").strip(), "Số điện thoại liên hệ")
+            
         if "contact_address" in request.form:
             SystemConfig.set(conn, "contact_address", request.form.get("contact_address", "").strip(), "Địa chỉ liên hệ")
+            
+        if "contact_address_vi" in request.form or "contact_address_en" in request.form:
+            address_vi = request.form.get("contact_address_vi", "").strip()
+            address_en = request.form.get("contact_address_en", "").strip()
+            
+            if address_vi and not address_en:
+                address_en = translate_text_server_side(address_vi, "vi", "en")
+            elif address_en and not address_vi:
+                address_vi = translate_text_server_side(address_en, "en", "vi")
+                
+            SystemConfig.set(conn, "contact_address_vi", address_vi, "Địa chỉ liên hệ (Tiếng Việt)")
+            SystemConfig.set(conn, "contact_address_en", address_en, "Địa chỉ liên hệ (Tiếng Anh)")
+            # Backward compatibility fallback
+            SystemConfig.set(conn, "contact_address", address_vi, "Địa chỉ liên hệ")
         if "contact_fb" in request.form:
             SystemConfig.set(conn, "contact_fb", request.form.get("contact_fb", "").strip(), "Facebook liên hệ")
         if "default_lang" in request.form:
@@ -869,7 +900,7 @@ def save_legal_config():
     content_vi = (request.form.get("content_vi") or "").strip()
     content_en = (request.form.get("content_en") or "").strip()
     
-    allowed_pages = {"privacy-policy", "terms-of-service", "payment-policy", "data-deletion", "support", "contact", "user-guide"}
+    allowed_pages = {"privacy-policy", "terms-of-service", "payment-policy", "data-deletion", "support", "contact", "user-guide", "home"}
     if page not in allowed_pages:
         flash("Trang pháp lý không hợp lệ.", "error")
         return redirect(url_for("users.system_config"))
@@ -906,7 +937,7 @@ def reset_legal_config():
 
     from models import SystemConfig
     page = (request.form.get("page") or "").strip()
-    allowed_pages = {"privacy-policy", "terms-of-service", "payment-policy", "data-deletion", "support", "contact", "user-guide"}
+    allowed_pages = {"privacy-policy", "terms-of-service", "payment-policy", "data-deletion", "support", "contact", "user-guide", "home"}
     if page not in allowed_pages:
         return jsonify({"error": "Invalid page"}), 400
 
@@ -933,7 +964,7 @@ def get_legal_versions():
         return jsonify({"error": "Unauthorized"}), 403
 
     page = (request.args.get("page") or "").strip()
-    allowed_pages = {"privacy-policy", "terms-of-service", "payment-policy", "data-deletion", "support", "contact", "user-guide"}
+    allowed_pages = {"privacy-policy", "terms-of-service", "payment-policy", "data-deletion", "support", "contact", "user-guide", "home"}
     if page not in allowed_pages:
         return jsonify({"error": "Invalid page"}), 400
 

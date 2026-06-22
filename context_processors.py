@@ -5,17 +5,34 @@ def register_context_processors(app):
     def inject_ui_prefs():
         current_plan = None
         from flask import session, request
-        ui_language = request.cookies.get("siteLanguage", "vi")
+        from connect import get_connection
+        from models import SystemConfig
+
+        default_lang = "vi"
+        default_theme = "light"
+        try:
+            conn = get_connection()
+            try:
+                default_lang = SystemConfig.get(conn, "default_lang", "vi")
+                default_theme = SystemConfig.get(conn, "default_theme", "light")
+            finally:
+                conn.close()
+        except Exception:
+            pass
+
+        ui_language = request.cookies.get("siteLanguage")
+        if not ui_language or ui_language not in {"vi", "en"}:
+            ui_language = default_lang
         if ui_language not in {"vi", "en"}:
             ui_language = "vi"
-        ui_theme = "light"
+
+        ui_theme = default_theme if default_theme in {"light", "dark", "auto"} else "light"
         ui_avatar_url = "https://lh3.googleusercontent.com/aida-public/AB6AXuABdf7zKSVKEqdGUUjqEkF9ftdFTrLW87Tb24r2IiZiv_JP0LrItrCxl23SH-gYj2Mqtkma0ak9DZbUtKM5nW747pmivDYGVbYhNr1PZbxbFuOrZdGJvnbhdSurFLfL3BcmhN2p1h9wv_6geT-x8eoTG1TDoLL40P8wDiaymvRT--SA4jYjU9A77WIji5FmOi99mPDXw7xS6dUyUNJYU2gHLk4-smzFrCuBbQbgtpATDvNo6hq3YR-cfSaNblImtCnDXIb8np7J4HA"
         pending_confirmations_count = 0
 
         user_id_raw = session.get("user_id")
         if user_id_raw is not None:
             try:
-                from connect import get_connection
                 from models import UserQuota
                 from models import UserSettings
 
@@ -38,6 +55,12 @@ def register_context_processors(app):
                         current_plan = plan
 
                     user_settings = UserSettings.get_or_create(conn, user_id)
+                    
+                    if not request.cookies.get("siteLanguage"):
+                        lang_raw = (user_settings or {}).get("language")
+                        if lang_raw in {"vi", "en"}:
+                            ui_language = lang_raw
+
                     theme_raw = (user_settings or {}).get("theme")
                     if isinstance(theme_raw, str) and theme_raw.strip().lower() in {"light", "dark", "auto"}:
                         ui_theme = theme_raw.strip().lower()

@@ -59,7 +59,7 @@ from routes.health import health_bp
 from routes.sepay import sepay_bp
 from routes.legal import legal_bp
 from config import configure_app
-from middleware import register_block_inactive_users, register_csrf_protection, register_html_translation
+from middleware import register_block_inactive_users, register_csrf_protection, register_html_translation, register_maintenance_mode
 from context_processors import register_context_processors
 from error_handlers import register_error_handlers
 from account_delete import account_delete_bp
@@ -99,6 +99,7 @@ app.register_blueprint(legal_bp, url_prefix="")
 app.register_blueprint(account_delete_bp, url_prefix="/account")
 
 # Middleware registration
+register_maintenance_mode(app)
 register_block_inactive_users(app)
 register_csrf_protection(app)
 register_html_translation(app)

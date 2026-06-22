@@ -1,5 +1,6 @@
 <!-- Premium Inline Page Visual Editor Overlay -->
-{% set current_page_key = request.path.strip('/').split('/').pop().split('.')[0] %}
+{% set raw_page_key = request.path.strip('/').split('/').pop().split('.')[0] %}
+{% set current_page_key = raw_page_key if raw_page_key else 'home' %}
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
 <textarea id="raw-editor-content-vi" style="display: none;">{{ system_config.get(current_page_key.replace('-', '_') ~ '_content_vi', '') }}</textarea>
@@ -57,6 +58,29 @@
   [contenteditable="true"]:empty::before { content: attr(placeholder); color: #94a3b8; font-style: italic; }
   [contenteditable="true"]:focus { outline: none; box-shadow: 0 0 0 2px rgba(0, 83, 219, 0.2); border-radius: 6px; }
   html.dark [contenteditable="true"]:focus { box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); }
+
+  /* ── In-place visual editor styling for Home Page ── */
+  .home-editable-element {
+    outline: none;
+    transition: all 0.2s ease;
+  }
+  .home-editable-element:hover {
+    box-shadow: 0 0 0 1px rgba(0, 83, 219, 0.3);
+    border-radius: 4px;
+    background-color: rgba(0, 83, 219, 0.03);
+    cursor: pointer;
+  }
+  html.dark .home-editable-element:hover {
+    box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.3);
+    background-color: rgba(59, 130, 246, 0.03);
+  }
+  .home-editable-element:focus {
+    box-shadow: 0 0 0 2px rgba(0, 83, 219, 0.5) !important;
+    background-color: transparent !important;
+  }
+  html.dark .home-editable-element:focus {
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5) !important;
+  }
 
   /* ── Selection Formatting Toolbar ── */
   #inline-format-toolbar {
@@ -178,12 +202,6 @@
   html.dark #preview-modal-inner { background: #0f172a; }
   @keyframes slideUp { from { opacity: 0; transform: translateY(20px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
-  /* Ẩn card nội dung gốc khi vừa load chế độ edit để tránh giật nháy */
-  #legal-content-card {
-    opacity: 0;
-    transform: translateY(8px);
-    transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1), transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-  }
 </style>
 
 <!-- ══════════════════════════════════════════════════════════════════
@@ -204,9 +222,9 @@
     <!-- Language switcher -->
     <div class="flex gap-0.5 bg-slate-100 dark:bg-slate-950 p-1 rounded-lg border border-slate-200 dark:border-slate-800">
       <button type="button" id="editor-lang-vi-btn" onclick="switchEditorLanguage('vi')"
-        class="px-2.5 py-1 rounded-md text-xs font-bold bg-white dark:bg-slate-800 text-primary shadow-sm transition-all">VI</button>
+        class="px-2.5 py-1 rounded-md text-xs {% if ui_language != 'en' %}font-bold bg-white dark:bg-slate-800 text-primary shadow-sm{% else %}font-semibold text-slate-500 dark:text-slate-400 hover:text-primary{% endif %} transition-all">VI</button>
       <button type="button" id="editor-lang-en-btn" onclick="switchEditorLanguage('en')"
-        class="px-2.5 py-1 rounded-md text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-primary transition-all">EN</button>
+        class="px-2.5 py-1 rounded-md text-xs {% if ui_language == 'en' %}font-bold bg-white dark:bg-slate-800 text-primary shadow-sm{% else %}font-semibold text-slate-500 dark:text-slate-400 hover:text-primary{% endif %} transition-all">EN</button>
     </div>
 
     <div class="editor-divider"></div>
@@ -358,6 +376,8 @@
   var pageKey = "{{ current_page_key }}";
   var visualEditorLang = "{{ ui_language or 'vi' }}";
   var sections = [];
+  var existingVi = {};
+  var existingEn = {};
 
   /* ─── Undo/Redo history ─── */
   var historyStack = [];
@@ -462,6 +482,7 @@
      Priority: JSON from DB → DOM snapshot → empty
   ═══════════════════════════════════════════════ */
   function loadInitialContent() {
+    if (pageKey === 'home') return;
     const rawVi = (document.getElementById("raw-editor-content-vi") || {}).value || "";
     const rawEn = (document.getElementById("raw-editor-content-en") || {}).value || "";
 
@@ -477,21 +498,21 @@
     if (pageKey === 'support') {
       if (!vi_array || vi_array.length === 0) {
         vi_array = [
-          { title: "Thông tin nhanh", content: `<p><strong>Email hỗ trợ:</strong> <a href="mailto:{{ get_config('site_email', 'support@pet.ai') }}" class="text-primary hover:underline font-medium">{{ get_config('site_email', 'support@pet.ai') }}</a></p>\n<p class="mt-2"><strong>Thời gian phản hồi dự kiến:</strong> Từ <strong>1 – 3 ngày làm việc</strong>.</p>` },
+          { title: "Thông tin nhanh", content: `<p><strong>Email hỗ trợ:</strong> <a href="mailto:{{ get_config("site_email", "support@pet.ai") }}" class="text-primary hover:underline font-medium">{{ get_config("site_email", "support@pet.ai") }}</a></p>\n<p class="mt-2"><strong>Thời gian phản hồi dự kiến:</strong> Từ <strong>1 – 3 ngày làm việc</strong>.</p>` },
           { title: "Hướng dẫn sử dụng cơ bản", content: `<p class="mb-2">1. Tại giao diện chính, chọn <strong>Đăng nhập</strong> hoặc tạo tài khoản mới.</p>\n<p class="mb-2">2. Vào trang Nhận Diện, cho quyền máy ảnh hoặc tải lên hình.</p>\n<p>3. Chờ từ 2 - 4 giây và AI sẽ trả về kết quả 3 giống chó tiềm năng nhất cùng với lịch sử thống kê.</p>` },
           { title: "Làm sao để đăng nhập?", content: `Bạn nhấp vào nút Đăng nhập ở góc trên cùng của Website hoặc qua menu di động để sử dụng Email/Google.` },
           { title: "Làm sao để xóa tài khoản?", content: `Gửi thư theo <a href="/data-deletion" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">Chính sách xóa dữ liệu</a> của chúng tôi để được trợ giúp.` },
-          { title: "Làm sao để liên hệ hỗ trợ?", content: `Bạn có thể sử dụng biểu mẫu phía dưới mục <a href="/contact" class="text-primary hover:underline" target="_blank" rel="noopener noreferrer">Liên hệ</a> hoặc gửi thư về {{ get_config('site_email', 'support@pet.ai') }}.` },
+          { title: "Làm sao để liên hệ hỗ trợ?", content: `Bạn có thể sử dụng biểu mẫu phía dưới mục <a href="/contact" class="text-primary hover:underline" target="_blank" rel="noopener noreferrer">Liên hệ</a> hoặc gửi thư về {{ get_config("site_email", "support@pet.ai") }}.` },
           { title: "Tôi gặp lỗi trong ứng dụng thì phải làm gì?", content: `Rất mong bạn thông cảm, hãy chụp lại lỗi đó (screenshot), ghi rõ hành động dẫn tới lỗi và gửi email về cho chúng tôi sớm nhất!` }
         ];
       }
       if (!en_array || en_array.length === 0) {
         en_array = [
-          { title: "Quick Info", content: `<p><strong>Support Email:</strong> <a href="mailto:{{ get_config('site_email', 'support@pet.ai') }}" class="text-primary hover:underline font-medium">{{ get_config('site_email', 'support@pet.ai') }}</a></p>\n<p class="mt-2"><strong>Estimated Response Time:</strong> From <strong>1 – 3 business days</strong>.</p>` },
+          { title: "Quick Info", content: `<p><strong>Support Email:</strong> <a href="mailto:{{ get_config("site_email", "support@pet.ai") }}" class="text-primary hover:underline font-medium">{{ get_config("site_email", "support@pet.ai") }}</a></p>\n<p class="mt-2"><strong>Estimated Response Time:</strong> From <strong>1 – 3 business days</strong>.</p>` },
           { title: "Basic User Guide", content: `<p class="mb-2">1. From the main interface, select <strong>Login</strong> or create a new account.</p>\n<p class="mb-2">2. Go to the Identification page, grant camera permission or upload a photo.</p>\n<p>3. Wait 2 - 4 seconds and the AI will return the top 3 potential dog breeds along with scan history statistics.</p>` },
           { title: "How do I log in?", content: `Click the Login button at the top corner of the Website or via the mobile menu to log in using Email/Google.` },
           { title: "How do I delete my account?", content: `Send a request according to our <a href="/data-deletion" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">Data Deletion Policy</a> for assistance.` },
-          { title: "How do I contact support?", content: `You can use the form under the <a href="/contact" class="text-primary hover:underline" target="_blank" rel="noopener noreferrer">Contact</a> page or send an email to {{ get_config('site_email', 'support@pet.ai') }}.` },
+          { title: "How do I contact support?", content: `You can use the form under the <a href="/contact" class="text-primary hover:underline" target="_blank" rel="noopener noreferrer">Contact</a> page or send an email to {{ get_config("site_email", "support@pet.ai") }}.` },
           { title: "What should I do if I encounter an error?", content: `We apologize for any inconvenience. Please take a screenshot of the error, describe the steps that led to it, and send an email to us as soon as possible!` }
         ];
       }
@@ -508,8 +529,8 @@
           { title: "8. Nâng cấp gói dịch vụ", content: '<p class="text-on-surface-variant mb-4">Khi cần mở rộng giới hạn sử dụng, bạn có thể nâng cấp tài khoản của mình:</p><div class="space-y-4 pl-1"><div class="flex gap-3 items-start"><span class="material-symbols-outlined text-primary text-[20px] mt-0.5">event_busy</span><div><strong class="text-sm text-primary block">Khi nào cần nâng cấp</strong><span class="text-xs text-on-surface-variant leading-relaxed">Khi đã dùng hết hạn mức miễn phí hoặc muốn trải nghiệm tốc độ ưu tiên và không có quảng cáo.</span></div></div><div class="flex gap-3 items-start"><span class="material-symbols-outlined text-primary text-[20px] mt-0.5">widgets</span><div><strong class="text-sm text-primary block">Cách chọn gói</strong><span class="text-xs text-on-surface-variant leading-relaxed">Truy cập trang \'Nâng cấp gói\' và chọn một trong ba gói: Basic (50 lượt/7 ngày/1,000đ), Pro (200 lượt/30 ngày/5,000đ) hoặc Enterprise (Không giới hạn/90 ngày/15,000đ).</span></div></div><div class="flex gap-3 items-start"><span class="material-symbols-outlined text-primary text-[20px] mt-0.5">qr_code_2</span><div><strong class="text-sm text-primary block">Cách thanh toán (VietQR)</strong><span class="text-xs text-on-surface-variant leading-relaxed">Hệ thống tạo mã thanh toán QR tự động. Hãy mở ứng dụng ngân hàng và quét mã để chuyển khoản chính xác số tiền cùng nội dung chuyển khoản được hiển thị.</span></div></div><div class="flex gap-3 items-start"><span class="material-symbols-outlined text-primary text-[20px] mt-0.5">sync_saved_locally</span><div><strong class="text-sm text-primary block">Hệ thống xử lý</strong><span class="text-xs text-on-surface-variant leading-relaxed">Sau khi chuyển khoản thành công, hệ thống VietQR tự động ghi nhận và kích hoạt gói nâng cấp cho tài khoản của bạn sau 1-5 phút mà không cần admin duyệt thủ công.</span></div></div></div>' },
           { title: "9. Xem lịch sử nhận diện", content: '<p class="text-on-surface-variant mb-4">Tất cả kết quả quét ảnh được lưu tự động để tra cứu lại bất cứ lúc nào:</p><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div class="p-4 bg-surface-container rounded-xl border border-outline-variant/20 flex gap-3 items-start"><span class="material-symbols-outlined text-primary text-[20px]">list_alt</span><div><h5 class="font-bold text-primary mb-1 text-sm">Danh sách lịch sử</h5><p class="text-xs text-on-surface-variant leading-relaxed">Truy cập trang \'Lịch sử\' từ thanh bên trái để xem danh sách toàn bộ các lượt nhận diện đã thực hiện.</p></div></div><div class="p-4 bg-surface-container rounded-xl border border-outline-variant/20 flex gap-3 items-start"><span class="material-symbols-outlined text-primary text-[20px]">manage_search</span><div><h5 class="font-bold text-primary mb-1 text-sm">Quản lý lịch sử</h5><p class="text-xs text-on-surface-variant leading-relaxed">Bạn có thể tìm kiếm nhanh theo giống chó, xem chi tiết từng lượt quét hoặc chọn xóa các bản ghi không cần thiết.</p></div></div></div>' },
           { title: "10. Xem thống kê cá nhân", content: '<p class="text-on-surface-variant mb-4">Trang thống kê giúp bạn có cái nhìn tổng quan về lịch sử sử dụng của mình:</p><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div class="p-4 bg-surface-container rounded-xl border border-outline-variant/20 flex gap-3 items-start"><span class="material-symbols-outlined text-primary text-[20px]">analytics</span><div><h5 class="font-bold text-primary mb-1 text-sm">Tổng quan</h5><p class="text-xs text-on-surface-variant leading-relaxed">Xem tổng số lượt quét, độ tin cậy trung bình của các lần nhận diện và số lượng giống chó khác nhau bạn từng phát hiện.</p></div></div><div class="p-4 bg-surface-container rounded-xl border border-outline-variant/20 flex gap-3 items-start"><span class="material-symbols-outlined text-primary text-[20px]">insert_chart</span><div><h5 class="font-bold text-primary mb-1 text-sm">Biểu đồ trực quan</h5><p class="text-xs text-on-surface-variant leading-relaxed">Biểu đồ trực quan: Biểu đồ xu hướng nhận diện theo thời gian, biểu đồ Top 5 giống chó bạn quét nhiều nhất và biểu đồ phân bổ mức độ tin cậy của phân loại AI.</p></div></div></div>' },
-          { title: "11. Các câu hỏi thường gặp (FAQ)", content: '<div class="space-y-3"><details class="group bg-surface-container-low rounded-xl p-4 border border-outline-variant/10 [&_summary::-webkit-details-marker]:hidden"><summary class="flex items-center justify-between cursor-pointer focus:outline-none"><h5 class="font-bold text-primary text-sm flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">help_outline</span><span>AI nhận diện có chính xác không?</span></h5><span class="relative flex-shrink-0 ml-1.5 w-5 h-5"><span class="material-symbols-outlined transition-transform duration-300 group-open:-rotate-180 text-primary">expand_more</span></span></summary><p class="mt-2 text-xs text-on-surface-variant pl-7 leading-relaxed">Mô hình AI nhận diện dựa trên đặc trưng hình thái học bên ngoài từ tập dữ liệu huấn luyện. Kết quả chỉ mang tính tham khảo khách quan, không thể thay thế cho các kiểm tra xét nghiệm di truyền (DNA).</p></details><details class="group bg-surface-container-low rounded-xl p-4 border border-outline-variant/10 [&_summary::-webkit-details-marker]:hidden"><summary class="flex items-center justify-between cursor-pointer focus:outline-none"><h5 class="font-bold text-primary text-sm flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">help_outline</span><span>Làm sao để có kết quả tốt nhất?</span></h5><span class="relative flex-shrink-0 ml-1.5 w-5 h-5"><span class="material-symbols-outlined transition-transform duration-300 group-open:-rotate-180 text-primary">expand_more</span></span></summary><p class="mt-2 text-xs text-on-surface-variant pl-7 leading-relaxed">Nên chụp ảnh cún cưng ở góc chính diện khuôn mặt, ánh sáng rõ ràng, ảnh không bị rung mờ và chỉ có duy nhất khuôn mặt của một chú chó trong khung hình.</p></details><details class="group bg-surface-container-low rounded-xl p-4 border border-outline-variant/10 [&_summary::-webkit-details-marker]:hidden"><summary class="flex items-center justify-between cursor-pointer focus:outline-none"><h5 class="font-bold text-primary text-sm flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">help_outline</span><span>Hết lượt miễn phí tôi phải làm gì?</span></h5><span class="relative flex-shrink-0 ml-1.5 w-5 h-5"><span class="material-symbols-outlined transition-transform duration-300 group-open:-rotate-180 text-primary">expand_more</span></span></summary><p class="mt-2 text-xs text-on-surface-variant pl-7 leading-relaxed">Bạn có thể chọn \'Xem quảng cáo\' ở khu vực nhận diện để nhận thêm lượt nhận diện hoặc tiến hành nâng cấp gói dịch vụ trả phí phù hợp.</p></details><details class="group bg-surface-container-low rounded-xl p-4 border border-outline-variant/10 [&_summary::-webkit-details-marker]:hidden"><summary class="flex items-center justify-between cursor-pointer focus:outline-none"><h5 class="font-bold text-primary text-sm flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">help_outline</span><span>Thanh toán không thành công thì phải làm sao?</span></h5><span class="relative flex-shrink-0 ml-1.5 w-5 h-5"><span class="material-symbols-outlined transition-transform duration-300 group-open:-rotate-180 text-primary">expand_more</span></span></summary><p class="mt-2 text-xs text-on-surface-variant pl-7 leading-relaxed">Giao dịch tự động có thể mất từ 1-5 phút để xử lý. Nếu quá thời gian trên tài khoản vẫn chưa được kích hoạt, vui lòng gửi yêu cầu hỗ trợ đính kèm mã đơn hàng hoặc ảnh chụp biên lai chuyển khoản.</p></details><details class="group bg-surface-container-low rounded-xl p-4 border border-outline-variant/10 [&_summary::-webkit-details-marker]:hidden"><summary class="flex items-center justify-between cursor-pointer focus:outline-none"><h5 class="font-bold text-primary text-sm flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">help_outline</span><span>Làm thế nào để liên hệ hỗ trợ?</span></h5><span class="relative flex-shrink-0 ml-1.5 w-5 h-5"><span class="material-symbols-outlined transition-transform duration-300 group-open:-rotate-180 text-primary">expand_more</span></span></summary><p class="mt-2 text-xs text-on-surface-variant pl-7 leading-relaxed">Bạn có thể gửi email trực tiếp tới {{ get_config('site_email', 'support@pet.ai') }} hoặc điền biểu mẫu liên hệ tại trang \'Liên hệ\' của website.</p></details></div>' },
-          { title: "12. Thông tin liên hệ hỗ trợ", content: '<p class="text-on-surface-variant mb-4">Nếu gặp bất kỳ khó khăn hay sự cố nào trong quá trình sử dụng hệ thống PetAI, vui lòng liên hệ:</p><div class="space-y-3 text-sm"><div class="flex items-center gap-3"><span class="material-symbols-outlined text-primary text-[20px]">mail</span><span class="text-on-surface-variant">Email: {{ get_config('site_email', 'support@pet.ai') }} (Hỗ trợ 24/7)</span></div><div class="flex items-center gap-3"><span class="material-symbols-outlined text-primary text-[20px]">call</span><span class="text-on-surface-variant">Hotline: {{ get_config('contact_phone', '0916 416 409') }}</span></div><div class="flex items-center gap-3"><span class="material-symbols-outlined text-primary text-[20px]">location_on</span><span class="text-on-surface-variant">Địa chỉ: P16, Đường số 8, KDC lô 49, Khu đô thị Nam Cần Thơ, P. Cái Răng, TP. Cần Thơ</span></div></div>' }
+          { title: "11. Các câu hỏi thường gặp (FAQ)", content: '<div class="space-y-3"><details class="group bg-surface-container-low rounded-xl p-4 border border-outline-variant/10 [&_summary::-webkit-details-marker]:hidden"><summary class="flex items-center justify-between cursor-pointer focus:outline-none"><h5 class="font-bold text-primary text-sm flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">help_outline</span><span>AI nhận diện có chính xác không?</span></h5><span class="relative flex-shrink-0 ml-1.5 w-5 h-5"><span class="material-symbols-outlined transition-transform duration-300 group-open:-rotate-180 text-primary">expand_more</span></span></summary><p class="mt-2 text-xs text-on-surface-variant pl-7 leading-relaxed">Mô hình AI nhận diện dựa trên đặc trưng hình thái học bên ngoài từ tập dữ liệu huấn luyện. Kết quả chỉ mang tính tham khảo khách quan, không thể thay thế cho các kiểm tra xét nghiệm di truyền (DNA).</p></details><details class="group bg-surface-container-low rounded-xl p-4 border border-outline-variant/10 [&_summary::-webkit-details-marker]:hidden"><summary class="flex items-center justify-between cursor-pointer focus:outline-none"><h5 class="font-bold text-primary text-sm flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">help_outline</span><span>Làm sao để có kết quả tốt nhất?</span></h5><span class="relative flex-shrink-0 ml-1.5 w-5 h-5"><span class="material-symbols-outlined transition-transform duration-300 group-open:-rotate-180 text-primary">expand_more</span></span></summary><p class="mt-2 text-xs text-on-surface-variant pl-7 leading-relaxed">Nên chụp ảnh cún cưng ở góc chính diện khuôn mặt, ánh sáng rõ ràng, ảnh không bị rung mờ và chỉ có duy nhất khuôn mặt của một chú chó trong khung hình.</p></details><details class="group bg-surface-container-low rounded-xl p-4 border border-outline-variant/10 [&_summary::-webkit-details-marker]:hidden"><summary class="flex items-center justify-between cursor-pointer focus:outline-none"><h5 class="font-bold text-primary text-sm flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">help_outline</span><span>Hết lượt miễn phí tôi phải làm gì?</span></h5><span class="relative flex-shrink-0 ml-1.5 w-5 h-5"><span class="material-symbols-outlined transition-transform duration-300 group-open:-rotate-180 text-primary">expand_more</span></span></summary><p class="mt-2 text-xs text-on-surface-variant pl-7 leading-relaxed">Bạn có thể chọn \'Xem quảng cáo\' ở khu vực nhận diện để nhận thêm lượt nhận diện hoặc tiến hành nâng cấp gói dịch vụ trả phí phù hợp.</p></details><details class="group bg-surface-container-low rounded-xl p-4 border border-outline-variant/10 [&_summary::-webkit-details-marker]:hidden"><summary class="flex items-center justify-between cursor-pointer focus:outline-none"><h5 class="font-bold text-primary text-sm flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">help_outline</span><span>Thanh toán không thành công thì phải làm sao?</span></h5><span class="relative flex-shrink-0 ml-1.5 w-5 h-5"><span class="material-symbols-outlined transition-transform duration-300 group-open:-rotate-180 text-primary">expand_more</span></span></summary><p class="mt-2 text-xs text-on-surface-variant pl-7 leading-relaxed">Giao dịch tự động có thể mất từ 1-5 phút để xử lý. Nếu quá thời gian trên tài khoản vẫn chưa được kích hoạt, vui lòng gửi yêu cầu hỗ trợ đính kèm mã đơn hàng hoặc ảnh chụp biên lai chuyển khoản.</p></details><details class="group bg-surface-container-low rounded-xl p-4 border border-outline-variant/10 [&_summary::-webkit-details-marker]:hidden"><summary class="flex items-center justify-between cursor-pointer focus:outline-none"><h5 class="font-bold text-primary text-sm flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">help_outline</span><span>Làm thế nào để liên hệ hỗ trợ?</span></h5><span class="relative flex-shrink-0 ml-1.5 w-5 h-5"><span class="material-symbols-outlined transition-transform duration-300 group-open:-rotate-180 text-primary">expand_more</span></span></summary><p class="mt-2 text-xs text-on-surface-variant pl-7 leading-relaxed">Bạn có thể gửi email trực tiếp tới {{ get_config("site_email", "support@pet.ai") }} hoặc điền biểu mẫu liên hệ tại trang \'Liên hệ\' của website.</p></details></div>' },
+          { title: "12. Thông tin liên hệ hỗ trợ", content: '<p class="text-on-surface-variant mb-4">Nếu gặp bất kỳ khó khăn hay sự cố nào trong quá trình sử dụng hệ thống PetAI, vui lòng liên hệ:</p><div class="space-y-3 text-sm"><div class="flex items-center gap-3"><span class="material-symbols-outlined text-primary text-[20px]">mail</span><span class="text-on-surface-variant">Email: {{ get_config("site_email", "support@pet.ai") }} (Hỗ trợ 24/7)</span></div><div class="flex items-center gap-3"><span class="material-symbols-outlined text-primary text-[20px]">call</span><span class="text-on-surface-variant">Hotline: {{ get_config("contact_phone", "0916 416 409") }}</span></div><div class="flex items-center gap-3"><span class="material-symbols-outlined text-primary text-[20px]">location_on</span><span class="text-on-surface-variant">Địa chỉ: {{ get_config("contact_address_vi", get_config("contact_address", "P16, Đường số 8, KDC lô 49, Khu đô thị Nam Cần Thơ, Phường Cái Răng, TP. Cần Thơ")) }}</span></div></div>' }
         ];
       }
       if (!en_array || en_array.length === 0) {
@@ -524,8 +545,21 @@
           { title: "8. Upgrading Subscription Packages", content: '<p class="text-on-surface-variant mb-4">To extend scan limits and experience premium speed, you can upgrade your plan:</p><div class="space-y-4 pl-1"><div class="flex gap-3 items-start"><span class="material-symbols-outlined text-primary text-[20px] mt-0.5">event_busy</span><div><strong class="text-sm text-primary block">When to Upgrade</strong><span class="text-xs text-on-surface-variant leading-relaxed">When you run out of free scans, want ad-free usage, or require priority server response.</span></div></div><div class="flex gap-3 items-start"><span class="material-symbols-outlined text-primary text-[20px] mt-0.5">widgets</span><div><strong class="text-sm text-primary block">Choose a Plan</strong><span class="text-xs text-on-surface-variant leading-relaxed">Go to the Upgrade page and select a plan: Basic (50 scans / 7 days / 1,000 VND), Pro (200 scans / 30 days / 5,000 VND), or Enterprise (Unlimited scans / 90 days / 15,000 VND).</span></div></div><div class="flex gap-3 items-start"><span class="material-symbols-outlined text-primary text-[20px] mt-0.5">qr_code_2</span><div><strong class="text-sm text-primary block">Payment (VietQR)</strong><span class="text-xs text-on-surface-variant leading-relaxed">The system creates a dynamic payment invoice and VietQR code. Open your banking app, scan the code, and transfer the exact amount with the exact memo.</span></div></div><div class="flex gap-3 items-start"><span class="material-symbols-outlined text-primary text-[20px] mt-0.5">sync_saved_locally</span><div><strong class="text-sm text-primary block">Automatic Activation</strong><span class="text-xs text-on-surface-variant leading-relaxed">Once the transfer is completed, the VietQR gateway automatically confirms payment and upgrades your account in 1-5 minutes.</span></div></div></div>' },
           { title: "9. Viewing Scan History", content: '<p class="text-on-surface-variant mb-4">Every scanned photo is saved automatically to let you query them anytime:</p><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div class="p-4 bg-surface-container rounded-xl border border-outline-variant/20 flex gap-3 items-start"><span class="material-symbols-outlined text-primary text-[20px]">list_alt</span><div><h5 class="font-bold text-primary mb-1 text-sm">Viewing Scan History</h5><p class="text-xs text-on-surface-variant leading-relaxed">Navigate to the \'History\' page from the sidebar to view a chronological list of all scans.</p></div></div><div class="p-4 bg-surface-container rounded-xl border border-outline-variant/20 flex gap-3 items-start"><span class="material-symbols-outlined text-primary text-[20px]">manage_search</span><div><h5 class="font-bold text-primary mb-1 text-sm">Managing History</h5><p class="text-xs text-on-surface-variant leading-relaxed">You can filter the list by breed name, open details to view the full report, or delete individual records.</p></div></div></div>' },
           { title: "10. Exploring Personal Analytics", content: '<p class="text-on-surface-variant mb-4">The statistics page displays high-level trends of your scanning activity:</p><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div class="p-4 bg-surface-container rounded-xl border border-outline-variant/20 flex gap-3 items-start"><span class="material-symbols-outlined text-primary text-[20px]">analytics</span><div><h5 class="font-bold text-primary mb-1 text-sm">Overview</h5><p class="text-xs text-on-surface-variant leading-relaxed">Total scans performed, average AI confidence score, and unique breeds discovered.</p></div></div><div class="p-4 bg-surface-container rounded-xl border border-outline-variant/20 flex gap-3 items-start"><span class="material-symbols-outlined text-primary text-[20px]">insert_chart</span><div><h5 class="font-bold text-primary mb-1 text-sm">Charts</h5><p class="text-xs text-on-surface-variant leading-relaxed">Charts: Activity trend graph, top 5 identified breeds chart, and probability distribution breakdowns.</p></div></div></div>' },
-          { title: "11. Frequently Asked Questions (FAQ)", content: '<div class="space-y-3"><details class="group bg-surface-container-low rounded-xl p-4 border border-outline-variant/10 [&_summary::-webkit-details-marker]:hidden"><summary class="flex items-center justify-between cursor-pointer focus:outline-none"><h5 class="font-bold text-primary text-sm flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">help_outline</span><span>Is the AI prediction 100% accurate?</span></h5><span class="relative flex-shrink-0 ml-1.5 w-5 h-5"><span class="material-symbols-outlined transition-transform duration-300 group-open:-rotate-180 text-primary">expand_more</span></span></summary><p class="mt-2 text-xs text-on-surface-variant pl-7 leading-relaxed">AI models predict based on morphological features learned from training data. The outputs are for objective reference and cannot replace genetic (DNA) tests.</p></details><details class="group bg-surface-container-low rounded-xl p-4 border border-outline-variant/10 [&_summary::-webkit-details-marker]:hidden"><summary class="flex items-center justify-between cursor-pointer focus:outline-none"><h5 class="font-bold text-primary text-sm flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">help_outline</span><span>How can I get the best results?</span></h5><span class="relative flex-shrink-0 ml-1.5 w-5 h-5"><span class="material-symbols-outlined transition-transform duration-300 group-open:-rotate-180 text-primary">expand_more</span></span></summary><p class="mt-2 text-xs text-on-surface-variant pl-7 leading-relaxed">Ensure the photo features a straight-on shot of the dog\'s face, has clear lighting, is not blurry, and contains only one dog.</p></details><details class="group bg-surface-container-low rounded-xl p-4 border border-outline-variant/10 [&_summary::-webkit-details-marker]:hidden"><summary class="flex items-center justify-between cursor-pointer focus:outline-none"><h5 class="font-bold text-primary text-sm flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">help_outline</span><span>What should I do when free scans run out?</span></h5><span class="relative flex-shrink-0 ml-1.5 w-5 h-5"><span class="material-symbols-outlined transition-transform duration-300 group-open:-rotate-180 text-primary">expand_more</span></span></summary><p class="mt-2 text-xs text-on-surface-variant pl-7 leading-relaxed">You can click \'Watch Ad\' in the pop-up to unlock additional scans or purchase a plan upgrade.</p></details><details class="group bg-surface-container-low rounded-xl p-4 border border-outline-variant/10 [&_summary::-webkit-details-marker]:hidden"><summary class="flex items-center justify-between cursor-pointer focus:outline-none"><h5 class="font-bold text-primary text-sm flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">help_outline</span><span>What if my payment is unsuccessful?</span></h5><span class="relative flex-shrink-0 ml-1.5 w-5 h-5"><span class="material-symbols-outlined transition-transform duration-300 group-open:-rotate-180 text-primary">expand_more</span></span></summary><p class="mt-2 text-xs text-on-surface-variant pl-7 leading-relaxed">VietQR transactions take 1-5 minutes to complete. If it takes longer, please contact us with your order ID or bank receipt.</p></details><details class="group bg-surface-container-low rounded-xl p-4 border border-outline-variant/10 [&_summary::-webkit-details-marker]:hidden"><summary class="flex items-center justify-between cursor-pointer focus:outline-none"><h5 class="font-bold text-primary text-sm flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">help_outline</span><span>How do I contact support?</span></h5><span class="relative flex-shrink-0 ml-1.5 w-5 h-5"><span class="material-symbols-outlined transition-transform duration-300 group-open:-rotate-180 text-primary">expand_more</span></span></summary><p class="mt-2 text-xs text-on-surface-variant pl-7 leading-relaxed">You can email us at {{ get_config('site_email', 'support@pet.ai') }} or use the contact form under the Contact page.</p></details></div>' },
-          { title: "12. Support Contact Information", content: '<p class="text-on-surface-variant mb-4">If you encounter any issues while using the PetAI platform, feel free to contact us:</p><div class="space-y-3 text-sm"><div class="flex items-center gap-3"><span class="material-symbols-outlined text-primary text-[20px]">mail</span><span class="text-on-surface-variant">Email: {{ get_config('site_email', 'support@pet.ai') }} (24/7 Support)</span></div><div class="flex items-center gap-3"><span class="material-symbols-outlined text-primary text-[20px]">call</span><span class="text-on-surface-variant">Hotline: {{ get_config('contact_phone', '0916 416 409') }}</span></div><div class="flex items-center gap-3"><span class="material-symbols-outlined text-primary text-[20px]">location_on</span><span class="text-on-surface-variant">Address: P16, Street 8, Lot 49 residential area, Nam Can Tho Urban Area, Cai Rang District, Can Tho City, Vietnam</span></div></div>' }
+          { title: "11. Frequently Asked Questions (FAQ)", content: '<div class="space-y-3"><details class="group bg-surface-container-low rounded-xl p-4 border border-outline-variant/10 [&_summary::-webkit-details-marker]:hidden"><summary class="flex items-center justify-between cursor-pointer focus:outline-none"><h5 class="font-bold text-primary text-sm flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">help_outline</span><span>Is the AI prediction 100% accurate?</span></h5><span class="relative flex-shrink-0 ml-1.5 w-5 h-5"><span class="material-symbols-outlined transition-transform duration-300 group-open:-rotate-180 text-primary">expand_more</span></span></summary><p class="mt-2 text-xs text-on-surface-variant pl-7 leading-relaxed">AI models predict based on morphological features learned from training data. The outputs are for objective reference and cannot replace genetic (DNA) tests.</p></details><details class="group bg-surface-container-low rounded-xl p-4 border border-outline-variant/10 [&_summary::-webkit-details-marker]:hidden"><summary class="flex items-center justify-between cursor-pointer focus:outline-none"><h5 class="font-bold text-primary text-sm flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">help_outline</span><span>How can I get the best results?</span></h5><span class="relative flex-shrink-0 ml-1.5 w-5 h-5"><span class="material-symbols-outlined transition-transform duration-300 group-open:-rotate-180 text-primary">expand_more</span></span></summary><p class="mt-2 text-xs text-on-surface-variant pl-7 leading-relaxed">Ensure the photo features a straight-on shot of the dog\'s face, has clear lighting, is not blurry, and contains only one dog.</p></details><details class="group bg-surface-container-low rounded-xl p-4 border border-outline-variant/10 [&_summary::-webkit-details-marker]:hidden"><summary class="flex items-center justify-between cursor-pointer focus:outline-none"><h5 class="font-bold text-primary text-sm flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">help_outline</span><span>What should I do when free scans run out?</span></h5><span class="relative flex-shrink-0 ml-1.5 w-5 h-5"><span class="material-symbols-outlined transition-transform duration-300 group-open:-rotate-180 text-primary">expand_more</span></span></summary><p class="mt-2 text-xs text-on-surface-variant pl-7 leading-relaxed">You can click \'Watch Ad\' in the pop-up to unlock additional scans or purchase a plan upgrade.</p></details><details class="group bg-surface-container-low rounded-xl p-4 border border-outline-variant/10 [&_summary::-webkit-details-marker]:hidden"><summary class="flex items-center justify-between cursor-pointer focus:outline-none"><h5 class="font-bold text-primary text-sm flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">help_outline</span><span>What if my payment is unsuccessful?</span></h5><span class="relative flex-shrink-0 ml-1.5 w-5 h-5"><span class="material-symbols-outlined transition-transform duration-300 group-open:-rotate-180 text-primary">expand_more</span></span></summary><p class="mt-2 text-xs text-on-surface-variant pl-7 leading-relaxed">VietQR transactions take 1-5 minutes to complete. If it takes longer, please contact us with your order ID or bank receipt.</p></details><details class="group bg-surface-container-low rounded-xl p-4 border border-outline-variant/10 [&_summary::-webkit-details-marker]:hidden"><summary class="flex items-center justify-between cursor-pointer focus:outline-none"><h5 class="font-bold text-primary text-sm flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">help_outline</span><span>How do I contact support?</span></h5><span class="relative flex-shrink-0 ml-1.5 w-5 h-5"><span class="material-symbols-outlined transition-transform duration-300 group-open:-rotate-180 text-primary">expand_more</span></span></summary><p class="mt-2 text-xs text-on-surface-variant pl-7 leading-relaxed">You can email us at {{ get_config("site_email", "support@pet.ai") }} or use the contact form under the Contact page.</p></details></div>' },
+          { title: "12. Support Contact Information", content: '<p class="text-on-surface-variant mb-4">If you encounter any issues while using the PetAI platform, feel free to contact us:</p><div class="space-y-3 text-sm"><div class="flex items-center gap-3"><span class="material-symbols-outlined text-primary text-[20px]">mail</span><span class="text-on-surface-variant">Email: {{ get_config("site_email", "support@pet.ai") }} (24/7 Support)</span></div><div class="flex items-center gap-3"><span class="material-symbols-outlined text-primary text-[20px]">call</span><span class="text-on-surface-variant">Hotline: {{ get_config("contact_phone", "0916 416 409") }}</span></div><div class="flex items-center gap-3"><span class="material-symbols-outlined text-primary text-[20px]">location_on</span><span class="text-on-surface-variant">Address: {{ get_config("contact_address_en", get_config("contact_address", "P16, Street 8, Lot 49 residential area, Nam Can Tho Urban Area, Cai Rang District, Can Tho City, Vietnam")) }}</span></div></div>' }
+        ];
+      }
+    } else if (pageKey === 'home') {
+      if (!vi_array || vi_array.length === 0) {
+        vi_array = [
+          { title: "Chào mừng đến với PetAI", content: `<p>Nền tảng nhận diện giống chó thông minh sử dụng trí tuệ nhân tạo (AI) giúp bạn phát hiện hơn 120 giống chó phổ biến và giống chó lai chỉ trong vài giây.</p>` },
+          { title: "Các tính năng chính của hệ thống", content: `<p class="mb-2">• <strong>Nhận diện nhanh:</strong> Phân tích đặc trưng ảnh và trả về kết quả tức thì.</p>\n<p class="mb-2">• <strong>Top-3 gợi ý:</strong> Gợi ý các giống chó có khả năng cao nhất kèm độ tin cậy.</p>\n<p>• <strong>Giải thích trực quan:</strong> Bản đồ nhiệt Grad-CAM làm nổi bật vùng đặc trưng tai, mắt, mõm.</p>` }
+        ];
+      }
+      if (!en_array || en_array.length === 0) {
+        en_array = [
+          { title: "Welcome to PetAI", content: `<p>Intelligent dog breed identification platform powered by Artificial Intelligence (AI) helping you identify over 120 popular breeds and crossbreeds in seconds.</p>` },
+          { title: "Core Features", content: `<p class="mb-2">• <strong>Fast Identification:</strong> Image morphology analysis with instant results.</p>\n<p class="mb-2">• <strong>Top-3 Candidates:</strong> Returns the most likely breed matches along with confidence levels.</p>\n<p>• <strong>Visual Explanation:</strong> Grad-CAM heatmap highlighting key features like ears, eyes, and snout.</p>` }
         ];
       }
     }
@@ -648,6 +682,7 @@
   function renderVisualSections() {
     const card = document.getElementById("legal-content-card");
     if (!card) return;
+    if (pageKey === 'home') return;
 
     const h1 = card.querySelector("h1");
     card.innerHTML = "";
@@ -1585,25 +1620,7 @@
   });
 
   function initEditor() {
-    /* FIX 1: Capture full DOM content BEFORE the editor clears #legal-content-card */
-    const card = document.getElementById("legal-content-card");
-    if (card) {
-      const clone = card.cloneNode(true);
-      clone.querySelectorAll('h1').forEach(el => el.remove());
-      originalDomHtml = clone.innerHTML;
-    }
-
-    loadInitialContent();
-    pushToHistory();          /* push initial state so undo is always safe */
-    renderVisualSections();
-
-    // Fade-in mượt mà sau khi editor đã render xong
-    if (card) {
-      requestAnimationFrame(() => {
-        card.style.opacity = "1";
-        card.style.transform = "translateY(0)";
-      });
-    }
+    initInPlaceEditor();
 
     document.addEventListener("selectionchange", checkSelection);
 
@@ -1614,6 +1631,93 @@
     document.addEventListener("i18nReady", function(e) {
       if (typeof switchEditorLanguage === "function") switchEditorLanguage(e.detail.lang);
     });
+  }
+
+  function initInPlaceEditor() {
+    console.log("Initializing in-place editor for Page: " + pageKey);
+
+    // Collect initial custom translations
+    try {
+      existingVi = JSON.parse(document.getElementById("raw-editor-content-vi").value || '{}');
+    } catch(e) {}
+    try {
+      existingEn = JSON.parse(document.getElementById("raw-editor-content-en").value || '{}');
+    } catch(e) {}
+
+    // Populate TRANSLATIONS instantly
+    for (var k in existingVi) { TRANSLATIONS.vi[k] = existingVi[k]; }
+    for (var k in existingEn) { TRANSLATIONS.en[k] = existingEn[k]; }
+
+    // Make all text elements with data-i18n or data-i18n-html editable
+    document.querySelectorAll("[data-i18n], [data-i18n-html]").forEach(el => {
+      const key = el.getAttribute("data-i18n") || el.getAttribute("data-i18n-html");
+      if (!key) return;
+
+      // Skip elements that shouldn't be edited (like icons, flags, menus, headers, buttons with complex sub-elements)
+      if (el.closest("nav") || el.closest("footer") || el.classList.contains("material-symbols-outlined") || el.tagName === "A" || el.tagName === "BUTTON") {
+        return;
+      }
+
+      // Avoid editing standard contact details labels
+      if (key.includes("Footer") || key.includes("contactEmail") || key.includes("contactPhone") || key.includes("sysLabelContactAddress")) {
+        return;
+      }
+
+      el.setAttribute("contenteditable", "true");
+      el.classList.add("home-editable-element");
+
+      // Handle blur to update translation dict instantly
+      el.addEventListener("blur", function() {
+        const val = el.innerHTML.trim();
+        if (visualEditorLang === 'vi') {
+          existingVi[key] = val;
+          TRANSLATIONS.vi[key] = val;
+        } else {
+          existingEn[key] = val;
+          TRANSLATIONS.en[key] = val;
+        }
+      });
+    });
+
+    // Override savePageChanges for In-place editing
+    window.savePageChanges = async function() {
+      // Force save any currently focused element
+      const activeEl = document.activeElement;
+      if (activeEl && activeEl.classList.contains("home-editable-element")) {
+        activeEl.blur();
+      }
+
+      const fd = new FormData();
+      const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+      fd.append("csrf_token", csrfMeta ? csrfMeta.getAttribute("content") : "");
+      fd.append("page", pageKey);
+      fd.append("content_vi", JSON.stringify(existingVi));
+      fd.append("content_en", JSON.stringify(existingEn));
+
+      try {
+        const res = await fetch("/users/system-config/save-legal", { method: "POST", body: fd });
+        if (res.ok) {
+          if (window.showToast) window.showToast("Đã lưu nội dung thành công!", "success");
+          else alert("Lưu nội dung thành công!");
+          
+          setTimeout(() => {
+            window.location.href = window.location.pathname + "?edit=true";
+          }, 1000);
+        } else {
+          if (window.showToast) window.showToast("Lỗi khi lưu nội dung.", "error");
+          else alert("Lỗi khi lưu nội dung.");
+        }
+      } catch(e) {
+        console.error(e);
+        if (window.showToast) window.showToast("Lỗi kết nối: " + e.message, "error");
+        else alert("Lỗi kết nối: " + e.message);
+      }
+    };
+    
+    // Override cancelPageEdit for In-place editing
+    window.cancelPageEdit = function() {
+      window.location.href = "/users/system-config?tab=legal&page_select=" + pageKey;
+    };
   }
 
   if (document.readyState === "loading") {

@@ -141,8 +141,28 @@ def register_html_translation(app):
             if "Content-Encoding" in response.headers:
                 return response
             
-            from flask import request
-            lang = request.cookies.get("siteLanguage", "vi")
+            from flask import request, session
+            lang = request.cookies.get("siteLanguage")
+            if not lang:
+                from connect import get_connection
+                from models import SystemConfig, UserSettings
+                conn = None
+                try:
+                    conn = get_connection()
+                    user_id_raw = session.get("user_id")
+                    if user_id_raw is not None:
+                        user_settings = UserSettings.get_or_create(conn, int(user_id_raw))
+                        lang = (user_settings or {}).get("language")
+                    if not lang:
+                        lang = SystemConfig.get(conn, "default_lang", "vi")
+                except Exception:
+                    lang = "vi"
+                finally:
+                    if conn:
+                        conn.close()
+            if lang not in {"vi", "en"}:
+                lang = "vi"
+
             if lang in {"en", "vi"}:
                 try:
                     from i18n_server import translate_html
@@ -152,5 +172,74 @@ def register_html_translation(app):
                 except Exception as e:
                     app.logger.error(f"[i18n middleware] Error in translation: {e}")
         return response
+
+
+def register_maintenance_mode(app):
+    """Register a before_request handler to block users when maintenance mode is active.
+
+    Allows admin, static files, login/logout, health checks, and payment webhooks to bypass.
+    """
+
+    @app.before_request
+    def _check_maintenance_mode():
+        # Check if maintenance mode is enabled in DB
+        from connect import get_connection
+        from models import SystemConfig
+        
+        maintenance_active = False
+        conn = None
+        try:
+            conn = get_connection()
+            val = SystemConfig.get(conn, "maintenance_mode", "0")
+            maintenance_active = (val == "1")
+        except Exception:
+            pass
+        finally:
+            if conn:
+                conn.close()
+                
+        if not maintenance_active:
+            return None
+            
+        # Admin is allowed to bypass maintenance mode
+        if session.get("role") == "admin":
+            return None
+            
+        # Exempt endpoints
+        endpoint = (request.endpoint or "")
+        exempt_endpoints = {
+            "login.login",
+            "login.login_google",
+            "login.google_authorized",
+            "logout.logout",
+            "health.health_check",
+            "sepay.webhook_sepay",
+            "sepay.webhook_sepay_root_alias",
+        }
+        
+        if endpoint.startswith("static") or endpoint in exempt_endpoints:
+            return None
+            
+        # Render maintenance page (using error.html with 503)
+        from flask import render_template
+        
+        # Get language for error message
+        lang = request.cookies.get("siteLanguage")
+        if not lang:
+            try:
+                conn = get_connection()
+                lang = SystemConfig.get(conn, "default_lang", "vi")
+                conn.close()
+            except Exception:
+                lang = "vi"
+        if lang not in {"vi", "en"}:
+            lang = "vi"
+            
+        if lang == "en":
+            message = "We are currently performing scheduled maintenance. Please check back later. Thank you for your patience."
+        else:
+            message = "Hệ thống đang được bảo trì định kỳ. Vui lòng quay lại sau. Xin cảm ơn sự kiên nhẫn của bạn."
+            
+        return render_template("error.html", code=503, message=message), 503
 
 

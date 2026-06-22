@@ -1,0 +1,18 @@
+import os, re
+directory = 'd:/KhoaLuan - Copy (new) - Copy/templates'
+for filename in os.listdir(directory):
+    if filename.endswith('.html'):
+        filepath = os.path.join(directory, filename)
+        with open(filepath, 'r', encoding='utf-8') as f:
+            content = f.read()
+
+        original = content
+        
+        content = re.sub(r"get_config\(\\'site_email\\',\s*\\'support@pet\.ai\\'\)", 'get_config("site_email", "support@pet.ai")', content)
+        content = re.sub(r"get_config\(\\'contact_phone\\',\s*\\'0916 416 409\\'\)", 'get_config("contact_phone", "0916 416 409")', content)
+        content = re.sub(r"get_config\(\\'site_name\\',\s*\\'PetAI\\'\)", 'get_config("site_name", "PetAI")', content)
+
+        if content != original:
+            with open(filepath, 'w', encoding='utf-8') as f:
+                f.write(content)
+            print(f'Fixed backslash escaping in {filename}')
