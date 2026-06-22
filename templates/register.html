@@ -90,7 +90,7 @@
         }
       })();
     </script>
-    <title data-i18n="registerPageTitle">{{ 'Register - PetAI' if ui_language == 'en' else 'Đăng ký - PetAI' }}</title>
+    <title data-i18n="registerPageTitle">{{ 'Register - {{ get_config(\'site_name\', \'PetAI\') }}' if ui_language == 'en' else 'Đăng ký - {{ get_config(\'site_name\', \'PetAI\') }}' }}</title>
     <script src="{{ url_for('static', filename='js/tailwindcss.js') }}"></script>
     <script src="{{ url_for('static', filename='js/chart.umd.min.js') }}"></script>
     <link
@@ -253,7 +253,7 @@
                   >pets</span
                 >
                 <span class="text-sm md:text-lg font-semibold text-on-primary"
-                  >PetAI</span
+                  >{{ get_config(\'site_name\', \'PetAI\') }}</span
                 >
               </div>
               <h1 class="headline-lg mb-sm" data-i18n="regLeftTitle">
@@ -366,7 +366,7 @@
               src="{{ url_for('static', filename='images/logo.png') }}"
             />
             <span class="text-sm md:text-lg font-semibold text-primary"
-              >PetAI</span
+              >{{ get_config(\'site_name\', \'PetAI\') }}</span
             >
           </div>
           <div class="w-full max-w-[400px] mx-auto flex flex-col gap-md">

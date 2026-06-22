@@ -241,7 +241,7 @@
         } catch (e) {}
       })();
     </script>
-    <title data-i18n="adminConfirmationsPageTitle">{{ 'Approval' if ui_language == 'en' else 'Duyệt' }} - PetAI</title>
+    <title data-i18n="adminConfirmationsPageTitle">{{ 'Approval' if ui_language == 'en' else 'Duyệt' }} - {{ get_config(\'site_name\', \'PetAI\') }}</title>
     <script src="{{ url_for('static', filename='js/tailwindcss.js') }}"></script>
     <script src="{{ url_for('static', filename='js/chart.umd.min.js') }}"></script>
 
@@ -1313,7 +1313,8 @@
 
           if (pendingOrders.length === 0) {
             tbody.innerHTML = getEmptyStateHtml(translate("noPendingApprovals", "Không có đơn chờ xác nhận."));
-            document.getElementById("showingInfo1").textContent = "Hiển thị 0 - 0 trong tổng số 0 đơn.";
+            document.getElementById("showingInfo1").textContent = 
+              translate("showingText", "Hiển thị") + " 0 - 0 " + translate("ofText", "trên") + " 0 " + translate("pendingConfirmOrdersText", "đơn chờ xác nhận") + ".";
             document.getElementById("paginationControls1").innerHTML = "";
             return;
           }
@@ -1447,7 +1448,8 @@
 
           if (paidOrders.length === 0) {
             tbody.innerHTML = getEmptyStateHtml(translate("noPaidOrders", "Chưa có đơn hàng nào khác."));
-            document.getElementById("showingInfo2").textContent = "Hiển thị 0 - 0 trong tổng số 0 đơn.";
+            document.getElementById("showingInfo2").textContent = 
+              translate("showingText", "Hiển thị") + " 0 - 0 " + translate("ofText", "trên") + " 0 " + translate("ordersText", "đơn") + ".";
             document.getElementById("paginationControls2").innerHTML = "";
             return;
           }

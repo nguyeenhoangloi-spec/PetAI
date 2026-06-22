@@ -329,7 +329,7 @@
       <div class="flex items-center gap-gutter">
         <a href="{{ url_for('home.index') }}" class="inline-flex items-center gap-0">
           <img alt="PetAI New Logo" class="w-auto h-10 md:h-12" src="{{ url_for('static', filename='images/logo.png') }}">
-          <span class="ml-0 text-lg md:text-2xl font-semibold text-primary">PetAI</span>
+          <span class="ml-0 text-lg md:text-2xl font-semibold text-primary">{{ get_config(\'site_name\', \'PetAI\') }}</span>
         </a>
       </div>
       <div class="flex items-center gap-6">
@@ -465,7 +465,7 @@
                         <div>
                           <div class="text-[11px] font-bold text-on-surface-variant/60 dark:text-slate-400 tracking-wider uppercase" data-i18n="emailLabel">EMAIL</div>
                           <div class="text-sm font-semibold text-on-surface dark:text-slate-200 mt-0.5">
-                            <a href="mailto:support@pet.ai" class="hover:text-primary transition-colors text-primary font-medium">support@pet.ai</a>
+                            <a href="mailto:{{ get_config('site_email', 'support@pet.ai') }}" class="hover:text-primary transition-colors text-primary font-medium">{{ get_config('site_email', 'support@pet.ai') }}</a>
                           </div>
                         </div>
                       </div>
@@ -597,7 +597,7 @@
         <div class="space-y-5">
           <div class="flex items-center gap-2">
             <img alt="PetAI Logo" class="h-9 w-auto hover:scale-105 transition-transform duration-300" src="{{ url_for('static', filename='images/logo.png') }}">
-            <span class="text-xl font-bold text-primary tracking-tight font-display">PetAI</span>
+            <span class="text-xl font-bold text-primary tracking-tight font-display">{{ get_config(\'site_name\', \'PetAI\') }}</span>
           </div>
           <p class="text-sm text-on-surface-variant leading-relaxed max-w-xs" data-i18n="footerDesc">
             Ứng dụng nhận diện giống chó bằng AI dành cho người yêu thú cưng. Kết quả chính xác, nhanh chóng.
@@ -658,7 +658,7 @@
             </li>
             <li class="flex items-start gap-2">
               <span class="material-symbols-outlined text-primary text-base mt-0.5 contact-icon">call</span>
-              <span data-i18n="contactPhone">Điện thoại: 0916 416 409</span>
+              <span data-i18n="contactPhone">Điện thoại: {{ get_config('contact_phone', '0916 416 409') }}</span>
             </li>
             <li class="flex items-start gap-2">
               <span class="material-symbols-outlined text-primary text-base mt-0.5 contact-icon">pin_drop</span>

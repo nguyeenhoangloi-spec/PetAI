@@ -225,7 +225,7 @@
         } catch (e) {}
       })();
     </script>
-    <title data-i18n="paymentHistoryTitle">{{ 'Payment History' if ui_language == 'en' else 'Lịch sử thanh toán' }} - PetAI</title>
+    <title data-i18n="paymentHistoryTitle">{{ 'Payment History' if ui_language == 'en' else 'Lịch sử thanh toán' }} - {{ get_config(\'site_name\', \'PetAI\') }}</title>
     <script src="{{ url_for('static', filename='js/tailwindcss.js') }}"></script>
 
     <link
@@ -618,6 +618,7 @@
                 <input
                   type="text"
                   id="search-input"
+                  data-i18n-placeholder="paymentSearchPlaceholder"
                   placeholder="Tìm theo mã đơn hoặc mã giao dịch..."
                   class="w-full pl-9 pr-4 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-300 dark:text-slate-200"
                 />
@@ -769,9 +770,9 @@
                   id="page-size-select"
                   class="px-2 py-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary cursor-pointer"
                 >
-                  <option value="10">10 / <span data-i18n="paymentHistoryPaginationPerPage">trang</span></option>
-                  <option value="20">20 / <span data-i18n="paymentHistoryPaginationPerPage">trang</span></option>
-                  <option value="50">50 / <span data-i18n="paymentHistoryPaginationPerPage">trang</span></option>
+                  <option value="10" data-i18n-option-prefix="10 / " data-i18n-option-key="paymentHistoryPaginationPerPage">10 / trang</option>
+                  <option value="20" data-i18n-option-prefix="20 / " data-i18n-option-key="paymentHistoryPaginationPerPage">20 / trang</option>
+                  <option value="50" data-i18n-option-prefix="50 / " data-i18n-option-key="paymentHistoryPaginationPerPage">50 / trang</option>
                 </select>
               </div>
 
@@ -798,211 +799,8 @@
             </div>
           </div>
         </section>
-      </div>
-    </main>
-
-    <!-- Invoice Auto-Show Trigger -->
-    <div id="payment-auto-invoice" data-auto-invoice="{{ auto_show_invoice|tojson|forceescape if auto_show_invoice else '' }}"></div>
-
-    <!-- Redesigned Modern Order Detail Modal / Banking Slip -->
-    <div
-      id="detailModal"
-      class="fixed inset-0 z-[1050] hidden items-center justify-center p-4 bg-slate-950/60 backdrop-blur-md transition-opacity duration-300"
-      role="dialog"
-      aria-modal="true"
-    >
-      <div
-        id="detailModalContainer"
-        class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 w-full max-w-md overflow-hidden transform transition-all duration-300 scale-95 opacity-0"
-      >
-        <!-- Header -->
-        <div class="px-6 py-4 border-b border-outline-variant/20 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-950">
-          <div class="flex items-center gap-2">
-            <span class="material-symbols-outlined text-primary dark:text-blue-400 text-2xl">receipt_long</span>
-            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100" data-i18n="orderDetailTitle">Chi tiết đơn hàng</h3>
-          </div>
-          <button
-            onclick="closeDetailModal()"
-            type="button"
-            class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 focus:outline-none transition-colors cursor-pointer"
-            aria-label="Đóng"
-          >
-            <span class="material-symbols-outlined">close</span>
-          </button>
-        </div>
-
-        <!-- Body: simulated banking slip style -->
-        <div class="p-6 space-y-5 max-h-[70vh] overflow-y-auto">
-          <!-- Status Banner inside slip -->
-          <div id="detail-status-banner" class="rounded-2xl p-5 flex flex-col items-center justify-center text-center gap-2 shadow-sm border">
-            <div id="detail-status-icon" class="w-12 h-12 rounded-full flex items-center justify-center text-2xl font-bold"></div>
-            <h4 id="detail-status-label" class="text-md font-bold text-slate-800 dark:text-slate-100"></h4>
-            <p id="detail-status-sub" class="text-xs text-slate-500 dark:text-slate-400 mt-0.5"></p>
-          </div>
-
-          <!-- Transaction Fields Grid -->
-          <div class="border border-outline-variant/30 dark:border-slate-800 rounded-2xl p-4 bg-slate-50/50 dark:bg-slate-950/40 space-y-3.5">
-            <div class="flex justify-between items-center text-xs sm:text-sm">
-              <span class="text-slate-500 dark:text-slate-450" data-i18n="paymentHistoryColOrderId">Mã đơn hàng</span>
-              <span class="font-mono font-bold text-slate-850 dark:text-slate-200" id="detail-order-id">#--</span>
-            </div>
-            <div class="flex justify-between items-center text-xs sm:text-sm">
-              <span class="text-slate-500 dark:text-slate-450" data-i18n="paymentHistoryTransactionId">Mã giao dịch</span>
-              <span class="font-mono font-semibold text-slate-800 dark:text-slate-300" id="detail-txn-id">--</span>
-            </div>
-            <div class="flex justify-between items-center text-xs sm:text-sm">
-              <span class="text-slate-500 dark:text-slate-450" data-i18n="paymentHistoryColPlan">Gói đăng ký</span>
-              <span class="font-extrabold text-primary dark:text-blue-400" id="detail-plan">--</span>
-            </div>
-            <div class="flex justify-between items-center text-xs sm:text-sm">
-              <span class="text-slate-500 dark:text-slate-450" data-i18n="paymentHistoryColAmount">Số tiền</span>
-              <span class="font-extrabold text-slate-850 dark:text-slate-100 text-base" id="detail-amount">--</span>
-            </div>
-            <div class="flex justify-between items-center text-xs sm:text-sm">
-              <span class="text-slate-500 dark:text-slate-450" data-i18n="paymentHistoryColMethod">Phương thức</span>
-              <span class="font-semibold text-slate-800 dark:text-slate-250" id="detail-method">--</span>
-            </div>
-            <div class="h-px bg-outline-variant/25 dark:bg-slate-800/80 my-2"></div>
-            <div class="flex justify-between items-center text-xs sm:text-sm">
-              <span class="text-slate-500 dark:text-slate-450" data-i18n="paymentHistoryColCreated">Thời gian tạo</span>
-              <span class="font-semibold text-slate-800 dark:text-slate-250" id="detail-created-at">--</span>
-            </div>
-            <div id="detail-confirmed-row" class="flex justify-between items-center text-xs sm:text-sm hidden">
-              <span class="text-slate-500 dark:text-slate-450" data-i18n="confirmedTimeLabel">Thời gian xác nhận</span>
-              <span class="font-semibold text-slate-800 dark:text-slate-250" id="detail-confirmed-at">--</span>
-            </div>
-            <div id="detail-memo-row" class="flex justify-between items-center text-xs sm:text-sm hidden">
-              <span class="text-slate-500 dark:text-slate-450" data-i18n="transferNote">Nội dung chuyển khoản</span>
-              <span class="font-mono font-bold text-blue-600 dark:text-blue-400 select-all" id="detail-memo">--</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Footer actions -->
-        <div class="px-6 py-4 border-t border-outline-variant/20 dark:border-slate-800 flex justify-end gap-3 bg-slate-50 dark:bg-slate-950">
-          <div id="detail-modal-actions" class="flex items-center gap-2">
-            <!-- Populate checkout or cancel dynamically -->
-          </div>
-          <button
-            onclick="closeDetailModal()"
-            type="button"
-            class="px-4 py-2 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-350 bg-white dark:bg-slate-900 rounded-lg text-sm font-bold hover:bg-slate-50 dark:hover:bg-slate-800 active:scale-95 transition-all duration-150 cursor-pointer shadow-sm"
-          >
-            <span data-i18n="paymentHistoryModalClose">Đóng</span>
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Print Invoice Modal Markup (Standard Receipt) -->
-    <div
-      id="invoiceModal"
-      class="fixed inset-0 z-[1050] hidden items-center justify-center p-4 bg-slate-950/60 backdrop-blur-md transition-opacity duration-300"
-      role="dialog"
-      aria-modal="true"
-    >
-      <div
-        id="invoiceModalContainer"
-        class="bg-white/95 dark:bg-slate-900/95 backdrop-blur-md rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 w-full max-w-lg overflow-hidden transform transition-all duration-300 scale-95 opacity-0"
-      >
-        <!-- Header -->
-        <div
-          class="px-6 py-4 border-b border-slate-250/20 dark:border-slate-800/80 flex justify-between items-center bg-slate-50/80 dark:bg-slate-950/80"
-        >
-          <div class="flex items-center gap-2">
-            <span class="material-symbols-outlined text-primary text-2xl">receipt_long</span>
-            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100" data-i18n="invoiceModalTitle">
-              Hóa Đơn Thanh Toán
-            </h3>
-          </div>
-          <button
-            id="closeInvoiceXBtn"
-            type="button"
-            class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 focus:outline-none transition-colors cursor-pointer"
-            aria-label="Đóng"
-          >
-            <span class="material-symbols-outlined">close</span>
-          </button>
-        </div>
-
-        <!-- Body -->
-        <div class="p-6 space-y-6 max-h-[70vh] overflow-y-auto">
-          <div class="flex flex-col items-center text-center">
-            <div
-              class="w-12 h-12 rounded-full bg-emerald-100 dark:bg-emerald-950/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400 mb-2"
-            >
-              <span class="material-symbols-outlined text-3xl font-bold">check</span>
-            </div>
-            <h4 class="text-md font-bold text-slate-800 dark:text-slate-100" data-i18n="invoiceSuccess">
-              Thanh toán thành công!
-            </h4>
-            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1" data-i18n="invoiceThankYou">
-              Cảm ơn bạn đã sử dụng dịch vụ của PetAI
-            </p>
-          </div>
-
-          <div
-            class="border border-slate-200/60 dark:border-slate-800/80 rounded-xl p-4 bg-slate-50/30 dark:bg-slate-950/30 space-y-3"
-          >
-            <div class="flex justify-between items-center text-sm">
-              <span class="text-slate-500 dark:text-slate-400" data-i18n="orderIdLabel">Mã đơn hàng</span>
-              <span class="font-mono font-bold text-slate-800 dark:text-slate-200" id="invoiceOrderId">#ORDER_ID</span>
-            </div>
-            <div class="flex justify-between items-center text-sm">
-              <span class="text-slate-500 dark:text-slate-400" data-i18n="servicePlan">Gói dịch vụ</span>
-              <span class="font-bold text-primary dark:text-blue-400" id="invoicePlanName">PRO</span>
-            </div>
-            <div class="flex justify-between items-center text-sm">
-              <span class="text-slate-500 dark:text-slate-400" data-i18n="paymentMethodCol">Phương thức</span>
-              <span class="font-semibold text-slate-800 dark:text-slate-200" id="invoiceMethod" data-i18n="paymentMethodQR">Chuyển khoản QR</span>
-            </div>
-            <div class="flex justify-between items-center text-sm">
-              <span class="text-slate-500 dark:text-slate-400" data-i18n="amount">Số tiền</span>
-              <span class="font-bold text-secondary text-base" id="invoiceAmount">5.000đ</span>
-            </div>
-            <div class="h-px bg-slate-200 dark:bg-slate-800 my-2"></div>
-            <div class="flex justify-between items-center text-sm">
-              <span class="text-slate-500 dark:text-slate-400" data-i18n="customerLabel">Khách hàng</span>
-              <span class="font-semibold text-slate-800 dark:text-slate-200" id="invoiceCustomerName">Nguyen Van A</span>
-            </div>
-            <div class="flex justify-between items-center text-sm">
-              <span class="text-slate-500 dark:text-slate-400" data-i18n="emailLabel">Email</span>
-              <span class="font-semibold text-slate-800 dark:text-slate-200 truncate max-w-[200px]" id="invoiceCustomerEmail">email@example.com</span>
-            </div>
-            <div class="flex justify-between items-center text-sm">
-              <span class="text-slate-500 dark:text-slate-400" data-i18n="createdTimeLabel">Thời gian tạo</span>
-              <span class="font-semibold text-slate-800 dark:text-slate-200" id="invoiceCreatedAt">17/06/2026 12:00</span>
-            </div>
-            <div class="flex justify-between items-center text-sm">
-              <span class="text-slate-500 dark:text-slate-400" data-i18n="confirmedTimeLabel">Thời gian xác nhận</span>
-              <span class="font-semibold text-slate-800 dark:text-slate-200" id="invoiceConfirmedAt">17/06/2026 12:05</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Footer buttons -->
-        <div
-          class="px-6 py-4 border-t border-slate-250/20 dark:border-slate-800/80 flex justify-end gap-3 bg-slate-50/80 dark:bg-slate-950/80"
-        >
-          <button
-            id="printInvoiceBtn"
-            type="button"
-            class="px-4 py-2 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 rounded-lg text-sm font-bold flex items-center gap-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 active:scale-95 transition-all duration-150 cursor-pointer shadow-sm"
-          >
-            <span class="material-symbols-outlined text-[18px]">print</span>
-            <span data-i18n="printInvoiceBtn">In hóa đơn</span>
-          </button>
-          <button
-            id="closeInvoiceBtn"
-            type="button"
-            class="px-4 py-2 bg-primary text-on-primary rounded-lg text-sm font-bold hover:bg-primary/95 active:scale-95 transition-all duration-150 cursor-pointer shadow-sm"
-          >
-            <span data-i18n="close">Đóng</span>
-          </button>
-        </div>
-      </div>
-    </div>
-
+        <!-- Invoice Auto-Show Trigger -->
+        <div id="payment-auto-invoice" data-auto-invoice="{{ auto_show_invoice|tojson|forceescape if auto_show_invoice else '' }}"></div>
     <!-- Pass backend variables to Javascript -->
     <script>
       window.csrfToken = "{{ csrf_token() }}";
@@ -1290,7 +1088,7 @@
                       <span class="material-symbols-outlined text-[14px]">content_copy</span>
                     </button>
                   </div>
-                  <span class="text-[10px] text-slate-400 dark:text-slate-500 block mt-0.5">Mã giao dịch: ${mockTxn}</span>
+                  <span class="text-[10px] text-slate-400 dark:text-slate-500 block mt-0.5">${isVi ? 'Mã giao dịch' : 'Transaction ID'}: ${mockTxn}</span>
                 </td>
                 <td class="py-3.5 px-5 align-middle">
                   <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold ${getPlanBadgeClass(o.plan)}">
@@ -1339,19 +1137,19 @@
                 
                 <div class="grid grid-cols-2 gap-2 text-xs">
                   <div>
-                    <span class="text-slate-450 dark:text-slate-500 block text-[10px] uppercase font-bold">Mã giao dịch</span>
+                    <span class="text-slate-450 dark:text-slate-500 block text-[10px] uppercase font-bold">${isVi ? 'Mã giao dịch' : 'Transaction ID'}</span>
                     <span class="font-mono text-slate-700 dark:text-slate-300 font-medium">${mockTxn}</span>
                   </div>
                   <div>
-                    <span class="text-slate-450 dark:text-slate-500 block text-[10px] uppercase font-bold">Số tiền</span>
+                    <span class="text-slate-450 dark:text-slate-500 block text-[10px] uppercase font-bold">${isVi ? 'Số tiền' : 'Amount'}</span>
                     <span class="font-bold text-slate-800 dark:text-slate-100">${formatCurrency(o.amount_vnd)}</span>
                   </div>
                   <div>
-                    <span class="text-slate-450 dark:text-slate-500 block text-[10px] uppercase font-bold">Thời gian tạo</span>
+                    <span class="text-slate-450 dark:text-slate-500 block text-[10px] uppercase font-bold">${isVi ? 'Thời gian tạo' : 'Created Time'}</span>
                     <span class="text-slate-700 dark:text-slate-300 font-medium">${formatDate(o.created_at)}</span>
                   </div>
                   <div>
-                    <span class="text-slate-450 dark:text-slate-500 block text-[10px] uppercase font-bold">Phương thức</span>
+                    <span class="text-slate-450 dark:text-slate-500 block text-[10px] uppercase font-bold">${isVi ? 'Phương thức' : 'Method'}</span>
                     <span class="text-slate-700 dark:text-slate-300 font-semibold">${o.payment_method.toUpperCase()}</span>
                   </div>
                 </div>
@@ -2054,6 +1852,208 @@
         }
       })();
     </script>
+      </div>
+    </main>
+
+    <!-- Redesigned Modern Order Detail Modal / Banking Slip -->
+    <div
+      id="detailModal"
+      class="fixed inset-0 z-[1050] hidden items-center justify-center p-4 bg-slate-950/60 backdrop-blur-md transition-opacity duration-300"
+      role="dialog"
+      aria-modal="true"
+    >
+      <div
+        id="detailModalContainer"
+        class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 w-full max-w-md overflow-hidden transform transition-all duration-300 scale-95 opacity-0"
+      >
+        <!-- Header -->
+        <div class="px-6 py-4 border-b border-outline-variant/20 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-950">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary dark:text-blue-400 text-2xl">receipt_long</span>
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100" data-i18n="orderDetailTitle">Chi tiết đơn hàng</h3>
+          </div>
+          <button
+            onclick="closeDetailModal()"
+            type="button"
+            class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 focus:outline-none transition-colors cursor-pointer"
+            aria-label="Đóng"
+          >
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+
+        <!-- Body: simulated banking slip style -->
+        <div class="p-6 space-y-5 max-h-[70vh] overflow-y-auto">
+          <!-- Status Banner inside slip -->
+          <div id="detail-status-banner" class="rounded-2xl p-5 flex flex-col items-center justify-center text-center gap-2 shadow-sm border">
+            <div id="detail-status-icon" class="w-12 h-12 rounded-full flex items-center justify-center text-2xl font-bold"></div>
+            <h4 id="detail-status-label" class="text-md font-bold text-slate-800 dark:text-slate-100"></h4>
+            <p id="detail-status-sub" class="text-xs text-slate-500 dark:text-slate-400 mt-0.5"></p>
+          </div>
+
+          <!-- Transaction Fields Grid -->
+          <div class="border border-outline-variant/30 dark:border-slate-800 rounded-2xl p-4 bg-slate-50/50 dark:bg-slate-950/40 space-y-3.5">
+            <div class="flex justify-between items-center text-xs sm:text-sm">
+              <span class="text-slate-500 dark:text-slate-450" data-i18n="paymentHistoryColOrderId">Mã đơn hàng</span>
+              <span class="font-mono font-bold text-slate-850 dark:text-slate-200" id="detail-order-id">#--</span>
+            </div>
+            <div class="flex justify-between items-center text-xs sm:text-sm">
+              <span class="text-slate-500 dark:text-slate-450" data-i18n="paymentHistoryTransactionId">Mã giao dịch</span>
+              <span class="font-mono font-semibold text-slate-800 dark:text-slate-300" id="detail-txn-id">--</span>
+            </div>
+            <div class="flex justify-between items-center text-xs sm:text-sm">
+              <span class="text-slate-500 dark:text-slate-450" data-i18n="paymentHistoryColPlan">Gói đăng ký</span>
+              <span class="font-extrabold text-primary dark:text-blue-400" id="detail-plan">--</span>
+            </div>
+            <div class="flex justify-between items-center text-xs sm:text-sm">
+              <span class="text-slate-500 dark:text-slate-450" data-i18n="paymentHistoryColAmount">Số tiền</span>
+              <span class="font-extrabold text-slate-850 dark:text-slate-100 text-base" id="detail-amount">--</span>
+            </div>
+            <div class="flex justify-between items-center text-xs sm:text-sm">
+              <span class="text-slate-500 dark:text-slate-450" data-i18n="paymentHistoryColMethod">Phương thức</span>
+              <span class="font-semibold text-slate-800 dark:text-slate-250" id="detail-method">--</span>
+            </div>
+            <div class="h-px bg-outline-variant/25 dark:bg-slate-800/80 my-2"></div>
+            <div class="flex justify-between items-center text-xs sm:text-sm">
+              <span class="text-slate-500 dark:text-slate-450" data-i18n="paymentHistoryColCreated">Thời gian tạo</span>
+              <span class="font-semibold text-slate-800 dark:text-slate-250" id="detail-created-at">--</span>
+            </div>
+            <div id="detail-confirmed-row" class="flex justify-between items-center text-xs sm:text-sm hidden">
+              <span class="text-slate-500 dark:text-slate-450" data-i18n="confirmedTimeLabel">Thời gian xác nhận</span>
+              <span class="font-semibold text-slate-800 dark:text-slate-250" id="detail-confirmed-at">--</span>
+            </div>
+            <div id="detail-memo-row" class="flex justify-between items-center text-xs sm:text-sm hidden">
+              <span class="text-slate-500 dark:text-slate-450" data-i18n="transferNote">Nội dung chuyển khoản</span>
+              <span class="font-mono font-bold text-blue-600 dark:text-blue-400 select-all" id="detail-memo">--</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer actions -->
+        <div class="px-6 py-4 border-t border-outline-variant/20 dark:border-slate-800 flex justify-end gap-3 bg-slate-50 dark:bg-slate-950">
+          <div id="detail-modal-actions" class="flex items-center gap-2">
+            <!-- Populate checkout or cancel dynamically -->
+          </div>
+          <button
+            onclick="closeDetailModal()"
+            type="button"
+            class="px-4 py-2 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-350 bg-white dark:bg-slate-900 rounded-lg text-sm font-bold hover:bg-slate-50 dark:hover:bg-slate-800 active:scale-95 transition-all duration-150 cursor-pointer shadow-sm"
+          >
+            <span data-i18n="paymentHistoryModalClose">Đóng</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Print Invoice Modal Markup (Standard Receipt) -->
+    <div
+      id="invoiceModal"
+      class="fixed inset-0 z-[1050] hidden items-center justify-center p-4 bg-slate-950/60 backdrop-blur-md transition-opacity duration-300"
+      role="dialog"
+      aria-modal="true"
+    >
+      <div
+        id="invoiceModalContainer"
+        class="bg-white/95 dark:bg-slate-900/95 backdrop-blur-md rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 w-full max-w-lg overflow-hidden transform transition-all duration-300 scale-95 opacity-0"
+      >
+        <!-- Header -->
+        <div
+          class="px-6 py-4 border-b border-slate-250/20 dark:border-slate-800/80 flex justify-between items-center bg-slate-50/80 dark:bg-slate-950/80"
+        >
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary text-2xl">receipt_long</span>
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100" data-i18n="invoiceModalTitle">
+              Hóa Đơn Thanh Toán
+            </h3>
+          </div>
+          <button
+            id="closeInvoiceXBtn"
+            type="button"
+            class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 focus:outline-none transition-colors cursor-pointer"
+            aria-label="Đóng"
+          >
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+
+        <!-- Body -->
+        <div class="p-6 space-y-6 max-h-[70vh] overflow-y-auto">
+          <div class="flex flex-col items-center text-center">
+            <div
+              class="w-12 h-12 rounded-full bg-emerald-100 dark:bg-emerald-950/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400 mb-2"
+            >
+              <span class="material-symbols-outlined text-3xl font-bold">check</span>
+            </div>
+            <h4 class="text-md font-bold text-slate-800 dark:text-slate-100" data-i18n="invoiceSuccess">
+              Thanh toán thành công!
+            </h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1" data-i18n="invoiceThankYou">
+              Cảm ơn bạn đã sử dụng dịch vụ của PetAI
+            </p>
+          </div>
+
+          <div
+            class="border border-slate-200/60 dark:border-slate-800/80 rounded-xl p-4 bg-slate-50/30 dark:bg-slate-950/30 space-y-3"
+          >
+            <div class="flex justify-between items-center text-sm">
+              <span class="text-slate-500 dark:text-slate-400" data-i18n="orderIdLabel">Mã đơn hàng</span>
+              <span class="font-mono font-bold text-slate-800 dark:text-slate-200" id="invoiceOrderId">#ORDER_ID</span>
+            </div>
+            <div class="flex justify-between items-center text-sm">
+              <span class="text-slate-500 dark:text-slate-400" data-i18n="servicePlan">Gói dịch vụ</span>
+              <span class="font-bold text-primary dark:text-blue-400" id="invoicePlanName">PRO</span>
+            </div>
+            <div class="flex justify-between items-center text-sm">
+              <span class="text-slate-500 dark:text-slate-400" data-i18n="paymentMethodCol">Phương thức</span>
+              <span class="font-semibold text-slate-800 dark:text-slate-200" id="invoiceMethod" data-i18n="paymentMethodQR">Chuyển khoản QR</span>
+            </div>
+            <div class="flex justify-between items-center text-sm">
+              <span class="text-slate-500 dark:text-slate-400" data-i18n="amount">Số tiền</span>
+              <span class="font-bold text-secondary text-base" id="invoiceAmount">5.000đ</span>
+            </div>
+            <div class="h-px bg-slate-200 dark:bg-slate-800 my-2"></div>
+            <div class="flex justify-between items-center text-sm">
+              <span class="text-slate-500 dark:text-slate-400" data-i18n="customerLabel">Khách hàng</span>
+              <span class="font-semibold text-slate-800 dark:text-slate-200" id="invoiceCustomerName">Nguyen Van A</span>
+            </div>
+            <div class="flex justify-between items-center text-sm">
+              <span class="text-slate-500 dark:text-slate-400" data-i18n="emailLabel">Email</span>
+              <span class="font-semibold text-slate-800 dark:text-slate-200 truncate max-w-[200px]" id="invoiceCustomerEmail">email@example.com</span>
+            </div>
+            <div class="flex justify-between items-center text-sm">
+              <span class="text-slate-500 dark:text-slate-400" data-i18n="createdTimeLabel">Thời gian tạo</span>
+              <span class="font-semibold text-slate-800 dark:text-slate-200" id="invoiceCreatedAt">17/06/2026 12:00</span>
+            </div>
+            <div class="flex justify-between items-center text-sm">
+              <span class="text-slate-500 dark:text-slate-400" data-i18n="confirmedTimeLabel">Thời gian xác nhận</span>
+              <span class="font-semibold text-slate-800 dark:text-slate-200" id="invoiceConfirmedAt">17/06/2026 12:05</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer buttons -->
+        <div
+          class="px-6 py-4 border-t border-slate-250/20 dark:border-slate-800/80 flex justify-end gap-3 bg-slate-50/80 dark:bg-slate-950/80"
+        >
+          <button
+            id="printInvoiceBtn"
+            type="button"
+            class="px-4 py-2 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 rounded-lg text-sm font-bold flex items-center gap-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 active:scale-95 transition-all duration-150 cursor-pointer shadow-sm"
+          >
+            <span class="material-symbols-outlined text-[18px]">print</span>
+            <span data-i18n="printInvoiceBtn">In hóa đơn</span>
+          </button>
+          <button
+            id="closeInvoiceBtn"
+            type="button"
+            class="px-4 py-2 bg-primary text-on-primary rounded-lg text-sm font-bold hover:bg-primary/95 active:scale-95 transition-all duration-150 cursor-pointer shadow-sm"
+          >
+            <span data-i18n="close">Đóng</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
     <script src="{{ url_for('static', filename='js/toasts.js') }}"></script>
     <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>

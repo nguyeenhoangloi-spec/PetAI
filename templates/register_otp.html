@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title data-i18n="otpVerifyPageTitle">Xác thực OTP - PetAI</title>
+    <title data-i18n="otpVerifyPageTitle">Xác thực OTP - {{ get_config(\'site_name\', \'PetAI\') }}</title>
     <script src="{{ url_for('static', filename='js/tailwindcss.js') }}"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/typography.css') }}" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/theme-dark.css') }}" />
@@ -67,7 +67,7 @@
         <div class="text-center">
           <div class="flex items-center justify-center gap-2 mb-4">
             <span class="material-symbols-outlined text-primary text-3xl">mark_email_read</span>
-            <span class="text-xl font-bold text-primary">PetAI</span>
+            <span class="text-xl font-bold text-primary">{{ get_config(\'site_name\', \'PetAI\') }}</span>
           </div>
           <h2 class="text-2xl font-bold text-on-background mb-2" data-i18n="emailVerifyHeader">Xác thực Email</h2>
           <p class="text-sm text-on-surface-variant">

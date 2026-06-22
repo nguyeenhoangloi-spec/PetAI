@@ -315,7 +315,7 @@
       <div class="flex items-center gap-gutter">
         <a href="{{ url_for('home.index') }}" class="inline-flex items-center gap-0">
           <img alt="PetAI New Logo" class="w-auto h-10 md:h-12" src="{{ url_for('static', filename='images/logo.png') }}">
-          <span class="ml-0 text-lg md:text-2xl font-semibold text-primary">PetAI</span>
+          <span class="ml-0 text-lg md:text-2xl font-semibold text-primary">{{ get_config(\'site_name\', \'PetAI\') }}</span>
         </a>
       </div>
       <div class="flex items-center gap-6">
@@ -379,7 +379,7 @@
             <span data-i18n="paymentSection3Title">3. Chính sách hoàn tiền</span>
           </h2>
           <p data-i18n="paymentSection3Desc">
-            <span data-i18n="paymentSection3Desc">Chúng tôi thực hiện hoàn tiền trong các trường hợp sau: (a) Lỗi hệ thống phát sinh khiến giao dịch bị trừ tiền nhưng tài khoản không được kích hoạt gói dịch vụ và không thể khắc phục kỹ thuật; (b) Người dùng chuyển khoản thừa tiền so với giá trị gói dịch vụ đăng ký. Mọi yêu cầu hoàn trả vui lòng gửi về email support@pet.ai kèm theo ảnh chụp biên lai giao dịch để được đối soát và xử lý trong vòng 3-5 ngày làm việc.</span>
+            <span data-i18n="paymentSection3Desc">Chúng tôi thực hiện hoàn tiền trong các trường hợp sau: (a) Lỗi hệ thống phát sinh khiến giao dịch bị trừ tiền nhưng tài khoản không được kích hoạt gói dịch vụ và không thể khắc phục kỹ thuật; (b) Người dùng chuyển khoản thừa tiền so với giá trị gói dịch vụ đăng ký. Mọi yêu cầu hoàn trả vui lòng gửi về email {{ get_config('site_email', 'support@pet.ai') }} kèm theo ảnh chụp biên lai giao dịch để được đối soát và xử lý trong vòng 3-5 ngày làm việc.</span>
           </p>
 
           <h2 class="text-xl font-bold text-primary mt-6 mb-2" data-i18n="paymentSection4Title">
@@ -401,8 +401,8 @@
           </h2>
           <p class="leading-loose">
             Email:
-            <a href="mailto:{{ get_config('site_email', 'support@pet.ai') }}"
-              class="text-primary hover:underline font-medium">{{ get_config('site_email', 'support@pet.ai') }}</a><br>
+            <a href="mailto:{{ get_config('site_email', '{{ get_config('site_email', 'support@pet.ai') }}') }}"
+              class="text-primary hover:underline font-medium">{{ get_config('site_email', '{{ get_config('site_email', 'support@pet.ai') }}') }}</a><br>
             Website:
             <a href="https://pet.ai" class="text-primary hover:underline font-medium" target="_blank"
               rel="noopener noreferrer">https://pet.ai</a><br><span data-i18n="addressLabelPlaceholder">Địa chỉ:
@@ -420,7 +420,7 @@
         <div class="space-y-5">
           <div class="flex items-center gap-2">
             <img alt="PetAI Logo" class="h-9 w-auto hover:scale-105 transition-transform duration-300" src="{{ url_for('static', filename='images/logo.png') }}">
-            <span class="text-xl font-bold text-primary tracking-tight font-display">PetAI</span>
+            <span class="text-xl font-bold text-primary tracking-tight font-display">{{ get_config(\'site_name\', \'PetAI\') }}</span>
           </div>
           <p class="text-sm text-on-surface-variant leading-relaxed max-w-xs" data-i18n="footerDesc">
             Ứng dụng nhận diện giống chó bằng AI dành cho người yêu thú cưng. Kết quả chính xác, nhanh chóng.
@@ -481,7 +481,7 @@
             </li>
             <li class="flex items-start gap-2">
               <span class="material-symbols-outlined text-primary text-base mt-0.5 contact-icon">call</span>
-              <span data-i18n="contactPhone">Điện thoại: 0916 416 409</span>
+              <span data-i18n="contactPhone">Điện thoại: {{ get_config('contact_phone', '0916 416 409') }}</span>
             </li>
             <li class="flex items-start gap-2">
               <span class="material-symbols-outlined text-primary text-base mt-0.5 contact-icon">pin_drop</span>

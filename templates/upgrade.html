@@ -224,7 +224,7 @@
           } catch (e) {}
         })();
     </script>
-    <title data-i18n="upgradePageTitle">{{ 'Upgrade' if ui_language == 'en' else 'Nâng cấp' }} - PetAI</title>
+    <title data-i18n="upgradePageTitle">{{ 'Upgrade' if ui_language == 'en' else 'Nâng cấp' }} - {{ get_config(\'site_name\', \'PetAI\') }}</title>
     <script src="{{ url_for('static', filename='js/tailwindcss.js') }}"></script>
     <script src="{{ url_for('static', filename='js/chart.umd.min.js') }}"></script>
     <link
@@ -513,7 +513,8 @@
     {% set display_role = session.get('role') or 'user' %} {% set display_plan =
     current_plan or 'free' %}
 
-    {% include '_header.html' %}    <main
+    {% include '_header.html' %}
+    <main
       class="flex-grow w-full px-4 md:px-6 py-margin grid grid-cols-1 gap-0"
     >
       {% set active_page = 'upgrade' %} {% include '_sidebar.html' %}
@@ -1274,7 +1275,7 @@
                 <h4 class="text-sm font-bold text-slate-900 dark:text-white" data-i18n="helpCardTitle">Bạn cần hỗ trợ thêm?</h4>
                 <p class="text-xs text-slate-500 dark:text-slate-400 leading-normal" data-i18n="helpCardDesc">Liên hệ đội ngũ hỗ trợ của chúng tôi qua email hoặc chat trực tuyến.</p>
               </div>
-              <a href="mailto:support@pet.ai" class="bg-transparent hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white rounded-lg px-4 py-2 text-xs font-semibold flex items-center gap-1.5 shrink-0 transition-all active:scale-95 duration-100">
+              <a href="mailto:{{ get_config('site_email', 'support@pet.ai') }}" class="bg-transparent hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white rounded-lg px-4 py-2 text-xs font-semibold flex items-center gap-1.5 shrink-0 transition-all active:scale-95 duration-100">
                 <span class="material-symbols-outlined text-[16px]">support_agent</span>
                 <span data-i18n="helpCardBtn">Liên hệ hỗ trợ</span>
               </a>

@@ -316,6 +316,16 @@ def translate_dynamic_toast(text: str, lang: str) -> str:
         order_id = text[len("Đã xác nhận thanh toán cho đơn "):-1]
         return f"Payment confirmed for order {order_id}."
         
+    # 5b. Đã từ chối thanh toán cho đơn {order_id}.
+    if text.startswith("Đã từ chối thanh toán cho đơn ") and text.endswith("."):
+        order_id = text[len("Đã từ chối thanh toán cho đơn "):-1]
+        return f"Payment rejected for order {order_id}."
+        
+    # 5c. Thanh toán thành công cho đơn {order_id}.
+    if text.startswith("Thanh toán thành công cho đơn ") and text.endswith("."):
+        order_id = text[len("Thanh toán thành công cho đơn "):-1]
+        return f"Payment successful for order {order_id}."
+        
     # 6. Đã xóa lịch sử nhận diện. (Đã xóa {deleted_files} ảnh lưu trữ)
     match_history = re.match(r'Đã xóa lịch sử nhận diện\.\s*\(Đã xóa (\d+) ảnh lưu trữ\)', text)
     if match_history:
@@ -397,6 +407,16 @@ def translate_dynamic_toast(text: str, lang: str) -> str:
     if text.startswith("Lỗi: "):
         err_msg = text[len("Lỗi: "):]
         return f"Error: {err_msg}"
+        
+    # 12. Lỗi tải lên logo: {e}
+    if text.startswith("Lỗi tải lên logo: "):
+        err_msg = text[len("Lỗi tải lên logo: "):]
+        return f"Error uploading logo: {err_msg}"
+        
+    # 13. Lỗi tải lên favicon: {e}
+    if text.startswith("Lỗi tải lên favicon: "):
+        err_msg = text[len("Lỗi tải lên favicon: "):]
+        return f"Error uploading favicon: {err_msg}"
         
     return text
 

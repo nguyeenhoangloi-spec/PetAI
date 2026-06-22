@@ -6,7 +6,7 @@
     </button>
     <a href="{{ url_for('home.index') }}" class="flex items-center gap-2">
       <img alt="PetAI Logo" class="w-8 h-8 md:w-9 md:h-9 object-contain" src="{{ url_for('static', filename='images/logo.png') }}">
-      <span class="text-lg md:text-xl font-bold text-primary tracking-wide">PetAI</span>
+      <span class="text-lg md:text-xl font-bold text-primary tracking-wide">{{ get_config(\'site_name\', \'PetAI\') }}</span>
     </a>
   </div>
 

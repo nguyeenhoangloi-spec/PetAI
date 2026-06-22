@@ -204,7 +204,7 @@
         } catch (e) {}
       })();
     </script>
-    <title data-i18n="sysConfigPageTitle">Cấu hình hệ thống - PetAI</title>
+    <title data-i18n="sysConfigPageTitle">Cấu hình hệ thống - {{ get_config(\'site_name\', \'PetAI\') }}</title>
     <script src="{{ url_for('static', filename='js/tailwindcss.js') }}"></script>
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/typography.css') }}" />
@@ -652,7 +652,7 @@
                         <label class="text-xs font-bold text-on-surface-variant dark:text-slate-350" data-i18n="sysLabelContactEmail">Email liên hệ / hỗ trợ *</label>
                         <div class="relative">
                           <span class="material-symbols-outlined text-slate-450 absolute left-4 top-1/2 -translate-y-1/2 text-lg">mail</span>
-                          <input type="email" name="site_email" value="{{ configs.get('site_email', 'support@pet.ai') }}" required class="premium-input w-full pl-11 pr-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none" />
+                          <input type="email" name="site_email" value="{{ configs.get('site_email', '{{ get_config('site_email', 'support@pet.ai') }}') }}" required class="premium-input w-full pl-11 pr-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none" />
                         </div>
                       </div>
 
@@ -693,16 +693,16 @@
                       <div class="flex flex-col gap-1.5">
                         <label class="text-xs font-bold text-on-surface-variant dark:text-slate-350" data-i18n="sysLabelDefaultLang">Ngôn ngữ mặc định</label>
                         <select name="default_lang" class="premium-input w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none">
-                          <option value="vi" {{ 'selected' if configs.get('default_lang', 'vi') == 'vi' }}>Tiếng Việt</option>
-                          <option value="en" {{ 'selected' if configs.get('default_lang', 'vi') == 'en' }}>English</option>
+                          <option value="vi" {{ 'selected' if configs.get('default_lang', 'vi') == 'vi' }} data-i18n-option-key="langVi">Tiếng Việt</option>
+                          <option value="en" {{ 'selected' if configs.get('default_lang', 'vi') == 'en' }} data-i18n-option-key="langEn">English</option>
                         </select>
                       </div>
 
                       <div class="flex flex-col gap-1.5">
                         <label class="text-xs font-bold text-on-surface-variant dark:text-slate-355" data-i18n="sysLabelDefaultTheme">Theme mặc định</label>
                         <select name="default_theme" class="premium-input w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-955 border border-outline-variant/40 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none">
-                          <option value="light" {{ 'selected' if configs.get('default_theme', 'light') == 'light' }}>Sáng (Light)</option>
-                          <option value="dark" {{ 'selected' if configs.get('default_theme', 'light') == 'dark' }}>Tối (Dark)</option>
+                          <option value="light" {{ 'selected' if configs.get('default_theme', 'light') == 'light' }} data-i18n-option-key="themeLight">Sáng (Light)</option>
+                          <option value="dark" {{ 'selected' if configs.get('default_theme', 'light') == 'dark' }} data-i18n-option-key="themeDark">Tối (Dark)</option>
                         </select>
                       </div>
 
@@ -1136,7 +1136,7 @@
                   <!-- Search box -->
                   <div class="relative w-full sm:w-56">
                     <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-450 text-[18px]">search</span>
-                    <input type="text" id="legal-search" oninput="filterLegalCards()" placeholder="Tìm kiếm trang..." class="premium-input w-full pl-9 pr-4 py-2 bg-slate-50 dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-800 rounded-xl text-xs focus:outline-none" />
+                    <input type="text" id="legal-search" oninput="filterLegalCards()" data-i18n-placeholder="sysLegalSearchPlaceholder" placeholder="Tìm kiếm trang..." class="premium-input w-full pl-9 pr-4 py-2 bg-slate-50 dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-800 rounded-xl text-xs focus:outline-none" />
                   </div>
                   <!-- Category buttons filter -->
                   <div class="flex gap-1 bg-slate-100 dark:bg-slate-955 p-1 rounded-xl border border-slate-200 dark:border-slate-850">
@@ -1621,9 +1621,11 @@
         const templateName = selector.options[selector.selectedIndex].text;
         
         if (window.showToast) {
-          window.showToast("info", `Đang gửi email thử nghiệm mẫu "${templateName}"...`);
+          const sendingMsg = (window.PetAI_i18n ? window.PetAI_i18n.t("toastSendingTestEmail") : 'Đang gửi email thử nghiệm mẫu "{templateName}"...').replace("{templateName}", templateName);
+          const successMsg = window.PetAI_i18n ? window.PetAI_i18n.t("toastSendTestEmailSuccess") : 'Đã gửi email thử nghiệm thành công tới địa chỉ hỗ trợ của bạn!';
+          window.showToast("info", sendingMsg);
           setTimeout(() => {
-            window.showToast("success", `Đã gửi email thử nghiệm thành công tới địa chỉ hỗ trợ của bạn!`);
+            window.showToast("success", successMsg);
           }, 1200);
         }
       }
@@ -1641,7 +1643,7 @@
             uploader.files = dataTransfer.files;
             
             if (window.showToast) {
-              window.showToast("info", "Đang tải lên tài nguyên...");
+              window.showToast("info", window.PetAI_i18n ? window.PetAI_i18n.t("toastUploadingAsset") : "Đang tải lên tài nguyên...");
             }
             uploaderForm.submit();
           }
@@ -1687,7 +1689,10 @@
             throw new Error(data.error || "Unknown error");
           }
         } catch (err) {
-          if (window.showToast) window.showToast("error", "Lỗi: " + err.message);
+          if (window.showToast) {
+            const prefix = window.PetAI_i18n ? window.PetAI_i18n.t("errorPrefix") || "Error: " : "Lỗi: ";
+            window.showToast("error", prefix + err.message);
+          }
         }
       }
 
@@ -1720,7 +1725,7 @@
 
         checkFormChanges();
         if (window.showToast) {
-          window.showToast("success", "Đã khôi phục cài đặt mặc định các gói. Bấm lưu thay đổi để hoàn tất.");
+          window.showToast("success", window.PetAI_i18n ? window.PetAI_i18n.t("toastRestorePlansSuccess") : "Đã khôi phục cài đặt mặc định các gói. Bấm lưu thay đổi để hoàn tất.");
         }
       }
 
