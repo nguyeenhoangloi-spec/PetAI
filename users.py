@@ -601,8 +601,10 @@ def confirm_payment():
     return redirect(url_for("users.confirmations_list", page=current_page))
 
 
-@users_bp.route("/set-plan", methods=["POST"])
+@users_bp.route("/set-plan", methods=["GET", "POST"])
 def set_user_plan():
+    if request.method == "GET":
+        return redirect(url_for("users.list_users"))
     if not require_admin():
         if request.headers.get("X-Requested-With") == "XMLHttpRequest" or request.is_json:
             return jsonify({"success": False, "error": "Vui lòng đăng nhập."}), 401
