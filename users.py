@@ -374,28 +374,63 @@ def confirmations_list():
         return redirect(url_for("login.login"))
 
     conn = None
-    orders = []
-    page_raw = (request.args.get("page") or "1").strip()
-    try:
-        page = max(int(page_raw), 1)
-    except Exception:
-        page = 1
-    per_page = 10
+    all_orders = []
     pricing = PLAN_PRICE_VND
     try:
         conn = get_connection()
-        orders = PaymentOrder.list_all(conn, limit=200) or []
+        # Fetch more orders (up to 500) to support rich client-side search/filters/pagination
+        all_orders = PaymentOrder.list_all(conn, limit=500) or []
         pricing = get_plan_price_vnd(conn)
     finally:
         if conn:
             conn.close()
 
-    for o in orders:
+    for o in all_orders:
         o["amount_calc"] = _order_amount_vnd(o, pricing)
 
-    paid_orders = [o for o in orders if (o.get("status") or "").lower() == PaymentOrder.STATUS_PAID]
+    # 1. Trend MoM Calculation
+    from datetime import datetime, timedelta
+    now = datetime.now()
+    current_month_start = datetime(now.year, now.month, 1)
+    if now.month == 1:
+        last_month_start = datetime(now.year - 1, 12, 1)
+        last_month_end = datetime(now.year, 1, 1)
+    else:
+        last_month_start = datetime(now.year, now.month - 1, 1)
+        last_month_end = current_month_start
+
+    # This month values
+    tm_revenue = sum(o["amount_calc"] for o in all_orders if (o.get("status") or "").lower() == PaymentOrder.STATUS_PAID and o.get("created_at") >= current_month_start)
+    tm_approved = sum(1 for o in all_orders if (o.get("status") or "").lower() == PaymentOrder.STATUS_PAID and o.get("created_at") >= current_month_start)
+    tm_pending = sum(1 for o in all_orders if (o.get("status") or "").lower() == PaymentOrder.STATUS_USER_CONFIRMED and o.get("created_at") >= current_month_start)
+    tm_rejected = sum(1 for o in all_orders if (o.get("status") or "").lower() == "rejected" and o.get("created_at") >= current_month_start)
+
+    # Last month values
+    lm_revenue = sum(o["amount_calc"] for o in all_orders if (o.get("status") or "").lower() == PaymentOrder.STATUS_PAID and last_month_start <= o.get("created_at") < last_month_end)
+    lm_approved = sum(1 for o in all_orders if (o.get("status") or "").lower() == PaymentOrder.STATUS_PAID and last_month_start <= o.get("created_at") < last_month_end)
+    lm_pending = sum(1 for o in all_orders if (o.get("status") or "").lower() == PaymentOrder.STATUS_USER_CONFIRMED and last_month_start <= o.get("created_at") < last_month_end)
+    lm_rejected = sum(1 for o in all_orders if (o.get("status") or "").lower() == "rejected" and last_month_start <= o.get("created_at") < last_month_end)
+
+    def calculate_trend(curr, prev):
+        if not prev or prev == 0:
+            return {"has_data": False, "val": 0, "up": True}
+        diff = curr - prev
+        pct = round((diff / prev) * 100, 1)
+        return {"has_data": True, "val": abs(pct), "up": pct >= 0}
+
+    rev_trend = calculate_trend(tm_revenue, lm_revenue)
+    app_trend = calculate_trend(tm_approved, lm_approved)
+    pen_trend = calculate_trend(tm_pending, lm_pending)
+    rej_trend = calculate_trend(tm_rejected, lm_rejected)
+
+    # Stats for overview cards
+    paid_orders = [o for o in all_orders if (o.get("status") or "").lower() == PaymentOrder.STATUS_PAID]
     total_paid_amount = sum(int(o.get("amount_calc") or 0) for o in paid_orders)
     total_paid_count = len(paid_orders)
+    total_pending_count = sum(1 for o in all_orders if (o.get("status") or "").lower() == PaymentOrder.STATUS_USER_CONFIRMED)
+    total_rejected_count = sum(1 for o in all_orders if (o.get("status") or "").lower() == "rejected")
+    total_cancelled_count = sum(1 for o in all_orders if (o.get("status") or "").lower() == "cancelled")
+
     recent_paid = sorted(
         paid_orders,
         key=lambda o: o.get("confirmed_at") or o.get("created_at") or datetime.min,
@@ -405,33 +440,71 @@ def confirmations_list():
     if recent_paid:
         latest_paid_at = recent_paid[0].get("confirmed_at") or recent_paid[0].get("created_at")
 
-    # Chỉ hiển thị đơn user đã bấm "Tôi đã chuyển tiền" (user_confirmed)
-    orders = [o for o in orders if (o.get("status") or "").lower() == PaymentOrder.STATUS_USER_CONFIRMED]
-    total_orders = len(orders)
-    total_pages = (total_orders + per_page - 1) // per_page
-    if total_pages > 0 and page > total_pages:
-        page = total_pages
-    start_idx = (page - 1) * per_page
-    end_idx = start_idx + per_page
-    orders = orders[start_idx:end_idx]
+    # Serialize datetimes in all_orders so frontend JS can read them easily if needed
+    for o in all_orders:
+        created = o.get("created_at")
+        confirmed = o.get("confirmed_at")
+        o["created_str"] = created.strftime('%d/%m/%Y %H:%M') if created else ""
+        o["confirmed_str"] = confirmed.strftime('%d/%m/%Y %H:%M') if confirmed else ""
 
     allow_manual_confirm = bool(current_app.config.get("ALLOW_MANUAL_TRANSFER_CONFIRM", True))
     auto_confirm_on_user = bool(current_app.config.get("AUTO_CONFIRM_ON_USER_CONFIRM", False))
 
     return render_template(
         "confirmations.html",
-        orders=orders,
-        page=page,
-        per_page=per_page,
-        total_orders=total_orders,
-        total_pages=total_pages,
+        all_orders=all_orders,
         total_paid_amount=total_paid_amount,
         total_paid_count=total_paid_count,
+        total_pending_count=total_pending_count,
+        total_rejected_count=total_rejected_count,
+        total_cancelled_count=total_cancelled_count,
         latest_paid_at=latest_paid_at,
         recent_paid=recent_paid,
+        rev_trend=rev_trend,
+        app_trend=app_trend,
+        pen_trend=pen_trend,
+        rej_trend=rej_trend,
         allow_manual_confirm=allow_manual_confirm,
         auto_confirm_on_user=auto_confirm_on_user,
     )
+
+
+@users_bp.route("/payments/reject", methods=["POST"])
+def reject_payment():
+    if not require_admin():
+        return redirect(url_for("login.login"))
+    order_id = (request.form.get("order_id") or "").strip()
+    page_raw = (request.form.get("page") or "1").strip()
+    try:
+        current_page = max(int(page_raw), 1)
+    except Exception:
+        current_page = 1
+    if not order_id:
+        flash("Thiếu mã đơn.", "error")
+        return redirect(url_for("users.confirmations_list", page=current_page))
+    conn = None
+    try:
+        conn = get_connection()
+        with conn.cursor() as cur:
+            cur.execute(
+                "UPDATE payment_orders SET status = 'rejected', confirmed_at = CURRENT_TIMESTAMP WHERE order_id = %s AND status = %s",
+                (order_id, PaymentOrder.STATUS_USER_CONFIRMED),
+            )
+            ok = cur.rowcount > 0
+        if ok:
+            conn.commit()
+            flash(f"Đã từ chối thanh toán cho đơn {order_id}.", "success")
+        else:
+            flash("Không thể từ chối đơn (có thể đã xử lý hoặc không tồn tại).", "error")
+    except Exception:
+        if conn:
+            conn.rollback()
+        logger.exception("[ADMIN] reject_payment error")
+        flash("Lỗi từ chối đơn.", "error")
+    finally:
+        if conn:
+            conn.close()
+    return redirect(url_for("users.confirmations_list", page=current_page))
 
 
 @users_bp.route("/payments/confirm", methods=["POST"])
