@@ -487,7 +487,14 @@
         margin-right: 0.375rem;
       }
 
-      /* WCAG Contrast Fix for Disabled Buttons in Dark Mode */
+      /* WCAG Contrast Fix for Disabled Buttons in Dark/Light Modes */
+      button:disabled {
+        background-color: #f1f5f9 !important;
+        color: #94a3b8 !important;
+        border: 1px solid #e2e8f0 !important;
+        opacity: 0.85 !important;
+        cursor: not-allowed !important;
+      }
       html.dark button:disabled,
       html[data-theme="dark"] button:disabled {
         background-color: rgba(30, 41, 59, 0.6) !important;
@@ -542,7 +549,7 @@
         <!-- ── Current Plan Banner ── -->
         {% set q_info = quota_info or {} %}
         {% set active_plan = q_info.plan or current_plan or 'free' %}
-        <section class="w-full bg-slate-900 text-white rounded-2xl p-6 md:p-8 mb-10 border border-slate-800 relative overflow-hidden shadow-lg animate-fade-in delay-100">
+        <section class="w-full bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-white rounded-2xl p-6 md:p-8 mb-10 border border-slate-200 dark:border-slate-800 relative overflow-hidden shadow-lg animate-fade-in delay-100">
           <div class="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none"></div>
           <div class="absolute bottom-0 left-0 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl -ml-20 -mb-20 pointer-events-none"></div>
           
@@ -550,7 +557,7 @@
             <!-- Left col: Quota detail info -->
             <div class="space-y-6 flex flex-col justify-between">
               <div class="flex items-center gap-4">
-                <div class="w-12 h-12 rounded-full bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-blue-450">
+                <div class="w-12 h-12 rounded-full bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-blue-500 dark:text-blue-400">
                   {% if active_plan == 'enterprise' %}
                     <span class="material-symbols-outlined text-[28px]" style="font-variation-settings: 'FILL' 1;">crown</span>
                   {% elif active_plan == 'pro' %}
@@ -562,26 +569,26 @@
                   {% endif %}
                 </div>
                 <div>
-                  <p class="text-xs text-slate-400 font-medium tracking-wide uppercase" data-i18n="currentPlanTitle">Gói hiện tại của bạn</p>
+                  <p class="text-xs text-slate-500 dark:text-slate-400 font-medium tracking-wide uppercase" data-i18n="currentPlanTitle">Gói hiện tại của bạn</p>
                   <div class="flex items-center gap-3 mt-1">
-                    <h2 class="text-2xl font-bold text-white capitalize">
+                    <h2 class="text-2xl font-bold text-slate-900 dark:text-white capitalize">
                       {% if active_plan == 'enterprise' %}Enterprise
                       {% elif active_plan == 'pro' %}Pro
                       {% elif active_plan == 'basic' %}Basic
                       {% else %}Free
                       {% endif %}
                     </h2>
-                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-500/20 text-amber-400 border border-amber-500/30" data-i18n="activeStatus">
+                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30" data-i18n="activeStatus">
                       Đang hoạt động
                     </span>
                   </div>
                 </div>
               </div>
               
-              <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-4 border-t border-slate-800">
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-4 border-t border-slate-200 dark:border-slate-800">
                 <div>
-                  <p class="text-[11px] text-slate-400 font-semibold uppercase tracking-wider" data-i18n="durationLabel">Thời hạn</p>
-                  <p class="text-lg font-bold text-white mt-1">
+                  <p class="text-[11px] text-slate-500 dark:text-slate-400 font-semibold uppercase tracking-wider" data-i18n="durationLabel">Thời hạn</p>
+                  <p class="text-lg font-bold text-slate-900 dark:text-white mt-1">
                     {% if active_plan == 'free' %}
                       <span data-i18n="forever">Vĩnh viễn</span>
                     {% else %}
@@ -596,31 +603,31 @@
                       {% endif %}
                     {% endif %}
                   </p>
-                  <p class="text-[11px] text-slate-500 mt-0.5">
+                  <p class="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">
                     {% if active_plan != 'free' and q_info.plan_expire %}
-                      Hết hạn: {{ q_info.plan_expire }}
+                      {% if ui_language == 'en' %}Expires: {{ q_info.plan_expire }}{% else %}Hết hạn: {{ q_info.plan_expire }}{% endif %}
                     {% else %}
                       &nbsp;
                     {% endif %}
                   </p>
                 </div>
                 <div>
-                  <p class="text-[11px] text-slate-400 font-semibold uppercase tracking-wider" data-i18n="scanLimitLabel">Lượt nhận diện</p>
-                  <p class="text-lg font-bold text-white mt-1">
+                  <p class="text-[11px] text-slate-500 dark:text-slate-400 font-semibold uppercase tracking-wider" data-i18n="scanLimitLabel">Lượt nhận diện</p>
+                  <p class="text-lg font-bold text-slate-900 dark:text-white mt-1">
                     {% if active_plan == 'enterprise' %}
                       <span data-i18n="scanLimitUnlimit">Không giới hạn</span>
                     {% elif active_plan == 'free' %}
-                      10 <span class="text-xs font-normal text-slate-400">/ trọn đời</span>
+                      10 <span class="text-xs font-normal text-slate-500 dark:text-slate-400">/ {% if ui_language == 'en' %}lifetime{% else %}trọn đời{% endif %}</span>
                     {% else %}
-                      {{ q_info.paid_uses_remaining or 0 }} <span class="text-xs font-normal text-slate-400">lượt còn lại</span>
+                      {{ q_info.paid_uses_remaining or 0 }} <span class="text-xs font-normal text-slate-500 dark:text-slate-400">{% if ui_language == 'en' %}scans remaining{% else %}lượt còn lại{% endif %}</span>
                     {% endif %}
                   </p>
-                  <p class="text-[11px] text-slate-500 mt-0.5">
+                  <p class="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">
                     {% if active_plan != 'free' and q_info.total_uses %}
                       {% if active_plan == 'enterprise' %}
-                        Sử dụng thoải mái
+                        {% if ui_language == 'en' %}Unlimited usage{% else %}Sử dụng thoải mái{% endif %}
                       {% else %}
-                        Hạn mức: {{ q_info.total_uses }} lượt
+                        {% if ui_language == 'en' %}Quota: {{ q_info.total_uses }} scans{% else %}Hạn mức: {{ q_info.total_uses }} lượt{% endif %}
                       {% endif %}
                     {% else %}
                       &nbsp;
@@ -628,27 +635,27 @@
                   </p>
                 </div>
                 <div>
-                  <p class="text-[11px] text-slate-400 font-semibold uppercase tracking-wider" data-i18n="status">Trạng thái</p>
-                  <p class="text-lg font-bold text-emerald-400 mt-1 flex items-center gap-1.5">
-                    <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                  <p class="text-[11px] text-slate-500 dark:text-slate-400 font-semibold uppercase tracking-wider" data-i18n="status">Trạng thái</p>
+                  <p class="text-lg font-bold text-emerald-600 dark:text-emerald-400 mt-1 flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 dark:bg-emerald-400"></span>
                     <span data-i18n="activeStatus">Hoạt động</span>
                   </p>
-                  <p class="text-[11px] text-slate-500 mt-0.5">
-                    Tài khoản của bạn đang hoạt động tốt
+                  <p class="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">
+                    {% if ui_language == 'en' %}Your account is in good standing{% else %}Tài khoản của bạn đang hoạt động tốt{% endif %}
                   </p>
                 </div>
               </div>
             </div>
 
             <!-- Right col: CTA or Action status -->
-            <div class="lg:border-l lg:border-slate-800 lg:pl-8 py-2 flex flex-col justify-between h-full space-y-6">
+            <div class="lg:border-l lg:border-slate-200 lg:dark:border-slate-800 lg:pl-8 py-2 flex flex-col justify-between h-full space-y-6">
               <div class="space-y-2">
                 {% if active_plan == 'enterprise' %}
-                  <h3 class="text-lg font-bold text-amber-400" data-i18n="highestPlanMsg">Bạn đang sử dụng gói cao nhất</h3>
-                  <p class="text-sm text-slate-400 leading-relaxed">Cảm ơn bạn đã tin dùng và đồng hành cùng hệ thống thông minh PetAI!</p>
+                  <h3 class="text-lg font-bold text-amber-600 dark:text-amber-400" data-i18n="highestPlanMsg">Bạn đang sử dụng gói cao nhất</h3>
+                  <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">Cảm ơn bạn đã tin dùng và đồng hành cùng hệ thống thông minh PetAI!</p>
                 {% else %}
-                  <h3 class="text-lg font-bold text-white" data-i18n="upgradeExperience">Nâng cấp trải nghiệm</h3>
-                  <p class="text-sm text-slate-400 leading-relaxed" data-i18n="upgradeExperienceDesc">Mở khóa nhiều hạn mức quét AI hơn, loại bỏ quảng cáo và tối ưu hóa tốc độ nhận diện cún cưng.</p>
+                  <h3 class="text-lg font-bold text-slate-900 dark:text-white" data-i18n="upgradeExperience">Nâng cấp trải nghiệm</h3>
+                  <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed" data-i18n="upgradeExperienceDesc">Mở khóa nhiều hạn mức quét AI hơn, loại bỏ quảng cáo và tối ưu hóa tốc độ nhận diện cún cưng.</p>
                 {% endif %}
               </div>
               {% if active_plan != 'free' %}
@@ -656,7 +663,7 @@
                   type="button"
                   id="bannerRenewBtn"
                   data-renew-plan="{{ active_plan }}"
-                  class="w-full lg:w-auto inline-flex items-center justify-center gap-2 bg-transparent hover:bg-slate-800 text-slate-200 border border-slate-700 hover:border-slate-600 font-semibold py-2.5 px-6 rounded-lg label-sm transition-all active:scale-95 duration-100"
+                  class="w-full lg:w-auto inline-flex items-center justify-center gap-2 bg-transparent hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600 font-semibold py-2.5 px-6 rounded-lg label-sm transition-all active:scale-95 duration-100"
                 >
                   <span class="material-symbols-outlined text-[18px]">sync</span>
                   <span data-i18n="renewPlanBtn">Gia hạn gói</span>
@@ -665,7 +672,7 @@
             </div>
           </div>
         </section>
-
+        
         <!-- ── Pricing Cards Grid ── -->
         <section
           class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-6 mb-10"
@@ -674,26 +681,26 @@
           <!-- Gói: Free -->
           <article
             id="card-free"
-            class="pricing-card bg-slate-900 border border-slate-850 p-6 rounded-2xl flex flex-col justify-between shadow-sm min-h-[520px] transition-all relative animate-fade-in delay-100"
+            class="pricing-card bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl flex flex-col justify-between shadow-sm dark:shadow-none min-h-[520px] transition-all relative animate-fade-in delay-100"
           >
             <div class="pt-2">
               <div class="w-10 h-10 rounded-full bg-blue-600/10 text-blue-500 flex items-center justify-center mb-4">
                 <span class="material-symbols-outlined text-[24px]">pets</span>
               </div>
               
-              <h2 class="text-xl font-bold text-white" data-i18n="planFreeTitle">Miễn phí</h2>
-              <p class="text-xs text-slate-400 mt-1" data-i18n="planFreeSub">Gói dùng thử cơ bản</p>
+              <h2 class="text-xl font-bold text-slate-900 dark:text-white" data-i18n="planFreeTitle">Miễn phí</h2>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-1" data-i18n="planFreeSub">Gói dùng thử cơ bản</p>
               
               <div class="my-6">
                 <div class="flex items-baseline">
-                  <span class="text-3xl font-extrabold text-white price-display" data-i18n="planFreePrice">0đ</span>
+                  <span class="text-3xl font-extrabold text-slate-900 dark:text-white price-display" data-i18n="planFreePrice">0đ</span>
                 </div>
-                <p class="text-xs text-slate-400 mt-1" data-i18n="planFreePriceSub">Miễn phí trọn đời</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1" data-i18n="planFreePriceSub">Miễn phí trọn đời</p>
               </div>
 
-              <hr class="border-slate-800 my-4">
+              <hr class="border-slate-200 dark:border-slate-800 my-4">
 
-              <ul class="space-y-3.5 text-sm text-slate-300">
+              <ul class="space-y-3.5 text-sm text-slate-600 dark:text-slate-300">
                 <li class="flex items-start gap-2.5">
                   <span class="text-blue-500 font-bold select-none">✓</span>
                   <span data-i18n="scanLimit10">10 lượt nhận diện AI</span>
@@ -709,17 +716,17 @@
               </ul>
             </div>
 
-            <div class="mt-8 pt-4 border-t border-slate-800 text-center">
+            <div class="mt-8 pt-4 border-t border-slate-200 dark:border-slate-800 text-center">
               {% if active_plan == 'free' %}
                 <button
-                  class="w-full py-2.5 border border-slate-800 text-slate-500 bg-transparent rounded-lg label-sm font-semibold cursor-not-allowed"
+                  class="w-full py-2.5 border border-slate-200 dark:border-slate-800 text-slate-400 dark:text-slate-500 bg-transparent rounded-lg label-sm font-semibold cursor-not-allowed"
                   disabled
                   type="button"
                   data-i18n="currentPlanBtn"
                 >Gói hiện tại</button>
               {% else %}
                 <button
-                  class="w-full py-2.5 border border-slate-800 text-slate-500 bg-transparent rounded-lg label-sm font-semibold cursor-not-allowed"
+                  class="w-full py-2.5 border border-slate-200 dark:border-slate-800 text-slate-400 dark:text-slate-500 bg-transparent rounded-lg label-sm font-semibold cursor-not-allowed"
                   disabled
                   type="button"
                   data-i18n="cannotDowngradeBtn"
@@ -731,27 +738,27 @@
           <!-- Gói: Basic -->
           <article
             id="card-basic"
-            class="pricing-card bg-slate-900 border border-slate-850 p-6 rounded-2xl flex flex-col justify-between shadow-sm min-h-[520px] transition-all relative animate-fade-in delay-150"
+            class="pricing-card bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl flex flex-col justify-between shadow-sm dark:shadow-none min-h-[520px] transition-all relative animate-fade-in delay-150"
           >
             <div class="pt-2">
               <div class="w-10 h-10 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center mb-4">
                 <span class="material-symbols-outlined text-[24px]">bolt</span>
               </div>
               
-              <h2 class="text-xl font-bold text-white" data-i18n="planBasicTitle">Cơ bản</h2>
-              <p class="text-xs text-slate-400 mt-1" data-i18n="planBasicSub">Dành cho nhu cầu nhẹ</p>
+              <h2 class="text-xl font-bold text-slate-900 dark:text-white" data-i18n="planBasicTitle">Cơ bản</h2>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-1" data-i18n="planBasicSub">Dành cho nhu cầu nhẹ</p>
               
               <div class="my-6">
                 <div class="flex items-baseline">
-                  <span class="text-3xl font-extrabold text-white price-display" data-i18n="planBasicPrice">1.000đ</span>
+                  <span class="text-3xl font-extrabold text-slate-900 dark:text-white price-display" data-i18n="planBasicPrice">1.000đ</span>
                 </div>
-                <p class="text-xs text-slate-400 mt-1" data-i18n="planBasicPriceSub">/ 7 ngày</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1" data-i18n="planBasicPriceSub">/ 7 ngày</p>
               </div>
 
-              <hr class="border-slate-800 my-4">
+              <hr class="border-slate-200 dark:border-slate-800 my-4">
 
-              <ul class="space-y-3.5 text-sm text-slate-300">
-                <li class="flex items-start gap-2.5 font-medium text-slate-200">
+              <ul class="space-y-3.5 text-sm text-slate-600 dark:text-slate-300">
+                <li class="flex items-start gap-2.5 font-medium text-slate-800 dark:text-slate-200">
                   <span class="text-emerald-500 font-bold select-none">✓</span>
                   <span data-i18n="scanLimit50">50 lượt nhận diện AI</span>
                 </li>
@@ -766,10 +773,10 @@
               </ul>
             </div>
 
-            <div class="mt-8 pt-4 border-t border-slate-800 text-center">
+            <div class="mt-8 pt-4 border-t border-slate-200 dark:border-slate-800 text-center">
               {% if active_plan == 'basic' %}
                 <button
-                  class="w-full py-2.5 border border-slate-700 text-slate-200 bg-transparent rounded-lg label-sm font-semibold transition-all hover:bg-slate-800 active:scale-95"
+                  class="w-full py-2.5 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 bg-transparent rounded-lg label-sm font-semibold transition-all hover:bg-slate-100 dark:hover:bg-slate-800 active:scale-95"
                   type="button"
                   data-plan-btn="basic"
                   data-action-type="renew"
@@ -778,14 +785,14 @@
                 </button>
               {% elif active_plan in ['pro', 'enterprise'] %}
                 <button
-                  class="w-full py-2.5 border border-slate-800 text-slate-500 bg-transparent rounded-lg label-sm font-semibold cursor-not-allowed"
+                  class="w-full py-2.5 border border-slate-200 dark:border-slate-800 text-slate-400 dark:text-slate-500 bg-transparent rounded-lg label-sm font-semibold cursor-not-allowed"
                   disabled
                   type="button"
                   data-i18n="cannotDowngradeBtn"
                 >Không thể hạ gói</button>
               {% else %}
                 <button
-                  class="w-full py-2.5 border border-slate-700 hover:border-slate-600 text-slate-200 hover:bg-slate-800 bg-transparent rounded-lg label-sm font-bold transition-all active:scale-95 duration-100"
+                  class="w-full py-2.5 border border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 bg-transparent rounded-lg label-sm font-bold transition-all active:scale-95 duration-100"
                   type="button"
                   data-plan-btn="basic"
                   data-action-type="upgrade"
@@ -799,7 +806,7 @@
           <!-- Gói: Pro (Khuyên dùng) -->
           <article
             id="card-pro"
-            class="pricing-card bg-slate-900 border-2 border-blue-600 p-6 rounded-2xl flex flex-col justify-between shadow-[0_0_20px_rgba(37,99,235,0.2)] min-h-[520px] transition-all relative animate-fade-in delay-200"
+            class="pricing-card bg-white dark:bg-slate-900 border-2 border-blue-500 dark:border-blue-600 p-6 rounded-2xl flex flex-col justify-between shadow-[0_0_20px_rgba(37,99,235,0.1)] dark:shadow-[0_0_20px_rgba(37,99,235,0.2)] min-h-[520px] transition-all relative animate-fade-in delay-200"
           >
             <span
               class="badge-recommended absolute top-3 right-3 bg-amber-500 text-amber-950 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm"
@@ -810,24 +817,24 @@
                 <span class="material-symbols-outlined text-[24px]">workspace_premium</span>
               </div>
               
-              <h2 class="text-xl font-bold text-white">Pro</h2>
-              <p class="text-xs text-slate-400 mt-1" data-i18n="planProSub">Tối ưu & phổ biến nhất</p>
+              <h2 class="text-xl font-bold text-slate-900 dark:text-white">Pro</h2>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-1" data-i18n="planProSub">Tối ưu & phổ biến nhất</p>
               
               <div class="my-6">
                 <div class="flex items-baseline">
-                  <span class="text-3xl font-extrabold text-white price-display" data-i18n="planProPrice">5.000đ</span>
+                  <span class="text-3xl font-extrabold text-slate-900 dark:text-white price-display" data-i18n="planProPrice">5.000đ</span>
                 </div>
-                <p class="text-xs text-slate-400 mt-1" data-i18n="planProPriceSub">/ 30 ngày</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1" data-i18n="planProPriceSub">/ 30 ngày</p>
               </div>
 
-              <hr class="border-slate-800 my-4">
+              <hr class="border-slate-200 dark:border-slate-800 my-4">
 
-              <ul class="space-y-3.5 text-sm text-slate-300">
-                <li class="flex items-start gap-2.5 font-semibold text-slate-200">
+              <ul class="space-y-3.5 text-sm text-slate-600 dark:text-slate-300">
+                <li class="flex items-start gap-2.5 font-semibold text-slate-800 dark:text-slate-200">
                   <span class="text-purple-500 font-bold select-none">✓</span>
                   <span data-i18n="scanLimit200">200 lượt nhận diện AI</span>
                 </li>
-                <li class="flex items-start gap-2.5 font-semibold text-slate-200">
+                <li class="flex items-start gap-2.5 font-semibold text-slate-800 dark:text-slate-200">
                   <span class="text-purple-500 font-bold select-none">✓</span>
                   <span data-i18n="prioritySpeed">Ưu tiên tốc độ xử lý</span>
                 </li>
@@ -842,10 +849,10 @@
               </ul>
             </div>
 
-            <div class="mt-8 pt-4 border-t border-slate-800 text-center">
+            <div class="mt-8 pt-4 border-t border-slate-200 dark:border-slate-800 text-center">
               {% if active_plan == 'pro' %}
                 <button
-                  class="w-full py-2.5 border border-slate-700 text-slate-200 bg-transparent rounded-lg label-sm font-semibold transition-all hover:bg-slate-800 active:scale-95"
+                  class="w-full py-2.5 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 bg-transparent rounded-lg label-sm font-semibold transition-all hover:bg-slate-100 dark:hover:bg-slate-800 active:scale-95"
                   type="button"
                   data-plan-btn="pro"
                   data-action-type="renew"
@@ -854,14 +861,14 @@
                 </button>
               {% elif active_plan == 'enterprise' %}
                 <button
-                  class="w-full py-2.5 border border-slate-800 text-slate-500 bg-transparent rounded-lg label-sm font-semibold cursor-not-allowed"
+                  class="w-full py-2.5 border border-slate-200 dark:border-slate-800 text-slate-400 dark:text-slate-500 bg-transparent rounded-lg label-sm font-semibold cursor-not-allowed"
                   disabled
                   type="button"
                   data-i18n="cannotDowngradeBtn"
                 >Không thể hạ gói</button>
               {% else %}
                 <button
-                  class="w-full py-2.5 bg-blue-650 hover:bg-blue-700 text-white rounded-lg label-sm font-bold transition-all shadow-sm hover:shadow-md active:scale-95 duration-100"
+                  class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg label-sm font-bold transition-all shadow-sm hover:shadow-md active:scale-95 duration-100"
                   type="button"
                   data-plan-btn="pro"
                   data-action-type="upgrade"
@@ -875,11 +882,11 @@
           <!-- Gói: Enterprise -->
           <article
             id="card-enterprise"
-            class="pricing-card bg-slate-900 border border-amber-500/35 p-6 rounded-2xl flex flex-col justify-between shadow-sm min-h-[520px] transition-all relative animate-fade-in delay-250"
+            class="pricing-card bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl flex flex-col justify-between shadow-sm dark:shadow-none min-h-[520px] transition-all relative animate-fade-in delay-250"
           >
             {% if active_plan == 'enterprise' %}
               <span
-                class="badge-recommended absolute top-3 right-3 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-500/20 text-amber-400 border border-amber-500/30"
+                class="badge-recommended absolute top-3 right-3 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30"
               >Gói hiện tại</span>
             {% endif %}
             <div class="pt-2">
@@ -887,42 +894,42 @@
                 <span class="material-symbols-outlined text-[24px]">crown</span>
               </div>
               
-              <h2 class="text-xl font-bold text-white" data-i18n="planEntTitle">Enterprise</h2>
-              <p class="text-xs text-slate-400 mt-1" data-i18n="planEntSub">Hiệu suất cực cao</p>
+              <h2 class="text-xl font-bold text-slate-900 dark:text-white" data-i18n="planEntTitle">Enterprise</h2>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-1" data-i18n="planEntSub">Hiệu suất cực cao</p>
               
               <div class="my-6">
                 <div class="flex items-baseline">
-                  <span class="text-3xl font-extrabold text-white price-display" data-i18n="planEntPrice">15.000đ</span>
+                  <span class="text-3xl font-extrabold text-slate-900 dark:text-white price-display" data-i18n="planEntPrice">15.000đ</span>
                 </div>
-                <p class="text-xs text-slate-400 mt-1" data-i18n="planEntPriceSub">/ 90 ngày</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1" data-i18n="planEntPriceSub">/ 90 ngày</p>
               </div>
 
-              <hr class="border-slate-800 my-4">
+              <hr class="border-slate-200 dark:border-slate-800 my-4">
 
-              <ul class="space-y-3.5 text-sm text-slate-300">
-                <li class="flex items-start gap-2.5 font-semibold text-slate-200">
+              <ul class="space-y-3.5 text-sm text-slate-600 dark:text-slate-300">
+                <li class="flex items-start gap-2.5 font-semibold text-slate-800 dark:text-slate-200">
                   <span class="text-amber-500 font-bold select-none">✓</span>
                   <span data-i18n="scanLimitUnlimit">Không giới hạn lượt nhận diện</span>
                 </li>
-                <li class="flex items-start gap-2.5 font-semibold text-slate-200">
+                <li class="flex items-start gap-2.5 font-semibold text-slate-800 dark:text-slate-200">
                   <span class="text-amber-500 font-bold select-none">✓</span>
                   <span data-i18n="vipBandwidth">Băng thông tối ưu & VIP</span>
                 </li>
-                <li class="flex items-start gap-2.5">
+                <li class="flex items-start gap-2.5 font-semibold text-slate-800 dark:text-slate-200">
                   <span class="text-amber-500 font-bold select-none">✓</span>
                   <span data-i18n="prioritySupport">Hỗ trợ ưu tiên cao nhất</span>
                 </li>
-                <li class="flex items-start gap-2.5">
+                <li class="flex items-start gap-2.5 font-semibold text-slate-800 dark:text-slate-200">
                   <span class="text-amber-500 font-bold select-none">✓</span>
                   <span data-i18n="prioritySupport">Tính năng nâng cao cấp nhất</span>
                 </li>
               </ul>
             </div>
 
-            <div class="mt-8 pt-4 border-t border-slate-800 text-center">
+            <div class="mt-8 pt-4 border-t border-slate-200 dark:border-slate-800 text-center">
               {% if active_plan == 'enterprise' %}
                 <button
-                  class="w-full py-2.5 border border-amber-500/40 hover:bg-slate-800 text-amber-400 rounded-lg label-sm font-semibold transition-all active:scale-95 duration-100"
+                  class="w-full py-2.5 border border-amber-500/40 dark:border-amber-500/40 hover:bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-lg label-sm font-semibold transition-all active:scale-95 duration-100"
                   type="button"
                   data-plan-btn="enterprise"
                   data-action-type="renew"
@@ -931,7 +938,7 @@
                 </button>
               {% else %}
                 <button
-                  class="w-full py-2.5 border border-amber-500/40 hover:border-amber-500 hover:bg-slate-800 text-amber-400 rounded-lg label-sm font-bold transition-all active:scale-95 duration-100"
+                  class="w-full py-2.5 border border-amber-500/40 dark:border-amber-500/40 hover:bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-lg label-sm font-bold transition-all active:scale-95 duration-100"
                   type="button"
                   data-plan-btn="enterprise"
                   data-action-type="upgrade"
@@ -944,77 +951,79 @@
         </section>
 
         <!-- ── Comparison Table Section ── -->
-        <section class="bg-slate-900 border border-slate-800 rounded-2xl p-6 mb-10 shadow-sm animate-fade-in delay-300">
+        <section class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 mb-10 shadow-sm animate-fade-in delay-300">
           <div class="flex items-center gap-3 mb-6">
             <div class="w-8 h-8 rounded-full bg-blue-600/20 text-blue-500 flex items-center justify-center">
               <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">compare_arrows</span>
             </div>
-            <h3 class="text-lg font-bold text-white" data-i18n="comparisonTableTitle">So sánh các gói dịch vụ</h3>
+            <h3 class="text-lg font-bold text-slate-900 dark:text-white" data-i18n="comparisonTableTitle">So sánh các gói dịch vụ</h3>
           </div>
           
           <div class="overflow-x-auto w-full">
             <table class="w-full border-collapse text-left text-sm">
               <thead>
-                <tr class="border-b border-slate-800 text-slate-300 font-semibold">
-                  <th class="pb-3 pr-4 font-semibold" data-i18n="compFeature">Tính năng</th>
-                  <th class="pb-3 px-4 font-semibold text-center text-slate-400">Free</th>
-                  <th class="pb-3 px-4 font-semibold text-center text-emerald-400">Basic</th>
-                  <th class="pb-3 px-4 font-semibold text-center text-purple-400 relative">
-                    Pro
-                    <span class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-purple-650 text-white text-[8px] px-1.5 py-0.5 rounded-full font-bold uppercase whitespace-nowrap" data-i18n="recommended">Đề xuất</span>
+                <tr class="border-b border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-semibold align-bottom">
+                  <th class="pb-3 pr-4 font-semibold text-slate-900 dark:text-slate-100" data-i18n="compFeature">Tính năng</th>
+                  <th class="pb-3 px-4 font-semibold text-center text-slate-500 dark:text-slate-400">Free</th>
+                  <th class="pb-3 px-4 font-semibold text-center text-emerald-600 dark:text-emerald-400">Basic</th>
+                  <th class="pb-3 px-4 font-semibold text-center text-purple-600 dark:text-purple-400">
+                    <div class="flex flex-col items-center gap-1">
+                      <span class="bg-purple-600 text-white text-[8px] px-1.5 py-0.5 rounded-full font-bold uppercase whitespace-nowrap" data-i18n="recommended">Đề xuất</span>
+                      <span>Pro</span>
+                    </div>
                   </th>
-                  <th class="pb-3 pl-4 font-semibold text-center text-amber-400 font-bold">Enterprise</th>
+                  <th class="pb-3 pl-4 font-semibold text-center text-amber-600 dark:text-amber-400 font-bold">Enterprise</th>
                 </tr>
               </thead>
-              <tbody class="divide-y divide-slate-800/50 text-slate-200">
+              <tbody class="divide-y divide-slate-200 dark:divide-slate-800/50 text-slate-700 dark:text-slate-200">
                 <tr>
-                  <td class="py-3.5 pr-4 font-medium" data-i18n="compAIModel">Lượt nhận diện AI</td>
-                  <td class="py-3.5 px-4 text-center">10 lượt</td>
-                  <td class="py-3.5 px-4 text-center text-emerald-400 font-semibold">50 lượt</td>
-                  <td class="py-3.5 px-4 text-center font-semibold text-purple-400 bg-purple-500/10">200 lượt</td>
-                  <td class="py-3.5 pl-4 text-center font-bold text-amber-400" data-i18n="compUnlimited">Không giới hạn</td>
+                  <td class="py-3.5 pr-4 font-medium text-slate-900 dark:text-slate-100" data-i18n="compAIModel">Lượt nhận diện AI</td>
+                  <td class="py-3.5 px-4 text-center text-slate-600 dark:text-slate-400">{% if ui_language == 'en' %}10 scans{% else %}10 lượt{% endif %}</td>
+                  <td class="py-3.5 px-4 text-center text-emerald-600 dark:text-emerald-400 font-semibold">{% if ui_language == 'en' %}50 scans{% else %}50 lượt{% endif %}</td>
+                  <td class="py-3.5 px-4 text-center font-semibold text-purple-600 dark:text-purple-400 bg-purple-500/5 dark:bg-purple-500/10">{% if ui_language == 'en' %}200 scans{% else %}200 lượt{% endif %}</td>
+                  <td class="py-3.5 pl-4 text-center font-bold text-amber-600 dark:text-amber-400" data-i18n="compUnlimited">Không giới hạn</td>
                 </tr>
                 <tr>
-                  <td class="py-3.5 pr-4 font-medium" data-i18n="compDuration">Thời hạn sử dụng</td>
-                  <td class="py-3.5 px-4 text-center">Miễn phí</td>
-                  <td class="py-3.5 px-4 text-center">7 ngày</td>
-                  <td class="py-3.5 px-4 text-center bg-purple-500/10 text-purple-400 font-semibold">30 ngày</td>
-                  <td class="py-3.5 pl-4 text-center text-amber-400 font-bold">90 ngày</td>
+                  <td class="py-3.5 pr-4 font-medium text-slate-900 dark:text-slate-100" data-i18n="compDuration">Thời hạn sử dụng</td>
+                  <td class="py-3.5 px-4 text-center text-slate-600 dark:text-slate-400" data-i18n="compTrial">Miễn phí</td>
+                  <td class="py-3.5 px-4 text-center text-slate-600 dark:text-slate-400">{% if ui_language == 'en' %}7 days{% else %}7 ngày{% endif %}</td>
+                  <td class="py-3.5 px-4 text-center bg-purple-500/5 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400 font-semibold">{% if ui_language == 'en' %}30 days{% else %}30 ngày{% endif %}</td>
+                  <td class="py-3.5 pl-4 text-center text-amber-600 dark:text-amber-400 font-bold">{% if ui_language == 'en' %}90 days{% else %}90 ngày{% endif %}</td>
                 </tr>
                 <tr>
-                  <td class="py-3.5 pr-4 font-medium" data-i18n="compAds">Quảng cáo</td>
-                  <td class="py-3.5 px-4 text-center text-slate-400" data-i18n="compYes">Có</td>
-                  <td class="py-3.5 px-4 text-center text-emerald-400 font-semibold" data-i18n="compNo">Không</td>
-                  <td class="py-3.5 px-4 text-center text-purple-400 font-semibold bg-purple-500/10" data-i18n="compNo">Không</td>
-                  <td class="py-3.5 pl-4 text-center text-amber-400 font-semibold" data-i18n="compNo">Không</td>
+                  <td class="py-3.5 pr-4 font-medium text-slate-900 dark:text-slate-100" data-i18n="compAds">Quảng cáo</td>
+                  <td class="py-3.5 px-4 text-center text-slate-500 dark:text-slate-400" data-i18n="compYes">Có</td>
+                  <td class="py-3.5 px-4 text-center text-emerald-600 dark:text-emerald-400 font-semibold" data-i18n="compNo">Không</td>
+                  <td class="py-3.5 px-4 text-center text-purple-600 dark:text-purple-400 font-semibold bg-purple-500/5 dark:bg-purple-500/10" data-i18n="compNo">Không</td>
+                  <td class="py-3.5 pl-4 text-center text-amber-600 dark:text-amber-400 font-semibold" data-i18n="compNo">Không</td>
                 </tr>
                 <tr>
-                  <td class="py-3.5 pr-4 font-medium" data-i18n="compSpeed">Tốc độ xử lý</td>
-                  <td class="py-3.5 px-4 text-center text-slate-400" data-i18n="compBasic">Cơ bản</td>
-                  <td class="py-3.5 px-4 text-center text-slate-400" data-i18n="compBasic">Cơ bản</td>
-                  <td class="py-3.5 px-4 text-center font-semibold text-purple-400 bg-purple-500/10" data-i18n="compPriority">Ưu tiên</td>
-                  <td class="py-3.5 pl-4 text-center font-bold text-amber-400" data-i18n="compVip">VIP</td>
+                  <td class="py-3.5 pr-4 font-medium text-slate-900 dark:text-slate-100" data-i18n="compSpeed">Tốc độ xử lý</td>
+                  <td class="py-3.5 px-4 text-center text-slate-500 dark:text-slate-400" data-i18n="compBasic">Cơ bản</td>
+                  <td class="py-3.5 px-4 text-center text-slate-500 dark:text-slate-400" data-i18n="compBasic">Cơ bản</td>
+                  <td class="py-3.5 px-4 text-center font-semibold text-purple-600 dark:text-purple-400 bg-purple-500/5 dark:bg-purple-500/10" data-i18n="compPriority">Ưu tiên</td>
+                  <td class="py-3.5 pl-4 text-center font-bold text-amber-600 dark:text-amber-400" data-i18n="compVip">VIP</td>
                 </tr>
                 <tr>
-                  <td class="py-3.5 pr-4 font-medium" data-i18n="compSupport">Hỗ trợ</td>
-                  <td class="py-3.5 px-4 text-center text-slate-400" data-i18n="compBasic">Cơ bản</td>
-                  <td class="py-3.5 px-4 text-center">Email</td>
-                  <td class="py-3.5 px-4 text-center font-semibold text-purple-400 bg-purple-500/10" data-i18n="compPriority">Ưu tiên</td>
-                  <td class="py-3.5 pl-4 text-center font-bold text-amber-400" data-i18n="compHighestSupport">Ưu tiên cao nhất</td>
+                  <td class="py-3.5 pr-4 font-medium text-slate-900 dark:text-slate-100" data-i18n="compSupport">Hỗ trợ</td>
+                  <td class="py-3.5 px-4 text-center text-slate-500 dark:text-slate-400" data-i18n="compBasic">Cơ bản</td>
+                  <td class="py-3.5 px-4 text-center text-slate-600 dark:text-slate-400">Email</td>
+                  <td class="py-3.5 px-4 text-center font-semibold text-purple-600 dark:text-purple-400 bg-purple-500/5 dark:bg-purple-500/10" data-i18n="compPriority">Ưu tiên</td>
+                  <td class="py-3.5 pl-4 text-center font-bold text-amber-600 dark:text-amber-400" data-i18n="compHighestSupport">Ưu tiên cao nhất</td>
                 </tr>
                 <tr>
-                  <td class="py-3.5 pr-4 font-medium" data-i18n="compAdvancedFeatures">Tính năng nâng cao</td>
-                  <td class="py-3.5 px-4 text-center text-slate-400" data-i18n="compLimited">Giới hạn</td>
-                  <td class="py-3.5 px-4 text-center text-slate-300" data-i18n="compSomeFeatures">Một số tính năng</td>
-                  <td class="py-3.5 px-4 text-center font-semibold text-purple-400 bg-purple-500/10" data-i18n="compFullFeatures">Đầy đủ tính năng</td>
-                  <td class="py-3.5 pl-4 text-center font-bold text-amber-400" data-i18n="compFullAdvancedFeatures">Đầy đủ + nâng cao</td>
+                  <td class="py-3.5 pr-4 font-medium text-slate-900 dark:text-slate-100" data-i18n="compAdvancedFeatures">Tính năng nâng cao</td>
+                  <td class="py-3.5 px-4 text-center text-slate-500 dark:text-slate-400" data-i18n="compLimited">Giới hạn</td>
+                  <td class="py-3.5 px-4 text-center text-slate-600 dark:text-slate-400" data-i18n="compSomeFeatures">Một số tính năng</td>
+                  <td class="py-3.5 px-4 text-center font-semibold text-purple-600 dark:text-purple-400 bg-purple-500/5 dark:bg-purple-500/10" data-i18n="compFullFeatures">Đầy đủ tính năng</td>
+                  <td class="py-3.5 pl-4 text-center font-bold text-amber-600 dark:text-amber-400" data-i18n="compFullAdvancedFeatures">Đầy đủ + nâng cao</td>
                 </tr>
                 <tr>
-                  <td class="py-3.5 pr-4 font-medium" data-i18n="compSuitability">Phù hợp với</td>
-                  <td class="py-3.5 px-4 text-center text-slate-400" data-i18n="compTrial">Trải nghiệm</td>
-                  <td class="py-3.5 px-4 text-center">Người dùng cá nhân</td>
-                  <td class="py-3.5 px-4 text-center font-semibold text-purple-400 bg-purple-500/10" data-i18n="compPowerUser">Người dùng thường xuyên</td>
-                  <td class="py-3.5 pl-4 text-center font-bold text-amber-400" data-i18n="compEnterprise">Doanh nghiệp / Chuyên sâu</td>
+                  <td class="py-3.5 pr-4 font-medium text-slate-900 dark:text-slate-100" data-i18n="compSuitability">Phù hợp với</td>
+                  <td class="py-3.5 px-4 text-center text-slate-500 dark:text-slate-400" data-i18n="compTrial">Trải nghiệm</td>
+                  <td class="py-3.5 px-4 text-center text-slate-500 dark:text-slate-400" data-i18n="compPersonal">Người dùng cá nhân</td>
+                  <td class="py-3.5 px-4 text-center bg-purple-500/5 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400 font-medium" data-i18n="compPowerUser">Người dùng thường xuyên</td>
+                  <td class="py-3.5 pl-4 text-center font-bold text-amber-600 dark:text-amber-400" data-i18n="compEnterprise">Doanh nghiệp / Chuyên sâu</td>
                 </tr>
               </tbody>
             </table>
@@ -1022,78 +1031,78 @@
         </section>
 
         <!-- ── Checkout Area (VietQR Card) & FAQ Section ── -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start mb-10">
+        <div id="checkout-faq-container" class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start mb-10" style="display: none;">
           
           <!-- Column Left: Inline Confirm Payment -->
           <section
             id="checkout"
             style="display: none;"
-            class="w-full bg-slate-900 border border-slate-800 rounded-2xl p-6 md:p-8 shadow-md relative overflow-hidden transition-all duration-300"
+            class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 md:p-8 shadow-md relative overflow-hidden transition-all duration-300"
             data-purpose="checkout-section"
           >
             <div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-2xl pointer-events-none"></div>
             
             <div class="flex items-center gap-3.5 mb-6 text-primary dark:text-blue-400">
-              <div class="w-10 h-10 rounded-xl bg-blue-600/10 flex items-center justify-center text-blue-505">
+              <div class="w-10 h-10 rounded-xl bg-blue-600/10 flex items-center justify-center text-blue-600 dark:text-blue-400">
                 <span class="material-symbols-outlined text-[24px]">shopping_cart_checkout</span>
               </div>
               <div>
-                <h2 class="text-xl font-bold text-white" data-i18n="confirmPaymentTitle">Xác nhận thanh toán</h2>
-                <p class="text-xs text-slate-400 mt-0.5" data-i18n="confirmPaymentSub">Vui lòng chuyển khoản đúng số tiền để kích hoạt gói</p>
+                <h2 class="text-xl font-bold text-slate-900 dark:text-white" data-i18n="confirmPaymentTitle">Xác nhận thanh toán</h2>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5" data-i18n="confirmPaymentSub">Vui lòng chuyển khoản đúng số tiền để kích hoạt gói</p>
               </div>
             </div>
 
             <!-- Gói đã chọn Summary Banner -->
-            <div class="bg-slate-950/80 p-4 rounded-xl border border-slate-800 mb-6 flex items-center justify-between">
+            <div class="bg-slate-50 dark:bg-slate-950/80 p-4 rounded-xl border border-slate-200 dark:border-slate-800 mb-6 flex items-center justify-between">
               <div class="flex items-center gap-3">
                 <div class="w-9 h-9 rounded-lg bg-purple-600/10 text-purple-500 flex items-center justify-center">
                   <span class="material-symbols-outlined text-[20px]" id="checkout-plan-icon">workspace_premium</span>
                 </div>
                 <div>
-                  <p class="text-[11px] text-slate-400 font-medium" data-i18n="selectedPlanLabel">Bạn đã chọn gói</p>
-                  <h4 class="text-sm font-bold text-white capitalize mt-0.5" id="checkout-plan-name">Pro</h4>
+                  <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium" data-i18n="selectedPlanLabel">Bạn đã chọn gói</p>
+                  <h4 class="text-sm font-bold text-slate-900 dark:text-white capitalize mt-0.5" id="checkout-plan-name">Pro</h4>
                 </div>
               </div>
-              <div class="text-right">
-                <span class="text-base font-extrabold text-blue-400" id="checkout-plan-price">5.000đ</span>
-                <span class="text-[10px] text-slate-400 block" id="checkout-plan-duration">/ 30 ngày</span>
+               <div class="text-right">
+                <span class="text-base font-extrabold text-blue-600 dark:text-blue-400" id="checkout-plan-price">5.000đ</span>
+                <span class="text-[10px] text-slate-500 dark:text-slate-400 block" id="checkout-plan-duration">/ {% if ui_language == 'en' %}30 days{% else %}30 ngày{% endif %}</span>
               </div>
             </div>
 
-            <h3 class="text-sm font-bold text-white mb-2" data-i18n="transferViaVietQR">Thanh toán qua VietQR</h3>
+            <h3 class="text-sm font-bold text-slate-900 dark:text-white mb-2" data-i18n="transferViaVietQR">Thanh toán qua VietQR</h3>
             
             <!-- VietQR Instructions and Payment Credentials -->
             <div class="grid grid-cols-1 md:grid-cols-[1.2fr_1fr] gap-6 items-center">
               
               <!-- Left Instructions & info Alert -->
-              <div class="space-y-4 text-sm text-slate-300">
-                <p class="text-xs text-slate-400 leading-relaxed" data-i18n="paymentInstructions">
+              <div class="space-y-4 text-sm text-slate-600 dark:text-slate-300">
+                <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed" data-i18n="paymentInstructions">
                   Quét mã QR hoặc sử dụng ứng dụng ngân hàng để thanh toán.
                 </p>
                 <div class="text-lg">
-                  <span class="text-slate-400 text-sm" data-i18n="amountToPay">Số tiền cần thanh toán:</span>
-                  <span class="font-extrabold text-blue-450 text-xl block mt-0.5" id="checkout-amount-val">5,000đ</span>
+                  <span class="text-slate-500 dark:text-slate-400 text-sm" data-i18n="amountToPay">Số tiền cần thanh toán:</span>
+                  <span class="font-extrabold text-blue-600 dark:text-blue-400 text-xl block mt-0.5" id="checkout-amount-val">5,000đ</span>
                 </div>
 
                 <!-- Info Alert container -->
-                <div class="bg-blue-500/10 border border-blue-500/20 text-blue-400 p-3 rounded-lg text-xs leading-normal flex items-start gap-2">
+                <div class="bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/20 text-blue-700 dark:text-blue-400 p-3 rounded-lg text-xs leading-normal flex items-start gap-2">
                   <span class="material-symbols-outlined text-[16px] mt-0.5">info</span>
                   <span data-i18n="activationTimelineNote">Sau khi thanh toán thành công, gói của bạn sẽ được kích hoạt tự động trong vòng 1-3 phút.</span>
                 </div>
               </div>
 
               <!-- QR Code view column -->
-              <div class="flex flex-col items-center justify-center p-3 bg-slate-950 rounded-xl border border-slate-800 text-center space-y-3">
-                <div class="relative w-40 h-40 bg-white p-2 rounded-lg border border-slate-800 flex items-center justify-center shadow-inner">
+              <div class="flex flex-col items-center justify-center p-3 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 text-center space-y-3">
+                <div class="relative w-40 h-40 bg-white p-2 rounded-lg border border-slate-200 dark:border-slate-800 flex items-center justify-center shadow-inner">
                   <img id="checkout-qr-img" class="w-full h-full object-contain" src="" alt="VietQR Code" />
-                  <div id="checkout-qr-loader" class="absolute inset-0 bg-slate-950/90 flex items-center justify-center rounded-lg">
+                  <div id="checkout-qr-loader" class="absolute inset-0 bg-slate-50 dark:bg-slate-950/90 flex items-center justify-center rounded-lg">
                     <svg class="animate-spin h-8 w-8 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                       <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                       <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
                   </div>
                 </div>
-                <div class="text-[10px] font-bold text-slate-400 tracking-wider flex items-center gap-1">
+                <div class="text-[10px] font-bold text-slate-500 dark:text-slate-400 tracking-wider flex items-center gap-1">
                   <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
                   VietQR
                 </div>
@@ -1101,49 +1110,43 @@
 
             </div>
 
-            <!-- Manual copy details wrapped in collapsible accordion -->
-            <details class="group mt-4 border border-slate-800 rounded-xl bg-slate-950 overflow-hidden">
-              <summary class="flex justify-between items-center px-4 py-3 text-xs font-semibold text-slate-400 hover:text-white cursor-pointer select-none">
-                <span data-i18n="manualTransferInfo">Thông tin chuyển khoản thủ công</span>
-                <span class="material-symbols-outlined text-[16px] transition-transform duration-250 group-open:rotate-180">keyboard_arrow_down</span>
-              </summary>
-              <div class="p-4 border-t border-slate-800 space-y-3">
-                <div class="bg-slate-900/60 p-2.5 rounded-lg border border-slate-800 flex justify-between items-center text-xs">
+              <div class="p-4 border-t border-slate-200 dark:border-slate-800 space-y-3">
+                <div class="bg-white dark:bg-slate-900/60 p-2.5 rounded-lg border border-slate-200 dark:border-slate-800 flex justify-between items-center text-xs">
                   <div>
-                    <span class="text-slate-500 block text-[10px]" data-i18n="bankLabel">Ngân hàng</span>
-                    <strong class="text-slate-200" id="checkout-bank-val">MB Bank</strong>
+                    <span class="text-slate-400 dark:text-slate-500 block text-[10px]" data-i18n="bankLabel">Ngân hàng</span>
+                    <strong class="text-slate-700 dark:text-slate-200" id="checkout-bank-val">MB Bank</strong>
                   </div>
-                  <button type="button" class="text-blue-400 hover:text-blue-300 text-xs flex items-center gap-0.5" onclick="copyText('checkout-bank-val')">
+                  <button type="button" class="text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 text-xs flex items-center gap-0.5" onclick="copyText('checkout-bank-val')">
                     <span class="material-symbols-outlined text-[14px]">content_copy</span>
                   </button>
                 </div>
 
-                <div class="bg-slate-900/60 p-2.5 rounded-lg border border-slate-800 flex justify-between items-center text-xs">
+                <div class="bg-white dark:bg-slate-900/60 p-2.5 rounded-lg border border-slate-200 dark:border-slate-800 flex justify-between items-center text-xs">
                   <div>
-                    <span class="text-slate-500 block text-[10px]" data-i18n="accountNumberLabel">Số tài khoản</span>
-                    <strong class="text-slate-200 tracking-wider" id="checkout-account-val">--</strong>
+                    <span class="text-slate-400 dark:text-slate-500 block text-[10px]" data-i18n="accountNumberLabel">Số tài khoản</span>
+                    <strong class="text-slate-700 dark:text-slate-200 tracking-wider" id="checkout-account-val">--</strong>
                   </div>
-                  <button type="button" class="text-blue-400 hover:text-blue-300 text-xs flex items-center gap-0.5" onclick="copyText('checkout-account-val')">
+                  <button type="button" class="text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 text-xs flex items-center gap-0.5" onclick="copyText('checkout-account-val')">
                     <span class="material-symbols-outlined text-[14px]">content_copy</span>
                   </button>
                 </div>
 
-                <div class="bg-slate-900/60 p-2.5 rounded-lg border border-slate-800 flex justify-between items-center text-xs">
+                <div class="bg-white dark:bg-slate-900/60 p-2.5 rounded-lg border border-slate-200 dark:border-slate-800 flex justify-between items-center text-xs">
                   <div>
-                    <span class="text-slate-500 block text-[10px]" data-i18n="accountNameLabel">Chủ tài khoản</span>
-                    <strong class="text-slate-200" id="checkout-holder-val">--</strong>
+                    <span class="text-slate-400 dark:text-slate-500 block text-[10px]" data-i18n="accountNameLabel">Chủ tài khoản</span>
+                    <strong class="text-slate-700 dark:text-slate-200" id="checkout-holder-val">--</strong>
                   </div>
-                  <button type="button" class="text-blue-400 hover:text-blue-300 text-xs flex items-center gap-0.5" onclick="copyText('checkout-holder-val')">
+                  <button type="button" class="text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 text-xs flex items-center gap-0.5" onclick="copyText('checkout-holder-val')">
                     <span class="material-symbols-outlined text-[14px]">content_copy</span>
                   </button>
                 </div>
 
-                <div class="bg-blue-950/20 p-2.5 rounded-lg border border-blue-900/50 flex justify-between items-center text-xs">
+                <div class="bg-blue-50 dark:bg-blue-950/20 p-2.5 rounded-lg border border-blue-200 dark:border-blue-900/50 flex justify-between items-center text-xs">
                   <div>
-                    <span class="text-blue-400 block text-[10px]" data-i18n="memoLabel">Nội dung chuyển khoản (Bắt buộc đúng)</span>
-                    <strong class="text-blue-300 tracking-wide select-all" id="checkout-memo-val">--</strong>
+                    <span class="text-blue-700 dark:text-blue-400 block text-[10px]" data-i18n="transferMemoLabel">Nội dung chuyển khoản (Bắt buộc đúng)</span>
+                    <strong class="text-blue-800 dark:text-blue-300 tracking-wide select-all" id="checkout-memo-val">--</strong>
                   </div>
-                  <button type="button" class="text-blue-400 hover:text-blue-300 text-xs flex items-center gap-0.5" onclick="copyText('checkout-memo-val')">
+                  <button type="button" class="text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 text-xs flex items-center gap-0.5" onclick="copyText('checkout-memo-val')">
                     <span class="material-symbols-outlined text-[14px]">content_copy</span>
                   </button>
                 </div>
@@ -1152,7 +1155,7 @@
             </details>
 
             <!-- Action buttons form -->
-            <form method="post" action="/predict/payments/confirm-transfer" id="confirmForm" class="mt-6 pt-6 border-t border-slate-800">
+            <form method="post" action="/predict/payments/confirm-transfer" id="confirmForm" class="mt-6 pt-6 border-t border-slate-200 dark:border-slate-800">
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
               <input type="hidden" name="order_id" id="confirm-order-id" value="">
               
@@ -1160,7 +1163,7 @@
                 <button
                   type="button"
                   id="checkoutBackBtn"
-                  class="w-full sm:w-auto px-6 py-2.5 border border-slate-700 hover:bg-slate-800 rounded-lg label-sm font-semibold text-slate-300 transition-colors text-center active:scale-95 duration-100"
+                  class="w-full sm:w-auto px-6 py-2.5 border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg label-sm font-semibold text-slate-600 dark:text-slate-300 transition-colors text-center active:scale-95 duration-100"
                   data-i18n="backBtn"
                 >Quay lại</button>
 
@@ -1169,7 +1172,7 @@
                   class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-8 py-2.5 rounded-lg label-sm font-bold flex items-center justify-center gap-2 transition-all shadow-sm hover:shadow-md active:scale-95 duration-100"
                 >
                   <span class="material-symbols-outlined text-[18px]">verified</span>
-                  <span data-i18n="continuePayBtn">Tôi đã thanh toán</span>
+                  <span data-i18n="confirmPaidBtn">Tôi đã thanh toán</span>
                 </button>
               </div>
             </form>
@@ -1177,15 +1180,15 @@
 
           <!-- Column Right: FAQ Accordions -->
           <section class="space-y-4">
-            <h3 class="text-lg font-bold text-white mb-2 flex items-center gap-2">
-              <span class="material-symbols-outlined text-blue-400">help</span>
+            <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2">
+              <span class="material-symbols-outlined text-blue-500 dark:text-blue-400">help</span>
               <span data-i18n="faqTitle">Câu hỏi thường gặp</span>
             </h3>
             
             <div class="space-y-3">
               <!-- FAQ Item 1 -->
-              <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-sm transition-all duration-200">
-                <button type="button" class="w-full py-4 px-5 text-left font-semibold text-sm text-white flex justify-between items-center gap-4 hover:bg-slate-800/40 focus:outline-none" onclick="toggleFaq(this)">
+              <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm transition-all duration-200">
+                <button type="button" class="w-full py-4 px-5 text-left font-semibold text-sm text-slate-900 dark:text-white flex justify-between items-center gap-4 hover:bg-slate-50 dark:hover:bg-slate-800/40 focus:outline-none" onclick="toggleFaq(this)">
                   <span class="flex items-center gap-3">
                     <span class="flex-shrink-0 w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[11px] font-bold">?</span>
                     <span data-i18n="faq1Q">Thanh toán xong bao lâu được kích hoạt?</span>
@@ -1193,15 +1196,15 @@
                   <span class="material-symbols-outlined text-slate-400 transition-transform duration-200 text-[20px]">keyboard_arrow_down</span>
                 </button>
                 <div class="faq-ans max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
-                  <div class="p-5 pt-0 text-sm text-slate-300 border-t border-slate-800/40 leading-relaxed" data-i18n="faq1A">
+                  <div class="p-5 pt-0 text-sm text-slate-600 dark:text-slate-300 border-t border-slate-100 dark:border-slate-800/40 leading-relaxed" data-i18n="faq1A">
                     Hệ thống tự động kích hoạt thông qua cổng VietQR trong vòng 1-3 phút ngay khi nhận được giao dịch chuyển khoản chính xác nội dung.
                   </div>
                 </div>
               </div>
 
               <!-- FAQ Item 2 -->
-              <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-sm transition-all duration-200">
-                <button type="button" class="w-full py-4 px-5 text-left font-semibold text-sm text-white flex justify-between items-center gap-4 hover:bg-slate-800/40 focus:outline-none" onclick="toggleFaq(this)">
+              <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm transition-all duration-200">
+                <button type="button" class="w-full py-4 px-5 text-left font-semibold text-sm text-slate-900 dark:text-white flex justify-between items-center gap-4 hover:bg-slate-50 dark:hover:bg-slate-800/40 focus:outline-none" onclick="toggleFaq(this)">
                   <span class="flex items-center gap-3">
                     <span class="flex-shrink-0 w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[11px] font-bold">?</span>
                     <span data-i18n="faq2Q">Có thể nâng cấp khi đang dùng gói cũ không?</span>
@@ -1209,15 +1212,15 @@
                   <span class="material-symbols-outlined text-slate-400 transition-transform duration-200 text-[20px]">keyboard_arrow_down</span>
                 </button>
                 <div class="faq-ans max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
-                  <div class="p-5 pt-0 text-sm text-slate-300 border-t border-slate-800/40 leading-relaxed" data-i18n="faq2A">
+                  <div class="p-5 pt-0 text-sm text-slate-600 dark:text-slate-300 border-t border-slate-100 dark:border-slate-800/40 leading-relaxed" data-i18n="faq2A">
                     Có, bạn có thể nâng cấp lên gói cao hơn bất kỳ lúc nào. Lượt quét và thời hạn của gói mới sẽ được áp dụng ngay lập tức.
                   </div>
                 </div>
               </div>
 
               <!-- FAQ Item 3 -->
-              <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-sm transition-all duration-200">
-                <button type="button" class="w-full py-4 px-5 text-left font-semibold text-sm text-white flex justify-between items-center gap-4 hover:bg-slate-800/40 focus:outline-none" onclick="toggleFaq(this)">
+              <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm transition-all duration-200">
+                <button type="button" class="w-full py-4 px-5 text-left font-semibold text-sm text-slate-900 dark:text-white flex justify-between items-center gap-4 hover:bg-slate-50 dark:hover:bg-slate-800/40 focus:outline-none" onclick="toggleFaq(this)">
                   <span class="flex items-center gap-3">
                     <span class="flex-shrink-0 w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[11px] font-bold">?</span>
                     <span data-i18n="faq3Q">Có thể hủy hoặc hoàn tiền không?</span>
@@ -1225,15 +1228,15 @@
                   <span class="material-symbols-outlined text-slate-400 transition-transform duration-200 text-[20px]">keyboard_arrow_down</span>
                 </button>
                 <div class="faq-ans max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
-                  <div class="p-5 pt-0 text-sm text-slate-300 border-t border-slate-800/40 leading-relaxed" data-i18n="faq3A">
+                  <div class="p-5 pt-0 text-sm text-slate-600 dark:text-slate-300 border-t border-slate-100 dark:border-slate-800/40 leading-relaxed" data-i18n="faq3A">
                     Các giao dịch thanh toán gói dịch vụ là không hoàn lại. Vui lòng kiểm tra kỹ thông tin trước khi thực hiện giao dịch.
                   </div>
                 </div>
               </div>
 
               <!-- FAQ Item 4 -->
-              <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-sm transition-all duration-200">
-                <button type="button" class="w-full py-4 px-5 text-left font-semibold text-sm text-white flex justify-between items-center gap-4 hover:bg-slate-800/40 focus:outline-none" onclick="toggleFaq(this)">
+              <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm transition-all duration-200">
+                <button type="button" class="w-full py-4 px-5 text-left font-semibold text-sm text-slate-900 dark:text-white flex justify-between items-center gap-4 hover:bg-slate-50 dark:hover:bg-slate-800/40 focus:outline-none" onclick="toggleFaq(this)">
                   <span class="flex items-center gap-3">
                     <span class="flex-shrink-0 w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[11px] font-bold">?</span>
                     <span data-i18n="faq4Q">Gói có tự gia hạn không?</span>
@@ -1241,15 +1244,15 @@
                   <span class="material-symbols-outlined text-slate-400 transition-transform duration-200 text-[20px]">keyboard_arrow_down</span>
                 </button>
                 <div class="faq-ans max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
-                  <div class="p-5 pt-0 text-sm text-slate-300 border-t border-slate-800/40 leading-relaxed" data-i18n="faq4A">
+                  <div class="p-5 pt-0 text-sm text-slate-600 dark:text-slate-300 border-t border-slate-100 dark:border-slate-800/40 leading-relaxed" data-i18n="faq4A">
                     Không, hệ thống không tự động gia hạn hoặc trừ tiền tài khoản của bạn. Bạn chủ động gia hạn thủ công khi có nhu cầu.
                   </div>
                 </div>
               </div>
 
               <!-- FAQ Item 5 -->
-              <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-sm transition-all duration-200">
-                <button type="button" class="w-full py-4 px-5 text-left font-semibold text-sm text-white flex justify-between items-center gap-4 hover:bg-slate-800/40 focus:outline-none" onclick="toggleFaq(this)">
+              <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm transition-all duration-200">
+                <button type="button" class="w-full py-4 px-5 text-left font-semibold text-sm text-slate-900 dark:text-white flex justify-between items-center gap-4 hover:bg-slate-50 dark:hover:bg-slate-800/40 focus:outline-none" onclick="toggleFaq(this)">
                   <span class="flex items-center gap-3">
                     <span class="flex-shrink-0 w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[11px] font-bold">?</span>
                     <span data-i18n="faq5Q">Tôi có thể thay đổi gói sau khi nâng cấp không?</span>
@@ -1257,7 +1260,7 @@
                   <span class="material-symbols-outlined text-slate-400 transition-transform duration-200 text-[20px]">keyboard_arrow_down</span>
                 </button>
                 <div class="faq-ans max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
-                  <div class="p-5 pt-0 text-sm text-slate-300 border-t border-slate-800/40 leading-relaxed" data-i18n="faq5A">
+                  <div class="p-5 pt-0 text-sm text-slate-600 dark:text-slate-300 border-t border-slate-100 dark:border-slate-800/40 leading-relaxed" data-i18n="faq5A">
                     Bạn có thể nâng cấp lên gói cao hơn. Việc hạ cấp xuống gói thấp hơn chỉ được thực hiện sau khi gói hiện tại hết hạn sử dụng.
                   </div>
                 </div>
@@ -1265,12 +1268,12 @@
             </div>
 
             <!-- Support Card -->
-            <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl flex justify-between items-center gap-4 shadow-sm mt-6">
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-2xl flex justify-between items-center gap-4 shadow-sm mt-6">
               <div class="space-y-1">
-                <h4 class="text-sm font-bold text-white" data-i18n="helpCardTitle">Bạn cần hỗ trợ thêm?</h4>
-                <p class="text-xs text-slate-400 leading-normal" data-i18n="helpCardDesc">Liên hệ đội ngũ hỗ trợ của chúng tôi qua email hoặc chat trực tuyến.</p>
+                <h4 class="text-sm font-bold text-slate-900 dark:text-white" data-i18n="helpCardTitle">Bạn cần hỗ trợ thêm?</h4>
+                <p class="text-xs text-slate-500 dark:text-slate-400 leading-normal" data-i18n="helpCardDesc">Liên hệ đội ngũ hỗ trợ của chúng tôi qua email hoặc chat trực tuyến.</p>
               </div>
-              <a href="mailto:support@pet.ai" class="bg-transparent hover:bg-slate-800 border border-slate-700 text-slate-200 hover:text-white rounded-lg px-4 py-2 text-xs font-semibold flex items-center gap-1.5 shrink-0 transition-all active:scale-95 duration-100" data-i18n="helpCardBtn">
+              <a href="mailto:support@pet.ai" class="bg-transparent hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white rounded-lg px-4 py-2 text-xs font-semibold flex items-center gap-1.5 shrink-0 transition-all active:scale-95 duration-100" data-i18n="helpCardBtn">
                 <span class="material-symbols-outlined text-[16px]">support_agent</span>
                 <span>Liên hệ hỗ trợ</span>
               </a>
@@ -1370,6 +1373,7 @@
     }
 
     // --- Interactive Checkout Block ---
+    const checkoutFaqContainer = document.getElementById("checkout-faq-container");
     const checkoutSec = document.getElementById("checkout");
     const checkoutPlanIcon = document.getElementById("checkout-plan-icon");
     const checkoutPlanName = document.getElementById("checkout-plan-name");
@@ -1387,7 +1391,7 @@
     const checkoutQrLoader = document.getElementById("checkout-qr-loader");
     const confirmOrderId = document.getElementById("confirm-order-id");
 
-    const checkoutBackBtn = document.getElementById("checkout-back-btn");
+    const checkoutBackBtn = document.getElementById("checkoutBackBtn");
 
     let activeSelectedPlan = null;
     let statusCheckingInterval = null;
@@ -1401,6 +1405,9 @@
 
     // Hide checkout card
     function hideCheckout() {
+      if (checkoutFaqContainer) {
+        checkoutFaqContainer.style.display = "none";
+      }
       if (checkoutSec) {
         checkoutSec.style.display = "none";
       }
@@ -1468,10 +1475,18 @@
 
       // Reset loading states
       if (checkoutQrLoader) checkoutQrLoader.style.display = "flex";
+      
+      if (checkoutFaqContainer) {
+        checkoutFaqContainer.style.display = "grid";
+      }
       checkoutSec.style.display = "block";
       
       // Smooth scroll
-      checkoutSec.scrollIntoView({ behavior: "smooth" });
+      if (checkoutFaqContainer) {
+        checkoutFaqContainer.scrollIntoView({ behavior: "smooth" });
+      } else {
+        checkoutSec.scrollIntoView({ behavior: "smooth" });
+      }
 
       // Update package summary values instantly
       const lang = document.documentElement.getAttribute("data-user-lang") || "vi";
