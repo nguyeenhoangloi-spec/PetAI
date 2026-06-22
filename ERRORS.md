@@ -297,3 +297,21 @@
 - **Prevention**: Luôn giải mã JSON trước khi kiểm tra các trường dữ liệu text chứa ký tự unicode/UTF-8. Đảm bảo truyền đúng chữ ký của Client.set_cookie trong các phiên bản Flask/Werkzeug khác nhau.
 - **Status**: Fixed
 
+---
+
+## [2026-06-22 02:45] - Lỗi thiếu đóng ngoặc nhọn trong Javascript trên trang Dashboard
+
+- **Type**: Agent
+- **Severity**: High
+- **File**: `templates/dashboard.html:2043`
+- **Agent**: @frontend-specialist
+- **Root Cause**: Trong khối xử lý sự kiện `i18nChanged` tại `templates/dashboard.html`, điều kiện rà soát `if (topBreedsChartInstance) {` không được đóng ngoặc nhọn `}` ở cuối block trước khi gọi hàm đóng sự kiện `});`. Điều này tạo ra lỗi cú pháp JavaScript, khiến trình duyệt từ chối biên dịch và chạy toàn bộ mã Script trên trang Dashboard, làm cho các chart bị trắng và hoạt cảnh đếm số bị dừng ở 0.
+- **Error Message**:
+  ```text
+  Uncaught SyntaxError: Unexpected token '}' (phá vỡ cấu trúc biên dịch script)
+  ```
+- **Fix Applied**: Bổ sung dấu đóng ngoặc nhọn `}` tại dòng 2043 để đóng khối lệnh điều kiện `if (topBreedsChartInstance)` một cách chính xác trước khi đóng sự kiện `i18nChanged`.
+- **Prevention**: Luôn kiểm tra kỹ các cặp đóng mở ngoặc `{}` của Javascript khi chỉnh sửa hoặc copy-paste trong các file HTML template.
+- **Status**: Fixed
+
+

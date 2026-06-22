@@ -462,9 +462,7 @@
     {% set display_role = session.get('role') or 'user' %} {% set display_plan =
     current_plan or 'free' %}
 
-    {% include '_header.html' %}
-
-    <main
+    {% include '_header.html' %}    <main
       class="flex-grow w-full px-4 md:px-6 py-margin grid grid-cols-1 gap-0"
     >
       {% set active_page = 'upgrade' %} {% include '_sidebar.html' %}
@@ -480,41 +478,129 @@
               class="headline-lg font-semibold text-on-surface"
               data-i18n="upgradeTitle"
             >
-              Nâng cấp gói sử dụng
+              Nâng cấp gói dịch vụ
             </h1>
-            <p class="body-md text-on-surface-variant">
-              {% if current_plan == 'free' or not current_plan %}
-              <span data-i18n-html="upgradeDescFree"
-                >Bạn đang sử dụng gói
-                <strong class="text-slate-700 dark:text-slate-300"
-                  >MIỄN PHÍ (FREE)</strong
-                >. Nâng cấp để tăng lượt nhận diện và trải nghiệm mượt mà
-                không quảng cáo.</span
-              >
-              {% else %}
-              <span data-i18n="upgradeDescPaidPrefix"
-                >Tài khoản của bạn đang sử dụng gói</span
-              >
-              <strong
-                class="text-primary dark:text-blue-400 uppercase font-bold"
-                >{{ current_plan }}</strong
-              ><span data-i18n="upgradeDescPaidSuffix"
-                >. Bạn có thể nâng cấp hoặc gia hạn bên dưới.</span
-              >
-              {% endif %}
+            <p class="body-md text-on-surface-variant" data-i18n="upgradeSubtitle">
+              Chọn gói phù hợp để mở khóa nhiều tính năng nâng cao và trải nghiệm tốt hơn.
             </p>
           </div>
           <div class="flex items-center gap-3">
             <a
-              class="bg-primary text-on-primary px-5 py-2.5 rounded-lg label-sm shadow-sm hover:shadow-md hover:bg-blue-700 transition-all flex items-center gap-2 self-start md:self-auto active:scale-95 duration-100 font-semibold"
-              href="#checkout"
+              class="bg-surface-container-low dark:bg-slate-800 border border-outline-variant/30 text-on-surface hover:bg-surface-container-high dark:hover:bg-slate-700 px-5 py-2.5 rounded-lg label-sm shadow-sm transition-all flex items-center gap-2 self-start md:self-auto active:scale-95 duration-100 font-semibold"
+              href="{{ url_for('predict.my_payments') }}"
             >
-              <span
-                class="material-symbols-outlined text-[18px]"
-                aria-hidden="true"
-                >shopping_cart</span
-              ><span data-i18n="choosePlanPay">Chọn gói &amp; Thanh toán</span></a
-            >
+              <span class="material-symbols-outlined text-[18px]" aria-hidden="true">receipt_long</span>
+              <span data-i18n="upgradeBillingHistoryBtn">Lịch sử thanh toán</span>
+            </a>
+          </div>
+        </section>
+
+        <!-- ── Current Plan Banner ── -->
+        {% set q_info = quota_info or {} %}
+        {% set active_plan = q_info.plan or current_plan or 'free' %}
+        <section class="w-full bg-slate-900 text-white rounded-2xl p-6 md:p-8 mb-10 border border-slate-800 relative overflow-hidden shadow-lg animate-fade-in delay-100">
+          <div class="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none"></div>
+          <div class="absolute bottom-0 left-0 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl -ml-20 -mb-20 pointer-events-none"></div>
+          
+          <div class="grid grid-cols-1 lg:grid-cols-[1.5fr_1fr] gap-6 items-center relative z-10">
+            <!-- Left col: Quota detail info -->
+            <div class="space-y-6">
+              <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-xl bg-primary/20 border border-primary/30 flex items-center justify-center text-primary-fixed">
+                  <span class="material-symbols-outlined text-[28px]">stars</span>
+                </div>
+                <div>
+                  <p class="text-xs text-slate-400 font-medium tracking-wide uppercase" data-i18n="currentPlanTitle">Gói hiện tại của bạn</p>
+                  <div class="flex items-center gap-3 mt-1">
+                    <h2 class="text-2xl font-bold text-white capitalize">{{ active_plan }}</h2>
+                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-400 border border-emerald-500/30" data-i18n="activeStatus">
+                      Đang hoạt động
+                    </span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-4 border-t border-slate-800">
+                <div>
+                  <p class="text-[11px] text-slate-400 font-semibold uppercase tracking-wider" data-i18n="durationLabel">Thời hạn</p>
+                  <p class="text-lg font-bold text-white mt-1">
+                    {% if active_plan == 'free' %}
+                      <span data-i18n="forever">Vĩnh viễn</span>
+                    {% else %}
+                      {% if q_info.days_left is not none %}
+                        {{ q_info.days_left }} {% if ui_language == 'en' %}days left{% else %}ngày còn lại{% endif %}
+                      {% else %}
+                        --
+                      {% endif %}
+                    {% endif %}
+                  </p>
+                  <p class="text-[11px] text-slate-500 mt-0.5">
+                    {% if active_plan != 'free' and q_info.plan_expire %}
+                      Hết hạn: {{ q_info.plan_expire }}
+                    {% else %}
+                      &nbsp;
+                    {% endif %}
+                  </p>
+                </div>
+                <div>
+                  <p class="text-[11px] text-slate-400 font-semibold uppercase tracking-wider" data-i18n="scanLimitLabel">Lượt nhận diện</p>
+                  <p class="text-lg font-bold text-white mt-1">
+                    {% if active_plan == 'enterprise' %}
+                      <span data-i18n="scanLimitUnlimit">Không giới hạn</span>
+                    {% elif active_plan == 'free' %}
+                      10 <span class="text-xs font-normal text-slate-400">/ trọn đời</span>
+                    {% else %}
+                      {{ q_info.paid_uses_remaining or 0 }} <span class="text-xs font-normal text-slate-400">lượt còn lại</span>
+                    {% endif %}
+                  </p>
+                  <p class="text-[11px] text-slate-500 mt-0.5">
+                    {% if active_plan != 'free' and q_info.total_uses %}
+                      Hạn mức: {{ q_info.total_uses }} lượt
+                    {% else %}
+                      &nbsp;
+                    {% endif %}
+                  </p>
+                </div>
+                <div>
+                  <p class="text-[11px] text-slate-400 font-semibold uppercase tracking-wider" data-i18n="status">Trạng thái</p>
+                  <p class="text-lg font-bold text-emerald-400 mt-1 flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                    <span data-i18n="activeStatus">Hoạt động</span>
+                  </p>
+                  <p class="text-[11px] text-slate-500 mt-0.5">
+                    Tài khoản đang hoạt động tốt
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right col: CTA or Action status -->
+            <div class="lg:border-l lg:border-slate-800 lg:pl-8 py-2 flex flex-col justify-center h-full">
+              {% if active_plan == 'enterprise' %}
+                <div class="text-center lg:text-left space-y-2">
+                  <h3 class="text-lg font-bold text-amber-400" data-i18n="highestPlanMsg">Bạn đang sử dụng gói cao nhất</h3>
+                  <p class="text-sm text-slate-400 leading-relaxed">Cảm ơn bạn đã tin dùng và đồng hành cùng hệ thống thông minh PetAI!</p>
+                </div>
+              {% else %}
+                <div class="text-center lg:text-left space-y-4">
+                  <div>
+                    <h3 class="text-lg font-bold text-white">Nâng cấp trải nghiệm</h3>
+                    <p class="text-xs text-slate-400 mt-1 leading-relaxed">Mở khóa nhiều hạn mức quét AI hơn, loại bỏ quảng cáo và tối ưu hóa tốc độ nhận diện giống cún cưng.</p>
+                  </div>
+                  {% if active_plan != 'free' %}
+                    <button
+                      type="button"
+                      id="bannerRenewBtn"
+                      data-renew-plan="{{ active_plan }}"
+                      class="inline-flex items-center gap-2 bg-primary hover:bg-blue-600 text-white font-bold py-2.5 px-6 rounded-lg label-sm transition-all shadow-md active:scale-95 duration-100"
+                    >
+                      <span class="material-symbols-outlined text-[18px]">sync</span>
+                      <span data-i18n="renewPlanBtn">Gia hạn gói</span>
+                    </button>
+                  {% endif %}
+                </div>
+              {% endif %}
+            </div>
           </div>
         </section>
 
@@ -523,1051 +609,1024 @@
           class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-6 mb-10"
           data-purpose="pricing-grid"
         >
-            <!-- Gói: Free -->
-            <article
-              class="pricing-card bg-surface-container-lowest dark:bg-slate-900 p-5 rounded-xl flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[460px] animate-fade-in delay-100"
-            >
-              <div class="card-accent-bar bg-slate-300 dark:bg-slate-700"></div>
-              <div class="pt-2">
-                <div class="flex justify-between items-start mb-4">
-                  <div>
-                    <h2
-                      class="text-xl font-bold text-on-surface"
-                      data-i18n="planFreeTitle"
-                    >
-                      <span data-i18n="planFreeTitle">Miễn phí</span>
-                    </h2>
-                    <p
-                      class="text-xs text-on-surface-variant mt-1"
-                      data-i18n="planFreeSub"
-                    >
-                      <span data-i18n="planFreeSub">Gói khởi đầu mặc định</span>
-                    </p>
-                  </div>
-                  <div
-                    class="w-9 h-9 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500"
-                  >
-                    <span
-                      class="material-symbols-outlined text-[20px]"
-                      aria-hidden="true"
-                      >person</span
-                    >
-                  </div>
+          <!-- Gói: Free -->
+          <article
+            id="card-free"
+            class="pricing-card bg-surface-container-lowest dark:bg-slate-900 p-6 rounded-2xl flex flex-col justify-between border border-outline-variant/30 dark:border-slate-800 shadow-sm min-h-[500px] animate-fade-in delay-100"
+          >
+            <div class="card-accent-bar bg-slate-300 dark:bg-slate-700"></div>
+            <div class="pt-2">
+              <div class="flex justify-between items-start mb-4">
+                <div>
+                  <h2 class="text-2xl font-bold text-on-surface dark:text-slate-100" data-i18n="planFreeTitle">Miễn phí</h2>
+                  <p class="text-xs text-on-surface-variant dark:text-slate-400 mt-1" data-i18n="planFreeSub">Gói dùng thử cơ bản</p>
                 </div>
-                <div class="my-6">
-                  <span
-                    class="text-3xl font-extrabold text-on-surface price-display"
-                    data-i18n="planFreePrice"
-                    >0đ</span
-                  >
-                  <p
-                    class="text-xs text-on-surface-variant mt-1"
-                    data-i18n="planFreePriceSub"
-                  >
-                    <span data-i18n="planFreePriceSub">Luôn miễn phí</span>
-                  </p>
+                <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500">
+                  <span class="material-symbols-outlined text-[24px]">pets</span>
                 </div>
-
-                <hr class="border-outline-variant/10 my-4">
-
-                <ul
-                  class="space-y-3 body-md text-on-surface-variant"
-                >
-                  <li class="flex items-start gap-2 text-sm">
-                    <span
-                      class="feature-icon bg-slate-100 dark:bg-slate-800 text-slate-500"
-                      aria-hidden="true"
-                    >
-                      <span
-                        class="material-symbols-outlined text-[14px] font-bold"
-                        >check</span
-                      >
-                    </span>
-                    <span data-i18n="scanLimit10"
-                      >10 lượt nhận diện miễn phí</span
-                    >
-                  </li>
-                  <li class="flex items-start gap-2 text-sm">
-                    <span
-                      class="feature-icon bg-slate-100 dark:bg-slate-800 text-slate-500"
-                      aria-hidden="true"
-                    >
-                      <span
-                        class="material-symbols-outlined text-[14px] font-bold"
-                        >check</span
-                      >
-                    </span>
-                    <span data-i18n="watchAdsMore"
-                      >Xem quảng cáo để thêm lượt</span
-                    >
-                  </li>
-                  <li class="flex items-start gap-2 text-sm">
-                    <span
-                      class="feature-icon bg-slate-100 dark:bg-slate-800 text-slate-500"
-                      aria-hidden="true"
-                    >
-                      <span
-                        class="material-symbols-outlined text-[14px] font-bold"
-                        >check</span
-                      >
-                    </span>
-                    <span data-i18n="suitableTrial">Phù hợp để dùng thử</span>
-                  </li>
-                </ul>
+              </div>
+              
+              <div class="my-6">
+                <div class="flex items-baseline">
+                  <span class="text-3xl font-extrabold text-on-surface dark:text-slate-100 price-display" data-i18n="planFreePrice">0đ</span>
+                </div>
+                <p class="text-xs text-on-surface-variant dark:text-slate-400 mt-1" data-i18n="planFreePriceSub">Miễn phí trọn đời</p>
               </div>
 
-              <div
-                class="mt-8 pt-4 border-t border-outline-variant/5 text-center"
-              >
-                {% if current_plan == 'free' or not current_plan %}
+              <hr class="border-outline-variant/10 dark:border-slate-800 my-4">
+
+              <ul class="space-y-3.5 body-md text-on-surface-variant dark:text-slate-300">
+                <li class="flex items-start gap-2.5 text-sm">
+                  <span class="feature-icon bg-slate-100 dark:bg-slate-800 text-slate-500" aria-hidden="true">
+                    <span class="material-symbols-outlined text-[13px] font-bold">check</span>
+                  </span>
+                  <span data-i18n="scanLimit10">10 lượt nhận diện AI</span>
+                </li>
+                <li class="flex items-start gap-2.5 text-sm">
+                  <span class="feature-icon bg-slate-100 dark:bg-slate-800 text-slate-500" aria-hidden="true">
+                    <span class="material-symbols-outlined text-[13px] font-bold">check</span>
+                  </span>
+                  <span data-i18n="watchAdsMore">Xem quảng cáo</span>
+                </li>
+                <li class="flex items-start gap-2.5 text-sm">
+                  <span class="feature-icon bg-slate-100 dark:bg-slate-800 text-slate-500" aria-hidden="true">
+                    <span class="material-symbols-outlined text-[13px] font-bold">check</span>
+                  </span>
+                  <span data-i18n="suitableTrial">Phù hợp để trải nghiệm</span>
+                </li>
+              </ul>
+            </div>
+
+            <div class="mt-8 pt-4 border-t border-outline-variant/5 dark:border-slate-800 text-center">
+              {% if active_plan == 'free' %}
                 <button
-                  class="w-full py-2.5 bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 rounded-lg label-sm font-semibold cursor-not-allowed border border-outline-variant/20"
+                  class="w-full py-2.5 bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 rounded-lg label-sm font-semibold cursor-not-allowed border border-outline-variant/20 dark:border-slate-700"
                   disabled
                   type="button"
-                  data-i18n="currentPlan"
-                >
-                  <span data-i18n="currentPlan">Gói hiện tại</span>
-                </button>
-                <p
-                  class="text-[11px] text-on-surface-variant/70 mt-2 flex items-center justify-center gap-1"
-                >
-                  <span
-                    class="material-symbols-outlined text-[13px]"
-                    aria-hidden="true"
-                    >info</span
-                  ><span data-i18n="freePlanActive"
-                    >Gói FREE đang hoạt động</span
-                  >
-                </p>
-                {% else %}
+                  data-i18n="currentPlanBtn"
+                >Gói hiện tại</button>
+              {% else %}
                 <button
-                  class="w-full py-2.5 bg-slate-100 dark:bg-slate-800/60 text-slate-400 dark:text-slate-600 rounded-lg label-sm font-semibold cursor-not-allowed border border-outline-variant/20"
+                  class="w-full py-2.5 bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-600 rounded-lg label-sm font-semibold cursor-not-allowed border border-outline-variant/20 dark:border-slate-700"
                   disabled
                   type="button"
-                  data-i18n="cannotDowngrade"
-                >
-                  <span data-i18n="cannotDowngrade">Không thể hạ cấp</span>
-                </button>
-                {% endif %}
+                  data-i18n="cannotDowngradeBtn"
+                >Không thể hạ gói</button>
+              {% endif %}
+            </div>
+          </article>
+
+          <!-- Gói: Basic -->
+          <article
+            id="card-basic"
+            class="pricing-card bg-surface-container-lowest dark:bg-slate-900 p-6 rounded-2xl flex flex-col justify-between border border-outline-variant/30 dark:border-slate-800 shadow-sm min-h-[500px] animate-fade-in delay-150"
+          >
+            <div class="card-accent-bar bg-blue-500"></div>
+            <div class="pt-2">
+              <div class="flex justify-between items-start mb-4">
+                <div>
+                  <h2 class="text-2xl font-bold text-on-surface dark:text-slate-100" data-i18n="planBasicTitle">Cơ bản</h2>
+                  <p class="text-xs text-on-surface-variant dark:text-slate-400 mt-1" data-i18n="planBasicSub">Dành cho nhu cầu nhẹ</p>
+                </div>
+                <div class="w-10 h-10 rounded-xl bg-blue-550/10 dark:bg-blue-500/20 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                  <span class="material-symbols-outlined text-[24px]">bolt</span>
+                </div>
               </div>
-            </article>
-
-            <!-- Gói: Basic -->
-            <article
-              class="pricing-card bg-surface-container-lowest dark:bg-slate-900 p-5 rounded-xl flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[460px] animate-fade-in delay-150"
-            >
-              <div class="card-accent-bar bg-blue-500"></div>
-              <div class="pt-2">
-                <div class="flex justify-between items-start mb-4">
-                  <div>
-                    <h2
-                      class="text-xl font-bold text-on-surface"
-                      data-i18n="planBasicTitle"
-                    >
-                      <span data-i18n="planBasicTitle">Cơ bản</span>
-                    </h2>
-                    <p
-                      class="text-xs text-on-surface-variant mt-1"
-                      data-i18n="planBasicSub"
-                    >
-                      <span data-i18n="planBasicSub">Dành cho nhu cầu nhẹ</span>
-                    </p>
-                  </div>
-                  <div
-                    class="w-9 h-9 rounded-lg bg-blue-500/10 dark:bg-blue-500/20 flex items-center justify-center text-blue-600 dark:text-blue-400"
-                  >
-                    <span
-                      class="material-symbols-outlined text-[20px]"
-                      aria-hidden="true"
-                      >bolt</span
-                    >
-                  </div>
+              
+              <div class="my-6">
+                <div class="flex items-baseline">
+                  <span class="text-3xl font-extrabold text-on-surface dark:text-slate-100 price-display" data-i18n="planBasicPrice">1.000đ</span>
                 </div>
-                <div class="my-6">
-                  <span
-                    class="text-3xl font-extrabold text-on-surface price-display"
-                    data-i18n="planBasicPrice"
-                    >1.000đ</span
-                  >
-                  <p
-                    class="text-xs text-on-surface-variant mt-1"
-                    data-i18n="planBasicPriceSub"
-                  >
-                    <span data-i18n="planBasicPriceSub">/ 7 ngày sử dụng</span>
-                  </p>
-                </div>
-
-                <hr class="border-outline-variant/10 my-4">
-
-                <ul
-                  class="space-y-3 body-md text-on-surface-variant"
-                >
-                  <li
-                    class="flex items-start gap-2 text-sm font-medium text-on-surface"
-                  >
-                    <span
-                      class="feature-icon bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400"
-                      aria-hidden="true"
-                    >
-                      <span
-                        class="material-symbols-outlined text-[14px] font-bold"
-                        >check</span
-                      >
-                    </span>
-                    <span data-i18n-html="planBasicLimitDesc"><strong>50 lượt</strong> nhận diện</span>
-                  </li>
-                  <li class="flex items-start gap-2 text-sm">
-                    <span
-                      class="feature-icon bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400"
-                      aria-hidden="true"
-                    >
-                      <span
-                        class="material-symbols-outlined text-[14px] font-bold"
-                        >check</span
-                      >
-                    </span>
-                    <span data-i18n="noAds">Không có quảng cáo</span>
-                  </li>
-                  <li class="flex items-start gap-2 text-sm">
-                    <span
-                      class="feature-icon bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400"
-                      aria-hidden="true"
-                    >
-                      <span
-                        class="material-symbols-outlined text-[14px] font-bold"
-                        >check</span
-                      >
-                    </span>
-                    <span data-i18n="suitableLight">Phù hợp nhu cầu nhẹ</span>
-                  </li>
-                </ul>
+                <p class="text-xs text-on-surface-variant dark:text-slate-400 mt-1" data-i18n="planBasicPriceSub">/ 7 ngày</p>
               </div>
 
-              <div
-                class="mt-8 pt-4 border-t border-outline-variant/5 text-center"
-              >
-                {% if current_plan == 'basic' %}
+              <hr class="border-outline-variant/10 dark:border-slate-800 my-4">
+
+              <ul class="space-y-3.5 body-md text-on-surface-variant dark:text-slate-300">
+                <li class="flex items-start gap-2.5 text-sm font-medium text-on-surface dark:text-slate-200">
+                  <span class="feature-icon bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400" aria-hidden="true">
+                    <span class="material-symbols-outlined text-[13px] font-bold">check</span>
+                  </span>
+                  <span data-i18n="scanLimit50">50 lượt nhận diện AI</span>
+                </li>
+                <li class="flex items-start gap-2.5 text-sm">
+                  <span class="feature-icon bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400" aria-hidden="true">
+                    <span class="material-symbols-outlined text-[13px] font-bold">check</span>
+                  </span>
+                  <span data-i18n="noAds">Không quảng cáo</span>
+                </li>
+                <li class="flex items-start gap-2.5 text-sm">
+                  <span class="feature-icon bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400" aria-hidden="true">
+                    <span class="material-symbols-outlined text-[13px] font-bold">check</span>
+                  </span>
+                  <span data-i18n="suitableLight">Phù hợp nhu cầu nhẹ</span>
+                </li>
+              </ul>
+            </div>
+
+            <div class="mt-8 pt-4 border-t border-outline-variant/5 dark:border-slate-800 text-center">
+              {% if active_plan == 'basic' %}
                 <button
-                  class="w-full py-2.5 bg-blue-100/50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 rounded-lg label-sm font-semibold cursor-not-allowed border border-blue-200 dark:border-blue-900/50"
+                  class="w-full py-2.5 bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 rounded-lg label-sm font-semibold border border-blue-200 dark:border-blue-900/50"
+                  type="button"
+                  data-plan-btn="basic"
+                  data-action-type="renew"
+                >
+                  <span data-i18n="renewBtn">Gia hạn</span>
+                </button>
+              {% elif active_plan in ['pro', 'enterprise'] %}
+                <button
+                  class="w-full py-2.5 bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 rounded-lg label-sm font-semibold cursor-not-allowed border border-outline-variant/20 dark:border-slate-700"
                   disabled
                   type="button"
-                  data-i18n="currentPlan"
-                >
-                  <span data-i18n="currentPlan">Gói hiện tại</span>
-                </button>
-                <p
-                  class="text-[11px] text-on-surface-variant/70 mt-2 flex items-center justify-center gap-1"
-                >
-                  <span
-                    class="material-symbols-outlined text-[13px]"
-                    aria-hidden="true"
-                    >info</span
-                  ><span data-i18n="basicPlanActive"
-                    >Gói Basic đang hoạt động</span
-                  >
-                </p>
-                {% elif current_plan in ['pro', 'enterprise'] %}
+                  data-i18n="cannotDowngradeBtn"
+                >Không thể hạ gói</button>
+              {% else %}
                 <button
-                  class="w-full py-2.5 bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 rounded-lg label-sm font-semibold cursor-not-allowed border border-outline-variant/20"
-                  disabled
+                  class="w-full py-2.5 bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/50 dark:hover:bg-blue-900 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-900/50 rounded-lg label-sm font-bold transition-all active:scale-95 duration-100"
                   type="button"
-                  data-i18n="cannotDowngrade"
+                  data-plan-btn="basic"
+                  data-action-type="upgrade"
                 >
-                  <span data-i18n="cannotDowngrade">Không thể hạ cấp</span>
+                  <span data-i18n="upgradeBtn">Nâng cấp</span>
                 </button>
-                <p
-                  class="text-[11px] text-red-600 dark:text-red-400 mt-2 flex items-center justify-center gap-1 leading-snug"
-                >
-                  <span
-                    class="material-symbols-outlined text-[13px] shrink-0"
-                    aria-hidden="true"
-                    >warning</span
-                  ><span data-i18n="usingHigherPlan"
-                    >Đang dùng gói cấp cao hơn</span
-                  >
-                </p>
-                {% else %}
-                <button
-                  class="w-full py-2.5 bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-900/50 rounded-lg label-sm font-bold hover:bg-blue-100 dark:hover:bg-blue-900 transition-colors active:scale-95 duration-100"
-                  type="button"
-                  data-plan="basic"
-                  data-i18n="register"
-                >
-                  <span data-i18n="register">Đăng ký</span>
-                </button>
-                {% endif %}
+              {% endif %}
+            </div>
+          </article>
+
+          <!-- Gói: Pro (Khuyên dùng) -->
+          <article
+            id="card-pro"
+            class="pricing-card bg-surface-container-lowest dark:bg-slate-900 p-6 rounded-2xl flex flex-col justify-between border-2 border-primary/45 dark:border-primary/60 shadow-md min-h-[500px] relative animate-fade-in delay-200"
+          >
+            <div class="card-accent-bar bg-gradient-to-r from-blue-600 to-indigo-650"></div>
+            <span
+              class="badge-recommended absolute top-3 right-3 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider"
+              data-i18n="recommended"
+            >Đề xuất</span>
+            <div class="pt-2">
+              <div class="flex justify-between items-start mb-4">
+                <div>
+                  <h2 class="text-2xl font-bold text-primary dark:text-blue-400">Pro</h2>
+                  <p class="text-xs text-on-surface-variant dark:text-slate-400 mt-1" data-i18n="planProSub">Tối ưu & phổ biến nhất</p>
+                </div>
+                <div class="w-10 h-10 rounded-xl bg-primary/10 dark:bg-primary/20 flex items-center justify-center text-primary dark:text-blue-400">
+                  <span class="material-symbols-outlined text-[24px]">workspace_premium</span>
+                </div>
               </div>
-            </article>
-
-            <!-- Gói: Pro (Highlight) -->
-            <article
-              class="pricing-card bg-surface-container-lowest dark:bg-slate-900 p-5 rounded-xl flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[460px] pro-highlight animate-fade-in delay-200"
-            >
-              <div
-                class="card-accent-bar bg-gradient-to-r from-blue-600 to-indigo-600"
-              ></div>
-              <span
-                class="badge-recommended absolute top-3 right-3 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider"
-                data-i18n="recommended"
-                >Khuyên dùng</span
-              >
-              <div class="pt-2">
-                <div class="flex justify-between items-start mb-4">
-                  <div>
-                    <h2
-                      class="text-xl font-bold text-primary dark:text-blue-400"
-                    >
-                      Pro
-                    </h2>
-                    <p
-                      class="text-xs text-on-surface-variant mt-1"
-                      data-i18n="planProSub"
-                    >
-                      <span data-i18n="planProSub">Tối ưu &amp; phổ biến nhất</span>
-                    </p>
-                  </div>
-                  <div
-                    class="w-9 h-9 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center text-primary dark:text-blue-400"
-                  >
-                    <span
-                      class="material-symbols-outlined text-[20px]"
-                      aria-hidden="true"
-                      >workspace_premium</span
-                    >
-                  </div>
+              
+              <div class="my-6">
+                <div class="flex items-baseline">
+                  <span class="text-3xl font-extrabold text-on-surface dark:text-slate-100 price-display" data-i18n="planProPrice">5.000đ</span>
                 </div>
-                <div class="my-6">
-                  <span
-                    class="text-3xl font-extrabold text-on-surface price-display"
-                    data-i18n="planProPrice"
-                    >5.000đ</span
-                  >
-                  <p
-                    class="text-xs text-on-surface-variant mt-1"
-                    data-i18n="planProPriceSub"
-                  >
-                    <span data-i18n="planProPriceSub">/ 30 ngày sử dụng</span>
-                  </p>
-                </div>
-
-                <hr class="border-outline-variant/10 my-4">
-
-                <ul
-                  class="space-y-3 body-md text-on-surface-variant"
-                >
-                  <li
-                    class="flex items-start gap-2 text-sm font-semibold text-on-surface"
-                  >
-                    <span
-                      class="feature-icon bg-primary/10 text-primary dark:text-blue-400"
-                      aria-hidden="true"
-                    >
-                      <span
-                        class="material-symbols-outlined text-[14px] font-bold"
-                        >check</span
-                      >
-                    </span>
-                    <span data-i18n-html="planProLimitDesc"><strong>200 lượt</strong> nhận diện</span>
-                  </li>
-                  <li
-                    class="flex items-start gap-2 text-sm font-semibold text-on-surface"
-                  >
-                    <span
-                      class="feature-icon bg-primary/10 text-primary dark:text-blue-400"
-                      aria-hidden="true"
-                    >
-                      <span
-                        class="material-symbols-outlined text-[14px] font-bold"
-                        >check</span
-                      >
-                    </span>
-                    <span data-i18n="prioritySpeed">Ưu tiên tốc độ xử lý</span>
-                  </li>
-                  <li class="flex items-start gap-2 text-sm">
-                    <span
-                      class="feature-icon bg-primary/10 text-primary dark:text-blue-400"
-                      aria-hidden="true"
-                    >
-                      <span
-                        class="material-symbols-outlined text-[14px] font-bold"
-                        >check</span
-                      >
-                    </span>
-                    <span data-i18n="adFreeComfort"
-                      >Không quảng cáo, dùng thoải mái</span
-                    >
-                  </li>
-                </ul>
+                <p class="text-xs text-on-surface-variant dark:text-slate-400 mt-1" data-i18n="planProPriceSub">/ 30 ngày</p>
               </div>
 
-              <div
-                class="mt-8 pt-4 border-t border-outline-variant/5 text-center"
-              >
-                {% if current_plan == 'pro' %}
+              <hr class="border-outline-variant/10 dark:border-slate-800 my-4">
+
+              <ul class="space-y-3.5 body-md text-on-surface-variant dark:text-slate-300">
+                <li class="flex items-start gap-2.5 text-sm font-semibold text-on-surface dark:text-slate-200">
+                  <span class="feature-icon bg-primary/10 text-primary dark:text-blue-400" aria-hidden="true">
+                    <span class="material-symbols-outlined text-[13px] font-bold">check</span>
+                  </span>
+                  <span data-i18n="scanLimit200">200 lượt nhận diện AI</span>
+                </li>
+                <li class="flex items-start gap-2.5 text-sm font-semibold text-on-surface dark:text-slate-200">
+                  <span class="feature-icon bg-primary/10 text-primary dark:text-blue-400" aria-hidden="true">
+                    <span class="material-symbols-outlined text-[13px] font-bold">check</span>
+                  </span>
+                  <span data-i18n="prioritySpeed">Ưu tiên tốc độ xử lý</span>
+                </li>
+                <li class="flex items-start gap-2.5 text-sm">
+                  <span class="feature-icon bg-primary/10 text-primary dark:text-blue-400" aria-hidden="true">
+                    <span class="material-symbols-outlined text-[13px] font-bold">check</span>
+                  </span>
+                  <span data-i18n="noAds">Không quảng cáo</span>
+                </li>
+                <li class="flex items-start gap-2.5 text-sm">
+                  <span class="feature-icon bg-primary/10 text-primary dark:text-blue-400" aria-hidden="true">
+                    <span class="material-symbols-outlined text-[13px] font-bold">check</span>
+                  </span>
+                  <span data-i18n="adFreeComfort">Tính năng nâng cao cấp</span>
+                </li>
+              </ul>
+            </div>
+
+            <div class="mt-8 pt-4 border-t border-outline-variant/5 dark:border-slate-800 text-center">
+              {% if active_plan == 'pro' %}
                 <button
-                  class="w-full py-2.5 bg-blue-100/50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 rounded-lg label-sm font-semibold cursor-not-allowed border border-blue-200 dark:border-blue-900/50"
+                  class="w-full py-2.5 bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 rounded-lg label-sm font-semibold border border-blue-200 dark:border-blue-900/50"
+                  type="button"
+                  data-plan-btn="pro"
+                  data-action-type="renew"
+                >
+                  <span data-i18n="renewBtn">Gia hạn</span>
+                </button>
+              {% elif active_plan == 'enterprise' %}
+                <button
+                  class="w-full py-2.5 bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 rounded-lg label-sm font-semibold cursor-not-allowed border border-outline-variant/20 dark:border-slate-700"
                   disabled
                   type="button"
-                  data-i18n="currentPlan"
-                >
-                  <span data-i18n="currentPlan">Gói hiện tại</span>
-                </button>
-                <p
-                  class="text-[11px] text-on-surface-variant/70 mt-2 flex items-center justify-center gap-1"
-                >
-                  <span
-                    class="material-symbols-outlined text-[13px]"
-                    aria-hidden="true"
-                    >info</span
-                  ><span data-i18n="proPlanActive">Gói Pro đang hoạt động</span>
-                </p>
-                {% elif current_plan == 'enterprise' %}
-                <button
-                  class="w-full py-2.5 bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 rounded-lg label-sm font-semibold cursor-not-allowed border border-outline-variant/20"
-                  disabled
-                  type="button"
-                  data-i18n="cannotDowngrade"
-                >
-                  <span data-i18n="cannotDowngrade">Không thể hạ cấp</span>
-                </button>
-                <p
-                  class="text-[11px] text-red-600 dark:text-red-400 mt-2 flex items-center justify-center gap-1 leading-snug"
-                >
-                  <span
-                    class="material-symbols-outlined text-[13px] shrink-0"
-                    aria-hidden="true"
-                    >warning</span
-                  ><span data-i18n="usingHigherPlan"
-                    >Đang dùng gói cấp cao hơn</span
-                  >
-                </p>
-                {% else %}
+                  data-i18n="cannotDowngradeBtn"
+                >Không thể hạ gói</button>
+              {% else %}
                 <button
                   class="w-full py-2.5 bg-primary hover:bg-blue-700 text-white rounded-lg label-sm font-bold transition-all shadow-sm hover:shadow-md active:scale-95 duration-100"
                   type="button"
-                  data-plan="pro"
-                  data-i18n="register"
+                  data-plan-btn="pro"
+                  data-action-type="upgrade"
                 >
-                  <span data-i18n="register">Đăng ký</span>
+                  <span data-i18n="upgradeBtn">Nâng cấp</span>
                 </button>
-                {% endif %}
-              </div>
-            </article>
+              {% endif %}
+            </div>
+          </article>
 
-            <!-- Gói: Enterprise -->
-            <article
-              class="pricing-card bg-surface-container-lowest dark:bg-slate-900 p-5 rounded-xl flex flex-col justify-between border border-outline-variant/30 shadow-sm min-h-[460px] animate-fade-in delay-250"
-            >
-              <div class="card-accent-bar bg-amber-500"></div>
-              <div class="pt-2">
-                <div class="flex justify-between items-start mb-4">
-                  <div>
-                    <h2
-                      class="text-xl font-bold text-on-surface"
-                      data-i18n="planEntTitle"
-                    >
-                      <span data-i18n="planEntTitle">Doanh nghiệp</span>
-                    </h2>
-                    <p
-                      class="text-xs text-on-surface-variant mt-1"
-                      data-i18n="planEntSub"
-                    >
-                      <span data-i18n="planEntSub">Nhu cầu cực lớn</span>
-                    </p>
-                  </div>
-                  <div
-                    class="w-9 h-9 rounded-lg bg-amber-500/10 dark:bg-amber-500/20 flex items-center justify-center text-amber-600 dark:text-amber-400"
-                  >
-                    <span
-                      class="material-symbols-outlined text-[20px]"
-                      aria-hidden="true"
-                      >domain</span
-                    >
-                  </div>
+          <!-- Gói: Enterprise -->
+          <article
+            id="card-enterprise"
+            class="pricing-card bg-surface-container-lowest dark:bg-slate-900 p-6 rounded-2xl flex flex-col justify-between border border-outline-variant/30 dark:border-slate-800 shadow-sm min-h-[500px] animate-fade-in delay-250"
+          >
+            <div class="card-accent-bar bg-amber-500"></div>
+            <div class="pt-2">
+              <div class="flex justify-between items-start mb-4">
+                <div>
+                  <h2 class="text-2xl font-bold text-on-surface dark:text-slate-100" data-i18n="planEntTitle">Doanh nghiệp</h2>
+                  <p class="text-xs text-on-surface-variant dark:text-slate-400 mt-1" data-i18n="planEntSub">Hiệu suất cực cao</p>
                 </div>
-                <div class="my-6">
-                  <span
-                    class="text-3xl font-extrabold text-on-surface price-display"
-                    data-i18n="planEntPrice"
-                    >15.000đ</span
-                  >
-                  <p
-                    class="text-xs text-on-surface-variant mt-1"
-                    data-i18n="planEntPriceSub"
-                  >
-                    <span data-i18n="planEntPriceSub">/ 90 ngày sử dụng</span>
-                  </p>
+                <div class="w-10 h-10 rounded-xl bg-amber-500/10 dark:bg-amber-500/20 flex items-center justify-center text-amber-600 dark:text-amber-400">
+                  <span class="material-symbols-outlined text-[24px]">crown</span>
                 </div>
-
-                <hr class="border-outline-variant/10 my-4">
-
-                <ul
-                  class="space-y-3 body-md text-on-surface-variant"
-                >
-                  <li
-                    class="flex items-start gap-2 text-sm font-semibold text-on-surface"
-                  >
-                    <span
-                      class="feature-icon bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400"
-                      aria-hidden="true"
-                    >
-                      <span
-                        class="material-symbols-outlined text-[14px] font-bold"
-                        >check</span
-                      >
-                    </span>
-                    <span data-i18n-html="planEntLimitDesc"><strong>Không giới hạn</strong> nhận diện</span>
-                  </li>
-                  <li class="flex items-start gap-2 text-sm">
-                    <span
-                      class="feature-icon bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400"
-                      aria-hidden="true"
-                    >
-                      <span
-                        class="material-symbols-outlined text-[14px] font-bold"
-                        >check</span
-                      >
-                    </span>
-                    <span data-i18n="vipBandwidth"
-                      >Tối ưu hóa băng thông &amp; VIP</span
-                    >
-                  </li>
-                  <li class="flex items-start gap-2 text-sm">
-                    <span
-                      class="feature-icon bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400"
-                      aria-hidden="true"
-                    >
-                      <span
-                        class="material-symbols-outlined text-[14px] font-bold"
-                        >check</span
-                      >
-                    </span>
-                    <span data-i18n="prioritySupport"
-                      >Hỗ trợ ưu tiên hàng đầu</span
-                    >
-                  </li>
-                </ul>
+              </div>
+              
+              <div class="my-6">
+                <div class="flex items-baseline">
+                  <span class="text-3xl font-extrabold text-on-surface dark:text-slate-100 price-display" data-i18n="planEntPrice">15.000đ</span>
+                </div>
+                <p class="text-xs text-on-surface-variant dark:text-slate-400 mt-1" data-i18n="planEntPriceSub">/ 90 ngày</p>
               </div>
 
-              <div
-                class="mt-8 pt-4 border-t border-outline-variant/5 text-center"
-              >
-                {% if current_plan == 'enterprise' %}
-                <button
-                  class="w-full py-2.5 bg-blue-100/50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 rounded-lg label-sm font-semibold cursor-not-allowed border border-blue-200 dark:border-blue-900/50"
-                  disabled
-                  type="button"
-                  data-i18n="currentPlan"
-                >
-                  <span data-i18n="currentPlan">Gói hiện tại</span>
-                </button>
-                <p
-                  class="text-[11px] text-on-surface-variant/70 mt-2 flex items-center justify-center gap-1"
-                >
-                  <span
-                    class="material-symbols-outlined text-[13px]"
-                    aria-hidden="true"
-                    >info</span
-                  ><span data-i18n="entPlanActive"
-                    >Gói Enterprise đang hoạt động</span
-                  >
-                </p>
-                {% else %}
-                <button
-                  class="w-full py-2.5 bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-900/50 rounded-lg label-sm font-bold hover:bg-amber-100 dark:hover:bg-amber-900 transition-colors active:scale-95 duration-100"
-                  type="button"
-                  data-plan="enterprise"
-                  data-i18n="register"
-                >
-                  <span data-i18n="register">Đăng ký</span>
-                </button>
-                {% endif %}
-              </div>
-            </article>
-          </section>
+              <hr class="border-outline-variant/10 dark:border-slate-800 my-4">
 
-          <!-- ── Confirmation Section ── -->
+              <ul class="space-y-3.5 body-md text-on-surface-variant dark:text-slate-300">
+                <li class="flex items-start gap-2.5 text-sm font-semibold text-on-surface dark:text-slate-200">
+                  <span class="feature-icon bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400" aria-hidden="true">
+                    <span class="material-symbols-outlined text-[13px] font-bold">check</span>
+                  </span>
+                  <span data-i18n="scanLimitUnlimit">Không giới hạn lượt nhận diện</span>
+                </li>
+                <li class="flex items-start gap-2.5 text-sm font-semibold text-on-surface dark:text-slate-200">
+                  <span class="feature-icon bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400" aria-hidden="true">
+                    <span class="material-symbols-outlined text-[13px] font-bold">check</span>
+                  </span>
+                  <span data-i18n="vipBandwidth">Băng thông tối ưu & VIP</span>
+                </li>
+                <li class="flex items-start gap-2.5 text-sm">
+                  <span class="feature-icon bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400" aria-hidden="true">
+                    <span class="material-symbols-outlined text-[13px] font-bold">check</span>
+                  </span>
+                  <span data-i18n="prioritySupport">Hỗ trợ ưu tiên cao nhất</span>
+                </li>
+                <li class="flex items-start gap-2.5 text-sm">
+                  <span class="feature-icon bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400" aria-hidden="true">
+                    <span class="material-symbols-outlined text-[13px] font-bold">check</span>
+                  </span>
+                  <span data-i18n="prioritySupport">Tính năng nâng cao cấp nhất</span>
+                </li>
+              </ul>
+            </div>
+
+            <div class="mt-8 pt-4 border-t border-outline-variant/5 dark:border-slate-800 text-center">
+              {% if active_plan == 'enterprise' %}
+                <button
+                  class="w-full py-2.5 bg-blue-550/10 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 rounded-lg label-sm font-semibold border border-blue-200 dark:border-blue-900/50"
+                  type="button"
+                  data-plan-btn="enterprise"
+                  data-action-type="renew"
+                >
+                  <span data-i18n="renewBtn">Gia hạn</span>
+                </button>
+              {% else %}
+                <button
+                  class="w-full py-2.5 bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/50 dark:hover:bg-amber-900 text-amber-600 dark:text-amber-450 border border-amber-200 dark:border-amber-900/50 rounded-lg label-sm font-bold transition-all active:scale-95 duration-100"
+                  type="button"
+                  data-plan-btn="enterprise"
+                  data-action-type="upgrade"
+                >
+                  <span data-i18n="upgradeBtn">Nâng cấp</span>
+                </button>
+              {% endif %}
+            </div>
+          </article>
+        </section>
+
+        <!-- ── Comparison Table Section ── -->
+        <section class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 dark:border-slate-800 rounded-2xl p-6 mb-10 shadow-sm animate-fade-in delay-300">
+          <div class="flex items-center gap-3 mb-6">
+            <span class="material-symbols-outlined text-primary dark:text-blue-400 text-[24px]">compare_arrows</span>
+            <h3 class="text-lg font-bold text-on-surface dark:text-slate-100" data-i18n="comparisonTableTitle">So sánh các gói dịch vụ</h3>
+          </div>
+          
+          <div class="overflow-x-auto w-full">
+            <table class="w-full border-collapse text-left text-sm">
+              <thead>
+                <tr class="border-b border-outline-variant/20 dark:border-slate-800 text-on-surface-variant dark:text-slate-400 font-semibold">
+                  <th class="pb-3 pr-4 font-semibold" data-i18n="compFeature">Tính năng</th>
+                  <th class="pb-3 px-4 font-semibold text-center">Free</th>
+                  <th class="pb-3 px-4 font-semibold text-center text-blue-600 dark:text-blue-400">Basic</th>
+                  <th class="pb-3 px-4 font-semibold text-center text-primary dark:text-blue-400 relative">
+                    Pro
+                    <span class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-primary text-white text-[8px] px-1.5 py-0.5 rounded-full font-bold uppercase" data-i18n="recommended">Đề xuất</span>
+                  </th>
+                  <th class="pb-3 pl-4 font-semibold text-center text-amber-500 dark:text-amber-400">Enterprise</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-outline-variant/10 dark:divide-slate-800/50 text-on-surface dark:text-slate-350">
+                <tr>
+                  <td class="py-3.5 pr-4 font-medium" data-i18n="compAIModel">Lượt nhận diện AI</td>
+                  <td class="py-3.5 px-4 text-center">10 lượt</td>
+                  <td class="py-3.5 px-4 text-center">50 lượt</td>
+                  <td class="py-3.5 px-4 text-center font-semibold text-primary dark:text-blue-400 bg-primary/5 dark:bg-primary/10">200 lượt</td>
+                  <td class="py-3.5 pl-4 text-center font-bold text-amber-500 dark:text-amber-400" data-i18n="compUnlimited">Không giới hạn</td>
+                </tr>
+                <tr>
+                  <td class="py-3.5 pr-4 font-medium" data-i18n="compDuration">Thời hạn sử dụng</td>
+                  <td class="py-3.5 px-4 text-center" data-i18n="planFreePriceSub">Miễn phí</td>
+                  <td class="py-3.5 px-4 text-center">7 ngày</td>
+                  <td class="py-3.5 px-4 text-center bg-primary/5 dark:bg-primary/10">30 ngày</td>
+                  <td class="py-3.5 pl-4 text-center">90 ngày</td>
+                </tr>
+                <tr>
+                  <td class="py-3.5 pr-4 font-medium" data-i18n="compAds">Quảng cáo</td>
+                  <td class="py-3.5 px-4 text-center text-slate-500" data-i18n="compYes">Có</td>
+                  <td class="py-3.5 px-4 text-center text-emerald-500 font-semibold" data-i18n="compNo">Không</td>
+                  <td class="py-3.5 px-4 text-center text-emerald-500 font-semibold bg-primary/5 dark:bg-primary/10" data-i18n="compNo">Không</td>
+                  <td class="py-3.5 pl-4 text-center text-emerald-500 font-semibold" data-i18n="compNo">Không</td>
+                </tr>
+                <tr>
+                  <td class="py-3.5 pr-4 font-medium" data-i18n="compSpeed">Tốc độ xử lý</td>
+                  <td class="py-3.5 px-4 text-center text-slate-500" data-i18n="compBasic">Cơ bản</td>
+                  <td class="py-3.5 px-4 text-center text-slate-500" data-i18n="compBasic">Cơ bản</td>
+                  <td class="py-3.5 px-4 text-center font-semibold text-primary dark:text-blue-400 bg-primary/5 dark:bg-primary/10" data-i18n="compPriority">Ưu tiên</td>
+                  <td class="py-3.5 pl-4 text-center font-bold text-amber-500 dark:text-amber-400" data-i18n="compVip">VIP</td>
+                </tr>
+                <tr>
+                  <td class="py-3.5 pr-4 font-medium" data-i18n="compSupport">Hỗ trợ</td>
+                  <td class="py-3.5 px-4 text-center text-slate-500" data-i18n="compBasic">Cơ bản</td>
+                  <td class="py-3.5 px-4 text-center" data-i18n="compEmail">Email</td>
+                  <td class="py-3.5 px-4 text-center font-semibold text-primary dark:text-blue-400 bg-primary/5 dark:bg-primary/10" data-i18n="compPriority">Ưu tiên</td>
+                  <td class="py-3.5 pl-4 text-center font-bold text-amber-500 dark:text-amber-400" data-i18n="compHighestSupport">Ưu tiên cao nhất</td>
+                </tr>
+                <tr>
+                  <td class="py-3.5 pr-4 font-medium" data-i18n="compAdvancedFeatures">Tính năng nâng cao</td>
+                  <td class="py-3.5 px-4 text-center text-slate-500" data-i18n="compLimited">Giới hạn</td>
+                  <td class="py-3.5 px-4 text-center text-slate-600 dark:text-slate-400" data-i18n="compSomeFeatures">Một số tính năng</td>
+                  <td class="py-3.5 px-4 text-center font-semibold text-primary dark:text-blue-400 bg-primary/5 dark:bg-primary/10" data-i18n="compFullFeatures">Đầy đủ tính năng</td>
+                  <td class="py-3.5 pl-4 text-center font-bold text-amber-500 dark:text-amber-400" data-i18n="compFullAdvancedFeatures">Đầy đủ + nâng cao</td>
+                </tr>
+                <tr>
+                  <td class="py-3.5 pr-4 font-medium" data-i18n="compSuitability">Phù hợp với</td>
+                  <td class="py-3.5 px-4 text-center text-slate-500" data-i18n="compTrial">Trải nghiệm</td>
+                  <td class="py-3.5 px-4 text-center" data-i18n="compPersonal">Người dùng cá nhân</td>
+                  <td class="py-3.5 px-4 text-center font-semibold text-primary dark:text-blue-400 bg-primary/5 dark:bg-primary/10" data-i18n="compPowerUser">Người dùng thường xuyên</td>
+                  <td class="py-3.5 pl-4 text-center font-bold text-amber-500 dark:text-amber-400" data-i18n="compEnterprise">Doanh nghiệp / Chuyên sâu</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- ── Checkout Area (VietQR Card) & FAQ Section ── -->
+        <div class="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-8 items-start mb-10">
+          
+          <!-- Column Left: Inline Confirm Payment (Hidden by default) -->
           <section
             id="checkout"
-            class="w-full bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-xl p-6 md:p-8 shadow-sm animate-fade-in delay-300"
+            style="display: none;"
+            class="w-full bg-surface-container-lowest dark:bg-slate-900 border-2 border-primary/30 dark:border-slate-800 rounded-2xl p-6 md:p-8 shadow-md relative overflow-hidden transition-all duration-300"
             data-purpose="checkout-section"
           >
-            <div
-              class="flex items-center gap-3.5 mb-6 text-primary dark:text-blue-400"
-            >
-              <div
-                class="w-10 h-10 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center text-primary dark:text-blue-400"
-              >
-                <span class="material-symbols-outlined" aria-hidden="true"
-                  >shopping_cart_checkout</span
-                >
+            <div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-2xl pointer-events-none"></div>
+            
+            <div class="flex items-center gap-3.5 mb-6 text-primary dark:text-blue-400">
+              <div class="w-10 h-10 rounded-xl bg-primary/10 dark:bg-primary/20 flex items-center justify-center text-primary dark:text-blue-400">
+                <span class="material-symbols-outlined text-[24px]">shopping_cart_checkout</span>
               </div>
               <div>
-                <h2
-                  class="text-xl font-bold text-on-surface"
-                  data-i18n="confirmPaymentTitle"
-                >
-                  <span data-i18n="confirmPaymentTitle"
-                    >Xác nhận thanh toán</span
-                  >
-                </h2>
-                <p
-                  class="text-xs text-on-surface-variant mt-0.5"
-                  data-i18n="confirmPaymentSub"
-                >
-                  <span data-i18n="confirmPaymentSub"
-                    >Vui lòng kiểm tra gói dịch vụ đã chọn và tiếp tục</span
-                  >
-                </p>
+                <h2 class="text-xl font-bold text-on-surface dark:text-slate-100" data-i18n="confirmPaymentTitle">Xác nhận thanh toán</h2>
+                <p class="text-xs text-on-surface-variant dark:text-slate-400 mt-0.5" data-i18n="confirmPaymentSub">Vui lòng chuyển khoản đúng số tiền để kích hoạt gói</p>
               </div>
             </div>
 
-            <form
-              method="post"
-              action="/predict/checkout"
-              id="checkoutForm"
-            >
-              <input
-                type="hidden"
-                name="csrf_token"
-                value="{{ csrf_token() }}"
-              >
-              <input type="hidden" name="payment_method" value="qr">
+            <!-- Gói đã chọn Summary Banner -->
+            <div class="bg-slate-50 dark:bg-slate-950 p-4 rounded-xl border border-outline-variant/20 dark:border-slate-800 mb-6 flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center text-primary dark:text-blue-400">
+                  <span class="material-symbols-outlined text-[20px]" id="checkout-plan-icon">workspace_premium</span>
+                </div>
+                <div>
+                  <p class="text-[11px] text-on-surface-variant dark:text-slate-400 font-medium" data-i18n="selectedPlanLabel">Bạn đã chọn gói</p>
+                  <h4 class="text-sm font-bold text-on-surface dark:text-slate-200 capitalize mt-0.5" id="checkout-plan-name">Pro</h4>
+                </div>
+              </div>
+              <div class="text-right">
+                <span class="text-base font-extrabold text-primary dark:text-blue-400" id="checkout-plan-price">5.000đ</span>
+                <span class="text-[10px] text-on-surface-variant dark:text-slate-400 block" id="checkout-plan-duration">/ 30 ngày</span>
+              </div>
+            </div>
 
-              <div
-                class="grid grid-cols-1 md:grid-cols-[1.2fr_1fr] gap-6 md:gap-8 items-start"
-              >
-                <!-- Cột trái: Form chọn gói -->
-                <div class="space-y-5">
-                  <div class="space-y-2">
-                    <label
-                      class="block label-sm font-semibold text-on-surface-variant"
-                      for="plan"
-                      data-i18n="upgradeLabel"
-                      ><span data-i18n="upgradeLabel"
-                        >Gói nâng cấp đăng ký</span
-                      ></label
-                    >
-                    <div class="relative">
-                      <select
-                        class="block w-full bg-slate-50 dark:bg-slate-950 border border-outline-variant/35 rounded-lg px-4 py-3.5 pr-10 label-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent cursor-pointer appearance-none bg-none transition-all"
-                        id="plan"
-                        name="plan"
-                        required
-                        data-current-plan="{{ current_plan or 'free' }}"
-                      >
-                        <option value="pro" data-i18n="optPro">
-                          <span data-i18n="optPro"
-                            >Chuyên nghiệp (Pro) — 5.000đ / 30 ngày / 200
-                            lượt</span
-                          >
-                        </option>
-                        <option value="basic" data-i18n="optBasic">
-                          <span data-i18n="optBasic"
-                            >Cơ bản (Basic) — 1.000đ / 7 ngày / 50 lượt</span
-                          >
-                        </option>
-                        <option value="enterprise" data-i18n="optEnterprise">
-                          <span data-i18n="optEnterprise"
-                            >Doanh nghiệp (Enterprise) — 15.000đ / 90 ngày /
-                            Không giới hạn</span
-                          >
-                        </option>
-                      </select>
-                      <div
-                        class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-on-surface-variant"
-                      >
-                        <span
-                          class="material-symbols-outlined text-[20px]"
-                          aria-hidden="true"
-                          >keyboard_arrow_down</span
-                        >
-                      </div>
-                    </div>
+            <!-- VietQR Instructions and Payment Credentials -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+              
+              <!-- VietQR credentials & manual copy fields -->
+              <div class="space-y-4 text-sm text-on-surface dark:text-slate-350">
+                <div class="bg-slate-50 dark:bg-slate-950/70 p-3 rounded-lg border border-outline-variant/15 dark:border-slate-800/80">
+                  <div class="flex justify-between items-center mb-1">
+                    <span class="text-xs text-on-surface-variant dark:text-slate-400" data-i18n="bankLabel">Ngân hàng</span>
+                    <button type="button" class="text-primary hover:text-blue-600 text-xs flex items-center gap-0.5 active:scale-90 transition-transform" onclick="copyText('checkout-bank-val')">
+                      <span class="material-symbols-outlined text-[14px]">content_copy</span>
+                    </button>
                   </div>
-
-                  <div
-                    class="flex items-start gap-2.5 text-xs text-on-surface-variant bg-slate-50 dark:bg-slate-950 p-4 rounded-lg border border-outline-variant/20 leading-relaxed"
-                  >
-                    <span
-                      class="material-symbols-outlined text-primary dark:text-blue-400 text-[18px] mt-0.5"
-                      aria-hidden="true"
-                      >info</span
-                    >
-                    <span data-i18n-html="gatewayInfo"
-                      >Cổng <strong>VietQR tự động</strong>. Bạn chỉ cần quét mã
-                      QR được hiển thị và chuyển đúng số tiền cùng nội dung
-                      chuyển khoản để hệ thống tự động duyệt.</span
-                    >
-                  </div>
+                  <strong class="text-sm font-bold text-on-surface dark:text-white" id="checkout-bank-val">MB Bank</strong>
                 </div>
 
-                <!-- Cột phải: Tóm tắt đơn hàng (Order Summary Card) -->
-                <div
-                  class="bg-slate-50 dark:bg-slate-950/50 border border-outline-variant/20 rounded-xl p-5 space-y-4"
-                >
-                  <div
-                    class="flex items-center justify-between border-b border-outline-variant/10 pb-3"
-                  >
-                    <h3
-                      class="font-bold text-sm text-on-surface uppercase tracking-wide"
-                      data-i18n="orderSummary"
-                    >
-                      <span data-i18n="orderSummary">Tóm tắt đơn hàng</span>
-                    </h3>
-                    <span
-                      class="px-2 py-0.5 text-[10px] font-bold rounded bg-primary/10 text-primary dark:text-blue-400"
-                      id="summary-badge"
-                      >PRO</span
-                    >
+                <div class="bg-slate-50 dark:bg-slate-950/70 p-3 rounded-lg border border-outline-variant/15 dark:border-slate-800/80">
+                  <div class="flex justify-between items-center mb-1">
+                    <span class="text-xs text-on-surface-variant dark:text-slate-400" data-i18n="accountNumberLabel">Số tài khoản</span>
+                    <button type="button" class="text-primary hover:text-blue-600 text-xs flex items-center gap-0.5 active:scale-90 transition-transform" onclick="copyText('checkout-account-val')">
+                      <span class="material-symbols-outlined text-[14px]">content_copy</span>
+                    </button>
                   </div>
+                  <strong class="text-sm font-bold text-on-surface dark:text-white tracking-wider" id="checkout-account-val">--</strong>
+                </div>
 
-                  <div class="space-y-2.5 text-sm">
-                    <div class="flex justify-between">
-                      <span
-                        class="text-on-surface-variant"
-                        data-i18n="planLabel"
-                        >Gói đăng ký:</span
-                      >
-                      <strong
-                        class="text-on-surface font-semibold"
-                        id="summary-name"
-                        data-i18n="planProName"
-                        ><span data-i18n="planProName"
-                          >Chuyên nghiệp (Pro)</span
-                        ></strong
-                      >
-                    </div>
-                    <div class="flex justify-between">
-                      <span
-                        class="text-on-surface-variant"
-                        data-i18n="durationLabel"
-                        >Thời hạn:</span
-                      >
-                      <span
-                        class="text-on-surface font-semibold"
-                        id="summary-duration"
-                        data-i18n="days30"
-                        >30 ngày</span
-                      >
-                    </div>
-                    <div class="flex justify-between">
-                      <span
-                        class="text-on-surface-variant"
-                        data-i18n="scanLimitLabel"
-                        >Lượt nhận diện:</span
-                      >
-                      <span
-                        class="text-on-surface font-semibold"
-                        id="summary-limit"
-                        data-i18n="planProLimit"
-                        >200 lượt</span
-                      >
-                    </div>
-                    <div
-                      class="border-t border-outline-variant/10 my-3 pt-3 flex justify-between items-baseline"
-                    >
-                      <span
-                        class="text-on-surface-variant font-semibold"
-                        data-i18n="totalPayLabel"
-                        >Tổng thanh toán:</span
-                      >
-                      <span
-                        class="text-2xl font-extrabold text-primary dark:text-blue-400"
-                        id="summary-price"
-                        data-i18n="planProPrice"
-                        >5.000đ</span
-                      >
-                    </div>
+                <div class="bg-slate-50 dark:bg-slate-950/70 p-3 rounded-lg border border-outline-variant/15 dark:border-slate-800/80">
+                  <div class="flex justify-between items-center mb-1">
+                    <span class="text-xs text-on-surface-variant dark:text-slate-400" data-i18n="accountNameLabel">Chủ tài khoản</span>
                   </div>
+                  <strong class="text-sm font-bold text-on-surface dark:text-white" id="checkout-holder-val">--</strong>
+                </div>
+
+                <div class="bg-slate-50 dark:bg-slate-950/70 p-3 rounded-lg border border-outline-variant/15 dark:border-slate-800/80">
+                  <div class="flex justify-between items-center mb-1">
+                    <span class="text-xs text-on-surface-variant dark:text-slate-400" data-i18n="totalPayLabel">Tổng thanh toán</span>
+                    <button type="button" class="text-primary hover:text-blue-600 text-xs flex items-center gap-0.5 active:scale-90 transition-transform" onclick="copyText('checkout-amount-raw-val')">
+                      <span class="material-symbols-outlined text-[14px]">content_copy</span>
+                    </button>
+                  </div>
+                  <strong class="text-lg font-extrabold text-primary dark:text-blue-400" id="checkout-amount-val">5,000đ</strong>
+                  <span class="hidden" id="checkout-amount-raw-val">5000</span>
+                </div>
+
+                <div class="bg-blue-50/50 dark:bg-blue-950/30 p-3 rounded-lg border border-primary/25">
+                  <div class="flex justify-between items-center mb-1">
+                    <span class="text-xs text-primary dark:text-blue-400 font-semibold" data-i18n="memoLabel">Nội dung chuyển khoản (Bắt buộc đúng)</span>
+                    <button type="button" class="text-primary hover:text-blue-600 text-xs flex items-center gap-0.5 active:scale-90 transition-transform" onclick="copyText('checkout-memo-val')">
+                      <span class="material-symbols-outlined text-[14px]">content_copy</span>
+                    </button>
+                  </div>
+                  <strong class="text-base font-extrabold text-primary dark:text-blue-400 tracking-wide select-all" id="checkout-memo-val">--</strong>
                 </div>
               </div>
 
-              <!-- Nút hành động -->
-              <div
-                class="flex flex-col md:flex-row justify-between items-center pt-6 mt-6 gap-4 border-t border-outline-variant/10"
-              >
-                <a
-                  class="w-full md:w-auto px-8 py-3 border border-outline-variant/40 rounded-lg label-sm font-semibold text-on-surface-variant hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-center active:scale-95 duration-100"
-                  href="{{ url_for('predict.upload_page') }}"
-                  data-i18n="back"
-                  ><span data-i18n="back">Quay lại</span></a
-                >
-                {% if current_plan == 'enterprise' %}
+              <!-- QR Code view column -->
+              <div class="flex flex-col items-center justify-center p-4 bg-slate-50 dark:bg-slate-950 rounded-xl border border-outline-variant/20 dark:border-slate-800 text-center space-y-3">
+                <span class="text-xs font-semibold text-on-surface-variant dark:text-slate-400" data-i18n="paymentQrTitle">Quét mã VietQR để thanh toán</span>
+                <div class="relative w-48 h-48 bg-white p-2 rounded-lg border border-outline-variant/20 flex items-center justify-center shadow-inner">
+                  <img id="checkout-qr-img" class="w-full h-full object-contain" src="" alt="VietQR Code" />
+                  <div id="checkout-qr-loader" class="absolute inset-0 bg-white/90 dark:bg-slate-950/90 flex items-center justify-center rounded-lg">
+                    <svg class="animate-spin h-8 w-8 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                  </div>
+                </div>
+                <p class="text-[10px] text-on-surface-variant dark:text-slate-400 leading-normal max-w-[200px]" data-i18n="paymentSecurityNote">
+                  Hệ thống tự động kích hoạt gói sau 1-3 phút khi nhận được giao dịch chính xác.
+                </p>
+              </div>
+
+            </div>
+
+            <!-- Action buttons form -->
+            <form method="post" action="/predict/payments/confirm-transfer" id="confirmForm" class="mt-6 pt-6 border-t border-outline-variant/15 dark:border-slate-800">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <input type="hidden" name="order_id" id="confirm-order-id" value="">
+              
+              <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
                 <button
-                  class="w-full md:w-auto bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 px-8 py-3 border border-transparent rounded-lg label-sm font-semibold flex items-center justify-center gap-2 cursor-not-allowed"
-                  disabled
                   type="button"
-                >
-                  <span
-                    class="material-symbols-outlined text-[20px]"
-                    aria-hidden="true"
-                    >verified</span
-                  ><span data-i18n="usingHighestPlan"
-                    >Đang dùng gói cao nhất</span
-                  >
-                </button>
-                {% else %}
+                  id="checkoutBackBtn"
+                  class="w-full sm:w-auto px-6 py-2.5 border border-outline-variant/40 dark:border-slate-700 rounded-lg label-sm font-semibold text-on-surface-variant dark:text-slate-350 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-center active:scale-95 duration-100"
+                  data-i18n="backBtn"
+                >Quay lại</button>
+
                 <button
-                  class="w-full md:w-auto bg-primary hover:bg-blue-700 text-white px-8 py-3 border border-transparent rounded-lg label-sm font-semibold flex items-center justify-center gap-2 transition-all shadow-sm hover:shadow-md active:scale-95 duration-100"
                   type="submit"
-                  id="payBtn"
+                  class="w-full sm:w-auto bg-primary hover:bg-blue-600 text-white px-8 py-2.5 rounded-lg label-sm font-bold flex items-center justify-center gap-2 transition-all shadow-sm hover:shadow-md active:scale-95 duration-100"
                 >
-                  <span
-                    class="material-symbols-outlined text-[20px]"
-                    aria-hidden="true"
-                    >qr_code_2</span
-                  ><span data-i18n="continuePayBtn">Tiếp tục thanh toán</span>
+                  <span class="material-symbols-outlined text-[18px]">verified</span>
+                  <span data-i18n="continuePayBtn">Tôi đã thanh toán</span>
                 </button>
-                {% endif %}
               </div>
             </form>
           </section>
+
+          <!-- Column Right: FAQ Accordions -->
+          <section class="space-y-4">
+            <h3 class="text-lg font-bold text-on-surface dark:text-slate-100 mb-2 flex items-center gap-2">
+              <span class="material-symbols-outlined text-primary dark:text-blue-400">help</span>
+              <span data-i18n="faqTitle">Câu hỏi thường gặp</span>
+            </h3>
+            
+            <div class="space-y-3">
+              <!-- FAQ Item 1 -->
+              <div class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/20 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm transition-all duration-200">
+                <button type="button" class="w-full py-4 px-5 text-left font-semibold text-sm text-on-surface dark:text-slate-100 flex justify-between items-center gap-4 hover:bg-surface-container-low/40 dark:hover:bg-slate-850 focus:outline-none" onclick="toggleFaq(this)">
+                  <span data-i18n="faq1Q">Thanh toán xong bao lâu được kích hoạt?</span>
+                  <span class="material-symbols-outlined text-on-surface-variant dark:text-slate-400 transition-transform duration-200 text-[20px]">keyboard_arrow_down</span>
+                </button>
+                <div class="faq-ans max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
+                  <div class="p-5 pt-0 text-sm text-on-surface-variant dark:text-slate-350 border-t border-outline-variant/5 dark:border-slate-800/40 leading-relaxed" data-i18n="faq1A">
+                    Hệ thống tự động kích hoạt thông qua cổng VietQR trong vòng 1-3 phút ngay khi nhận được giao dịch chuyển khoản chính xác nội dung.
+                  </div>
+                </div>
+              </div>
+
+              <!-- FAQ Item 2 -->
+              <div class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/20 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm transition-all duration-200">
+                <button type="button" class="w-full py-4 px-5 text-left font-semibold text-sm text-on-surface dark:text-slate-100 flex justify-between items-center gap-4 hover:bg-surface-container-low/40 dark:hover:bg-slate-850 focus:outline-none" onclick="toggleFaq(this)">
+                  <span data-i18n="faq2Q">Có thể nâng cấp khi đang dùng gói cũ không?</span>
+                  <span class="material-symbols-outlined text-on-surface-variant dark:text-slate-400 transition-transform duration-200 text-[20px]">keyboard_arrow_down</span>
+                </button>
+                <div class="faq-ans max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
+                  <div class="p-5 pt-0 text-sm text-on-surface-variant dark:text-slate-350 border-t border-outline-variant/5 dark:border-slate-800/40 leading-relaxed" data-i18n="faq2A">
+                    Có, bạn có thể nâng cấp lên gói cao hơn bất kỳ lúc nào. Lượt quét và thời hạn của gói mới sẽ được áp dụng ngay lập tức.
+                  </div>
+                </div>
+              </div>
+
+              <!-- FAQ Item 3 -->
+              <div class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/20 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm transition-all duration-200">
+                <button type="button" class="w-full py-4 px-5 text-left font-semibold text-sm text-on-surface dark:text-slate-100 flex justify-between items-center gap-4 hover:bg-surface-container-low/40 dark:hover:bg-slate-850 focus:outline-none" onclick="toggleFaq(this)">
+                  <span data-i18n="faq3Q">Có thể hủy hoặc hoàn tiền không?</span>
+                  <span class="material-symbols-outlined text-on-surface-variant dark:text-slate-400 transition-transform duration-200 text-[20px]">keyboard_arrow_down</span>
+                </button>
+                <div class="faq-ans max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
+                  <div class="p-5 pt-0 text-sm text-on-surface-variant dark:text-slate-350 border-t border-outline-variant/5 dark:border-slate-800/40 leading-relaxed" data-i18n="faq3A">
+                    Các giao dịch thanh toán gói dịch vụ là không hoàn lại. Vui lòng kiểm tra kỹ thông tin trước khi thực hiện giao dịch.
+                  </div>
+                </div>
+              </div>
+
+              <!-- FAQ Item 4 -->
+              <div class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/20 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm transition-all duration-200">
+                <button type="button" class="w-full py-4 px-5 text-left font-semibold text-sm text-on-surface dark:text-slate-100 flex justify-between items-center gap-4 hover:bg-surface-container-low/40 dark:hover:bg-slate-850 focus:outline-none" onclick="toggleFaq(this)">
+                  <span data-i18n="faq4Q">Gói có tự gia hạn không?</span>
+                  <span class="material-symbols-outlined text-on-surface-variant dark:text-slate-400 transition-transform duration-200 text-[20px]">keyboard_arrow_down</span>
+                </button>
+                <div class="faq-ans max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
+                  <div class="p-5 pt-0 text-sm text-on-surface-variant dark:text-slate-350 border-t border-outline-variant/5 dark:border-slate-800/40 leading-relaxed" data-i18n="faq4A">
+                    Không, hệ thống không tự động gia hạn hoặc trừ tiền tài khoản của bạn. Bạn chủ động gia hạn thủ công khi có nhu cầu.
+                  </div>
+                </div>
+              </div>
+
+              <!-- FAQ Item 5 -->
+              <div class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/20 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm transition-all duration-200">
+                <button type="button" class="w-full py-4 px-5 text-left font-semibold text-sm text-on-surface dark:text-slate-100 flex justify-between items-center gap-4 hover:bg-surface-container-low/40 dark:hover:bg-slate-850 focus:outline-none" onclick="toggleFaq(this)">
+                  <span data-i18n="faq5Q">Tôi có thể thay đổi gói sau khi nâng cấp không?</span>
+                  <span class="material-symbols-outlined text-on-surface-variant dark:text-slate-400 transition-transform duration-200 text-[20px]">keyboard_arrow_down</span>
+                </button>
+                <div class="faq-ans max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
+                  <div class="p-5 pt-0 text-sm text-on-surface-variant dark:text-slate-350 border-t border-outline-variant/5 dark:border-slate-800/40 leading-relaxed" data-i18n="faq5A">
+                    Bạn có thể nâng cấp lên gói cao hơn. Việc hạ cấp xuống gói thấp hơn chỉ được thực hiện sau khi gói hiện tại hết hạn sử dụng.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Support Card -->
+            <div class="bg-gradient-to-br from-primary/10 to-indigo-500/5 dark:from-slate-850/65 dark:to-indigo-950/20 border border-primary/15 dark:border-slate-800 p-5 rounded-2xl flex justify-between items-center gap-4 shadow-sm mt-6">
+              <div class="space-y-1">
+                <h4 class="text-sm font-bold text-on-surface dark:text-white" data-i18n="helpCardTitle">Bạn cần hỗ trợ thêm?</h4>
+                <p class="text-xs text-on-surface-variant dark:text-slate-400 leading-normal" data-i18n="helpCardDesc">Liên hệ đội ngũ hỗ trợ của chúng tôi qua email hoặc chat trực tuyến.</p>
+              </div>
+              <a href="mailto:support@pet.ai" class="bg-primary hover:bg-blue-600 text-white rounded-lg px-4 py-2 text-xs font-semibold flex items-center gap-1.5 shrink-0 transition-colors shadow-sm" data-i18n="helpCardBtn">
+                <span class="material-symbols-outlined text-[16px]">support_agent</span>
+                <span>Liên hệ hỗ trợ</span>
+              </a>
+            </div>
+          </section>
+
+        </div>
+
+        <!-- ── Page Footer Links ── -->
+        <footer class="border-t border-outline-variant/10 dark:border-slate-800/80 pt-6 pb-4 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-on-surface-variant dark:text-slate-400">
+          <div class="flex items-center gap-1.5 text-[11px]">
+            <span class="material-symbols-outlined text-emerald-500 text-[14px]">lock</span>
+            <span data-i18n="paymentSecurityNote">Thanh toán được bảo mật và xử lý thông qua hệ thống VietQR.</span>
+          </div>
+          <div class="flex items-center gap-6">
+            <a href="{{ url_for('legal.payment_policy') if hasattr(url_for, 'legal.payment_policy') else '/legal/payment-policy' }}" class="hover:text-primary transition-colors font-medium" data-i18n="policyLink">Chính sách thanh toán</a>
+            <span class="text-outline-variant/40">•</span>
+            <a href="{{ url_for('legal.terms') if hasattr(url_for, 'legal.terms') else '/legal/terms' }}" class="hover:text-primary transition-colors font-medium" data-i18n="termsLink">Điều khoản sử dụng</a>
+          </div>
+        </footer>
       </div>
     </main>
 
 <script>
-      (function () {
-        const planSelect = document.getElementById("plan");
-        if (planSelect) {
-          const currentPlan = planSelect.getAttribute("data-current-plan") || "free";
-          const basicOpt = planSelect.querySelector('option[value="basic"]');
-          const proOpt = planSelect.querySelector('option[value="pro"]');
-          const enterpriseOpt = planSelect.querySelector('option[value="enterprise"]');
-
-          if (currentPlan === "pro") {
-            if (proOpt) proOpt.selected = true;
-            if (basicOpt) basicOpt.disabled = true;
-          } else if (currentPlan === "enterprise") {
-            if (enterpriseOpt) enterpriseOpt.selected = true;
-            if (proOpt) proOpt.disabled = true;
-            if (basicOpt) basicOpt.disabled = true;
-          } else if (currentPlan === "basic") {
-            if (basicOpt) basicOpt.selected = true;
-          }
-        }
-        const planButtons = document.querySelectorAll("[data-plan]");
-        const checkoutForm = document.getElementById("checkoutForm");
-        const payBtn = document.getElementById("payBtn");
-
-        // Dynamic Order Summary DOM Elements
-        const summaryName = document.getElementById("summary-name");
-        const summaryDuration = document.getElementById("summary-duration");
-        const summaryLimit = document.getElementById("summary-limit");
-        const summaryPrice = document.getElementById("summary-price");
-        const summaryBadge = document.getElementById("summary-badge");
-
-        function updateOrderSummary(plan) {
-          try {
-            const t_func =
-              typeof window.PetAI_i18n !== "undefined"
-                ? window.PetAI_i18n.t
-                : function (x) {
-                    return x;
-                  };
-            const packageData = {
-              basic: {
-                name: t_func("planBasicName"),
-                price: t_func("planBasicPrice"),
-                duration: t_func("planBasicDuration"),
-                limit: t_func("planBasicLimit"),
-                badge: "BASIC",
-              },
-              pro: {
-                name: t_func("planProName"),
-                price: t_func("planProPrice"),
-                duration: t_func("planProDuration"),
-                limit: t_func("planProLimit"),
-                badge: "PRO",
-              },
-              enterprise: {
-                name: t_func("planEntName"),
-                price: t_func("planEntPrice"),
-                duration: t_func("planEntDuration"),
-                limit: t_func("planEntLimit"),
-                badge: "ENTERPRISE",
-              },
-            };
-            const data = packageData[plan];
-            if (!data) return;
-            if (summaryName) summaryName.innerText = data.name;
-            if (summaryDuration) summaryDuration.innerText = data.duration;
-            if (summaryLimit) summaryLimit.innerText = data.limit;
-            if (summaryPrice) summaryPrice.innerText = data.price;
-            if (summaryBadge) {
-              summaryBadge.innerText = data.badge;
-              if (plan === "enterprise") {
-                summaryBadge.className =
-                  "px-2 py-0.5 text-[10px] font-bold rounded bg-amber-500/10 text-amber-600 dark:text-amber-400";
-              } else if (plan === "basic") {
-                summaryBadge.className =
-                  "px-2 py-0.5 text-[10px] font-bold rounded bg-blue-500/10 text-blue-600 dark:text-blue-400";
-              } else {
-                summaryBadge.className =
-                  "px-2 py-0.5 text-[10px] font-bold rounded bg-primary/10 text-primary dark:text-blue-400";
-              }
-            }
-          } catch (err) {
-            console.error("Error updating order summary:", err);
-          }
-        }
-
-        // Listen for language change events
-        document.addEventListener("i18nChanged", () => {
-          if (planSelect) {
-            updateOrderSummary(planSelect.value);
-          }
-        });
-
-        // Initialize Order Summary based on current select value
-        if (planSelect) {
-          updateOrderSummary(planSelect.value);
-          planSelect.addEventListener("change", (e) => {
-            updateOrderSummary(e.target.value);
-          });
-        }
-
-        planButtons.forEach((btn) => {
-          btn.addEventListener("click", () => {
-            try {
-              const plan = btn.getAttribute("data-plan");
-              if (!planSelect || !plan) return;
-              planSelect.value = plan;
-              updateOrderSummary(plan);
-              planSelect.focus();
-              const checkoutSec = document.getElementById("checkout");
-              if (checkoutSec) {
-                checkoutSec.scrollIntoView({ behavior: "smooth" });
-              }
-            } catch (e) {
-              console.error("Error clicking plan button:", e);
-            }
-          });
-        });
-
-        if (checkoutForm) {
-          checkoutForm.addEventListener("submit", async function (e) {
-            e.preventDefault();
-            if (!payBtn) return;
-            const t_func =
-              typeof window.PetAI_i18n !== "undefined"
-                ? window.PetAI_i18n.t
-                : function (x) {
-                    return x;
-                  };
-            const originalHtml = payBtn.innerHTML;
-            payBtn.disabled = true;
-            payBtn.innerHTML = `
-              <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              ${t_func("creatingInvoice") || "Đang tạo hóa đơn..."}
-            `;
-
-            try {
-              const formData = new FormData(this);
-              const res = await fetch(this.action || window.location.href, {
-                method: "POST",
-                body: formData,
-                headers: {
-                  "X-Requested-With": "XMLHttpRequest"
-                }
-              });
-
-              if (res.ok) {
-                const html = await res.text();
-                if (window.loadPagePjax) {
-                  window.loadPagePjax(res.url, true, html);
-                } else {
-                  window.location.href = res.url;
-                }
-              } else {
-                payBtn.disabled = false;
-                payBtn.innerHTML = originalHtml;
-                if (typeof window.showToast === "function") {
-                  window.showToast("error", "Đã xảy ra lỗi");
-                }
-              }
-            } catch (err) {
-              console.error(err);
-              payBtn.disabled = false;
-              payBtn.innerHTML = originalHtml;
-              if (typeof window.showToast === "function") {
-                window.showToast("error", "Đã xảy ra lỗi");
-              }
-            }
-          });
-        }
-      })();
-    </script>
-    <script src="{{ url_for('static', filename='js/toasts.js') }}"></script>
-  <script>
-    (function() {
-      function formatVND(val, suffix) {
-        if (!val) return "";
-        const num = parseFloat(String(val).replace(/[^0-9]/g, ''));
-        if (isNaN(num)) return val + suffix;
-        return num.toLocaleString('en-US').replace(/,/g, '.') + suffix;
-      }
-      function formatVND_EN(val, suffix) {
-        if (!val) return "";
-        const num = parseFloat(String(val).replace(/[^0-9]/g, ''));
-        if (isNaN(num)) return val + suffix;
-        return num.toLocaleString('en-US') + suffix;
-      }
+  (function () {
+    // --- FAQ Accordion ---
+    window.toggleFaq = function (btn) {
+      const faqItem = btn.parentElement;
+      const answer = faqItem.querySelector(".faq-ans");
+      const icon = btn.querySelector(".material-symbols-outlined");
       
-      window.PetAI_DynamicSettings = {
-        vi: {
-          planBasicPrice: formatVND("{{ get_config('plan_basic_price', '1000') }}", "đ"),
-          planProPrice: formatVND("{{ get_config('plan_pro_price', '5000') }}", "đ"),
-          planEntPrice: formatVND("{{ get_config('plan_enterprise_price', '15000') }}", "đ"),
-          planBasicPriceSub: "/ {{ get_config('plan_basic_days', '7') }} ngày sử dụng",
-          planProPriceSub: "/ {{ get_config('plan_pro_days', '30') }} ngày sử dụng",
-          planEntPriceSub: "/ {{ get_config('plan_enterprise_days', '90') }} ngày sử dụng",
-          scanLimit50: "{{ get_config('plan_basic_scans', '50') }} lượt nhận diện",
-          scanLimit200: "{{ get_config('plan_pro_scans', '200') }} lượt nhận diện",
-          scanLimitUnlimit: "{{ 'Không giới hạn nhận diện' if get_config('plan_enterprise_scans', 'unlimited') == 'unlimited' else (get_config('plan_enterprise_scans', 'unlimited') ~ ' lượt nhận diện') }}",
-          optPro: "Chuyên nghiệp (Pro) — " + formatVND("{{ get_config('plan_pro_price', '5000') }}", "đ") + " / {{ get_config('plan_pro_days', '30') }} ngày / {{ get_config('plan_pro_scans', '200') }} lượt",
-          optBasic: "Cơ bản (Basic) — " + formatVND("{{ get_config('plan_basic_price', '1000') }}", "đ") + " / {{ get_config('plan_basic_days', '7') }} ngày / {{ get_config('plan_basic_scans', '50') }} lượt",
-          optEnterprise: "Doanh nghiệp (Enterprise) — " + formatVND("{{ get_config('plan_enterprise_price', '15000') }}", "đ") + " / {{ get_config('plan_enterprise_days', '90') }} ngày / " + ("{{ get_config('plan_enterprise_scans', 'unlimited') }}" === "unlimited" ? "Không giới hạn" : "{{ get_config('plan_enterprise_scans', 'unlimited') }} lượt"),
-          planBasicName: "Cơ bản (Basic)",
-          planBasicDuration: "{{ get_config('plan_basic_days', '7') }} ngày",
-          planBasicLimit: "{{ get_config('plan_basic_scans', '50') }} lượt",
-          planProName: "Chuyên nghiệp (Pro)",
-          planProDuration: "{{ get_config('plan_pro_days', '30') }} ngày",
-          planProLimit: "{{ get_config('plan_pro_scans', '200') }} lượt",
-          planEntName: "Doanh nghiệp (Enterprise)",
-          planEntDuration: "{{ get_config('plan_enterprise_days', '90') }} ngày",
-          planEntLimit: "{{ 'Không giới hạn' if get_config('plan_enterprise_scans', 'unlimited') == 'unlimited' else (get_config('plan_enterprise_scans', 'unlimited') ~ ' lượt') }}"
-        },
-        en: {
-          planBasicPrice: formatVND_EN("{{ get_config('plan_basic_price', '1000') }}", " VND"),
-          planProPrice: formatVND_EN("{{ get_config('plan_pro_price', '5000') }}", " VND"),
-          planEntPrice: formatVND_EN("{{ get_config('plan_enterprise_price', '15000') }}", " VND"),
-          planBasicPriceSub: "/ {{ get_config('plan_basic_days', '7') }} days usage",
-          planProPriceSub: "/ {{ get_config('plan_pro_days', '30') }} days usage",
-          planEntPriceSub: "/ {{ get_config('plan_enterprise_days', '90') }} days usage",
-          scanLimit50: "{{ get_config('plan_basic_scans', '50') }} AI scans",
-          scanLimit200: "{{ get_config('plan_pro_scans', '200') }} AI scans",
-          scanLimitUnlimit: "{{ 'Unlimited AI scans' if get_config('plan_enterprise_scans', 'unlimited') == 'unlimited' else (get_config('plan_enterprise_scans', 'unlimited') ~ ' AI scans') }}",
-          optPro: "Professional (Pro) — " + formatVND_EN("{{ get_config('plan_pro_price', '5000') }}", " VND") + " / {{ get_config('plan_pro_days', '30') }} days / {{ get_config('plan_pro_scans', '200') }} scans",
-          optBasic: "Basic (Basic) — " + formatVND_EN("{{ get_config('plan_basic_price', '1000') }}", " VND") + " / {{ get_config('plan_basic_days', '7') }} days / {{ get_config('plan_basic_scans', '50') }} scans",
-          optEnterprise: "Enterprise (Enterprise) — " + formatVND_EN("{{ get_config('plan_enterprise_price', '15000') }}", " VND") + " / {{ get_config('plan_enterprise_days', '90') }} days / " + ("{{ get_config('plan_enterprise_scans', 'unlimited') }}" === "unlimited" ? "Unlimited" : "{{ get_config('plan_enterprise_scans', 'unlimited') }} scans"),
-          planBasicName: "Basic",
-          planBasicDuration: "{{ get_config('plan_basic_days', '7') }} days",
-          planBasicLimit: "{{ get_config('plan_basic_scans', '50') }} scans",
-          planProName: "Pro",
-          planProDuration: "{{ get_config('plan_pro_days', '30') }} days",
-          planProLimit: "{{ get_config('plan_pro_scans', '200') }} scans",
-          planEntName: "Enterprise",
-          planEntDuration: "{{ get_config('plan_enterprise_days', '90') }} days",
-          planEntLimit: "{{ 'Unlimited' if get_config('plan_enterprise_scans', 'unlimited') == 'unlimited' else (get_config('plan_enterprise_scans', 'unlimited') ~ ' scans') }}"
+      // Close other accordions
+      document.querySelectorAll(".faq-ans").forEach((el) => {
+        if (el !== answer) {
+          el.style.maxHeight = null;
+          const otherBtn = el.parentElement.querySelector("button");
+          if (otherBtn) {
+            const otherIcon = otherBtn.querySelector(".material-symbols-outlined");
+            if (otherIcon) otherIcon.style.transform = "rotate(0deg)";
+          }
         }
-      };
-    })();
-  </script>
-    <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
-  </body>
+      });
+
+      if (answer.style.maxHeight) {
+        answer.style.maxHeight = null;
+        if (icon) icon.style.transform = "rotate(0deg)";
+      } else {
+        answer.style.maxHeight = answer.scrollHeight + "px";
+        if (icon) icon.style.transform = "rotate(180deg)";
+      }
+    };
+
+    // --- Copy Clipboard Helper ---
+    window.copyText = function (elementId) {
+      const el = document.getElementById(elementId);
+      if (!el) return;
+      const text = el.innerText || el.textContent;
+      
+      navigator.clipboard.writeText(text.trim()).then(() => {
+        if (typeof window.showToast === "function") {
+          const isEn = (document.documentElement.getAttribute("data-user-lang") === "en");
+          window.showToast("success", isEn ? "Copied successfully!" : "Đã sao chép thành công!");
+        }
+      }).catch(err => {
+        console.error("Clipboard copy failed:", err);
+      });
+    };
+
+    // --- Dynamic Settings / Pricing Syncer ---
+    function updateDynamicPrices(lang) {
+      const settings = window.PetAI_DynamicSettings ? window.PetAI_DynamicSettings[lang] : null;
+      if (!settings) return;
+
+      const cardBasicPrice = document.querySelector("#card-basic .price-display");
+      const cardBasicPriceSub = document.querySelector("#card-basic .price-display + p");
+      const cardProPrice = document.querySelector("#card-pro .price-display");
+      const cardProPriceSub = document.querySelector("#card-pro .price-display + p");
+      const cardEnterprisePrice = document.querySelector("#card-enterprise .price-display");
+      const cardEnterprisePriceSub = document.querySelector("#card-enterprise .price-display + p");
+
+      if (cardBasicPrice) cardBasicPrice.innerText = settings.planBasicPrice;
+      if (cardBasicPriceSub) cardBasicPriceSub.innerText = settings.planBasicPriceSub;
+      if (cardProPrice) cardProPrice.innerText = settings.planProPrice;
+      if (cardProPriceSub) cardProPriceSub.innerText = settings.planProPriceSub;
+      if (cardEnterprisePrice) cardEnterprisePrice.innerText = settings.planEntPrice;
+      if (cardEnterprisePriceSub) cardEnterprisePriceSub.innerText = settings.planEntPriceSub;
+
+      // Card feature scan limit updates
+      const basicLimit = document.querySelector("#card-basic [data-i18n='scanLimit50']");
+      if (basicLimit) basicLimit.innerText = settings.scanLimit50;
+
+      const proLimit = document.querySelector("#card-pro [data-i18n='scanLimit200']");
+      if (proLimit) proLimit.innerText = settings.scanLimit200;
+
+      const entLimit = document.querySelector("#card-enterprise [data-i18n='scanLimitUnlimit']");
+      if (entLimit) entLimit.innerText = settings.scanLimitUnlimit;
+    }
+
+    // --- Interactive Checkout Block ---
+    const checkoutSec = document.getElementById("checkout");
+    const checkoutPlanIcon = document.getElementById("checkout-plan-icon");
+    const checkoutPlanName = document.getElementById("checkout-plan-name");
+    const checkoutPlanPrice = document.getElementById("checkout-plan-price");
+    const checkoutPlanDuration = document.getElementById("checkout-plan-duration");
+    
+    const checkoutBankVal = document.getElementById("checkout-bank-val");
+    const checkoutAccountVal = document.getElementById("checkout-account-val");
+    const checkoutHolderVal = document.getElementById("checkout-holder-val");
+    const checkoutAmountVal = document.getElementById("checkout-amount-val");
+    const checkoutAmountRawVal = document.getElementById("checkout-amount-raw-val");
+    const checkoutMemoVal = document.getElementById("checkout-memo-val");
+    
+    const checkoutQrImg = document.getElementById("checkout-qr-img");
+    const checkoutQrLoader = document.getElementById("checkout-qr-loader");
+    const confirmOrderId = document.getElementById("confirm-order-id");
+
+    const checkoutBackBtn = document.getElementById("checkout-back-btn");
+
+    let activeSelectedPlan = null;
+    let statusCheckingInterval = null;
+
+    // Reset card highlight borders
+    function resetCardHighlights() {
+      document.querySelectorAll(".pricing-card").forEach(card => {
+        card.classList.remove("ring-4", "ring-primary", "dark:ring-blue-500", "scale-[1.01]");
+      });
+    }
+
+    // Hide checkout card
+    function hideCheckout() {
+      if (checkoutSec) {
+        checkoutSec.style.display = "none";
+      }
+      resetCardHighlights();
+      activeSelectedPlan = null;
+      if (statusCheckingInterval) {
+        clearInterval(statusCheckingInterval);
+        statusCheckingInterval = null;
+      }
+    }
+
+    // Highlight selected card
+    function highlightPlanCard(plan) {
+      resetCardHighlights();
+      const card = document.getElementById(`card-${plan}`);
+      if (card) {
+        card.classList.add("ring-4", "ring-primary", "dark:ring-blue-500", "scale-[1.01]");
+      }
+    }
+
+    // Stop and clean checking interval
+    function stopStatusChecking() {
+      if (statusCheckingInterval) {
+        clearInterval(statusCheckingInterval);
+        statusCheckingInterval = null;
+      }
+    }
+
+    // Poll check invoice status
+    function startStatusChecking(orderId) {
+      stopStatusChecking();
+      statusCheckingInterval = setInterval(async () => {
+        try {
+          const res = await fetch(`/predict/payments/status?order_id=${orderId}`, {
+            headers: {
+              "X-Requested-With": "XMLHttpRequest"
+            }
+          });
+          if (res.ok) {
+            const data = await res.json();
+            if (data && data.success && data.status === "paid") {
+              stopStatusChecking();
+              if (typeof window.showToast === "function") {
+                const lang = document.documentElement.getAttribute("data-user-lang") || "vi";
+                const msg = lang === "en" ? "Payment received! Activating plan..." : "Đã nhận thanh toán! Đang kích hoạt gói...";
+                window.showToast("success", msg);
+              }
+              setTimeout(() => {
+                window.location.reload();
+              }, 1500);
+            }
+          }
+        } catch (e) {
+          console.error("Error polling payment status:", e);
+        }
+      }, 4000);
+    }
+
+    // Load checkout payment info
+    async function selectPlanAndShowCheckout(plan) {
+      if (!checkoutSec) return;
+      
+      activeSelectedPlan = plan;
+      highlightPlanCard(plan);
+
+      // Reset loading states
+      if (checkoutQrLoader) checkoutQrLoader.style.display = "flex";
+      checkoutSec.style.display = "block";
+      
+      // Smooth scroll
+      checkoutSec.scrollIntoView({ behavior: "smooth" });
+
+      // Update package summary values instantly
+      const lang = document.documentElement.getAttribute("data-user-lang") || "vi";
+      const settings = window.PetAI_DynamicSettings ? window.PetAI_DynamicSettings[lang] : null;
+      if (settings) {
+        if (plan === "basic") {
+          checkoutPlanIcon.innerText = "bolt";
+          checkoutPlanName.innerText = settings.planBasicName;
+          checkoutPlanPrice.innerText = settings.planBasicPrice;
+          checkoutPlanDuration.innerText = "/ " + settings.planBasicDuration;
+        } else if (plan === "pro") {
+          checkoutPlanIcon.innerText = "workspace_premium";
+          checkoutPlanName.innerText = settings.planProName;
+          checkoutPlanPrice.innerText = settings.planProPrice;
+          checkoutPlanDuration.innerText = "/ " + settings.planProDuration;
+        } else if (plan === "enterprise") {
+          checkoutPlanIcon.innerText = "crown";
+          checkoutPlanName.innerText = settings.planEntName;
+          checkoutPlanPrice.innerText = settings.planEntPrice;
+          checkoutPlanDuration.innerText = "/ " + settings.planEntDuration;
+        }
+      }
+
+      // Call checkout order generation
+      try {
+        const formData = new FormData();
+        formData.append("plan", plan);
+        formData.append("payment_method", "qr");
+        
+        const csrfToken = document.querySelector('meta[name="csrf-token"]');
+        if (csrfToken) {
+          formData.append("csrf_token", csrfToken.getAttribute("content"));
+        }
+
+        const res = await fetch("/predict/checkout", {
+          method: "POST",
+          body: formData,
+          headers: {
+            "X-Requested-With": "XMLHttpRequest"
+          }
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.status === "success") {
+            // Update credentials
+            checkoutBankVal.innerText = data.bank_name || "MB Bank";
+            checkoutAccountVal.innerText = data.bank_account || "";
+            checkoutHolderVal.innerText = data.account_name || "";
+            
+            // Format VND
+            if (data.amount_vnd) {
+              const formattedVnd = lang === "en" 
+                ? parseFloat(data.amount_vnd).toLocaleString("en-US") + " VND" 
+                : parseFloat(data.amount_vnd).toLocaleString("en-US").replace(/,/g, ".") + "đ";
+              checkoutAmountVal.innerText = formattedVnd;
+              checkoutAmountRawVal.innerText = parseInt(data.amount_vnd);
+            }
+            
+            checkoutMemoVal.innerText = data.add_info || "";
+            confirmOrderId.value = data.order_id || "";
+
+            // Load QR Image
+            if (data.qr_url) {
+              checkoutQrImg.src = data.qr_url;
+              checkoutQrImg.onload = () => {
+                if (checkoutQrLoader) checkoutQrLoader.style.display = "none";
+              };
+            } else {
+              if (checkoutQrLoader) checkoutQrLoader.style.display = "none";
+            }
+
+            // Start auto checking status
+            if (data.order_id) {
+              startStatusChecking(data.order_id);
+            }
+          } else {
+            if (typeof window.showToast === "function") {
+              window.showToast("error", data.message_vi || "Đã xảy ra lỗi");
+            }
+            hideCheckout();
+          }
+        } else {
+          try {
+            const errData = await res.json();
+            if (typeof window.showToast === "function") {
+              window.showToast("error", lang === "en" ? errData.message_en : errData.message_vi);
+            }
+          } catch(e) {
+            if (typeof window.showToast === "function") {
+              window.showToast("error", lang === "en" ? "Failed to create order" : "Không thể tạo hóa đơn");
+            }
+          }
+          hideCheckout();
+        }
+      } catch (err) {
+        console.error("Checkout AJAX failed:", err);
+        if (typeof window.showToast === "function") {
+          window.showToast("error", "Đã xảy ra lỗi hệ thống");
+        }
+        hideCheckout();
+      }
+    }
+
+    // --- Action Listeners ---
+    document.addEventListener("DOMContentLoaded", () => {
+      const currentLang = document.documentElement.getAttribute("data-user-lang") || "vi";
+      updateDynamicPrices(currentLang);
+      
+      // Pricing buttons click listeners
+      document.querySelectorAll("[data-plan-btn]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const plan = btn.getAttribute("data-plan-btn");
+          selectPlanAndShowCheckout(plan);
+        });
+      });
+
+      // Banner renew button listener
+      const bannerRenew = document.getElementById("bannerRenewBtn");
+      if (bannerRenew) {
+        bannerRenew.addEventListener("click", () => {
+          const plan = bannerRenew.getAttribute("data-renew-plan");
+          selectPlanAndShowCheckout(plan);
+        });
+      }
+
+      // Back action from checkout
+      const backBtn = document.getElementById("checkoutBackBtn");
+      if (backBtn) {
+        backBtn.addEventListener("click", () => {
+          hideCheckout();
+        });
+      }
+    });
+
+    // --- Handle site language transitions ---
+    document.addEventListener("i18nChanged", () => {
+      const newLang = document.documentElement.getAttribute("data-user-lang") || "vi";
+      updateDynamicPrices(newLang);
+      if (activeSelectedPlan) {
+        selectPlanAndShowCheckout(activeSelectedPlan);
+      }
+    });
+
+  })();
+</script>
+<script src="{{ url_for('static', filename='js/toasts.js') }}"></script>
+<script>
+  (function() {
+    function formatVND(val, suffix) {
+      if (!val) return "";
+      const num = parseFloat(String(val).replace(/[^0-9]/g, ''));
+      if (isNaN(num)) return val + suffix;
+      return num.toLocaleString('en-US').replace(/,/g, '.') + suffix;
+    }
+    function formatVND_EN(val, suffix) {
+      if (!val) return "";
+      const num = parseFloat(String(val).replace(/[^0-9]/g, ''));
+      if (isNaN(num)) return val + suffix;
+      return num.toLocaleString('en-US') + suffix;
+    }
+    
+    window.PetAI_DynamicSettings = {
+      vi: {
+        planBasicPrice: formatVND("{{ get_config('plan_basic_price', '1000') }}", "đ"),
+        planProPrice: formatVND("{{ get_config('plan_pro_price', '5000') }}", "đ"),
+        planEntPrice: formatVND("{{ get_config('plan_enterprise_price', '15000') }}", "đ"),
+        planBasicPriceSub: "/ {{ get_config('plan_basic_days', '7') }} ngày sử dụng",
+        planProPriceSub: "/ {{ get_config('plan_pro_days', '30') }} ngày sử dụng",
+        planEntPriceSub: "/ {{ get_config('plan_enterprise_days', '90') }} ngày sử dụng",
+        scanLimit50: "{{ get_config('plan_basic_scans', '50') }} lượt nhận diện",
+        scanLimit200: "{{ get_config('plan_pro_scans', '200') }} lượt nhận diện",
+        scanLimitUnlimit: "{{ 'Không giới hạn nhận diện' if get_config('plan_enterprise_scans', 'unlimited') == 'unlimited' else (get_config('plan_enterprise_scans', 'unlimited') ~ ' lượt nhận diện') }}",
+        optPro: "Chuyên nghiệp (Pro) — " + formatVND("{{ get_config('plan_pro_price', '5000') }}", "đ") + " / {{ get_config('plan_pro_days', '30') }} ngày / {{ get_config('plan_pro_scans', '200') }} lượt",
+        optBasic: "Cơ bản (Basic) — " + formatVND("{{ get_config('plan_basic_price', '1000') }}", "đ") + " / {{ get_config('plan_basic_days', '7') }} ngày / {{ get_config('plan_basic_scans', '50') }} lượt",
+        optEnterprise: "Doanh nghiệp (Enterprise) — " + formatVND("{{ get_config('plan_enterprise_price', '15000') }}", "đ") + " / {{ get_config('plan_enterprise_days', '90') }} ngày / " + ("{{ get_config('plan_enterprise_scans', 'unlimited') }}" === "unlimited" ? "Không giới hạn" : "{{ get_config('plan_enterprise_scans', 'unlimited') }} lượt"),
+        planBasicName: "Cơ bản (Basic)",
+        planBasicDuration: "{{ get_config('plan_basic_days', '7') }} ngày",
+        planBasicLimit: "{{ get_config('plan_basic_scans', '50') }} lượt",
+        planProName: "Chuyên nghiệp (Pro)",
+        planProDuration: "{{ get_config('plan_pro_days', '30') }} ngày",
+        planProLimit: "{{ get_config('plan_pro_scans', '200') }} lượt",
+        planEntName: "Doanh nghiệp (Enterprise)",
+        planEntDuration: "{{ get_config('plan_enterprise_days', '90') }} ngày",
+        planEntLimit: "{{ 'Không giới hạn' if get_config('plan_enterprise_scans', 'unlimited') == 'unlimited' else (get_config('plan_enterprise_scans', 'unlimited') ~ ' lượt') }}"
+      },
+      en: {
+        planBasicPrice: formatVND_EN("{{ get_config('plan_basic_price', '1000') }}", " VND"),
+        planProPrice: formatVND_EN("{{ get_config('plan_pro_price', '5000') }}", " VND"),
+        planEntPrice: formatVND_EN("{{ get_config('plan_enterprise_price', '15000') }}", " VND"),
+        planBasicPriceSub: "/ {{ get_config('plan_basic_days', '7') }} days usage",
+        planProPriceSub: "/ {{ get_config('plan_pro_days', '30') }} days usage",
+        planEntPriceSub: "/ {{ get_config('plan_enterprise_days', '90') }} days usage",
+        scanLimit50: "{{ get_config('plan_basic_scans', '50') }} AI scans",
+        scanLimit200: "{{ get_config('plan_pro_scans', '200') }} AI scans",
+        scanLimitUnlimit: "{{ 'Unlimited AI scans' if get_config('plan_enterprise_scans', 'unlimited') == 'unlimited' else (get_config('plan_enterprise_scans', 'unlimited') ~ ' AI scans') }}",
+        optPro: "Professional (Pro) — " + formatVND_EN("{{ get_config('plan_pro_price', '5000') }}", " VND") + " / {{ get_config('plan_pro_days', '30') }} days / {{ get_config('plan_pro_scans', '200') }} scans",
+        optBasic: "Basic (Basic) — " + formatVND_EN("{{ get_config('plan_basic_price', '1000') }}", " VND") + " / {{ get_config('plan_basic_days', '7') }} days / {{ get_config('plan_basic_scans', '50') }} scans",
+        optEnterprise: "Enterprise (Enterprise) — " + formatVND_EN("{{ get_config('plan_enterprise_price', '15000') }}", " VND") + " / {{ get_config('plan_enterprise_days', '90') }} days / " + ("{{ get_config('plan_enterprise_scans', 'unlimited') }}" === "unlimited" ? "Unlimited" : "{{ get_config('plan_enterprise_scans', 'unlimited') }} scans"),
+        planBasicName: "Basic",
+        planBasicDuration: "{{ get_config('plan_basic_days', '7') }} days",
+        planBasicLimit: "{{ get_config('plan_basic_scans', '50') }} scans",
+        planProName: "Pro",
+        planProDuration: "{{ get_config('plan_pro_days', '30') }} days",
+        planProLimit: "{{ get_config('plan_pro_scans', '200') }} scans",
+        planEntName: "Enterprise",
+        planEntDuration: "{{ get_config('plan_enterprise_days', '90') }} days",
+        planEntLimit: "{{ 'Unlimited' if get_config('plan_enterprise_scans', 'unlimited') == 'unlimited' else (get_config('plan_enterprise_scans', 'unlimited') ~ ' scans') }}"
+      }
+    };
+  })();
+</script>
+<script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
 </html>

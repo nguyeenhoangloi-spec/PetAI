@@ -151,10 +151,60 @@ def watch_ad_complete():
 
 @predict_bp.route("/upgrade", methods=["GET"])
 def upgrade():
-	if _get_session_user_id() is None:
+	user_id = _get_session_user_id()
+	if user_id is None:
 		flash("Vui lòng đăng nhập để sử dụng chức năng này.", "warning")
 		return redirect(url_for("login.login"))
-	return render_template("upgrade.html")
+
+	from datetime import datetime
+	conn = None
+	quota_info = None
+	try:
+		conn = get_connection()
+		quota = UserQuota.get_or_create(conn, user_id)
+		plan_name = (quota.get("plan") or "free").strip().lower()
+		plan_expire = quota.get("plan_expire")
+		paid_uses_remaining = quota.get("paid_uses_remaining")
+
+		now = datetime.now()
+		is_active = (plan_name != "free" and (plan_expire is None or plan_expire > now))
+		is_out_of_uses = (paid_uses_remaining is not None and int(paid_uses_remaining) <= 0)
+
+		if plan_name != "free" and (not is_active or is_out_of_uses):
+			active_plan = "free"
+		else:
+			active_plan = plan_name
+
+		# Get total limit
+		total_uses = None
+		if active_plan != "free":
+			limit_val = UserQuota._paid_plan_limit(conn, active_plan)
+			total_uses = limit_val
+		else:
+			total_uses = UserQuota.FREE_PREDICTIONS
+
+		user_scans = PredictionHistory.count_by_user(conn, user_id)
+		days_left = None
+		if plan_expire:
+			days_left = max((plan_expire - now).days, 0)
+
+		quota_info = {
+			"plan": active_plan,
+			"plan_expire": plan_expire.strftime("%d/%m/%Y") if plan_expire else None,
+			"plan_expire_raw": plan_expire,
+			"paid_uses_remaining": paid_uses_remaining,
+			"total_uses": total_uses,
+			"user_scans": user_scans,
+			"ad_unlocks_remaining": quota.get("ad_unlocks_remaining", 0),
+			"days_left": days_left
+		}
+	except Exception as e:
+		print("[UPGRADE ROUTE ERROR] Failed to fetch quota:", e)
+	finally:
+		if conn:
+			conn.close()
+
+	return render_template("upgrade.html", quota_info=quota_info)
 
 
 def _plan_price_vnd(plan: str, conn=None) -> int:
@@ -219,6 +269,12 @@ def checkout():
 	"""Trang thanh toán."""
 	user_id = _get_session_user_id()
 	if user_id is None:
+		if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+			return jsonify({
+				"status": "error",
+				"message_vi": "Vui lòng đăng nhập để sử dụng chức năng này.",
+				"message_en": "Please login to use this function."
+			}), 401
 		flash("Vui lòng đăng nhập để sử dụng chức năng này.", "warning")
 		return redirect(url_for("login.login"))
 
@@ -229,9 +285,6 @@ def checkout():
 		plan = "pro"
 
 	# --- Purchase rules ---
-	# - Allow upgrade anytime (basic -> pro -> enterprise)
-	# - Do NOT allow buying lower plan while current plan is active
-	# - Renewing the same plan is allowed only after expiry
 	from datetime import datetime
 	plan_rank = {"free": 0, "basic": 1, "pro": 2, "enterprise": 3}
 	conn = None
@@ -249,6 +302,12 @@ def checkout():
 			new_rank = int(plan_rank.get(plan, 0))
 
 			if new_rank < cur_rank:
+				if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+					return jsonify({
+						"status": "error",
+						"message_vi": "Bạn đang có gói cao hơn còn hiệu lực. Không thể mua gói thấp hơn.",
+						"message_en": "You have a higher plan active. Cannot purchase a lower plan."
+					}), 400
 				flash("Bạn đang có gói cao hơn còn hiệu lực. Không thể mua gói thấp hơn.", "warning")
 				return redirect(url_for("predict.upgrade"))
 
@@ -256,6 +315,12 @@ def checkout():
 				# Renew same plan only when expired OR out of paid uses
 				out_of_uses = (current_paid_uses is not None and int(current_paid_uses) <= 0)
 				if not out_of_uses:
+					if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+						return jsonify({
+							"status": "error",
+							"message_vi": "Gói hiện tại của bạn vẫn còn lượt sử dụng. Chỉ có thể gia hạn khi hết hạn hoặc đã hết lượt.",
+							"message_en": "Your current plan still has scans remaining. You can only renew when it expires or runs out of scans."
+						}), 400
 					flash("Gói hiện tại của bạn vẫn còn lượt sử dụng. Chỉ có thể gia hạn khi hết hạn hoặc đã hết lượt.", "info")
 					return redirect(url_for("predict.upgrade"))
 	finally:
@@ -282,6 +347,37 @@ def checkout():
 			conn.close()
 
 	session["pending_payment"] = {"order_id": order_id}
+
+	if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+		bank_bin = (current_app.config.get("VIETQR_BANK_BIN") or "").strip()
+		bank_account = (current_app.config.get("VIETQR_ACCOUNT_NUMBER") or "").strip()
+		bank_name = (current_app.config.get("VIETQR_BANK_NAME") or "MB Bank").strip()
+		account_name = (current_app.config.get("VIETQR_ACCOUNT_NAME") or "NGUYEN HOANG LOI").strip()
+		qr_api_base = (current_app.config.get("SEPAY_QR_API") or "https://img.vietqr.io/image").strip()
+		
+		add_info = f"DOGAI {plan.upper()} {order_id}".strip()
+		qr_url = ""
+		if bank_bin and bank_account and qr_api_base:
+			qr_url = (
+				f"{qr_api_base.rstrip('/')}/{bank_bin}-{bank_account}-compact2.png"
+				f"?amount={int(amount_vnd or 0)}"
+				f"&addInfo={quote_plus(add_info)}"
+			)
+			if account_name:
+				qr_url += f"&accountName={quote_plus(account_name)}"
+		
+		return jsonify({
+			"status": "success",
+			"order_id": order_id,
+			"plan": plan,
+			"amount_vnd": amount_vnd,
+			"payment_method": payment_method,
+			"bank_name": bank_name,
+			"bank_account": bank_account,
+			"account_name": account_name,
+			"add_info": add_info,
+			"qr_url": qr_url
+		})
 
 	return render_template(
 		"checkout.html",
