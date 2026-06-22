@@ -327,6 +327,21 @@ def translate_dynamic_toast(text: str, lang: str) -> str:
     if match_plan:
         plan = match_plan.group(1)
         return f"Successfully assigned package {plan} to user."
+
+    # 7b. Đã cấp gói {plan} cho user #{user_id}.
+    match_plan_user = re.match(r'Đã cấp gói (.*?) cho user #(\d+)\.', text)
+    if match_plan_user:
+        return f"Successfully assigned package {match_plan_user.group(1)} to user #{match_plan_user.group(2)}."
+
+    # 7c. Đã khóa tài khoản {username} thành công.
+    if text.startswith("Đã khóa tài khoản ") and text.endswith(" thành công."):
+        username = text[len("Đã khóa tài khoản "):-len(" thành công.")]
+        return f"Successfully locked account {username}."
+
+    # 7d. Đã mở khóa tài khoản {username} thành công.
+    if text.startswith("Đã mở khóa tài khoản ") and text.endswith(" thành công."):
+        username = text[len("Đã mở khóa tài khoản "):-len(" thành công.")]
+        return f"Successfully unlocked account {username}."
         
     # 8. Đã cập nhật nội dung trang {page}.
     match_page = re.match(r'Đã cập nhật nội dung trang (.*?)\.', text)
@@ -340,11 +355,43 @@ def translate_dynamic_toast(text: str, lang: str) -> str:
         plan_label = match_purchase.group(1)
         return f"Package {plan_label} purchased successfully."
         
-    # 10. Mã OTP không chính xác. Bạn còn {attempts} lần nhập.
-    match_otp = re.match(r'Mã OTP không chính xác\.\s*Bạn còn (\d+) lần nhập\.', text)
+    # 10. Mã OTP không chính xác. Bạn còn {attempts} lần nhập. / lần thử.
+    match_otp = re.match(r'Mã OTP không chính xác\.\s*Bạn còn (\d+) (lần nhập|lần thử)\.', text)
     if match_otp:
         attempts = match_otp.group(1)
         return f"Incorrect OTP. You have {attempts} attempts left."
+
+    # Account deletion responses mappings
+    if text == "Chưa đăng nhập.":
+        return "Not logged in."
+    if text == "Không tìm thấy tài khoản.":
+        return "Account not found."
+    if text == "Tài khoản đã trong trạng thái chờ xóa.":
+        return "Account is already pending deletion."
+    if text == "Tài khoản đã bị xóa.":
+        return "Account has been deleted."
+    if text == "Mã OTP không hợp lệ.":
+        return "Invalid OTP."
+    if text == "Tài khoản không ở trạng thái hợp lệ để xóa.":
+        return "Account is not in a valid state to be deleted."
+    if text == "Mã OTP đã hết hạn. Vui lòng yêu cầu lại.":
+        return "OTP expired. Please request a new one."
+    if text == "Bạn đã nhập sai quá nhiều lần. Vui lòng thử lại sau 10 phút.":
+        return "You entered it incorrectly too many times. Please try again in 10 minutes."
+    if text == "Mã OTP không hợp lệ hoặc đã hết hạn.":
+        return "Invalid or expired OTP."
+    if text == "Yêu cầu xóa tài khoản đã được ghi nhận.":
+        return "Account deletion request has been recorded."
+    if text == "Lỗi hệ thống. Vui lòng thử lại.":
+        return "System error. Please try again."
+    if text == "Mã OTP đã được gửi về email của bạn.":
+        return "OTP code has been sent to your email."
+    if text == "Mã OTP mới đã được gửi.":
+        return "New OTP code has been sent."
+    if text == "Mã OTP khôi phục đã được gửi về email của bạn.":
+        return "Recovery OTP code has been sent to your email."
+    if text == "Tài khoản của bạn đã được khôi phục thành công!":
+        return "Your account has been successfully restored!"
         
     # 11. Lỗi: {error}
     if text.startswith("Lỗi: "):

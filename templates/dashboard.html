@@ -493,17 +493,17 @@
                     <span class="material-symbols-outlined text-[12px]">info</span>
                     <span>
                       {% if quota_info.plan == 'free' and quota_info.user_scans >= 10 %}
-                        +{{ quota_info.ad_unlocks_remaining }} lượt từ Ads
+                        {{ '+' ~ quota_info.ad_unlocks_remaining ~ ' scans from Ads' if ui_language == 'en' else '+' ~ quota_info.ad_unlocks_remaining ~ ' lượt từ Ads' }}
                       {% elif quota_info.plan == 'free' %}
-                        Tối đa 10 lượt miễn phí
+                        {{ 'Max 10 free scans' if ui_language == 'en' else 'Tối đa 10 lượt miễn phí' }}
                       {% else %}
-                        Đang sử dụng
+                        {{ 'Active' if ui_language == 'en' else 'Đang sử dụng' }}
                       {% endif %}
                     </span>
                   </div>
                   <div>
                     <span data-i18n="expirationLabel">Hạn gói:</span>
-                    <span class="font-semibold">{{ quota_info.plan_expire or 'Vĩnh viễn' }}</span>
+                    <span class="font-semibold">{{ quota_info.plan_expire or ('Lifetime' if ui_language == 'en' else 'Vĩnh viễn') }}</span>
                   </div>
                 </div>
               </div>
@@ -523,12 +523,12 @@
                 </div>
               </div>
               <div class="mt-4 flex flex-col">
-                <span class="text-3xl font-bold text-on-surface tracking-tight" data-counter="{{ total_revenue }}" data-suffix="đ" data-use-commas="true">0đ</span>
+                <span class="text-3xl font-bold text-on-surface tracking-tight" data-counter="{{ total_revenue }}" data-suffix="{{ ' VND' if ui_language == 'en' else 'đ' }}" data-use-commas="true">0{{ ' VND' if ui_language == 'en' else 'đ' }}</span>
                 <span class="label-sm text-on-surface-variant/70 mt-2 flex items-center justify-between">
                   <span data-i18n="revenueFromPaid">Từ các gói đã thanh toán</span>
-                  <span class="text-xs text-emerald-600 dark:text-emerald-400 font-semibold bg-emerald-500/10 dark:bg-emerald-500/20 px-2 py-0.5 rounded flex items-center gap-0.5" title="Doanh thu ghi nhận trong tháng này">
+                  <span class="text-xs text-emerald-600 dark:text-emerald-400 font-semibold bg-emerald-500/10 dark:bg-emerald-500/20 px-2 py-0.5 rounded flex items-center gap-0.5" title="{{ 'Revenue recorded this month' if ui_language == 'en' else 'Doanh thu ghi nhận trong tháng này' }}" data-i18n-title="revenueThisMonthTooltip">
                     <span class="material-symbols-outlined text-[13px] font-bold">trending_up</span>
-                    +{{ '{:,}'.format(revenue_this_month).replace(',', '.') }}đ
+                    +{{ '{:,}'.format(revenue_this_month) if ui_language == 'en' else '{:,}'.format(revenue_this_month).replace(',', '.') }}{{ ' VND' if ui_language == 'en' else 'đ' }}
                   </span>
                 </span>
               </div>
@@ -807,7 +807,11 @@
                           <img src="/{{ pred.image_path }}" alt="Dog" class="w-10 h-10 rounded-lg object-cover border border-outline-variant/15">
                         </td>
                         <td class="py-3 font-semibold">
-                          <span data-i18n-breed="{{ pred.breed or '' }}">{{ pred.breed or 'Chưa xác định' }}</span>
+                          {% if pred.breed %}
+                            <span data-i18n-breed="{{ pred.breed }}">{{ pred.breed }}</span>
+                          {% else %}
+                            <span data-i18n="notDetermined">{{ 'Undetermined' if ui_language == 'en' else 'Chưa xác định' }}</span>
+                          {% endif %}
                         </td>
                         <td class="py-3">
                           {% set conf = (pred.confidence or 0) * 100 %}
@@ -837,7 +841,7 @@
                           {{ pred.created_at.strftime('%d/%m/%Y %H:%M') if pred.created_at else '' }}
                         </td>
                         <td class="py-3 text-right">
-                          <button type="button" onclick="openDetailModal('{{ pred.image_path|escape }}', '{{ (pred.breed or "Chưa xác định")|escape }}', '{{ "%.1f"|format((pred.confidence or 0)*100) }}', '{{ (pred.species or "Chó")|escape }}', '{{ pred.created_at.strftime("%d/%m/%Y %H:%M") if pred.created_at else "" }}')" class="text-primary hover:bg-surface-container-high p-1.5 rounded-lg inline-flex items-center justify-center transition-colors cursor-pointer" title="Xem chi tiết" data-i18n-title="viewDetail">
+                          <button type="button" onclick="openDetailModal('{{ pred.image_path|escape }}', '{{ (pred.breed or "Chưa xác định")|escape }}', '{{ "%.1f"|format((pred.confidence or 0)*100) }}', '{{ (pred.species or "Chó")|escape }}', '{{ pred.created_at.strftime("%d/%m/%Y %H:%M") if pred.created_at else "" }}')" class="text-primary hover:bg-surface-container-high p-1.5 rounded-lg inline-flex items-center justify-center transition-colors cursor-pointer" title="{{ 'View Details' if ui_language == 'en' else 'Xem chi tiết' }}" data-i18n-title="viewDetail">
                             <span class="material-symbols-outlined text-[18px]">visibility</span>
                           </button>
                         </td>
@@ -854,7 +858,11 @@
                     <div class="flex items-center gap-3 overflow-hidden">
                       <img src="/{{ pred.image_path }}" alt="Dog" class="w-12 h-12 rounded-lg object-cover border border-outline-variant/15 flex-shrink-0">
                       <div class="flex flex-col justify-center overflow-hidden">
-                        <span class="text-sm font-semibold truncate" data-i18n-breed="{{ pred.breed or '' }}">{{ pred.breed or 'Chưa xác định' }}</span>
+                        {% if pred.breed %}
+                          <span class="text-sm font-semibold truncate" data-i18n-breed="{{ pred.breed }}">{{ pred.breed }}</span>
+                        {% else %}
+                          <span class="text-sm font-semibold truncate" data-i18n="notDetermined">{{ 'Undetermined' if ui_language == 'en' else 'Chưa xác định' }}</span>
+                        {% endif %}
                         <span class="text-[11px] text-on-surface-variant mt-0.5">{{ pred.created_at.strftime('%d/%m/%Y %H:%M') if pred.created_at else '' }}</span>
                       </div>
                     </div>
@@ -872,7 +880,7 @@
                       <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold {{ badge_class }}">
                         {{ '%.1f'|format(conf) }}%
                       </span>
-                      <button type="button" onclick="openDetailModal('{{ pred.image_path|escape }}', '{{ (pred.breed or "Chưa xác định")|escape }}', '{{ "%.1f"|format((pred.confidence or 0)*100) }}', '{{ (pred.species or "Chó")|escape }}', '{{ pred.created_at.strftime("%d/%m/%Y %H:%M") if pred.created_at else "" }}')" class="text-primary hover:bg-surface-container-high p-1.5 rounded-lg inline-flex items-center justify-center transition-colors cursor-pointer" title="Xem chi tiết" data-i18n-title="viewDetail">
+                      <button type="button" onclick="openDetailModal('{{ pred.image_path|escape }}', '{{ (pred.breed or "Chưa xác định")|escape }}', '{{ "%.1f"|format((pred.confidence or 0)*100) }}', '{{ (pred.species or "Chó")|escape }}', '{{ pred.created_at.strftime("%d/%m/%Y %H:%M") if pred.created_at else "" }}')" class="text-primary hover:bg-surface-container-high p-1.5 rounded-lg inline-flex items-center justify-center transition-colors cursor-pointer" title="{{ 'View Details' if ui_language == 'en' else 'Xem chi tiết' }}" data-i18n-title="viewDetail">
                         <span class="material-symbols-outlined text-[18px]">visibility</span>
                       </button>
                     </div>
@@ -1396,43 +1404,48 @@
             const breakdownEl = document.getElementById(
               "subscriptionBreakdown",
             );
-            if (breakdownEl && hasSubData) {
-              subLabels.forEach(function (label, i) {
-                const count = subData[i];
-                const pct =
-                  totalSubs > 0
-                    ? ((count / totalSubs) * 100).toFixed(1)
-                    : "0.0";
-                const color = subColors[i] || "#94a3b8";
-                const row = document.createElement("div");
-                row.className = "flex flex-col gap-1";
-                const userSuffix =
+            function renderSubscriptionBreakdown() {
+              if (!breakdownEl) return;
+              breakdownEl.innerHTML = "";
+              if (hasSubData) {
+                subLabels.forEach(function (label, i) {
+                  const count = subData[i];
+                  const pct =
+                    totalSubs > 0
+                      ? ((count / totalSubs) * 100).toFixed(1)
+                      : "0.0";
+                  const color = subColors[i] || "#94a3b8";
+                  const row = document.createElement("div");
+                  row.className = "flex flex-col gap-1";
+                  const userSuffix =
+                    typeof window.PetAI_i18n !== "undefined"
+                      ? window.PetAI_i18n.t("usersText").toLowerCase()
+                      : "người";
+                  row.innerHTML = `
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                      <span class="inline-block w-3 h-3 rounded-full flex-shrink-0" style="background:${color}"></span>
+                      <span class="label-sm font-semibold text-on-surface">${label}</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                      <span class="label-sm font-bold text-on-surface">${count} <span class="font-normal text-on-surface-variant">${userSuffix}</span></span>
+                      <span class="label-sm font-semibold text-on-surface-variant w-14 text-right">${pct}%</span>
+                    </div>
+                  </div>
+                  <div class="h-2 rounded-full bg-surface-container-high dark:bg-slate-700 overflow-hidden">
+                    <div class="h-full rounded-full transition-all duration-700" style="width:${pct}%;background:${color}"></div>
+                  </div>`;
+                  breakdownEl.appendChild(row);
+                });
+              } else {
+                const noDataMsg =
                   typeof window.PetAI_i18n !== "undefined"
-                    ? window.PetAI_i18n.t("usersText").toLowerCase()
-                    : "người";
-                row.innerHTML = `
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center gap-2">
-                    <span class="inline-block w-3 h-3 rounded-full flex-shrink-0" style="background:${color}"></span>
-                    <span class="label-sm font-semibold text-on-surface">${label}</span>
-                  </div>
-                  <div class="flex items-center gap-3">
-                    <span class="label-sm font-bold text-on-surface">${count} <span class="font-normal text-on-surface-variant">${userSuffix}</span></span>
-                    <span class="label-sm font-semibold text-on-surface-variant w-14 text-right">${pct}%</span>
-                  </div>
-                </div>
-                <div class="h-2 rounded-full bg-surface-container-high dark:bg-slate-700 overflow-hidden">
-                  <div class="h-full rounded-full transition-all duration-700" style="width:${pct}%;background:${color}"></div>
-                </div>`;
-                breakdownEl.appendChild(row);
-              });
-            } else if (breakdownEl) {
-              const noDataMsg =
-                typeof window.PetAI_i18n !== "undefined"
-                  ? window.PetAI_i18n.t("noSubscriptionData")
-                  : "Chưa có dữ liệu gói đăng ký.";
-              breakdownEl.innerHTML = `<p class="text-on-surface-variant label-sm">${noDataMsg}</p>`;
+                    ? window.PetAI_i18n.t("noSubscriptionData")
+                    : "Chưa có dữ liệu gói đăng ký.";
+                breakdownEl.innerHTML = `<p class="text-on-surface-variant label-sm">${noDataMsg}</p>`;
+              }
             }
+            renderSubscriptionBreakdown();
           })();
         }
 
@@ -2002,6 +2015,74 @@
         });
         themeObserver.observe(document.documentElement, { attributes: true });
 
+        function updateTrendSubtitles() {
+          if (isAdmin) {
+            const activeRevTab = document.querySelector(".rev-tab.bg-primary");
+            if (activeRevTab) {
+              const period = activeRevTab.getAttribute("data-period");
+              const subtitle = document.getElementById("revenueTrendSubtitle");
+              if (subtitle) {
+                const t_func = typeof window.PetAI_i18n !== "undefined" ? window.PetAI_i18n.t : x => x;
+                if (period === "7days") subtitle.textContent = t_func("revenueTrendSubtitle7");
+                else if (period === "30days") subtitle.textContent = t_func("revenueTrendSubtitle30");
+                else if (period === "90days") subtitle.textContent = t_func("revenueTrendSubtitle90");
+                else if (period === "12months") subtitle.textContent = t_func("revenueTrendSubtitle12");
+                else if (period === "custom") {
+                  const start = document.getElementById("revenueStartDate").value;
+                  const end = document.getElementById("revenueEndDate").value;
+                  if (start && end) {
+                    subtitle.textContent = t_func("customRangeSubtitle")
+                      .replace("{start}", start.split("-").reverse().join("/"))
+                      .replace("{end}", end.split("-").reverse().join("/"));
+                  } else {
+                    subtitle.textContent = t_func("custom");
+                  }
+                }
+              }
+            }
+          } else {
+            const activeActTab = document.querySelector(".act-tab.bg-primary");
+            if (activeActTab) {
+              const period = activeActTab.getAttribute("data-period");
+              const trendTitle = document.getElementById("predictionTrendTitle");
+              const trendBadge = document.getElementById("predictionTrendBadge");
+              const trendSubtitle = document.getElementById("predictionTrendSubtitle");
+              const t_func = typeof window.PetAI_i18n !== "undefined" ? window.PetAI_i18n.t : x => x;
+              if (trendTitle && trendBadge && trendSubtitle) {
+                if (period === "7days") {
+                  trendTitle.textContent = t_func("predTrendTitle7");
+                  trendBadge.textContent = t_func("last7days");
+                  trendSubtitle.textContent = t_func("predTrendSubtitleDefault");
+                } else if (period === "30days") {
+                  trendTitle.textContent = t_func("predTrendTitle30");
+                  trendBadge.textContent = t_func("days30");
+                  trendSubtitle.textContent = t_func("predTrendSubtitleDefault");
+                } else if (period === "90days") {
+                  trendTitle.textContent = t_func("predTrendTitle90");
+                  trendBadge.textContent = t_func("days90");
+                  trendSubtitle.textContent = t_func("predTrendSubtitleDefault");
+                } else if (period === "12months") {
+                  trendTitle.textContent = t_func("predTrendTitle12");
+                  trendBadge.textContent = t_func("months12");
+                  trendSubtitle.textContent = t_func("predTrendSubtitleMonth");
+                } else if (period === "custom") {
+                  const start = document.getElementById("activityStartDate").value;
+                  const end = document.getElementById("activityEndDate").value;
+                  trendTitle.textContent = t_func("predTrendTitleCustom");
+                  trendBadge.textContent = t_func("custom");
+                  if (start && end) {
+                    trendSubtitle.textContent = t_func("customRangeSubtitle")
+                      .replace("{start}", start.split("-").reverse().join("/"))
+                      .replace("{end}", end.split("-").reverse().join("/"));
+                  } else {
+                    trendSubtitle.textContent = t_func("custom");
+                  }
+                }
+              }
+            }
+          }
+        }
+
         document.addEventListener("i18nChanged", function (e) {
           const lang = e.detail.lang;
           
@@ -2041,6 +2122,12 @@
             }
             topBreedsChartInstance.update();
           }
+
+          if (typeof renderSubscriptionBreakdown === "function") {
+            renderSubscriptionBreakdown();
+          }
+
+          updateTrendSubtitles();
         });
       });
     </script>
@@ -2186,9 +2273,23 @@
         // Set basic data
         modalImage.src = "/" + imagePath;
         modalBreed.setAttribute("data-i18n-breed", breed);
-        if (typeof window.PetAI_i18n !== "undefined") {
-          modalBreed.innerText = breed;
-          modalSpecies.innerText = species || "Chó";
+        if (typeof window.PetAI_i18n !== "undefined" && window.PetAI_i18n.getCurrentLang() === "en") {
+          if (breed === "Chưa xác định") {
+            modalBreed.innerText = window.PetAI_i18n.t("notDetermined");
+          } else if (breed.startsWith("Nghi lai:")) {
+            const parentPart = breed.replace("Nghi lai:", "").trim();
+            const parents = parentPart.split("x");
+            if (parents.length >= 2) {
+              const p1 = window.PetAI_i18n.translateBreed(parents[0].trim());
+              const p2 = window.PetAI_i18n.translateBreed(parents[1].trim());
+              modalBreed.innerText = `Mixed: ${p1} x ${p2}`;
+            } else {
+              modalBreed.innerText = `Mixed: ${window.PetAI_i18n.translateBreed(parentPart)}`;
+            }
+          } else {
+            modalBreed.innerText = window.PetAI_i18n.translateBreed(breed);
+          }
+          modalSpecies.innerText = species === "Chó" ? window.PetAI_i18n.t("speciesDog") : (species || "Dog");
         } else {
           modalBreed.innerText = breed;
           modalSpecies.innerText = species || "Chó";
@@ -2215,8 +2316,13 @@
             const p2 = parents[1].trim();
             modalParent1.setAttribute("data-i18n-breed", p1);
             modalParent2.setAttribute("data-i18n-breed", p2);
-            modalParent1.innerText = p1;
-            modalParent2.innerText = p2;
+            if (typeof window.PetAI_i18n !== "undefined" && window.PetAI_i18n.getCurrentLang() === "en") {
+              modalParent1.innerText = window.PetAI_i18n.translateBreed(p1);
+              modalParent2.innerText = window.PetAI_i18n.translateBreed(p2);
+            } else {
+              modalParent1.innerText = p1;
+              modalParent2.innerText = p2;
+            }
             modalHybridInfo.classList.remove("hidden");
           } else {
             modalHybridInfo.classList.add("hidden");

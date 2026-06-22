@@ -1640,6 +1640,12 @@
         // Detailed transaction drawer modal loading
         window.openDetailModal = async function(orderId) {
           const isVi = document.documentElement.getAttribute("lang") !== "en";
+          const detailModal = document.getElementById("detailModal");
+          const detailModalContainer = document.getElementById("detailModalContainer");
+          if (!detailModal || !detailModalContainer) {
+            console.error("Detail modal elements not found in DOM");
+            return;
+          }
           try {
             const res = await fetch(`/predict/payments/status?order_id=${encodeURIComponent(orderId)}`, {
               cache: "no-store"
@@ -1671,6 +1677,9 @@
         };
 
         window.closeDetailModal = function() {
+          const detailModal = document.getElementById("detailModal");
+          const detailModalContainer = document.getElementById("detailModalContainer");
+          if (!detailModal || !detailModalContainer) return;
           detailModalContainer.classList.remove("scale-100", "opacity-100");
           detailModalContainer.classList.add("scale-95", "opacity-0");
           setTimeout(() => {
@@ -1789,14 +1798,17 @@
         }
 
         // Close on clicking backdrop
-        detailModal.addEventListener("click", function (e) {
-          if (detailModalContainer && !detailModalContainer.contains(e.target)) {
+        document.addEventListener("click", function (e) {
+          const detailModal = document.getElementById("detailModal");
+          const detailModalContainer = document.getElementById("detailModalContainer");
+          if (detailModal && detailModalContainer && e.target === detailModal) {
             closeDetailModal();
           }
         });
 
         document.addEventListener("keydown", function (e) {
-          if (e.key === "Escape" && !detailModal.classList.contains("hidden")) {
+          const detailModal = document.getElementById("detailModal");
+          if (detailModal && e.key === "Escape" && !detailModal.classList.contains("hidden")) {
             closeDetailModal();
           }
         });
@@ -1870,6 +1882,12 @@
 
         window.showPaymentSuccessBill = function (data) {
           if (!data) return;
+          const modal = document.getElementById("invoiceModal");
+          const container = document.getElementById("invoiceModalContainer");
+          if (!modal || !container) {
+            console.error("Invoice modal elements not found in DOM");
+            return;
+          }
 
           try {
             document.getElementById("invoiceOrderId").textContent =
@@ -1945,6 +1963,9 @@
         };
 
         window.hideInvoiceModal = function () {
+          const modal = document.getElementById("invoiceModal");
+          const container = document.getElementById("invoiceModalContainer");
+          if (!modal || !container) return;
           container.classList.remove("scale-100", "opacity-100");
           container.classList.add("scale-95", "opacity-0");
           setTimeout(() => {
@@ -1962,15 +1983,16 @@
           });
         }
 
-        if (modal) {
-          modal.addEventListener("click", function (e) {
-            if (container && !container.contains(e.target)) {
-              hideInvoiceModal();
-            }
-          });
-        }
+        document.addEventListener("click", function (e) {
+          const modal = document.getElementById("invoiceModal");
+          const container = document.getElementById("invoiceModalContainer");
+          if (modal && container && e.target === modal) {
+            hideInvoiceModal();
+          }
+        });
 
         document.addEventListener("keydown", function (e) {
+          const modal = document.getElementById("invoiceModal");
           if (
             e.key === "Escape" &&
             modal &&

@@ -161,6 +161,14 @@
   });
 
   window.showToast = function (type, message, options) {
+    const isFirstTypeValid = (type === "success" || type === "error" || type === "warning" || type === "info" || type === "warn" || type === "danger" || type === "fail" || type === "failed");
+    const isSecondTypeValid = (message === "success" || message === "error" || message === "warning" || message === "info" || message === "warn" || message === "danger" || message === "fail" || message === "failed");
+    if (!isFirstTypeValid && isSecondTypeValid) {
+      const temp = type;
+      type = message;
+      message = temp;
+    }
+
     const normalized = normalizeType(type);
     let text = String(message || "").trim();
     if (!text) return;

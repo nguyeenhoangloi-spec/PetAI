@@ -266,11 +266,22 @@ def lock_user(user_id: int):
     conn = None
     try:
         conn = get_connection()
-        with conn.cursor() as cur:
-            cur.execute("UPDATE users SET is_active = FALSE WHERE id = %s", (user_id,))
-            if cur.rowcount == 0:
+        with conn.cursor(DictCursor) as cur:
+            cur.execute("SELECT email, fullname FROM users WHERE id = %s", (user_id,))
+            user = cur.fetchone()
+            if not user:
                 return jsonify({"success": False, "error": "Không tìm thấy người dùng."}), 404
+            
+            cur.execute("UPDATE users SET is_active = FALSE WHERE id = %s", (user_id,))
         conn.commit()
+        
+        try:
+            if user.get("email"):
+                from notifications import send_account_locked_email
+                send_account_locked_email(user["email"], user.get("fullname") or user["email"])
+        except Exception:
+            logger.exception("[LOCK] Error sending email")
+            
         logger.info("[LOCK] Success. user_id=%s locked.", user_id)
         return jsonify({"success": True}), 200
     except Exception:
@@ -291,11 +302,22 @@ def unlock_user(user_id: int):
     conn = None
     try:
         conn = get_connection()
-        with conn.cursor() as cur:
-            cur.execute("UPDATE users SET is_active = TRUE WHERE id = %s", (user_id,))
-            if cur.rowcount == 0:
+        with conn.cursor(DictCursor) as cur:
+            cur.execute("SELECT email, fullname FROM users WHERE id = %s", (user_id,))
+            user = cur.fetchone()
+            if not user:
                 return jsonify({"success": False, "error": "Không tìm thấy người dùng."}), 404
+            
+            cur.execute("UPDATE users SET is_active = TRUE WHERE id = %s", (user_id,))
         conn.commit()
+        
+        try:
+            if user.get("email"):
+                from notifications import send_account_unlocked_email
+                send_account_unlocked_email(user["email"], user.get("fullname") or user["email"])
+        except Exception:
+            logger.exception("[UNLOCK] Error sending email")
+            
         return jsonify({"success": True}), 200
     except Exception:
         if conn:
@@ -330,7 +352,7 @@ def delete_user(user_id: int):
             return jsonify({"success": False, "error": "Thiếu xác nhận xóa (confirm)."}), 400
 
         with conn.cursor(DictCursor) as cur:
-            cur.execute("SELECT id, username FROM users WHERE id = %s", (user_id,))
+            cur.execute("SELECT id, username, email, fullname FROM users WHERE id = %s", (user_id,))
             target = cur.fetchone()
             if not target:
                 return jsonify({"success": False, "error": "Không tìm thấy người dùng."}), 404
@@ -360,6 +382,14 @@ def delete_user(user_id: int):
 
             cur.execute("DELETE FROM users WHERE id = %s", (user_id,))
         conn.commit()
+        
+        try:
+            if target.get("email"):
+                from notifications import send_account_deleted_email
+                send_account_deleted_email(target["email"], target.get("fullname") or target.get("username") or target["email"])
+        except Exception:
+            logger.exception("[DELETE] Error sending email")
+            
         return jsonify({"success": True}), 200
     except Exception:
         if conn:

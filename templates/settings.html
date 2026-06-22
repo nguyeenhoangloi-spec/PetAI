@@ -374,9 +374,9 @@
   <body class="bg-background text-on-background body-md antialiased min-h-screen flex flex-col dark:bg-slate-950 dark:text-slate-100">
     {% include '_toasts.html' %}
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
-    {% set display_name = session.get('fullname') or session.get('username') or session.get('email') or 'Người dùng' %}
+    {% set display_name = session.get('fullname') or session.get('username') or session.get('email') or ('User' if ui_language == 'en' else 'Người dùng') %}
     {% set display_email = session.get('email') %}
-    {% set display_role = session.get('role') or 'Thanh vien' %}
+    {% set display_role = 'Admin' if (session.get('role') or '').lower() == 'admin' else ('Member' if ui_language == 'en' else 'Thành viên') %}
     {% set display_plan = current_plan or 'free' %}
 
     {% include '_header.html' %}
@@ -390,8 +390,8 @@
           <div class="bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-700 dark:from-slate-900 dark:to-slate-800 rounded-2xl p-6 text-white shadow-lg flex flex-col md:flex-row items-center justify-between gap-6 transition-all duration-300">
             <div class="flex flex-col md:flex-row items-center gap-6">
               <div class="relative w-20 h-20 shrink-0">
-                <img id="profileAvatar" alt="Ảnh đại diện" class="w-full h-full rounded-full border-4 border-white/20 p-0.5 shadow-md cursor-pointer hover:scale-105 transition-transform duration-250 object-cover" src="{{ ui_avatar_url }}">
-                <button type="button" id="changeAvatarBtn" class="absolute bottom-0 right-0 w-7 h-7 rounded-full bg-primary hover:bg-blue-700 text-white border-2 border-white dark:border-slate-900 shadow-md flex items-center justify-center cursor-pointer transition-all duration-200 hover:scale-110 active:scale-95" onclick="document.getElementById('avatarFileInput').click()" title="Thay đổi ảnh đại diện">
+                <img id="profileAvatar" alt="{{ 'Profile picture' if ui_language == 'en' else 'Ảnh đại diện' }}" class="w-full h-full rounded-full border-4 border-white/20 p-0.5 shadow-md cursor-pointer hover:scale-105 transition-transform duration-250 object-cover" src="{{ ui_avatar_url }}">
+                <button type="button" id="changeAvatarBtn" class="absolute bottom-0 right-0 w-7 h-7 rounded-full bg-primary hover:bg-blue-700 text-white border-2 border-white dark:border-slate-900 shadow-md flex items-center justify-center cursor-pointer transition-all duration-200 hover:scale-110 active:scale-95" onclick="document.getElementById('avatarFileInput').click()" data-i18n-title="changeAvatarTitle" title="{{ 'Change avatar' if ui_language == 'en' else 'Thay đổi ảnh đại diện' }}">
                   <span class="material-symbols-outlined text-[15px]">photo_camera</span>
                 </button>
                 <input type="file" id="avatarFileInput" accept="image/*" class="hidden">
@@ -405,7 +405,7 @@
                   </span>
                   <span class="inline-flex items-center px-3 py-0.5 rounded-full text-[10px] font-bold bg-amber-400 text-slate-900 uppercase tracking-wider">
                     <span class="material-symbols-outlined text-[12px] mr-1">workspace_premium</span>
-                    <span data-i18n="userPlanLabel" data-code="{{ display_plan }}">Gói {{ display_plan }}</span>
+                    <span data-i18n="userPlanLabel" data-code="{{ display_plan }}">{{ 'Plan ' ~ display_plan if ui_language == 'en' else 'Gói ' ~ display_plan }}</span>
                   </span>
                 </div>
               </div>
@@ -414,7 +414,7 @@
             <div class="flex shrink-0">
               <a href="{{ url_for('predict.upgrade') }}" class="px-5 py-2.5 bg-amber-400 hover:bg-amber-300 text-slate-900 font-semibold rounded-xl text-sm shadow-md transition-all active:scale-95 flex items-center gap-2">
                 <span class="material-symbols-outlined text-[18px]">upgrade</span>
-                <span data-i18n="subscriptionUpgradeBtn">Nâng cấp gói</span>
+                <span data-i18n="subscriptionUpgradeBtn">{{ 'Upgrade Plan' if ui_language == 'en' else 'Nâng cấp gói' }}</span>
               </a>
             </div>
           </div>
@@ -423,23 +423,23 @@
           <div class="flex border-b border-slate-200 dark:border-slate-800/80 overflow-x-auto gap-2 md:gap-6 mt-2 scrollbar-none" id="settingsTabs" role="tablist">
             <button type="button" role="tab" aria-selected="true" aria-controls="tab-panel-profile" id="tab-btn-profile" class="flex items-center gap-2 px-1 py-3 text-sm font-semibold border-b-2 border-primary text-primary transition-all duration-200 whitespace-nowrap focus:outline-none select-none">
               <span class="material-symbols-outlined text-[18px]">person</span>
-              <span data-i18n="settingsTabProfile">Hồ sơ</span>
+              <span data-i18n="settingsTabProfile">{{ 'Profile' if ui_language == 'en' else 'Hồ sơ' }}</span>
             </button>
             <button type="button" role="tab" aria-selected="false" aria-controls="tab-panel-security" id="tab-btn-security" class="flex items-center gap-2 px-1 py-3 text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-all duration-200 whitespace-nowrap focus:outline-none select-none">
               <span class="material-symbols-outlined text-[18px]">security</span>
-              <span data-i18n="settingsTabSecurity">Bảo mật</span>
+              <span data-i18n="settingsTabSecurity">{{ 'Security' if ui_language == 'en' else 'Bảo mật' }}</span>
             </button>
             <button type="button" role="tab" aria-selected="false" aria-controls="tab-panel-notifications" id="tab-btn-notifications" class="flex items-center gap-2 px-1 py-3 text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-all duration-200 whitespace-nowrap focus:outline-none select-none">
               <span class="material-symbols-outlined text-[18px]">notifications</span>
-              <span data-i18n="settingsTabNotifications">Thông báo</span>
+              <span data-i18n="settingsTabNotifications">{{ 'Notifications' if ui_language == 'en' else 'Thông báo' }}</span>
             </button>
             <button type="button" role="tab" aria-selected="false" aria-controls="tab-panel-appearance" id="tab-btn-appearance" class="flex items-center gap-2 px-1 py-3 text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-all duration-200 whitespace-nowrap focus:outline-none select-none">
               <span class="material-symbols-outlined text-[18px]">palette</span>
-              <span data-i18n="settingsTabAppearance">Giao diện</span>
+              <span data-i18n="settingsTabAppearance">{{ 'Appearance' if ui_language == 'en' else 'Giao diện' }}</span>
             </button>
             <button type="button" role="tab" aria-selected="false" aria-controls="tab-panel-privacy" id="tab-btn-privacy" class="flex items-center gap-2 px-1 py-3 text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-all duration-200 whitespace-nowrap focus:outline-none select-none">
               <span class="material-symbols-outlined text-[18px]">shield</span>
-              <span data-i18n="settingsTabPrivacy">Quyền riêng tư</span>
+              <span data-i18n="settingsTabPrivacy">{{ 'Privacy' if ui_language == 'en' else 'Quyền riêng tư' }}</span>
             </button>
           </div>
 
@@ -562,7 +562,7 @@
                           class="w-full bg-transparent border-none px-4 py-3 pr-10 text-sm text-slate-800 dark:text-slate-100 focus:ring-0 disabled:text-slate-400 disabled:cursor-not-allowed"
                           name="current_password"
                           type="password"
-                          placeholder="{% if force_change_password %}Không cần mật khẩu hiện tại{% else %}Nhập mật khẩu hiện tại{% endif %}"
+                          placeholder="{% if force_change_password %}{{ 'Current password not required' if ui_language == 'en' else 'Không cần mật khẩu hiện tại' }}{% else %}{{ 'Enter current password' if ui_language == 'en' else 'Nhập mật khẩu hiện tại' }}{% endif %}"
                           autocomplete="current-password"
                           {% if force_change_password %}disabled{% endif %}
                         >
@@ -991,6 +991,14 @@
               const userId = "{{ session.get('user_id') or 'guest' }}";
               const activeTabKey = "settings-active-tab:" + userId;
 
+              // Helper function to translate dynamically
+              const getTranslation = (key, fallback) => {
+                if (window.PetAI_i18n && typeof window.PetAI_i18n.t === 'function') {
+                  return window.PetAI_i18n.t(key) || fallback;
+                }
+                return fallback;
+              };
+
               // 1. Logic chuyển đổi Tab
               const tabButtons = {
                 profile: document.getElementById('tab-btn-profile'),
@@ -1089,12 +1097,12 @@
                   if (isEditing) {
                     fullnameInput.removeAttribute('disabled');
                     fullnameInput.focus();
-                    editBtn.innerHTML = `<span class="material-symbols-outlined text-[14px]">close</span><span data-i18n="cancelBtn">Hủy</span>`;
+                    editBtn.innerHTML = `<span class="material-symbols-outlined text-[14px]">close</span><span data-i18n="cancelBtn">${getTranslation('cancelBtn', 'Hủy')}</span>`;
                     if (cancelEditBtn) cancelEditBtn.classList.remove('hidden');
                   } else {
                     fullnameInput.value = originalName;
                     fullnameInput.setAttribute('disabled', 'true');
-                    editBtn.innerHTML = `<span class="material-symbols-outlined text-[14px]">edit</span><span data-i18n="editBtn">Chỉnh sửa</span>`;
+                    editBtn.innerHTML = `<span class="material-symbols-outlined text-[14px]">edit</span><span data-i18n="editBtn">${getTranslation('editBtn', 'Chỉnh sửa')}</span>`;
                     if (cancelEditBtn) cancelEditBtn.classList.add('hidden');
                   }
                 });
@@ -1106,7 +1114,7 @@
                   isEditing = false;
                   fullnameInput.value = originalName;
                   fullnameInput.setAttribute('disabled', 'true');
-                  editBtn.innerHTML = `<span class="material-symbols-outlined text-[14px]">edit</span><span data-i18n="editBtn">Chỉnh sửa</span>`;
+                  editBtn.innerHTML = `<span class="material-symbols-outlined text-[14px]">edit</span><span data-i18n="editBtn">${getTranslation('editBtn', 'Chỉnh sửa')}</span>`;
                   cancelEditBtn.classList.add('hidden');
                 });
               }
@@ -1190,7 +1198,7 @@
                   window.closeClearHistoryModal();
                   const originalText = clearHistoryBtn.innerHTML;
                   clearHistoryBtn.disabled = true;
-                  clearHistoryBtn.innerHTML = `<span class="material-symbols-outlined text-[18px] animate-spin">sync</span><span>Đang xóa...</span>`;
+                  clearHistoryBtn.innerHTML = `<span class="material-symbols-outlined text-[18px] animate-spin">sync</span><span data-i18n="deleting">${getTranslation('deleting', 'Đang xóa...')}</span>`;
 
                   try {
                     const res = await fetch('{{ url_for("settings.clear_history") }}', {
@@ -1210,13 +1218,13 @@
                     } else {
                       clearHistoryBtn.disabled = false;
                       clearHistoryBtn.innerHTML = originalText;
-                      if (typeof window.showToast === 'function') window.showToast('error', 'Lỗi không thể xóa lịch sử.');
+                      if (typeof window.showToast === 'function') window.showToast('error', getTranslation('msgHistoryClearError', 'Không thể xóa lịch sử. Vui lòng thử lại.'));
                     }
                   } catch (err) {
                     console.error(err);
                     clearHistoryBtn.disabled = false;
                     clearHistoryBtn.innerHTML = originalText;
-                    if (typeof window.showToast === 'function') window.showToast('error', 'Lỗi kết nối máy chủ.');
+                    if (typeof window.showToast === 'function') window.showToast('error', getTranslation('toastServerError', 'Lỗi kết nối máy chủ.'));
                   }
                 });
               }
@@ -1233,11 +1241,10 @@
                   }
 
                   const activeSaveBtns = document.querySelectorAll('.save-settings-btn');
-                  const t_func = typeof window.PetAI_i18n !== 'undefined' ? window.PetAI_i18n.t : (x) => x;
 
                   activeSaveBtns.forEach(btn => {
                     btn.disabled = true;
-                    btn.textContent = t_func('saving') || 'Đang lưu...';
+                    btn.textContent = getTranslation('saving', 'Đang lưu...');
                   });
 
                   try {
@@ -1258,17 +1265,17 @@
                     } else {
                       activeSaveBtns.forEach(btn => {
                         btn.disabled = false;
-                        btn.textContent = t_func('saveChanges') || 'Lưu thay đổi';
+                        btn.textContent = getTranslation('saveChanges', 'Lưu thay đổi');
                       });
-                      if (typeof window.showToast === 'function') window.showToast('error', 'Không thể lưu cài đặt.');
+                      if (typeof window.showToast === 'function') window.showToast('error', getTranslation('msgSettingsSaveError', 'Không thể lưu cài đặt.'));
                     }
                   } catch (err) {
                     console.error(err);
                     activeSaveBtns.forEach(btn => {
                       btn.disabled = false;
-                      btn.textContent = t_func('saveChanges') || 'Lưu thay đổi';
+                      btn.textContent = getTranslation('saveChanges', 'Lưu thay đổi');
                     });
-                    if (typeof window.showToast === 'function') window.showToast('error', 'Lỗi kết nối.');
+                    if (typeof window.showToast === 'function') window.showToast('error', getTranslation('connectionError', 'Lỗi kết nối.'));
                   }
                 });
               }
@@ -1286,7 +1293,7 @@
 
                   const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp', 'image/gif'];
                   if (!allowedTypes.includes(file.type)) {
-                    if (typeof window.showToast === 'function') window.showToast('error', 'Định dạng file không được hỗ trợ.');
+                    if (typeof window.showToast === 'function') window.showToast('error', getTranslation('msgFileNotSupported', 'Định dạng file không được hỗ trợ.'));
                     return;
                   }
 
@@ -1294,7 +1301,6 @@
                   const objectUrl = URL.createObjectURL(file);
                   if (profileAvatar) profileAvatar.src = objectUrl;
 
-                  const t_func = typeof window.PetAI_i18n !== 'undefined' ? window.PetAI_i18n.t : (x) => x;
                   const formData = new FormData();
                   formData.append('avatar', file);
 
@@ -1302,7 +1308,7 @@
                   const csrfToken = csrfMeta ? csrfMeta.getAttribute('content') : '';
 
                   try {
-                    if (typeof window.showToast === 'function') window.showToast('info', t_func('uploading') || 'Đang tải ảnh lên...');
+                    if (typeof window.showToast === 'function') window.showToast('info', getTranslation('uploading', 'Đang tải ảnh lên...'));
                     const response = await fetch('/settings/upload-avatar', {
                       method: 'POST',
                       body: formData,
@@ -1322,14 +1328,14 @@
                       const dropdownAvatar = document.querySelector('.avatar-wrapper img');
                       if (dropdownAvatar) dropdownAvatar.src = newUrl;
 
-                      if (typeof window.showToast === 'function') window.showToast('success', t_func('uploadSuccess') || 'Đã cập nhật ảnh đại diện thành công!');
+                      if (typeof window.showToast === 'function') window.showToast('success', getTranslation('uploadSuccess', 'Đã cập nhật ảnh đại diện thành công!'));
                     } else {
                       throw new Error(result.message || 'Upload failed');
                     }
                   } catch (err) {
                     console.error(err);
                     if (profileAvatar) profileAvatar.src = originalSrc;
-                    if (typeof window.showToast === 'function') window.showToast('error', err.message || 'Không thể tải ảnh lên.');
+                    if (typeof window.showToast === 'function') window.showToast('error', err.message || getTranslation('uploadError', 'Không thể tải ảnh lên.'));
                   } finally {
                     URL.revokeObjectURL(objectUrl);
                     avatarInput.value = '';
@@ -1359,6 +1365,15 @@
               if (errEl) errEl.classList.add('hidden');
             };
 
+            // Helper function to translate backend messages
+            const getMsg = (msg) => {
+              if (!msg) return "";
+              if (window.PetAI_i18n && typeof window.PetAI_i18n.translateDynamicToast === "function") {
+                return window.PetAI_i18n.translateDynamicToast(msg, window.PetAI_i18n.getCurrentLang());
+              }
+              return msg;
+            };
+
             window.sendDeleteOtp = async function () {
               const reason = document.getElementById('delete-reason-input').value.trim();
               const btn = document.getElementById('delete-send-otp-btn');
@@ -1382,10 +1397,26 @@
                   document.querySelectorAll('#delete-otp-boxes .otp-input')[0]?.focus();
                   startDelCountdown();
                 } else {
-                  alert(data.message || 'Gặp lỗi khi yêu cầu OTP.');
+                  const errorMsg = getMsg(data.message) || (window.PetAI_i18n ? window.PetAI_i18n.t('errorRequestOtp') : 'Gặp lỗi khi yêu cầu OTP.');
+                  if (window.PetAI_alert) {
+                    window.PetAI_alert({
+                      type: 'error',
+                      text: errorMsg
+                    });
+                  } else {
+                    alert(errorMsg);
+                  }
                 }
               } catch (e) {
-                alert('Lỗi kết nối. Vui lòng thử lại.');
+                const errorMsg = window.PetAI_i18n ? window.PetAI_i18n.t('connectionErrorTryAgain') : 'Lỗi kết nối. Vui lòng thử lại.';
+                if (window.PetAI_alert) {
+                  window.PetAI_alert({
+                    type: 'error',
+                    text: errorMsg
+                  });
+                } else {
+                  alert(errorMsg);
+                }
               } finally {
                 btn.disabled = false;
                 btn.textContent = window.PetAI_i18n ? window.PetAI_i18n.t('sendOtpBtn') : 'Gửi mã xác nhận';
@@ -1432,7 +1463,7 @@
               if (otp.length !== 6) {
                 const errEl = document.getElementById('delete-otp-error');
                 if (errEl) {
-                  errEl.textContent = 'Vui lòng nhập đủ 6 chữ số.';
+                  errEl.textContent = window.PetAI_i18n ? window.PetAI_i18n.t('enterAll6Digits') : 'Vui lòng nhập đủ 6 chữ số.';
                   errEl.classList.remove('hidden');
                 }
                 return;
@@ -1459,7 +1490,7 @@
                 } else {
                   const errEl = document.getElementById('delete-otp-error');
                   if (errEl) {
-                    errEl.textContent = data.message || 'Mã OTP không đúng.';
+                    errEl.textContent = getMsg(data.message) || (window.PetAI_i18n ? window.PetAI_i18n.t('incorrectOtp') : 'Mã OTP không đúng.');
                     errEl.classList.remove('hidden');
                   }
                   btn.disabled = false;
@@ -1468,7 +1499,7 @@
               } catch (e) {
                 const errEl = document.getElementById('delete-otp-error');
                 if (errEl) {
-                  errEl.textContent = 'Lỗi kết nối.';
+                  errEl.textContent = window.PetAI_i18n ? window.PetAI_i18n.t('connectionError') : 'Lỗi kết nối.';
                   errEl.classList.remove('hidden');
                 }
                 btn.disabled = false;
@@ -1497,12 +1528,31 @@
                   const errEl = document.getElementById('delete-otp-error');
                   if (errEl) errEl.classList.add('hidden');
                   startDelCountdown();
-                  if (typeof window.showToast === 'function') window.showToast('success', 'Mã OTP mới đã được gửi.');
+                  if (typeof window.showToast === 'function') {
+                    const otpSentMsg = window.PetAI_i18n ? window.PetAI_i18n.t('toastNewOtpSent') || 'Mã OTP mới đã được gửi.' : 'Mã OTP mới đã được gửi.';
+                    window.showToast('success', otpSentMsg);
+                  }
                 } else {
-                  alert(data.message || 'Không thể gửi lại OTP.');
+                  const errorMsg = getMsg(data.message) || (window.PetAI_i18n ? window.PetAI_i18n.t('errorResendOtp') : 'Không thể gửi lại OTP.');
+                  if (window.PetAI_alert) {
+                    window.PetAI_alert({
+                      type: 'error',
+                      text: errorMsg
+                    });
+                  } else {
+                    alert(errorMsg);
+                  }
                 }
               } catch (e) {
-                alert('Lỗi kết nối.');
+                const errorMsg = window.PetAI_i18n ? window.PetAI_i18n.t('connectionError') : 'Lỗi kết nối.';
+                if (window.PetAI_alert) {
+                  window.PetAI_alert({
+                    type: 'error',
+                    text: errorMsg
+                  });
+                } else {
+                  alert(errorMsg);
+                }
               } finally {
                 btn.disabled = false;
                 btn.textContent = window.PetAI_i18n ? window.PetAI_i18n.t('deleteResendBtn') : 'Gửi lại mã OTP';

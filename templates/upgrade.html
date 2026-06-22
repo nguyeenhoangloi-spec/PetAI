@@ -652,7 +652,7 @@
               <div class="space-y-2">
                 {% if active_plan == 'enterprise' %}
                   <h3 class="text-lg font-bold text-amber-600 dark:text-amber-400" data-i18n="highestPlanMsg">Bạn đang sử dụng gói cao nhất</h3>
-                  <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">Cảm ơn bạn đã tin dùng và đồng hành cùng hệ thống thông minh PetAI!</p>
+                  <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed" data-i18n="highestPlanDesc">Cảm ơn bạn đã tin dùng và đồng hành cùng hệ thống thông minh PetAI!</p>
                 {% else %}
                   <h3 class="text-lg font-bold text-slate-900 dark:text-white" data-i18n="upgradeExperience">Nâng cấp trải nghiệm</h3>
                   <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed" data-i18n="upgradeExperienceDesc">Mở khóa nhiều hạn mức quét AI hơn, loại bỏ quảng cáo và tối ưu hóa tốc độ nhận diện cún cưng.</p>
@@ -887,6 +887,7 @@
             {% if active_plan == 'enterprise' %}
               <span
                 class="badge-recommended absolute top-3 right-3 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30"
+                data-i18n="currentPlanBtn"
               >Gói hiện tại</span>
             {% endif %}
             <div class="pt-2">
@@ -1020,7 +1021,7 @@
                 </tr>
                 <tr>
                   <td class="py-3.5 pr-4 font-medium text-slate-900 dark:text-slate-100" data-i18n="compSuitability">Phù hợp với</td>
-                  <td class="py-3.5 px-4 text-center text-slate-500 dark:text-slate-400" data-i18n="compTrial">Trải nghiệm</td>
+                  <td class="py-3.5 px-4 text-center text-slate-500 dark:text-slate-400" data-i18n="compSuitabilityTrial">Trải nghiệm</td>
                   <td class="py-3.5 px-4 text-center text-slate-500 dark:text-slate-400" data-i18n="compPersonal">Người dùng cá nhân</td>
                   <td class="py-3.5 px-4 text-center bg-purple-500/5 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400 font-medium" data-i18n="compPowerUser">Người dùng thường xuyên</td>
                   <td class="py-3.5 pl-4 text-center font-bold text-amber-600 dark:text-amber-400" data-i18n="compEnterprise">Doanh nghiệp / Chuyên sâu</td>
@@ -1273,9 +1274,9 @@
                 <h4 class="text-sm font-bold text-slate-900 dark:text-white" data-i18n="helpCardTitle">Bạn cần hỗ trợ thêm?</h4>
                 <p class="text-xs text-slate-500 dark:text-slate-400 leading-normal" data-i18n="helpCardDesc">Liên hệ đội ngũ hỗ trợ của chúng tôi qua email hoặc chat trực tuyến.</p>
               </div>
-              <a href="mailto:support@pet.ai" class="bg-transparent hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white rounded-lg px-4 py-2 text-xs font-semibold flex items-center gap-1.5 shrink-0 transition-all active:scale-95 duration-100" data-i18n="helpCardBtn">
+              <a href="mailto:support@pet.ai" class="bg-transparent hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white rounded-lg px-4 py-2 text-xs font-semibold flex items-center gap-1.5 shrink-0 transition-all active:scale-95 duration-100">
                 <span class="material-symbols-outlined text-[16px]">support_agent</span>
-                <span>Liên hệ hỗ trợ</span>
+                <span data-i18n="helpCardBtn">Liên hệ hỗ trợ</span>
               </a>
             </div>
           </section>

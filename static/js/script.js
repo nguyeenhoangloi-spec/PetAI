@@ -507,6 +507,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const newNav = doc.querySelector("body > nav");
       const newModal = doc.querySelector("#confirmModal");
       const newDetailModal = doc.querySelector("#detailModal");
+      const newInvoiceModal = doc.querySelector("#invoiceModal");
       const newGradcamModal = doc.querySelector("#gradcamDetailModal");
       const newWatchAdModal = doc.querySelector("#watchAdModal");
       const newToastStack = doc.querySelector(".toast-stack");
@@ -646,6 +647,16 @@ document.addEventListener("DOMContentLoaded", function () {
           document.body.appendChild(newDetailModal);
         } else if (currentDetailModal) {
           currentDetailModal.remove();
+        }
+
+        // 4.655 Update invoiceModal if present
+        const currentInvoiceModal = document.getElementById("invoiceModal");
+        if (currentInvoiceModal && newInvoiceModal) {
+          currentInvoiceModal.parentNode.replaceChild(newInvoiceModal, currentInvoiceModal);
+        } else if (newInvoiceModal) {
+          document.body.appendChild(newInvoiceModal);
+        } else if (currentInvoiceModal) {
+          currentInvoiceModal.remove();
         }
 
         // 4.66 Update watchAdModal if present

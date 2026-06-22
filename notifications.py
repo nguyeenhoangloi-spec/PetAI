@@ -326,3 +326,55 @@ def send_restore_success_email(to_email: str, fullname: str) -> None:
     """
     _send_async(to_email, subject, _base_layout(content))
 
+
+# ---------------------------------------------------------------------------
+# 10. Tài khoản bị khóa bởi Admin
+# ---------------------------------------------------------------------------
+def send_account_locked_email(to_email: str, fullname: str) -> None:
+    subject = "[PetAI] Thông báo: Tài khoản của bạn đã bị khóa 🔒"
+    content = f"""
+      <h2 style="margin:0 0 16px;color:#e53e3e;">Tài khoản của bạn đã bị khóa</h2>
+      <p>Xin chào <b>{fullname}</b>,</p>
+      <p>Chúng tôi tiếc phải thông báo rằng tài khoản PetAI của bạn đã bị <b>khóa tạm thời hoặc vĩnh viễn</b> bởi quản trị viên hệ thống do vi phạm chính sách hoặc lý do bảo mật.</p>
+      <p>Nếu bạn cho rằng đây là một sự nhầm lẫn, vui lòng liên hệ với bộ phận hỗ trợ khách hàng của chúng tôi để được hỗ trợ giải quyết.</p>
+      <p style="margin-top:24px;font-size:13px;color:#718096;">Mọi thắc mắc vui lòng phản hồi qua email: <a href="mailto:support@tienphongtech.vn" style="color:#004ac6;">support@tienphongtech.vn</a>.</p>
+    """
+    _send_async(to_email, subject, _base_layout(content))
+
+
+# ---------------------------------------------------------------------------
+# 11. Tài khoản được mở khóa bởi Admin
+# ---------------------------------------------------------------------------
+def send_account_unlocked_email(to_email: str, fullname: str) -> None:
+    subject = "[PetAI] Tài khoản của bạn đã được mở khóa 🎉"
+    content = f"""
+      <h2 style="margin:0 0 16px;color:#38a169;">Tài khoản đã được mở khóa</h2>
+      <p>Xin chào <b>{fullname}</b>,</p>
+      <p>Chúc mừng! Tài khoản PetAI của bạn đã được <b>mở khóa và kích hoạt hoạt động trở lại</b> bởi quản trị viên hệ thống.</p>
+      <p>Bây giờ bạn có thể đăng nhập vào hệ thống và tiếp tục sử dụng tất cả các dịch vụ nhận diện giống chó thông minh như bình thường.</p>
+      <div style="text-align:center;margin:24px 0;">
+        <a href="{_APP_URL}/login"
+           style="background:#004ac6;color:#fff;padding:12px 32px;border-radius:8px;
+                  text-decoration:none;font-weight:600;font-size:15px;display:inline-block;">
+          Đăng nhập ngay →
+        </a>
+      </div>
+    """
+    _send_async(to_email, subject, _base_layout(content))
+
+
+# ---------------------------------------------------------------------------
+# 12. Tài khoản bị xóa vĩnh viễn bởi Admin
+# ---------------------------------------------------------------------------
+def send_account_deleted_email(to_email: str, fullname: str) -> None:
+    subject = "[PetAI] Thông báo: Tài khoản của bạn đã bị xóa khỏi hệ thống 🗑️"
+    content = f"""
+      <h2 style="margin:0 0 16px;color:#e53e3e;">Tài khoản đã bị xóa</h2>
+      <p>Xin chào <b>{fullname}</b>,</p>
+      <p>Chúng tôi xin thông báo rằng tài khoản PetAI liên kết với địa chỉ email này đã bị <b>xóa vĩnh viễn khỏi hệ thống</b> theo yêu cầu hoặc do quyết định quản trị.</p>
+      <p>Tất cả dữ liệu cá nhân, lịch sử quét và thông tin liên quan của bạn đã được xóa bỏ khỏi cơ sở dữ liệu của chúng tôi để bảo mật quyền riêng tư.</p>
+      <p>Cảm ơn bạn đã đồng hành cùng PetAI trong thời gian qua.</p>
+    """
+    _send_async(to_email, subject, _base_layout(content))
+
+

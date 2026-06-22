@@ -385,6 +385,15 @@
         </div>
       </section>
 
+      <!-- Notification Info Banner -->
+      <section class="bg-blue-50 dark:bg-blue-950/20 border border-blue-100 dark:border-blue-900/30 rounded-xl p-4 flex items-start gap-3 shadow-xs">
+        <span class="material-symbols-outlined text-blue-600 dark:text-blue-400 mt-0.5">info</span>
+        <div class="flex-grow">
+          <h4 class="text-sm font-semibold text-blue-800 dark:text-blue-300" data-i18n="notificationInfoTitle">Chức năng thông báo tự động</h4>
+          <p class="text-xs text-blue-705 dark:text-blue-400/90 mt-1 leading-relaxed" data-i18n="notificationInfoText">Hệ thống sẽ tự động gửi email thông báo chi tiết đến người dùng khi quản trị viên thực hiện thay đổi trạng thái tài khoản (Khóa/Mở khóa), cấp gói dịch vụ hoặc xóa tài khoản để đảm bảo tính minh bạch.</p>
+        </div>
+      </section>
+
       <!-- MoM Overview Cards -->
       <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         <!-- Card 1: Tổng người dùng -->
@@ -1046,7 +1055,8 @@
                 text: text,
                 type: "danger",
                 onConfirm: function () {
-                  executePostAction("/users/lock/" + uid, "Tài khoản " + username + " đã bị khóa.");
+                  var successMsg = t("toastLockSuccess", "Tài khoản {username} đã bị khóa.").replace("{username}", username);
+                  executePostAction("/users/lock/" + uid, successMsg);
                 }
               });
             }
@@ -1067,7 +1077,8 @@
                 text: text,
                 type: "success",
                 onConfirm: function () {
-                  executePostAction("/users/unlock/" + uid, "Tài khoản " + username + " đã được kích hoạt.");
+                  var successMsg = t("toastUnlockSuccess", "Tài khoản {username} đã được kích hoạt.").replace("{username}", username);
+                  executePostAction("/users/unlock/" + uid, successMsg);
                 }
               });
             }
@@ -1089,9 +1100,10 @@
                 title: title,
                 text: text,
                 type: "danger",
-                onConfirm: async function () {
-                  // Custom input inside dialog logic
-                  var confirmWord = prompt("Nhập 'DELETE' hoặc tên đăng nhập '" + username + "' để xác nhận xóa:");
+                showInput: true,
+                requiredInput: ["DELETE", username],
+                inputPlaceholder: t("deleteInputPlaceholder", "Nhập 'DELETE' hoặc '{username}' để xác nhận").replace("{username}", username),
+                onConfirm: async function (confirmWord) {
                   if (!confirmWord) return false;
                   
                   var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute("content");
@@ -1107,14 +1119,14 @@
                     });
                     var data = await res.json();
                     if (res.ok && data.success) {
-                      showToastNotification("Xóa tài khoản " + username + " thành công.", "success");
+                      showToastNotification(t("toastDeleteUserSuccess", "Xóa tài khoản {username} thành công.").replace("{username}", username), "success");
                       reloadPjaxPage();
                     } else {
-                      showToastNotification(data.error || "Không thể xóa tài khoản. Vui lòng thử lại.", "error");
+                      showToastNotification(data.error || t("toastDeleteUserError", "Không thể xóa tài khoản. Vui lòng thử lại."), "error");
                     }
                   } catch (e) {
                     console.error(e);
-                    showToastNotification("Lỗi kết nối máy chủ.", "error");
+                    showToastNotification(t("toastServerError", "Lỗi kết nối máy chủ."), "error");
                   }
                 }
               });
@@ -1152,14 +1164,14 @@
                     });
                     var data = await res.json();
                     if (res.ok && data.success) {
-                      showToastNotification("Đã cập nhật vai trò cho " + username + " thành công.", "success");
+                      showToastNotification(t("toastRoleSuccess", "Đã cập nhật vai trò cho {username} thành công.").replace("{username}", username), "success");
                       reloadPjaxPage();
                     } else {
-                      showToastNotification(data.error || "Lỗi thay đổi vai trò.", "error");
+                      showToastNotification(data.error || t("toastRoleError", "Lỗi thay đổi vai trò."), "error");
                     }
                   } catch (e) {
                     console.error(e);
-                    showToastNotification("Lỗi kết nối máy chủ.", "error");
+                    showToastNotification(t("toastServerError", "Lỗi kết nối máy chủ."), "error");
                   }
                 }
               });
@@ -1217,11 +1229,11 @@
             showToastNotification(successMsg, "success");
             reloadPjaxPage();
           } else {
-            showToastNotification(data.error || "Có lỗi xảy ra.", "error");
+            showToastNotification(data.error || t("toastDefaultError", "Có lỗi xảy ra."), "error");
           }
         } catch (err) {
           console.error(err);
-          showToastNotification("Lỗi kết nối tới máy chủ.", "error");
+          showToastNotification(t("toastServerError", "Lỗi kết nối tới máy chủ."), "error");
         }
       }
 
@@ -1240,16 +1252,16 @@
           });
           var data = await res.json();
           if (res.ok && data.success) {
-            showToastNotification(data.message || "Gói dịch vụ đã được cập nhật.", "success");
+            showToastNotification(data.message || t("toastPlanSuccess", "Gói dịch vụ đã được cập nhật."), "success");
             reloadPjaxPage();
             return true;
           } else {
-            showToastNotification(data.error || "Không thể cập nhật gói.", "error");
+            showToastNotification(data.error || t("toastPlanError", "Không thể cập nhật gói."), "error");
             return false;
           }
         } catch (e) {
           console.error(e);
-          showToastNotification("Lỗi kết nối máy chủ.", "error");
+          showToastNotification(t("toastServerError", "Lỗi kết nối máy chủ."), "error");
           return false;
         }
       }
@@ -1276,7 +1288,7 @@
       // Helper to show toasts
       function showToastNotification(message, type) {
         if (window.showToast) {
-          window.showToast(message, type);
+          window.showToast(type, message);
         } else {
           alert(message);
         }
@@ -1331,10 +1343,7 @@
       if (addUserBtn) {
         addUserBtn.addEventListener("click", function () {
           var title = t("addUserBtn", "Thêm người dùng");
-          var currentLang = document.documentElement.getAttribute("lang") || "vi";
-          var msg = currentLang === "en" 
-            ? "Manual user creation function has not been integrated on the backend system yet." 
-            : "Chức năng thêm người dùng thủ công chưa được tích hợp trên backend hệ thống.";
+          var msg = t("manualUserCreationNotIntegrated", "Chức năng thêm người dùng thủ công chưa được tích hợp trên backend hệ thống.");
           
           if (window.PetAI_alert) {
             window.PetAI_alert({
