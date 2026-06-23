@@ -338,83 +338,111 @@
         <h1 class="headline-lg text-on-surface mb-6 font-bold" data-i18n="dataDeletion">
           <span data-i18n="dataDeletion">Chính sách xóa dữ liệu</span>
         </h1>
-        <div class="space-y-6 text-on-surface-variant body-md leading-relaxed">
-          <h2 class="text-xl font-bold text-primary mt-6 mb-2" data-i18n="dataDeletionSection1Title">
-            <span data-i18n="dataDeletionSection1Title">1. Quyền yêu cầu xóa tài khoản và dữ liệu</span>
-          </h2>
-          <p data-i18n="dataDeletionSection1Desc">
-            <span data-i18n="dataDeletionSection1Desc">Người dùng luôn có quyền yêu cầu xóa bỏ tài khoản cũng như tất
-              cả dữ liệu cá nhân (tên, email, hình ảnh) đã tích lũy trong quá
-              trình sử dụng hệ thống.</span>
-          </p>
+        {% set sections_vi = get_legal_sections('data-deletion', 'vi') %}
+        {% set sections_en = get_legal_sections('data-deletion', 'en') %}
+        {% if sections_vi or sections_en %}
+          <!-- Vietnamese View (Dynamic) -->
+          <div id="dynamic-content-vi" class="space-y-6 text-on-surface-variant body-md leading-relaxed legal-content-rich {{ 'hidden' if ui_language == 'en' else '' }}">
+            {% for sec in sections_vi %}
+              {% if sec.title %}
+                <h2 class="text-xl font-bold text-primary mt-6 mb-2">{{ sec.title }}</h2>
+              {% endif %}
+              {% if sec.content %}
+                <div class="text-on-surface-variant dark:text-slate-350 body-md leading-relaxed">{{ sec.content | safe }}</div>
+              {% endif %}
+            {% endfor %}
+          </div>
 
-          <h2 class="text-xl font-bold text-primary mt-6 mb-2" data-i18n="dataDeletionSection2Title">
-            <span data-i18n="dataDeletionSection2Title">2. Hướng dẫn xóa tài khoản trong ứng dụng</span>
-          </h2>
-          <p data-i18n-html="dataDeletionSection2Desc">
-            Nếu ứng dụng đã cập nhật chức năng này, vui lòng đi tới phần
-            <strong data-i18n="settingsLabel"><span data-i18n="settingsLabel">Thiết lập / Settings</span></strong><span
-              data-i18n="arrowSelect">&gt; Chọn</span><strong data-i18n="accountManagement"><span
-                data-i18n="accountManagement">Quản lý tài khoản</span></strong><span data-i18n="arrowClick">&gt;
-              Nhấn</span><strong data-i18n="deleteAccount"><span data-i18n="deleteAccount">Xóa tài
-                khoản</span></strong><span data-i18n="autoDeleteInfoDesc">để hệ thống tự động loại bỏ thông tin của
-              bạn.</span>
-          </p>
+          <!-- English View (Dynamic) -->
+          <div id="dynamic-content-en" class="space-y-6 text-on-surface-variant body-md leading-relaxed legal-content-rich {{ 'hidden' if ui_language != 'en' else '' }}">
+            {% for sec in sections_en %}
+              {% if sec.title %}
+                <h2 class="text-xl font-bold text-primary mt-6 mb-2">{{ sec.title }}</h2>
+              {% endif %}
+              {% if sec.content %}
+                <div class="text-on-surface-variant dark:text-slate-350 body-md leading-relaxed">{{ sec.content | safe }}</div>
+              {% endif %}
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="space-y-6 text-on-surface-variant body-md leading-relaxed">
+            <h2 class="text-xl font-bold text-primary mt-6 mb-2" data-i18n="dataDeletionSection1Title">
+              <span data-i18n="dataDeletionSection1Title">1. Quyền yêu cầu xóa tài khoản và dữ liệu</span>
+            </h2>
+            <p data-i18n="dataDeletionSection1Desc">
+              <span data-i18n="dataDeletionSection1Desc">Người dùng luôn có quyền yêu cầu xóa bỏ tài khoản cũng như tất
+                cả dữ liệu cá nhân (tên, email, hình ảnh) đã tích lũy trong quá
+                trình sử dụng hệ thống.</span>
+            </p>
 
-          <h2 class="text-xl font-bold text-primary mt-6 mb-2" data-i18n="dataDeletionSection3Title">
-            <span data-i18n="dataDeletionSection3Title">3. Gửi email yêu cầu</span>
-          </h2>
-          <p data-i18n="dataDeletionSection3Desc">
-            <span data-i18n="dataDeletionSection3Desc">Trong trường hợp hệ thống chưa có chức năng xóa trực tiếp, bạn
-              hoàn toàn có thể yêu cầu xóa bằng cách gửi thư. Hãy làm theo
-              hướng dẫn sau:</span>
-          </p>
-          <ul class="list-disc pl-5 mt-2 space-y-2">
-            <li>
-              <strong data-i18n="dataDeletionEmailLabel"><span data-i18n="dataDeletionEmailLabel">Email nhận yêu
-                  cầu:</span></strong>
-              <a href="mailto:{{ get_config('site_email', 'support@pet.ai') }}"
+            <h2 class="text-xl font-bold text-primary mt-6 mb-2" data-i18n="dataDeletionSection2Title">
+              <span data-i18n="dataDeletionSection2Title">2. Hướng dẫn xóa tài khoản trong ứng dụng</span>
+            </h2>
+            <p data-i18n-html="dataDeletionSection2Desc">
+              Nếu ứng dụng đã cập nhật chức năng này, vui lòng đi tới phần
+              <strong data-i18n="settingsLabel"><span data-i18n="settingsLabel">Thiết lập / Settings</span></strong><span
+                data-i18n="arrowSelect">&gt; Chọn</span><strong data-i18n="accountManagement"><span
+                  data-i18n="accountManagement">Quản lý tài khoản</span></strong><span data-i18n="arrowClick">&gt;
+                Nhấn</span><strong data-i18n="deleteAccount"><span data-i18n="deleteAccount">Xóa tài
+                  khoản</span></strong><span data-i18n="autoDeleteInfoDesc">để hệ thống tự động loại bỏ thông tin của
+                bạn.</span>
+            </p>
+
+            <h2 class="text-xl font-bold text-primary mt-6 mb-2" data-i18n="dataDeletionSection3Title">
+              <span data-i18n="dataDeletionSection3Title">3. Gửi email yêu cầu</span>
+            </h2>
+            <p data-i18n="dataDeletionSection3Desc">
+              <span data-i18n="dataDeletionSection3Desc">Trong trường hợp hệ thống chưa có chức năng xóa trực tiếp, bạn
+                hoàn toàn có thể yêu cầu xóa bằng cách gửi thư. Hãy làm theo
+                hướng dẫn sau:</span>
+            </p>
+            <ul class="list-disc pl-5 mt-2 space-y-2">
+              <li>
+                <strong data-i18n="dataDeletionEmailLabel"><span data-i18n="dataDeletionEmailLabel">Email nhận yêu
+                    cầu:</span></strong>
+                <a href="mailto:{{ get_config('site_email', 'support@pet.ai') }}"
+                  class="text-primary hover:underline font-medium">{{ get_config('site_email', 'support@pet.ai') }}</a>
+              </li>
+              <li>
+                <strong data-i18n="dataDeletionSubjectLabel"><span data-i18n="dataDeletionSubjectLabel">Tiêu đề
+                    email:</span></strong><span data-i18n="dataDeletionSubjectValue">Yêu cầu xóa dữ liệu/tài khoản</span>
+              </li>
+              <li>
+                <span data-i18n="dataDeletionVerificationHint">Hãy nêu rõ địa chỉ Email bạn dùng để đăng ký để chúng tôi
+                  đối
+                  chứng.</span>
+              </li>
+            </ul>
+
+            <h2 class="text-xl font-bold text-primary mt-6 mb-2" data-i18n="dataDeletionSection4Title">
+              <span data-i18n="dataDeletionSection4Title">4. Quá trình xử lý</span>
+            </h2>
+            <p data-i18n-html="dataDeletionSection4Desc">
+              Tất cả các định dạng dữ liệu, hình ảnh, tài khoản của bạn sẽ được
+              xử lý và xóa vĩnh viễn trong vòng
+              <strong data-i18n="days30"><span data-i18n="homePricing30Days">30 ngày</span></strong><span
+                data-i18n="fromRequestTime">kể từ khi có yêu cầu.</span>
+            </p>
+
+            <h2 class="text-xl font-bold text-primary mt-6 mb-2" data-i18n="dataDeletionSection5Title">
+              <span data-i18n="dataDeletionSection5Title">5. Một số dữ liệu có thể được giữ lại</span>
+            </h2>
+            <p data-i18n="retainedDataDesc">
+              Một số dữ liệu thuộc về báo cáo thanh toán, giao dịch hoá đơn hoặc
+              các chi tiết nhằm phục vụ tranh chấp có thể sẽ được tiếp tục lưu
+              giữ tùy thuộc vào quy định pháp luật sở tại yêu cầu.
+            </p>
+
+            <h2 class="text-xl font-bold text-primary mt-6 mb-2" data-i18n="dataDeletionSection6Title">
+              <span data-i18n="dataDeletionSection6Title">6. Thông tin liên hệ</span>
+            </h2>
+            <p>
+              <span data-i18n="dataDeletionSection6Desc">Mọi khó khăn vui lòng liên lạc: </span><a
+                href="mailto:{{ get_config('site_email', 'support@pet.ai') }}"
                 class="text-primary hover:underline font-medium">{{ get_config('site_email', 'support@pet.ai') }}</a>
-            </li>
-            <li>
-              <strong data-i18n="dataDeletionSubjectLabel"><span data-i18n="dataDeletionSubjectLabel">Tiêu đề
-                  email:</span></strong><span data-i18n="dataDeletionSubjectValue">Yêu cầu xóa dữ liệu/tài khoản</span>
-            </li>
-            <li>
-              <span data-i18n="dataDeletionVerificationHint">Hãy nêu rõ địa chỉ Email bạn dùng để đăng ký để chúng tôi
-                đối
-                chứng.</span>
-            </li>
-          </ul>
-
-          <h2 class="text-xl font-bold text-primary mt-6 mb-2" data-i18n="dataDeletionSection4Title">
-            <span data-i18n="dataDeletionSection4Title">4. Quá trình xử lý</span>
-          </h2>
-          <p data-i18n-html="dataDeletionSection4Desc">
-            Tất cả các định dạng dữ liệu, hình ảnh, tài khoản của bạn sẽ được
-            xử lý và xóa vĩnh viễn trong vòng
-            <strong data-i18n="days30"><span data-i18n="homePricing30Days">30 ngày</span></strong><span
-              data-i18n="fromRequestTime">kể từ khi có yêu cầu.</span>
-          </p>
-
-          <h2 class="text-xl font-bold text-primary mt-6 mb-2" data-i18n="dataDeletionSection5Title">
-            <span data-i18n="dataDeletionSection5Title">5. Một số dữ liệu có thể được giữ lại</span>
-          </h2>
-          <p data-i18n="retainedDataDesc">
-            Một số dữ liệu thuộc về báo cáo thanh toán, giao dịch hoá đơn hoặc
-            các chi tiết nhằm phục vụ tranh chấp có thể sẽ được tiếp tục lưu
-            giữ tùy thuộc vào quy định pháp luật sở tại yêu cầu.
-          </p>
-
-          <h2 class="text-xl font-bold text-primary mt-6 mb-2" data-i18n="dataDeletionSection6Title">
-            <span data-i18n="dataDeletionSection6Title">6. Thông tin liên hệ</span>
-          </h2>
-          <p>
-            <span data-i18n="dataDeletionSection6Desc">Mọi khó khăn vui lòng liên lạc: </span><a
-              href="mailto:{{ get_config('site_email', 'support@pet.ai') }}"
-              class="text-primary hover:underline font-medium">{{ get_config('site_email', 'support@pet.ai') }}</a>
-          </p>
-        </div>
+            </p>
+          </div>
+        {% endif %}
       </div>
     </section>
   </main>  <footer class="bg-surface-container-low border-t border-outline-variant/30 px-6 py-12">

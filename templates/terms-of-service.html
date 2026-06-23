@@ -349,72 +349,100 @@
         <h1 class="headline-lg text-on-surface mb-6 font-bold" data-i18n="terms">
           <span data-i18n="terms">Điều khoản sử dụng</span>
         </h1>
-        <div class="space-y-6 text-on-surface-variant body-md leading-relaxed">
-          <h2 class="text-xl font-bold text-primary mt-6 mb-2" data-i18n="termsSection1Title">
-            <span data-i18n="termsSection1Title">1. Điều kiện sử dụng ứng dụng/website</span>
-          </h2>
-          <p data-i18n="termsSection1Desc">
-            <span data-i18n="termsSection1Desc">Việc bạn truy cập và sử dụng dịch vụ đồng nghĩa với việc bạn
-              xác nhận đã đọc, hiểu và chấp thuận toàn bộ các điều khoản được
-              quy định tại văn bản này.</span>
-          </p>
+        {% set sections_vi = get_legal_sections('terms-of-service', 'vi') %}
+        {% set sections_en = get_legal_sections('terms-of-service', 'en') %}
+        {% if sections_vi or sections_en %}
+          <!-- Vietnamese View (Dynamic) -->
+          <div id="dynamic-content-vi" class="space-y-6 text-on-surface-variant body-md leading-relaxed legal-content-rich {{ 'hidden' if ui_language == 'en' else '' }}">
+            {% for sec in sections_vi %}
+              {% if sec.title %}
+                <h2 class="text-xl font-bold text-primary mt-6 mb-2">{{ sec.title }}</h2>
+              {% endif %}
+              {% if sec.content %}
+                <div class="text-on-surface-variant dark:text-slate-350 body-md leading-relaxed">{{ sec.content | safe }}</div>
+              {% endif %}
+            {% endfor %}
+          </div>
 
-          <h2 class="text-xl font-bold text-primary mt-6 mb-2" data-i18n="termsSection2Title">
-            <span data-i18n="termsSection2Title">2. Quyền và trách nhiệm của người dùng</span>
-          </h2>
-          <p data-i18n="termsSection2Desc">
-            <span data-i18n="termsSection2Desc">Người dùng cam kết cung cấp thông tin chân thực khi tạo tài
-              khoản, và tự chịu trách nhiệm bảo mật thông tin đăng nhập của
-              chính bản thân.</span>
-          </p>
+          <!-- English View (Dynamic) -->
+          <div id="dynamic-content-en" class="space-y-6 text-on-surface-variant body-md leading-relaxed legal-content-rich {{ 'hidden' if ui_language != 'en' else '' }}">
+            {% for sec in sections_en %}
+              {% if sec.title %}
+                <h2 class="text-xl font-bold text-primary mt-6 mb-2">{{ sec.title }}</h2>
+              {% endif %}
+              {% if sec.content %}
+                <div class="text-on-surface-variant dark:text-slate-350 body-md leading-relaxed">{{ sec.content | safe }}</div>
+              {% endif %}
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="space-y-6 text-on-surface-variant body-md leading-relaxed">
+            <h2 class="text-xl font-bold text-primary mt-6 mb-2" data-i18n="termsSection1Title">
+              <span data-i18n="termsSection1Title">1. Điều kiện sử dụng ứng dụng/website</span>
+            </h2>
+            <p data-i18n="termsSection1Desc">
+              <span data-i18n="termsSection1Desc">Việc bạn truy cập và sử dụng dịch vụ đồng nghĩa với việc bạn
+                xác nhận đã đọc, hiểu và chấp thuận toàn bộ các điều khoản được
+                quy định tại văn bản này.</span>
+            </p>
 
-          <h2 class="text-xl font-bold text-primary mt-6 mb-2" data-i18n="termsSection3Title">
-            <span data-i18n="termsSection3Title">3. Quy định về tài khoản</span>
-          </h2>
-          <p data-i18n="termsSection3Desc">
-            <span data-i18n="termsSection3Desc">Việc sử dụng các tính năng cao cấp có thể yêu cầu đăng nhập.
-              Mỗi tài khoản cá nhân chỉ được ủy quyền cho một người, cấm việc
-              mua bán tài khoản.</span>
-          </p>
+            <h2 class="text-xl font-bold text-primary mt-6 mb-2" data-i18n="termsSection2Title">
+              <span data-i18n="termsSection2Title">2. Quyền và trách nhiệm của người dùng</span>
+            </h2>
+            <p data-i18n="termsSection2Desc">
+              <span data-i18n="termsSection2Desc">Người dùng cam kết cung cấp thông tin chân thực khi tạo tài
+                khoản, và tự chịu trách nhiệm bảo mật thông tin đăng nhập của
+                chính bản thân.</span>
+            </p>
 
-          <h2 class="text-xl font-bold text-primary mt-6 mb-2" data-i18n="termsSection4Title">
-            <span data-i18n="termsSection4Title">4. Nội dung hoặc hành vi bị cấm</span>
-          </h2>
-          <p data-i18n="termsSection4Desc">
-            <span data-i18n="termsSection4Desc">Bạn không được phép: (a) sử dụng ứng dụng vào các mục đích phi
-              pháp; (b) khai thác lạm dụng hệ thống API của chúng tôi; (c) can
-              thiệp, sao chép hay dịch ngược phần mềm cũng như mô hình AI mà
-              chúng tôi cung cấp.</span>
-          </p>
+            <h2 class="text-xl font-bold text-primary mt-6 mb-2" data-i18n="termsSection3Title">
+              <span data-i18n="termsSection3Title">3. Quy định về tài khoản</span>
+            </h2>
+            <p data-i18n="termsSection3Desc">
+              <span data-i18n="termsSection3Desc">Việc sử dụng các tính năng cao cấp có thể yêu cầu đăng nhập.
+                Mỗi tài khoản cá nhân chỉ được ủy quyền cho một người, cấm việc
+                mua bán tài khoản.</span>
+            </p>
 
-          <h2 class="text-xl font-bold text-primary mt-6 mb-2" data-i18n="termsSection5Title">
-            <span data-i18n="termsSection5Title">5. Giới hạn trách nhiệm của nhà phát triển</span>
-          </h2>
-          <p data-i18n="termsSection5Desc">
-            <span data-i18n="termsSection5Desc">Các phân tích và nhận diện dựa trên AI chỉ mang tính tham khảo
-              và có thể xuất hiện xác suất sai lệch. Chúng tôi không nhận
-              trách nhiệm cho các hậu quả gián tiếp gây ra từ tư vấn kết quả
-              của phần mềm.</span>
-          </p>
+            <h2 class="text-xl font-bold text-primary mt-6 mb-2" data-i18n="termsSection4Title">
+              <span data-i18n="termsSection4Title">4. Nội dung hoặc hành vi bị cấm</span>
+            </h2>
+            <p data-i18n="termsSection4Desc">
+              <span data-i18n="termsSection4Desc">Bạn không được phép: (a) sử dụng ứng dụng vào các mục đích phi
+                pháp; (b) khai thác lạm dụng hệ thống API của chúng tôi; (c) can
+                thiệp, sao chép hay dịch ngược phần mềm cũng như mô hình AI mà
+                chúng tôi cung cấp.</span>
+            </p>
 
-          <h2 class="text-xl font-bold text-primary mt-6 mb-2" data-i18n="termsSection6Title">
-            <span data-i18n="termsSection6Title">6. Chấm dứt tài khoản khi vi phạm</span>
-          </h2>
-          <p data-i18n="termsSection6Desc">
-            <span data-i18n="termsSection6Desc">Chúng tôi bảo lưu toàn quyền đơn phương khóa hoặc xóa sạch tài
-              khoản và dữ liệu liên quan nếu phát hiện người dùng vi phạm
-              nghiêm trọng những điều kiện đã nêu.</span>
-          </p>
+            <h2 class="text-xl font-bold text-primary mt-6 mb-2" data-i18n="termsSection5Title">
+              <span data-i18n="termsSection5Title">5. Giới hạn trách nhiệm của nhà phát triển</span>
+            </h2>
+            <p data-i18n="termsSection5Desc">
+              <span data-i18n="termsSection5Desc">Các phân tích và nhận diện dựa trên AI chỉ mang tính tham khảo
+                và có thể xuất hiện xác suất sai lệch. Chúng tôi không nhận
+                trách nhiệm cho các hậu quả gián tiếp gây ra từ tư vấn kết quả
+                của phần mềm.</span>
+            </p>
 
-          <h2 class="text-xl font-bold text-primary mt-6 mb-2" data-i18n="termsSection7Title">
-            <span data-i18n="termsSection7Title">7. Thông tin liên hệ</span>
-          </h2>
-          <p>
-            <span data-i18n="termsSection7Desc">Mọi thắc mắc và góp ý vui lòng gửi về: </span><a
-              href="mailto:{{ get_config('site_email', 'support@pet.ai') }}"
-              class="text-primary hover:underline font-medium">{{ get_config('site_email', 'support@pet.ai') }}</a>
-          </p>
-        </div>
+            <h2 class="text-xl font-bold text-primary mt-6 mb-2" data-i18n="termsSection6Title">
+              <span data-i18n="termsSection6Title">6. Chấm dứt tài khoản khi vi phạm</span>
+            </h2>
+            <p data-i18n="termsSection6Desc">
+              <span data-i18n="termsSection6Desc">Chúng tôi bảo lưu toàn quyền đơn phương khóa hoặc xóa sạch tài
+                khoản và dữ liệu liên quan nếu phát hiện người dùng vi phạm
+                nghiêm trọng những điều kiện đã nêu.</span>
+            </p>
+
+            <h2 class="text-xl font-bold text-primary mt-6 mb-2" data-i18n="termsSection7Title">
+              <span data-i18n="termsSection7Title">7. Thông tin liên hệ</span>
+            </h2>
+            <p>
+              <span data-i18n="termsSection7Desc">Mọi thắc mắc và góp ý vui lòng gửi về: </span><a
+                href="mailto:{{ get_config('site_email', 'support@pet.ai') }}"
+                class="text-primary hover:underline font-medium">{{ get_config('site_email', 'support@pet.ai') }}</a>
+            </p>
+          </div>
+        {% endif %}
       </div>
     </section>
   </main>

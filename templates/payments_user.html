@@ -770,9 +770,9 @@
                   id="page-size-select"
                   class="px-2 py-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary cursor-pointer"
                 >
-                  <option value="10" data-i18n-option-prefix="10 / " data-i18n-option-key="paymentHistoryPaginationPerPage">10 / trang</option>
-                  <option value="20" data-i18n-option-prefix="20 / " data-i18n-option-key="paymentHistoryPaginationPerPage">20 / trang</option>
-                  <option value="50" data-i18n-option-prefix="50 / " data-i18n-option-key="paymentHistoryPaginationPerPage">50 / trang</option>
+                  <option value="10" data-i18n-option-prefix="10 / " data-i18n-option-key="paymentHistoryPaginationPerPage">10 / {{ 'page' if ui_language == 'en' else 'trang' }}</option>
+                  <option value="20" data-i18n-option-prefix="20 / " data-i18n-option-key="paymentHistoryPaginationPerPage">20 / {{ 'page' if ui_language == 'en' else 'trang' }}</option>
+                  <option value="50" data-i18n-option-prefix="50 / " data-i18n-option-key="paymentHistoryPaginationPerPage">50 / {{ 'page' if ui_language == 'en' else 'trang' }}</option>
                 </select>
               </div>
 
@@ -854,6 +854,7 @@
         let currentPage = 1;
         let rowsPerPage = 10;
         let filteredOrders = [...window.userOrders];
+        const isVi = document.documentElement.getAttribute("lang") !== "en";
 
         // Format Date string helper
         function formatDate(dateStr) {
@@ -892,7 +893,6 @@
 
         function getPlanDurationText(plan) {
           plan = (plan || "").toLowerCase();
-          const isVi = document.documentElement.getAttribute("lang") !== "en";
           if (plan === "pro") return isVi ? "30 ngày" : "30 days";
           if (plan === "enterprise") return isVi ? "90 ngày" : "90 days";
           return isVi ? "7 ngày" : "7 days";
@@ -900,7 +900,6 @@
 
         function getStatusBadgeHtml(status, confirmedAt, createdAt) {
           status = (status || "").toLowerCase();
-          const isVi = document.documentElement.getAttribute("lang") !== "en";
           let colorClass = "";
           let dotHtml = "";
           let label = "";
@@ -966,7 +965,6 @@
 
         function getPaymentMethodHtml(method) {
           method = (method || "").toUpperCase();
-          const isVi = document.documentElement.getAttribute("lang") !== "en";
           let icon = "credit_card";
           let title = method;
           let sub = "";
@@ -997,7 +995,6 @@
         // Action controls
         function getActionsHtml(o) {
           const status = (o.status || "").toLowerCase();
-          const isVi = document.documentElement.getAttribute("lang") !== "en";
           
           const detailBtn = `
             <button onclick="openDetailModal('${o.order_id}')" class="inline-flex items-center justify-center px-2.5 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-350 rounded-lg text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-750 transition-all shadow-sm active:scale-95 duration-100 cursor-pointer">

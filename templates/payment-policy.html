@@ -336,58 +336,86 @@
         <h1 class="headline-lg text-on-surface mb-6 font-bold" data-i18n="paymentPolicy">
           <span data-i18n="paymentPolicy">Chính sách thanh toán</span>
         </h1>
-        <div class="space-y-6 text-on-surface-variant body-md leading-relaxed">
-          <p class="mb-4 text-on-surface-variant" data-i18n="paymentUpdateDatePrefix">
-            <span data-i18n="paymentUpdateDatePrefix">Ngày cập nhật: 20/06/2026</span>
-          </p>
+        {% set sections_vi = get_legal_sections('payment-policy', 'vi') %}
+        {% set sections_en = get_legal_sections('payment-policy', 'en') %}
+        {% if sections_vi or sections_en %}
+          <!-- Vietnamese View (Dynamic) -->
+          <div id="dynamic-content-vi" class="space-y-6 text-on-surface-variant body-md leading-relaxed legal-content-rich {{ 'hidden' if ui_language == 'en' else '' }}">
+            {% for sec in sections_vi %}
+              {% if sec.title %}
+                <h2 class="text-xl font-bold text-primary mt-6 mb-2">{{ sec.title }}</h2>
+              {% endif %}
+              {% if sec.content %}
+                <div class="text-on-surface-variant dark:text-slate-350 body-md leading-relaxed">{{ sec.content | safe }}</div>
+              {% endif %}
+            {% endfor %}
+          </div>
 
-          <h2 class="text-xl font-bold text-primary mt-6 mb-2" data-i18n="paymentSection1Title">
-            <span data-i18n="paymentSection1Title">1. Phương thức thanh toán</span>
-          </h2>
-          <p data-i18n="paymentSection1Desc">
-            <span data-i18n="paymentSection1Desc">Hệ thống hỗ trợ thanh toán qua hình thức chuyển khoản ngân hàng bằng mã VietQR tự động hoặc chuyển khoản trực tiếp với thông tin được hiển thị chi tiết khi nâng cấp gói.</span>
-          </p>
+          <!-- English View (Dynamic) -->
+          <div id="dynamic-content-en" class="space-y-6 text-on-surface-variant body-md leading-relaxed legal-content-rich {{ 'hidden' if ui_language != 'en' else '' }}">
+            {% for sec in sections_en %}
+              {% if sec.title %}
+                <h2 class="text-xl font-bold text-primary mt-6 mb-2">{{ sec.title }}</h2>
+              {% endif %}
+              {% if sec.content %}
+                <div class="text-on-surface-variant dark:text-slate-350 body-md leading-relaxed">{{ sec.content | safe }}</div>
+              {% endif %}
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="space-y-6 text-on-surface-variant body-md leading-relaxed">
+            <p class="mb-4 text-on-surface-variant" data-i18n="paymentUpdateDatePrefix">
+              <span data-i18n="paymentUpdateDatePrefix">Ngày cập nhật: 20/06/2026</span>
+            </p>
 
-          <h2 class="text-xl font-bold text-primary mt-6 mb-2" data-i18n="paymentSection2Title">
-            <span data-i18n="paymentSection2Title">2. Quy trình xử lý giao dịch</span>
-          </h2>
-          <p data-i18n="paymentSection2Desc">
-            <span data-i18n="paymentSection2Desc">Sau khi chuyển khoản đúng số tiền và nội dung ghi chú theo hướng dẫn, hệ thống VietQR tự động sẽ ghi nhận và kích hoạt gói dịch vụ trong vòng từ 1 đến 5 phút. Trong trường hợp giao dịch cần duyệt thủ công từ quản trị viên, thời gian xử lý có thể kéo dài tối đa 24 giờ làm việc.</span>
-          </p>
+            <h2 class="text-xl font-bold text-primary mt-6 mb-2" data-i18n="paymentSection1Title">
+              <span data-i18n="paymentSection1Title">1. Phương thức thanh toán</span>
+            </h2>
+            <p data-i18n="paymentSection1Desc">
+              <span data-i18n="paymentSection1Desc">Hệ thống hỗ trợ thanh toán qua hình thức chuyển khoản ngân hàng bằng mã VietQR tự động hoặc chuyển khoản trực tiếp với thông tin được hiển thị chi tiết khi nâng cấp gói.</span>
+            </p>
 
-          <h2 class="text-xl font-bold text-primary mt-6 mb-2" data-i18n="paymentSection3Title">
-            <span data-i18n="paymentSection3Title">3. Chính sách hoàn tiền</span>
-          </h2>
-          <p data-i18n="paymentSection3Desc">
-            <span data-i18n="paymentSection3Desc">Chúng tôi thực hiện hoàn tiền trong các trường hợp sau: (a) Lỗi hệ thống phát sinh khiến giao dịch bị trừ tiền nhưng tài khoản không được kích hoạt gói dịch vụ và không thể khắc phục kỹ thuật; (b) Người dùng chuyển khoản thừa tiền so với giá trị gói dịch vụ đăng ký. Mọi yêu cầu hoàn trả vui lòng gửi về email {{ get_config('site_email', 'support@pet.ai') }} kèm theo ảnh chụp biên lai giao dịch để được đối soát và xử lý trong vòng 3-5 ngày làm việc.</span>
-          </p>
+            <h2 class="text-xl font-bold text-primary mt-6 mb-2" data-i18n="paymentSection2Title">
+              <span data-i18n="paymentSection2Title">2. Quy trình xử lý giao dịch</span>
+            </h2>
+            <p data-i18n="paymentSection2Desc">
+              <span data-i18n="paymentSection2Desc">Sau khi chuyển khoản đúng số tiền và nội dung ghi chú theo hướng dẫn, hệ thống VietQR tự động sẽ ghi nhận và kích hoạt gói dịch vụ trong vòng từ 1 đến 5 phút. Trong trường hợp giao dịch cần duyệt thủ công từ quản trị viên, thời gian xử lý có thể kéo dài tối đa 24 giờ làm việc.</span>
+            </p>
 
-          <h2 class="text-xl font-bold text-primary mt-6 mb-2" data-i18n="paymentSection4Title">
-            <span data-i18n="paymentSection4Title">4. Bảo mật giao dịch</span>
-          </h2>
-          <p data-i18n="paymentSection4Desc">
-            <span data-i18n="paymentSection4Desc">Mọi giao dịch thanh toán được thực hiện an toàn qua cổng tích hợp, thông tin tài khoản ngân hàng và nội dung giao dịch được xử lý bảo mật theo tiêu chuẩn mã hóa SSL/TLS, cam kết không lưu giữ thông tin nhạy cảm của khách hàng.</span>
-          </p>
+            <h2 class="text-xl font-bold text-primary mt-6 mb-2" data-i18n="paymentSection3Title">
+              <span data-i18n="paymentSection3Title">3. Chính sách hoàn tiền</span>
+            </h2>
+            <p data-i18n="paymentSection3Desc">
+              <span data-i18n="paymentSection3Desc">Chúng tôi thực hiện hoàn tiền trong các trường hợp sau: (a) Lỗi hệ thống phát sinh khiến giao dịch bị trừ tiền nhưng tài khoản không được kích hoạt gói dịch vụ và không thể khắc phục kỹ thuật; (b) Người dùng chuyển khoản thừa tiền so với giá trị gói dịch vụ đăng ký. Mọi yêu cầu hoàn trả vui lòng gửi về email {{ get_config('site_email', 'support@pet.ai') }} kèm theo ảnh chụp biên lai giao dịch để được đối soát và xử lý trong vòng 3-5 ngày làm việc.</span>
+            </p>
 
-          <h2 class="text-xl font-bold text-primary mt-6 mb-2" data-i18n="paymentSection5Title">
-            <span data-i18n="paymentSection5Title">5. Giải quyết tranh chấp và khiếu nại</span>
-          </h2>
-          <p data-i18n="paymentSection5Desc">
-            <span data-i18n="paymentSection5Desc">Mọi vấn đề khiếu nại liên quan đến thanh toán, vui lòng cung cấp mã đơn hàng (Order Code) và minh chứng chuyển khoản gửi tới bộ phận hỗ trợ khách hàng để được giải quyết nhanh nhất.</span>
-          </p>
+            <h2 class="text-xl font-bold text-primary mt-6 mb-2" data-i18n="paymentSection4Title">
+              <span data-i18n="paymentSection4Title">4. Bảo mật giao dịch</span>
+            </h2>
+            <p data-i18n="paymentSection4Desc">
+              <span data-i18n="paymentSection4Desc">Mọi giao dịch thanh toán được thực hiện an toàn qua cổng tích hợp, thông tin tài khoản ngân hàng và nội dung giao dịch được xử lý bảo mật theo tiêu chuẩn mã hóa SSL/TLS, cam kết không lưu giữ thông tin nhạy cảm của khách hàng.</span>
+            </p>
 
-          <h2 class="text-xl font-bold text-primary mt-6 mb-2" data-i18n="privacySection8Title">
-            <span data-i18n="privacySection8Title">8. Thông tin liên hệ</span>
-          </h2>
-          <p class="leading-loose">
-            Email:
-            <a href="mailto:{{ get_config('site_email', 'support@pet.ai') }}"
-              class="text-primary hover:underline font-medium">{{ get_config('site_email', 'support@pet.ai') }}</a><br>
-            Website:
-            <a href="https://pet.ai" class="text-primary hover:underline font-medium" target="_blank"
-              rel="noopener noreferrer">https://pet.ai</a><br><span ><span data-i18n="sysLabelContactAddress">Địa chỉ</span>: {{ get_config("contact_address_en" if ui_language == "en" else "contact_address_vi", get_config("contact_address", "P16, Đường số 8, KDC lô 49, Khu đô thị Nam Cần Thơ, Phường Cái Răng, TP. Cần Thơ")) }}</span>
-          </p>
-        </div>
+            <h2 class="text-xl font-bold text-primary mt-6 mb-2" data-i18n="paymentSection5Title">
+              <span data-i18n="paymentSection5Title">5. Giải quyết tranh chấp và khiếu nại</span>
+            </h2>
+            <p data-i18n="paymentSection5Desc">
+              <span data-i18n="paymentSection5Desc">Mọi vấn đề khiếu nại liên quan đến thanh toán, vui lòng cung cấp mã đơn hàng (Order Code) và minh chứng chuyển khoản gửi tới bộ phận hỗ trợ khách hàng để được giải quyết nhanh nhất.</span>
+            </p>
+
+            <h2 class="text-xl font-bold text-primary mt-6 mb-2" data-i18n="privacySection8Title">
+              <span data-i18n="privacySection8Title">8. Thông tin liên hệ</span>
+            </h2>
+            <p class="leading-loose">
+              Email:
+              <a href="mailto:{{ get_config('site_email', 'support@pet.ai') }}"
+                class="text-primary hover:underline font-medium">{{ get_config('site_email', 'support@pet.ai') }}</a><br>
+              Website:
+              <a href="https://pet.ai" class="text-primary hover:underline font-medium" target="_blank"
+                rel="noopener noreferrer">https://pet.ai</a><br><span ><span data-i18n="sysLabelContactAddress">Địa chỉ</span>: {{ get_config("contact_address_en" if ui_language == "en" else "contact_address_vi", get_config("contact_address", "P16, Đường số 8, KDC lô 49, Khu đô thị Nam Cần Thơ, Phường Cái Răng, TP. Cần Thơ")) }}</span>
+            </p>
+          </div>
+        {% endif %}
       </div>
     </section>
   </main>

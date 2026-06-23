@@ -1281,6 +1281,10 @@
       }
     }
 
+    // Auto-translate any remaining empty sections before saving
+    const oppositeLang = visualEditorLang === "vi" ? "en" : "vi";
+    await translateEmptySections(visualEditorLang, oppositeLang);
+
     const viData = sections.map(s => ({ title: s.title_vi, content: s.content_vi }));
     const enData = sections.map(s => ({ title: s.title_en, content: s.content_en }));
 
@@ -1620,7 +1624,17 @@
   });
 
   function initEditor() {
-    initInPlaceEditor();
+    if (pageKey === 'home') {
+      initInPlaceEditor();
+    } else {
+      const card = document.getElementById("legal-content-card");
+      if (card) {
+        originalDomHtml = card.innerHTML;
+        loadInitialContent();
+        pushToHistory();
+        renderVisualSections();
+      }
+    }
 
     document.addEventListener("selectionchange", checkSelection);
 
@@ -1667,14 +1681,25 @@
       el.classList.add("home-editable-element");
 
       // Handle blur to update translation dict instantly
-      el.addEventListener("blur", function() {
+      el.addEventListener("blur", async function() {
         const val = el.innerHTML.trim();
+        const autoTrans = document.getElementById("editor-auto-translate") && document.getElementById("editor-auto-translate").checked;
         if (visualEditorLang === 'vi') {
           existingVi[key] = val;
           TRANSLATIONS.vi[key] = val;
+          if (autoTrans && val) {
+            const translated = await translateHTML(val, "vi", "en");
+            existingEn[key] = translated;
+            TRANSLATIONS.en[key] = translated;
+          }
         } else {
           existingEn[key] = val;
           TRANSLATIONS.en[key] = val;
+          if (autoTrans && val) {
+            const translated = await translateHTML(val, "en", "vi");
+            existingVi[key] = translated;
+            TRANSLATIONS.vi[key] = translated;
+          }
         }
       });
     });
@@ -1685,6 +1710,21 @@
       const activeEl = document.activeElement;
       if (activeEl && activeEl.classList.contains("home-editable-element")) {
         activeEl.blur();
+      }
+
+      // Auto-translate any missing keys for home page
+      const autoTrans = document.getElementById("editor-auto-translate") && document.getElementById("editor-auto-translate").checked;
+      if (autoTrans) {
+        for (var k in existingVi) {
+          if (existingVi[k] && !existingEn[k]) {
+            existingEn[k] = await translateHTML(existingVi[k], "vi", "en");
+          }
+        }
+        for (var k in existingEn) {
+          if (existingEn[k] && !existingVi[k]) {
+            existingVi[k] = await translateHTML(existingEn[k], "en", "vi");
+          }
+        }
       }
 
       const fd = new FormData();

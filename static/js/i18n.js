@@ -4013,6 +4013,475 @@
       return "Failed to resend OTP.";
     }
 
+    // ── Login / Auth ──
+    if (text === "Vui lòng nhập tên đăng nhập hoặc email") {
+      return "Please enter your username or email";
+    }
+    if (text === "Vui lòng nhập mật khẩu") {
+      return "Please enter your password";
+    }
+    if (text === "Tên đăng nhập/Email phải có ít nhất 3 ký tự") {
+      return "Username/Email must be at least 3 characters";
+    }
+    if (text === "Mật khẩu phải có ít nhất 6 ký tự") {
+      return "Password must be at least 6 characters";
+    }
+    if (text === "Tài khoản không tồn tại.") {
+      return "Account does not exist.";
+    }
+    if (text === "Tài khoản chưa được xác thực email. Vui lòng xác thực email trước khi đăng nhập.") {
+      return "Account email not verified. Please verify your email before logging in.";
+    }
+    if (text === "Mật khẩu không đúng.") {
+      return "Incorrect password.";
+    }
+    if (text === "Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên.") {
+      return "Your account has been locked. Please contact the administrator.";
+    }
+    if (text === "Tài khoản này đã bị xóa vĩnh viễn. Vui lòng liên hệ hỗ trợ nếu cần được giúp đỡ.") {
+      return "This account has been permanently deleted. Please contact support if you need help.";
+    }
+    if (text === "Lỗi kết nối cơ sở dữ liệu. Vui lòng thử lại.") {
+      return "Database connection error. Please try again.";
+    }
+    if (text === "Lỗi kết nối cơ sở dữ liệu. Vui lòng thử lại sau.") {
+      return "Database connection error. Please try again later.";
+    }
+    if (text === "Google OAuth chưa được cấu hình.") {
+      return "Google OAuth is not configured.";
+    }
+    if (text === "Phiên đăng nhập Google không hợp lệ hoặc đã hết hạn. Vui lòng thử lại.") {
+      return "Google login session is invalid or expired. Please try again.";
+    }
+    if (text === "Không lấy được email từ Google. Vui lòng thử lại.") {
+      return "Could not get email from Google. Please try again.";
+    }
+    if (text === "Đăng nhập Google thất bại. Vui lòng thử lại.") {
+      return "Google login failed. Please try again.";
+    }
+    if (text === "Bạn đã đăng xuất.") {
+      return "You have logged out.";
+    }
+
+    // ── Register ──
+    if (text === "Vui lòng nhập đầy đủ thông tin") {
+      return "Please fill in all required fields";
+    }
+    if (text === "Bạn phải đồng ý với điều khoản dịch vụ và chính sách bảo mật") {
+      return "You must agree to the Terms of Service and Privacy Policy";
+    }
+    if (text === "Họ và tên phải có ít nhất 2 ký tự") {
+      return "Full name must be at least 2 characters";
+    }
+    if (text === "Chỉ chấp nhận email đăng ký có đuôi @gmail.com") {
+      return "Only @gmail.com email addresses are accepted";
+    }
+    if (text === "Tên đăng nhập phải có 3-20 ký tự, chỉ chứa chữ cái, số và dấu gạch dưới") {
+      return "Username must be 3-20 characters, containing only letters, numbers and underscores";
+    }
+    if (text === "Mật khẩu xác nhận không khớp") {
+      return "Password confirmation does not match";
+    }
+    if (text === "Tên đăng nhập đã tồn tại. Vui lòng chọn tên khác.") {
+      return "Username already exists. Please choose another.";
+    }
+    if (text === "Email đã được sử dụng. Vui lòng sử dụng email khác.") {
+      return "Email already in use. Please use another email.";
+    }
+    if (text === "Không tìm thấy thông tin đăng ký. Vui lòng thực hiện đăng ký lại.") {
+      return "Registration information not found. Please register again.";
+    }
+    if (text === "Không thể tạo tài khoản do lỗi hệ thống. Vui lòng thử lại.") {
+      return "Could not create account due to system error. Please try again.";
+    }
+
+    // ── OTP / Password Recovery ──
+    if (text === "Vui lòng nhập mã OTP") {
+      return "Please enter the OTP code";
+    }
+    if (text === "Mã OTP đã được gửi về Gmail của bạn. Vui lòng xác thực.") {
+      return "OTP code has been sent to your Gmail. Please verify.";
+    }
+    if (text === "Mã OTP không chính xác hoặc đã hết hạn.") {
+      return "OTP code is incorrect or expired.";
+    }
+    if (text === "Bạn đã nhập sai OTP quá 5 lần. Vui lòng yêu cầu khôi phục lại mật khẩu.") {
+      return "You entered incorrect OTP more than 5 times. Please request password recovery again.";
+    }
+    if (text === "Bạn đã nhập sai OTP quá 5 lần. Vui lòng đăng ký lại từ đầu.") {
+      return "You entered incorrect OTP more than 5 times. Please register again.";
+    }
+    if (text === "Mã OTP đã hết hạn. Vui lòng bấm gửi lại mã.") {
+      return "OTP code has expired. Please click resend code.";
+    }
+    if (text === "Tài khoản không tồn tại hoặc đã bị khóa.") {
+      return "Account does not exist or has been locked.";
+    }
+    if (text === "Xác thực OTP thành công. Vui lòng thiết lập mật khẩu mới cho tài khoản của bạn.") {
+      return "OTP verified successfully. Please set a new password for your account.";
+    }
+    if (text === "Không thể thiết lập đăng nhập do lỗi hệ thống. Vui lòng thử lại sau.") {
+      return "Could not set up login due to system error. Please try again later.";
+    }
+    if (text === "Mã OTP mới đã được gửi thành công về Gmail của bạn.") {
+      return "New OTP code has been sent to your Gmail.";
+    }
+    if (text === "Bạn đã yêu cầu gửi lại mã OTP quá 3 lần trong vòng 10 phút. Vui lòng thử lại sau.") {
+      return "You have requested OTP resend more than 3 times in 10 minutes. Please try again later.";
+    }
+    if (text === "Bạn đã yêu cầu gửi lại mã OTP quá 3 lần trong vòng 10 phút. Vui lòng đợi thêm trước khi thử lại.") {
+      return "You have requested OTP resend more than 3 times in 10 minutes. Please wait before trying again.";
+    }
+    if (text === "Không thể gửi email OTP. Vui lòng thử lại sau.") {
+      return "Could not send OTP email. Please try again later.";
+    }
+    if (text === "Không thể gửi email OTP. Vui lòng kiểm tra lại cấu hình email hoặc thử lại sau.") {
+      return "Could not send OTP email. Please check email settings or try again later.";
+    }
+    if (text === "Hệ thống gửi thư gặp sự cố. Vui lòng thử lại sau.") {
+      return "Mail system encountered an error. Please try again later.";
+    }
+    if (text === "Email hoặc tên đăng nhập này không tồn tại trong hệ thống. Vui lòng kiểm tra lại.") {
+      return "This email or username does not exist. Please check again.";
+    }
+    if (text === "Tài khoản này chưa được xác thực email. Vui lòng liên hệ hỗ trợ.") {
+      return "This account has not been email verified. Please contact support.";
+    }
+
+    // ── Settings ──
+    if (text === "Vui lòng đăng nhập để truy cập cài đặt.") {
+      return "Please log in to access settings.";
+    }
+    if (text === "Phiên đăng nhập không hợp lệ.") {
+      return "Invalid login session.";
+    }
+    if (text === "Họ và tên phải có từ 2 đến 128 ký tự.") {
+      return "Full name must be 2-128 characters.";
+    }
+    if (text === "Vui lòng điền mật khẩu mới và xác nhận mật khẩu.") {
+      return "Please enter new password and confirm password.";
+    }
+    if (text === "Vui lòng điền đầy đủ thông tin để thay đổi mật khẩu.") {
+      return "Please fill in all fields to change password.";
+    }
+    if (text === "Mật khẩu mới phải có ít nhất 6 ký tự.") {
+      return "New password must be at least 6 characters.";
+    }
+    if (text === "Mật khẩu mới và xác nhận mật khẩu không khớp.") {
+      return "New password and confirmation do not match.";
+    }
+    if (text === "Không tìm thấy người dùng.") {
+      return "User not found.";
+    }
+    if (text === "Mật khẩu hiện tại không chính xác.") {
+      return "Current password is incorrect.";
+    }
+    if (text === "Cài đặt và mật khẩu đã được thay đổi thành công!") {
+      return "Settings and password changed successfully!";
+    }
+    if (text === "Cài đặt đã được lưu thành công!") {
+      return "Settings saved successfully!";
+    }
+    if (text === "Không thể lưu cài đặt. Vui lòng thử lại.") {
+      return "Could not save settings. Please try again.";
+    }
+    if (text === "Không thể tải cài đặt. Vui lòng thử lại.") {
+      return "Could not load settings. Please try again.";
+    }
+    if (text === "Vui lòng đăng nhập để thực hiện thao tác này.") {
+      return "Please log in to perform this action.";
+    }
+    if (text === "Không thể xóa lịch sử. Vui lòng thử lại.") {
+      return "Could not delete history. Please try again.";
+    }
+
+    // ── Middleware ──
+    if (text === "Tài khoản đã bị khóa hoặc đã xóa. Vui lòng liên hệ hỗ trợ.") {
+      return "Account has been locked or deleted. Please contact support.";
+    }
+    if (text === "Bạn đang sử dụng mật khẩu tạm thời. Vui lòng đổi mật khẩu mới để tiếp tục sử dụng hệ thống.") {
+      return "You are using a temporary password. Please change your password to continue.";
+    }
+    if (text === "Phiên thao tác không hợp lệ (CSRF). Vui lòng thử lại.") {
+      return "Invalid session (CSRF). Please try again.";
+    }
+
+    // ── Dashboard / History / Analytics ──
+    if (text === "Vui lòng đăng nhập để truy cập dashboard.") {
+      return "Please log in to access dashboard.";
+    }
+    if (text === "Phiên đăng nhập không hợp lệ. Vui lòng đăng nhập lại.") {
+      return "Invalid login session. Please log in again.";
+    }
+    if (text === "Không thể tải dashboard. Vui lòng thử lại.") {
+      return "Could not load dashboard. Please try again.";
+    }
+    if (text === "Vui lòng đăng nhập để xem lịch sử.") {
+      return "Please log in to view history.";
+    }
+    if (text === "Không thể tải lịch sử. Vui lòng thử lại.") {
+      return "Could not load history. Please try again.";
+    }
+    if (text === "Vui lòng đăng nhập để xem thống kê.") {
+      return "Please log in to view statistics.";
+    }
+    if (text === "Không thể tải thống kê. Vui lòng thử lại.") {
+      return "Could not load statistics. Please try again.";
+    }
+
+    // ── Upload / Predict ──
+    if (text === "Vui lòng đăng nhập để sử dụng chức năng này.") {
+      return "Please log in to use this feature.";
+    }
+    if (text === "Vui lòng đăng nhập để truy cập chức năng này.") {
+      return "Please log in to access this feature.";
+    }
+    if (text === "Vui lòng chọn ảnh trước khi bấm phân tích.") {
+      return "Please select an image before analyzing.";
+    }
+    if (text === "Bạn chưa chọn ảnh. Vui lòng tải ảnh lên rồi thử lại.") {
+      return "No image selected. Please upload an image and try again.";
+    }
+    if (text === "Bạn đã dùng hết 10 lượt miễn phí và 3 lượt xem quảng cáo. Vui lòng mua gói để tiếp tục.") {
+      return "You have used all 10 free uses and 3 ad views. Please purchase a plan to continue.";
+    }
+    if (text === "Bạn đã dùng hết 10 lượt miễn phí. Vui lòng xem quảng cáo để mở khóa thêm.") {
+      return "You have used all 10 free uses. Please watch an ad to unlock more.";
+    }
+    if (text === "Vui lòng xem quảng cáo để mở khóa thêm lượt nhận diện.") {
+      return "Please watch an ad to unlock more recognitions.";
+    }
+    if (text === "Gói của bạn đã hết hạn. Vui lòng gia hạn để tiếp tục.") {
+      return "Your plan has expired. Please renew to continue.";
+    }
+    if (text === "Bạn đã hết lượt sử dụng của gói hiện tại. Vui lòng gia hạn để tiếp tục.") {
+      return "You have used all uses in your current plan. Please renew to continue.";
+    }
+    if (text === "Bạn đã hết lượt sử dụng. Vui lòng gia hạn để tiếp tục.") {
+      return "You are out of uses. Please renew to continue.";
+    }
+    if (text === "Không thể lưu ảnh tải lên. Vui lòng thử lại với ảnh khác.") {
+      return "Could not save uploaded image. Please try again with another image.";
+    }
+    if (text === "Định dạng file không được hỗ trợ. Chỉ chấp nhận JPG, JPEG, PNG.") {
+      return "File format not supported. Only JPG, JPEG, PNG are accepted.";
+    }
+    if (text === "Bạn đã xem đủ 3 lần quảng cáo. Vui lòng mua gói để tiếp tục.") {
+      return "You have watched all 3 ads. Please purchase a plan to continue.";
+    }
+    if (text === "Đã mở khóa thêm 3 lượt nhận diện. Bạn có thể tiếp tục!") {
+      return "Unlocked 3 more recognitions. You can continue!";
+    }
+    if (text === "Không thể ghi nhận quảng cáo. Vui lòng thử lại.") {
+      return "Could not record ad view. Please try again.";
+    }
+    if (text === "Đã xảy ra lỗi khi phân tích ảnh") {
+      return "An error occurred while analyzing the image";
+    }
+    if (text === "Đã xảy ra lỗi kết nối") {
+      return "A connection error occurred";
+    }
+    if (text === "Đã xảy ra lỗi") {
+      return "An error occurred";
+    }
+
+    // ── Payment / Upgrade ──
+    if (text === "Bạn đang có gói cao hơn còn hiệu lực. Không thể mua gói thấp hơn.") {
+      return "You have an active higher plan. Cannot purchase a lower plan.";
+    }
+    if (text === "Gói hiện tại của bạn vẫn còn lượt sử dụng. Chỉ có thể gia hạn khi hết hạn hoặc đã hết lượt.") {
+      return "Your current plan still has remaining uses. You can only renew when expired or out of uses.";
+    }
+    if (text === "Vui lòng thực hiện thanh toán trực tiếp trên trang nâng cấp.") {
+      return "Please make payment directly on the upgrade page.";
+    }
+    if (text === "Đơn thanh toán không hợp lệ hoặc đã hết hạn. Vui lòng thử lại.") {
+      return "Payment order is invalid or expired. Please try again.";
+    }
+    if (text === "Hệ thống đang dùng xác nhận tự động. Vui lòng chờ hệ thống ghi nhận giao dịch.") {
+      return "System uses auto-confirmation. Please wait for the system to record your transaction.";
+    }
+    if (text === "Luồng thanh toán đã thay đổi. Hãy tạo đơn ở trang nâng cấp trước.") {
+      return "Payment flow has changed. Please create an order on the upgrade page first.";
+    }
+    if (text === "Đơn thanh toán không tồn tại hoặc không hợp lệ.") {
+      return "Payment order does not exist or is invalid.";
+    }
+    if (text === "Đã xác nhận thanh toán và kích hoạt gói của bạn.") {
+      return "Payment confirmed and your plan has been activated.";
+    }
+    if (text === "Đã ghi nhận bạn đã chuyển tiền. Đơn hàng đang chờ admin xác nhận.") {
+      return "Transfer recorded. Order is pending admin confirmation.";
+    }
+    if (text === "Không thể ghi nhận (đơn có thể đã được báo/đã xác nhận).") {
+      return "Could not record (order may already be reported/confirmed).";
+    }
+    if (text === "Không thể ghi nhận thanh toán. Vui lòng thử lại.") {
+      return "Could not record payment. Please try again.";
+    }
+    if (text === "Không thể ghi nhận chuyển tiền. Vui lòng thử lại.") {
+      return "Could not record transfer. Please try again.";
+    }
+    if (text === "Vui lòng đăng nhập để xem lịch sử thanh toán.") {
+      return "Please log in to view payment history.";
+    }
+    if (text === "Trang này chỉ dành cho tài khoản người dùng.") {
+      return "This page is for user accounts only.";
+    }
+    if (text === "Thiếu mã đơn thanh toán.") {
+      return "Missing payment order code.";
+    }
+    if (text === "Đơn thanh toán không tồn tại hoặc không thuộc tài khoản của bạn.") {
+      return "Payment order does not exist or does not belong to your account.";
+    }
+    if (text === "Bạn chưa thanh toán.") {
+      return "You have not made payment yet.";
+    }
+    if (text === "Hệ thống sẽ tự xác nhận khi nhận được giao dịch. Bạn không cần bấm xác nhận thủ công.") {
+      return "System will auto-confirm when payment is received. No manual confirmation needed.";
+    }
+    if (text === "Đã xảy ra lỗi hệ thống") {
+      return "A system error occurred";
+    }
+    if (text === "Không thể tạo hóa đơn") {
+      return "Failed to create order";
+    }
+
+    // ── Admin: Users ──
+    if (text === "Không thể tải danh sách người dùng.") {
+      return "Could not load user list.";
+    }
+    if (text === "Không thể tải chi tiết người dùng.") {
+      return "Could not load user details.";
+    }
+    if (text === "Đã khởi tạo bảng ứng dụng thành công.") {
+      return "Application tables initialized successfully.";
+    }
+    if (text === "Không thể khởi tạo DB. Vui lòng thử lại.") {
+      return "Could not initialize DB. Please try again.";
+    }
+    if (text === "Thiếu mã đơn.") {
+      return "Missing order code.";
+    }
+    if (text === "Không thể từ chối đơn (có thể đã xử lý hoặc không tồn tại).") {
+      return "Could not reject order (may already be processed or does not exist).";
+    }
+    if (text === "Lỗi từ chối đơn.") {
+      return "Error rejecting order.";
+    }
+    if (text === "Không thể xác nhận đơn (có thể đã xác nhận hoặc không tồn tại).") {
+      return "Could not confirm order (may already be confirmed or does not exist).";
+    }
+    if (text === "Lỗi xác nhận đơn.") {
+      return "Error confirming order.";
+    }
+    if (text === "User ID không hợp lệ.") {
+      return "Invalid User ID.";
+    }
+    if (text === "Không thể cấp gói cho user. Vui lòng thử lại.") {
+      return "Could not assign plan to user. Please try again.";
+    }
+    if (text === "Không thể tải cấu hình hệ thống.") {
+      return "Could not load system configuration.";
+    }
+    if (text === "Cập nhật cấu hình hệ thống thành công.") {
+      return "System configuration updated successfully.";
+    }
+    if (text === "Lỗi lưu cấu hình hệ thống.") {
+      return "Error saving system configuration.";
+    }
+    if (text === "Trang pháp lý không hợp lệ.") {
+      return "Invalid legal page.";
+    }
+    if (text === "Lỗi cập nhật nội dung trang pháp lý.") {
+      return "Error updating legal page content.";
+    }
+
+    // ── Admin: Logo / Favicon ──
+    if (text === "Chưa chọn file upload.") {
+      return "No file selected for upload.";
+    }
+    if (text === "Định dạng file logo không hỗ trợ. Chỉ cho phép PNG, JPG, JPEG, SVG, WEBP.") {
+      return "Logo file format not supported. Only PNG, JPG, JPEG, SVG, WEBP allowed.";
+    }
+    if (text === "Thay đổi logo trang web thành công.") {
+      return "Website logo changed successfully.";
+    }
+    if (text === "Định dạng file favicon không hỗ trợ. Chỉ cho phép ICO, PNG, JPG, JPEG, SVG, WEBP.") {
+      return "Favicon file format not supported. Only ICO, PNG, JPG, JPEG, SVG, WEBP allowed.";
+    }
+    if (text === "Thay đổi favicon trang web thành công.") {
+      return "Website favicon changed successfully.";
+    }
+
+    // ── Client Editor ──
+    if (text === "Đang tự động dịch các mục chưa có bản dịch...") {
+      return "Auto-translating items without translations...";
+    }
+    if (text === "Đã tự động dịch thành công!") {
+      return "Auto-translation completed successfully!";
+    }
+    if (text === "Đã lưu nội dung trang thành công!") {
+      return "Page content saved successfully!";
+    }
+    if (text === "Lưu trang thành công!") {
+      return "Page saved successfully!";
+    }
+    if (text === "Đã khôi phục nội dung gốc!") {
+      return "Original content restored!";
+    }
+    if (text === "Không thể khôi phục") {
+      return "Could not restore";
+    }
+    if (text === "Đã khôi phục phiên bản thành công!") {
+      return "Version restored successfully!";
+    }
+    if (text === "Đã lưu nội dung thành công!") {
+      return "Content saved successfully!";
+    }
+    if (text === "Lưu nội dung thành công!") {
+      return "Content saved successfully!";
+    }
+    if (text === "Lỗi khi lưu nội dung.") {
+      return "Error saving content.";
+    }
+
+    // ── Account Delete ──
+    if (text === "Tài khoản của bạn đã bị xóa vĩnh viễn.") {
+      return "Your account has been permanently deleted.";
+    }
+
+    // ── Payment confirmation (dynamic patterns) ──
+    // Đã từ chối thanh toán cho đơn {order_id}.
+    if (text.startsWith("Đã từ chối thanh toán cho đơn ") && text.endsWith(".")) {
+      const oid = text.substring("Đã từ chối thanh toán cho đơn ".length, text.length - 1);
+      return "Payment rejected for order " + oid + ".";
+    }
+    // Thanh toán thành công cho đơn {order_id}.
+    if (text.startsWith("Thanh toán thành công cho đơn ") && text.endsWith(".")) {
+      const oid = text.substring("Thanh toán thành công cho đơn ".length, text.length - 1);
+      return "Payment successful for order " + oid + ".";
+    }
+
+    // ── Dynamic: Lỗi tải lên logo/favicon ──
+    if (text.startsWith("Lỗi tải lên logo: ")) {
+      return "Logo upload error: " + text.substring("Lỗi tải lên logo: ".length);
+    }
+    if (text.startsWith("Lỗi tải lên favicon: ")) {
+      return "Favicon upload error: " + text.substring("Lỗi tải lên favicon: ".length);
+    }
+
+    // ── Dynamic: Lỗi khi lưu trang: / Lỗi kết nối: ──
+    if (text.startsWith("Lỗi khi lưu trang: ")) {
+      return "Error saving page: " + text.substring("Lỗi khi lưu trang: ".length);
+    }
+    if (text.startsWith("Lỗi kết nối: ")) {
+      return "Connection error: " + text.substring("Lỗi kết nối: ".length);
+    }
+    if (text.startsWith("Lỗi lưu cấu hình: ")) {
+      return "Error saving configuration: " + text.substring("Lỗi lưu cấu hình: ".length);
+    }
+
     // 11. Lỗi: {error}
     if (text.startsWith("Lỗi: ")) {
       const errMsg = text.substring("Lỗi: ".length);
@@ -4812,6 +5281,10 @@
     }
 
     var text = options.text || "";
+    // Auto-translate text when not in Vietnamese
+    if (lang !== "vi" && text) {
+      text = translateDynamicToast(text, lang);
+    }
     var confirmText = options.confirmText || tDict.confirm || (lang === "en" ? "Confirm" : "Xác nhận");
     var cancelText = options.cancelText || tDict.cancel || (lang === "en" ? "Cancel" : "Hủy");
 

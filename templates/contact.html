@@ -358,6 +358,33 @@
           >
             <span data-i18n="contact">Liên hệ</span>
           </h1>
+        {% set sections_vi = get_legal_sections('contact', 'vi') %}
+        {% set sections_en = get_legal_sections('contact', 'en') %}
+        {% if sections_vi or sections_en %}
+          <!-- Vietnamese View (Dynamic) -->
+          <div id="dynamic-content-vi" class="space-y-6 text-on-surface-variant body-md leading-relaxed legal-content-rich {{ 'hidden' if ui_language == 'en' else '' }}">
+            {% for sec in sections_vi %}
+              {% if sec.title %}
+                <h2 class="text-xl font-bold text-primary mt-6 mb-2">{{ sec.title }}</h2>
+              {% endif %}
+              {% if sec.content %}
+                <div class="text-on-surface-variant dark:text-slate-350 body-md leading-relaxed">{{ sec.content | safe }}</div>
+              {% endif %}
+            {% endfor %}
+          </div>
+
+          <!-- English View (Dynamic) -->
+          <div id="dynamic-content-en" class="space-y-6 text-on-surface-variant body-md leading-relaxed legal-content-rich {{ 'hidden' if ui_language != 'en' else '' }}">
+            {% for sec in sections_en %}
+              {% if sec.title %}
+                <h2 class="text-xl font-bold text-primary mt-6 mb-2">{{ sec.title }}</h2>
+              {% endif %}
+              {% if sec.content %}
+                <div class="text-on-surface-variant dark:text-slate-350 body-md leading-relaxed">{{ sec.content | safe }}</div>
+              {% endif %}
+            {% endfor %}
+          </div>
+        {% else %}
           <div class="space-y-6 text-on-surface-variant body-md leading-relaxed">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
               <div class="space-y-6">
@@ -564,6 +591,7 @@
               </div>
             </div>
           </div>
+        {% endif %}
 
         </div>
       </section>
