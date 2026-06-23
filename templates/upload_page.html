@@ -611,26 +611,26 @@
               </ul>
               <!-- Sample images row -->
               <div class="grid grid-cols-4 gap-2">
-                <div class="aspect-square rounded-lg bg-emerald-500/8 dark:bg-emerald-900/20 border border-emerald-500/20 dark:border-emerald-800/30 flex items-center justify-center relative">
-                  <span class="material-symbols-outlined text-emerald-500/60 dark:text-emerald-600 text-[26px]">pets</span>
+                <div class="aspect-square rounded-lg bg-emerald-500/8 dark:bg-emerald-900/20 border border-emerald-500/20 dark:border-emerald-800/30 relative overflow-hidden group cursor-help" title="{{ 'Dog appears clearly' if ui_language == 'en' else 'Chó xuất hiện rõ trong ảnh' }}" data-i18n-title="req1ValidDesc">
+                  <img src="{{ url_for('static', filename='images/guidelines/clear_dog.png') }}" alt="Valid example" class="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105">
                   <span class="absolute bottom-1 right-1 w-4 h-4 bg-emerald-500 rounded-full flex items-center justify-center shadow-sm">
                     <span class="material-symbols-outlined text-white text-[11px]" style="font-variation-settings:'FILL' 1">check</span>
                   </span>
                 </div>
-                <div class="aspect-square rounded-lg bg-emerald-500/8 dark:bg-emerald-900/20 border border-emerald-500/20 dark:border-emerald-800/30 flex items-center justify-center relative">
-                  <span class="material-symbols-outlined text-emerald-500/60 dark:text-emerald-600 text-[26px]">pets</span>
+                <div class="aspect-square rounded-lg bg-emerald-500/8 dark:bg-emerald-900/20 border border-emerald-500/20 dark:border-emerald-800/30 relative overflow-hidden group cursor-help" title="{{ 'Not blurry or too dark' if ui_language == 'en' else 'Không bị mờ hoặc quá tối' }}" data-i18n-title="req2ValidDesc">
+                  <img src="{{ url_for('static', filename='images/guidelines/good_lighting.png') }}" alt="Valid example" class="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105">
                   <span class="absolute bottom-1 right-1 w-4 h-4 bg-emerald-500 rounded-full flex items-center justify-center shadow-sm">
                     <span class="material-symbols-outlined text-white text-[11px]" style="font-variation-settings:'FILL' 1">check</span>
                   </span>
                 </div>
-                <div class="aspect-square rounded-lg bg-emerald-500/8 dark:bg-emerald-900/20 border border-emerald-500/20 dark:border-emerald-800/30 flex items-center justify-center relative">
-                  <span class="material-symbols-outlined text-emerald-500/60 dark:text-emerald-600 text-[26px]">pets</span>
+                <div class="aspect-square rounded-lg bg-emerald-500/8 dark:bg-emerald-900/20 border border-emerald-500/20 dark:border-emerald-800/30 relative overflow-hidden group cursor-help" title="{{ 'Not obscured face/body' if ui_language == 'en' else 'Không bị che mặt/thân quá nhiều' }}" data-i18n-title="req3ValidDesc">
+                  <img src="{{ url_for('static', filename='images/guidelines/unobscured.png') }}" alt="Valid example" class="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105">
                   <span class="absolute bottom-1 right-1 w-4 h-4 bg-emerald-500 rounded-full flex items-center justify-center shadow-sm">
                     <span class="material-symbols-outlined text-white text-[11px]" style="font-variation-settings:'FILL' 1">check</span>
                   </span>
                 </div>
-                <div class="aspect-square rounded-lg bg-red-500/8 dark:bg-red-900/20 border border-red-500/20 dark:border-red-800/30 flex items-center justify-center relative">
-                  <span class="material-symbols-outlined text-red-400/60 dark:text-red-600 text-[26px]">hide_image</span>
+                <div class="aspect-square rounded-lg bg-red-500/8 dark:bg-red-900/20 border border-red-500/20 dark:border-red-800/30 relative overflow-hidden group cursor-help" title="{{ 'No screenshots or watermarks' if ui_language == 'en' else 'Không chụp màn hình, ảnh có watermark' }}" data-i18n-title="req6InvalidDesc">
+                  <img src="{{ url_for('static', filename='images/guidelines/invalid_watermark.png') }}" alt="Invalid example" class="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105">
                   <span class="absolute bottom-1 right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center shadow-sm">
                     <span class="material-symbols-outlined text-white text-[11px]" style="font-variation-settings:'FILL' 1">close</span>
                   </span>
