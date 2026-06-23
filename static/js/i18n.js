@@ -4998,6 +4998,21 @@
     
     updateSwitcherUI(lang);
 
+    // Sync trigger texts and dropdowns as well
+    try {
+      var triggerText = document.querySelector("#sidebarLangTrigger .current-lang-text");
+      if (triggerText) {
+        triggerText.textContent = lang.toUpperCase();
+      }
+      document.querySelectorAll(".sidebar-lang-option").forEach(function (opt) {
+        if (opt.getAttribute("data-value") === lang) {
+          opt.classList.add("is-active");
+        } else {
+          opt.classList.remove("is-active");
+        }
+      });
+    } catch (err) { }
+
     try {
       document.dispatchEvent(
         new CustomEvent("i18nChanged", { detail: { lang: lang } }),
@@ -5005,7 +5020,16 @@
     } catch (e) { }
 
     if (oldLang !== lang) {
-      window.location.reload();
+      var isEditing = false;
+      try {
+        isEditing = window.location.search.indexOf("edit=true") !== -1 || 
+                    window.location.search.indexOf("preview=true") !== -1 || 
+                    document.getElementById("admin-float-editor-bar") !== null ||
+                    document.getElementById("inplace-preview-bar") !== null;
+      } catch (err) { }
+      if (!isEditing) {
+        window.location.reload();
+      }
     }
   }
 

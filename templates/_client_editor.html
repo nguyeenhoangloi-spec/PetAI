@@ -202,6 +202,11 @@
   html.dark #preview-modal-inner { background: #0f172a; }
   @keyframes slideUp { from { opacity: 0; transform: translateY(20px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
+  body.preview-mode-active .home-editable-element {
+    box-shadow: none !important;
+    background-color: transparent !important;
+    cursor: default !important;
+  }
 </style>
 
 <!-- ══════════════════════════════════════════════════════════════════
@@ -279,6 +284,23 @@
       Hủy
     </button>
   </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     IN-PLACE HOMEPAGE PREVIEW BAR
+══════════════════════════════════════════════════════════════════ -->
+<div id="inplace-preview-bar" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[9999] bg-slate-900/96 dark:bg-slate-950/96 backdrop-blur border border-slate-800 shadow-2xl rounded-2xl px-5 py-3 flex items-center justify-between gap-4 w-[93%] max-w-lg transition-all duration-300 font-['Inter'] antialiased text-white hidden animate-scale-up">
+  <div class="flex items-center gap-2.5">
+    <span class="material-symbols-outlined text-amber-500 text-xl animate-pulse">visibility</span>
+    <div>
+      <h4 class="text-sm font-bold leading-tight" id="preview-mode-heading">Chế độ Xem trước</h4>
+      <p class="text-[10px] text-slate-400 leading-tight" id="preview-mode-sub">Giao diện hiển thị thực tế của người dùng</p>
+    </div>
+  </div>
+  <button type="button" onclick="toggleInPlacePreview(false)"
+    class="flex items-center gap-1.5 bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg text-xs font-bold transition-all shadow-sm">
+    <span class="material-symbols-outlined !text-sm">edit</span> <span id="back-to-edit-btn-text">Quay lại soạn thảo</span>
+  </button>
 </div>
 
 <!-- ══════════════════════════════════════════════════════════════════
@@ -378,6 +400,7 @@
   var sections = [];
   var existingVi = {};
   var existingEn = {};
+  var TRANSLATIONS = window.PetAI_i18n ? window.PetAI_i18n.getTranslations() : { vi: {}, en: {} };
 
   /* ─── Undo/Redo history ─── */
   var historyStack = [];
@@ -1178,7 +1201,7 @@
     if (!needsTranslation) return;
 
     if (window.showToast) {
-      window.showToast("Đang tự động dịch các mục chưa có bản dịch...", "info");
+      window.showToast("info", "Đang tự động dịch các mục chưa có bản dịch...", { timeout: 2000 });
     }
 
     const promises = sections.map(async (sec) => {
@@ -1202,7 +1225,7 @@
     await Promise.all(promises);
 
     if (window.showToast) {
-      window.showToast("Đã tự động dịch thành công!", "success");
+      window.showToast("success", "Đã tự động dịch thành công!", { timeout: 2000 });
     }
   }
 
@@ -1245,6 +1268,13 @@
     if (vi) vi.className = lang === 'vi' ? act : inact;
     if (en) en.className = lang === 'en' ? act : inact;
     renderVisualSections();
+
+    if (pageKey === 'home' && window.PetAI_i18n) {
+      window.PetAI_i18n.applyToElement(document.body, lang);
+      if (typeof window.PetAI_i18n.updateDynamicContentVisibility === "function") {
+        window.PetAI_i18n.updateDynamicContentVisibility(lang);
+      }
+    }
   }
 
   /* ═══════════════════════════════════════════════
@@ -1298,7 +1328,7 @@
     try {
       const res = await fetch("/users/system-config/save-legal", { method: "POST", body: fd });
       if (res.ok) {
-        if (window.showToast) window.showToast("Đã lưu nội dung trang thành công!", "success");
+        if (window.showToast) window.showToast("success", "Đã lưu nội dung trang thành công!", { timeout: 2000 });
         else {
           if (window.PetAI_alert) window.PetAI_alert({ text: "Lưu trang thành công!", type: "success" });
           else alert("Lưu trang thành công!");
@@ -1367,7 +1397,7 @@
       const res = await fetch("/users/system-config/reset-legal", { method: "POST", body: fd });
       const data = await res.json();
       if (data.success) {
-        if (window.showToast) window.showToast("Đã khôi phục nội dung gốc!", "success");
+        if (window.showToast) window.showToast("success", "Đã khôi phục nội dung gốc!", { timeout: 2000 });
         setTimeout(() => window.location.reload(), 800);
       } else {
         if (window.PetAI_alert) window.PetAI_alert({ text: "Lỗi: " + (data.error || "Không thể khôi phục"), type: "danger" });
@@ -1382,7 +1412,15 @@
   /* ═══════════════════════════════════════════════
      PREMIUM 2: Undo / Redo with debounced push
   ═══════════════════════════════════════════════ */
-  function deepClone() { return JSON.parse(JSON.stringify(sections)); }
+  function deepClone() {
+    if (pageKey === 'home') {
+      return {
+        vi: JSON.parse(JSON.stringify(existingVi)),
+        en: JSON.parse(JSON.stringify(existingEn))
+      };
+    }
+    return JSON.parse(JSON.stringify(sections));
+  }
 
   function pushToHistory() {
     clearTimeout(historyDebounceTimer);
@@ -1400,19 +1438,46 @@
     historyDebounceTimer = setTimeout(pushToHistory, 700);
   }
 
+  function restoreFromHistoryState(state) {
+    if (pageKey === 'home') {
+      existingVi = JSON.parse(JSON.stringify(state.vi));
+      existingEn = JSON.parse(JSON.stringify(state.en));
+      
+      // Update TRANSLATIONS cache
+      for (var k in existingVi) { TRANSLATIONS.vi[k] = existingVi[k]; }
+      for (var k in existingEn) { TRANSLATIONS.en[k] = existingEn[k]; }
+      
+      // Update PetAI_DynamicSettings
+      if (window.PetAI_DynamicSettings) {
+        if (window.PetAI_DynamicSettings.vi) {
+          for (var k in existingVi) { window.PetAI_DynamicSettings.vi[k] = existingVi[k]; }
+        }
+        if (window.PetAI_DynamicSettings.en) {
+          for (var k in existingEn) { window.PetAI_DynamicSettings.en[k] = existingEn[k]; }
+        }
+      }
+      
+      // Re-apply translations instantly to current visual editor language
+      if (window.PetAI_i18n) {
+        window.PetAI_i18n.applyToElement(document.body, visualEditorLang);
+      }
+    } else {
+      sections = JSON.parse(JSON.stringify(state));
+      renderVisualSections();
+    }
+  }
+
   function undoEdit() {
     if (historyIndex <= 0) return;
     historyIndex--;
-    sections = JSON.parse(JSON.stringify(historyStack[historyIndex]));
-    renderVisualSections();
+    restoreFromHistoryState(historyStack[historyIndex]);
     updateUndoRedoBtns();
   }
 
   function redoEdit() {
     if (historyIndex >= historyStack.length - 1) return;
     historyIndex++;
-    sections = JSON.parse(JSON.stringify(historyStack[historyIndex]));
-    renderVisualSections();
+    restoreFromHistoryState(historyStack[historyIndex]);
     updateUndoRedoBtns();
   }
 
@@ -1427,6 +1492,10 @@
      PREMIUM 3: Preview Modal
   ═══════════════════════════════════════════════ */
   function openPreviewModal() {
+    if (pageKey === 'home') {
+      toggleInPlacePreview(true);
+      return;
+    }
     const modal = document.getElementById("preview-modal");
     const area = document.getElementById("preview-content-area");
     if (!modal || !area) return;
@@ -1448,6 +1517,54 @@
     const m = document.getElementById("preview-modal");
     if (m) m.classList.remove("open");
     document.body.style.overflow = "";
+  }
+
+  function toggleInPlacePreview(showPreview) {
+    const editorBar = document.getElementById("admin-float-editor-bar");
+    const previewBar = document.getElementById("inplace-preview-bar");
+    if (!editorBar || !previewBar) return;
+
+    if (showPreview) {
+      editorBar.classList.add("hidden");
+      previewBar.classList.remove("hidden");
+
+      const heading = document.getElementById("preview-mode-heading");
+      const sub = document.getElementById("preview-mode-sub");
+      const btnText = document.getElementById("back-to-edit-btn-text");
+
+      if (visualEditorLang === 'vi') {
+        if (heading) heading.textContent = "Chế độ Xem trước";
+        if (sub) sub.textContent = "Giao diện hiển thị thực tế của người dùng";
+        if (btnText) btnText.textContent = "Quay lại soạn thảo";
+      } else {
+        if (heading) heading.textContent = "Preview Mode";
+        if (sub) sub.textContent = "Actual user view of the page";
+        if (btnText) btnText.textContent = "Back to Editing";
+      }
+
+      document.body.classList.add("preview-mode-active");
+
+      document.querySelectorAll(".home-editable-element").forEach(el => {
+        el.setAttribute("contenteditable", "false");
+      });
+      
+      if (window.showToast) {
+        window.showToast("info", visualEditorLang === 'vi' ? "Đang xem trước trang chủ..." : "Previewing home page...", { timeout: 2000 });
+      }
+    } else {
+      previewBar.classList.add("hidden");
+      editorBar.classList.remove("hidden");
+
+      document.body.classList.remove("preview-mode-active");
+
+      document.querySelectorAll(".home-editable-element").forEach(el => {
+        el.setAttribute("contenteditable", "true");
+      });
+      
+      if (window.showToast) {
+        window.showToast("info", visualEditorLang === 'vi' ? "Quay lại chế độ chỉnh sửa" : "Back to editor mode", { timeout: 2000 });
+      }
+    }
   }
 
   function handlePreviewBackdropClick(e) {
@@ -1544,7 +1661,7 @@
       const res = await fetch("/users/system-config/restore-version", { method: "POST", body: fd });
       const data = await res.json();
       if (data.success) {
-        if (window.showToast) window.showToast("Đã khôi phục phiên bản thành công!", "success");
+        if (window.showToast) window.showToast("success", "Đã khôi phục phiên bản thành công!", { timeout: 2000 });
         setTimeout(() => window.location.reload(), 800);
       } else {
         if (window.PetAI_alert) window.PetAI_alert({ text: "Lỗi: " + (data.error || "Không thể khôi phục"), type: "danger" });
@@ -1620,6 +1737,12 @@
     if (e.key === 'Escape') {
       closePreviewModal();
       closeVersionHistory();
+      if (pageKey === 'home') {
+        const previewBar = document.getElementById("inplace-preview-bar");
+        if (previewBar && !previewBar.classList.contains("hidden")) {
+          toggleInPlacePreview(false);
+        }
+      }
     }
   });
 
@@ -1649,6 +1772,11 @@
 
   function initInPlaceEditor() {
     console.log("Initializing in-place editor for Page: " + pageKey);
+
+    // Guardrail dynamic settings
+    window.PetAI_DynamicSettings = window.PetAI_DynamicSettings || { vi: {}, en: {} };
+    if (!window.PetAI_DynamicSettings.vi) window.PetAI_DynamicSettings.vi = {};
+    if (!window.PetAI_DynamicSettings.en) window.PetAI_DynamicSettings.en = {};
 
     // Collect initial custom translations
     try {
@@ -1683,24 +1811,53 @@
       // Handle blur to update translation dict instantly
       el.addEventListener("blur", async function() {
         const val = el.innerHTML.trim();
+        
+        // Check if value actually changed
+        const currentVal = (visualEditorLang === 'vi' ? existingVi[key] : existingEn[key]) || "";
+        if (val === currentVal) return;
+
         const autoTrans = document.getElementById("editor-auto-translate") && document.getElementById("editor-auto-translate").checked;
         if (visualEditorLang === 'vi') {
           existingVi[key] = val;
           TRANSLATIONS.vi[key] = val;
+          if (window.PetAI_DynamicSettings && window.PetAI_DynamicSettings.vi) {
+            window.PetAI_DynamicSettings.vi[key] = val;
+          }
           if (autoTrans && val) {
+            if (window.showToast) window.showToast("info", "Đang tự động dịch sang tiếng Anh...", { timeout: 2000 });
             const translated = await translateHTML(val, "vi", "en");
             existingEn[key] = translated;
             TRANSLATIONS.en[key] = translated;
+            if (window.PetAI_DynamicSettings && window.PetAI_DynamicSettings.en) {
+              window.PetAI_DynamicSettings.en[key] = translated;
+            }
+            if (window.showToast) window.showToast("success", "Đã dịch tự động xong!", { timeout: 2000 });
           }
         } else {
           existingEn[key] = val;
           TRANSLATIONS.en[key] = val;
+          if (window.PetAI_DynamicSettings && window.PetAI_DynamicSettings.en) {
+            window.PetAI_DynamicSettings.en[key] = val;
+          }
           if (autoTrans && val) {
+            if (window.showToast) window.showToast("info", "Đang tự động dịch sang tiếng Việt...", { timeout: 2000 });
             const translated = await translateHTML(val, "en", "vi");
             existingVi[key] = translated;
             TRANSLATIONS.vi[key] = translated;
+            if (window.PetAI_DynamicSettings && window.PetAI_DynamicSettings.vi) {
+              window.PetAI_DynamicSettings.vi[key] = translated;
+            }
+            if (window.showToast) window.showToast("success", "Đã dịch tự động xong!", { timeout: 2000 });
           }
         }
+
+        // Reapply translations to make sure the page is in sync
+        if (window.PetAI_i18n) {
+          window.PetAI_i18n.applyToElement(document.body, visualEditorLang);
+        }
+
+        // Push state to history stack
+        schedulePushToHistory();
       });
     });
 
@@ -1737,19 +1894,30 @@
       try {
         const res = await fetch("/users/system-config/save-legal", { method: "POST", body: fd });
         if (res.ok) {
-          if (window.showToast) window.showToast("Đã lưu nội dung thành công!", "success");
-          else alert("Lưu nội dung thành công!");
+          if (window.showToast) window.showToast("success", "Đã lưu nội dung trang thành công!", { timeout: 2000 });
+          else {
+            if (window.PetAI_alert) window.PetAI_alert({ text: "Lưu trang thành công!", type: "success" });
+            else alert("Lưu trang thành công!");
+          }
           
           setTimeout(() => {
-            window.location.href = window.location.pathname + "?edit=true";
-          }, 1000);
+            const bar = document.getElementById("admin-float-editor-bar");
+            if (bar) {
+              bar.style.transition = 'opacity 0.25s cubic-bezier(0.4, 0, 1, 1), transform 0.25s cubic-bezier(0.4, 0, 1, 1)';
+              bar.style.opacity = '0';
+              bar.style.transform = 'translate(-50%, 20px)';
+            }
+            setTimeout(() => {
+              window.location.href = "/users/system-config?tab=legal&page_select=" + pageKey;
+            }, 250);
+          }, 650);
         } else {
-          if (window.showToast) window.showToast("Lỗi khi lưu nội dung.", "error");
+          if (window.showToast) window.showToast("error", "Lỗi khi lưu nội dung.", { timeout: 2000 });
           else alert("Lỗi khi lưu nội dung.");
         }
       } catch(e) {
         console.error(e);
-        if (window.showToast) window.showToast("Lỗi kết nối: " + e.message, "error");
+        if (window.showToast) window.showToast("error", "Lỗi kết nối: " + e.message, { timeout: 2000 });
         else alert("Lỗi kết nối: " + e.message);
       }
     };
@@ -1758,6 +1926,9 @@
     window.cancelPageEdit = function() {
       window.location.href = "/users/system-config?tab=legal&page_select=" + pageKey;
     };
+
+    // Push initial state to history stack
+    pushToHistory();
   }
 
   if (document.readyState === "loading") {

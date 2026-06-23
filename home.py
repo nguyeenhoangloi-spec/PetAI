@@ -12,7 +12,8 @@ def index():
     if session.get("user_id"):
         is_admin = session.get("role") == "admin"
         is_edit = request.args.get("edit") == "true"
-        if not (is_admin and is_edit):
+        is_preview = request.args.get("preview") == "true"
+        if not (is_admin or is_edit or is_preview):
             return redirect(url_for("dashboard.dashboard"))
     # Trang chủ là landing page công khai: luôn hiển thị nền sáng (không theo theme khu vực bên trong)
     return render_template("home.html", force_light_theme=True)
