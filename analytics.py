@@ -84,6 +84,19 @@ def statistics():
         # Get current stats
         stats = PredictionHistory.get_stats(conn, user_id, start_at=start_at, end_at=end_at)
         
+        # Get latest image path for each top breed to display as thumbnail
+        if stats.get('top_breeds') and conn:
+            with conn.cursor() as cur:
+                for item in stats['top_breeds']:
+                    cur.execute("""
+                        SELECT image_path 
+                        FROM prediction_history 
+                        WHERE user_id = %s AND breed = %s AND image_path IS NOT NULL AND image_path != ''
+                        ORDER BY created_at DESC LIMIT 1
+                    """, (user_id, item['breed']))
+                    row = cur.fetchone()
+                    item['image_path'] = row[0] if row else None
+        
         # Get unique breed count
         unique_breed_count = PredictionHistory.get_unique_breed_count(conn, user_id, start_at=start_at, end_at=end_at)
         
@@ -183,6 +196,8 @@ def statistics():
         peak_confidence_bracket = confidence_brackets[max_bracket_index] if max_bracket_count > 0 else "Chưa có dữ liệu"
 
         peak_active_date = "Chưa có dữ liệu"
+        peak_active_weekday_vi = ""
+        peak_active_weekday_en = ""
         max_daily_count = -1
         for day in daily_counts:
             if day['count'] > max_daily_count:
@@ -190,6 +205,24 @@ def statistics():
                 peak_active_date = day['date']
         if max_daily_count <= 0:
             peak_active_date = "Chưa có dữ liệu"
+        else:
+            try:
+                # Parse weekday from format dd/mm
+                if peak_active_date and '/' in peak_active_date:
+                    parts = peak_active_date.split('/')
+                    if len(parts) == 2:
+                        day_val = int(parts[0])
+                        month_val = int(parts[1])
+                        # Check if month is valid (not monthly format like mm/yy)
+                        if month_val <= 12:
+                            year_val = datetime.now().year
+                            dt_obj = datetime(year_val, month_val, day_val)
+                            weekdays_vi = ["Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy", "Chủ Nhật"]
+                            weekdays_en = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+                            peak_active_weekday_vi = weekdays_vi[dt_obj.weekday()]
+                            peak_active_weekday_en = weekdays_en[dt_obj.weekday()]
+            except Exception:
+                pass
 
         return render_template(
             "statistics.html",
@@ -209,6 +242,8 @@ def statistics():
             most_common_breed=most_common_breed,
             peak_confidence_bracket=peak_confidence_bracket,
             peak_active_date=peak_active_date,
+            peak_active_weekday_vi=peak_active_weekday_vi,
+            peak_active_weekday_en=peak_active_weekday_en,
             duration_days=duration_days
         )
     except Exception as e:

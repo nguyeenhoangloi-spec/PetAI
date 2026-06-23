@@ -806,7 +806,7 @@
                 <!-- Card: Grad-CAM heatmap visuals (takes ~67%) -->
                 {% if gradcam_items %}
                 <div
-                  class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-5 border border-outline-variant/30 dark:border-slate-800 shadow-sm md:col-span-8 flex flex-col justify-between"
+                  class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-5 border border-outline-variant/30 dark:border-slate-800 shadow-sm md:col-span-8 flex flex-col justify-start gap-4"
                 >
                   <div class="mb-4">
                     <h3
@@ -831,7 +831,7 @@
                     {% set badge_bg = 'bg-blue-600' if loop.index == 1 else 'bg-orange-500' %}
                     <div class="space-y-2.5 group">
                       <div
-                        class="relative rounded-xl overflow-hidden aspect-[4/3] border border-outline-variant/30 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 cursor-pointer heatmap-thumbnail shadow-md"
+                        class="relative rounded-xl overflow-hidden aspect-square border border-outline-variant/30 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 cursor-pointer heatmap-thumbnail shadow-md"
                         data-breed="{{ item.breed }}"
                         data-breed-en="{{ item.breed_en }}"
                         data-label="{{ item.label }}"
@@ -1053,7 +1053,7 @@
                 </div>
 
                 <!-- Similar Breeds Link -->
-                <a href="{{ url_for('history.history') }}" class="text-xs text-primary dark:text-blue-400 hover:underline flex items-center justify-center gap-1 mt-5 pt-2.5 border-t border-outline-variant/10 dark:border-slate-850 w-full font-bold">
+                <a href="#" onclick="if(window.openAllBreedsModal) { window.openAllBreedsModal(); return false; }" class="text-xs text-primary dark:text-blue-400 hover:underline flex items-center justify-center gap-1 mt-5 pt-2.5 border-t border-outline-variant/10 dark:border-slate-850 w-full font-bold">
                   <span data-i18n="similarityLink">Xem tất cả các giống tương đồng</span>
                   <span class="material-symbols-outlined text-[14px]">chevron_right</span>
                 </a>

@@ -1536,6 +1536,7 @@
     "paymentHistoryTotalPaid": "Tổng tiền đã thanh toán",
     "paymentHistoryCurrentPlan": "Gói hiện tại",
     "paymentHistoryFilterAllStatus": "Tất cả trạng thái",
+    "allOtherLabel": "Khác",
     "paymentHistoryStatusPending": "Chờ thanh toán",
     "paymentHistoryStatusProcessing": "Đang xử lý",
     "paymentHistoryStatusPaid": "Đã thanh toán",
@@ -2031,7 +2032,11 @@
     "modelMatchingMethodDetail": "NumPy Prototypes (Morphological)",
     "modelFrameworkTitle": "Thư viện & Framework",
     "modelFrameworkDetail": "PyTorch, Ultralytics, NumPy",
-    "confirmLogoutText": "Bạn có chắc chắn muốn đăng xuất tài khoản?"
+    "confirmLogoutText": "Bạn có chắc chắn muốn đăng xuất tài khoản?",
+    "allBreedsModalTitle": "Giống chó hỗ trợ",
+    "searchBreedPlaceholder": "Tìm kiếm giống chó...",
+    "noBreedsFound": "Không tìm thấy giống chó phù hợp",
+    "viewAllBreeds": "Xem tất cả các giống hỗ trợ"
   },
   "en": {
     "homePageTitle": "PetAI | Intelligent Dog Breed Identification",
@@ -3559,6 +3564,7 @@
     "paymentHistoryTotalPaid": "Total Paid",
     "paymentHistoryCurrentPlan": "Current Plan",
     "paymentHistoryFilterAllStatus": "All Statuses",
+    "allOtherLabel": "Others",
     "paymentHistoryStatusPending": "Pending Payment",
     "paymentHistoryStatusProcessing": "Processing",
     "paymentHistoryStatusPaid": "Paid",
@@ -4064,7 +4070,11 @@
       "modelMatchingMethodTitle": "Feature Matching",
       "modelMatchingMethodDetail": "NumPy Prototypes (Morphological)",
       "modelFrameworkTitle": "Libraries & Frameworks",
-      "modelFrameworkDetail": "PyTorch, Ultralytics, NumPy"
+      "modelFrameworkDetail": "PyTorch, Ultralytics, NumPy",
+      "allBreedsModalTitle": "Supported Dog Breeds",
+      "searchBreedPlaceholder": "Search dog breeds...",
+      "noBreedsFound": "No matching dog breeds found",
+      "viewAllBreeds": "View all supported breeds"
     }
 };
 
@@ -5793,7 +5803,8 @@
     applyToElement: applyToElement,
     translateBreed: translateBreedViToEn,
     translateDynamicToast: translateDynamicToast,
-    updateDynamicContentVisibility: updateDynamicContentVisibility
+    updateDynamicContentVisibility: updateDynamicContentVisibility,
+    viToEnBreeds: VI_TO_EN_BREEDS
   };
 
   if (document.readyState === "loading") {
