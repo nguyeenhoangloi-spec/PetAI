@@ -696,23 +696,39 @@
   </footer>
 
 
+  <script type="application/json" id="site-desc-vi-data">{{ get_config('site_description_vi', get_config('site_description', 'Ứng dụng nhận diện giống chó bằng AI dành cho người yêu thú cưng. Kết quả chính xác, nhanh chóng.')) | tojson | safe }}</script>
+  <script type="application/json" id="site-desc-en-data">{{ get_config('site_description_en', 'AI-powered dog breed identification app for pet lovers. Fast and accurate results.') | tojson | safe }}</script>
+  <script type="application/json" id="contact-content-vi-data">{{ get_config('contact_content_vi', '{}') | tojson | safe }}</script>
+  <script type="application/json" id="contact-content-en-data">{{ get_config('contact_content_en', '{}') | tojson | safe }}</script>
   <script>
     (function() {
       window.PetAI_DynamicSettings = window.PetAI_DynamicSettings || { vi: {}, en: {} };
       window.PetAI_DynamicSettings.vi = window.PetAI_DynamicSettings.vi || {};
       window.PetAI_DynamicSettings.en = window.PetAI_DynamicSettings.en || {};
-      window.PetAI_DynamicSettings.vi.footerDesc = {{ get_config('site_description_vi', get_config('site_description', 'Ứng dụng nhận diện giống chó bằng AI dành cho người yêu thú cưng. Kết quả chính xác, nhanh chóng.')) | tojson | safe }};
-      window.PetAI_DynamicSettings.vi.footerDescText = {{ get_config('site_description_vi', get_config('site_description', 'Ứng dụng nhận diện giống chó bằng AI dành cho người yêu thú cưng. Kết quả chính xác, nhanh chóng.')) | tojson | safe }};
-      window.PetAI_DynamicSettings.en.footerDesc = {{ get_config('site_description_en', 'AI-powered dog breed identification app for pet lovers. Fast and accurate results.') | tojson | safe }};
-      window.PetAI_DynamicSettings.en.footerDescText = {{ get_config('site_description_en', 'AI-powered dog breed identification app for pet lovers. Fast and accurate results.') | tojson | safe }};
-      try {
-        const dbVi = JSON.parse({{ get_config('contact_content_vi', '{}') | tojson | safe }} || '{}');
-        Object.assign(window.PetAI_DynamicSettings.vi, dbVi);
-      } catch(e) {}
-      try {
-        const dbEn = JSON.parse({{ get_config('contact_content_en', '{}') | tojson | safe }} || '{}');
-        Object.assign(window.PetAI_DynamicSettings.en, dbEn);
-      } catch(e) {}
+
+      const parseJSONSafe = (id) => {
+        const el = document.getElementById(id);
+        if (!el) return null;
+        try {
+          return JSON.parse(el.textContent);
+        } catch (e) {
+          return null;
+        }
+      };
+
+      const descVi = parseJSONSafe('site-desc-vi-data') || 'Ứng dụng nhận diện giống chó bằng AI dành cho người yêu thú cưng. Kết quả chính xác, nhanh chóng.';
+      const descEn = parseJSONSafe('site-desc-en-data') || 'AI-powered dog breed identification app for pet lovers. Fast and accurate results.';
+
+      window.PetAI_DynamicSettings.vi.footerDesc = descVi;
+      window.PetAI_DynamicSettings.vi.footerDescText = descVi;
+      window.PetAI_DynamicSettings.en.footerDesc = descEn;
+      window.PetAI_DynamicSettings.en.footerDescText = descEn;
+
+      const dbVi = parseJSONSafe('contact-content-vi-data') || {};
+      Object.assign(window.PetAI_DynamicSettings.vi, dbVi);
+
+      const dbEn = parseJSONSafe('contact-content-en-data') || {};
+      Object.assign(window.PetAI_DynamicSettings.en, dbEn);
     })();
   </script>
   <script src="{{ url_for('static', filename='js/i18n.js') }}?v=16"></script>

@@ -485,7 +485,7 @@
                       {% set pct = ((quota_info.paid_uses_remaining / quota_info.total_uses) * 100)|round|int %}
                     {% endif %}
                   {% endif %}
-                  <div class="h-full bg-white rounded-full transition-all duration-500" style="width: {{ pct }}%"></div>
+                  <div id="scanQuotaBar" class="h-full bg-white rounded-full transition-all duration-500" style="width: 0%;"></div>
                 </div>
                 
                 <div class="flex items-center justify-between mt-3 text-[11px] text-white/70">
@@ -841,7 +841,7 @@
                           {{ pred.created_at.strftime('%d/%m/%Y %H:%M') if pred.created_at else '' }}
                         </td>
                         <td class="py-3 text-right">
-                          <button type="button" onclick="openDetailModal('{{ pred.image_path|escape }}', '{{ (pred.breed or "Chưa xác định")|escape }}', '{{ "%.1f"|format((pred.confidence or 0)*100) }}', '{{ (pred.species or "Chó")|escape }}', '{{ pred.created_at.strftime("%d/%m/%Y %H:%M") if pred.created_at else "" }}')" class="text-primary hover:bg-surface-container-high p-1.5 rounded-lg inline-flex items-center justify-center transition-colors cursor-pointer" title="{{ 'View Details' if ui_language == 'en' else 'Xem chi tiết' }}" data-i18n-title="viewDetail">
+                          <button type="button" onclick="openDetailModal(this)" data-image="{{ pred.image_path|escape }}" data-breed="{{ (pred.breed or 'Chưa xác định')|escape }}" data-confidence="{{ '%.1f'|format((pred.confidence or 0)*100) }}" data-species="{{ (pred.species or 'Chó')|escape }}" data-date="{{ pred.created_at.strftime('%d/%m/%Y %H:%M') if pred.created_at else '' }}" class="text-primary hover:bg-surface-container-high p-1.5 rounded-lg inline-flex items-center justify-center transition-colors cursor-pointer" title="{{ 'View Details' if ui_language == 'en' else 'Xem chi tiết' }}" data-i18n-title="viewDetail">
                             <span class="material-symbols-outlined text-[18px]">visibility</span>
                           </button>
                         </td>
@@ -880,7 +880,7 @@
                       <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold {{ badge_class }}">
                         {{ '%.1f'|format(conf) }}%
                       </span>
-                      <button type="button" onclick="openDetailModal('{{ pred.image_path|escape }}', '{{ (pred.breed or "Chưa xác định")|escape }}', '{{ "%.1f"|format((pred.confidence or 0)*100) }}', '{{ (pred.species or "Chó")|escape }}', '{{ pred.created_at.strftime("%d/%m/%Y %H:%M") if pred.created_at else "" }}')" class="text-primary hover:bg-surface-container-high p-1.5 rounded-lg inline-flex items-center justify-center transition-colors cursor-pointer" title="{{ 'View Details' if ui_language == 'en' else 'Xem chi tiết' }}" data-i18n-title="viewDetail">
+                      <button type="button" onclick="openDetailModal(this)" data-image="{{ pred.image_path|escape }}" data-breed="{{ (pred.breed or 'Chưa xác định')|escape }}" data-confidence="{{ '%.1f'|format((pred.confidence or 0)*100) }}" data-species="{{ (pred.species or 'Chó')|escape }}" data-date="{{ pred.created_at.strftime('%d/%m/%Y %H:%M') if pred.created_at else '' }}" class="text-primary hover:bg-surface-container-high p-1.5 rounded-lg inline-flex items-center justify-center transition-colors cursor-pointer" title="{{ 'View Details' if ui_language == 'en' else 'Xem chi tiết' }}" data-i18n-title="viewDetail">
                         <span class="material-symbols-outlined text-[18px]">visibility</span>
                       </button>
                     </div>
@@ -959,6 +959,12 @@
 
     <script>
       document.addEventListener("DOMContentLoaded", function () {
+        // Set dynamic width for progress bar safely
+        const quotaBar = document.getElementById("scanQuotaBar");
+        if (quotaBar) {
+          quotaBar.style.width = "{{ pct }}%";
+        }
+
         let revenueChart = null;
         let subscriptionChartInstance = null;
         let dailyChartInstance = null;
@@ -2257,7 +2263,16 @@
     </div>
 
     <script>
-      window.openDetailModal = function(imagePath, breed, confidence, species, date) {
+      window.openDetailModal = function(imagePathOrElement, breed, confidence, species, date) {
+        let imagePath = imagePathOrElement;
+        if (imagePathOrElement instanceof HTMLElement || (imagePathOrElement && imagePathOrElement.getAttribute)) {
+          const el = imagePathOrElement;
+          imagePath = el.getAttribute("data-image");
+          breed = el.getAttribute("data-breed");
+          confidence = el.getAttribute("data-confidence");
+          species = el.getAttribute("data-species");
+          date = el.getAttribute("data-date");
+        }
         const modal = document.getElementById("detailModal");
         const modalImage = document.getElementById("modalImage");
         const modalBreed = document.getElementById("modalBreed");

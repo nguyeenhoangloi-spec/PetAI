@@ -552,13 +552,13 @@
           <table class="w-full text-left border-collapse" id="usersTable">
             <thead>
               <tr class="bg-surface-container-low/60 dark:bg-slate-800/30 border-b border-outline-variant/35 dark:border-slate-850">
-                <th class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider w-[35%]" data-i18n="userColHeader">NGƯỜI DÙNG</th>
-                <th class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-center" data-i18n="roleColHeader">VAI TRÒ</th>
-                <th class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-center" data-i18n="statusColHeader">TRẠNG THÁI</th>
-                <th class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-center" data-i18n="planColHeader">CẤP GÓI</th>
-                <th class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-center" data-i18n="createdAtColHeader">NGÀY TẠO</th>
-                <th class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-center" data-i18n="lastLoginCol">LẦN ĐĂNG NHẬP GẦN NHẤT</th>
-                <th class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-right" data-i18n="actionColHeader">THAO TÁC</th>
+                <th class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider w-[28%]" data-i18n="userColHeader">NGƯỜI DÙNG</th>
+                <th class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-center whitespace-nowrap" data-i18n="roleColHeader">VAI TRÒ</th>
+                <th class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-center whitespace-nowrap" data-i18n="statusColHeader">TRẠNG THÁI</th>
+                <th class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-center whitespace-nowrap" data-i18n="planColHeader">CẤP GÓI</th>
+                <th class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-center whitespace-nowrap" data-i18n="createdAtColHeader">NGÀY TẠO</th>
+                <th class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-center whitespace-nowrap" data-i18n="lastLoginCol">LẦN ĐĂNG NHẬP GẦN NHẤT</th>
+                <th class="px-6 py-4 label-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-wider text-right whitespace-nowrap" data-i18n="actionColHeader">THAO TÁC</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-outline-variant/20 dark:divide-slate-800" id="usersTableBody">
@@ -609,30 +609,36 @@
         </div>
       </section>
 
-    </div>
-  </main>
-
+  <script type="application/json" id="users-data-store">
+    [
+      {% for u in users %}
+      {
+        "id": {{ u.id }},
+        "username": "{{ u.username | escape }}",
+        "fullname": "{{ u.fullname | escape }}",
+        "email": "{{ u.email | escape }}",
+        "role": "{{ u.role | escape }}",
+        "is_active": {{ 'true' if u.is_active else 'false' }},
+        "created_at": "{{ u.created_at }}",
+        "created_str": "{{ u.created_str }}",
+        "plan": "{{ u.plan }}",
+        "expire_str": "{{ u.expire_str }}"
+      }{% if not loop.last %},{% endif %}
+      {% endfor %}
+    ]
+  </script>
   <script>
     (function () {
       "use strict";
 
       // 1. Data Store passed from Jinja template
-      var USERS_DATA = [
-        {% for u in users %}
-        {
-          id: {{ u.id }},
-          username: "{{ u.username | escape }}",
-          fullname: "{{ u.fullname | escape }}",
-          email: "{{ u.email | escape }}",
-          role: "{{ u.role | escape }}",
-          is_active: {{ 'true' if u.is_active else 'false' }},
-          created_at: "{{ u.created_at }}",
-          created_str: "{{ u.created_str }}",
-          plan: "{{ u.plan }}",
-          expire_str: "{{ u.expire_str }}"
-        }{% if not loop.last %},{% endif %}
-        {% endfor %}
-      ];
+      var usersEl = document.getElementById("users-data-store");
+      var USERS_DATA = [];
+      try {
+        USERS_DATA = JSON.parse(usersEl ? usersEl.textContent : "[]");
+      } catch (e) {
+        USERS_DATA = [];
+      }
 
       // 2. Elements Selection
       var tableBody = document.getElementById("usersTableBody");
@@ -816,13 +822,13 @@
           html += '</td>';
 
           // Col 2: ROLE
-          html += '<td class="px-6 py-4 text-center">' + roleBadge + '</td>';
+          html += '<td class="px-6 py-4 text-center whitespace-nowrap">' + roleBadge + '</td>';
 
           // Col 3: STATUS
-          html += '<td class="px-6 py-4 text-center">' + statusBadge + '</td>';
+          html += '<td class="px-6 py-4 text-center whitespace-nowrap">' + statusBadge + '</td>';
 
           // Col 4: PLAN SELECT
-          html += '<td class="px-6 py-4 text-center">';
+          html += '<td class="px-6 py-4 text-center whitespace-nowrap">';
           html += '  <div class="relative inline-flex items-center">';
           html += '    <select class="plan-update-dropdown bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/40 dark:border-slate-800 rounded-lg py-1 pl-2.5 pr-7 label-sm font-semibold uppercase text-on-surface dark:text-slate-200 focus:ring-1 focus:ring-primary dark:focus:ring-blue-500 appearance-none bg-none cursor-pointer transition-colors" data-user-id="' + u.id + '" data-username="' + u.username + '" data-previous="' + u.plan + '">';
           html += '      <option value="free" ' + selectedFree + '>FREE</option>';
@@ -837,10 +843,10 @@
           html += '</td>';
 
           // Col 5: CREATED AT
-          html += '<td class="px-6 py-4 text-center label-sm text-on-surface-variant dark:text-slate-400">' + (u.created_str || "-") + '</td>';
+          html += '<td class="px-6 py-4 text-center label-sm text-on-surface-variant dark:text-slate-400 whitespace-nowrap">' + (u.created_str || "-") + '</td>';
 
           // Col 6: LAST LOGIN
-          html += '<td class="px-6 py-4 text-center label-sm">';
+          html += '<td class="px-6 py-4 text-center label-sm whitespace-nowrap">';
           html += '  <div class="inline-flex items-center gap-1.5 ' + loginRelative.textClass + '">';
           html += '    <span class="w-1.5 h-1.5 rounded-full ' + loginRelative.statusClass + '"></span>';
           html += '    <span>' + loginText + '</span>';
@@ -848,9 +854,9 @@
           html += '</td>';
 
           // Col 7: ACTIONS
-          html += '<td class="px-6 py-4 text-right relative">';
+          html += '<td class="px-6 py-4 text-right relative whitespace-nowrap">';
           html += '  <div class="flex items-center justify-end gap-2">';
-          html += '    <a class="inline-flex items-center justify-center gap-0.5 rounded-lg border border-outline-variant/45 dark:border-slate-700 px-3 py-1 label-sm font-semibold text-on-surface-variant dark:text-slate-300 hover:bg-surface-container-low dark:hover:bg-slate-800 transition-colors shadow-xs" href="' + detailsUrl + '">';
+          html += '    <a class="inline-flex items-center justify-center gap-0.5 rounded-lg border border-outline-variant/45 dark:border-slate-700 px-3 py-1 label-sm font-semibold text-on-surface-variant dark:text-slate-300 hover:bg-surface-container-low dark:hover:bg-slate-800 transition-colors shadow-xs whitespace-nowrap" href="' + detailsUrl + '">';
           html += '      <span data-i18n="detailBtn">' + t("detailBtn", "Chi tiết") + '</span>';
           html += '    </a>';
           html += '    <div class="relative action-menu-container">';
@@ -1388,6 +1394,9 @@
       }
     });
   </script>
+    </div>
+  </main>
+
   <script src="{{ url_for('static', filename='js/toasts.js') }}"></script>
   <script src="{{ url_for('static', filename='js/i18n.js') }}?v=16"></script>
   <script src="{{ url_for('static', filename='js/script.js') }}"></script>

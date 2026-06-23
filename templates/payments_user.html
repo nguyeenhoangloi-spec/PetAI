@@ -801,6 +801,21 @@
         </section>
         <!-- Invoice Auto-Show Trigger -->
         <div id="payment-auto-invoice" data-auto-invoice="{{ auto_show_invoice|tojson|forceescape if auto_show_invoice else '' }}"></div>
+    <script type="application/json" id="user-orders-data">
+      [
+        {% for o in orders %}
+          {
+            "order_id": "{{ o.order_id | escape }}",
+            "plan": "{{ o.plan | escape }}",
+            "payment_method": "{{ o.payment_method | escape }}",
+            "amount_vnd": {{ o.amount_vnd | default(0) | int }},
+            "status": "{{ o.status | escape }}",
+            "created_at": "{{ o.created_at.strftime('%Y-%m-%d %H:%M:%S') if o.created_at else '' }}",
+            "confirmed_at": "{{ o.confirmed_at.strftime('%Y-%m-%d %H:%M:%S') if o.confirmed_at else '' }}"
+          }{% if not loop.last %},{% endif %}
+        {% endfor %}
+      ]
+    </script>
     <!-- Pass backend variables to Javascript -->
     <script>
       window.csrfToken = "{{ csrf_token() }}";
@@ -808,19 +823,14 @@
       window.currentUserPlanExpire = "{{ quota_info.plan_expire.strftime('%d/%m/%Y') if quota_info and quota_info.plan_expire else '' }}";
       
       // Load payment orders safely into client memory
-      window.userOrders = [
-        {% for o in orders %}
-          {
-            "order_id": "{{ o.order_id }}",
-            "plan": "{{ o.plan }}",
-            "payment_method": "{{ o.payment_method }}",
-            "amount_vnd": {{ o.amount_vnd | default(0) | int }},
-            "status": "{{ o.status }}",
-            "created_at": "{{ o.created_at.strftime('%Y-%m-%d %H:%M:%S') if o.created_at else '' }}",
-            "confirmed_at": "{{ o.confirmed_at.strftime('%Y-%m-%d %H:%M:%S') if o.confirmed_at else '' }}"
-          }{% if not loop.last %},{% endif %}
-        {% endfor %}
-      ];
+      (function() {
+        const ordersEl = document.getElementById("user-orders-data");
+        try {
+          window.userOrders = JSON.parse(ordersEl ? ordersEl.textContent : "[]");
+        } catch (e) {
+          window.userOrders = [];
+        }
+      })();
     </script>
 
     <!-- UI Logic, Filters, Pagination, Cancel actions and Modal Controllers -->

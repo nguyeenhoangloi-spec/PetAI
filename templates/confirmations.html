@@ -1156,10 +1156,17 @@
       <input type="hidden" name="order_id" id="hiddenRejectOrderId" value="" />
     </form>
 
+    <script type="application/json" id="all-orders-data">{{ all_orders|tojson or '[]' }}</script>
     <script>
       (function () {
         // --- Embed Python variables into JS scope safely ---
-        var allOrders = {{ all_orders|tojson or '[]' }};
+        var allOrdersEl = document.getElementById("all-orders-data");
+        var allOrders = [];
+        try {
+          allOrders = JSON.parse(allOrdersEl ? allOrdersEl.textContent : "[]");
+        } catch (e) {
+          allOrders = [];
+        }
         var currentLang = document.documentElement.getAttribute("lang") || "vi";
 
         // Current states

@@ -484,7 +484,10 @@ document.addEventListener("DOMContentLoaded", function () {
       const doc = parser.parseFromString(html, "text/html");
 
       // Capture inline scripts before updateDOM removes them from doc.body
-      const inlineScripts = doc.body ? Array.from(doc.body.querySelectorAll("script:not([src])")) : [];
+      const inlineScripts = doc.body ? Array.from(doc.body.querySelectorAll("script:not([src])")).filter(s => {
+        const type = s.getAttribute("type");
+        return !type || type === "text/javascript" || type === "module";
+      }) : [];
 
       if (!isPopState) {
         history.pushState(null, "", url);

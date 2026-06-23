@@ -1946,6 +1946,10 @@
       });
     })();
   </script>
+  <script type="application/json" id="site-desc-vi-data">{{ get_config('site_description_vi', get_config('site_description', 'Ứng dụng nhận diện giống chó bằng AI dành cho người yêu thú cưng. Kết quả chính xác, nhanh chóng.')) | tojson | safe }}</script>
+  <script type="application/json" id="site-desc-en-data">{{ get_config('site_description_en', 'AI-powered dog breed identification app for pet lovers. Fast and accurate results.') | tojson | safe }}</script>
+  <script type="application/json" id="home-content-vi-data">{{ get_config('home_content_vi', '{}') | tojson | safe }}</script>
+  <script type="application/json" id="home-content-en-data">{{ get_config('home_content_en', '{}') | tojson | safe }}</script>
   <script>
     (function() {
       function formatVND(val, suffix) {
@@ -1960,7 +1964,20 @@
         if (isNaN(num)) return val + suffix;
         return num.toLocaleString('en-US') + suffix;
       }
-      
+
+      const parseJSONSafe = (id) => {
+        const el = document.getElementById(id);
+        if (!el) return null;
+        try {
+          return JSON.parse(el.textContent);
+        } catch (e) {
+          return null;
+        }
+      };
+
+      const descVi = parseJSONSafe('site-desc-vi-data') || 'Ứng dụng nhận diện giống chó bằng AI dành cho người yêu thú cưng. Kết quả chính xác, nhanh chóng.';
+      const descEn = parseJSONSafe('site-desc-en-data') || 'AI-powered dog breed identification app for pet lovers. Fast and accurate results.';
+
       window.PetAI_DynamicSettings = {
         vi: {
           planBasicPrice: formatVND("{{ get_config('plan_basic_price', '1000') }}", "đ"),
@@ -1972,8 +1989,8 @@
           scanLimit50: "{{ get_config('plan_basic_scans', '50') }} lượt nhận diện",
           scanLimit200: "{{ get_config('plan_pro_scans', '200') }} lượt nhận diện",
           scanLimitUnlimit: "{{ 'Không giới hạn nhận diện' if get_config('plan_enterprise_scans', 'unlimited') == 'unlimited' else (get_config('plan_enterprise_scans', 'unlimited') ~ ' lượt nhận diện') }}",
-          footerDesc: {{ get_config('site_description_vi', get_config('site_description', 'Ứng dụng nhận diện giống chó bằng AI dành cho người yêu thú cưng. Kết quả chính xác, nhanh chóng.')) | tojson | safe }},
-          footerDescText: {{ get_config('site_description_vi', get_config('site_description', 'Ứng dụng nhận diện giống chó bằng AI dành cho người yêu thú cưng. Kết quả chính xác, nhanh chóng.')) | tojson | safe }}
+          footerDesc: descVi,
+          footerDescText: descVi
         },
         en: {
           planBasicPrice: formatVND_EN("{{ get_config('plan_basic_price', '1000') }}", " VND"),
@@ -1985,20 +2002,16 @@
           scanLimit50: "{{ get_config('plan_basic_scans', '50') }} AI scans",
           scanLimit200: "{{ get_config('plan_pro_scans', '200') }} AI scans",
           scanLimitUnlimit: "{{ 'Unlimited AI scans' if get_config('plan_enterprise_scans', 'unlimited') == 'unlimited' else (get_config('plan_enterprise_scans', 'unlimited') ~ ' AI scans') }}",
-          footerDesc: {{ get_config('site_description_en', 'AI-powered dog breed identification app for pet lovers. Fast and accurate results.') | tojson | safe }},
-          footerDescText: {{ get_config('site_description_en', 'AI-powered dog breed identification app for pet lovers. Fast and accurate results.') | tojson | safe }}
+          footerDesc: descEn,
+          footerDescText: descEn
         }
       };
 
       // Merge database home content translations
-      try {
-        const dbVi = JSON.parse({{ get_config('home_content_vi', '{}') | tojson | safe }} || '{}');
-        Object.assign(window.PetAI_DynamicSettings.vi, dbVi);
-      } catch(e) {}
-      try {
-        const dbEn = JSON.parse({{ get_config('home_content_en', '{}') | tojson | safe }} || '{}');
-        Object.assign(window.PetAI_DynamicSettings.en, dbEn);
-      } catch(e) {}
+      const dbVi = parseJSONSafe('home-content-vi-data') || {};
+      Object.assign(window.PetAI_DynamicSettings.vi, dbVi);
+      const dbEn = parseJSONSafe('home-content-en-data') || {};
+      Object.assign(window.PetAI_DynamicSettings.en, dbEn);
     })();
   </script>
   <script src="{{ url_for('static', filename='js/i18n.js') }}?v=16"></script>
