@@ -943,8 +943,8 @@
                   <!-- Parent 1 -->
                   <div class="flex flex-col items-center gap-2 w-[44%] text-center">
                     <div class="relative w-20 h-20 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 flex items-center justify-center border border-blue-500/30 shadow-md">
-                      <img id="parent-breed-img-1" class="w-full h-full object-cover hide-until-loaded" src="" alt="Parent 1" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                      <span class="material-symbols-outlined text-[28px] text-slate-400 absolute inset-0 flex items-center justify-center" style="display: none;">pets</span>
+                      <img id="parent-breed-img-1" class="w-full h-full object-cover hide-until-loaded opacity-0 transition-opacity duration-200" src="/static/images/breed_placeholder.png" alt="Parent 1" onload="this.classList.remove('opacity-0'); if(this.nextElementSibling) this.nextElementSibling.style.display='none';">
+                      <span class="material-symbols-outlined text-[28px] text-slate-400 absolute inset-0 flex items-center justify-center">pets</span>
                     </div>
                     <span class="text-sm font-bold text-on-surface dark:text-slate-200 truncate w-full leading-tight" data-i18n-breed data-i18n-breed-vi="{{ mix_breed1.breed }}" data-i18n-breed-en="{{ mix_breed1.breed_en }}">
                       {{ mix_breed1.breed_en if ui_language == 'en' else mix_breed1.breed }}
@@ -962,8 +962,8 @@
                   <!-- Parent 2 -->
                   <div class="flex flex-col items-center gap-2 w-[44%] text-center">
                     <div class="relative w-20 h-20 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 flex items-center justify-center border border-orange-500/30 shadow-md">
-                      <img id="parent-breed-img-2" class="w-full h-full object-cover hide-until-loaded" src="" alt="Parent 2" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                      <span class="material-symbols-outlined text-[28px] text-slate-400 absolute inset-0 flex items-center justify-center" style="display: none;">pets</span>
+                      <img id="parent-breed-img-2" class="w-full h-full object-cover hide-until-loaded opacity-0 transition-opacity duration-200" src="/static/images/breed_placeholder.png" alt="Parent 2" onload="this.classList.remove('opacity-0'); if(this.nextElementSibling) this.nextElementSibling.style.display='none';">
+                      <span class="material-symbols-outlined text-[28px] text-slate-400 absolute inset-0 flex items-center justify-center">pets</span>
                     </div>
                     <span class="text-sm font-bold text-on-surface dark:text-slate-200 truncate w-full leading-tight" data-i18n-breed data-i18n-breed-vi="{{ mix_breed2.breed }}" data-i18n-breed-en="{{ mix_breed2.breed_en }}">
                       {{ mix_breed2.breed_en if ui_language == 'en' else mix_breed2.breed }}
@@ -1033,8 +1033,8 @@
                     </div>
                     <!-- Breed Image Thumbnail -->
                     <div class="relative w-12 h-12 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 border border-outline-variant/30 dark:border-slate-700 flex items-center justify-center flex-shrink-0 shadow-sm">
-                      <img id="sim-breed-img-{{ loop.index }}" class="w-full h-full object-cover hide-until-loaded" src="" alt="Breed item" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                      <span class="material-symbols-outlined text-[20px] text-slate-400 absolute inset-0 flex items-center justify-center" style="display: none;">pets</span>
+                      <img id="sim-breed-img-{{ loop.index }}" class="w-full h-full object-cover hide-until-loaded opacity-0 transition-opacity duration-200" src="/static/images/breed_placeholder.png" alt="Breed item" onload="this.classList.remove('opacity-0'); if(this.nextElementSibling) this.nextElementSibling.style.display='none';">
+                      <span class="material-symbols-outlined text-[20px] text-slate-400 absolute inset-0 flex items-center justify-center">pets</span>
                     </div>
                     <!-- Details & Progress Bar -->
                     <div class="flex-grow space-y-1.5 min-w-0">
@@ -1492,7 +1492,7 @@
             breedLabel = `${breed.toUpperCase()} - ${breedConfPct}`;
           }
           
-          // Draw Outer box (DOG)
+          // Draw Outer box with Breed Label
           const outerBox = document.createElement('div');
           outerBox.className = "absolute border-2 border-blue-500/80 rounded-lg shadow-[0_0_12px_rgba(59,130,246,0.3)] pointer-events-none";
           outerBox.style.left = left + 'px';
@@ -1501,30 +1501,11 @@
           outerBox.style.height = height + 'px';
           outerBox.innerHTML = `
             <div class="absolute -top-7 left-0 bg-blue-600 text-white text-[10px] font-black uppercase px-2 py-0.5 rounded-t shadow-md flex items-center gap-1 whitespace-nowrap">
-              <span>DOG: ${dogConf}</span>
-            </div>
-          `;
-          
-          // Draw Inner box (BREED classification) - slightly offset/shrunk
-          const left2 = left + width * 0.14;
-          const top2 = top + height * 0.08;
-          const width2 = width * 0.72;
-          const height2 = height * 0.84;
-          
-          const innerBox = document.createElement('div');
-          innerBox.className = "absolute border border-blue-400/60 rounded pointer-events-none";
-          innerBox.style.left = left2 + 'px';
-          innerBox.style.top = top2 + 'px';
-          innerBox.style.width = width2 + 'px';
-          innerBox.style.height = height2 + 'px';
-          innerBox.innerHTML = `
-            <div class="absolute -top-6 left-0 bg-blue-500/90 text-white text-[9px] font-black uppercase px-1.5 py-0.5 rounded-t shadow-md flex items-center gap-1 whitespace-nowrap">
               <span>${breedLabel}</span>
             </div>
           `;
           
           container.appendChild(outerBox);
-          container.appendChild(innerBox);
         }
         
         if (img.complete) {
@@ -1690,18 +1671,31 @@
         const emptyState = document.getElementById('recent-history-empty');
         if (!slider) return;
 
-        fetch('/history/api/recent?limit=8')
-          .then(r => r.json())
+        // Set a timeout of 4 seconds to prevent indefinite skeleton hangs
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 4000);
+
+        fetch('/history/api/recent?limit=8', { signal: controller.signal })
+          .then(r => {
+            if (!r.ok) throw new Error("Server error " + r.status);
+            return r.json();
+          })
           .then(data => {
+            clearTimeout(timeoutId);
             if (skeleton) skeleton.remove();
-            const items = Array.isArray(data) ? data : (data.predictions || data.items || data.data || []);
-            if (!items || items.length === 0) {
+            
+            // Safe filter for any falsy values
+            const rawItems = Array.isArray(data) ? data : (data.predictions || data.items || data.data || []);
+            const items = (Array.isArray(rawItems) ? rawItems : []).filter(Boolean);
+
+            if (items.length === 0) {
               if (emptyState) { emptyState.classList.remove('hidden'); emptyState.classList.add('flex'); }
               return;
             }
             const lang = _getLang();
             const fragment = document.createDocumentFragment();
             items.forEach(item => {
+              if (!item) return;
               const card = document.createElement('a');
               card.href = item.url || ('/history?id=' + (item.id || ''));
               card.className = 'flex-shrink-0 w-24 group cursor-pointer snap-start';
@@ -1745,76 +1739,17 @@
               }
             }
           })
-          .catch(() => {
+          .catch(err => {
+            clearTimeout(timeoutId);
+            console.error("Recent history loader failed:", err);
             if (skeleton) skeleton.remove();
             if (emptyState) { emptyState.classList.remove('hidden'); emptyState.classList.add('flex'); }
           });
       })();
 
-      /* =========================================================
-         Breed CEO API Image Loader for mix/similarity panels
-      ========================================================= */
-      function loadBreedImage(imgElement, breedEn) {
-        if (!breedEn) return;
-        let cleanName = breedEn.toLowerCase().replace(/[^a-z ]/g, '').trim();
-        let apiBreed = cleanName;
-        if (cleanName.includes('retriever')) {
-          if (cleanName.includes('golden')) apiBreed = 'retriever/golden';
-          else if (cleanName.includes('flat')) apiBreed = 'retriever/flatcoated';
-          else if (cleanName.includes('curly')) apiBreed = 'retriever/curly';
-          else apiBreed = 'retriever';
-        } else if (cleanName.includes('shepherd')) {
-          if (cleanName.includes('german')) apiBreed = 'germanshepherd';
-          else apiBreed = 'shepherd';
-        } else if (cleanName.includes('poodle')) {
-          if (cleanName.includes('toy')) apiBreed = 'poodle/toy';
-          else if (cleanName.includes('mini')) apiBreed = 'poodle/miniature';
-          else apiBreed = 'poodle';
-        } else if (cleanName.includes('terrier')) {
-          apiBreed = 'terrier';
-        } else if (cleanName.includes('spaniel')) {
-          apiBreed = 'spaniel';
-        } else {
-          const parts = cleanName.split(' ');
-          if (parts.length > 1) {
-            apiBreed = parts[parts.length - 1] + '/' + parts[0];
-          }
-        }
-        
-        fetch(`https://dog.ceo/api/breed/${apiBreed}/images/random`)
-          .then(r => r.json())
-          .then(data => {
-            if (data.status === 'success' && data.message) {
-              imgElement.src = data.message;
-            } else {
-              imgElement.src = `https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=100&auto=format&fit=crop&q=80`;
-            }
-          })
-          .catch(() => {
-            imgElement.src = `https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=100&auto=format&fit=crop&q=80`;
-          });
-      }
-
       document.addEventListener("DOMContentLoaded", function () {
         const _bridge = document.getElementById('predict-data-bridge');
-        const _sim1En = _bridge ? _bridge.getAttribute('data-similarity-top1-en') || '' : '';
-        const _sim2En = _bridge ? _bridge.getAttribute('data-similarity-top2-en') || '' : '';
-        const _sim3En = _bridge ? _bridge.getAttribute('data-similarity-top3-en') || '' : '';
         const _imgPathFmt = _bridge ? _bridge.getAttribute('data-image-path') || '' : '';
-
-        // Load parent images for mixed breed analysis
-        const parentImg1 = document.getElementById('parent-breed-img-1');
-        const parentImg2 = document.getElementById('parent-breed-img-2');
-        if (parentImg1) loadBreedImage(parentImg1, _sim1En);
-        if (parentImg2) loadBreedImage(parentImg2, _sim2En);
-
-        // Load similar breeds thumbnails
-        const simImg1 = document.getElementById('sim-breed-img-1');
-        const simImg2 = document.getElementById('sim-breed-img-2');
-        const simImg3 = document.getElementById('sim-breed-img-3');
-        if (simImg1) loadBreedImage(simImg1, _sim1En);
-        if (simImg2) loadBreedImage(simImg2, _sim2En);
-        if (simImg3) loadBreedImage(simImg3, _sim3En);
 
         /* =========================================================
            Detect image format for Card 4 badge

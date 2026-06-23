@@ -1200,7 +1200,7 @@ def upload():
 
 		return render_template(
 			"predict.html",
-			image_path=annotated_path.replace("\\", "/"),
+			image_path=save_path.replace("\\", "/"),
 			result=result,
 			yolo_species=det_label,
 			yolo_species_conf=yolo_conf,
