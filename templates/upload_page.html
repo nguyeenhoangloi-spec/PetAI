@@ -914,12 +914,20 @@
               return "text-amber-600 dark:text-amber-400";
             }
 
+            const lang = window.PetAI_i18n ? window.PetAI_i18n.getCurrentLang() : 'vi';
             const cards = items.map((item) => {
               const conf = parseFloat(item.confidence || 0);
               const pct  = (conf * 100).toFixed(0) + "%";
               const raw  = (item.image_path || "").replace(/^[\/\\]+/, "");
               const imgUrl = raw ? "/" + raw : "";
-              const breed  = item.breed || "--";
+              let breed = item.breed || "--";
+              if (lang === 'en') {
+                if (item.breed_en) {
+                  breed = item.breed_en;
+                } else if (window.PetAI_i18n && window.PetAI_i18n.translateBreed) {
+                  breed = window.PetAI_i18n.translateBreed(item.breed);
+                }
+              }
               const time   = fmtTime(item.created_at);
               const cc     = confColor(conf);
 
@@ -934,7 +942,7 @@
                   </div>
                 </div>
                 <div class="flex flex-col gap-0.5 min-w-0">
-                  <p class="text-[12px] font-semibold text-on-surface dark:text-slate-200 truncate leading-snug" title="${breed}" data-i18n-breed="${breed}">${breed}</p>
+                  <p class="text-[12px] font-semibold text-on-surface dark:text-slate-200 truncate leading-snug" title="${breed}" data-i18n-breed="${item.breed || ''}">${breed}</p>
                   <p class="text-[13px] font-bold ${cc} leading-tight">${pct}</p>
                   <p class="text-[11px] text-on-surface-variant/60 dark:text-slate-500 truncate leading-tight">${time}</p>
                 </div>

@@ -101,11 +101,13 @@ class PredictionHistory:
             params.extend([limit, offset])
             
             cur.execute(query, tuple(params))
+            from i18n_server import translate_breed_vi_to_en
             rows = cur.fetchall()
             return [{
                 'id': row[0],
                 'image_path': row[1],
                 'breed': to_common_vietnamese_breed_name(row[2]),
+                'breed_en': translate_breed_vi_to_en(to_common_vietnamese_breed_name(row[2])),
                 'confidence': row[3],
                 'species': row[4],
                 'created_at': row[5]
@@ -142,11 +144,13 @@ class PredictionHistory:
                         ORDER BY created_at DESC
                         LIMIT %s OFFSET %s
                     """, (user_id, start_at, end_at, limit, offset))
+                from i18n_server import translate_breed_vi_to_en
                 rows = cur.fetchall()
                 return [{
                     'id': row[0],
                     'image_path': row[1],
                     'breed': to_common_vietnamese_breed_name(row[2]),
+                    'breed_en': translate_breed_vi_to_en(to_common_vietnamese_breed_name(row[2])),
                     'confidence': row[3],
                     'species': row[4],
                     'created_at': row[5],
@@ -173,11 +177,13 @@ class PredictionHistory:
                         ORDER BY ph.created_at DESC
                         LIMIT %s OFFSET %s
                     """, (start_at, end_at, limit, offset))
+                from i18n_server import translate_breed_vi_to_en
                 rows = cur.fetchall()
                 return [{
                     'id': row[0],
                     'image_path': row[1],
                     'breed': to_common_vietnamese_breed_name(row[2]),
+                    'breed_en': translate_breed_vi_to_en(to_common_vietnamese_breed_name(row[2])),
                     'confidence': row[3],
                     'species': row[4],
                     'created_at': row[5],

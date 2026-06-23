@@ -635,7 +635,7 @@
         <a class="body-md text-on-surface-variant hover:text-primary transition-colors duration-300"
           href="#social-proof" data-i18n="about"><span data-i18n="about">Giới thiệu</span></a>
       </div>
-      {% endif %} {% if session.get('user_id') %}
+      {% endif %} {% if session.get('user_id') and not request.args.get('edit') %}
       <div class="flex items-center gap-6">
         <a class="body-md text-on-surface-variant hover:text-primary transition-colors duration-300 font-semibold"
           href="{{ url_for('dashboard.dashboard') }}" data-i18n="dashboard"><span data-i18n="dashboard">Bảng điều
@@ -647,9 +647,11 @@
         </a>
       </div>
       {% else %}
+      {% if not request.args.get('edit') %}
       <div class="flex items-center gap-6">
         <a class="nav-login-btn" href="{{ url_for('login.login') }}" data-i18n="login"><span data-i18n="login">Đăng nhập</span></a>
       </div>
+      {% endif %}
       {% endif %}
     </div>
   </nav>

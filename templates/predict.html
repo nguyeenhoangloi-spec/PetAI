@@ -1705,7 +1705,14 @@
               const card = document.createElement('a');
               card.href = item.url || ('/history?id=' + (item.id || ''));
               card.className = 'flex-shrink-0 w-24 group cursor-pointer snap-start';
-              const breed = lang === 'en' ? (item.breed_en || item.breed || '') : (item.breed || '');
+              let breed = item.breed || '';
+              if (lang === 'en') {
+                if (item.breed_en) {
+                  breed = item.breed_en;
+                } else if (window.PetAI_i18n && window.PetAI_i18n.translateBreed) {
+                  breed = window.PetAI_i18n.translateBreed(item.breed);
+                }
+              }
               const conf = item.confidence !== undefined ? Math.round(item.confidence * 100) + '%' : '';
               let imgSrc = item.image_url || item.image_path || item.thumbnail || '';
               if (imgSrc && !imgSrc.startsWith('http') && !imgSrc.startsWith('/')) {
@@ -1723,7 +1730,7 @@
                   </div>
                 </div>
                 <div class="text-[11px] font-bold text-on-surface dark:text-slate-200 truncate w-full flex items-center justify-between gap-1" title="${breed} ${conf}">
-                  <span class="truncate">${breed || '—'}</span>
+                  <span class="truncate" data-i18n-breed="${item.breed || ''}">${breed || '—'}</span>
                   ${conf ? `<span class="text-primary dark:text-blue-400 font-extrabold shrink-0 text-[10px]">${conf}</span>` : ''}
                 </div>
               `;
@@ -1733,6 +1740,9 @@
               itemsContainer.appendChild(fragment);
               itemsContainer.classList.remove('hidden');
               itemsContainer.classList.add('flex');
+              if (window.PetAI_i18n && typeof window.PetAI_i18n.applyToElement === "function") {
+                window.PetAI_i18n.applyToElement(itemsContainer, lang);
+              }
             }
           })
           .catch(() => {

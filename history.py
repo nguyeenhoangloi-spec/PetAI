@@ -94,6 +94,7 @@ def history():
             LIMIT %s OFFSET %s
         """
         
+        from i18n_server import translate_breed_vi_to_en
         with conn.cursor() as cur:
             cur.execute(query, tuple(fetch_params))
             rows = cur.fetchall() or []
@@ -101,6 +102,7 @@ def history():
                 'id': row[0],
                 'image_path': row[1],
                 'breed': to_common_vietnamese_breed_name(row[2]),
+                'breed_en': translate_breed_vi_to_en(to_common_vietnamese_breed_name(row[2])),
                 'confidence': row[3],
                 'species': row[4],
                 'created_at': row[5]
