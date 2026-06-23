@@ -107,6 +107,12 @@ def register_context_processors(app):
         def get_config(key, default=""):
             val = system_config.get(key, default)
             if val and "_content_" in key:
+                if isinstance(val, str) and (val.strip().startswith("{") or val.strip().startswith("[")):
+                    try:
+                        import json
+                        return json.loads(val)
+                    except Exception:
+                        pass
                 import re
                 # 1. Convert bold-only paragraphs to H2 headings
                 val = re.sub(r'<p[^>]*>\s*<(strong|b)>([^<]+)</\1>\s*</p>', r'<h2>\2</h2>', val)
