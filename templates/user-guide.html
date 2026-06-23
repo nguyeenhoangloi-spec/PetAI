@@ -648,6 +648,17 @@
       </div>
     </div>
   </footer>
+  <script>
+    (function() {
+      window.PetAI_DynamicSettings = window.PetAI_DynamicSettings || { vi: {}, en: {} };
+      window.PetAI_DynamicSettings.vi = window.PetAI_DynamicSettings.vi || {};
+      window.PetAI_DynamicSettings.en = window.PetAI_DynamicSettings.en || {};
+      window.PetAI_DynamicSettings.vi.footerDesc = {{ get_config('site_description_vi', get_config('site_description', 'Ứng dụng nhận diện giống chó bằng AI dành cho người yêu thú cưng. Kết quả chính xác, nhanh chóng.')) | tojson | safe }};
+      window.PetAI_DynamicSettings.vi.footerDescText = {{ get_config('site_description_vi', get_config('site_description', 'Ứng dụng nhận diện giống chó bằng AI dành cho người yêu thú cưng. Kết quả chính xác, nhanh chóng.')) | tojson | safe }};
+      window.PetAI_DynamicSettings.en.footerDesc = {{ get_config('site_description_en', 'AI-powered dog breed identification app for pet lovers. Fast and accurate results.') | tojson | safe }};
+      window.PetAI_DynamicSettings.en.footerDescText = {{ get_config('site_description_en', 'AI-powered dog breed identification app for pet lovers. Fast and accurate results.') | tojson | safe }};
+    })();
+  </script>
   <script src="{{ url_for('static', filename='js/i18n.js') }}?v=16"></script>
   <script src="{{ url_for('static', filename='js/script.js') }}"></script>
     <script>

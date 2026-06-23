@@ -891,7 +891,10 @@ class SystemConfig:
             "data_deletion_content_vi": "",
             "data_deletion_content_en": "",
             "support_content_vi": "",
-            "support_content_en": ""
+            "support_content_en": "",
+            "vietqr_instructions": "Chuyển khoản chính xác số tiền của gói để được duyệt tự động sau 1-3 phút.",
+            "vietqr_instructions_vi": "Chuyển khoản chính xác số tiền của gói để được duyệt tự động sau 1-3 phút.",
+            "vietqr_instructions_en": "Transfer the exact amount of the package to be automatically approved within 1-3 minutes."
         }
         for k, v in defaults.items():
             with conn.cursor() as cur:

@@ -792,8 +792,24 @@ def save_system_config():
         # General configurations
         if "site_name" in request.form:
             SystemConfig.set(conn, "site_name", request.form.get("site_name", "").strip(), "Tên website")
-        if "site_description" in request.form:
-            SystemConfig.set(conn, "site_description", request.form.get("site_description", "").strip(), "Mô tả ngắn website")
+        if "site_description_vi" in request.form or "site_description_en" in request.form:
+            desc_vi = request.form.get("site_description_vi", "").strip()
+            desc_en = request.form.get("site_description_en", "").strip()
+            
+            if desc_vi and not desc_en:
+                desc_en = translate_text_server_side(desc_vi, "vi", "en")
+            elif desc_en and not desc_vi:
+                desc_vi = translate_text_server_side(desc_en, "en", "vi")
+                
+            SystemConfig.set(conn, "site_description_vi", desc_vi, "Mô tả ngắn website (Tiếng Việt)")
+            SystemConfig.set(conn, "site_description_en", desc_en, "Mô tả ngắn website (Tiếng Anh)")
+            SystemConfig.set(conn, "site_description", desc_vi, "Mô tả ngắn website")
+        elif "site_description" in request.form:
+            desc_vi = request.form.get("site_description", "").strip()
+            SystemConfig.set(conn, "site_description", desc_vi, "Mô tả ngắn website")
+            SystemConfig.set(conn, "site_description_vi", desc_vi, "Mô tả ngắn website (Tiếng Việt)")
+            desc_en = translate_text_server_side(desc_vi, "vi", "en")
+            SystemConfig.set(conn, "site_description_en", desc_en, "Mô tả ngắn website (Tiếng Anh)")
         if "site_email" in request.form:
             SystemConfig.set(conn, "site_email", request.form.get("site_email", "").strip(), "Email liên hệ chính")
         if "contact_phone" in request.form:
@@ -854,7 +870,25 @@ def save_system_config():
             SystemConfig.set(conn, "vietqr_bank", request.form.get("vietqr_bank", "").strip(), "Ngân hàng VietQR")
             SystemConfig.set(conn, "vietqr_template", request.form.get("vietqr_template", "").strip(), "Nội dung chuyển khoản mẫu")
             SystemConfig.set(conn, "vietqr_email", request.form.get("vietqr_email", "").strip(), "Email nhận thông báo thanh toán")
-            SystemConfig.set(conn, "vietqr_instructions", request.form.get("vietqr_instructions", "").strip(), "Hướng dẫn thanh toán")
+            if "vietqr_instructions_vi" in request.form or "vietqr_instructions_en" in request.form:
+                instructions_vi = request.form.get("vietqr_instructions_vi", "").strip()
+                instructions_en = request.form.get("vietqr_instructions_en", "").strip()
+                
+                if instructions_vi and not instructions_en:
+                    instructions_en = translate_text_server_side(instructions_vi, "vi", "en")
+                elif instructions_en and not instructions_vi:
+                    instructions_vi = translate_text_server_side(instructions_en, "en", "vi")
+                
+                SystemConfig.set(conn, "vietqr_instructions_vi", instructions_vi, "Hướng dẫn thanh toán (Tiếng Việt)")
+                SystemConfig.set(conn, "vietqr_instructions_en", instructions_en, "Hướng dẫn thanh toán (Tiếng Anh)")
+                SystemConfig.set(conn, "vietqr_instructions", instructions_vi, "Hướng dẫn thanh toán")
+            elif "vietqr_instructions" in request.form:
+                instructions_vi = request.form.get("vietqr_instructions", "").strip()
+                SystemConfig.set(conn, "vietqr_instructions", instructions_vi, "Hướng dẫn thanh toán")
+                SystemConfig.set(conn, "vietqr_instructions_vi", instructions_vi, "Hướng dẫn thanh toán (Tiếng Việt)")
+                instructions_en = translate_text_server_side(instructions_vi, "vi", "en")
+                SystemConfig.set(conn, "vietqr_instructions_en", instructions_en, "Hướng dẫn thanh toán (Tiếng Anh)")
+            
             vietqr_enabled = "1" if request.form.get("vietqr_enabled") in ["on", "1", "true"] else "0"
             SystemConfig.set(conn, "vietqr_enabled", vietqr_enabled, "Bật thanh toán VietQR (1=Bật, 0=Tắt)")
 

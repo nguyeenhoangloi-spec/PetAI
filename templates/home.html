@@ -1971,7 +1971,9 @@
           planEntPriceSub: "/ {{ get_config('plan_enterprise_days', '90') }} ngày sử dụng",
           scanLimit50: "{{ get_config('plan_basic_scans', '50') }} lượt nhận diện",
           scanLimit200: "{{ get_config('plan_pro_scans', '200') }} lượt nhận diện",
-          scanLimitUnlimit: "{{ 'Không giới hạn nhận diện' if get_config('plan_enterprise_scans', 'unlimited') == 'unlimited' else (get_config('plan_enterprise_scans', 'unlimited') ~ ' lượt nhận diện') }}"
+          scanLimitUnlimit: "{{ 'Không giới hạn nhận diện' if get_config('plan_enterprise_scans', 'unlimited') == 'unlimited' else (get_config('plan_enterprise_scans', 'unlimited') ~ ' lượt nhận diện') }}",
+          footerDesc: {{ get_config('site_description_vi', get_config('site_description', 'Ứng dụng nhận diện giống chó bằng AI dành cho người yêu thú cưng. Kết quả chính xác, nhanh chóng.')) | tojson | safe }},
+          footerDescText: {{ get_config('site_description_vi', get_config('site_description', 'Ứng dụng nhận diện giống chó bằng AI dành cho người yêu thú cưng. Kết quả chính xác, nhanh chóng.')) | tojson | safe }}
         },
         en: {
           planBasicPrice: formatVND_EN("{{ get_config('plan_basic_price', '1000') }}", " VND"),
@@ -1982,7 +1984,9 @@
           planEntPriceSub: "/ {{ get_config('plan_enterprise_days', '90') }} days usage",
           scanLimit50: "{{ get_config('plan_basic_scans', '50') }} AI scans",
           scanLimit200: "{{ get_config('plan_pro_scans', '200') }} AI scans",
-          scanLimitUnlimit: "{{ 'Unlimited AI scans' if get_config('plan_enterprise_scans', 'unlimited') == 'unlimited' else (get_config('plan_enterprise_scans', 'unlimited') ~ ' AI scans') }}"
+          scanLimitUnlimit: "{{ 'Unlimited AI scans' if get_config('plan_enterprise_scans', 'unlimited') == 'unlimited' else (get_config('plan_enterprise_scans', 'unlimited') ~ ' AI scans') }}",
+          footerDesc: {{ get_config('site_description_en', 'AI-powered dog breed identification app for pet lovers. Fast and accurate results.') | tojson | safe }},
+          footerDescText: {{ get_config('site_description_en', 'AI-powered dog breed identification app for pet lovers. Fast and accurate results.') | tojson | safe }}
         }
       };
 

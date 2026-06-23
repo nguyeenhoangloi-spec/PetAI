@@ -547,6 +547,12 @@
   <script>
     (function() {
       window.PetAI_DynamicSettings = window.PetAI_DynamicSettings || { vi: {}, en: {} };
+      window.PetAI_DynamicSettings.vi = window.PetAI_DynamicSettings.vi || {};
+      window.PetAI_DynamicSettings.en = window.PetAI_DynamicSettings.en || {};
+      window.PetAI_DynamicSettings.vi.footerDesc = {{ get_config('site_description_vi', get_config('site_description', 'Ứng dụng nhận diện giống chó bằng AI dành cho người yêu thú cưng. Kết quả chính xác, nhanh chóng.')) | tojson | safe }};
+      window.PetAI_DynamicSettings.vi.footerDescText = {{ get_config('site_description_vi', get_config('site_description', 'Ứng dụng nhận diện giống chó bằng AI dành cho người yêu thú cưng. Kết quả chính xác, nhanh chóng.')) | tojson | safe }};
+      window.PetAI_DynamicSettings.en.footerDesc = {{ get_config('site_description_en', 'AI-powered dog breed identification app for pet lovers. Fast and accurate results.') | tojson | safe }};
+      window.PetAI_DynamicSettings.en.footerDescText = {{ get_config('site_description_en', 'AI-powered dog breed identification app for pet lovers. Fast and accurate results.') | tojson | safe }};
       try {
         const dbVi = JSON.parse({{ get_config('terms_of_service_content_vi', '{}') | tojson | safe }} || '{}');
         Object.assign(window.PetAI_DynamicSettings.vi, dbVi);

@@ -1677,7 +1677,8 @@
         planProLimit: "{{ get_config('plan_pro_scans', '200') }} lượt",
         planEntName: "Doanh nghiệp (Enterprise)",
         planEntDuration: "{{ get_config('plan_enterprise_days', '90') }} ngày",
-        planEntLimit: "{{ 'Không giới hạn' if get_config('plan_enterprise_scans', 'unlimited') == 'unlimited' else (get_config('plan_enterprise_scans', 'unlimited') ~ ' lượt') }}"
+        planEntLimit: "{{ 'Không giới hạn' if get_config('plan_enterprise_scans', 'unlimited') == 'unlimited' else (get_config('plan_enterprise_scans', 'unlimited') ~ ' lượt') }}",
+        paymentInstructions: "{{ get_config('vietqr_instructions_vi', get_config('vietqr_instructions', 'Chuyển khoản chính xác số tiền của gói để được duyệt tự động sau 1-3 phút.')) }}"
       },
       en: {
         planBasicPrice: formatVND_EN("{{ get_config('plan_basic_price', '1000') }}", " VND"),
@@ -1700,7 +1701,8 @@
         planProLimit: "{{ get_config('plan_pro_scans', '200') }} scans",
         planEntName: "Enterprise",
         planEntDuration: "{{ get_config('plan_enterprise_days', '90') }} days",
-        planEntLimit: "{{ 'Unlimited' if get_config('plan_enterprise_scans', 'unlimited') == 'unlimited' else (get_config('plan_enterprise_scans', 'unlimited') ~ ' scans') }}"
+        planEntLimit: "{{ 'Unlimited' if get_config('plan_enterprise_scans', 'unlimited') == 'unlimited' else (get_config('plan_enterprise_scans', 'unlimited') ~ ' scans') }}",
+        paymentInstructions: "{{ get_config('vietqr_instructions_en', get_config('vietqr_instructions', 'Transfer the exact amount of the package to be automatically approved within 1-3 minutes.')) }}"
       }
     };
   })();
