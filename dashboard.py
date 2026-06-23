@@ -10,7 +10,7 @@ from connect import get_connection
 from models import PredictionHistory, UserQuota, SystemConfig
 from breed_names import to_common_vietnamese_breed_name
 
-PREDICTIONS_PER_PAGE = 10
+PREDICTIONS_PER_PAGE = 5
 
 
 dashboard_bp = Blueprint("dashboard", __name__)

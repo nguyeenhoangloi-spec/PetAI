@@ -2025,6 +2025,12 @@
     "modelArchitectureTitle": "Kiến trúc mô hình",
     "modelStatusTitle": "Trạng thái model",
     "modelAverageConfTitle": "Độ tin cậy TB hệ thống",
+    "modelAppDetail": "Phát hiện & Phân loại giống chó",
+    "modelArchDetail": "YOLOv8s + EfficientNet-B0",
+    "modelMatchingMethodTitle": "So khớp đặc trưng",
+    "modelMatchingMethodDetail": "NumPy Prototypes (Morphological)",
+    "modelFrameworkTitle": "Thư viện & Framework",
+    "modelFrameworkDetail": "PyTorch, Ultralytics, NumPy",
     "confirmLogoutText": "Bạn có chắc chắn muốn đăng xuất tài khoản?"
   },
   "en": {
@@ -4052,7 +4058,13 @@
       "modelAppTitle": "Model Application",
       "modelArchitectureTitle": "Model Architecture",
       "modelStatusTitle": "Model Status",
-      "modelAverageConfTitle": "System Avg. Confidence"
+      "modelAverageConfTitle": "System Avg. Confidence",
+      "modelAppDetail": "Dog Detection & Classification",
+      "modelArchDetail": "YOLOv8s + EfficientNet-B0",
+      "modelMatchingMethodTitle": "Feature Matching",
+      "modelMatchingMethodDetail": "NumPy Prototypes (Morphological)",
+      "modelFrameworkTitle": "Libraries & Frameworks",
+      "modelFrameworkDetail": "PyTorch, Ultralytics, NumPy"
     }
 };
 
