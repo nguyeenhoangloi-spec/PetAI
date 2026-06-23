@@ -9,125 +9,36 @@
 >
   <head>
   <script>
-    // Apply initial sidebar collapse state immediately on load to prevent transition animation
     (function() {
       document.documentElement.classList.add("preload");
       try {
         if (window.innerWidth >= 768) {
           const isCollapsed = localStorage.getItem("sidebar-collapsed") === "true";
-          if (isCollapsed) {
-            document.documentElement.classList.add("sidebar-collapsed");
-          } else {
-            document.documentElement.classList.remove("sidebar-collapsed");
-          }
+          if (isCollapsed) { document.documentElement.classList.add("sidebar-collapsed"); }
+          else { document.documentElement.classList.remove("sidebar-collapsed"); }
         }
       } catch (e) {}
     })();
   </script>
   <style id="early-sidebar-style">
-    /* Prevent FOUC (Flash of Unstyled Content) during Tailwind compiler startup */
-    html.preload body {
-      opacity: 0 !important;
-    }
-    
-    /* Early CSS to prevent F5 flicker before stylesheet loads */
-    html.preload .sidebar,
-    html.preload main,
-    html.preload footer {
-      transition: none !important;
-    }
-    
-    /* Stable header styles to prevent navigation bar shifting */
-    body>nav .flex.items-center.gap-gutter {
-      gap: 12px !important;
-    }
-    body>nav #menuToggle {
-      margin-left: 4px !important;
-      margin-right: 0 !important;
-      position: relative !important;
-    }
-    
-    /* Stable inner sidebar styles to prevent internal text/layout shifting */
-    .sidebar-wrapper {
-      display: flex !important;
-      flex-direction: column !important;
-      height: 100% !important;
-      justify-content: space-between !important;
-      padding: 16px 10px 12px 10px !important;
-      box-sizing: border-box !important;
-      gap: 12px !important;
-    }
-    .sidebar-menu {
-      display: flex !important;
-      flex-direction: column !important;
-      gap: 6px !important;
-      flex-grow: 1 !important;
-    }
-    .sidebar-menu-item {
-      display: flex !important;
-      align-items: center !important;
-      gap: 10px !important;
-      height: 40px !important;
-      padding: 0 10px !important;
-      border-radius: 12px !important;
-      box-sizing: border-box !important;
-    }
-    
+    html.preload body { opacity: 0 !important; }
+    html.preload .sidebar, html.preload main, html.preload footer { transition: none !important; }
+    body>nav .flex.items-center.gap-gutter { gap: 12px !important; }
+    body>nav #menuToggle { margin-left: 4px !important; margin-right: 0 !important; position: relative !important; }
+    .sidebar-wrapper { display: flex !important; flex-direction: column !important; height: 100% !important; justify-content: space-between !important; padding: 16px 10px 12px 10px !important; box-sizing: border-box !important; gap: 12px !important; }
+    .sidebar-menu { display: flex !important; flex-direction: column !important; gap: 6px !important; flex-grow: 1 !important; }
+    .sidebar-menu-item { display: flex !important; align-items: center !important; gap: 10px !important; height: 40px !important; padding: 0 10px !important; border-radius: 12px !important; box-sizing: border-box !important; }
     @media (min-width: 768px) {
-      .sidebar {
-        position: fixed !important;
-        top: 64px !important;
-        left: 0 !important;
-        bottom: 0 !important;
-        width: 224px !important;
-        height: calc(100vh - 64px) !important;
-        z-index: 100 !important;
-      }
-      
-      /* Collapsed state */
-      html.sidebar-collapsed .sidebar {
-        transform: translateX(-100%) !important;
-        opacity: 0 !important;
-        visibility: hidden !important;
-      }
-      html.sidebar-collapsed main,
-      html.sidebar-collapsed footer {
-        margin-left: 0 !important;
-        width: 100% !important;
-      }
-      
-      /* Expanded state (default) */
-      html:not(.sidebar-collapsed) .sidebar {
-        transform: translateX(0) !important;
-        opacity: 1 !important;
-        visibility: visible !important;
-      }
-      html:not(.sidebar-collapsed) main,
-      html:not(.sidebar-collapsed) footer {
-        margin-left: 224px !important;
-        width: calc(100% - 224px) !important;
-      }
-      
-      /* Force single-column grid immediately for main container on both states */
-      html main {
-        grid-template-columns: 1fr !important;
-        gap: 0 !important;
-      }
+      .sidebar { position: fixed !important; top: 64px !important; left: 0 !important; bottom: 0 !important; width: 224px !important; height: calc(100vh - 64px) !important; z-index: 100 !important; }
+      html.sidebar-collapsed .sidebar { transform: translateX(-100%) !important; opacity: 0 !important; visibility: hidden !important; }
+      html.sidebar-collapsed main, html.sidebar-collapsed footer { margin-left: 0 !important; width: 100% !important; }
+      html:not(.sidebar-collapsed) .sidebar { transform: translateX(0) !important; opacity: 1 !important; visibility: visible !important; }
+      html:not(.sidebar-collapsed) main, html:not(.sidebar-collapsed) footer { margin-left: 224px !important; width: calc(100% - 224px) !important; }
+      html main { grid-template-columns: 1fr !important; gap: 0 !important; }
     }
-    
     @media (max-width: 767px) {
-      .sidebar {
-        position: fixed !important;
-        top: 0 !important;
-        left: 0 !important;
-        height: 100vh !important;
-        width: 224px !important;
-        transform: translateX(-100%) !important;
-        z-index: 1000 !important;
-      }
-      .sidebar.active {
-        transform: translateX(0) !important;
-      }
+      .sidebar { position: fixed !important; top: 0 !important; left: 0 !important; height: 100vh !important; width: 224px !important; transform: translateX(-100%) !important; z-index: 1000 !important; }
+      .sidebar.active { transform: translateX(0) !important; }
     }
   </style>
     <script>
@@ -135,223 +46,99 @@
         var savedLang = "vi";
         try {
           var match = document.cookie.match(new RegExp('(^| )siteLanguage=([^;]+)'));
-          if (match) {
-            savedLang = match[2];
-          } else {
-            savedLang = localStorage.getItem("siteLanguage") || "vi";
-          }
+          if (match) { savedLang = match[2]; }
+          else { savedLang = localStorage.getItem("siteLanguage") || "vi"; }
         } catch (e) {}
         document.documentElement.setAttribute("data-user-lang", savedLang);
-        if (savedLang === "en") {
-          document.documentElement.classList.add("i18n-loading");
-        }
+        if (savedLang === "en") { document.documentElement.classList.add("i18n-loading"); }
       })();
     </script>
-    <style>
-      html.i18n-loading body {
-        visibility: hidden !important;
-      }
-    </style>
-    <noscript>
-      <style>
-        html.i18n-loading body {
-          visibility: visible !important;
-        }
-      </style>
-    </noscript>
+    <style> html.i18n-loading body { visibility: hidden !important; } </style>
+    <noscript><style> html.i18n-loading body { visibility: visible !important; } </style></noscript>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     <script>
       (function () {
         const root = document.documentElement;
-        const themeStorageKey =
-          "{{ 'theme:' ~ session.get('user_id') if session.get('user_id') else '' }}";
+        const themeStorageKey = "{{ 'theme:' ~ session.get('user_id') if session.get('user_id') else '' }}";
         const serverTheme = "{{ ui_theme or 'light' }}";
-        if (themeStorageKey) {
-          try {
-            localStorage.setItem(themeStorageKey, serverTheme);
-          } catch (e) {}
-        }
+        if (themeStorageKey) { try { localStorage.setItem(themeStorageKey, serverTheme); } catch (e) {} }
         const storedTheme = (function () {
           if (!themeStorageKey) return null;
-          try {
-            return localStorage.getItem(themeStorageKey);
-          } catch (e) {
-            return null;
-          }
+          try { return localStorage.getItem(themeStorageKey); } catch (e) { return null; }
         })();
         const preferredTheme = storedTheme || serverTheme;
-
         function resolveTheme(theme) {
           if (theme !== "auto") return theme;
-          try {
-            return window.matchMedia("(prefers-color-scheme: dark)").matches
-              ? "dark"
-              : "light";
-          } catch (e) {
-            return "light";
-          }
+          try { return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"; } catch (e) { return "light"; }
         }
-
         function applyTheme(theme) {
           const resolved = resolveTheme(theme);
           root.classList.toggle("dark", resolved === "dark");
           root.classList.toggle("light", resolved !== "dark");
           root.setAttribute("data-theme", resolved);
         }
-
         applyTheme(preferredTheme);
-
         if (preferredTheme === "auto") {
           try {
             const mql = window.matchMedia("(prefers-color-scheme: dark)");
-            const handler = function () {
-              applyTheme("auto");
-            };
-            if (mql.addEventListener) {
-              mql.addEventListener("change", handler);
-            } else if (mql.addListener) {
-              mql.addListener(handler);
-            }
+            const handler = function () { applyTheme("auto"); };
+            if (mql.addEventListener) { mql.addEventListener("change", handler); } else if (mql.addListener) { mql.addListener(handler); }
           } catch (e) {}
         }
-
         try {
-          const isCollapsed =
-            localStorage.getItem("sidebar-collapsed") === "true";
-          if (isCollapsed && window.innerWidth >= 768) {
-            root.classList.add("sidebar-collapsed");
-          }
+          const isCollapsed = localStorage.getItem("sidebar-collapsed") === "true";
+          if (isCollapsed && window.innerWidth >= 768) { root.classList.add("sidebar-collapsed"); }
         } catch (e) {}
       })();
     </script>
     <title data-i18n="uploadPageTitle">{{ 'Upload' if ui_language == 'en' else 'Tải ảnh' }} - {{ get_config('site_name', 'PetAI') }}</title>
     <script src="{{ url_for('static', filename='js/tailwindcss.js') }}"></script>
     <script src="{{ url_for('static', filename='js/chart.umd.min.js') }}"></script>
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='css/typography.css') }}"
-    />
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='css/theme-dark.css') }}"
-    />
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='css/toasts.css') }}"
-    />
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='css/mobile-header-fix.css') }}"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-      rel="stylesheet"
-    />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/typography.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/theme-dark.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/toasts.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile-header-fix.css') }}" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
     <script id="tailwind-config">
       tailwind.config = {
         darkMode: "class",
         theme: {
           extend: {
             colors: {
-              "on-tertiary-fixed": "#360f00",
-              "secondary-fixed-dim": "#ffb95f",
-              "surface-container": "#e5eeff",
-              "on-primary-fixed": "#00174b",
-              error: "#ba1a1a",
-              "secondary-container": "#fea619",
-              primary: "#004ac6",
-              "tertiary-container": "#bc4800",
-              "surface-tint": "#0053db",
-              "on-secondary": "#ffffff",
-              "surface-variant": "#d3e4fe",
-              "on-secondary-container": "#684000",
-              "tertiary-fixed-dim": "#ffb596",
-              "surface-dim": "#cbdbf5",
-              outline: "#737686",
-              "inverse-on-surface": "#eaf1ff",
-              "on-error": "#ffffff",
-              "secondary-fixed": "#ffddb8",
-              "on-primary": "#ffffff",
-              "on-primary-container": "#eeefff",
-              "surface-container-highest": "#d3e4fe",
-              "on-surface": "#0b1c30",
-              "surface-container-lowest": "#ffffff",
-              "on-primary-fixed-variant": "#003ea8",
-              "outline-variant": "#c3c6d7",
-              "primary-fixed": "#dbe1ff",
-              "inverse-primary": "#b4c5ff",
-              "on-error-container": "#93000a",
-              "on-tertiary": "#ffffff",
-              surface: "#f8f9ff",
-              "primary-fixed-dim": "#b4c5ff",
-              "on-background": "#0b1c30",
-              "surface-bright": "#f8f9ff",
-              "inverse-surface": "#213145",
-              "on-tertiary-fixed-variant": "#7d2d00",
-              "on-surface-variant": "#434655",
-              "tertiary-fixed": "#ffdbcd",
-              "surface-container-high": "#dce9ff",
-              "on-secondary-fixed": "#2a1700",
-              "on-tertiary-container": "#ffede6",
-              secondary: "#855300",
-              tertiary: "#943700",
-              background: "#f8f9ff",
-              "primary-container": "#2563eb",
-              "surface-container-low": "#eff4ff",
-              "on-secondary-fixed-variant": "#653e00",
-              "error-container": "#ffdad6",
+              "on-tertiary-fixed": "#360f00", "secondary-fixed-dim": "#ffb95f",
+              "surface-container": "#e5eeff", "on-primary-fixed": "#00174b",
+              error: "#ba1a1a", "secondary-container": "#fea619", primary: "#004ac6",
+              "tertiary-container": "#bc4800", "surface-tint": "#0053db",
+              "on-secondary": "#ffffff", "surface-variant": "#d3e4fe",
+              "on-secondary-container": "#684000", "tertiary-fixed-dim": "#ffb596",
+              "surface-dim": "#cbdbf5", outline: "#737686",
+              "inverse-on-surface": "#eaf1ff", "on-error": "#ffffff",
+              "secondary-fixed": "#ffddb8", "on-primary": "#ffffff",
+              "on-primary-container": "#eeefff", "surface-container-highest": "#d3e4fe",
+              "on-surface": "#0b1c30", "surface-container-lowest": "#ffffff",
+              "on-primary-fixed-variant": "#003ea8", "outline-variant": "#c3c6d7",
+              "primary-fixed": "#dbe1ff", "inverse-primary": "#b4c5ff",
+              "on-error-container": "#93000a", "on-tertiary": "#ffffff",
+              surface: "#f8f9ff", "primary-fixed-dim": "#b4c5ff",
+              "on-background": "#0b1c30", "surface-bright": "#f8f9ff",
+              "inverse-surface": "#213145", "on-tertiary-fixed-variant": "#7d2d00",
+              "on-surface-variant": "#434655", "tertiary-fixed": "#ffdbcd",
+              "surface-container-high": "#dce9ff", "on-secondary-fixed": "#2a1700",
+              "on-tertiary-container": "#ffede6", secondary: "#855300",
+              tertiary: "#943700", background: "#f8f9ff",
+              "primary-container": "#2563eb", "surface-container-low": "#eff4ff",
+              "on-secondary-fixed-variant": "#653e00", "error-container": "#ffdad6",
             },
-            borderRadius: {
-              DEFAULT: "0.25rem",
-              lg: "0.5rem",
-              xl: "0.75rem",
-              full: "9999px",
-            },
-            spacing: {
-              md: "24px",
-              base: "8px",
-              sm: "12px",
-              margin: "32px",
-              lg: "48px",
-              xl: "80px",
-              gutter: "24px",
-              xs: "4px",
-            },
-            fontFamily: {
-              "headline-md": ["Inter"],
-              "headline-lg": ["Inter"],
-              "display-xl": ["Inter"],
-              "body-md": ["Inter"],
-              "label-sm": ["Inter"],
-              "body-lg": ["Inter"],
-            },
+            borderRadius: { DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" },
+            spacing: { md: "24px", base: "8px", sm: "12px", margin: "32px", lg: "48px", xl: "80px", gutter: "24px", xs: "4px" },
+            fontFamily: { "headline-md": ["Inter"], "headline-lg": ["Inter"], "display-xl": ["Inter"], "body-md": ["Inter"], "label-sm": ["Inter"], "body-lg": ["Inter"] },
             fontSize: {
-              "headline-md": [
-                "24px",
-                { lineHeight: "32px", fontWeight: "600" },
-              ],
-              "headline-lg": [
-                "36px",
-                {
-                  lineHeight: "44px",
-                  letterSpacing: "-0.01em",
-                  fontWeight: "600",
-                },
-              ],
-              "display-xl": [
-                "60px",
-                {
-                  lineHeight: "72px",
-                  letterSpacing: "-0.02em",
-                  fontWeight: "700",
-                },
-              ],
+              "headline-md": ["24px", { lineHeight: "32px", fontWeight: "600" }],
+              "headline-lg": ["36px", { lineHeight: "44px", letterSpacing: "-0.01em", fontWeight: "600" }],
+              "display-xl": ["60px", { lineHeight: "72px", letterSpacing: "-0.02em", fontWeight: "700" }],
               "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
               "label-sm": ["14px", { lineHeight: "20px", fontWeight: "500" }],
               "body-lg": ["18px", { lineHeight: "28px", fontWeight: "400" }],
@@ -362,16 +149,26 @@
     </script>
     <style>
       .material-symbols-outlined {
-        font-variation-settings:
-          "FILL" 0,
-          "wght" 400,
-          "GRAD" 0,
-          "opsz" 24;
+        font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
       }
+      /* Drop zone dragover state */
       .is-dragover {
         border-color: #004ac6 !important;
-        background-color: #dbe1ff/50 !important;
+        background-color: rgba(219,225,255,0.25) !important;
       }
+      .dark .is-dragover {
+        border-color: #60a5fa !important;
+        background-color: rgba(59,130,246,0.12) !important;
+      }
+      /* Progress step pulse animation */
+      @keyframes stepPulse {
+        0%, 100% { box-shadow: 0 0 0 0 rgba(0,74,198,0.4); }
+        50% { box-shadow: 0 0 0 6px rgba(0,74,198,0); }
+      }
+      .step-active-pulse { animation: stepPulse 1.4s ease-in-out infinite; }
+      /* Recent grid scrollbar */
+      #recentHistoryList::-webkit-scrollbar { height: 4px; }
+      #recentHistoryList::-webkit-scrollbar-thumb { background: rgba(100,116,139,0.25); border-radius: 4px; }
     </style>
   </head>
   <body
@@ -380,517 +177,789 @@
   >
     {% include '_toasts.html' %}
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
-    {% set display_role = session.get('role') or 'user' %} {% set display_plan =
-    current_plan or 'free' %}
+    {% set display_role = session.get('role') or 'user' %}
+    {% set display_plan = current_plan or 'free' %}
 
     {% include '_header.html' %}
 
-    <main
-      tabindex="-1"
-      class="flex-grow w-full px-4 md:px-6 py-margin grid grid-cols-1 gap-0"
-    >
+    <main tabindex="-1" class="flex-grow w-full px-4 md:px-6 py-margin grid grid-cols-1 gap-0">
       {% set active_page = 'upload' %} {% include '_sidebar.html' %}
 
       <div class="col-span-1 flex flex-col min-w-0 gap-gutter relative" id="contentArea">
 
-        <section
-          class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-outline-variant/20 dark:border-slate-800 pb-5"
-          data-purpose="page-header"
-        >
-          <div class="flex flex-col gap-2">
-            <h1
-              class="headline-lg font-semibold text-on-surface dark:text-slate-100"
-              data-i18n="uploadHeaderTitle"
-            >
-              <span data-i18n="uploadHeaderTitle"
-                >Tải ảnh để nhận diện giống chó</span
-              >
+        <!-- ═══ PAGE HEADER ═══ -->
+        <section class="flex flex-col md:flex-row md:items-start md:justify-between gap-4 border-b border-outline-variant/20 dark:border-slate-800 pb-5">
+          <div class="flex flex-col gap-1.5">
+            <h1 class="headline-lg font-semibold text-on-surface dark:text-slate-100">
+              <span data-i18n="uploadHeaderTitle">Tải ảnh để nhận diện giống chó</span>
             </h1>
-            <p
-              class="body-md text-on-surface-variant dark:text-slate-400"
-              data-i18n="uploadHeaderDesc"
-            >
-              <span data-i18n="uploadHeaderDesc"
-                >Kéo thả ảnh chó của bạn để AI phân tích và dự đoán giống với độ
-                tin cậy chi tiết.</span
-              >
+            <p class="body-md text-on-surface-variant dark:text-slate-400">
+              <span data-i18n="uploadHeaderDesc">Kéo thả ảnh chó của bạn để AI phân tích và dự đoán giống với độ tin cậy cao.</span>
             </p>
           </div>
-          <div class="mt-4 md:mt-0 md:flex-none">
+          <div class="shrink-0">
             <a
-              class="bg-primary hover:bg-primary/95 text-on-primary px-4 py-2.5 rounded-lg label-sm shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-2 font-semibold"
               href="{{ url_for('predict.upgrade') }}"
+              class="bg-primary hover:bg-primary/90 text-on-primary px-5 py-2.5 rounded-xl label-sm shadow hover:shadow-md transition-all flex items-center gap-2 font-semibold whitespace-nowrap"
             >
-              <span class="material-symbols-outlined text-[18px]"
-                >workspace_premium</span
-              ><span data-i18n="upgradePlan">Nâng cấp gói</span></a
-            >
+              <span class="material-symbols-outlined text-[18px]">workspace_premium</span>
+              <span data-i18n="upgradePlan">Nâng cấp gói</span>
+            </a>
           </div>
         </section>
 
+        <!-- ═══ MAIN GRID ═══ -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+
+          <!-- ══════════ LEFT COLUMN ══════════ -->
           <div class="lg:col-span-8 flex flex-col gap-gutter">
+
+            <!-- ── UPLOAD FORM CARD ── -->
             <form
               action="{{ url_for('predict.upload') }}"
               method="post"
               enctype="multipart/form-data"
-              class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl border border-outline-variant/30 dark:border-slate-800 p-6 shadow-sm"
               id="uploadForm"
+              class="bg-surface-container-lowest dark:bg-slate-900 rounded-2xl border border-outline-variant/30 dark:border-slate-800 p-6 shadow-sm"
             >
-              <input
-                type="hidden"
-                name="csrf_token"
-                value="{{ csrf_token() }}"
-              />
-              <div class="flex items-center gap-sm mb-md">
-                <span
-                  class="material-symbols-outlined text-primary dark:text-blue-400"
-                  >cloud_upload</span
-                >
-                <h2
-                  class="headline-md font-semibold text-on-surface dark:text-slate-200"
-                  data-i18n="uploadAreaTitle"
-                >
-                  <span data-i18n="uploadAreaTitle">Khu vực tải ảnh</span>
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
+              <!-- Card title -->
+              <div class="flex items-center gap-2 mb-5">
+                <span class="material-symbols-outlined text-primary dark:text-blue-400 text-[22px]">cloud_upload</span>
+                <h2 class="text-[17px] font-semibold text-on-surface dark:text-slate-200" data-i18n="uploadAreaTitle">
+                  Khu vực tải ảnh
                 </h2>
               </div>
+
+              <!-- Drop Zone (always visible, hides when image selected) -->
               <div
                 id="dropZone"
-                class="relative border-2 border-dashed border-primary/40 dark:border-slate-850 rounded-xl bg-surface-container-low dark:bg-slate-950/20 hover:bg-surface-container-high dark:hover:bg-slate-900/40 transition-colors duration-200 p-10 flex flex-col items-center justify-center text-center gap-3 cursor-pointer"
+                class="relative border-2 border-dashed border-primary/30 dark:border-slate-700 rounded-xl bg-surface-container-low/50 dark:bg-slate-800/20 hover:bg-surface-container dark:hover:bg-slate-800/40 hover:border-primary/50 dark:hover:border-blue-500/40 transition-all duration-200 min-h-[210px] flex flex-col items-center justify-center text-center gap-3 cursor-pointer p-8"
               >
                 <input
                   type="file"
-                  class="absolute inset-0 opacity-0 cursor-pointer"
+                  class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                   name="image"
                   accept="image/png,image/jpeg,image/jpg"
                   required
                   id="imageInput"
                 />
-                <div id="dropState" class="flex flex-col items-center gap-3">
-                  <div
-                    class="w-16 h-16 rounded-full bg-primary/10 dark:bg-primary/25 text-primary dark:text-blue-400 flex items-center justify-center shadow-sm"
-                  >
-                    <span class="material-symbols-outlined text-[32px]"
-                      >cloud_upload</span
-                    >
+                <div id="dropState" class="flex flex-col items-center gap-3 pointer-events-none select-none">
+                  <div class="w-16 h-16 rounded-full bg-primary/10 dark:bg-blue-500/15 flex items-center justify-center">
+                    <span class="material-symbols-outlined text-primary dark:text-blue-400 text-[32px]">cloud_upload</span>
                   </div>
-                  <h3
-                    class="headline-md font-semibold text-on-surface dark:text-slate-200"
-                    data-i18n="dragDropHere"
-                  >
-                    <span data-i18n="dragDropHere">Kéo &amp; thả ảnh vào đây</span>
-                  </h3>
-                  <p
-                    class="body-md text-on-surface-variant dark:text-slate-400"
-                    data-i18n="clickToSelectPhoto"
-                  >
-                    <span data-i18n="clickToSelectPhoto"
-                      >hoặc bấm để chọn ảnh từ máy tính</span
-                    >
-                  </p>
-                  <span
-                    class="px-4 py-2 bg-surface-container dark:bg-slate-800 rounded-full body-md text-on-surface-variant dark:text-slate-400"
-                    data-i18n="supportedFormatsDesc"
-                    >Hỗ trợ JPG, JPEG, PNG • Tối đa 10MB</span
-                  >
+                  <div class="flex flex-col gap-1">
+                    <h3 class="text-[17px] font-semibold text-on-surface dark:text-slate-200" data-i18n="dragDropHere">
+                      Kéo &amp; thả ảnh vào đây
+                    </h3>
+                    <p class="text-[14px] text-on-surface-variant dark:text-slate-400" data-i18n="clickToSelectPhoto">
+                      hoặc bấm để chọn ảnh từ máy tính
+                    </p>
+                  </div>
+                  <span class="px-4 py-1.5 bg-surface-container dark:bg-slate-800 rounded-full text-[13px] text-on-surface-variant dark:text-slate-400 font-medium" data-i18n="supportedFormatsDesc">
+                    Hỗ trợ JPG, JPEG, PNG • Tối đa 10MB
+                  </span>
                 </div>
-                <div
-                  id="previewState"
-                  class="hidden flex flex-col items-center gap-4 w-full"
-                >
-                  <img
-                    id="imagePreview"
-                    class="max-h-[400px] max-w-full rounded-xl object-contain shadow-md mx-auto bg-transparent border border-outline-variant/10 dark:border-slate-800/40"
-                    alt="Xem trước ảnh tải lên"
-                    src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-                  >
-                  <div class="flex flex-wrap items-center gap-3">
-                    <button
-                      type="button"
-                      class="px-4 py-2 rounded-lg border border-outline-variant/40 dark:border-slate-700 text-on-surface dark:text-slate-300 hover:bg-surface-container-low dark:hover:bg-slate-800 label-sm transition-colors"
-                      id="changeBtn"
-                      data-i18n="changeImageBtn"
-                    >
-                      <span data-i18n="changeImageBtn">Đổi ảnh</span>
-                    </button>
-                    <button
-                      type="submit"
-                      class="px-4 py-2 rounded-lg bg-primary hover:bg-primary/95 text-on-primary label-sm hover:opacity-90 shadow-sm transition-all flex items-center gap-2 font-semibold"
-                      id="analyzeBtn"
-                    >
-                      <span class="material-symbols-outlined text-[18px]"
-                        >search</span
-                      ><span data-i18n="analyzeNowBtn">Phân tích ngay</span>
-                    </button>
+              </div>
+
+              <!-- Preview Area (hidden until image selected) -->
+              <div id="previewArea" class="hidden mt-4">
+                <div class="flex flex-col sm:flex-row gap-4 p-4 bg-surface-container-low/60 dark:bg-slate-800/40 rounded-xl border border-outline-variant/20 dark:border-slate-700/60">
+                  <!-- Thumbnail -->
+                  <div class="shrink-0 mx-auto sm:mx-0">
+                    <img
+                      id="imagePreview"
+                      class="w-[110px] h-[110px] rounded-xl object-cover bg-slate-200 dark:bg-slate-700 border border-outline-variant/20 dark:border-slate-700"
+                      alt="Preview"
+                      src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+                    />
+                  </div>
+                  <!-- File info -->
+                  <div class="flex flex-col justify-between flex-1 min-w-0 gap-3">
+                    <div class="flex flex-col gap-1">
+                      <p id="previewFileName" class="font-semibold text-on-surface dark:text-slate-200 text-[14px] truncate leading-snug">—</p>
+                      <p id="previewFileMeta" class="text-[12px] text-on-surface-variant dark:text-slate-400">—</p>
+                      <!-- Valid / Invalid badge -->
+                      <div id="previewValidBadge" class="hidden mt-0.5 w-fit inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[12px] font-semibold">
+                        <span id="previewBadgeIcon" class="material-symbols-outlined text-[14px]">check_circle</span>
+                        <span id="previewBadgeText" data-i18n="validImageBadge">Ảnh hợp lệ</span>
+                      </div>
+                    </div>
+                    <!-- Action buttons -->
+                    <div class="flex flex-wrap gap-2">
+                      <button
+                        type="button"
+                        id="changeBtn"
+                        class="px-3 py-1.5 rounded-lg border border-outline-variant/40 dark:border-slate-700 text-on-surface dark:text-slate-300 hover:bg-surface-container dark:hover:bg-slate-800 text-[13px] font-medium transition-colors flex items-center gap-1.5"
+                      >
+                        <span class="material-symbols-outlined text-[15px]">autorenew</span>
+                        <span data-i18n="changeImageBtn">Đổi ảnh</span>
+                      </button>
+                      <button
+                        type="button"
+                        id="deleteBtn"
+                        class="px-3 py-1.5 rounded-lg border border-error/30 dark:border-red-800/40 text-error dark:text-red-400 hover:bg-error/5 dark:hover:bg-red-900/20 text-[13px] font-medium transition-colors flex items-center gap-1.5"
+                      >
+                        <span class="material-symbols-outlined text-[15px]">delete</span>
+                        <span data-i18n="deleteImageBtn">Xóa</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
+
+              <!-- Analyze Button (full width, disabled until valid image) -->
+              <button
+                type="submit"
+                id="analyzeBtn"
+                disabled
+                class="mt-4 w-full py-3.5 rounded-xl bg-primary hover:bg-primary/90 disabled:opacity-40 disabled:cursor-not-allowed text-on-primary font-semibold text-[15px] shadow transition-all flex items-center justify-center gap-2"
+              >
+                <span class="material-symbols-outlined text-[20px]">manage_search</span>
+                <span data-i18n="analyzeNowBtn">Nhận diện ngay</span>
+              </button>
+
+              <!-- Security note -->
+              <p class="mt-3 text-center text-[12px] text-on-surface-variant/50 dark:text-slate-600 flex items-center justify-center gap-1">
+                <span class="material-symbols-outlined text-[13px]">lock</span>
+                <span data-i18n="securityNote">Dữ liệu của bạn được bảo mật tuyệt đối</span>
+              </p>
             </form>
-          </div>
 
-          <div class="lg:col-span-4 flex flex-col gap-gutter">
-            <section
-              class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl border border-outline-variant/30 dark:border-slate-800 p-5 shadow-sm"
+            <!-- ── PROGRESS STEPS CARD (hidden, shows when submitting) ── -->
+            <div
+              id="progressCard"
+              class="hidden bg-surface-container-lowest dark:bg-slate-900 rounded-2xl border border-outline-variant/30 dark:border-slate-800 p-6 shadow-sm"
             >
-              <div
-                class="flex items-center justify-between mb-sm border-b border-outline-variant/20 dark:border-slate-800 pb-3"
-              >
-                <div class="flex items-center gap-2">
-                  <span
-                    class="material-symbols-outlined text-primary dark:text-blue-400"
-                    >workspace_premium</span
-                  >
-                  <div
-                    class="headline-md font-semibold text-on-surface dark:text-slate-200"
-                  >
-                    <span data-i18n="quotaPlanPrefix">Gói:</span> {{
-                    (quota_info.plan if quota_info else display_plan)|upper }}
+              <h3 class="text-[15px] font-semibold text-on-surface dark:text-slate-200 mb-6 flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary dark:text-blue-400 text-[20px]">timeline</span>
+                <span data-i18n="processingTitle">Quy trình nhận diện</span>
+              </h3>
+              <div class="flex items-start" id="progressSteps">
+
+                <!-- Step 1 -->
+                <div class="flex flex-col items-center flex-1" data-step="1">
+                  <div class="flex items-center w-full">
+                    <div class="step-circle w-9 h-9 rounded-full flex items-center justify-center text-[14px] font-bold shrink-0 z-10 transition-all duration-400 bg-primary text-on-primary shadow-md">1</div>
+                    <div class="step-line flex-1 h-0.5 bg-outline-variant/30 dark:bg-slate-700 transition-colors duration-500"></div>
+                  </div>
+                  <div class="mt-2.5 text-center px-1">
+                    <p class="text-[12px] font-semibold text-on-surface dark:text-slate-200 leading-tight" data-i18n="step1Upload">Tải ảnh</p>
+                    <p class="step-desc text-[11px] text-on-surface-variant dark:text-slate-400 mt-0.5 leading-tight" data-i18n="step1UploadDesc">Ảnh đã sẵn sàng</p>
                   </div>
                 </div>
-                <span
-                  class="px-3 py-1 bg-primary/10 dark:bg-primary/20 text-primary dark:text-blue-400 rounded-full label-sm font-semibold"
-                  data-i18n="quotaLimitLabel"
-                  >Hạn mức</span
+
+                <!-- Step 2 -->
+                <div class="flex flex-col items-center flex-1" data-step="2">
+                  <div class="flex items-center w-full">
+                    <div class="step-circle w-9 h-9 rounded-full flex items-center justify-center text-[14px] font-bold shrink-0 z-10 transition-all duration-400 border-2 border-dashed border-outline-variant/40 dark:border-slate-600 text-on-surface-variant dark:text-slate-500">2</div>
+                    <div class="step-line flex-1 h-0.5 bg-outline-variant/30 dark:bg-slate-700 transition-colors duration-500"></div>
+                  </div>
+                  <div class="mt-2.5 text-center px-1">
+                    <p class="text-[12px] font-semibold text-on-surface-variant dark:text-slate-400 leading-tight" data-i18n="step2Check">Kiểm tra ảnh</p>
+                    <p class="step-desc text-[11px] text-on-surface-variant/60 dark:text-slate-500 mt-0.5 leading-tight" data-i18n="step2CheckDesc">Đang kiểm tra...</p>
+                  </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="flex flex-col items-center flex-1" data-step="3">
+                  <div class="flex items-center w-full">
+                    <div class="step-circle w-9 h-9 rounded-full flex items-center justify-center text-[14px] font-bold shrink-0 z-10 transition-all duration-400 border-2 border-dashed border-outline-variant/40 dark:border-slate-600 text-on-surface-variant dark:text-slate-500">3</div>
+                    <div class="step-line flex-1 h-0.5 bg-outline-variant/30 dark:bg-slate-700 transition-colors duration-500"></div>
+                  </div>
+                  <div class="mt-2.5 text-center px-1">
+                    <p class="text-[12px] font-semibold text-on-surface-variant dark:text-slate-400 leading-tight" data-i18n="step3Analyze">Phân tích AI</p>
+                    <p class="step-desc text-[11px] text-on-surface-variant/60 dark:text-slate-500 mt-0.5 leading-tight" data-i18n="step3AnalyzeDesc">Đang phân tích...</p>
+                  </div>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="flex flex-col items-center flex-1" data-step="4">
+                  <div class="flex items-center w-full">
+                    <div class="step-circle w-9 h-9 rounded-full flex items-center justify-center text-[14px] font-bold shrink-0 z-10 transition-all duration-400 border-2 border-dashed border-outline-variant/40 dark:border-slate-600 text-on-surface-variant dark:text-slate-500">4</div>
+                    <div class="step-line flex-1 h-0.5 bg-outline-variant/30 dark:bg-slate-700 transition-colors duration-500"></div>
+                  </div>
+                  <div class="mt-2.5 text-center px-1">
+                    <p class="text-[12px] font-semibold text-on-surface-variant dark:text-slate-400 leading-tight" data-i18n="step4Predict">Dự đoán</p>
+                    <p class="step-desc text-[11px] text-on-surface-variant/60 dark:text-slate-500 mt-0.5 leading-tight" data-i18n="step4PredictDesc">Đang dự đoán...</p>
+                  </div>
+                </div>
+
+                <!-- Step 5 (last, no line) -->
+                <div class="flex flex-col items-center" data-step="5">
+                  <div class="flex items-center">
+                    <div class="step-circle w-9 h-9 rounded-full flex items-center justify-center text-[14px] font-bold shrink-0 z-10 transition-all duration-400 border-2 border-dashed border-outline-variant/40 dark:border-slate-600 text-on-surface-variant dark:text-slate-500">5</div>
+                  </div>
+                  <div class="mt-2.5 text-center">
+                    <p class="text-[12px] font-semibold text-on-surface-variant dark:text-slate-400 leading-tight" data-i18n="step5Done">Hoàn tất</p>
+                    <p class="step-desc text-[11px] text-on-surface-variant/60 dark:text-slate-500 mt-0.5 leading-tight" data-i18n="step5DoneDesc">Sắp xong...</p>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- ── RECENT IDENTIFICATIONS ── -->
+            <section class="bg-surface-container-lowest dark:bg-slate-900 rounded-2xl border border-outline-variant/30 dark:border-slate-800 p-6 shadow-sm">
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="text-[16px] font-semibold text-on-surface dark:text-slate-200 flex items-center gap-2">
+                  <span class="material-symbols-outlined text-primary dark:text-blue-400 text-[20px]">history</span>
+                  <span data-i18n="recentIdentTitle">Nhận diện gần đây</span>
+                </h3>
+                <a
+                  href="{{ url_for('history.history') }}"
+                  class="text-[13px] text-primary dark:text-blue-400 hover:underline font-medium flex items-center gap-0.5 transition-opacity hover:opacity-80"
                 >
+                  <span data-i18n="viewAllBtn">Xem tất cả</span>
+                  <span class="material-symbols-outlined text-[15px]">chevron_right</span>
+                </a>
+              </div>
+              <!-- JS-rendered content -->
+              <div id="recentHistoryList">
+                <div class="flex items-center justify-center py-8 gap-2 text-on-surface-variant dark:text-slate-500">
+                  <span class="material-symbols-outlined text-[22px] opacity-40 animate-spin" style="animation-duration:2s">refresh</span>
+                  <span class="text-[13px] opacity-60" data-i18n="loadingQuota">Đang tải...</span>
+                </div>
+              </div>
+            </section>
+
+          </div><!-- END LEFT COLUMN -->
+
+          <!-- ══════════ RIGHT COLUMN ══════════ -->
+          <div class="lg:col-span-4 flex flex-col gap-gutter">
+
+            <!-- ── CURRENT PLAN CARD ── -->
+            <section class="bg-surface-container-lowest dark:bg-slate-900 rounded-2xl border border-outline-variant/30 dark:border-slate-800 p-5 shadow-sm">
+
+              <!-- Card header -->
+              <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-2">
+                  <span class="material-symbols-outlined text-primary dark:text-blue-400 text-[20px]">workspace_premium</span>
+                  <span class="text-[15px] font-semibold text-on-surface dark:text-slate-200" data-i18n="currentPlanTitle">Gói hiện tại</span>
+                </div>
+                {% if quota_info %}
+                  {% set plan_val = (quota_info.plan or 'free') %}
+                  {% if plan_val == 'enterprise' %}
+                    <span class="px-2.5 py-1 bg-purple-500/15 dark:bg-purple-500/20 text-purple-600 dark:text-purple-400 rounded-full text-[11px] font-bold tracking-wider uppercase">Enterprise</span>
+                  {% elif plan_val == 'pro' %}
+                    <span class="px-2.5 py-1 bg-primary/12 dark:bg-blue-500/15 text-primary dark:text-blue-400 rounded-full text-[11px] font-bold tracking-wider uppercase">Pro</span>
+                  {% elif plan_val == 'basic' %}
+                    <span class="px-2.5 py-1 bg-emerald-500/12 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 rounded-full text-[11px] font-bold tracking-wider uppercase">Basic</span>
+                  {% else %}
+                    <span class="px-2.5 py-1 bg-slate-500/10 dark:bg-slate-700 text-on-surface-variant dark:text-slate-400 rounded-full text-[11px] font-bold tracking-wider uppercase">Free</span>
+                  {% endif %}
+                {% else %}
+                  <span class="px-2.5 py-1 bg-slate-500/10 dark:bg-slate-700 text-on-surface-variant dark:text-slate-400 rounded-full text-[11px] font-bold tracking-wider">--</span>
+                {% endif %}
               </div>
 
-              {% if quota_info %} {% if quota_info.plan == 'free' %}
-              <div class="space-y-3 mt-4">
-                <div
-                  class="flex items-center justify-between p-3 bg-surface-container-low dark:bg-slate-950/40 rounded-lg border border-outline-variant/30 dark:border-slate-800"
-                >
-                  <div class="flex items-center gap-2">
-                    <span
-                      class="material-symbols-outlined text-primary dark:text-blue-400 text-[18px]"
-                      >electric_bolt</span
-                    >
-                    <span
-                      class="body-md text-on-surface-variant dark:text-slate-400"
-                      data-i18n="freeScansLeft"
-                      >Lượt miễn phí còn lại</span
-                    >
+              <!-- Info rows -->
+              <div class="space-y-3">
+                <!-- Scan count -->
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-2 text-[13px] text-on-surface-variant dark:text-slate-400">
+                    <span class="material-symbols-outlined text-[15px]">electric_bolt</span>
+                    <span data-i18n="freeScansLeft">Lượt nhận diện</span>
                   </div>
-                  <span
-                    class="headline-md font-bold text-primary dark:text-blue-400"
-                    >{{ quota_info.remaining_free }}</span
-                  >
+                  {% if quota_info %}
+                    {% if quota_info.plan in ('pro', 'enterprise', 'basic') %}
+                      <span class="text-[13px] font-semibold text-emerald-600 dark:text-emerald-400" data-i18n="unlimitedScans">Không giới hạn</span>
+                    {% elif quota_info.remaining_free is not none %}
+                      <span class="text-[13px] font-semibold text-on-surface dark:text-slate-200">{{ quota_info.remaining_free }}/{{ quota_info.free_limit }}</span>
+                    {% else %}
+                      <span class="text-[13px] font-semibold text-on-surface dark:text-slate-200">--</span>
+                    {% endif %}
+                  {% else %}
+                    <span class="text-[13px] text-on-surface-variant dark:text-slate-500">--</span>
+                  {% endif %}
                 </div>
-                <div
-                  class="flex items-center justify-between p-3 bg-secondary-container/10 dark:bg-orange-500/10 rounded-lg border border-secondary-container/30 dark:border-orange-500/20"
-                >
-                  <div class="flex items-center gap-2">
-                    <span
-                      class="material-symbols-outlined text-secondary dark:text-amber-400 text-[18px]"
-                      >play_circle</span
-                    >
-                    <span
-                      class="body-md text-on-surface-variant dark:text-slate-400"
-                      data-i18n="unlockedFromAds"
-                      >Mở khóa từ quảng cáo</span
-                    >
+
+                <!-- Max file size -->
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-2 text-[13px] text-on-surface-variant dark:text-slate-400">
+                    <span class="material-symbols-outlined text-[15px]">description</span>
+                    <span data-i18n="maxFileSize">Dung lượng tối đa</span>
                   </div>
-                  <span
-                    class="headline-md font-bold text-secondary dark:text-amber-400"
-                    >{{ quota_info.ad_unlocks_remaining }}</span
-                  >
+                  <span class="text-[13px] font-semibold text-on-surface dark:text-slate-200">10 MB</span>
                 </div>
-                <div
-                  class="flex items-center justify-between p-3 bg-surface-container-low dark:bg-slate-950/40 rounded-lg border border-outline-variant/30 dark:border-slate-800"
-                >
-                  <div class="flex items-center gap-2">
-                    <span
-                      class="material-symbols-outlined text-outline dark:text-slate-500 text-[18px]"
-                      >visibility</span
-                    >
-                    <span
-                      class="body-md text-on-surface-variant dark:text-slate-400"
-                      data-i18n="adViewsUsed"
-                      >Quảng cáo đã xem</span
-                    >
+
+                <!-- Expiry -->
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-2 text-[13px] text-on-surface-variant dark:text-slate-400">
+                    <span class="material-symbols-outlined text-[15px]">event</span>
+                    <span data-i18n="expiryDate">Hết hạn</span>
                   </div>
-                  <span
-                    class="body-md font-semibold text-on-surface dark:text-slate-200"
-                    >{{ quota_info.ad_views_used }}/{{ quota_info.ad_views_limit
-                    }}</span
-                  >
+                  {% if quota_info and quota_info.plan_expire %}
+                    <span class="text-[13px] font-semibold text-on-surface dark:text-slate-200">
+                      {% if quota_info.plan_expire is string %}
+                        {{ quota_info.plan_expire }}
+                      {% else %}
+                        {{ quota_info.plan_expire.strftime('%d/%m/%Y') }}
+                      {% endif %}
+                    </span>
+                  {% else %}
+                    <span class="text-[13px] text-on-surface-variant dark:text-slate-500" data-i18n="noExpiry">Không giới hạn</span>
+                  {% endif %}
                 </div>
               </div>
-              {% if 0 >= quota_info.remaining_free %}
-              <a
-                class="mt-md w-full inline-flex items-center justify-center gap-2 py-2.5 bg-inverse-surface dark:bg-slate-800 text-inverse-on-surface dark:text-slate-200 rounded-lg label-sm font-semibold hover:bg-on-background dark:hover:bg-slate-700 transition-colors"
-                href="{{ url_for('predict.watch_ad') }}"
-                data-watch-ad-trigger
-                aria-haspopup="dialog"
-                aria-controls="watchAdModal"
-              >
-                <span class="material-symbols-outlined text-[18px]"
-                  >smart_display</span
-                ><span data-i18n="watchAdsMore"
-                  >Xem quảng cáo để thêm lượt</span
-                ></a
-              >
-              {% endif %} {% else %}
-              <div
-                class="p-4 bg-primary/5 dark:bg-blue-950/30 rounded-lg border border-primary/20 dark:border-blue-900/40 mt-4 flex items-center justify-between"
-              >
-                <div class="flex flex-col gap-0.5">
-                  <div
-                    class="body-md font-semibold text-on-surface dark:text-slate-200"
-                    data-i18n="yourPaidPlan"
-                  >
-                    <span data-i18n="yourPaidPlan">Gói trả phí của bạn</span>
-                  </div>
-                  <div
-                    class="label-sm text-on-surface-variant dark:text-slate-400"
-                    data-i18n="unlimitedScans"
-                  >
-                    <span data-i18n="unlimitedScans"
-                      >Không giới hạn lượt nhận diện</span
-                    >
-                  </div>
-                </div>
-                <span
-                  class="material-symbols-outlined text-primary dark:text-blue-400 text-[24px]"
-                  >verified</span
+
+              <!-- Divider -->
+              <div class="my-4 border-t border-outline-variant/15 dark:border-slate-800"></div>
+
+              <!-- CTA button -->
+              {% if quota_info and quota_info.plan == 'free' %}
+                <a
+                  href="{{ url_for('predict.upgrade') }}"
+                  class="w-full py-2.5 rounded-xl bg-primary hover:bg-primary/90 text-on-primary text-[13px] font-semibold flex items-center justify-center gap-2 transition-colors"
                 >
-              </div>
-              {% endif %} {% else %}
-              <div
-                class="body-md text-on-surface-variant dark:text-slate-450 mt-4"
-                data-i18n="loadingQuota"
-              >
-                <span data-i18n="loadingQuota">Đang tải thông tin...</span>
-              </div>
+                  <span class="material-symbols-outlined text-[16px]">upgrade</span>
+                  <span data-i18n="upgradePlan">Nâng cấp gói</span>
+                </a>
+              {% else %}
+                <a
+                  href="{{ url_for('predict.upgrade') }}"
+                  class="w-full py-2.5 rounded-xl border border-outline-variant/30 dark:border-slate-700 text-on-surface dark:text-slate-300 hover:bg-surface-container-low dark:hover:bg-slate-800 text-[13px] font-medium flex items-center justify-center gap-1.5 transition-colors"
+                >
+                  <span data-i18n="viewPlanDetail">Xem chi tiết gói</span>
+                  <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+                </a>
+              {% endif %}
+
+              <!-- Watch ad (free users out of quota) -->
+              {% if quota_info and quota_info.plan == 'free' and quota_info.remaining_free is not none and quota_info.remaining_free <= 0 %}
+                <a
+                  class="mt-2 w-full py-2.5 rounded-xl bg-inverse-surface dark:bg-slate-800 text-inverse-on-surface dark:text-slate-200 text-[13px] font-medium flex items-center justify-center gap-2 hover:bg-on-background dark:hover:bg-slate-700 transition-colors"
+                  href="{{ url_for('predict.watch_ad') }}"
+                  data-watch-ad-trigger
+                  aria-haspopup="dialog"
+                  aria-controls="watchAdModal"
+                >
+                  <span class="material-symbols-outlined text-[16px]">smart_display</span>
+                  <span data-i18n="watchAdsMore">Xem quảng cáo để thêm lượt</span>
+                </a>
               {% endif %}
             </section>
 
-            <aside
-              class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl border border-outline-variant/30 dark:border-slate-800 p-5 shadow-sm"
-            >
-              <h3
-                class="headline-md font-semibold text-on-background dark:text-slate-100 mb-4 flex items-center gap-2"
-              >
-                <span
-                  class="material-symbols-outlined text-primary dark:text-blue-400"
-                  >auto_awesome</span
-                ><span data-i18n="predictionExperience"
-                  >Trải nghiệm dự đoán</span
-                >
+            <!-- ── PREDICTION EXPERIENCE CARD ── -->
+            <aside class="bg-surface-container-lowest dark:bg-slate-900 rounded-2xl border border-outline-variant/30 dark:border-slate-800 p-5 shadow-sm">
+              <h3 class="text-[15px] font-semibold text-on-surface dark:text-slate-200 mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary dark:text-blue-400 text-[20px]">auto_awesome</span>
+                <span data-i18n="predictionExperience">Trải nghiệm dự đoán</span>
               </h3>
-              <ul
-                class="flex flex-col gap-3 body-md text-on-surface-variant dark:text-slate-400"
-              >
-                <li class="flex items-start gap-2">
-                  <span
-                    class="material-symbols-outlined text-primary dark:text-blue-400 text-[18px]"
-                    >check</span
-                  ><span data-i18n="featureIdentifyConfidence"
-                    >Nhận diện giống chó với độ tin cậy %</span
-                  >
+              <ul class="flex flex-col gap-2.5">
+                <li class="flex items-center gap-2.5">
+                  <span class="material-symbols-outlined text-emerald-500 dark:text-emerald-400 text-[17px] shrink-0">check</span>
+                  <span class="text-[13px] text-on-surface-variant dark:text-slate-400" data-i18n="featureIdentifyConfidence">Nhận diện giống chó với độ tin cậy %</span>
                 </li>
-                <li class="flex items-start gap-2">
-                  <span
-                    class="material-symbols-outlined text-primary dark:text-blue-400 text-[18px]"
-                    >check</span
-                  ><span data-i18n="featureYoloBoundingBox"
-                    >Hỗ trợ ảnh có bounding box YOLO</span
-                  >
+                <li class="flex items-center gap-2.5">
+                  <span class="material-symbols-outlined text-emerald-500 dark:text-emerald-400 text-[17px] shrink-0">check</span>
+                  <span class="text-[13px] text-on-surface-variant dark:text-slate-400" data-i18n="featureYoloBoundingBox">Hỗ trợ ảnh có bounding box YOLO</span>
                 </li>
-                <li class="flex items-start gap-2">
-                  <span
-                    class="material-symbols-outlined text-primary dark:text-blue-400 text-[18px]"
-                    >check</span
-                  ><span data-i18n="featureAutoSaveHistory"
-                    >Lưu lịch sử dự đoán tự động</span
-                  >
+                <li class="flex items-center gap-2.5">
+                  <span class="material-symbols-outlined text-emerald-500 dark:text-emerald-400 text-[17px] shrink-0">check</span>
+                  <span class="text-[13px] text-on-surface-variant dark:text-slate-400" data-i18n="featureAutoSaveHistory">Lưu lịch sử dự đoán tự động</span>
                 </li>
-                <li class="flex items-start gap-2">
-                  <span
-                    class="material-symbols-outlined text-primary dark:text-blue-400 text-[18px]"
-                    >check</span
-                  ><span data-i18n="featureResponsiveLayout"
-                    >Tối ưu cho cả Mobile/Tablet/Desktop</span
-                  >
+                <li class="flex items-center gap-2.5">
+                  <span class="material-symbols-outlined text-emerald-500 dark:text-emerald-400 text-[17px] shrink-0">check</span>
+                  <span class="text-[13px] text-on-surface-variant dark:text-slate-400" data-i18n="featureResponsiveLayout">Tối ưu cho cả Mobile/Tablet/Desktop</span>
+                </li>
+                <li class="flex items-center gap-2.5">
+                  <span class="material-symbols-outlined text-emerald-500 dark:text-emerald-400 text-[17px] shrink-0">check</span>
+                  <span class="text-[13px] text-on-surface-variant dark:text-slate-400" data-i18n="featureHighQualityExport">Xuất kết quả chất lượng cao</span>
                 </li>
               </ul>
             </aside>
-          </div>
-        </div>
-      </div>
+
+            <!-- ── VALID IMAGE REQUIREMENTS CARD ── -->
+            <aside class="bg-surface-container-lowest dark:bg-slate-900 rounded-2xl border border-outline-variant/30 dark:border-slate-800 p-5 shadow-sm">
+              <h3 class="text-[15px] font-semibold text-on-surface dark:text-slate-200 mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined text-emerald-500 dark:text-emerald-400 text-[20px]">fact_check</span>
+                <span data-i18n="validImageTitle">Yêu cầu ảnh hợp lệ</span>
+              </h3>
+              <ul class="flex flex-col gap-2.5 mb-5">
+                <li class="flex items-start gap-2">
+                  <span class="material-symbols-outlined text-emerald-500 dark:text-emerald-400 text-[15px] mt-0.5 shrink-0">check_circle</span>
+                  <span class="text-[13px] text-on-surface-variant dark:text-slate-400" data-i18n="req1ValidDesc">Chó xuất hiện rõ trong ảnh</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <span class="material-symbols-outlined text-emerald-500 dark:text-emerald-400 text-[15px] mt-0.5 shrink-0">check_circle</span>
+                  <span class="text-[13px] text-on-surface-variant dark:text-slate-400" data-i18n="req2ValidDesc">Không bị mờ hoặc quá tối</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <span class="material-symbols-outlined text-emerald-500 dark:text-emerald-400 text-[15px] mt-0.5 shrink-0">check_circle</span>
+                  <span class="text-[13px] text-on-surface-variant dark:text-slate-400" data-i18n="req3ValidDesc">Không bị che mặt/thân quá nhiều</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <span class="material-symbols-outlined text-emerald-500 dark:text-emerald-400 text-[15px] mt-0.5 shrink-0">check_circle</span>
+                  <span class="text-[13px] text-on-surface-variant dark:text-slate-400" data-i18n="req4ValidDesc">Ưu tiên ảnh một con chó</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <span class="material-symbols-outlined text-emerald-500 dark:text-emerald-400 text-[15px] mt-0.5 shrink-0">check_circle</span>
+                  <span class="text-[13px] text-on-surface-variant dark:text-slate-400" data-i18n="req5ValidDesc">Định dạng JPG, JPEG, PNG</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <span class="material-symbols-outlined text-red-500 dark:text-red-400 text-[15px] mt-0.5 shrink-0">cancel</span>
+                  <span class="text-[13px] text-on-surface-variant dark:text-slate-400" data-i18n="req6InvalidDesc">Không chụp màn hình, ảnh có watermark</span>
+                </li>
+              </ul>
+              <!-- Sample images row -->
+              <div class="grid grid-cols-4 gap-2">
+                <div class="aspect-square rounded-lg bg-emerald-500/8 dark:bg-emerald-900/20 border border-emerald-500/20 dark:border-emerald-800/30 flex items-center justify-center relative">
+                  <span class="material-symbols-outlined text-emerald-500/60 dark:text-emerald-600 text-[26px]">pets</span>
+                  <span class="absolute bottom-1 right-1 w-4 h-4 bg-emerald-500 rounded-full flex items-center justify-center shadow-sm">
+                    <span class="material-symbols-outlined text-white text-[11px]" style="font-variation-settings:'FILL' 1">check</span>
+                  </span>
+                </div>
+                <div class="aspect-square rounded-lg bg-emerald-500/8 dark:bg-emerald-900/20 border border-emerald-500/20 dark:border-emerald-800/30 flex items-center justify-center relative">
+                  <span class="material-symbols-outlined text-emerald-500/60 dark:text-emerald-600 text-[26px]">pets</span>
+                  <span class="absolute bottom-1 right-1 w-4 h-4 bg-emerald-500 rounded-full flex items-center justify-center shadow-sm">
+                    <span class="material-symbols-outlined text-white text-[11px]" style="font-variation-settings:'FILL' 1">check</span>
+                  </span>
+                </div>
+                <div class="aspect-square rounded-lg bg-emerald-500/8 dark:bg-emerald-900/20 border border-emerald-500/20 dark:border-emerald-800/30 flex items-center justify-center relative">
+                  <span class="material-symbols-outlined text-emerald-500/60 dark:text-emerald-600 text-[26px]">pets</span>
+                  <span class="absolute bottom-1 right-1 w-4 h-4 bg-emerald-500 rounded-full flex items-center justify-center shadow-sm">
+                    <span class="material-symbols-outlined text-white text-[11px]" style="font-variation-settings:'FILL' 1">check</span>
+                  </span>
+                </div>
+                <div class="aspect-square rounded-lg bg-red-500/8 dark:bg-red-900/20 border border-red-500/20 dark:border-red-800/30 flex items-center justify-center relative">
+                  <span class="material-symbols-outlined text-red-400/60 dark:text-red-600 text-[26px]">hide_image</span>
+                  <span class="absolute bottom-1 right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center shadow-sm">
+                    <span class="material-symbols-outlined text-white text-[11px]" style="font-variation-settings:'FILL' 1">close</span>
+                  </span>
+                </div>
+              </div>
+            </aside>
+
+          </div><!-- END RIGHT COLUMN -->
+
+        </div><!-- END MAIN GRID -->
+      </div><!-- END contentArea -->
     </main>
 
-    {% if quota_info and quota_info.plan == 'free' %} {% include 'watch_ad.html'
-    %} {% endif %}
+    {% if quota_info and quota_info.plan == 'free' %} {% include 'watch_ad.html' %} {% endif %}
 
-<script src="{{ url_for('static', filename='js/toasts.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/i18n.js') }}?v=16"></script>
+    <script src="{{ url_for('static', filename='js/toasts.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/i18n.js') }}?v=17"></script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
     <script>
       (function () {
-        const dropZone = document.getElementById("dropZone");
-        const imageInput = document.getElementById("imageInput");
-        const dropState = document.getElementById("dropState");
-        const previewState = document.getElementById("previewState");
-        const imagePreview = document.getElementById("imagePreview");
-        const changeBtn = document.getElementById("changeBtn");
-        const analyzeBtn = document.getElementById("analyzeBtn");
-        const uploadForm = document.getElementById("uploadForm");
+        // ─── Element refs ───────────────────────────────────────────
+        const dropZone       = document.getElementById("dropZone");
+        const imageInput     = document.getElementById("imageInput");
+        const dropState      = document.getElementById("dropState");
+        const previewArea    = document.getElementById("previewArea");
+        const imagePreview   = document.getElementById("imagePreview");
+        const previewFileName= document.getElementById("previewFileName");
+        const previewFileMeta= document.getElementById("previewFileMeta");
+        const previewValidBadge = document.getElementById("previewValidBadge");
+        const previewBadgeIcon  = document.getElementById("previewBadgeIcon");
+        const previewBadgeText  = document.getElementById("previewBadgeText");
+        const changeBtn      = document.getElementById("changeBtn");
+        const deleteBtn      = document.getElementById("deleteBtn");
+        const analyzeBtn     = document.getElementById("analyzeBtn");
+        const uploadForm     = document.getElementById("uploadForm");
+        const progressCard   = document.getElementById("progressCard");
 
         if (!dropZone || !imageInput) return;
 
-        ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
-          dropZone.addEventListener(eventName, (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-          });
+        // ─── Drag & Drop ────────────────────────────────────────────
+        ["dragenter", "dragover", "dragleave", "drop"].forEach((ev) => {
+          dropZone.addEventListener(ev, (e) => { e.preventDefault(); e.stopPropagation(); });
         });
-
-        ["dragenter", "dragover"].forEach((eventName) => {
-          dropZone.addEventListener(eventName, () => {
-            dropZone.classList.add("is-dragover");
-          });
+        ["dragenter", "dragover"].forEach((ev) => {
+          dropZone.addEventListener(ev, () => dropZone.classList.add("is-dragover"));
         });
-
-        ["dragleave", "drop"].forEach((eventName) => {
-          dropZone.addEventListener(eventName, () => {
-            dropZone.classList.remove("is-dragover");
-          });
+        ["dragleave", "drop"].forEach((ev) => {
+          dropZone.addEventListener(ev, () => dropZone.classList.remove("is-dragover"));
         });
-
         dropZone.addEventListener("drop", (e) => {
           const files = e.dataTransfer && e.dataTransfer.files;
-          if (files && files.length > 0) {
-            imageInput.files = files;
-            showPreview(files[0]);
-          }
+          if (files && files.length > 0) { imageInput.files = files; showPreview(files[0]); }
         });
-
         imageInput.addEventListener("change", (e) => {
           const file = e.target.files && e.target.files[0];
           if (file) showPreview(file);
         });
 
+        // ─── Change button ──────────────────────────────────────────
         if (changeBtn) {
-          changeBtn.addEventListener("click", () => {
-            imageInput.value = "";
-            imagePreview.src = "";
-            imageInput.style.pointerEvents = "auto";
-            dropState.classList.remove("hidden");
-            previewState.classList.add("hidden");
-          });
+          changeBtn.addEventListener("click", () => { imageInput.click(); });
         }
 
+        // ─── Delete button ──────────────────────────────────────────
+        if (deleteBtn) {
+          deleteBtn.addEventListener("click", clearImage);
+        }
+
+        function clearImage() {
+          imageInput.value = "";
+          imagePreview.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+          dropZone.classList.remove("hidden");
+          previewArea.classList.add("hidden");
+          if (previewValidBadge) previewValidBadge.classList.add("hidden");
+          analyzeBtn.disabled = true;
+        }
+
+        // ─── Show preview ────────────────────────────────────────────
+        function showPreview(file) {
+          const validTypes = ["image/png", "image/jpeg", "image/jpg"];
+          const fileName   = (file.name || "").toLowerCase();
+          const hasValidExt = /\.(png|jpe?g)$/.test(fileName);
+          const mimeOk     = !file.type || validTypes.includes(file.type);
+          const sizeOk     = file.size <= 10 * 1024 * 1024;
+
+          if (!(mimeOk && hasValidExt)) {
+            const msg = typeof window.PetAI_i18n !== "undefined"
+              ? window.PetAI_i18n.t("onlySupportJpgPng")
+              : "Chỉ hỗ trợ ảnh JPG, JPEG hoặc PNG.";
+            if (typeof window.showToast === "function") { window.showToast("warning", msg); }
+            else { alert(msg); }
+            return;
+          }
+
+          const reader = new FileReader();
+          reader.onload = (ev) => {
+            imagePreview.src = ev.target.result;
+
+            // Hide drop zone, show preview
+            dropZone.classList.add("hidden");
+            previewArea.classList.remove("hidden");
+
+            // File name
+            if (previewFileName) previewFileName.textContent = file.name;
+
+            // File size
+            const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+            const sizeKB = (file.size / 1024).toFixed(1);
+            const sizeStr = file.size >= 1024 * 1024 ? sizeMB + " MB" : sizeKB + " KB";
+
+            // Image dimensions via temp img
+            const tempImg = new Image();
+            tempImg.onload = function () {
+              const w = tempImg.naturalWidth, h = tempImg.naturalHeight;
+              if (previewFileMeta) previewFileMeta.textContent = sizeStr + " • " + w + " × " + h + " px";
+            };
+            tempImg.onerror = function () {
+              if (previewFileMeta) previewFileMeta.textContent = sizeStr;
+            };
+            tempImg.src = ev.target.result;
+
+            // Valid badge
+            if (previewValidBadge) {
+              previewValidBadge.classList.remove("hidden");
+              if (sizeOk) {
+                previewValidBadge.className = "mt-0.5 w-fit inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[12px] font-semibold bg-emerald-500/15 text-emerald-700 dark:text-emerald-400";
+                if (previewBadgeIcon) previewBadgeIcon.textContent = "check_circle";
+                if (previewBadgeText) {
+                  previewBadgeText.setAttribute("data-i18n", "validImageBadge");
+                  previewBadgeText.textContent = typeof window.PetAI_i18n !== "undefined"
+                    ? (window.PetAI_i18n.t("validImageBadge") || "Ảnh hợp lệ")
+                    : "Ảnh hợp lệ";
+                }
+              } else {
+                previewValidBadge.className = "mt-0.5 w-fit inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[12px] font-semibold bg-red-500/15 text-red-700 dark:text-red-400";
+                if (previewBadgeIcon) previewBadgeIcon.textContent = "error";
+                if (previewBadgeText) {
+                  previewBadgeText.setAttribute("data-i18n", "invalidImageBadge");
+                  previewBadgeText.textContent = typeof window.PetAI_i18n !== "undefined"
+                    ? (window.PetAI_i18n.t("invalidImageBadge") || "Ảnh không hợp lệ")
+                    : "Ảnh không hợp lệ";
+                }
+              }
+            }
+
+            // Enable analyze button only if image valid
+            analyzeBtn.disabled = !(mimeOk && hasValidExt && sizeOk);
+          };
+          reader.readAsDataURL(file);
+        }
+
+        // ─── Progress Steps Animation ────────────────────────────────
+        let progressTimer = null;
+        const STEP_DELAYS  = [900, 1300, 1600, 1100];
+
+        function showProgressCard() {
+          if (!progressCard) return;
+          progressCard.classList.remove("hidden");
+          runStep(1);
+        }
+
+        function runStep(step) {
+          const els = progressCard ? progressCard.querySelectorAll("[data-step]") : [];
+          els.forEach((el) => {
+            const s = parseInt(el.dataset.step);
+            const circle  = el.querySelector(".step-circle");
+            const descEl  = el.querySelector(".step-desc");
+            const lineEl  = el.querySelector(".step-line");
+            if (!circle) return;
+
+            if (s < step) {
+              // Completed
+              circle.className = "step-circle w-9 h-9 rounded-full flex items-center justify-center text-[14px] font-bold shrink-0 z-10 transition-all duration-400 bg-emerald-500 text-white shadow-md";
+              circle.innerHTML = '<span class="material-symbols-outlined text-[18px]" style="font-variation-settings:\'FILL\' 1">check</span>';
+              circle.classList.remove("step-active-pulse");
+              if (lineEl) lineEl.classList.add("bg-emerald-500/40", "dark:bg-emerald-800");
+              if (descEl) descEl.style.opacity = "0.5";
+            } else if (s === step) {
+              // Active
+              circle.className = "step-circle w-9 h-9 rounded-full flex items-center justify-center text-[14px] font-bold shrink-0 z-10 transition-all duration-400 bg-primary text-on-primary shadow-md step-active-pulse";
+              circle.textContent = String(s);
+              if (descEl) descEl.style.opacity = "1";
+            } else {
+              // Pending
+              circle.className = "step-circle w-9 h-9 rounded-full flex items-center justify-center text-[14px] font-bold shrink-0 z-10 transition-all duration-400 border-2 border-dashed border-outline-variant/40 dark:border-slate-600 text-on-surface-variant dark:text-slate-500";
+              circle.textContent = String(s);
+              circle.classList.remove("step-active-pulse");
+              if (descEl) descEl.style.opacity = "0.5";
+            }
+          });
+
+          if (step < 5) {
+            progressTimer = setTimeout(() => runStep(step + 1), STEP_DELAYS[step - 1] || 1000);
+          }
+        }
+
+        // ─── Form Submit ─────────────────────────────────────────────
         if (uploadForm) {
           uploadForm.addEventListener("submit", async function (e) {
             e.preventDefault();
-            const t_func =
-              typeof window.PetAI_i18n !== "undefined"
-                ? window.PetAI_i18n.t
-                : function (x) {
-                    return x;
-                  };
-            const originalHtml = analyzeBtn ? analyzeBtn.innerHTML : "";
+            const t = typeof window.PetAI_i18n !== "undefined"
+              ? window.PetAI_i18n.t.bind(window.PetAI_i18n)
+              : (k) => k;
+            const origHtml = analyzeBtn ? analyzeBtn.innerHTML : "";
 
             if (analyzeBtn) {
               analyzeBtn.disabled = true;
               analyzeBtn.innerHTML =
-                '<span class="material-symbols-outlined text-[18px] animate-spin" style="animation-duration:1s">refresh</span>' +
-                '<span>' + (t_func("analyzing") || "Đang phân tích...") + '</span>';
+                '<span class="material-symbols-outlined text-[20px] animate-spin" style="animation-duration:1s">refresh</span>' +
+                '<span>' + (t("analyzing") || "Đang phân tích...") + '</span>';
             }
+
+            showProgressCard();
 
             try {
               const formData = new FormData(this);
               const res = await fetch(this.action || window.location.href, {
                 method: "POST",
                 body: formData,
-                headers: {
-                  "X-Requested-With": "XMLHttpRequest"
-                }
+                headers: { "X-Requested-With": "XMLHttpRequest" }
               });
+
+              if (progressTimer) clearTimeout(progressTimer);
 
               if (res.ok) {
                 const html = await res.text();
-                if (window.loadPagePjax) {
-                  window.loadPagePjax(res.url, true, html);
-                } else {
-                  window.location.href = res.url;
-                }
+                if (window.loadPagePjax) { window.loadPagePjax(res.url, true, html); }
+                else { window.location.href = res.url; }
               } else {
-                if (analyzeBtn) {
-                  analyzeBtn.disabled = false;
-                  analyzeBtn.innerHTML = originalHtml;
-                }
+                if (progressCard) progressCard.classList.add("hidden");
+                if (analyzeBtn) { analyzeBtn.disabled = false; analyzeBtn.innerHTML = origHtml; }
                 if (typeof window.showToast === "function") {
-                  window.showToast("error", "Đã xảy ra lỗi khi phân tích ảnh");
+                  window.showToast("error", t("analyzeError") || "Đã xảy ra lỗi khi phân tích ảnh");
                 }
               }
             } catch (err) {
               console.error(err);
-              if (analyzeBtn) {
-                analyzeBtn.disabled = false;
-                analyzeBtn.innerHTML = originalHtml;
-              }
+              if (progressTimer) clearTimeout(progressTimer);
+              if (progressCard) progressCard.classList.add("hidden");
+              if (analyzeBtn) { analyzeBtn.disabled = false; analyzeBtn.innerHTML = origHtml; }
               if (typeof window.showToast === "function") {
-                window.showToast("error", "Đã xảy ra lỗi kết nối");
+                window.showToast("error", t("connectError") || "Đã xảy ra lỗi kết nối");
               }
             }
           });
         }
 
-        function showPreview(file) {
-          const validTypes = ["image/png", "image/jpeg", "image/jpg"];
-          const fileName = (file.name || "").toLowerCase();
-          const hasValidExt = /\.(png|jpe?g)$/.test(fileName);
-          const mimeOk = !file.type || validTypes.includes(file.type);
-          if (!(mimeOk && hasValidExt)) {
-            if (typeof window.showToast === "function") {
-              window.showToast(
-                "warning",
-                typeof window.PetAI_i18n !== "undefined"
-                  ? window.PetAI_i18n.t("onlySupportJpgPng")
-                  : "Chỉ hỗ trợ ảnh JPG, JPEG hoặc PNG.",
-              );
-            } else if (window.PetAI_alert) {
-              window.PetAI_alert({
-                text: typeof window.PetAI_i18n !== "undefined"
-                  ? window.PetAI_i18n.t("onlySupportJpgPng")
-                  : "Chỉ hỗ trợ ảnh JPG, JPEG hoặc PNG.",
-                type: "warning"
-              });
-            } else {
-              alert(
-                typeof window.PetAI_i18n !== "undefined"
-                  ? window.PetAI_i18n.t("onlySupportJpgPng")
-                  : "Chỉ hỗ trợ ảnh JPG, JPEG hoặc PNG.",
-              );
-            }
-            return;
+        // ─── Load Recent History ─────────────────────────────────────
+        async function loadRecentHistory() {
+          const container = document.getElementById("recentHistoryList");
+          if (!container) return;
+
+          const t = typeof window.PetAI_i18n !== "undefined"
+            ? window.PetAI_i18n.t.bind(window.PetAI_i18n)
+            : (k) => k;
+
+          function emptyState(msg) {
+            return `<div class="flex flex-col items-center justify-center py-10 gap-2 text-on-surface-variant dark:text-slate-500">
+              <span class="material-symbols-outlined text-[40px] opacity-25">pets</span>
+              <p class="text-[13px] opacity-50">${msg}</p>
+            </div>`;
           }
 
-          const reader = new FileReader();
-          reader.onload = (e) => {
-            imagePreview.src = e.target.result;
-            imageInput.style.pointerEvents = "none";
-            dropState.classList.add("hidden");
-            previewState.classList.remove("hidden");
-          };
-          reader.readAsDataURL(file);
+          try {
+            const res = await fetch("/history/api/recent?limit=5");
+            if (!res.ok) throw new Error("API error");
+            const data = await res.json();
+            const items = data.predictions || [];
+
+            if (items.length === 0) {
+              container.innerHTML = emptyState(t("noRecentData") || "Chưa có dữ liệu nhận diện.");
+              return;
+            }
+
+            function fmtTime(iso) {
+              if (!iso) return "--";
+              try {
+                const d = new Date(iso);
+                const p = n => String(n).padStart(2,"0");
+                return p(d.getDate())+"/"+p(d.getMonth()+1)+"/"+d.getFullYear()+" "+p(d.getHours())+":"+p(d.getMinutes());
+              } catch { return "--"; }
+            }
+
+            function confColor(c) {
+              if (c >= 0.9) return "text-emerald-600 dark:text-emerald-400";
+              if (c >= 0.7) return "text-primary dark:text-blue-400";
+              return "text-amber-600 dark:text-amber-400";
+            }
+
+            const cards = items.map((item) => {
+              const conf = parseFloat(item.confidence || 0);
+              const pct  = (conf * 100).toFixed(0) + "%";
+              const raw  = (item.image_path || "").replace(/^[\/\\]+/, "");
+              const imgUrl = raw ? "/" + raw : "";
+              const breed  = item.breed || "--";
+              const time   = fmtTime(item.created_at);
+              const cc     = confColor(conf);
+
+              return `<div class="flex flex-col gap-2 p-3 rounded-xl bg-surface-container-low/60 dark:bg-slate-800/40 border border-outline-variant/20 dark:border-slate-700/50 hover:bg-surface-container dark:hover:bg-slate-800/70 transition-colors group cursor-default">
+                <div class="aspect-square rounded-lg overflow-hidden bg-slate-200 dark:bg-slate-700 relative">
+                  ${imgUrl
+                    ? `<img src="${imgUrl}" alt="${breed}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+                    : ""
+                  }
+                  <div style="display:${imgUrl ? 'none' : 'flex'}" class="absolute inset-0 items-center justify-center">
+                    <span class="material-symbols-outlined text-slate-400 dark:text-slate-600 text-[28px]">pets</span>
+                  </div>
+                </div>
+                <div class="flex flex-col gap-0.5 min-w-0">
+                  <p class="text-[12px] font-semibold text-on-surface dark:text-slate-200 truncate leading-snug" title="${breed}">${breed}</p>
+                  <p class="text-[13px] font-bold ${cc} leading-tight">${pct}</p>
+                  <p class="text-[11px] text-on-surface-variant/60 dark:text-slate-500 truncate leading-tight">${time}</p>
+                </div>
+              </div>`;
+            });
+
+            container.innerHTML = `<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">${cards.join("")}</div>`;
+          } catch (err) {
+            console.error("Recent history error:", err);
+            container.innerHTML = emptyState(t("noRecentData") || "Chưa có dữ liệu nhận diện.");
+          }
         }
 
-        const watchAdModal = document.getElementById("watchAdModal");
-        const watchAdTrigger = document.querySelector(
-          "[data-watch-ad-trigger]",
-        );
-        const watchAdClose = document.getElementById("watchAdClose");
-        const watchAdCancel = document.getElementById("watchAdCancel");
-        const watchAdCountdown = document.getElementById("watchAdCountdown");
-        const watchAdCompleteBtn =
-          document.getElementById("watchAdCompleteBtn");
-        const watchAdBar = document.getElementById("watchAdBar");
-        const watchAdForm = document.getElementById("watchAdCompleteForm");
-        const openWatchAd =
-          document.body.dataset.watchAdOpen &&
-          document.body.dataset.watchAdOpen !== "0";
+        loadRecentHistory();
+
+        // ─── Watch Ad Logic (unchanged) ──────────────────────────────
+        const watchAdModal       = document.getElementById("watchAdModal");
+        const watchAdTrigger     = document.querySelector("[data-watch-ad-trigger]");
+        const watchAdClose       = document.getElementById("watchAdClose");
+        const watchAdCancel      = document.getElementById("watchAdCancel");
+        const watchAdCountdown   = document.getElementById("watchAdCountdown");
+        const watchAdCompleteBtn = document.getElementById("watchAdCompleteBtn");
+        const watchAdBar         = document.getElementById("watchAdBar");
+        const watchAdForm        = document.getElementById("watchAdCompleteForm");
+        const openWatchAd        = document.body.dataset.watchAdOpen && document.body.dataset.watchAdOpen !== "0";
         const watchAdTotal = 8;
         let watchAdRemaining = watchAdTotal;
         let watchAdTimer = null;
@@ -898,201 +967,109 @@
 
         function startAdSlideshow() {
           stopAdSlideshow();
-          let activeAdSlideIndex = 0;
-          const adSlides = document.querySelectorAll(".ad-slide");
-          if (adSlides.length === 0) return;
-
-          adSlides.forEach((slide, idx) => {
-            slide.classList.toggle("active", idx === 0);
-          });
-
+          let idx = 0;
+          const slides = document.querySelectorAll(".ad-slide");
+          if (!slides.length) return;
+          slides.forEach((s, i) => s.classList.toggle("active", i === 0));
           adSlideInterval = setInterval(() => {
-            const currentSlides = document.querySelectorAll(".ad-slide");
-            if (currentSlides.length === 0) return;
-            currentSlides[activeAdSlideIndex].classList.remove("active");
-            activeAdSlideIndex = (activeAdSlideIndex + 1) % currentSlides.length;
-            currentSlides[activeAdSlideIndex].classList.add("active");
+            const sl = document.querySelectorAll(".ad-slide");
+            if (!sl.length) return;
+            sl[idx].classList.remove("active");
+            idx = (idx + 1) % sl.length;
+            sl[idx].classList.add("active");
           }, 2500);
         }
-
         function stopAdSlideshow() {
-          if (adSlideInterval) {
-            clearInterval(adSlideInterval);
-            adSlideInterval = null;
-          }
+          if (adSlideInterval) { clearInterval(adSlideInterval); adSlideInterval = null; }
         }
-
         function resetWatchAd() {
           watchAdRemaining = watchAdTotal;
-          if (watchAdCountdown) {
-            watchAdCountdown.textContent = String(watchAdTotal);
-          }
+          if (watchAdCountdown) watchAdCountdown.textContent = String(watchAdTotal);
           const circle = document.getElementById("countdownSvgCircle");
-          if (circle) {
-            circle.style.strokeDasharray = "107";
-            circle.style.strokeDashoffset = "0";
-          }
+          if (circle) { circle.style.strokeDasharray = "107"; circle.style.strokeDashoffset = "0"; }
           if (watchAdCompleteBtn) {
             watchAdCompleteBtn.disabled = true;
             watchAdCompleteBtn.classList.remove("shimmer-active");
-            watchAdCompleteBtn.innerHTML =
-              typeof window.PetAI_i18n !== "undefined"
-                ? '<span class="material-symbols-outlined text-[18px]">check</span>' +
-                  window.PetAI_i18n.t("adWatchedComplete")
-                : '<span class="material-symbols-outlined text-[18px]">check</span>Tôi đã xem xong';
+            watchAdCompleteBtn.innerHTML = typeof window.PetAI_i18n !== "undefined"
+              ? '<span class="material-symbols-outlined text-[18px]">check</span>' + window.PetAI_i18n.t("adWatchedComplete")
+              : '<span class="material-symbols-outlined text-[18px]">check</span>Tôi đã xem xong';
           }
-          if (watchAdBar) {
-            watchAdBar.style.width = "0%";
-          }
-          if (watchAdTimer) {
-            clearTimeout(watchAdTimer);
-            watchAdTimer = null;
-          }
+          if (watchAdBar) watchAdBar.style.width = "0%";
+          if (watchAdTimer) { clearTimeout(watchAdTimer); watchAdTimer = null; }
         }
-
         function tickWatchAd() {
           watchAdRemaining -= 1;
           if (watchAdRemaining <= 0) {
-            if (watchAdCountdown) {
-              watchAdCountdown.textContent = "0";
-            }
-            const circle = document.getElementById("countdownSvgCircle");
-            if (circle) {
-              circle.style.strokeDashoffset = "107";
-            }
-            if (watchAdCompleteBtn) {
-              watchAdCompleteBtn.disabled = false;
-              watchAdCompleteBtn.classList.add("shimmer-active");
-            }
-            if (watchAdBar) {
-              watchAdBar.style.width = "100%";
-            }
+            if (watchAdCountdown) watchAdCountdown.textContent = "0";
+            const c = document.getElementById("countdownSvgCircle");
+            if (c) c.style.strokeDashoffset = "107";
+            if (watchAdCompleteBtn) { watchAdCompleteBtn.disabled = false; watchAdCompleteBtn.classList.add("shimmer-active"); }
+            if (watchAdBar) watchAdBar.style.width = "100%";
             return;
           }
-          if (watchAdCountdown) {
-            watchAdCountdown.textContent = String(watchAdRemaining);
-          }
-          const circle = document.getElementById("countdownSvgCircle");
-          if (circle) {
-            const offset = ((watchAdTotal - watchAdRemaining) / watchAdTotal) * 107;
-            circle.style.strokeDashoffset = String(offset);
-          }
-          if (watchAdBar) {
-            const progress =
-              ((watchAdTotal - watchAdRemaining) / watchAdTotal) * 100;
-            watchAdBar.style.width = progress.toFixed(0) + "%";
-          }
+          if (watchAdCountdown) watchAdCountdown.textContent = String(watchAdRemaining);
+          const c = document.getElementById("countdownSvgCircle");
+          if (c) c.style.strokeDashoffset = String(((watchAdTotal - watchAdRemaining) / watchAdTotal) * 107);
+          if (watchAdBar) watchAdBar.style.width = ((watchAdTotal - watchAdRemaining) / watchAdTotal * 100).toFixed(0) + "%";
           watchAdTimer = setTimeout(tickWatchAd, 1000);
         }
-
         function openWatchAdModal() {
           if (!watchAdModal) return;
           resetWatchAd();
-          watchAdModal.classList.remove("hidden");
-          watchAdModal.classList.add("flex");
+          watchAdModal.classList.remove("hidden"); watchAdModal.classList.add("flex");
           watchAdModal.setAttribute("aria-hidden", "false");
           document.body.classList.add("overflow-hidden");
           startAdSlideshow();
           watchAdTimer = setTimeout(tickWatchAd, 1000);
         }
-
         function closeWatchAdModal() {
           if (!watchAdModal) return;
-          watchAdModal.classList.add("hidden");
-          watchAdModal.classList.remove("flex");
+          watchAdModal.classList.add("hidden"); watchAdModal.classList.remove("flex");
           watchAdModal.setAttribute("aria-hidden", "true");
           document.body.classList.remove("overflow-hidden");
           stopAdSlideshow();
-          if (watchAdTimer) {
-            clearTimeout(watchAdTimer);
-            watchAdTimer = null;
-          }
+          if (watchAdTimer) { clearTimeout(watchAdTimer); watchAdTimer = null; }
         }
 
         if (watchAdTrigger && watchAdModal) {
-          watchAdTrigger.addEventListener("click", (event) => {
-            event.preventDefault();
-            openWatchAdModal();
-          });
+          watchAdTrigger.addEventListener("click", (e) => { e.preventDefault(); openWatchAdModal(); });
         }
-
-        if (watchAdClose) {
-          watchAdClose.addEventListener("click", closeWatchAdModal);
-        }
-
-        if (watchAdCancel) {
-          watchAdCancel.addEventListener("click", closeWatchAdModal);
-        }
-
-        if (watchAdModal) {
-          watchAdModal.addEventListener("click", (event) => {
-            if (event.target === watchAdModal) {
-              closeWatchAdModal();
-            }
-          });
-        }
-
-        document.addEventListener("keydown", (event) => {
-          if (event.key === "Escape") {
-            closeWatchAdModal();
-          }
-        });
+        if (watchAdClose)  watchAdClose.addEventListener("click",  closeWatchAdModal);
+        if (watchAdCancel) watchAdCancel.addEventListener("click", closeWatchAdModal);
+        if (watchAdModal)  watchAdModal.addEventListener("click",  (e) => { if (e.target === watchAdModal) closeWatchAdModal(); });
+        document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeWatchAdModal(); });
 
         if (watchAdForm && watchAdCompleteBtn) {
           watchAdForm.addEventListener("submit", async function (e) {
             e.preventDefault();
-            const t_func =
-              typeof window.PetAI_i18n !== "undefined"
-                ? window.PetAI_i18n.t
-                : function (x) {
-                    return x;
-                  };
-            const originalText = watchAdCompleteBtn.innerHTML;
+            const t = typeof window.PetAI_i18n !== "undefined" ? window.PetAI_i18n.t.bind(window.PetAI_i18n) : (k) => k;
+            const orig = watchAdCompleteBtn.innerHTML;
             watchAdCompleteBtn.disabled = true;
-            watchAdCompleteBtn.textContent =
-              t_func("confirming") || "Đang xác nhận...";
-
+            watchAdCompleteBtn.textContent = t("confirming") || "Đang xác nhận...";
             try {
-              const formData = new FormData(this);
+              const fd = new FormData(this);
               const res = await fetch(this.action || window.location.href, {
-                method: "POST",
-                body: formData,
-                headers: {
-                  "X-Requested-With": "XMLHttpRequest"
-                }
+                method: "POST", body: fd, headers: { "X-Requested-With": "XMLHttpRequest" }
               });
-
               closeWatchAdModal();
-
               if (res.ok) {
                 const html = await res.text();
-                if (window.loadPagePjax) {
-                  window.loadPagePjax(res.url, true, html);
-                } else {
-                  window.location.href = res.url;
-                }
+                if (window.loadPagePjax) { window.loadPagePjax(res.url, true, html); }
+                else { window.location.href = res.url; }
               } else {
-                watchAdCompleteBtn.disabled = false;
-                watchAdCompleteBtn.innerHTML = originalText;
-                if (typeof window.showToast === "function") {
-                  window.showToast("error", "Đã xảy ra lỗi");
-                }
+                watchAdCompleteBtn.disabled = false; watchAdCompleteBtn.innerHTML = orig;
+                if (typeof window.showToast === "function") window.showToast("error", "Đã xảy ra lỗi");
               }
             } catch (err) {
-              console.error(err);
-              closeWatchAdModal();
-              watchAdCompleteBtn.disabled = false;
-              watchAdCompleteBtn.innerHTML = originalText;
-              if (typeof window.showToast === "function") {
-                window.showToast("error", "Đã xảy ra lỗi");
-              }
+              console.error(err); closeWatchAdModal();
+              watchAdCompleteBtn.disabled = false; watchAdCompleteBtn.innerHTML = orig;
+              if (typeof window.showToast === "function") window.showToast("error", "Đã xảy ra lỗi");
             }
           });
         }
 
-        if (openWatchAd) {
-          openWatchAdModal();
-        }
+        if (openWatchAd) openWatchAdModal();
+
       })();
     </script>
   </body>
