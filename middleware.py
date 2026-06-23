@@ -149,6 +149,8 @@ def register_html_translation(app):
             lang = request.cookies.get("siteLanguage")
             home_vi = {}
             home_en = {}
+            site_desc_vi = "Ứng dụng nhận diện giống chó bằng AI dành cho người yêu thú cưng. Kết quả chính xác, nhanh chóng."
+            site_desc_en = "AI-powered dog breed identification app for pet lovers. Fast and accurate results."
             conn = None
             try:
                 conn = get_connection()
@@ -178,6 +180,10 @@ def register_html_translation(app):
                         pass
                 elif isinstance(raw_en, dict):
                     home_en = raw_en
+
+                # Also fetch site descriptions
+                site_desc_vi = SystemConfig.get(conn, "site_description_vi", SystemConfig.get(conn, "site_description", site_desc_vi))
+                site_desc_en = SystemConfig.get(conn, "site_description_en", site_desc_en)
             except Exception:
                 pass
             finally:
@@ -191,7 +197,9 @@ def register_html_translation(app):
                 try:
                     from i18n_server import translate_html
                     html_content = response.get_data(as_text=True)
-                    dynamic_translations = home_vi if lang == "vi" else home_en
+                    dynamic_translations = dict(home_vi if lang == "vi" else home_en)
+                    dynamic_translations["footerDesc"] = site_desc_vi if lang == "vi" else site_desc_en
+                    dynamic_translations["footerDescText"] = site_desc_vi if lang == "vi" else site_desc_en
                     translated_html = translate_html(html_content, lang, dynamic_translations)
                     response.set_data(translated_html)
                 except Exception as e:
