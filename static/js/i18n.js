@@ -5110,7 +5110,9 @@
   }
 
   function applyTranslations(lang) {
+    console.log("i18n applyTranslations called with lang:", lang);
     if (window.PetAI_DynamicSettings) {
+      console.log("i18n window.PetAI_DynamicSettings exists:", JSON.stringify(window.PetAI_DynamicSettings));
       if (window.PetAI_DynamicSettings.vi) {
         for (var k in window.PetAI_DynamicSettings.vi) {
           TRANSLATIONS.vi[k] = window.PetAI_DynamicSettings.vi[k];
@@ -5121,6 +5123,8 @@
           TRANSLATIONS.en[k] = window.PetAI_DynamicSettings.en[k];
         }
       }
+    } else {
+      console.log("i18n window.PetAI_DynamicSettings is missing!");
     }
     var dict = TRANSLATIONS[lang];
     if (!dict) return;
@@ -5339,8 +5343,25 @@
               TRANSLATIONS.en[key] = data.en[key];
             }
           }
+          // Re-apply PetAI_DynamicSettings (DB data) AFTER merging static file
+          // so that user-edited content always takes priority over translations.json
+          if (window.PetAI_DynamicSettings) {
+            if (window.PetAI_DynamicSettings.vi) {
+              for (var k in window.PetAI_DynamicSettings.vi) {
+                TRANSLATIONS.vi[k] = window.PetAI_DynamicSettings.vi[k];
+              }
+            }
+            if (window.PetAI_DynamicSettings.en) {
+              for (var k in window.PetAI_DynamicSettings.en) {
+                TRANSLATIONS.en[k] = window.PetAI_DynamicSettings.en[k];
+              }
+            }
+          }
           console.log("i18n successfully merged remote translations!");
-          applyTranslations(lang);
+          // NOTE: Do NOT call applyTranslations here.
+          // Bootstrap already applied correct translations (including PetAI_DynamicSettings/DB data).
+          // Calling applyTranslations again causes a visible text flash on F5.
+          // The merged data is available for future setLanguage() calls.
         }
         if (callback) callback();
       })
@@ -5449,9 +5470,17 @@
 
     try {
       var saved = getSavedLang();
-      console.log("i18n saved language is:", saved);
+      console.log("i18n bootstrap: saved language is:", saved);
       currentLang = saved;
+      console.log("i18n bootstrap: TRANSLATIONS.vi before applyTranslations:", JSON.stringify({
+        predict: TRANSLATIONS.vi.predict,
+        dogBreedsNav: TRANSLATIONS.vi.dogBreedsNav
+      }));
       applyTranslations(saved);
+      console.log("i18n bootstrap: TRANSLATIONS.vi after applyTranslations:", JSON.stringify({
+        predict: TRANSLATIONS.vi.predict,
+        dogBreedsNav: TRANSLATIONS.vi.dogBreedsNav
+      }));
       updateSwitcherUI(saved);
       // Ensure cookie is synced on initialization (e.g. if cookie was cleared/expired but localStorage exists)
       // to prevent FOUC / translation flash on subsequent page reloads (F5) or PJAX request triggers.

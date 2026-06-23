@@ -142,24 +142,48 @@ def register_html_translation(app):
                 return response
             
             from flask import request, session
+            import json
+            from connect import get_connection
+            from models import SystemConfig
+            
             lang = request.cookies.get("siteLanguage")
-            if not lang:
-                from connect import get_connection
-                from models import SystemConfig, UserSettings
-                conn = None
-                try:
-                    conn = get_connection()
-                    user_id_raw = session.get("user_id")
-                    if user_id_raw is not None:
-                        user_settings = UserSettings.get_or_create(conn, int(user_id_raw))
-                        lang = (user_settings or {}).get("language")
-                    if not lang:
-                        lang = SystemConfig.get(conn, "default_lang", "vi")
-                except Exception:
-                    lang = "vi"
-                finally:
-                    if conn:
-                        conn.close()
+            home_vi = {}
+            home_en = {}
+            conn = None
+            try:
+                conn = get_connection()
+                user_id_raw = session.get("user_id")
+                if not lang and user_id_raw is not None:
+                    from models import UserSettings
+                    user_settings = UserSettings.get_or_create(conn, int(user_id_raw))
+                    lang = (user_settings or {}).get("language")
+                if not lang:
+                    lang = SystemConfig.get(conn, "default_lang", "vi")
+                
+                # Fetch custom translations from DB
+                raw_vi = SystemConfig.get(conn, "home_content_vi", "{}")
+                raw_en = SystemConfig.get(conn, "home_content_en", "{}")
+                if isinstance(raw_vi, str):
+                    try:
+                        home_vi = json.loads(raw_vi)
+                    except Exception:
+                        pass
+                elif isinstance(raw_vi, dict):
+                    home_vi = raw_vi
+                    
+                if isinstance(raw_en, str):
+                    try:
+                        home_en = json.loads(raw_en)
+                    except Exception:
+                        pass
+                elif isinstance(raw_en, dict):
+                    home_en = raw_en
+            except Exception:
+                pass
+            finally:
+                if conn:
+                    conn.close()
+                    
             if lang not in {"vi", "en"}:
                 lang = "vi"
 
@@ -167,7 +191,8 @@ def register_html_translation(app):
                 try:
                     from i18n_server import translate_html
                     html_content = response.get_data(as_text=True)
-                    translated_html = translate_html(html_content, lang)
+                    dynamic_translations = home_vi if lang == "vi" else home_en
+                    translated_html = translate_html(html_content, lang, dynamic_translations)
                     response.set_data(translated_html)
                 except Exception as e:
                     app.logger.error(f"[i18n middleware] Error in translation: {e}")

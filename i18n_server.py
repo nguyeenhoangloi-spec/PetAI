@@ -88,9 +88,10 @@ def translate_warning_text(text: str) -> str:
 VOID_ELEMENTS = {"area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "param", "source", "track", "wbr"}
 
 class HTMLTranslator(HTMLParser):
-    def __init__(self, lang):
+    def __init__(self, lang, dynamic_translations=None):
         super().__init__(convert_charrefs=False)
         self.lang = lang
+        self.dynamic_translations = dynamic_translations or {}
         self.result = []
         self.tag_stack = []
 
@@ -284,6 +285,8 @@ class HTMLTranslator(HTMLParser):
         self.result.append(f"&#{name};")
         
     def get_translation(self, key):
+        if key in self.dynamic_translations:
+            return self.dynamic_translations[key]
         return translations.get(self.lang, {}).get(key)
 
 
@@ -421,11 +424,11 @@ def translate_dynamic_toast(text: str, lang: str) -> str:
     return text
 
 
-def translate_html(html_content: str, lang: str) -> str:
+def translate_html(html_content: str, lang: str, dynamic_translations: dict = None) -> str:
     if lang not in {"en", "vi"}:
         return html_content
     try:
-        parser = HTMLTranslator(lang)
+        parser = HTMLTranslator(lang, dynamic_translations)
         parser.feed(html_content)
         return "".join(parser.result)
     except Exception as e:

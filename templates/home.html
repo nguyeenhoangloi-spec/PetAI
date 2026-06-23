@@ -1,7 +1,7 @@
 <!-- html-validate-disable no-dup-class, title-length -->
 <!DOCTYPE html>
 
-<html class="{{ ('dark' if ui_theme == 'dark' else 'light') + (' i18n-loading' if ui_language == 'en' else '') }}"
+<html class="{{ ('dark' if ui_theme == 'dark' else 'light') }} i18n-loading"
   lang="{{ ui_language or 'vi' }}" data-theme="{{ ui_theme or 'light' }}">
 
 <head>
@@ -17,14 +17,19 @@
           }
         } catch (e) {}
         document.documentElement.setAttribute("data-user-lang", savedLang);
-      if (savedLang === "en") {
-        document.documentElement.classList.add("i18n-loading");
-      }
+      // Hide body for ALL languages to prevent flash of untranslated/old content
+      document.documentElement.classList.add("i18n-loading");
     })();
   </script>
   <style>
     html.i18n-loading body {
       visibility: hidden !important;
+      opacity: 0 !important;
+    }
+    html.ready body {
+      visibility: visible;
+      opacity: 1;
+      transition: opacity 0.15s ease-in;
     }
   </style>
   <noscript>
@@ -780,24 +785,20 @@
     <section class="px-4 md:px-6 w-full mb-16" id="product">
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-gutter items-center">
         <div class="relative z-20">
-          <span class="inline-block label-sm text-primary mb-6 tracking-[0.2em]" data-i18n="homeHeroTag">ĐỀ TÀI: NHẬN
-            DIỆN GIỐNG CHÓ</span>
+          <span class="inline-block label-sm text-primary mb-6 tracking-[0.2em]" data-i18n="homeHeroTag">{{ ht('homeHeroTag', 'ĐỀ TÀI: NHẬN DIỆN GIỐNG CHÓ') }}</span>
           <h1 class="home-hero-title mb-8 text-on-surface">
-            <span data-i18n="predict">Nhận diện</span><br>
+            <span data-i18n="predict">{{ ht('predict', 'Nhận diện') }}</span><br>
             <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary"
-              data-i18n="dogBreedsNav">GIỐNG CHÓ</span>
+              data-i18n="dogBreedsNav">{{ ht('dogBreedsNav', 'GIỐNG CHÓ') }}</span>
           </h1>
           <p class="body-md text-on-surface-variant mb-12 max-w-xl" data-i18n="homeHeroDesc">
-            <span data-i18n="homeHeroDesc">Xác định chó thuần chủng và chó lai từ ảnh đầu vào, trả về
-              Top-3 giống cùng độ tin cậy và giải thích trực quan.</span>
+            <span data-i18n="homeHeroDesc">{{ ht('homeHeroDesc', 'Xác định chó thuần chủng và chó lai từ ảnh đầu vào, trả về Top-3 giống cùng độ tin cậy và giải thích trực quan.') }}</span>
           </p>
           <div class="flex flex-wrap gap-6">
             <a class="bg-primary text-on-primary px-8 py-4 rounded-xl font-bold hover:shadow-xl transition-all"
-              href="{{ url_for('predict.upload_page') }}" data-i18n="homeStartBtn"><span data-i18n="homeStartBtn">Bắt
-                đầu nhận diện</span></a>
+              href="{{ url_for('predict.upload_page') }}" data-i18n="homeStartBtn"><span data-i18n="homeStartBtn">{{ ht('homeStartBtn', 'Bắt đầu nhận diện') }}</span></a>
             <a class="glass-card px-8 py-4 rounded-xl font-bold text-primary flex items-center gap-2" href="#workflow">
-              <span class="material-symbols-outlined">play_circle</span><span data-i18n="homeHowItWorks">Cách hoạt
-                động</span></a>
+              <span class="material-symbols-outlined">play_circle</span><span data-i18n="homeHowItWorks">{{ ht('homeHowItWorks', 'Cách hoạt động') }}</span></a>
           </div>
         </div>
         <div class="relative flex justify-center items-center">
@@ -846,12 +847,11 @@
                 98.4<span class="headline-md">%</span>
               </div>
               <div class="label-sm text-on-surface-variant" data-i18n="homeAccuracy">
-                <span data-i18n="homeAccuracy">ĐỘ CHÍNH XÁC</span>
+                <span data-i18n="homeAccuracy">{{ ht('homeAccuracy', 'ĐỘ CHÍNH XÁC') }}</span>
               </div>
             </div>
             <a class="w-full py-3 bg-primary text-on-primary rounded-lg font-bold body-md mt-8 text-center"
-              href="{{ url_for('predict.upload_page') }}" data-i18n="homeTryNow"><span data-i18n="homeTryNow">Thử
-                ngay</span></a>
+              href="{{ url_for('predict.upload_page') }}" data-i18n="homeTryNow"><span data-i18n="homeTryNow">{{ ht('homeTryNow', 'Thử ngay') }}</span></a>
           </div>
         </div>
       </div>
@@ -860,10 +860,10 @@
     <section class="px-4 md:px-6 w-full overflow-hidden py-16" id="spotlight">
       <div class="text-center mb-8">
         <h2 class="headline-lg mb-4 uppercase tracking-tight text-on-surface" data-i18n="homeFeaturesTitle">
-          <span data-i18n="homeFeaturesTitle">Điều gì làm PetAI nổi bật?</span>
+          <span data-i18n="homeFeaturesTitle">{{ ht('homeFeaturesTitle', 'Điều gì làm PetAI nổi bật?') }}</span>
         </h2>
         <p class="body-md text-on-surface-variant" data-i18n="homeFeaturesSub">
-          <span data-i18n="homeFeaturesSub">Trải nghiệm nhận diện nhanh, rõ ràng và dễ hiểu.</span>
+          <span data-i18n="homeFeaturesSub">{{ ht('homeFeaturesSub', 'Trải nghiệm nhận diện nhanh, rõ ràng và dễ hiểu.') }}</span>
         </p>
       </div>
       <!-- Tab Navigation -->
@@ -872,22 +872,22 @@
           <button type="button"
             class="spotlight-tab px-6 py-2.5 rounded-full body-md transition-all duration-300 bg-primary text-on-primary shadow-md"
             data-tab="fast-id" data-i18n="homeFeature1Title">
-            <span data-i18n="homeFeature1Title">Nhận diện nhanh</span>
+            <span data-i18n="homeFeature1Title">{{ ht('homeFeature1Title', 'Nhận diện nhanh') }}</span>
           </button>
           <button type="button"
             class="spotlight-tab px-6 py-2.5 rounded-full body-md transition-all duration-300 text-on-surface-variant hover:text-primary"
             data-tab="top-3" data-i18n="homeFeature2Title">
-            <span data-i18n="homeFeature2Title">Top-3 giống</span>
+            <span data-i18n="homeFeature2Title">{{ ht('homeFeature2Title', 'Top-3 giống') }}</span>
           </button>
           <button type="button"
             class="spotlight-tab px-6 py-2.5 rounded-full body-md transition-all duration-300 text-on-surface-variant hover:text-primary"
             data-tab="visual" data-i18n="homeFeature3Title">
-            <span data-i18n="homeFeature3Title">Giải thích trực quan</span>
+            <span data-i18n="homeFeature3Title">{{ ht('homeFeature3Title', 'Giải thích trực quan') }}</span>
           </button>
           <button type="button"
             class="spotlight-tab px-6 py-2.5 rounded-full body-md transition-all duration-300 text-on-surface-variant hover:text-primary"
             data-tab="history" data-i18n="homeFeature4Title">
-            <span data-i18n="homeFeature4Title">Lưu lịch sử</span>
+            <span data-i18n="homeFeature4Title">{{ ht('homeFeature4Title', 'Lưu lịch sử') }}</span>
           </button>
         </div>
       </div>
@@ -900,31 +900,29 @@
         <div class="spotlight-panel grid grid-cols-1 lg:grid-cols-2 gap-16 items-center w-full" id="fast-id">
           <div class="space-y-8">
             <h3 class="headline-md text-on-surface" data-i18n="homeDetail1Title">
-              <span data-i18n="homeDetail1Title">Nhận diện nhanh, rõ trong vài giây</span>
+              <span data-i18n="homeDetail1Title">{{ ht('homeDetail1Title', 'Nhận diện nhanh, rõ trong vài giây') }}</span>
             </h3>
             <p class="text-on-surface-variant body-md" data-i18n="homeDetail1Desc">
-              <span data-i18n="homeDetail1Desc">PetAI phân tích ảnh và trả về kết quả rõ ràng, giúp bạn nhận
-                diện giống chó nhanh chóng.</span>
+              <span data-i18n="homeDetail1Desc">{{ ht('homeDetail1Desc', 'PetAI phân tích ảnh và trả về kết quả rõ ràng, giúp bạn nhận diện giống chó nhanh chóng.') }}</span>
             </p>
             <ul class="space-y-6">
               <li class="flex items-center gap-4 text-on-surface">
                 <span class="material-symbols-outlined text-primary">bolt</span>
-                <span class="" data-i18n="homeDetail1Point1">Xử lý ảnh nhanh, không chờ lâu</span>
+                <span class="" data-i18n="homeDetail1Point1">{{ ht('homeDetail1Point1', 'Xử lý ảnh nhanh, không chờ lâu') }}</span>
               </li>
               <li class="flex items-center gap-4 text-on-surface">
                 <span class="material-symbols-outlined text-primary">leaderboard</span>
-                <span class="" data-i18n="homeDetail1Point2">Top-3 kết quả kèm độ tin cậy</span>
+                <span class="" data-i18n="homeDetail1Point2">{{ ht('homeDetail1Point2', 'Top-3 kết quả kèm độ tin cậy') }}</span>
               </li>
               <li class="flex items-center gap-4 text-on-surface">
                 <span class="material-symbols-outlined text-primary">visibility</span>
-                <span class="" data-i18n="homeDetail1Point3">Gợi ý vùng đặc trưng dễ hiểu</span>
+                <span class="" data-i18n="homeDetail1Point3">{{ ht('homeDetail1Point3', 'Gợi ý vùng đặc trưng dễ hiểu') }}</span>
               </li>
             </ul>
           </div>
           <div class="bg-surface-container-low border border-outline-variant/30 p-8 rounded-2xl shadow-inner">
             <div class="flex items-center justify-between mb-8">
-              <span class="label-sm text-on-surface-variant tracking-[0.2em]" data-i18n="homeDemoTitle">MINH HỌA KẾT
-                QUẢ</span>
+              <span class="label-sm text-on-surface-variant tracking-[0.2em]" data-i18n="homeDemoTitle">{{ ht('homeDemoTitle', 'MINH HỌA KẾT QUẢ') }}</span>
               <span class="material-symbols-outlined text-on-surface-variant text-sm">more_horiz</span>
             </div>
             <div class="space-y-6 body-md">
@@ -958,8 +956,7 @@
             </div>
             <div class="mt-8 pt-6 border-t border-outline-variant/20 flex items-center justify-between">
               <a class="label-sm text-primary flex items-center gap-2 hover:underline cursor-pointer font-bold"
-                href="{{ url_for('history.history') }}"><span data-i18n="homeViewHistory">Xem lịch sử nhận
-                  diện</span><span class="material-symbols-outlined text-sm">arrow_forward</span>
+                href="{{ url_for('history.history') }}"><span data-i18n="homeViewHistory">{{ ht('homeViewHistory', 'Xem lịch sử nhận diện') }}</span><span class="material-symbols-outlined text-sm">arrow_forward</span>
               </a>
             </div>
           </div>
@@ -967,30 +964,29 @@
         <div class="spotlight-panel hidden grid grid-cols-1 lg:grid-cols-2 gap-16 items-center w-full" id="top-3">
           <div class="space-y-8">
             <h3 class="headline-md" data-i18n="homeDetail2Title">
-              <span data-i18n="homeDetail2Title">Top-3 giống để dễ so sánh</span>
+              <span data-i18n="homeDetail2Title">{{ ht('homeDetail2Title', 'Top-3 giống để dễ so sánh') }}</span>
             </h3>
             <p class="text-on-surface-variant body-md" data-i18n="homeDetail2Desc">
-              <span data-i18n="homeDetail2Desc">Hệ thống trả về 3 giống có khả năng xuất hiện cao nhất, hữu
-                ích cho trường hợp chó lai.</span>
+              <span data-i18n="homeDetail2Desc">{{ ht('homeDetail2Desc', 'Hệ thống trả về 3 giống có khả năng xuất hiện cao nhất, hữu ích cho trường hợp chó lai.') }}</span>
             </p>
             <ul class="space-y-6">
               <li class="flex items-center gap-4 text-on-surface">
                 <span class="material-symbols-outlined text-primary">list_alt</span>
-                <span class="" data-i18n="homeDetail2Point1">Kết quả sắp xếp theo độ tin cậy</span>
+                <span class="" data-i18n="homeDetail2Point1">{{ ht('homeDetail2Point1', 'Kết quả sắp xếp theo độ tin cậy') }}</span>
               </li>
               <li class="flex items-center gap-4 text-on-surface">
                 <span class="material-symbols-outlined text-primary">compare_arrows</span>
-                <span class="" data-i18n="homeDetail2Point2">So sánh nhanh giữa các giống gần nhau</span>
+                <span class="" data-i18n="homeDetail2Point2">{{ ht('homeDetail2Point2', 'So sánh nhanh giữa các giống gần nhau') }}</span>
               </li>
               <li class="flex items-center gap-4 text-on-surface">
                 <span class="material-symbols-outlined text-primary">tips_and_updates</span>
-                <span class="" data-i18n="homeDetail2Point3">Gợi ý phù hợp cho chó lai</span>
+                <span class="" data-i18n="homeDetail2Point3">{{ ht('homeDetail2Point3', 'Gợi ý phù hợp cho chó lai') }}</span>
               </li>
             </ul>
           </div>
           <div class="bg-surface-container-low border border-outline-variant/30 p-8 rounded-2xl shadow-inner">
             <div class="label-sm text-on-surface-variant mb-6 tracking-[0.2em]" data-i18n="homeTop3Title">
-              <span data-i18n="homeTop3Title">TOP-3 GỢI Ý</span>
+              <span data-i18n="homeTop3Title">{{ ht('homeTop3Title', 'TOP-3 GỢI Ý') }}</span>
             </div>
             <div class="space-y-4">
               <div class="flex items-center justify-between p-4 bg-white rounded-xl border border-outline-variant/30">
@@ -1009,37 +1005,36 @@
               </div>
             </div>
             <p class="mt-8 label-sm text-on-surface-variant italic" data-i18n="homeDemoDisclaimer">
-              <span data-i18n="homeDemoDisclaimer">Kết quả minh họa, tỷ lệ có thể thay đổi.</span>
+              <span data-i18n="homeDemoDisclaimer">{{ ht('homeDemoDisclaimer', 'Kết quả minh họa, tỷ lệ có thể thay đổi.') }}</span>
             </p>
           </div>
         </div>
         <div class="spotlight-panel hidden grid grid-cols-1 lg:grid-cols-2 gap-16 items-center w-full" id="visual">
           <div class="space-y-8">
             <h3 class="headline-md" data-i18n="homeDetail3Title">
-              <span data-i18n="homeDetail3Title">Giải thích trực quan, dễ hiểu</span>
+              <span data-i18n="homeDetail3Title">{{ ht('homeDetail3Title', 'Giải thích trực quan, dễ hiểu') }}</span>
             </h3>
             <p class="text-on-surface-variant body-md" data-i18n="homeDetail3Desc">
-              <span data-i18n="homeDetail3Desc">Làm nổi bật vùng đặc trưng giúp bạn hiểu vì sao AI đưa ra kết
-                quả.</span>
+              <span data-i18n="homeDetail3Desc">{{ ht('homeDetail3Desc', 'Làm nổi bật vùng đặc trưng giúp bạn hiểu vì sao AI đưa ra kết quả.') }}</span>
             </p>
             <ul class="space-y-6">
               <li class="flex items-center gap-4 text-on-surface">
                 <span class="material-symbols-outlined text-primary">center_focus_strong</span>
-                <span class="" data-i18n="homeDetail3Point1">Highlight vùng tai, mắt, mõm</span>
+                <span class="" data-i18n="homeDetail3Point1">{{ ht('homeDetail3Point1', 'Highlight vùng tai, mắt, mõm') }}</span>
               </li>
               <li class="flex items-center gap-4 text-on-surface">
                 <span class="material-symbols-outlined text-primary">image_search</span>
-                <span class="" data-i18n="homeDetail3Point2">Hình ảnh trực quan, dễ theo dõi</span>
+                <span class="" data-i18n="homeDetail3Point2">{{ ht('homeDetail3Point2', 'Hình ảnh trực quan, dễ theo dõi') }}</span>
               </li>
               <li class="flex items-center gap-4 text-on-surface">
                 <span class="material-symbols-outlined text-primary">verified</span>
-                <span class="" data-i18n="homeDetail3Point3">Tăng độ tin cậy khi tham khảo</span>
+                <span class="" data-i18n="homeDetail3Point3">{{ ht('homeDetail3Point3', 'Tăng độ tin cậy khi tham khảo') }}</span>
               </li>
             </ul>
           </div>
           <div class="bg-surface-container-low border border-outline-variant/30 p-8 rounded-2xl shadow-inner">
             <div class="label-sm text-on-surface-variant mb-6 tracking-[0.2em]" data-i18n="homeHighlightedRegions">
-              <span data-i18n="homeHighlightedRegions">VÙNG NỔI BẬT</span>
+              <span data-i18n="homeHighlightedRegions">{{ ht('homeHighlightedRegions', 'VÙNG NỔI BẬT') }}</span>
             </div>
             <div
               class="relative aspect-video rounded-xl overflow-hidden bg-primary/10 border border-primary/20 flex items-center justify-center group">
@@ -1055,10 +1050,10 @@
             </div>
             <div class="mt-6 space-y-2">
               <p class="body-md text-on-surface" data-i18n="homeDemoRegionDesc">
-                <span data-i18n="homeDemoRegionDesc">Vùng tai và mắt được đánh dấu rõ ràng.</span>
+                <span data-i18n="homeDemoRegionDesc">{{ ht('homeDemoRegionDesc', 'Vùng tai và mắt được đánh dấu rõ ràng.') }}</span>
               </p>
               <p class="label-sm text-on-surface-variant" data-i18n="homeDemoHeatmapDesc">
-                <span data-i18n="homeDemoHeatmapDesc">Mô phỏng minh họa heatmap.</span>
+                <span data-i18n="homeDemoHeatmapDesc">{{ ht('homeDemoHeatmapDesc', 'Mô phỏng minh họa heatmap.') }}</span>
               </p>
             </div>
           </div>
@@ -1066,30 +1061,29 @@
         <div class="spotlight-panel hidden grid grid-cols-1 lg:grid-cols-2 gap-16 items-center w-full" id="history">
           <div class="space-y-8">
             <h3 class="headline-md" data-i18n="homeDetail4Title">
-              <span data-i18n="homeDetail4Title">Lưu lịch sử để tra cứu lại</span>
+              <span data-i18n="homeDetail4Title">{{ ht('homeDetail4Title', 'Lưu lịch sử để tra cứu lại') }}</span>
             </h3>
             <p class="text-on-surface-variant body-md" data-i18n="homeDetail4Desc">
-              <span data-i18n="homeDetail4Desc">Xem lại các lần nhận diện trước đó, tiện so sánh và chia
-                sẻ.</span>
+              <span data-i18n="homeDetail4Desc">{{ ht('homeDetail4Desc', 'Xem lại các lần nhận diện trước đó, tiện so sánh và chia sẻ.') }}</span>
             </p>
             <ul class="space-y-6">
               <li class="flex items-center gap-4 text-on-surface">
                 <span class="material-symbols-outlined text-primary">history</span>
-                <span class="" data-i18n="homeDetail4Point1">Lưu kết quả tự động theo thời gian</span>
+                <span class="" data-i18n="homeDetail4Point1">{{ ht('homeDetail4Point1', 'Lưu kết quả tự động theo thời gian') }}</span>
               </li>
               <li class="flex items-center gap-4 text-on-surface">
                 <span class="material-symbols-outlined text-primary">filter_list</span>
-                <span class="" data-i18n="homeDetail4Point2">Lọc nhanh theo giống hoặc ngày</span>
+                <span class="" data-i18n="homeDetail4Point2">{{ ht('homeDetail4Point2', 'Lọc nhanh theo giống hoặc ngày') }}</span>
               </li>
               <li class="flex items-center gap-4 text-on-surface">
                 <span class="material-symbols-outlined text-primary">share</span>
-                <span class="" data-i18n="homeDetail4Point3">Chia sẻ kết quả với bạn bè</span>
+                <span class="" data-i18n="homeDetail4Point3">{{ ht('homeDetail4Point3', 'Chia sẻ kết quả với bạn bè') }}</span>
               </li>
             </ul>
           </div>
           <div class="bg-surface-container-low border border-outline-variant/30 p-8 rounded-2xl shadow-inner">
             <div class="label-sm text-on-surface-variant mb-6 tracking-[0.2em]" data-i18n="homeRecentHistoryTitle">
-              <span data-i18n="homeRecentHistoryTitle">LỊCH SỬ GẦN NHẤT</span>
+              <span data-i18n="homeRecentHistoryTitle">{{ ht('homeRecentHistoryTitle', 'LỊCH SỬ GẦN NHẤT') }}</span>
             </div>
             <div class="space-y-px">
               <div
@@ -1121,7 +1115,7 @@
             </div>
             <button type="button"
               class="mt-8 label-sm text-secondary-container flex items-center gap-2 hover:underline">
-              <span data-i18n="homeOpenHistoryBtn">Mở lịch sử</span><span
+              <span data-i18n="homeOpenHistoryBtn">{{ ht('homeOpenHistoryBtn', 'Mở lịch sử') }}</span><span
                 class="material-symbols-outlined text-sm">arrow_forward</span>
             </button>
           </div>
@@ -1132,11 +1126,10 @@
     <section class="px-4 md:px-6 w-full relative py-16" id="social-proof">
       <div class="text-center mb-8">
         <h2 class="headline-lg mb-4 text-on-surface" data-i18n="homeCommunityTitle">
-          <span data-i18n="homeCommunityTitle">ĐƯỢC TIN DÙNG BỞI CỘNG ĐỒNG YÊU THÚ CƯNG</span>
+          <span data-i18n="homeCommunityTitle">{{ ht('homeCommunityTitle', 'ĐƯỢC TIN DÙNG BỞI CỘNG ĐỒNG YÊU THÚ CƯNG') }}</span>
         </h2>
         <p class="body-md text-on-surface-variant max-w-2xl mx-auto" data-i18n="homeCommunitySub">
-          <span data-i18n="homeCommunitySub">PetAI hỗ trợ người nuôi chó, cửa hàng thú cưng và phòng khám thú
-            y ra quyết định nhanh hơn từ ảnh chụp thực tế.</span>
+          <span data-i18n="homeCommunitySub">{{ ht('homeCommunitySub', 'PetAI hỗ trợ người nuôi chó, cửa hàng thú cưng và phòng khám thú y ra quyết định nhanh hơn từ ảnh chụp thực tế.') }}</span>
         </p>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-bento-gap">
@@ -1151,7 +1144,7 @@
             10,000+
           </div>
           <p class="body-md text-on-surface-variant" data-i18n="registeredAccounts">
-            <span data-i18n="homeStatsUsersDesc">Tài khoản đã đăng ký</span>
+            <span data-i18n="homeStatsUsersDesc">{{ ht('homeStatsUsersDesc', 'Tài khoản đã đăng ký') }}</span>
           </p>
         </div>
         <!-- Stat 2 -->
@@ -1159,27 +1152,26 @@
           <div class="flex items-center justify-between mb-6">
             <span class="material-symbols-outlined text-primary text-2xl">query_stats</span>
             <span class="label-sm text-on-surface-variant tracking-[0.2em] uppercase"
-              data-i18n="homeStatsPredictions">DỰ ĐOÁN</span>
+              data-i18n="homeStatsPredictions">{{ ht('homeStatsPredictions', 'DỰ ĐOÁN') }}</span>
           </div>
           <div class="font-display-lg text-4xl font-bold text-primary mb-2">
             1M+
           </div>
           <p class="body-md text-on-surface-variant" data-i18n="homeStatsPredictionsDesc">
-            <span data-i18n="homeStatsPredictionsDesc">Lượt nhận diện đã xử lý</span>
+            <span data-i18n="homeStatsPredictionsDesc">{{ ht('homeStatsPredictionsDesc', 'Lượt nhận diện đã xử lý') }}</span>
           </p>
         </div>
         <!-- Stat 3 -->
         <div class="glass-card p-gutter rounded-3xl border border-outline-variant/30 group">
           <div class="flex items-center justify-between mb-6">
             <span class="material-symbols-outlined text-primary text-2xl">precision_manufacturing</span>
-            <span class="label-sm text-on-surface-variant tracking-[0.2em] uppercase" data-i18n="homeAccuracy">ĐỘ CHÍNH
-              XÁC</span>
+            <span class="label-sm text-on-surface-variant tracking-[0.2em] uppercase" data-i18n="homeAccuracy">{{ ht('homeAccuracy', 'ĐỘ CHÍNH XÁC') }}</span>
           </div>
           <div class="font-display-lg text-4xl font-bold text-primary mb-2">
             Top-3
           </div>
           <p class="body-md text-on-surface-variant" data-i18n="homeStatsAccuracyDesc">
-            <span data-i18n="homeStatsAccuracyDesc">Tối ưu cho chó thuần và chó lai</span>
+            <span data-i18n="homeStatsAccuracyDesc">{{ ht('homeStatsAccuracyDesc', 'Tối ưu cho chó thuần và chó lai') }}</span>
           </p>
         </div>
         <!-- Stat 4 -->
@@ -1192,7 +1184,7 @@
             24/7
           </div>
           <p class="body-md text-on-surface-variant" data-i18n="homeStatsSupportDesc">
-            <span data-i18n="homeStatsSupportDesc">Hỗ trợ trong quá trình sử dụng</span>
+            <span data-i18n="homeStatsSupportDesc">{{ ht('homeStatsSupportDesc', 'Hỗ trợ trong quá trình sử dụng') }}</span>
           </p>
         </div>
       </div>
@@ -1497,11 +1489,10 @@
     <section class="px-4 md:px-6 w-full overflow-hidden py-16" id="features">
       <div class="text-center mb-10">
         <h2 class="headline-lg mb-4 text-on-surface" data-i18n="homeCoreValuesTitle">
-          <span data-i18n="homeCoreValuesTitle">GIÁ TRỊ CỐT LÕI</span>
+          <span data-i18n="homeCoreValuesTitle">{{ ht('homeCoreValuesTitle', 'GIÁ TRỊ CỐT LÕI') }}</span>
         </h2>
         <p class="body-md text-on-surface-variant max-w-2xl mx-auto" data-i18n="homeCoreValuesSub">
-          <span data-i18n="homeCoreValuesSub">Nhận diện nhanh, rõ ràng, dễ hiểu với công nghệ học sâu tiên
-            tiến.</span>
+          <span data-i18n="homeCoreValuesSub">{{ ht('homeCoreValuesSub', 'Nhận diện nhanh, rõ ràng, dễ hiểu với công nghệ học sâu tiên tiến.') }}</span>
         </p>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-12 md:grid-rows-2 gap-bento-gap h-auto md:h-[800px]">
@@ -1509,13 +1500,12 @@
         <div
           class="md:col-span-8 md:row-span-1 glass-card p-gutter rounded-3xl flex flex-col justify-between group overflow-hidden relative bg-white">
           <div class="relative z-10">
-            <span class="label-sm text-primary mb-4 block" data-i18n="homeCoreValue1Tag">01 / DỮ LIỆU</span>
+            <span class="label-sm text-primary mb-4 block" data-i18n="homeCoreValue1Tag">{{ ht('homeCoreValue1Tag', '01 / DỮ LIỆU') }}</span>
             <h3 class="headline-md mb-2 text-on-surface" data-i18n="homeCoreValue1Title">
-              <span data-i18n="homeCoreValue1Title">120+ giống chó</span>
+              <span data-i18n="homeCoreValue1Title">{{ ht('homeCoreValue1Title', '120+ giống chó') }}</span>
             </h3>
             <p class="text-on-surface-variant max-w-md" data-i18n="homeCoreValue1Desc">
-              <span data-i18n="homeCoreValue1Desc">Phân loại đầy đủ các giống phổ biến và nhận diện chó lai với
-                kho dữ liệu khổng lồ.</span>
+              <span data-i18n="homeCoreValue1Desc">{{ ht('homeCoreValue1Desc', 'Phân loại đầy đủ các giống phổ biến và nhận diện chó lai với kho dữ liệu khổng lồ.') }}</span>
             </p>
           </div>
           <div class="absolute right-0 bottom-0 w-2/3 h-2/3 opacity-80 transition-opacity">
@@ -1527,9 +1517,9 @@
         <!-- API / Logic Core -->
         <div
           class="md:col-span-4 md:row-span-1 glass-card p-gutter rounded-3xl flex flex-col group border-l-4 border-l-primary bg-white">
-          <span class="label-sm text-secondary mb-4 block" data-i18n="homeCoreValue2Tag">02 / KẾT QUẢ</span>
+          <span class="label-sm text-secondary mb-4 block" data-i18n="homeCoreValue2Tag">{{ ht('homeCoreValue2Tag', '02 / KẾT QUẢ') }}</span>
           <h3 class="headline-md mb-4 text-on-surface" data-i18n="homeCoreValue2Title">
-            <span data-i18n="homeCoreValue2Title">Top-3 kết quả</span>
+            <span data-i18n="homeCoreValue2Title">{{ ht('homeCoreValue2Title', 'Top-3 kết quả') }}</span>
           </h3>
           <div
             class="label-sm text-code-sm bg-surface-container-low p-4 rounded-xl border border-outline-variant/30 flex-grow shadow-inner">
@@ -1541,7 +1531,7 @@
                 }</code>
           </div>
           <p class="mt-6 text-on-surface-variant" data-i18n="homeCoreValue2Desc">
-            <span data-i18n="homeCoreValue2Desc">Trả về 3 giống có khả năng cao nhất, tối ưu cho chó lai.</span>
+            <span data-i18n="homeCoreValue2Desc">{{ ht('homeCoreValue2Desc', 'Trả về 3 giống có khả năng cao nhất, tối ưu cho chó lai.') }}</span>
           </p>
         </div>
         <!-- Visual Explanation -->
@@ -1550,20 +1540,19 @@
           <div>
             <span class="material-symbols-outlined text-primary text-4xl mb-6">visibility</span>
             <h3 class="headline-md mb-2 text-on-surface" data-i18n="homeFeature3Title">
-              <span data-i18n="homeFeature3Title">Giải thích trực quan</span>
+              <span data-i18n="homeFeature3Title">{{ ht('homeFeature3Title', 'Giải thích trực quan') }}</span>
             </h3>
           </div>
           <p class="text-on-surface-variant" data-i18n="homeCoreValue3Desc">
-            <span data-i18n="homeCoreValue3Desc">Làm nổi bật các vùng đặc trưng (tai, mắt, mõm) giúp AI nhận
-              diện giống chó chính xác.</span>
+            <span data-i18n="homeCoreValue3Desc">{{ ht('homeCoreValue3Desc', 'Làm nổi bật các vùng đặc trưng (tai, mắt, mõm) giúp AI nhận diện giống chó chính xác.') }}</span>
           </p>
         </div>
         <!-- Data Protection -->
         <div
           class="md:col-span-4 md:row-span-1 glass-card p-gutter rounded-3xl bg-surface-container-low border-outline-variant/30">
-          <span class="label-sm text-on-surface-variant mb-4 block" data-i18n="homeCoreValue4Tag">04 / BẢO MẬT</span>
+          <span class="label-sm text-on-surface-variant mb-4 block" data-i18n="homeCoreValue4Tag">{{ ht('homeCoreValue4Tag', '04 / BẢO MẬT') }}</span>
           <h3 class="headline-md mb-4 text-on-surface" data-i18n="homeCoreValue4Title">
-            <span data-i18n="homeCoreValue4Title">Bảo vệ dữ liệu</span>
+            <span data-i18n="homeCoreValue4Title">{{ ht('homeCoreValue4Title', 'Bảo vệ dữ liệu') }}</span>
           </h3>
           <div class="flex items-end gap-1 h-24 mb-6">
             <div class="w-full bg-primary/20 h-12 rounded-t-sm"></div>
@@ -1573,8 +1562,7 @@
             <div class="w-full bg-primary/20 h-14 rounded-t-sm"></div>
           </div>
           <p class="text-on-surface-variant" data-i18n="homeCoreValue4Desc">
-            <span data-i18n="homeCoreValue4Desc">Ảnh tải lên được xử lý an toàn và chỉ dùng cho mục đích nhận
-              diện.</span>
+            <span data-i18n="homeCoreValue4Desc">{{ ht('homeCoreValue4Desc', 'Ảnh tải lên được xử lý an toàn và chỉ dùng cho mục đích nhận diện.') }}</span>
           </p>
         </div>
         <!-- Edge / Real-time -->
@@ -1585,11 +1573,10 @@
             src="https://lh3.googleusercontent.com/aida-public/AB6AXuCc6n9M76tFoshxhAyUwjlQPCPUhw2_3Trp2aG7Z4iOzqoT_RxK7lBQv4fMSUdm0-MIRRb1W-i3FG8t37d1jaO03SBuTNSdxBGlrsNRQ0-95aq9iC9OCiam9rmRm8frFGOBqeFBPwO_p5tiiZ2GWFpSDlD-aun0WbFpdd8nebTCW0fedH4-arfRedc_r9prCGKW2v3X4SImeMdcgfTOuwmyXv9D4wKI00p6ONKeMu8CbgRC3_pkmt11JcoziCiS7TVBLzjxzKu-Slo">
           <div class="relative z-10">
             <h3 class="headline-md mb-2 text-on-surface" data-i18n="homeCoreValue5Title">
-              <span data-i18n="homeCoreValue5Title">Xử lý tức thì</span>
+              <span data-i18n="homeCoreValue5Title">{{ ht('homeCoreValue5Title', 'Xử lý tức thì') }}</span>
             </h3>
             <p class="text-on-surface-variant" data-i18n="homeCoreValue5Desc">
-              <span data-i18n="homeCoreValue5Desc">Kết quả rõ trong vài giây nhờ hệ thống tối ưu hóa hiệu năng
-                cao.</span>
+              <span data-i18n="homeCoreValue5Desc">{{ ht('homeCoreValue5Desc', 'Kết quả rõ trong vài giây nhờ hệ thống tối ưu hóa hiệu năng cao.') }}</span>
             </p>
           </div>
         </div>
@@ -1599,10 +1586,10 @@
     <section class="px-4 md:px-6 w-full py-16" id="pricing">
       <div class="text-center mb-10">
         <h2 class="headline-lg mb-4 text-on-surface" data-i18n="homePricingTitle">
-          <span data-i18n="homePricingTitle">BẢNG GIÁ MINH BẠCH</span>
+          <span data-i18n="homePricingTitle">{{ ht('homePricingTitle', 'BẢNG GIÁ MINH BẠCH') }}</span>
         </h2>
         <p class="body-md text-on-surface-variant max-w-2xl mx-auto" data-i18n="homePricingSub">
-          <span data-i18n="homePricingSub">Chọn gói phù hợp với nhu cầu nhận diện của bạn.</span>
+          <span data-i18n="homePricingSub">{{ ht('homePricingSub', 'Chọn gói phù hợp với nhu cầu nhận diện của bạn.') }}</span>
         </p>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-bento-gap">
@@ -1619,22 +1606,18 @@
             </div>
             <ul class="space-y-4 text-on-surface-variant body-md mb-8">
               <li class="flex items-center gap-2">
-                <span class="material-symbols-outlined text-primary text-lg">check_circle</span><span
-                  data-i18n="homePlanFreeScans">10 lượt nhận diện</span>
+                <span class="material-symbols-outlined text-primary text-lg">check_circle</span><span data-i18n="homePlanFreeScans">{{ ht('homePlanFreeScans', '10 lượt nhận diện') }}</span>
               </li>
               <li class="flex items-center gap-2">
-                <span class="material-symbols-outlined text-primary text-lg">check_circle</span><span
-                  data-i18n="homePlanFreeAds">Tối đa 3 lần xem QC</span>
+                <span class="material-symbols-outlined text-primary text-lg">check_circle</span><span data-i18n="homePlanFreeAds">{{ ht('homePlanFreeAds', 'Tối đa 3 lần xem QC') }}</span>
               </li>
               <li class="flex items-center gap-2">
-                <span class="material-symbols-outlined text-primary text-lg">check_circle</span><span
-                  data-i18n="homePlanFreeSuit">Phù hợp dùng thử</span>
+                <span class="material-symbols-outlined text-primary text-lg">check_circle</span><span data-i18n="homePlanFreeSuit">{{ ht('homePlanFreeSuit', 'Phù hợp dùng thử') }}</span>
               </li>
             </ul>
           </div>
           <a class="w-full py-3 border border-outline-variant rounded-xl font-bold hover:bg-surface-container-low transition-all text-on-surface text-center"
-            href="{{ url_for('register.register') }}" data-i18n="homePlanFreeBtn"><span data-i18n="homePlanFreeBtn">Bắt
-              đầu</span></a>
+            href="{{ url_for('register.register') }}" data-i18n="homePlanFreeBtn"><span data-i18n="homePlanFreeBtn">{{ ht('homePlanFreeBtn', 'Bắt đầu') }}</span></a>
         </div>
         <!-- Co ban -->
         <div
@@ -1659,8 +1642,7 @@
             </ul>
           </div>
           <a class="w-full py-3 border border-outline-variant rounded-xl font-bold hover:bg-surface-container-low transition-all text-on-surface text-center"
-            href="{{ url_for('register.register') }}" data-i18n="homePlanChooseBtn"><span
-              data-i18n="homePlanChooseBtn">Chọn gói</span></a>
+            href="{{ url_for('register.register') }}" data-i18n="homePlanChooseBtn"><span data-i18n="homePlanChooseBtn">{{ ht('homePlanChooseBtn', 'Chọn gói') }}</span></a>
         </div>
         <!-- Pro -->
         <div
@@ -1688,8 +1670,7 @@
             </ul>
           </div>
           <a class="w-full py-3 bg-primary text-on-primary rounded-xl font-bold hover:shadow-lg transition-all text-center"
-            href="{{ url_for('register.register') }}" data-i18n="homePlanProBtn"><span data-i18n="homePlanProBtn">Chọn
-              Pro</span></a>
+            href="{{ url_for('register.register') }}" data-i18n="homePlanProBtn"><span data-i18n="homePlanProBtn">{{ ht('homePlanProBtn', 'Chọn Pro') }}</span></a>
         </div>
         <!-- Doanh nghiep -->
         <div
@@ -1704,8 +1685,7 @@
             </div>
             <ul class="space-y-4 text-on-surface-variant body-md mb-8">
               <li class="flex items-center gap-2">
-                <span class="material-symbols-outlined text-primary text-lg">check_circle</span><span
-                  data-i18n="homePlanEntScans">Không giới hạn lượt</span>
+                <span class="material-symbols-outlined text-primary text-lg">check_circle</span><span data-i18n="homePlanEntScans">{{ ht('homePlanEntScans', 'Không giới hạn lượt') }}</span>
               </li>
             </ul>
           </div>
@@ -1719,10 +1699,10 @@
       <div class="flex flex-col lg:flex-row gap-gutter">
         <div class="lg:w-1/3 mb-12 lg:mb-0">
           <h2 class="headline-lg mb-6 leading-tight text-on-surface" data-i18n="homeWorkflowTitle">
-            <span data-i18n="homeWorkflowTitle">Quy trình nhận diện</span>
+            <span data-i18n="homeWorkflowTitle">{{ ht('homeWorkflowTitle', 'Quy trình nhận diện') }}</span>
           </h2>
           <p class="text-on-surface-variant max-w-sm" data-i18n="homeWorkflowSub">
-            <span data-i18n="homeWorkflowSub">Từ ảnh đầu vào đến kết quả cuối cùng chỉ trong vài giây.</span>
+            <span data-i18n="homeWorkflowSub">{{ ht('homeWorkflowSub', 'Từ ảnh đầu vào đến kết quả cuối cùng chỉ trong vài giây.') }}</span>
           </p>
         </div>
         <div class="lg:w-2/3 relative">
@@ -1734,18 +1714,17 @@
                 01
               </div>
               <div class="space-y-4">
-                <span class="label-sm text-primary block" data-i18n="homeStep1Tag">BƯỚC 1 - TẢI ẢNH</span>
+                <span class="label-sm text-primary block" data-i18n="homeStep1Tag">{{ ht('homeStep1Tag', 'BƯỚC 1 - TẢI ẢNH') }}</span>
                 <h3 class="headline-md text-on-surface" data-i18n="homeStep1Title">
-                  <span data-i18n="homeStep1Title">Tải ảnh rõ nét</span>
+                  <span data-i18n="homeStep1Title">{{ ht('homeStep1Title', 'Tải ảnh rõ nét') }}</span>
                 </h3>
                 <p class="text-on-surface-variant" data-i18n="homeStep1Desc">
-                  <span data-i18n="homeStep1Desc">Chụp ảnh chính diện, ánh sáng tốt để tăng độ chính
-                    xác.</span>
+                  <span data-i18n="homeStep1Desc">{{ ht('homeStep1Desc', 'Chụp ảnh chính diện, ánh sáng tốt để tăng độ chính xác.') }}</span>
                 </p>
                 <div
                   class="inline-block px-3 py-1 bg-surface-container-high border border-outline-variant rounded label-sm font-bold text-on-surface-variant tracking-widest"
                   data-i18n="homeStep1Status">
-                  <span data-i18n="homeStep1Status">SẴN SÀNG</span>
+                  <span data-i18n="homeStep1Status">{{ ht('homeStep1Status', 'SẴN SÀNG') }}</span>
                 </div>
               </div>
             </div>
@@ -1755,18 +1734,17 @@
                 02
               </div>
               <div class="space-y-4">
-                <span class="label-sm text-primary block" data-i18n="homeStep2Tag">BƯỚC 2 - AI PHÂN TÍCH</span>
+                <span class="label-sm text-primary block" data-i18n="homeStep2Tag">{{ ht('homeStep2Tag', 'BƯỚC 2 - AI PHÂN TÍCH') }}</span>
                 <h3 class="headline-md text-on-surface" data-i18n="homeStep2Title">
-                  <span data-i18n="homeStep2Title">Mô hình YOLOv8 + phân loại</span>
+                  <span data-i18n="homeStep2Title">{{ ht('homeStep2Title', 'Mô hình YOLOv8 + phân loại') }}</span>
                 </h3>
                 <p class="text-on-surface-variant" data-i18n="homeStep2Desc">
-                  <span data-i18n="homeStep2Desc">Phát hiện chó và phân loại giống theo đặc trưng khuôn
-                    mặt.</span>
+                  <span data-i18n="homeStep2Desc">{{ ht('homeStep2Desc', 'Phát hiện chó và phân loại giống theo đặc trưng khuôn mặt.') }}</span>
                 </p>
                 <div
                   class="inline-block px-3 py-1 bg-primary/10 border border-primary/20 rounded label-sm font-bold text-primary tracking-widest uppercase"
                   data-i18n="homeCoreValue5Title">
-                  <span data-i18n="homeCoreValue5Title">Xử lý tức thì</span>
+                  <span data-i18n="homeCoreValue5Title">{{ ht('homeCoreValue5Title', 'Xử lý tức thì') }}</span>
                 </div>
               </div>
             </div>
@@ -1776,13 +1754,12 @@
                 03
               </div>
               <div class="space-y-4">
-                <span class="label-sm text-primary block" data-i18n="homeStep3Tag">BƯỚC 3 - TRẢ KẾT QUẢ</span>
+                <span class="label-sm text-primary block" data-i18n="homeStep3Tag">{{ ht('homeStep3Tag', 'BƯỚC 3 - TRẢ KẾT QUẢ') }}</span>
                 <h3 class="headline-md text-on-surface py-1" data-i18n="homeStep3Title">
-                  <span data-i18n="homeStep3Title">Top-3 giống &amp; độ tin cậy</span>
+                  <span data-i18n="homeStep3Title">{{ ht('homeStep3Title', 'Top-3 giống &amp; độ tin cậy') }}</span>
                 </h3>
                 <a class="bg-primary text-on-primary px-6 py-2 rounded font-bold label-sm tracking-widest hover:shadow-md transition-all uppercase"
-                  href="{{ url_for('predict.upload_page') }}" data-i18n="homeStep3Status"><span
-                    data-i18n="homeStep3Status">Hoàn thành</span></a>
+                  href="{{ url_for('predict.upload_page') }}" data-i18n="homeStep3Status"><span data-i18n="homeStep3Status">{{ ht('homeStep3Status', 'Hoàn thành') }}</span></a>
               </div>
             </div>
           </div>
@@ -1793,7 +1770,7 @@
     <section class="px-4 md:px-6 w-full py-16" id="use-cases">
       <div class="text-center mb-8">
         <h2 class="headline-lg mb-4 uppercase tracking-tight text-on-surface" data-i18n="homeAudienceTitle">
-          <span data-i18n="homeAudienceTitle">Phù hợp cho nhiều nhóm người dùng</span>
+          <span data-i18n="homeAudienceTitle">{{ ht('homeAudienceTitle', 'Phù hợp cho nhiều nhóm người dùng') }}</span>
         </h2>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-bento-gap">
@@ -1806,11 +1783,10 @@
               <span class="material-symbols-outlined text-primary text-3xl">person</span>
             </div>
             <h3 class="headline-md mb-4 text-on-surface" data-i18n="homeAudience1Title">
-              <span data-i18n="homeAudience1Title">Người nuôi thú cưng</span>
+              <span data-i18n="homeAudience1Title">{{ ht('homeAudience1Title', 'Người nuôi thú cưng') }}</span>
             </h3>
             <p class="text-on-surface-variant leading-relaxed" data-i18n="homeAudience1Desc">
-              <span data-i18n="homeAudience1Desc">Kiểm tra nhanh giống chó để theo dõi chăm sóc và định hướng
-                huấn luyện.</span>
+              <span data-i18n="homeAudience1Desc">{{ ht('homeAudience1Desc', 'Kiểm tra nhanh giống chó để theo dõi chăm sóc và định hướng huấn luyện.') }}</span>
             </p>
           </div>
         </div>
@@ -1823,11 +1799,10 @@
               <span class="material-symbols-outlined text-secondary text-3xl">storefront</span>
             </div>
             <h3 class="headline-md mb-4 text-on-surface" data-i18n="homeAudience2Title">
-              <span data-i18n="homeAudience2Title">Cửa hàng thú cưng</span>
+              <span data-i18n="homeAudience2Title">{{ ht('homeAudience2Title', 'Cửa hàng thú cưng') }}</span>
             </h3>
             <p class="text-on-surface-variant leading-relaxed" data-i18n="homeAudience2Desc">
-              <span data-i18n="homeAudience2Desc">Hỗ trợ tư vấn cho khách dựa trên kết quả AI rõ ràng và dễ
-                hiểu.</span>
+              <span data-i18n="homeAudience2Desc">{{ ht('homeAudience2Desc', 'Hỗ trợ tư vấn cho khách dựa trên kết quả AI rõ ràng và dễ hiểu.') }}</span>
             </p>
           </div>
         </div>
@@ -1840,11 +1815,10 @@
               <span class="material-symbols-outlined text-primary text-3xl">medical_services</span>
             </div>
             <h3 class="headline-md mb-4 text-on-surface" data-i18n="homeAudience3Title">
-              <span data-i18n="homeAudience3Title">Phòng khám thú y</span>
+              <span data-i18n="homeAudience3Title">{{ ht('homeAudience3Title', 'Phòng khám thú y') }}</span>
             </h3>
             <p class="text-on-surface-variant leading-relaxed" data-i18n="homeAudience3Desc">
-              <span data-i18n="homeAudience3Desc">Có thêm dữ liệu tham khảo ban đầu trước khi tiếp nhận và đánh
-                giá.</span>
+              <span data-i18n="homeAudience3Desc">{{ ht('homeAudience3Desc', 'Có thêm dữ liệu tham khảo ban đầu trước khi tiếp nhận và đánh giá.') }}</span>
             </p>
           </div>
         </div>
@@ -1854,70 +1828,58 @@
     <section class="px-4 md:px-6 w-full py-16" id="faq">
       <div class="text-center mb-8">
         <h2 class="headline-lg mb-4 text-on-surface uppercase tracking-tight" data-i18n="homeFaqTitle">
-          <span data-i18n="homeFaqTitle">CÂU HỎI THƯỜNG GẶP</span>
+          <span data-i18n="homeFaqTitle">{{ ht('homeFaqTitle', 'CÂU HỎI THƯỜNG GẶP') }}</span>
         </h2>
         <p class="body-md text-on-surface-variant" data-i18n="homeFaqSub">
-          <span data-i18n="homeFaqSub">Giải đáp nhanh các thắc mắc về PetAI.</span>
+          <span data-i18n="homeFaqSub">{{ ht('homeFaqSub', 'Giải đáp nhanh các thắc mắc về PetAI.') }}</span>
         </p>
       </div>
       <div class="w-full space-y-4">
         <details
           class="glass-card p-6 rounded-2xl group cursor-pointer bg-white transition-all duration-300 open:shadow-lg">
           <summary class="flex justify-between items-center font-bold text-on-surface headline-md list-none">
-            <span data-i18n="homeFaq1Q">Kết quả có chính xác 100% không?</span><span
+            <span data-i18n="homeFaq1Q">{{ ht('homeFaq1Q', 'Kết quả có chính xác 100% không?') }}</span><span
               class="material-symbols-outlined text-[#1978e5] group-open:rotate-180 transition-transform duration-300 font-bold">expand_more</span>
           </summary>
           <div class="overflow-hidden">
             <p class="mt-4 text-on-surface-variant leading-relaxed body-md" data-i18n="homeFaq1A">
-              <span data-i18n="homeFaq1A">Không. Hệ thống AI trả về kết quả dựa trên xác suất từ kho dữ
-                liệu huấn luyện. Chúng tôi cung cấp Top-3 giống có độ tin cậy
-                cao nhất để người dùng có cái nhìn khách quan và tham khảo tốt
-                hơn, đặc biệt hữu ích với trường hợp chó lai.</span>
+              <span data-i18n="homeFaq1A">{{ ht('homeFaq1A', 'Không. Hệ thống AI trả về kết quả dựa trên xác suất từ kho dữ liệu huấn luyện. Chúng tôi cung cấp Top-3 giống có độ tin cậy cao nhất để người dùng có cái nhìn khách quan và tham khảo tốt hơn, đặc biệt hữu ích với trường hợp chó lai.') }}</span>
             </p>
           </div>
         </details>
         <details
           class="glass-card p-6 rounded-2xl group cursor-pointer bg-white transition-all duration-300 open:shadow-lg">
           <summary class="flex justify-between items-center font-bold text-on-surface headline-md list-none">
-            <span data-i18n="homeFaq2Q">Mất bao lâu để có kết quả?</span><span
+            <span data-i18n="homeFaq2Q">{{ ht('homeFaq2Q', 'Mất bao lâu để có kết quả?') }}</span><span
               class="material-symbols-outlined text-[#1978e5] group-open:rotate-180 transition-transform duration-300 font-bold">expand_more</span>
           </summary>
           <div class="overflow-hidden">
             <p class="mt-4 text-on-surface-variant leading-relaxed body-md" data-i18n="homeFaq2A">
-              <span data-i18n="homeFaq2A">Hệ thống được tối ưu hóa để trả về kết quả chỉ trong vòng vài
-                giây (thường từ 2-5 giây) sau khi ảnh được tải lên thành công.
-                Tốc độ này có thể thay đổi nhẹ tùy thuộc vào tốc độ mạng của
-                bạn và kích thước file ảnh.</span>
+              <span data-i18n="homeFaq2A">{{ ht('homeFaq2A', 'Hệ thống được tối ưu hóa để trả về kết quả chỉ trong vòng vài giây (thường từ 2-5 giây) sau khi ảnh được tải lên thành công. Tốc độ này có thể thay đổi nhẹ tùy thuộc vào tốc độ mạng của bạn và kích thước file ảnh.') }}</span>
             </p>
           </div>
         </details>
         <details
           class="glass-card p-6 rounded-2xl group cursor-pointer bg-white transition-all duration-300 open:shadow-lg">
           <summary class="flex justify-between items-center font-bold text-on-surface headline-md list-none">
-            <span data-i18n="homeFaq3Q">Ảnh tải lên được xử lý như thế nào?</span><span
+            <span data-i18n="homeFaq3Q">{{ ht('homeFaq3Q', 'Ảnh tải lên được xử lý như thế nào?') }}</span><span
               class="material-symbols-outlined text-[#1978e5] group-open:rotate-180 transition-transform duration-300 font-bold">expand_more</span>
           </summary>
           <div class="overflow-hidden">
             <p class="mt-4 text-on-surface-variant leading-relaxed body-md" data-i18n="homeFaq3A">
-              <span data-i18n="homeFaq3A">Mỗi hình ảnh bạn tải lên đều được mã hóa và truyền tải qua
-                giao thức bảo mật. PetAI cam kết chỉ sử dụng ảnh cho mục đích
-                nhận diện giống chó và không chia sẻ dữ liệu cá nhân của bạn
-                với bất kỳ bên thứ ba nào khi chưa có sự đồng ý.</span>
+              <span data-i18n="homeFaq3A">{{ ht('homeFaq3A', 'Mỗi hình ảnh bạn tải lên đều được mã hóa và truyền tải qua giao thức bảo mật. PetAI cam kết chỉ sử dụng ảnh cho mục đích nhận diện giống chó và không chia sẻ dữ liệu cá nhân của bạn với bất kỳ bên thứ ba nào khi chưa có sự đồng ý.') }}</span>
             </p>
           </div>
         </details>
         <details
           class="glass-card p-6 rounded-2xl group cursor-pointer bg-white transition-all duration-300 open:shadow-lg">
           <summary class="flex justify-between items-center font-bold text-on-surface headline-md list-none">
-            <span data-i18n="homeFaq4Q">PetAI có hỗ trợ chó lai không?</span><span
+            <span data-i18n="homeFaq4Q">{{ ht('homeFaq4Q', 'PetAI có hỗ trợ chó lai không?') }}</span><span
               class="material-symbols-outlined text-[#1978e5] group-open:rotate-180 transition-transform duration-300 font-bold">expand_more</span>
           </summary>
           <div class="overflow-hidden">
             <p class="mt-4 text-on-surface-variant leading-relaxed body-md" data-i18n="homeFaq4A">
-              <span data-i18n="homeFaq4A">Có, PetAI được thiết kế đặc biệt để xử lý cả chó thuần chủng
-                và chó lai. Với chó lai, hệ thống sẽ phân tích các đặc điểm
-                hình thái và hiển thị Top-3 giống chó có đặc điểm tương đồng
-                nhất kèm theo tỷ lệ phần trăm tin cậy cho mỗi giống.</span>
+              <span data-i18n="homeFaq4A">{{ ht('homeFaq4A', 'Có, PetAI được thiết kế đặc biệt để xử lý cả chó thuần chủng và chó lai. Với chó lai, hệ thống sẽ phân tích các đặc điểm hình thái và hiển thị Top-3 giống chó có đặc điểm tương đồng nhất kèm theo tỷ lệ phần trăm tin cậy cho mỗi giống.') }}</span>
             </p>
           </div>
         </details>
@@ -1938,21 +1900,19 @@
           class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10 max-w-container-max mx-auto px-6 md:px-10 py-10">
           <div>
             <h2 class="font-display-lg text-4xl md:text-5xl lg:text-6xl leading-tight text-on-surface">
-              <span data-i18n="homeFeature1Title">Nhận diện nhanh</span><br>
-              <span class="text-primary" data-i18n="homeCtaSub">Rõ trong vài giây</span>
+              <span data-i18n="homeFeature1Title">{{ ht('homeFeature1Title', 'Nhận diện nhanh') }}</span><br>
+              <span class="text-primary" data-i18n="homeCtaSub">{{ ht('homeCtaSub', 'Rõ trong vài giây') }}</span>
             </h2>
           </div>
           <div class="space-y-10">
             <p class="body-md text-on-surface-variant max-w-lg" data-i18n="homeCtaDesc">
-              <span data-i18n="homeCtaDesc">Top-3 giống, độ tin cậy rõ ràng. Tham gia cùng cộng đồng hàng
-                ngàn người yêu thú cưng đang sử dụng PetAI mỗi ngày.</span>
+              <span data-i18n="homeCtaDesc">{{ ht('homeCtaDesc', 'Top-3 giống, độ tin cậy rõ ràng. Tham gia cùng cộng đồng hàng ngàn người yêu thú cưng đang sử dụng PetAI mỗi ngày.') }}</span>
             </p>
             <div class="flex flex-wrap gap-6">
               <a class="bg-primary text-on-primary px-8 py-4 rounded-xl font-bold hover:shadow-xl transition-all active:scale-95"
-                href="{{ url_for('predict.upload_page') }}" data-i18n="homeStartFreeBtn"><span
-                  data-i18n="homeStartFreeBtn">Bắt đầu miễn phí</span></a>
+                href="{{ url_for('predict.upload_page') }}" data-i18n="homeStartFreeBtn"><span data-i18n="homeStartFreeBtn">{{ ht('homeStartFreeBtn', 'Bắt đầu miễn phí') }}</span></a>
               <a class="px-8 py-4 rounded-xl font-bold text-on-surface border border-outline-variant hover:bg-white transition-all active:scale-95"
-                href="#workflow" data-i18n="homeGuideBtn"><span data-i18n="homeGuideBtn">Hướng dẫn sử dụng</span></a>
+                href="#workflow" data-i18n="homeGuideBtn"><span data-i18n="homeGuideBtn">{{ ht('homeGuideBtn', 'Hướng dẫn sử dụng') }}</span></a>
           </div>
         </div>
       </div>
@@ -2022,16 +1982,16 @@
           <ul class="space-y-3 text-sm text-on-surface-variant leading-relaxed">
             <li class="flex items-start gap-2">
               <span class="material-symbols-outlined text-primary text-base mt-0.5 contact-icon">mail</span>
-              <span><span data-i18n="contactEmailFooter">Email</span>: {{ get_config('site_email', 'support@pet.ai') }}</span>
+              <span><span data-i18n="contactEmailFooter">{{ ht('contactEmailFooter', 'Email') }}</span>: {{ get_config('site_email', 'support@pet.ai') }}</span>
             </li>
             <li class="flex items-start gap-2">
               <span class="material-symbols-outlined text-primary text-base mt-0.5 contact-icon">call</span>
-              <span><span data-i18n="contactPhoneFooter">Điện thoại</span>: {{ get_config('contact_phone', '0916 416 409') }}</span>
+              <span><span data-i18n="contactPhoneFooter">{{ ht('contactPhoneFooter', 'Điện thoại') }}</span>: {{ get_config('contact_phone', '0916 416 409') }}</span>
             </li>
             <li class="flex items-start gap-2">
               <span class="material-symbols-outlined text-primary text-base mt-0.5 contact-icon">pin_drop</span>
               <span class="max-w-[240px]">
-                <span data-i18n="sysLabelContactAddress">Địa chỉ</span>: 
+                <span data-i18n="sysLabelContactAddress">{{ ht('sysLabelContactAddress', 'Địa chỉ') }}</span>: 
                 <span class="footer-address-vi{% if ui_language == 'en' %} hidden{% endif %}">{{ get_config("contact_address_vi", get_config("contact_address", "P16, Đường số 8, KDC lô 49, Khu đô thị Nam Cần Thơ, Phường Cái Răng, TP. Cần Thơ")) }}</span>
                 <span class="footer-address-en{% if ui_language != 'en' %} hidden{% endif %}">{{ get_config("contact_address_en", get_config("contact_address", "P16, Street 8, Lot 49 residential area, Nam Can Tho Urban Area, Cai Rang District, Can Tho City, Vietnam")) }}</span>
               </span>
@@ -2156,7 +2116,7 @@
       Object.assign(window.PetAI_DynamicSettings.en, dbEn);
     })();
   </script>
-  <script src="{{ url_for('static', filename='js/i18n.js') }}?v=16"></script>
+  <script src="{{ url_for('static', filename='js/i18n.js') }}?v=20"></script>
   <script src="{{ url_for('static', filename='js/script.js') }}"></script>
   {% if session.get('role') == 'admin' and request.args.get('edit') == 'true' %}
     {% include '_client_editor.html' %}

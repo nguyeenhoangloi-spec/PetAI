@@ -91,6 +91,7 @@ def register_context_processors(app):
         }
     @app.context_processor
     def inject_system_config():
+        from flask import request
         from connect import get_connection
         from models import SystemConfig
         
@@ -159,12 +160,46 @@ def register_context_processors(app):
             val = re.sub(r'<p[^>]*>\s*(\d+\.\s+[^<]+)\s*</p>', make_header, val)
             return [{"title": "", "content": val}]
             
+        # --- Home content SSR helper ---
+        import json as _json
+        # Use same language detection logic as inject_ui_prefs
+        _lang_for_ht = request.cookies.get("siteLanguage")
+        if not _lang_for_ht or _lang_for_ht not in {"vi", "en"}:
+            _lang_for_ht = system_config.get("default_lang", "vi")
+        if _lang_for_ht not in {"vi", "en"}:
+            _lang_for_ht = "vi"
+
+        def _parse_home_dict(key):
+            raw = system_config.get(key, "{}")
+            if isinstance(raw, dict):
+                return raw
+            if isinstance(raw, str):
+                try:
+                    return _json.loads(raw)
+                except Exception:
+                    return {}
+            return {}
+
+        _home_vi = _parse_home_dict("home_content_vi")
+        _home_en = _parse_home_dict("home_content_en")
+
+        def ht(key, vi_default="", en_default=None):
+            """Server-side home translation: returns DB value if saved, else default.
+            Usage in template: {{ ht('homeHeroTitle', 'NHẬN DIỆN GIỐNG CHÓ', 'IDENTIFY DOG BREEDS') }}
+            """
+            if en_default is None:
+                en_default = vi_default
+            if _lang_for_ht == "en":
+                return _home_en.get(key, en_default)
+            return _home_vi.get(key, vi_default)
+
         return {
             "system_config": system_config,
             "get_config": get_config,
             "get_legal_sections": get_legal_sections,
             "site_logo": system_config.get("site_logo", "/static/images/logo.png"),
-            "site_email": system_config.get("site_email", "support@pet.ai")
+            "site_email": system_config.get("site_email", "support@pet.ai"),
+            "ht": ht,
         }
 
     @app.context_processor

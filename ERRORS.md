@@ -362,5 +362,21 @@
 - **Prevention**: Luôn đối chiếu kỹ tên các endpoint trong tệp route Python (Blueprint) khi tạo các liên kết động bằng `url_for` trong các template Jinja2, chạy kiểm thử tự động để phát hiện các lỗi xây dựng URL trước khi báo cáo hoàn thành.
 - **Status**: Fixed
 
+---
 
+## [2026-06-24 00:23] - Lỗi NameError: name 'request' is not defined trong context_processors.py
 
+- **Type**: Agent
+- **Severity**: Critical
+- **File**: `context_processors.py:165`
+- **Agent**: Antigravity Orchestrator
+- **Root Cause**: Hàm xử lý ngữ cảnh `inject_system_config` trong `context_processors.py` sử dụng biến `request` của Flask để đọc cookie ngôn ngữ `siteLanguage`. Tuy nhiên, thư viện `request` chưa được import trong phạm vi của hàm này, dẫn đến lỗi `NameError`.
+- **Error Message**:
+  ```text
+  File "d:\KhoaLuan - Copy (new) - Copy\context_processors.py", line 165, in inject_system_config
+    _lang_for_ht = request.cookies.get("siteLanguage")
+  NameError: name 'request' is not defined
+  ```
+- **Fix Applied**: Thêm dòng import cục bộ `from flask import request` vào ngay đầu hàm `inject_system_config()`.
+- **Prevention**: Luôn đảm bảo import đầy đủ các đối tượng được sử dụng trong hàm con, đặc biệt khi viết các helper context processors chạy cục bộ.
+- **Status**: Fixed
