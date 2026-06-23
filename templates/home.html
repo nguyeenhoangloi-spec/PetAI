@@ -615,46 +615,165 @@
   <div class="aura-glow bg-primary-container w-[600px] h-[600px] -top-48 -left-48"></div>
   <div class="aura-glow bg-secondary-container w-[500px] h-[500px] top-1/2 -right-24"></div>
   <!-- TopNavBar -->
-  <nav
-    class="fixed top-0 w-full z-50 bg-surface/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-outline-variant/30 dark:border-slate-800 font-['Inter'] antialiased nav-reduce-height">
-    <div class="flex justify-between items-center w-full px-4 md:px-6 h-16">
-      <div class="flex items-center gap-gutter">
-        <a href="{{ url_for('home.index') }}" class="inline-flex items-center gap-0">
-          <img alt="PetAI New Logo" class="w-auto h-10 md:h-12" src="{{ url_for('static', filename='images/logo.png') }}">
-          <span class="ml-0 text-lg md:text-2xl font-semibold text-primary">{{ get_config('site_name', 'PetAI') }}</span>
+  <nav id="topNavbar"
+    class="fixed top-0 w-full z-50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-slate-100 dark:border-slate-800/80 font-['Inter'] antialiased transition-all duration-300">
+    <div class="flex justify-between items-center w-full px-6 md:px-10 h-20">
+      <!-- Left: Logo -->
+      <div class="flex items-center">
+        <a href="{{ url_for('home.index') }}" class="inline-flex items-center gap-2 hover:opacity-90 transition-opacity">
+          <img alt="PetAI New Logo" class="w-auto h-9 md:h-10 animate-fade-in" src="{{ url_for('static', filename='images/logo.png') }}">
+          <span class="text-xl md:text-2xl font-bold text-primary tracking-tight">{{ get_config('site_name', 'PetAI') }}</span>
         </a>
       </div>
-      {% if not session.get('user_id') %}
-      <div class="hidden md:flex items-center gap-10">
-        <a class="body-md text-primary font-semibold" href="#product" data-i18n="product"><span data-i18n="product">Sản
-            phẩm</span></a>
-        <a class="body-md text-on-surface-variant hover:text-primary transition-colors duration-300" href="#features"
-          data-i18n="features"><span data-i18n="features">Tính năng</span></a>
-        <a class="body-md text-on-surface-variant hover:text-primary transition-colors duration-300" href="#pricing"
-          data-i18n="pricing"><span data-i18n="pricing">Bảng giá</span></a>
-        <a class="body-md text-on-surface-variant hover:text-primary transition-colors duration-300"
-          href="#social-proof" data-i18n="about"><span data-i18n="about">Giới thiệu</span></a>
-      </div>
-      {% endif %} {% if session.get('user_id') and not request.args.get('edit') %}
-      <div class="flex items-center gap-6">
-        <a class="body-md text-on-surface-variant hover:text-primary transition-colors duration-300 font-semibold"
-          href="{{ url_for('dashboard.dashboard') }}" data-i18n="dashboard"><span data-i18n="dashboard">Bảng điều
-            khiển</span></a>
-        <a class="logout-btn-link flex items-center gap-1.5 label-sm text-red-600 hover:text-red-700 font-semibold transition-colors"
-          href="{{ url_for('logout.logout') }}">
-          <span class="material-symbols-outlined text-[18px]">logout</span>
-          <span data-i18n="logout">Đăng xuất</span>
+
+      <!-- Middle: Navigation Menu -->
+      <div class="hidden md:flex items-center gap-1 lg:gap-2">
+        <a class="desktop-nav-link text-[15px] font-medium text-on-surface-variant dark:text-slate-300 hover:text-primary dark:hover:text-primary px-3.5 py-2 rounded-[10px] transition-all duration-200" href="#product" data-i18n="product">
+          <span data-i18n="product">{{ 'Sản phẩm' if ui_language != 'en' else 'Product' }}</span>
+        </a>
+        <a class="desktop-nav-link text-[15px] font-medium text-on-surface-variant dark:text-slate-300 hover:text-primary dark:hover:text-primary px-3.5 py-2 rounded-[10px] transition-all duration-200" href="#spotlight" data-i18n="features">
+          <span data-i18n="features">{{ 'Tính năng' if ui_language != 'en' else 'Features' }}</span>
+        </a>
+        <a class="desktop-nav-link text-[15px] font-medium text-on-surface-variant dark:text-slate-300 hover:text-primary dark:hover:text-primary px-3.5 py-2 rounded-[10px] transition-all duration-200" href="#pricing" data-i18n="pricing">
+          <span data-i18n="pricing">{{ 'Bảng giá' if ui_language != 'en' else 'Pricing' }}</span>
+        </a>
+        <a class="desktop-nav-link text-[15px] font-medium text-on-surface-variant dark:text-slate-300 hover:text-primary dark:hover:text-primary px-3.5 py-2 rounded-[10px] transition-all duration-200" href="#social-proof" data-i18n="about">
+          <span data-i18n="about">{{ 'Giới thiệu' if ui_language != 'en' else 'About' }}</span>
+        </a>
+        <a class="desktop-nav-link text-[15px] font-medium text-on-surface-variant dark:text-slate-300 hover:text-primary dark:hover:text-primary px-3.5 py-2 rounded-[10px] transition-all duration-200" href="{{ url_for('legal.support') }}" data-i18n="support">
+          <span data-i18n="support">{{ 'Hỗ trợ' if ui_language != 'en' else 'Support' }}</span>
         </a>
       </div>
-      {% else %}
-      {% if not request.args.get('edit') %}
-      <div class="flex items-center gap-6">
-        <a class="nav-login-btn" href="{{ url_for('login.login') }}" data-i18n="login"><span data-i18n="login">Đăng nhập</span></a>
+
+      <!-- Right: Actions -->
+      <div class="flex items-center gap-3 md:gap-4">
+        <!-- Language Dropdown Selector -->
+        <div class="relative group hidden md:block" id="headerLangSelector">
+          <button type="button" class="inline-flex items-center gap-1.5 h-11 px-3.5 rounded-[10px] border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-[14px] font-medium text-slate-600 dark:text-slate-300 transition-all">
+            <span class="material-symbols-outlined text-[17px]">language</span>
+            <span class="lang-text text-[13px] font-semibold">{{ 'VI' if ui_language == 'vi' else 'EN' }}</span>
+            <span class="material-symbols-outlined text-[13px] transition-transform duration-200 group-hover:rotate-180">keyboard_arrow_down</span>
+          </button>
+          <div class="absolute right-0 top-full mt-2 w-36 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[12px] shadow-xl opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-200 z-50">
+            <div class="p-1.5 space-y-0.5">
+              <button type="button" class="language-option w-full flex items-center gap-2.5 px-3 py-2 text-[13px] font-medium rounded-[8px] hover:bg-slate-50 dark:hover:bg-slate-800 transition-all {{ 'text-primary font-semibold' if ui_language == 'vi' else 'text-slate-600 dark:text-slate-300' }}" data-lang="vi">
+                <span class="text-base">🇻🇳</span>
+                <span>Tiếng Việt</span>
+              </button>
+              <button type="button" class="language-option w-full flex items-center gap-2.5 px-3 py-2 text-[13px] font-medium rounded-[8px] hover:bg-slate-50 dark:hover:bg-slate-800 transition-all {{ 'text-primary font-semibold' if ui_language == 'en' else 'text-slate-600 dark:text-slate-300' }}" data-lang="en">
+                <span class="text-base">🇺🇸</span>
+                <span>English</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {% if not request.args.get('edit') %}
+        <!-- Auth Actions (Desktop) -->
+        <div class="hidden md:flex items-center gap-2">
+          {% if session.get('user_id') %}
+          <a href="{{ url_for('dashboard.dashboard') }}" class="inline-flex items-center justify-center h-11 px-5 border border-slate-200 dark:border-slate-700 text-[14px] font-medium text-slate-700 dark:text-slate-300 rounded-[10px] hover:bg-slate-50 dark:hover:bg-slate-800 transition-all" data-i18n="dashboard">{{ 'Bảng điều khiển' if ui_language != 'en' else 'Dashboard' }}</a>
+          <a href="{{ url_for('logout.logout') }}" class="logout-btn-link flex items-center justify-center h-11 w-11 text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-[10px] border border-slate-200 dark:border-slate-700 transition-all" title="{{ 'Đăng xuất' if ui_language != 'en' else 'Logout' }}">
+            <span class="material-symbols-outlined text-[20px]">logout</span>
+          </a>
+          {% else %}
+          <a href="{{ url_for('login.login') }}" class="inline-flex items-center justify-center h-11 px-5 border border-slate-200 dark:border-slate-700 text-[14px] font-medium text-slate-700 dark:text-slate-300 rounded-[10px] hover:bg-slate-50 dark:hover:bg-slate-800 transition-all" data-i18n="login">{{ 'Đăng nhập' if ui_language != 'en' else 'Login' }}</a>
+          {% endif %}
+        </div>
+
+        <!-- Primary CTA (Desktop) -->
+        <a href="{{ url_for('predict.upload_page') }}" class="hidden md:inline-flex items-center justify-center h-11 px-6 bg-primary text-white text-[14px] font-semibold rounded-[10px] hover:bg-primary/90 hover:shadow-md active:scale-[0.97] transition-all duration-200" data-i18n="identifyNow"><span data-i18n="identifyNow">{{ 'Nhận diện ngay' if ui_language != 'en' else 'Identify Now' }}</span></a>
+        {% endif %}
+
+
+        <!-- Hamburger Icon (Mobile Only) -->
+        <button id="mobileMenuTrigger" type="button" class="md:hidden flex items-center justify-center p-2 rounded-[12px] text-on-surface-variant dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-900/60 transition-all" aria-label="Open Menu">
+          <span class="material-symbols-outlined text-[24px]">menu</span>
+        </button>
       </div>
-      {% endif %}
-      {% endif %}
     </div>
   </nav>
+
+  <!-- Mobile Drawer Overlay -->
+  <div id="mobileDrawerOverlay" class="fixed inset-0 bg-slate-950/50 backdrop-blur-sm z-40 hidden transition-opacity duration-300 opacity-0"></div>
+
+  <!-- Mobile Drawer Panel -->
+  <div id="mobileDrawer" class="fixed inset-y-0 right-0 z-50 w-full max-w-[300px] bg-white dark:bg-slate-950 border-l border-slate-100 dark:border-slate-850 shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col justify-between p-6">
+    <div class="space-y-6">
+      <!-- Drawer Header -->
+      <div class="flex items-center justify-between">
+        <a href="{{ url_for('home.index') }}" class="flex items-center gap-2">
+          <img alt="PetAI Logo" class="h-8 w-auto" src="{{ url_for('static', filename='images/logo.png') }}">
+          <span class="text-lg font-bold text-primary tracking-tight">{{ get_config('site_name', 'PetAI') }}</span>
+        </a>
+        <button id="mobileMenuClose" type="button" class="p-2 rounded-[12px] hover:bg-slate-50 dark:hover:bg-slate-900/60 text-on-surface-variant dark:text-slate-300 transition-all" aria-label="Close Menu">
+          <span class="material-symbols-outlined text-[24px]">close</span>
+        </button>
+      </div>
+
+      <!-- Drawer Navigation Menu -->
+      <nav class="flex flex-col gap-1.5">
+        <a href="#product" class="flex items-center gap-3 px-4 py-2.5 rounded-[12px] text-[15px] font-semibold text-on-surface-variant dark:text-slate-300 hover:text-primary dark:hover:text-primary hover:bg-slate-50 dark:hover:bg-slate-900/60 transition-all" data-i18n="product">
+          <span class="material-symbols-outlined text-[20px]">home</span>
+          <span data-i18n="product">{{ 'Sản phẩm' if ui_language != 'en' else 'Product' }}</span>
+        </a>
+        <a href="#spotlight" class="flex items-center gap-3 px-4 py-2.5 rounded-[12px] text-[15px] font-semibold text-on-surface-variant dark:text-slate-300 hover:text-primary dark:hover:text-primary hover:bg-slate-50 dark:hover:bg-slate-900/60 transition-all" data-i18n="features">
+          <span class="material-symbols-outlined text-[20px]">auto_awesome</span>
+          <span data-i18n="features">{{ 'Tính năng' if ui_language != 'en' else 'Features' }}</span>
+        </a>
+        <a href="#pricing" class="flex items-center gap-3 px-4 py-2.5 rounded-[12px] text-[15px] font-semibold text-on-surface-variant dark:text-slate-300 hover:text-primary dark:hover:text-primary hover:bg-slate-50 dark:hover:bg-slate-900/60 transition-all" data-i18n="pricing">
+          <span class="material-symbols-outlined text-[20px]">sell</span>
+          <span data-i18n="pricing">{{ 'Bảng giá' if ui_language != 'en' else 'Pricing' }}</span>
+        </a>
+        <a href="#social-proof" class="flex items-center gap-3 px-4 py-2.5 rounded-[12px] text-[15px] font-semibold text-on-surface-variant dark:text-slate-300 hover:text-primary dark:hover:text-primary hover:bg-slate-50 dark:hover:bg-slate-900/60 transition-all" data-i18n="about">
+          <span class="material-symbols-outlined text-[20px]">info</span>
+          <span data-i18n="about">{{ 'Giới thiệu' if ui_language != 'en' else 'About' }}</span>
+        </a>
+        <a href="{{ url_for('legal.support') }}" class="flex items-center gap-3 px-4 py-2.5 rounded-[12px] text-[15px] font-semibold text-on-surface-variant dark:text-slate-300 hover:text-primary dark:hover:text-primary hover:bg-slate-50 dark:hover:bg-slate-900/60 transition-all" data-i18n="support">
+          <span class="material-symbols-outlined text-[20px]">headset</span>
+          <span data-i18n="support">{{ 'Hỗ trợ' if ui_language != 'en' else 'Support' }}</span>
+        </a>
+      </nav>
+
+      <!-- Drawer Actions -->
+      <div class="h-px bg-slate-100 dark:bg-slate-800"></div>
+
+      <div class="flex flex-col gap-2.5">
+        {% if session.get('user_id') %}
+        <a href="{{ url_for('dashboard.dashboard') }}" class="flex items-center justify-center gap-2 w-full py-2.5 rounded-[12px] border border-slate-200 dark:border-slate-850 hover:bg-slate-50 dark:hover:bg-slate-900/60 text-[14px] font-bold text-on-surface-variant dark:text-slate-300 transition-all" data-i18n="dashboard">
+          <span class="material-symbols-outlined text-[20px]">dashboard</span>
+          <span data-i18n="dashboard">{{ 'Bảng điều khiển' if ui_language != 'en' else 'Dashboard' }}</span>
+        </a>
+        <a href="{{ url_for('logout.logout') }}" class="logout-btn-link flex items-center justify-center gap-2 w-full py-2.5 rounded-[12px] border border-red-200 dark:border-red-950/20 text-red-500 hover:bg-red-50 dark:hover:bg-red-950/10 text-[14px] font-bold transition-all">
+          <span class="material-symbols-outlined text-[20px]">logout</span>
+          <span data-i18n="logout">{{ 'Đăng xuất' if ui_language != 'en' else 'Logout' }}</span>
+        </a>
+        {% else %}
+        <a href="{{ url_for('login.login') }}" class="flex items-center justify-center gap-2 w-full py-2.5 rounded-[12px] border border-slate-200 dark:border-slate-850 hover:bg-slate-50 dark:hover:bg-slate-900/60 text-[14px] font-bold text-on-surface-variant dark:text-slate-300 transition-all" data-i18n="login">
+          <span class="material-symbols-outlined text-[20px]">login</span>
+          <span data-i18n="login">{{ 'Đăng nhập' if ui_language != 'en' else 'Login' }}</span>
+        </a>
+        {% endif %}
+
+        <a href="{{ url_for('predict.upload_page') }}" class="flex items-center justify-center gap-2 w-full py-3 bg-primary text-white text-[14px] font-bold rounded-[12px] hover:shadow-lg active:scale-95 transition-all" data-i18n="identifyNow">
+          <span class="material-symbols-outlined text-[20px]">auto_awesome</span>
+          <span data-i18n="identifyNow">{{ 'Nhận diện ngay' if ui_language != 'en' else 'Identify Now' }}</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Drawer Footer (Language Switcher) -->
+    <div class="space-y-4">
+      <div class="h-px bg-slate-100 dark:bg-slate-800"></div>
+      <div class="flex items-center justify-between">
+        <span class="text-xs font-semibold text-on-surface-variant/60 dark:text-slate-400" data-i18n="sidebarLanguageLabel">Ngôn ngữ</span>
+        <div class="flex gap-1 p-0.5 bg-slate-100 dark:bg-slate-900 rounded-[12px]">
+          <button type="button" class="language-option px-3 py-1 rounded-[8px] text-xs font-bold transition-all {{ 'bg-white dark:bg-slate-800 shadow-sm text-primary' if ui_language == 'vi' else 'text-slate-500 dark:text-slate-400 hover:text-primary' }}" data-lang="vi">VI</button>
+          <button type="button" class="language-option px-3 py-1 rounded-[8px] text-xs font-bold transition-all {{ 'bg-white dark:bg-slate-800 shadow-sm text-primary' if ui_language == 'en' else 'text-slate-500 dark:text-slate-400 hover:text-primary' }}" data-lang="en">EN</button>
+        </div>
+      </div>
+    </div>
+  </div>
   <main class="relative z-10 pt-20">
     <div id="legal-content-card" class="hidden"></div>
     <!-- Hero Section -->
@@ -1124,6 +1243,41 @@
         background: #ebedf7;
         border: 1px solid #b6d0ff;
         color: #005ab4;
+      }
+
+      /* Header Custom Premium Styles */
+      #topNavbar {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      #topNavbar.navbar-scrolled {
+        background-color: rgba(255, 255, 255, 0.95);
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      }
+      html.dark #topNavbar.navbar-scrolled {
+        background-color: rgba(15, 23, 42, 0.95);
+        box-shadow: 0 4px 35px rgba(0, 0, 0, 0.2);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      }
+      @media (max-width: 640px) {
+        /* Mobile height overrides to prevent conflict with global stylesheet */
+        #topNavbar > div {
+          height: 60px !important;
+          padding-left: 16px !important;
+          padding-right: 16px !important;
+        }
+        #topNavbar {
+          height: 60px !important;
+        }
+        main {
+          padding-top: 60px !important;
+        }
+      }
+      #mobileDrawerOverlay {
+        transition: opacity 0.3s ease-in-out;
+      }
+      #mobileDrawer {
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       }
     </style>
     <section class="py-1 overflow-hidden relative">
