@@ -934,7 +934,7 @@
                   </div>
                 </div>
                 <div class="flex flex-col gap-0.5 min-w-0">
-                  <p class="text-[12px] font-semibold text-on-surface dark:text-slate-200 truncate leading-snug" title="${breed}">${breed}</p>
+                  <p class="text-[12px] font-semibold text-on-surface dark:text-slate-200 truncate leading-snug" title="${breed}" data-i18n-breed="${breed}">${breed}</p>
                   <p class="text-[13px] font-bold ${cc} leading-tight">${pct}</p>
                   <p class="text-[11px] text-on-surface-variant/60 dark:text-slate-500 truncate leading-tight">${time}</p>
                 </div>
@@ -942,6 +942,9 @@
             });
 
             container.innerHTML = `<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">${cards.join("")}</div>`;
+            if (window.PetAI_i18n && typeof window.PetAI_i18n.applyToElement === "function") {
+              window.PetAI_i18n.applyToElement(container, window.PetAI_i18n.getCurrentLang() || "vi");
+            }
           } catch (err) {
             console.error("Recent history error:", err);
             container.innerHTML = emptyState(t("noRecentData") || "Chưa có dữ liệu nhận diện.");

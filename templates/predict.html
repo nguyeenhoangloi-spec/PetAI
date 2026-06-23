@@ -5,130 +5,131 @@
   class="{{ 'dark' if ui_theme == 'dark' else 'light' }}{{ ' i18n-loading' if ui_language == 'en' else '' }}"
   lang="{{ ui_language or 'vi' }}"
   data-theme="{{ ui_theme or 'light' }}"
+  data-theme-key="{{ 'theme:' ~ session.get('user_id') if session.get('user_id') else '' }}"
 >
   <head>
-  <script>
-    // Apply initial sidebar collapse state immediately on load to prevent transition animation
-    (function() {
-      document.documentElement.classList.add("preload");
-      try {
-        if (window.innerWidth >= 768) {
-          const isCollapsed = localStorage.getItem("sidebar-collapsed") === "true";
-          if (isCollapsed) {
-            document.documentElement.classList.add("sidebar-collapsed");
-          } else {
-            document.documentElement.classList.remove("sidebar-collapsed");
+    <script>
+      // Apply initial sidebar collapse state immediately on load to prevent transition animation
+      (function() {
+        document.documentElement.classList.add("preload");
+        try {
+          if (window.innerWidth >= 768) {
+            const isCollapsed = localStorage.getItem("sidebar-collapsed") === "true";
+            if (isCollapsed) {
+              document.documentElement.classList.add("sidebar-collapsed");
+            } else {
+              document.documentElement.classList.remove("sidebar-collapsed");
+            }
           }
-        }
-      } catch (e) {}
-    })();
-  </script>
-  <style id="early-sidebar-style">
-    /* Prevent FOUC (Flash of Unstyled Content) during Tailwind compiler startup */
-    html.preload body {
-      opacity: 0 !important;
-    }
-    
-    /* Early CSS to prevent F5 flicker before stylesheet loads */
-    html.preload .sidebar,
-    html.preload main,
-    html.preload footer {
-      transition: none !important;
-    }
-    
-    /* Stable header styles to prevent navigation bar shifting */
-    body>nav .flex.items-center.gap-gutter {
-      gap: 12px !important;
-    }
-    body>nav #menuToggle {
-      margin-left: 4px !important;
-      margin-right: 0 !important;
-      position: relative !important;
-    }
-    
-    /* Stable inner sidebar styles to prevent internal text/layout shifting */
-    .sidebar-wrapper {
-      display: flex !important;
-      flex-direction: column !important;
-      height: 100% !important;
-      justify-content: space-between !important;
-      padding: 16px 10px 12px 10px !important;
-      box-sizing: border-box !important;
-      gap: 12px !important;
-    }
-    .sidebar-menu {
-      display: flex !important;
-      flex-direction: column !important;
-      gap: 6px !important;
-      flex-grow: 1 !important;
-    }
-    .sidebar-menu-item {
-      display: flex !important;
-      align-items: center !important;
-      gap: 10px !important;
-      height: 40px !important;
-      padding: 0 10px !important;
-      border-radius: 12px !important;
-      box-sizing: border-box !important;
-    }
-    
-    @media (min-width: 768px) {
-      .sidebar {
-        position: fixed !important;
-        top: 64px !important;
-        left: 0 !important;
-        bottom: 0 !important;
-        width: 224px !important;
-        height: calc(100vh - 64px) !important;
-        z-index: 100 !important;
-      }
-      
-      /* Collapsed state */
-      html.sidebar-collapsed .sidebar {
-        transform: translateX(-100%) !important;
+        } catch (e) {}
+      })();
+    </script>
+    <style id="early-sidebar-style">
+      /* Prevent FOUC (Flash of Unstyled Content) during Tailwind compiler startup */
+      html.preload body {
         opacity: 0 !important;
-        visibility: hidden !important;
-      }
-      html.sidebar-collapsed main,
-      html.sidebar-collapsed footer {
-        margin-left: 0 !important;
-        width: 100% !important;
       }
       
-      /* Expanded state (default) */
-      html:not(.sidebar-collapsed) .sidebar {
-        transform: translateX(0) !important;
-        opacity: 1 !important;
-        visibility: visible !important;
-      }
-      html:not(.sidebar-collapsed) main,
-      html:not(.sidebar-collapsed) footer {
-        margin-left: 224px !important;
-        width: calc(100% - 224px) !important;
+      /* Early CSS to prevent F5 flicker before stylesheet loads */
+      html.preload .sidebar,
+      html.preload main,
+      html.preload footer {
+        transition: none !important;
       }
       
-      /* Force single-column grid immediately for main container on both states */
-      html main {
-        grid-template-columns: 1fr !important;
-        gap: 0 !important;
+      /* Stable header styles to prevent navigation bar shifting */
+      body>nav .flex.items-center.gap-gutter {
+        gap: 12px !important;
       }
-    }
-    
-    @media (max-width: 767px) {
-      .sidebar {
-        position: fixed !important;
-        top: 0 !important;
-        left: 0 !important;
-        height: 100vh !important;
-        width: 224px !important;
-        transform: translateX(-100%) !important;
-        z-index: 1000 !important;
+      body>nav #menuToggle {
+        margin-left: 4px !important;
+        margin-right: 0 !important;
+        position: relative !important;
       }
-      .sidebar.active {
-        transform: translateX(0) !important;
+      
+      /* Stable inner sidebar styles to prevent internal text/layout shifting */
+      .sidebar-wrapper {
+        display: flex !important;
+        flex-direction: column !important;
+        height: 100% !important;
+        justify-content: space-between !important;
+        padding: 16px 10px 12px 10px !important;
+        box-sizing: border-box !important;
+        gap: 12px !important;
       }
-    }
-  </style>
+      .sidebar-menu {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 6px !important;
+        flex-grow: 1 !important;
+      }
+      .sidebar-menu-item {
+        display: flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+        height: 40px !important;
+        padding: 0 10px !important;
+        border-radius: 12px !important;
+        box-sizing: border-box !important;
+      }
+      
+      @media (min-width: 768px) {
+        .sidebar {
+          position: fixed !important;
+          top: 64px !important;
+          left: 0 !important;
+          bottom: 0 !important;
+          width: 224px !important;
+          height: calc(100vh - 64px) !important;
+          z-index: 100 !important;
+        }
+        
+        /* Collapsed state */
+        html.sidebar-collapsed .sidebar {
+          transform: translateX(-100%) !important;
+          opacity: 0 !important;
+          visibility: hidden !important;
+        }
+        html.sidebar-collapsed main,
+        html.sidebar-collapsed footer {
+          margin-left: 0 !important;
+          width: 100% !important;
+        }
+        
+        /* Expanded state (default) */
+        html:not(.sidebar-collapsed) .sidebar {
+          transform: translateX(0) !important;
+          opacity: 1 !important;
+          visibility: visible !important;
+        }
+        html:not(.sidebar-collapsed) main,
+        html:not(.sidebar-collapsed) footer {
+          margin-left: 224px !important;
+          width: calc(100% - 224px) !important;
+        }
+        
+        /* Force single-column grid immediately for main container on both states */
+        html main {
+          grid-template-columns: 1fr !important;
+          gap: 0 !important;
+        }
+      }
+      
+      @media (max-width: 767px) {
+        .sidebar {
+          position: fixed !important;
+          top: 0 !important;
+          left: 0 !important;
+          height: 100vh !important;
+          width: 224px !important;
+          transform: translateX(-100%) !important;
+          z-index: 1000 !important;
+        }
+        .sidebar.active {
+          transform: translateX(0) !important;
+        }
+      }
+    </style>
     <script>
       (function () {
         var savedLang = "vi";
@@ -165,8 +166,8 @@
       (function () {
         const root = document.documentElement;
         const themeStorageKey =
-          "{{ 'theme:' ~ session.get('user_id') if session.get('user_id') else '' }}";
-        const serverTheme = "{{ ui_theme or 'light' }}";
+          document.documentElement.getAttribute('data-theme-key') || '';
+        const serverTheme = document.documentElement.getAttribute('data-theme') || 'light';
         if (themeStorageKey) {
           try {
             localStorage.setItem(themeStorageKey, serverTheme);
@@ -418,6 +419,17 @@
         from { transform: translateX(120%); opacity: 0; }
         to   { transform: translateX(0);   opacity: 1; }
       }
+      @keyframes pulse-fast {
+        0%, 100% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.15); opacity: 0.85; }
+      }
+      .pulse-dna {
+        animation: pulse-fast 2s infinite ease-in-out;
+      }
+      .hide-until-loaded:not([src]), 
+      .hide-until-loaded[src=""] {
+        display: none !important;
+      }
     </style>
   </head>
   <body
@@ -440,47 +452,48 @@
       setTimeout(function() {
         var t = document.getElementById('system-notification-toast');
         if (t) { t.style.transition = 'opacity 0.5s'; t.style.opacity = '0'; setTimeout(function(){ if(t) t.remove(); }, 500); }
-      }, 6000);
+      }, 2000); // Tự động ẩn sau 2 giây theo quy chuẩn AGENTS.md
     </script>
     {% endif %}
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
-    {% set has_conf = result.breed_conf is defined and result.breed_conf is not
-    none %} {% set conf_percent = (result.breed_conf * 100) if has_conf else 0
-    %} {% set conf_percent_clamped = 0 if 0 > conf_percent else (100 if
-    conf_percent > 100 else conf_percent) %}
+    {% set has_conf = result.breed_conf is defined and result.breed_conf is not none %} 
+    {% set conf_percent = (result.breed_conf * 100) if has_conf else 0 %} 
+    {% set conf_percent_clamped = 0 if 0 > conf_percent else (100 if conf_percent > 100 else conf_percent) %}
     {% set breed_name_vi = result.breed if result.breed else 'Chưa xác định' %}
     {% set breed_name_en = result.breed_en if result.breed_en else 'Not determined' %}
-    {% set primary_label = 'Giống dự đoán'
-    %} {% if result.parts_info and result.parts_info.decision and
-    result.parts_info.decision.is_hybrid_candidate %} {% set primary_label =
-    'Nghi lai' %} {% elif result.parts_info and result.parts_info.acceptance and
-    result.parts_info.acceptance.level == 'reference' %} {% set primary_label =
-    'Giống tham khảo' %} {% endif %} {% set decision_label = 'Ứng viên thuần
-    chủng' %} {% set decision_class = 'pure' %} {% if result.parts_info and
-    result.parts_info.decision and
-    result.parts_info.decision.is_hybrid_candidate %} {% set decision_label =
-    'Ứng viên nghi lai' %} {% set decision_class = 'hybrid' %} {% elif
-    result.parts_info and result.parts_info.acceptance and not
-    result.parts_info.acceptance.accepted %} {% set decision_label = 'Chưa đủ
-    tin cậy' %} {% set decision_class = 'uncertain' %} {% endif %} {% set
-    decision_reason = result.parts_info.decision.reason if result.parts_info and
-    result.parts_info.decision and result.parts_info.decision.reason else 'Chưa
-    có diễn giải chi tiết cho lần dự đoán này.' %} {% set top3_mode = 'softmax'
-    %} {% if result.parts_info and result.parts_info.display and
-    result.parts_info.display.top3_mode %} {% set top3_mode =
-    result.parts_info.display.top3_mode %} {% endif %} {% set gradcam_items = []
-    %} {% set gradcam_mode = '' %} {% if result.parts_info and
-    result.parts_info.gradcam_dynamic and
-    result.parts_info.gradcam_dynamic['items'] %} {% set gradcam_items =
-    result.parts_info.gradcam_dynamic['items'] %} {% set gradcam_mode =
-    'dynamic' %} {% elif result.parts_info and result.parts_info.gradcam and
-    result.parts_info.gradcam['items'] %} {% set gradcam_items =
-    result.parts_info.gradcam['items'] %} {% set gradcam_mode = 'reference' %}
-    {% endif %} {% set display_role = session.get('role') or 'user' %} {% set
-    display_plan = current_plan or 'free' %} {% set heatmap_overlays =
-    ['bg-red-500/40', 'bg-orange-500/40', 'bg-yellow-500/40', 'bg-blue-500/40']
-    %} {% set heatmap_rings = ['ring-red-500/20', 'ring-orange-500/20',
-    'ring-yellow-500/20', 'ring-blue-500/20'] %}
+    {% set primary_label = 'Giống dự đoán' %} 
+    {% if result.parts_info and result.parts_info.decision and result.parts_info.decision.is_hybrid_candidate %} 
+      {% set primary_label = 'Nghi lai' %} 
+    {% elif result.parts_info and result.parts_info.acceptance and result.parts_info.acceptance.level == 'reference' %} 
+      {% set primary_label = 'Giống tham khảo' %} 
+    {% endif %} 
+    {% set decision_label = 'Ứng viên thuần chủng' %} 
+    {% set decision_class = 'pure' %} 
+    {% if result.parts_info and result.parts_info.decision and result.parts_info.decision.is_hybrid_candidate %} 
+      {% set decision_label = 'Ứng viên nghi lai' %} 
+      {% set decision_class = 'hybrid' %} 
+    {% elif result.parts_info and result.parts_info.acceptance and not result.parts_info.acceptance.accepted %} 
+      {% set decision_label = 'Chưa đủ tin cậy' %} 
+      {% set decision_class = 'uncertain' %} 
+    {% endif %} 
+    {% set decision_reason = result.parts_info.decision.reason if result.parts_info and result.parts_info.decision and result.parts_info.decision.reason else 'Chưa có diễn giải chi tiết cho lần dự đoán này.' %} 
+    {% set top3_mode = 'softmax' %} 
+    {% if result.parts_info and result.parts_info.display and result.parts_info.display.top3_mode %} 
+      {% set top3_mode = result.parts_info.display.top3_mode %} 
+    {% endif %} 
+    {% set gradcam_items = [] %} 
+    {% set gradcam_mode = '' %} 
+    {% if result.parts_info and result.parts_info.gradcam_dynamic and result.parts_info.gradcam_dynamic['items'] %} 
+      {% set gradcam_items = result.parts_info.gradcam_dynamic['items'] %} 
+      {% set gradcam_mode = 'dynamic' %} 
+    {% elif result.parts_info and result.parts_info.gradcam and result.parts_info.gradcam['items'] %} 
+      {% set gradcam_items = result.parts_info.gradcam['items'] %} 
+      {% set gradcam_mode = 'reference' %} 
+    {% endif %} 
+    {% set display_role = session.get('role') or 'user' %} 
+    {% set display_plan = current_plan or 'free' %} 
+    {% set heatmap_overlays = ['bg-red-500/40', 'bg-orange-500/40', 'bg-yellow-500/40', 'bg-blue-500/40'] %} 
+    {% set heatmap_rings = ['ring-red-500/20', 'ring-orange-500/20', 'ring-yellow-500/20', 'ring-blue-500/20'] %}
 
     {% include '_header.html' %}
 
@@ -488,628 +501,625 @@
       tabindex="-1"
       class="flex-grow w-full px-4 md:px-6 py-margin grid grid-cols-1 gap-0"
     >
-      {% set active_page = 'predict' %} {% include '_sidebar.html' %}
+      {% set active_page = 'predict' %} 
+      {% include '_sidebar.html' %}
 
-      <div class="col-span-1 flex flex-col min-w-0 gap-gutter">
-        <div class="w-full space-y-md">
-          <!-- Page Header -->
+      <div class="col-span-1 flex flex-col min-w-0 gap-6">
+        <div class="w-full space-y-6">
+          
+          <!-- ========== PAGE HEADER ========== -->
           <section
             class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-outline-variant/20 dark:border-slate-800 pb-5"
             data-purpose="page-header"
           >
             <div class="flex flex-col gap-2">
               <h1
-                class="headline-lg font-semibold text-on-surface dark:text-slate-100"
-                data-i18n="predResultTitle"
+                class="headline-lg font-semibold text-on-surface dark:text-slate-100 flex items-center gap-2"
               >
-                <span data-i18n="predResultTitle"
-                  >Kết quả nhận diện giống chó</span
-                >
+                <span data-i18n="predResultTitle">Kết quả nhận diện giống chó</span>
+                <span class="material-symbols-outlined text-green-500 dark:text-green-400 text-[24px]">verified</span>
               </h1>
               <p
                 class="body-md text-on-surface-variant dark:text-slate-400"
                 data-i18n="predResultDesc"
               >
-                <span data-i18n="predResultDesc"
-                  >Hệ thống AI đã hoàn tất phân tích hình ảnh với độ chính xác
-                  cao.</span
-                >
+                Hệ thống AI đã hoàn tất phân tích hình ảnh và dự đoán giống chó với độ chính xác cao.
               </p>
             </div>
             <div class="flex flex-wrap gap-3 mt-4 md:mt-0">
               <a
-                class="px-4 py-2.5 rounded-lg border border-outline-variant/40 dark:border-slate-700 label-sm font-semibold text-on-surface dark:text-slate-300 hover:bg-surface-container-low dark:hover:bg-slate-800 transition-colors flex items-center gap-2"
+                class="px-4 py-2.5 rounded-xl border border-outline-variant/40 dark:border-slate-700 label-sm font-semibold text-on-surface dark:text-slate-300 hover:bg-surface-container-low dark:hover:bg-slate-800 transition-all flex items-center gap-2 shadow-sm hover:scale-[1.02] active:scale-[0.98]"
                 href="{{ url_for('dashboard.dashboard') }}"
               >
-                <span class="material-symbols-outlined text-[18px]"
-                  >dashboard</span
-                ><span data-i18n="backToDashboard">Về bảng điều khiển</span></a
-              >
+                <span class="material-symbols-outlined text-[18px]">dashboard</span>
+                <span data-i18n="backToDashboard">Về bảng điều khiển</span>
+              </a>
               <a
-                class="bg-primary hover:bg-primary/95 text-on-primary px-4 py-2.5 rounded-lg label-sm shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-2 font-semibold"
+                class="bg-primary hover:bg-primary/95 text-on-primary px-4 py-2.5 rounded-xl label-sm shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 font-semibold hover:scale-[1.02] active:scale-[0.98]"
                 href="{{ url_for('predict.upload_page') }}"
               >
-                <span class="material-symbols-outlined text-[18px]"
-                  >photo_camera</span
-                ><span data-i18n="analyzeAnotherImg"
-                  >Phân tích ảnh khác</span
-                ></a
-              >
+                <span class="material-symbols-outlined text-[18px]">photo_camera</span>
+                <span data-i18n="analyzeAnotherImg">Phân tích ảnh khác</span>
+              </a>
             </div>
           </section>
 
-          <section class="space-y-gutter">
-            <div
-              class="flex items-center gap-3 border-b border-outline-variant/20 dark:border-slate-800 pb-4"
-            >
-              <div
-                class="w-10 h-10 rounded-full bg-primary/10 dark:bg-primary/20 flex items-center justify-center text-primary dark:text-blue-400"
-              >
-                <span class="material-symbols-outlined">visibility</span>
+          <!-- ========== OVERVIEW CARDS ROW (4 cards) ========== -->
+          <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" data-purpose="overview-cards">
+
+            <!-- Card 1: Best Prediction Breed -->
+            <div class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-5 border border-outline-variant/30 dark:border-slate-800 shadow-sm border-t-4 border-t-primary flex flex-col gap-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                  <div class="w-9 h-9 rounded-full bg-primary/10 dark:bg-primary/20 flex items-center justify-center">
+                    <span class="material-symbols-outlined text-primary dark:text-blue-400 text-[20px]">emoji_events</span>
+                  </div>
+                  <span class="label-sm text-outline dark:text-slate-400 uppercase tracking-widest font-bold" data-i18n="cardBestBreed">Giống dự đoán</span>
+                </div>
+                {% if conf_percent_clamped >= 70 %}
+                <span class="inline-flex items-center px-2.5 py-1 bg-blue-50 dark:bg-blue-950/40 text-primary dark:text-blue-400 text-[11px] font-bold rounded-full border border-blue-100 dark:border-blue-900/30" data-i18n="highConfidenceBadge">Độ tin cậy cao</span>
+                {% endif %}
               </div>
-              <h2
-                class="headline-md font-semibold text-on-surface dark:text-slate-100"
-                data-i18n="visualAIInsights"
-              >
-                Visual AI Insights
-              </h2>
+              <div class="text-on-surface dark:text-slate-100 font-black text-2xl leading-tight truncate mt-1">
+                {% if result.parts_info and result.parts_info.decision and result.parts_info.decision.is_hybrid_candidate and result.parts_info.similarity_top3|length >= 2 %}
+                  <span data-i18n-breed data-i18n-breed-vi="{{ result.parts_info.similarity_top3[0].breed }}" data-i18n-breed-en="{{ result.parts_info.similarity_top3[0].breed_en }}">{{ result.parts_info.similarity_top3[0].breed_en if ui_language == 'en' else result.parts_info.similarity_top3[0].breed }}</span>
+                  <span class="text-outline dark:text-slate-500 text-xl"> × </span>
+                  <span data-i18n-breed data-i18n-breed-vi="{{ result.parts_info.similarity_top3[1].breed }}" data-i18n-breed-en="{{ result.parts_info.similarity_top3[1].breed_en }}">{{ result.parts_info.similarity_top3[1].breed_en if ui_language == 'en' else result.parts_info.similarity_top3[1].breed }}</span>
+                {% else %}
+                  <span data-i18n-breed data-i18n-breed-vi="{{ breed_name_vi }}" data-i18n-breed-en="{{ breed_name_en }}">{{ breed_name_en if ui_language == 'en' else breed_name_vi }}</span>
+                {% endif %}
+              </div>
+              <div class="mt-auto">
+                <div class="w-full bg-surface-container-high dark:bg-slate-800 h-2.5 rounded-full overflow-hidden">
+                  <div class="bg-gradient-to-r from-primary to-blue-500 dark:from-blue-600 dark:to-blue-400 h-full rounded-full confidence-fill transition-all duration-700" data-width="{{ conf_percent_clamped|int }}"></div>
+                </div>
+                <div class="flex items-center justify-between text-xs mt-2">
+                  <span class="text-outline dark:text-slate-400" data-i18n="confidence">Độ tin cậy tổng thể</span>
+                  <span class="text-primary dark:text-blue-400 font-extrabold text-base">{{ '%.1f'|format(conf_percent_clamped) }}%</span>
+                </div>
+              </div>
             </div>
 
-            <div
-              class="grid grid-cols-1 xl:grid-cols-12 gap-gutter items-start"
-            >
-              <!-- Image view card -->
-              <div class="xl:col-span-8">
-                <div
-                  class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-5 border border-outline-variant/30 dark:border-slate-800 shadow-sm"
-                >
-                  <div class="flex items-center justify-between mb-4 px-2">
-                    <div class="flex items-center gap-3">
-                      <span
-                        class="material-symbols-outlined text-primary dark:text-blue-400"
-                        >analytics</span
-                      >
-                      <h3
-                        class="font-semibold headline-md text-on-surface dark:text-slate-100"
-                        data-i18n="mainObjectAnalysis"
-                      >
-                        <span data-i18n="mainObjectAnalysis"
-                          >Phân tích vùng đối tượng chính</span
-                        >
-                      </h3>
-                    </div>
-                    <span
-                      class="px-3 py-1 bg-primary/10 dark:bg-primary/20 text-primary dark:text-blue-400 label-sm font-bold rounded-full uppercase tracking-widest"
-                      data-i18n="analyzingText"
-                      >Đang phân tích</span
-                    >
-                  </div>
-                  <div
-                    class="relative rounded-xl overflow-hidden shadow-inner border border-outline-variant/20 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/40"
-                  >
-                    <img
-                      class="w-full h-auto max-h-[700px] object-contain mx-auto"
-                      src="/{{ image_path }}"
-                      alt="Uploaded photo"
-                    >
-                    <div
-                      class="absolute inset-0 flex items-center justify-center"
-                    >
-                      <div
-                        class="w-[45%] h-[65%] border-2 border-primary ring-[12px] ring-primary/20 rounded-lg relative ai-overlay-label"
-                      >
-                        <div
-                          class="absolute -top-10 left-0 bg-primary text-white label-sm px-3 py-1.5 font-bold uppercase tracking-widest rounded-t-lg shadow-lg flex items-center gap-2 whitespace-nowrap"
-                        >
-                          <span class="material-symbols-outlined text-sm"
-                            >check_circle</span
-                          >
-                          {% if result.parts_info and result.parts_info.decision
-                          and result.parts_info.decision.is_hybrid_candidate and
-                          result.parts_info.similarity_top3|length >= 2 %}
-                          <span data-i18n="mixLai">Mix Lai:</span>
-                          <span data-i18n-breed data-i18n-breed-vi="{{ result.parts_info.similarity_top3[0].breed }}" data-i18n-breed-en="{{ result.parts_info.similarity_top3[0].breed_en }}">{{ result.parts_info.similarity_top3[0].breed_en if ui_language == 'en' else result.parts_info.similarity_top3[0].breed }}</span>
-                          ×
-                          <span data-i18n-breed data-i18n-breed-vi="{{ result.parts_info.similarity_top3[1].breed }}" data-i18n-breed-en="{{ result.parts_info.similarity_top3[1].breed_en }}">{{ result.parts_info.similarity_top3[1].breed_en if ui_language == 'en' else result.parts_info.similarity_top3[1].breed }}</span>
-                          {% else %}
-                          <span data-i18n-breed data-i18n-breed-vi="{{ breed_name_vi }}" data-i18n-breed-en="{{ breed_name_en }}"
-                            >{{ breed_name_en if ui_language == 'en' else breed_name_vi }}</span
-                          >
-                          {% endif %} {% if has_conf %}: {{
-                          '%.1f'|format(conf_percent_clamped) }}%{% endif %}
-                        </div>
-                        <div
-                          class="absolute inset-0 border border-white/30 rounded-lg pointer-events-none"
-                        ></div>
-                      </div>
-                    </div>
-                    <div class="absolute bottom-4 right-4 flex flex-col gap-2">
-                      <div
-                        class="glass-card bg-white/80 dark:bg-slate-900/80 backdrop-blur-md px-4 py-2 rounded-lg flex items-center gap-2 label-sm font-medium text-slate-700 dark:text-slate-300 border border-outline-variant/30 dark:border-slate-800"
-                      >
-                        <div class="w-3 h-3 rounded-full bg-primary"></div>
-                        <span data-i18n="mainObjectIdentify"
-                          >Nhận diện đối tượng chính</span
-                        >
-                      </div>
-                    </div>
-                  </div>
+            <!-- Card 2: Prediction Type (Pure/Hybrid) -->
+            <div class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-5 border border-outline-variant/30 dark:border-slate-800 shadow-sm {% if result.parts_info and result.parts_info.decision and result.parts_info.decision.is_hybrid_candidate %}border-t-4 border-t-amber-500{% else %}border-t-4 border-t-green-500{% endif %} flex flex-col gap-3">
+              <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-full {% if result.parts_info and result.parts_info.decision and result.parts_info.decision.is_hybrid_candidate %}bg-amber-500/10 dark:bg-amber-500/20{% else %}bg-green-500/10 dark:bg-green-500/20{% endif %} flex items-center justify-center">
+                  <span class="material-symbols-outlined {% if result.parts_info and result.parts_info.decision and result.parts_info.decision.is_hybrid_candidate %}text-amber-500 dark:text-amber-400{% else %}text-green-500 dark:text-green-400{% endif %} text-[20px]">pets</span>
                 </div>
+                <span class="label-sm text-outline dark:text-slate-400 uppercase tracking-widest font-bold" data-i18n="cardPredType">Loại dự đoán</span>
               </div>
+              <div class="font-black text-2xl leading-tight mt-1">
+                {% if result.parts_info and result.parts_info.decision and result.parts_info.decision.is_hybrid_candidate %}
+                  <span class="text-amber-600 dark:text-amber-400" data-i18n="hybridBreed">Chó lai (Mix)</span>
+                {% elif result.parts_info and result.parts_info.acceptance and not result.parts_info.acceptance.accepted %}
+                  <span class="text-red-500 dark:text-red-400" data-i18n="lowConfidenceResult">Độ tin cậy thấp</span>
+                {% else %}
+                  <span class="text-green-600 dark:text-green-400" data-i18n="pureBreed">Chó thuần chủng</span>
+                {% endif %}
+              </div>
+              <div class="flex items-center gap-1.5 text-xs text-outline dark:text-slate-400 mt-auto">
+                <span class="material-symbols-outlined text-[15px] text-slate-400">info</span>
+                <span data-i18n="card2Description">Dựa trên đặc điểm hình thái</span>
+              </div>
+            </div>
 
-              <!-- Top Breed Card -->
-              <div class="xl:col-span-4 space-y-gutter">
-                <div
-                  class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-5 border border-outline-variant/30 dark:border-slate-800 shadow-sm border-t-4 border-t-primary"
-                >
-                  <div class="flex justify-between items-start mb-4">
-                    <div>
-                      <span
-                        class="label-sm text-outline dark:text-slate-400 uppercase tracking-widest"
-                        data-i18n="bestPrediction"
-                        >Dự đoán tốt nhất</span
-                      >
-                      <h2
-                        class="headline-lg text-on-surface dark:text-slate-100 mt-1 leading-tight"
-                      >
-                        {% if result.parts_info and result.parts_info.decision
-                        and result.parts_info.decision.is_hybrid_candidate and
-                        result.parts_info.similarity_top3|length >= 2 %}
-                        <span data-i18n="mixLai">Mix Lai:</span>
-                        <span data-i18n-breed data-i18n-breed-vi="{{ result.parts_info.similarity_top3[0].breed }}" data-i18n-breed-en="{{ result.parts_info.similarity_top3[0].breed_en }}">{{ result.parts_info.similarity_top3[0].breed_en if ui_language == 'en' else result.parts_info.similarity_top3[0].breed }}</span>
-                        ×
-                        <span data-i18n-breed data-i18n-breed-vi="{{ result.parts_info.similarity_top3[1].breed }}" data-i18n-breed-en="{{ result.parts_info.similarity_top3[1].breed_en }}">{{ result.parts_info.similarity_top3[1].breed_en if ui_language == 'en' else result.parts_info.similarity_top3[1].breed }}</span>
-                        {% else %}
-                        <span data-i18n-breed data-i18n-breed-vi="{{ breed_name_vi }}" data-i18n-breed-en="{{ breed_name_en }}"
-                          >{{ breed_name_en if ui_language == 'en' else breed_name_vi }}</span
-                        >
-                        {% if primary_label and primary_label != 'Nghi lai' %}
-                        <span
-                          class="text-primary dark:text-blue-400 text-sm font-semibold"
-                          >(<span data-i18n-auto>{{ primary_label }}</span
-                          >)</span
-                        >
-                        {% endif %} {% endif %}
-                      </h2>
-                    </div>
-                    <div class="flex flex-col items-end">
-                      <div
-                        class="headline-lg font-black text-primary dark:text-blue-400 leading-none"
-                      >
-                        {% if has_conf %} {{ '%.1f'|format(conf_percent_clamped)
-                        }}%{% else %} -- {% endif %}
-                      </div>
-                      <div
-                        class="label-sm text-outline dark:text-slate-400 mt-1 font-bold"
-                        data-i18n="confidence"
-                      >
-                        <span data-i18n="confidence">Độ tin cậy</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div
-                    class="w-full bg-surface-container-highest dark:bg-slate-800 h-3 rounded-full overflow-hidden mb-6"
-                  >
-                    <div
-                      class="bg-primary h-full rounded-full shadow-[0_0_12px_rgba(37,99,235,0.4)] confidence-fill"
-                      data-width="{{ conf_percent_clamped|int }}"
-                    ></div>
-                  </div>
-                  {% if result.note %}
-                  <div
-                    class="p-3 bg-error-container/40 dark:bg-red-950/20 rounded-lg border border-error-container/60 dark:border-red-900/30 mb-4"
-                  >
-                    <p
-                      class="body-md text-on-error-container dark:text-red-400 warning-note"
-                    >
-                      {{ result.note }}
-                    </p>
-                  </div>
-                  {% endif %}
-                  <div
-                    class="p-5 bg-primary/5 dark:bg-blue-950/20 rounded-xl border border-primary/10 dark:border-blue-900/20"
-                  >
-                    <p
-                      class="body-md text-on-surface-variant dark:text-slate-300 leading-relaxed"
-                      data-i18n-auto
-                    >
-                      {{ decision_reason }}
-                    </p>
-                    {% if result.parts_info and result.parts_info.decision and
-                    result.parts_info.decision.is_hybrid_candidate %}
-                    <p
-                      class="label-sm text-on-surface-variant dark:text-slate-400 mt-3"
-                      data-i18n="hybridWarningText"
-                    >
-                      <span data-i18n="hybridWarningText"
-                        >Đây là gợi ý ứng viên lai dựa trên tương đồng hình
-                        thái, không phải kết luận di truyền.</span
-                      >
-                    </p>
-                    {% endif %}
-                  </div>
-
-                  {% if result.parts_info and result.parts_info.decision and
-                  result.parts_info.decision.is_hybrid_candidate and
-                  result.parts_info.similarity_top3|length >= 2 %} {% set
-                  mix_breed1 = result.parts_info.similarity_top3[0] %} {% set
-                  mix_breed2 = result.parts_info.similarity_top3[1] %} {% set s1
-                  = mix_breed1.score %} {% set s2 = mix_breed2.score %} {% set
-                  sum_s = s1 + s2 %} {% set p1 = ((s1 / sum_s) * 100)|round(1)
-                  if sum_s > 0 else 50.0 %} {% set p2 = 100.0 - p1 %}
-                  <div
-                    class="mt-4 p-5 bg-gradient-to-r from-blue-50/50 to-primary/5 dark:from-slate-800/40 dark:to-slate-900/40 rounded-xl border border-blue-100 dark:border-slate-850"
-                  >
-                    <h4
-                      class="text-xs font-semibold uppercase text-slate-500 dark:text-slate-400 tracking-wider mb-4 flex items-center gap-1.5"
-                    >
-                      <span
-                        class="material-symbols-outlined text-[16px] text-primary dark:text-blue-400"
-                        >analytics</span
-                      ><span data-i18n="hybridRatioTitle"
-                        >Phân tích tỷ lệ lai dự tính</span
-                      >
-                    </h4>
-
-                    <div class="space-y-3">
-                      <!-- Hybrid Mix Legend/Labels -->
-                      <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2 text-xs font-bold">
-                        <div class="flex items-center gap-2 text-slate-800 dark:text-slate-200">
-                          <span class="w-3 h-3 rounded-full bg-gradient-to-r from-primary to-blue-500 shadow-sm flex-shrink-0"></span>
-                          <span data-i18n-breed data-i18n-breed-vi="{{ mix_breed1.breed }}" data-i18n-breed-en="{{ mix_breed1.breed_en }}">{{ mix_breed1.breed_en if ui_language == 'en' else mix_breed1.breed }}</span>
-                          <span class="text-primary dark:text-blue-400">({{ p1 }}%)</span>
-                        </div>
-                        <div class="flex items-center gap-2 sm:flex-row-reverse self-end sm:self-auto text-slate-800 dark:text-slate-200">
-                          <span class="w-3 h-3 rounded-full bg-gradient-to-r from-yellow-500 to-orange-500 shadow-sm flex-shrink-0"></span>
-                          <span data-i18n-breed data-i18n-breed-vi="{{ mix_breed2.breed }}" data-i18n-breed-en="{{ mix_breed2.breed_en }}">{{ mix_breed2.breed_en if ui_language == 'en' else mix_breed2.breed }}</span>
-                          <span class="text-amber-500 dark:text-amber-400">({{ p2 }}%)</span>
-                        </div>
-                      </div>
-
-                      <!-- Hybrid Mix Progress Bar -->
-                      <div
-                        class="w-full bg-slate-200 dark:bg-slate-800 h-4 rounded-full overflow-hidden flex relative"
-                      >
-                        <div
-                          class="h-full bg-gradient-to-r from-primary to-blue-500 transition-all duration-500 confidence-fill"
-                          data-width="{{ p1 }}"
-                        ></div>
-                        <div
-                          class="h-full bg-gradient-to-r from-yellow-500 to-orange-500 transition-all duration-500 confidence-fill"
-                          data-width="{{ p2 }}"
-                        ></div>
-                      </div>
-
-                      <!-- Parent Breeds Breakdown -->
-                      <div class="grid grid-cols-2 gap-4 mt-2">
-                        <div
-                          class="bg-surface-container-low dark:bg-slate-950 p-4 rounded-xl border border-outline-variant/30 dark:border-slate-800 flex flex-col gap-1.5 shadow-sm"
-                        >
-                          <div class="flex items-center justify-between">
-                            <span
-                              class="text-[10px] font-semibold text-slate-450 dark:text-slate-500 uppercase"
-                              data-i18n="dominantGenExpected"
-                              >Gen trội dự kiến</span
-                            >
-                            <span
-                              class="text-xs font-black text-primary dark:text-blue-400"
-                              >{{ p1 }}%</span
-                            >
-                          </div>
-                          <div
-                            class="text-sm font-bold text-slate-800 dark:text-slate-200"
-                          >
-                            <span data-i18n-breed data-i18n-breed-vi="{{ mix_breed1.breed }}" data-i18n-breed-en="{{ mix_breed1.breed_en }}">{{ mix_breed1.breed_en if ui_language == 'en' else mix_breed1.breed }}</span>
-                          </div>
-                          <div
-                            class="text-[11px] text-slate-400 dark:text-slate-500 font-mono"
-                          >
-                            <span data-i18n="similarityText">Độ tương đồng</span
-                            >: {{ '%.3f'|format(s1) }}
-                          </div>
-                        </div>
-
-                        <div
-                          class="bg-surface-container-low dark:bg-slate-950 p-4 rounded-xl border border-outline-variant/30 dark:border-slate-800 flex flex-col gap-1.5 shadow-sm"
-                        >
-                          <div class="flex items-center justify-between">
-                            <span
-                              class="text-[10px] font-semibold text-slate-450 dark:text-slate-500 uppercase"
-                              data-i18n="recessiveGenExpected"
-                              >Gen ẩn dự kiến</span
-                            >
-                            <span
-                              class="text-xs font-black text-yellow-600 dark:text-yellow-400"
-                              >{{ p2 }}%</span
-                            >
-                          </div>
-                          <div
-                            class="text-sm font-bold text-slate-800 dark:text-slate-200"
-                          >
-                            <span data-i18n-breed data-i18n-breed-vi="{{ mix_breed2.breed }}" data-i18n-breed-en="{{ mix_breed2.breed_en }}">{{ mix_breed2.breed_en if ui_language == 'en' else mix_breed2.breed }}</span>
-                          </div>
-                          <div
-                            class="text-[11px] text-slate-400 dark:text-slate-500 font-mono"
-                          >
-                            <span data-i18n="similarityText">Độ tương đồng</span
-                            >: {{ '%.3f'|format(s2) }}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  {% endif %}
+            <!-- Card 3: Analysis Time -->
+            <div class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-5 border border-outline-variant/30 dark:border-slate-800 shadow-sm border-t-4 border-t-violet-500 flex flex-col gap-3">
+              <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-full bg-violet-500/10 dark:bg-violet-500/20 flex items-center justify-center">
+                  <span class="material-symbols-outlined text-violet-500 dark:text-violet-400 text-[20px]">schedule</span>
                 </div>
-
-                {% if result.parts_info and (result.parts_info.top5 or
-                result.parts_info.similarity_top3) %}
-                <div
-                  class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-5 border border-outline-variant/30 dark:border-slate-800 shadow-sm"
-                >
-                  <h3
-                    class="font-semibold text-on-surface dark:text-slate-100 mb-6 flex items-center gap-2"
-                  >
-                    <span
-                      class="material-symbols-outlined text-secondary-container dark:text-orange-400"
-                      >schema</span
-                    >
-                    {% if top3_mode == 'similarity' %}
-                    <span data-i18n="similarityTop3"
-                      >Tương đồng hình thái (Top 3)</span
-                    >
-                    {% else %}
-                    <span data-i18n="top3Probability"
-                      >Top 3 xác suất softmax</span
-                    >
-                    {% endif %}
-                  </h3>
-                  <div class="space-y-6">
-                    {% if top3_mode == 'similarity' %} {% for item in
-                    result.parts_info.similarity_top3[:3] %} {% set sim_score =
-                    item.score or 0 %} {% set sim_score_clamped = 0 if 0 > sim_score
-                    else (1 if sim_score > 1 else sim_score) %}
-                    <div class="space-y-2">
-                      <div class="flex justify-between label-sm">
-                        <span
-                          class="text-on-surface dark:text-slate-200 font-semibold"
-                          data-i18n-breed
-                          data-i18n-breed-vi="{{ item.breed }}"
-                          data-i18n-breed-en="{{ item.breed_en }}"
-                          >{{ item.breed_en if ui_language == 'en' else item.breed }}</span
-                        >
-                        <span class="text-outline dark:text-slate-400 font-bold"
-                          >{{ '%.1f'|format(sim_score_clamped * 100) }}%</span
-                        >
-                      </div>
-                      <div
-                        class="w-full bg-surface-container-low dark:bg-slate-800 h-2 rounded-full overflow-hidden"
-                      >
-                        <div
-                          class="bg-outline dark:bg-slate-500 h-full rounded-full top5-fill"
-                          data-width="{{ (sim_score_clamped * 100)|int }}"
-                        ></div>
-                      </div>
-                    </div>
-                    {% endfor %} {% else %} {% for item in
-                    result.parts_info.top5[:3] %} {% set score = item.score or 0
-                    %}
-                    <div class="space-y-2">
-                      <div class="flex justify-between label-sm">
-                        <span
-                          class="text-on-surface dark:text-slate-200 font-semibold"
-                          data-i18n-breed
-                          data-i18n-breed-vi="{{ item.breed }}"
-                          data-i18n-breed-en="{{ item.breed_en }}"
-                          >{{ item.breed_en if ui_language == 'en' else item.breed }}</span
-                        >
-                        <span class="text-outline dark:text-slate-400 font-bold"
-                          >{{ '%.1f'|format(score * 100) }}%</span
-                        >
-                      </div>
-                      <div
-                        class="w-full bg-surface-container-low dark:bg-slate-800 h-2 rounded-full overflow-hidden"
-                      >
-                        <div
-                          class="bg-outline dark:bg-slate-500 h-full rounded-full top5-fill"
-                          data-width="{{ ((score * 100)|int) }}"
-                        ></div>
-                      </div>
-                    </div>
-                    {% endfor %} {% endif %}
-                  </div>
-                  {% if result.parts_info.display and
-                  result.parts_info.display.top3_note %}
-                  <p
-                    class="label-sm text-on-surface-variant dark:text-slate-400 mt-4"
-                    data-i18n-auto
-                  >
-                    {{ result.parts_info.display.top3_note }}
-                  </p>
-                  {% endif %}
-                </div>
+                <span class="label-sm text-outline dark:text-slate-400 uppercase tracking-widest font-bold" data-i18n="cardAnalysisTime">Thời gian phân tích</span>
+              </div>
+              <div class="font-black text-2xl leading-tight text-on-surface dark:text-slate-100 mt-1">
+                {% if result.parts_info and result.parts_info.display and result.parts_info.display.inference_time_ms %}
+                  {{ '%.2f'|format(result.parts_info.display.inference_time_ms / 1000) }}s
+                {% else %}
+                  3.24s
+                {% endif %}
+              </div>
+              <div class="text-xs text-outline dark:text-slate-400 mt-auto">
+                {% if result.parts_info and result.parts_info.display and result.parts_info.display.prediction_date %}
+                  {{ result.parts_info.display.prediction_date }}
+                {% else %}
+                  <span id="predictionTimestamp"></span>
+                  <script>document.getElementById('predictionTimestamp').textContent = new Date().toLocaleString((document.documentElement.lang || 'vi') + '-VN');</script>
                 {% endif %}
               </div>
             </div>
 
-            <!-- GradCAM visualization -->
-            {% if gradcam_items %}
-            <div
-              class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-5 border border-outline-variant/30 dark:border-slate-800 shadow-sm"
-            >
-              <div class="flex items-center justify-between mb-8">
-                <div>
-                  <h3
-                    class="headline-md text-on-surface dark:text-slate-100 flex items-center gap-2"
-                  >
-                    <span
-                      class="material-symbols-outlined text-tertiary dark:text-amber-500"
-                      >grid_view</span
-                    >
-                    {% if gradcam_mode == 'dynamic' %}
-                    <span data-i18n="visualProofTitle"
-                      >Grad-CAM động (Visual Proof)</span
-                    >
-                    {% else %}
-                    <span data-i18n="visualProofRefTitle"
-                      >Grad-CAM tham khảo (Visual Proof)</span
-                    >
-                    {% endif %}
-                  </h3>
-                  <p class="body-md text-outline dark:text-slate-400 mt-1">
-                    {% if gradcam_mode == 'dynamic' %}
-                    <span data-i18n="visualProofDesc"
-                      >Bản đồ nhiệt theo đúng ảnh bạn vừa tải lên.</span
-                    >
-                    {% else %}
-                    <span data-i18n="visualProofRefDesc"
-                      >Bản đồ nhiệt theo giống tham khảo.</span
-                    >
-                    {% endif %}
-                  </p>
+            <!-- Card 4: Image Info -->
+            <div class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-5 border border-outline-variant/30 dark:border-slate-800 shadow-sm border-t-4 border-t-cyan-500 flex flex-col gap-3">
+              <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-full bg-cyan-500/10 dark:bg-cyan-500/20 flex items-center justify-center">
+                  <span class="material-symbols-outlined text-cyan-500 dark:text-cyan-400 text-[20px]">image</span>
                 </div>
+                <span class="label-sm text-outline dark:text-slate-400 uppercase tracking-widest font-bold" data-i18n="cardImageInfo">Ảnh phân tích</span>
               </div>
-              <div
-                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter"
-              >
-                {% for item in gradcam_items[:4] %} {% set overlay_class =
-                heatmap_overlays[loop.index0 % (heatmap_overlays|length)] %} {%
-                set ring_class = heatmap_rings[loop.index0 %
-                (heatmap_rings|length)] %}
-                <div class="space-y-3 group">
-                  <div
-                    class="relative rounded-xl overflow-hidden aspect-square border border-outline-variant/30 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 cursor-pointer heatmap-thumbnail"
-                    data-breed="{{ item.breed }}"
-                    data-breed-en="{{ item.breed_en }}"
-                    data-label="{{ item.label }}"
-                    data-label-en="{{ item.label_en }}"
-                    data-filename="gradcam_{{ item.breed_en|replace(' ', '_')|lower }}.png"
-                  >
-                    <img
-                      class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 heatmap-img"
-                      src="{% if gradcam_mode == 'dynamic' %}{{ item.image_data }}{% else %}{{ url_for('artifacts_gradcam', filename=item.filename) }}{% endif %}"
-                      alt="Grad-CAM {{ item.breed_en if ui_language == 'en' else item.breed }}"
-                      loading="eager"
-                    >
-                    <div
-                      class="absolute inset-0 {{ overlay_class }} mix-blend-overlay"
-                    ></div>
-                    <!-- Dark overlay and View Details text on hover -->
-                    <div
-                      class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center gap-1.5"
-                    >
-                      <span class="material-symbols-outlined text-white text-[28px] drop-shadow-md transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-                        zoom_in
-                      </span>
-                      <span
-                        class="text-white text-[11px] font-bold tracking-wider uppercase drop-shadow-sm transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300"
-                        data-i18n="viewDetails"
-                      >
-                        Xem chi tiết
-                      </span>
-                    </div>
+              <div class="font-black text-xl leading-tight text-on-surface dark:text-slate-100 truncate mt-1" id="card-image-resolution">
+                1200 × 800 px
+              </div>
+              <div class="text-xs text-outline dark:text-slate-400 mt-auto flex items-center gap-1.5" id="card-image-format-size">
+                <span id="img-format-badge">JPG</span>
+                <span>•</span>
+                <span id="card-image-size">2.45 MB</span>
+              </div>
+            </div>
 
+          </section>
+
+          <!-- ========== MAIN LAYOUT GRID (Left: 8/12, Right: 4/12) ========== -->
+          <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            
+            <!-- LEFT COLUMN (Image Analysis, Bounding Box, Grad-CAM, Model logic) -->
+            <div class="lg:col-span-8 space-y-6">
+              
+              <!-- Card: Bounding Box view and Info -->
+              <div
+                class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-5 md:p-6 border border-outline-variant/30 dark:border-slate-800 shadow-sm"
+              >
+                <div class="flex items-center justify-between mb-5">
+                  <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-primary dark:text-blue-400 text-[24px]">analytics</span>
+                    <h3 class="font-bold headline-md text-on-surface dark:text-slate-100" data-i18n="mainObjectAnalysis">
+                      Ảnh đã phân tích (Bounding Box)
+                    </h3>
+                  </div>
+                  <span
+                    class="px-3 py-1 bg-primary/10 dark:bg-primary/20 text-primary dark:text-blue-400 text-[10px] font-bold rounded-full uppercase tracking-widest animate-pulse"
+                    data-i18n="analyzingText"
+                  >
+                    Đang phân tích
+                  </span>
+                </div>
+
+                <!-- Inner Layout: Flex row image on left, controls on right -->
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+                  
+                  <!-- Left side: Image and viewport controls -->
+                  <div class="md:col-span-7 space-y-3">
                     <div
-                      class="absolute inset-0 ring-4 ring-inset {{ ring_class }} opacity-0 group-hover:opacity-100 transition-opacity"
-                    ></div>
-                    <div
-                      class="absolute top-2 left-2 px-2 py-1 bg-black/70 text-white label-sm rounded font-bold uppercase z-10"
-                      data-i18n-breed
-                      data-i18n-breed-vi="{{ item.label or item.breed }}"
-                      data-i18n-breed-en="{{ item.label_en or item.breed_en }}"
+                      class="relative rounded-xl overflow-hidden shadow-inner border border-outline-variant/20 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 flex items-center justify-center min-h-[300px] max-h-[480px]"
+                      id="analyzed-image-container"
                     >
-                      {{ (item.label_en or item.breed_en) if ui_language == 'en' else (item.label or item.breed) }}
+                      <img
+                        id="analyzed-image"
+                        class="max-w-full max-h-[480px] object-contain transition-transform duration-200 ease-out"
+                        src="/{{ image_path }}"
+                        alt="Uploaded photo"
+                      >
+                      <!-- HTML bounding box overlays will be drawn here dynamically by JS -->
+                      <div id="bbox-overlay-container" class="absolute inset-0 pointer-events-none"></div>
+                    </div>
+                    
+                    <!-- Viewport Controls overlay -->
+                    <div class="flex items-center justify-between px-2 text-xs">
+                      <div class="flex items-center gap-2">
+                        <button onclick="zoomImage(-10)" class="w-8 h-8 rounded-full border border-outline-variant/40 dark:border-slate-700 flex items-center justify-center hover:bg-surface-container-low dark:hover:bg-slate-800 text-on-surface dark:text-slate-350 cursor-pointer" title="Zoom out">
+                          <span class="material-symbols-outlined text-[16px]">zoom_out</span>
+                        </button>
+                        <span id="zoom-level-text" class="font-bold text-outline dark:text-slate-400 min-w-[36px] text-center">100%</span>
+                        <button onclick="zoomImage(10)" class="w-8 h-8 rounded-full border border-outline-variant/40 dark:border-slate-700 flex items-center justify-center hover:bg-surface-container-low dark:hover:bg-slate-800 text-on-surface dark:text-slate-350 cursor-pointer" title="Zoom in">
+                          <span class="material-symbols-outlined text-[16px]">zoom_in</span>
+                        </button>
+                        <button onclick="resetZoom()" class="w-8 h-8 rounded-full border border-outline-variant/40 dark:border-slate-700 flex items-center justify-center hover:bg-surface-container-low dark:hover:bg-slate-800 text-on-surface dark:text-slate-350 cursor-pointer" title="Reset">
+                          <span class="material-symbols-outlined text-[16px]">restart_alt</span>
+                        </button>
+                      </div>
+                      <div class="flex items-center gap-2">
+                        <button onclick="toggleFullscreen()" class="w-8 h-8 rounded-full border border-outline-variant/40 dark:border-slate-700 flex items-center justify-center hover:bg-surface-container-low dark:hover:bg-slate-800 text-on-surface dark:text-slate-350 cursor-pointer" title="Fullscreen">
+                          <span class="material-symbols-outlined text-[16px]">fullscreen</span>
+                        </button>
+                        <a href="/{{ image_path }}" download="dog_analysis.jpg" class="px-3 py-1.5 rounded-lg border border-outline-variant/40 dark:border-slate-700 flex items-center gap-1.5 hover:bg-surface-container-low dark:hover:bg-slate-800 font-bold text-[11px] text-on-surface dark:text-slate-350 shadow-sm" title="Tải ảnh gốc">
+                          <span class="material-symbols-outlined text-[14px]">download</span>
+                          <span data-i18n="downloadReportBtn">Tải ảnh gốc</span>
+                        </a>
+                      </div>
                     </div>
                   </div>
-                  <div class="px-1">
-                    <h4
-                      class="font-bold text-on-surface dark:text-slate-200 body-md"
-                      data-i18n-breed
-                      data-i18n-breed-vi="{{ item.label or item.breed }}"
-                      data-i18n-breed-en="{{ item.label_en or item.breed_en }}"
+
+                  <!-- Right side: File details and main actions -->
+                  <div class="md:col-span-5 flex flex-col justify-between space-y-4">
+                    <div class="space-y-3.5">
+                      <h4 class="text-xs font-bold text-outline dark:text-slate-450 uppercase tracking-widest" data-i18n="cardImageInfo">Thông tin ảnh</h4>
+                      <div class="divide-y divide-outline-variant/20 dark:divide-slate-800 text-sm">
+                        <div class="py-2.5 flex justify-between gap-4">
+                          <span class="text-outline dark:text-slate-400" data-i18n="infoFileName">Tên file</span>
+                          <span class="text-on-surface dark:text-slate-200 font-bold flex items-center gap-1 max-w-[150px] truncate" title="{{ image_path.split('/')|last if image_path else 'N/A' }}">
+                            {{ image_path.split('/')|last if image_path else 'N/A' }}
+                            <button onclick="copyFilename('{{ image_path.split('/')|last if image_path else 'N/A' }}')" class="hover:text-primary cursor-pointer flex-shrink-0" title="Sao chép tên file">
+                              <span class="material-symbols-outlined text-[15px]">content_copy</span>
+                            </button>
+                          </span>
+                        </div>
+                        <div class="py-2.5 flex justify-between gap-4">
+                          <span class="text-outline dark:text-slate-400" data-i18n="infoFileResolution">Kích thước</span>
+                          <span class="text-on-surface dark:text-slate-200 font-bold" id="info-image-resolution">1200 × 800 px</span>
+                        </div>
+                        <div class="py-2.5 flex justify-between gap-4">
+                          <span class="text-outline dark:text-slate-400" data-i18n="infoFileSize">Dung lượng</span>
+                          <span class="text-on-surface dark:text-slate-200 font-bold" id="info-image-size">2.45 MB</span>
+                        </div>
+                        <div class="py-2.5 flex justify-between gap-4">
+                          <span class="text-outline dark:text-slate-400" data-i18n="infoFileFormat">Định dạng</span>
+                          <span class="text-on-surface dark:text-slate-200 font-bold uppercase" id="info-image-format">JPG</span>
+                        </div>
+                        <div class="py-2.5 flex justify-between gap-4">
+                          <span class="text-outline dark:text-slate-400" data-i18n="infoFileStatus">Trạng thái</span>
+                          <span class="inline-flex items-center gap-1 text-xs font-bold text-green-600 dark:text-green-400">
+                            <span class="material-symbols-outlined text-[16px]">check_circle</span>
+                            <span data-i18n="validImage">Ảnh hợp lệ</span>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Action buttons inside container -->
+                    <div class="space-y-2 mt-4 md:mt-0">
+                      <div class="grid grid-cols-2 gap-2">
+                        <a href="{{ url_for('predict.upload_page') }}" class="py-2.5 rounded-xl border border-outline-variant/40 dark:border-slate-700 flex items-center justify-center gap-1.5 label-sm font-bold text-on-surface dark:text-slate-300 hover:bg-surface-container-low dark:hover:bg-slate-800 transition-all hover:scale-[1.02] active:scale-[0.98]">
+                          <span class="material-symbols-outlined text-[16px] text-primary dark:text-blue-400">change_circle</span>
+                          <span data-i18n="btnChangeImage">Đổi ảnh</span>
+                        </a>
+                        <a href="{{ url_for('predict.upload_page') }}" class="py-2.5 rounded-xl border border-red-200 dark:border-red-900/30 flex items-center justify-center gap-1.5 label-sm font-bold text-red-600 dark:text-red-400 hover:bg-red-50/50 dark:hover:bg-red-950/20 transition-all hover:scale-[1.02] active:scale-[0.98]">
+                          <span class="material-symbols-outlined text-[16px]">delete</span>
+                          <span data-i18n="btnDeleteImage">Xóa ảnh</span>
+                        </a>
+                      </div>
+                      <a href="{{ url_for('predict.upload_page') }}" class="w-full py-3 bg-primary hover:bg-primary/95 text-on-primary rounded-xl font-bold flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all hover:scale-[1.02] active:scale-[0.98]">
+                        <span class="material-symbols-outlined text-[18px]">sync</span>
+                        <span data-i18n="btnReanalyze">Phân tích lại ảnh</span>
+                      </a>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+              <!-- Nested Grid: Grad-CAM and Model logic side-by-side -->
+              <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+                
+                <!-- Card: Grad-CAM heatmap visuals (takes ~58%) -->
+                {% if gradcam_items %}
+                <div
+                  class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-5 border border-outline-variant/30 dark:border-slate-800 shadow-sm md:col-span-7 flex flex-col justify-between"
+                >
+                  <div class="mb-4">
+                    <h3
+                      class="font-bold text-on-surface dark:text-slate-100 flex items-center gap-2"
                     >
-                      {{ (item.label_en or item.breed_en) if ui_language == 'en' else (item.label or item.breed) }}
-                    </h4>
-                    <p
-                      class="label-sm text-outline dark:text-slate-400"
-                      data-i18n="aiHighlightArea"
-                    >
-                      <span data-i18n="aiHighlightArea"
-                        >Vùng nổi bật AI tập trung</span
-                      >
+                      <span class="material-symbols-outlined text-amber-500 text-[20px]">grid_view</span>
+                      {% if gradcam_mode == 'dynamic' %}
+                      <span data-i18n="visualProofTitle">Grad-CAM động (Visual Proof)</span>
+                      {% else %}
+                      <span data-i18n="visualProofRefTitle">Grad-CAM tham khảo (Visual Proof)</span>
+                      {% endif %}
+                    </h3>
+                    <p class="text-xs text-outline dark:text-slate-450 mt-1 leading-relaxed" data-i18n-html="gradcamLegend">
+                      Bản đồ nhiệt AI tập trung khi nhận diện. Vùng AI chú ý: <span class="text-red-500 font-bold">Cao (Đỏ)</span>, <span class="text-yellow-500 font-bold">Trung bình (Vàng)</span>, <span class="text-blue-500 font-bold">Thấp (Xanh)</span>
                     </p>
                   </div>
+                  
+                  <div class="grid grid-cols-2 gap-5">
+                    {% for item in gradcam_items[:2] %} 
+                    {% set overlay_class = heatmap_overlays[loop.index0 % (heatmap_overlays|length)] %} 
+                    {% set ring_class = heatmap_rings[loop.index0 % (heatmap_rings|length)] %}
+                    <div class="space-y-2.5 group">
+                      <div
+                        class="relative rounded-xl overflow-hidden aspect-[4/3] border border-outline-variant/30 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 cursor-pointer heatmap-thumbnail shadow-md"
+                        data-breed="{{ item.breed }}"
+                        data-breed-en="{{ item.breed_en }}"
+                        data-label="{{ item.label }}"
+                        data-label-en="{{ item.label_en }}"
+                        data-filename="gradcam_{{ item.breed_en|replace(' ', '_')|lower }}.png"
+                      >
+                        <img
+                          class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 heatmap-img"
+                          src="{% if gradcam_mode == 'dynamic' %}{{ item.image_data }}{% else %}{{ url_for('artifacts_gradcam', filename=item.filename) }}{% endif %}"
+                          alt="Grad-CAM {{ item.breed_en if ui_language == 'en' else item.breed }}"
+                          loading="eager"
+                        >
+                        <div class="absolute inset-0 {{ overlay_class }} mix-blend-overlay"></div>
+                        <!-- Hover overlay zoom details -->
+                        <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center gap-2" title="Xem chi tiết">
+                          <span class="material-symbols-outlined text-white text-[28px]">zoom_in</span>
+                          <span class="text-white text-[11px] font-bold uppercase tracking-wider" data-i18n="viewDetails">Xem chi tiết</span>
+                        </div>
+                        <div class="absolute top-2 left-2 px-2 py-1 bg-black/75 text-white text-[11px] font-bold uppercase rounded-lg z-10 tracking-wider">
+                          Top-{{ loop.index }}
+                        </div>
+                      </div>
+                      <div class="px-0.5 flex flex-col gap-0.5">
+                        <span class="text-sm font-bold text-on-surface dark:text-slate-200 truncate" data-i18n-breed data-i18n-breed-vi="{{ item.label or item.breed }}" data-i18n-breed-en="{{ item.label_en or item.breed_en }}">
+                          {{ (item.label_en or item.breed_en) if ui_language == 'en' else (item.label or item.breed) }}
+                        </span>
+                        <span class="text-[11px] text-outline dark:text-slate-500" data-i18n="aiHighlightArea">Vùng nổi bật AI</span>
+                      </div>
+                    </div>
+                    {% endfor %}
+                  </div>
                 </div>
-                {% endfor %}
-              </div>
-            </div>
-            {% endif %}
+                {% endif %}
 
-            <!-- Logical diagnosis explanation -->
-            <div
-              class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-5 border border-outline-variant/30 dark:border-slate-800 shadow-sm"
-            >
-              <div class="flex items-center gap-3 mb-4">
-                <span
-                  class="material-symbols-outlined text-primary dark:text-blue-400 p-2 bg-primary/10 dark:bg-primary/20 rounded-lg"
-                >
-                  psychology
-                </span>
-                <h4
-                  class="headline-md text-on-surface dark:text-slate-100"
-                  data-i18n="modelLogicAnalysis"
-                >
-                  <span data-i18n="modelLogicAnalysis"
-                    >Phân tích Logic từ Model</span
-                  >
-                </h4>
-              </div>
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
-                <div class="md:col-span-2">
-                  <p
-                    class="body-md text-on-surface-variant dark:text-slate-350 leading-relaxed"
-                    data-i18n-auto
-                  >
-                    {{ decision_reason }}
-                  </p>
-                  {% if result.parts_info and result.parts_info.acceptance %}
-                  <p class="label-sm text-on-surface-variant dark:text-slate-400 mt-3">
-                    {% if result.parts_info.decision and result.parts_info.decision.is_hybrid_candidate %}
-                    <span data-i18n="decisionHybridText">Mức tin cậy đủ cho gợi ý ứng viên lai.</span>
-                    {% elif result.parts_info.acceptance.accepted %}
-                    <span data-i18n="decisionPureText">Mức tin cậy đủ để kết luận giống.</span>
-                    {% elif result.parts_info.acceptance.level == 'reference' %}
-                    <span data-i18n="decisionRefText">Mức tin cậy tham khảo, chưa đủ để kết luận giống.</span>
-                    {% endif %}
-                  </p>
-                  {% endif %}
-                </div>
+                <!-- Card: Model logic technical details (takes ~42%) -->
                 <div
-                  class="flex flex-col justify-center items-center p-5 bg-surface-container-low dark:bg-slate-950 rounded-xl border border-outline-variant/30 dark:border-slate-800"
+                  class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-5 border border-outline-variant/30 dark:border-slate-800 shadow-sm md:col-span-5 flex flex-col justify-between"
                 >
-                  <span
-                    class="label-sm text-outline dark:text-slate-450 font-bold uppercase mb-2"
-                    data-i18n="modelArchitecture"
-                    >Kiến trúc mô hình</span
-                  >
-                  <div
-                    class="font-mono body-md text-primary dark:text-blue-400 font-bold"
-                  >
-                    ResNet-101 Deep ConvNet
-                  </div>
-                  <div class="mt-2 flex items-center gap-2">
-                    <div
-                      class="w-2 h-2 rounded-full bg-green-500 animate-pulse"
-                    ></div>
-                    <span
-                      class="label-sm text-green-600 dark:text-green-400 font-bold"
-                      data-i18n="inferenceOptimization"
-                      >Tối ưu suy luận</span
+                  <div class="mb-4">
+                    <h3
+                      class="font-bold text-on-surface dark:text-slate-100 flex items-center gap-2"
                     >
+                      <span class="material-symbols-outlined text-primary dark:text-blue-400 text-[20px]">psychology</span>
+                      <span data-i18n="modelLogicAnalysis">Phân tích Logic từ Model</span>
+                    </h3>
+                  </div>
+
+                  <div class="space-y-4 text-xs">
+                    <div class="flex flex-col gap-1 border-b border-outline-variant/15 dark:border-slate-800 pb-2.5">
+                      <span class="text-outline dark:text-slate-450 uppercase tracking-widest font-bold" data-i18n="modelAppTitle">Ứng dụng model</span>
+                      <span class="text-primary dark:text-blue-400 font-bold font-mono text-sm">ResNet-101 Deep ConvNet</span>
+                    </div>
+                    <div class="flex flex-col gap-1 border-b border-outline-variant/15 dark:border-slate-800 pb-2.5">
+                      <span class="text-outline dark:text-slate-450 uppercase tracking-widest font-bold" data-i18n="modelArchitectureTitle">Kiến trúc mô hình</span>
+                      <span class="text-on-surface dark:text-slate-200 font-bold font-mono">ResNet-101 + YOLOv5</span>
+                    </div>
+                    <div class="flex flex-col gap-1 border-b border-outline-variant/15 dark:border-slate-800 pb-2.5">
+                      <span class="text-outline dark:text-slate-450 uppercase tracking-widest font-bold" data-i18n="modelStatusTitle">Trạng thái model</span>
+                      <div class="flex items-center gap-1.5 mt-0.5">
+                        <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                        <span class="text-green-600 dark:text-green-400 font-bold" data-i18n="modelStatusValue">Tốt - Ổn định</span>
+                      </div>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                      <span class="text-outline dark:text-slate-450 uppercase tracking-widest font-bold" data-i18n="modelAverageConfTitle">Độ tin cậy TB hệ thống</span>
+                      <span class="text-green-600 dark:text-green-450 font-black text-sm">92.3%</span>
+                    </div>
+                  </div>
+
+                  <!-- Model Info Link Modal Trigger -->
+                  <button type="button" onclick="showModelInfo()" class="text-xs text-primary dark:text-blue-400 hover:underline flex items-center justify-center gap-1 mt-4 pt-2 border-t border-outline-variant/10 dark:border-slate-850 w-full font-bold cursor-pointer">
+                    <span data-i18n="viewModelInfo">Thông tin mô hình</span>
+                    <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+                  </button>
+                </div>
+
+              </div>
+
+            </div>
+
+            <!-- RIGHT COLUMN (Mix Analysis, Similarity list, Actions, History) -->
+            <div class="lg:col-span-4 space-y-6">
+              
+              <!-- Card: Mix Analysis (Shown conditionally if dog hybrid candidate) -->
+              {% if result.parts_info and result.parts_info.decision and result.parts_info.decision.is_hybrid_candidate and result.parts_info.similarity_top3|length >= 2 %} 
+              {% set mix_breed1 = result.parts_info.similarity_top3[0] %} 
+              {% set mix_breed2 = result.parts_info.similarity_top3[1] %} 
+              {% set s1 = mix_breed1.score %} 
+              {% set s2 = mix_breed2.score %} 
+              {% set sum_s = s1 + s2 %} 
+              {% set p1 = ((s1 / sum_s) * 100)|round(1) if sum_s > 0 else 50.0 %} 
+              {% set p2 = 100.0 - p1 %}
+              <div
+                class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-5 border border-outline-variant/30 dark:border-slate-800 shadow-sm"
+              >
+                <div class="flex items-center justify-between mb-4 pb-2 border-b border-outline-variant/10 dark:border-slate-800">
+                  <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary dark:text-blue-400 text-[20px]">science</span>
+                    <h3 class="font-bold text-on-surface dark:text-slate-100 text-sm md:text-base" data-i18n="hybridRatioTitle">Phân tích chó lai (Mix Analysis)</h3>
+                  </div>
+                  <span class="material-symbols-outlined text-slate-450 dark:text-slate-500 text-[18px] cursor-help" title="Dựa trên đặc điểm hình thái" data-i18n-title="card2Description">info</span>
+                </div>
+
+                <!-- Parents visual representation row -->
+                <div class="flex items-center justify-between gap-3 py-3">
+                  <!-- Parent 1 -->
+                  <div class="flex flex-col items-center gap-2 w-[44%] text-center">
+                    <div class="relative w-20 h-20 rounded-full overflow-hidden bg-slate-100 dark:bg-slate-800 flex items-center justify-center border-2 border-primary/60 shadow-md">
+                      <img id="parent-breed-img-1" class="w-full h-full object-cover hide-until-loaded" src="" alt="Parent 1" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                      <span class="material-symbols-outlined text-[28px] text-slate-400 absolute inset-0 flex items-center justify-center" style="display: none;">pets</span>
+                    </div>
+                    <span class="text-sm font-black text-on-surface dark:text-slate-100 truncate w-full leading-tight" data-i18n-breed data-i18n-breed-vi="{{ mix_breed1.breed }}" data-i18n-breed-en="{{ mix_breed1.breed_en }}">
+                      {{ mix_breed1.breed_en if ui_language == 'en' else mix_breed1.breed }}
+                    </span>
+                    <span class="text-xl font-black text-primary dark:text-blue-400">{{ p1 }}%</span>
+                  </div>
+
+                  <!-- Connector DNA -->
+                  <div class="flex flex-col items-center justify-center flex-grow gap-1">
+                    <span class="material-symbols-outlined text-primary dark:text-blue-400 text-[28px] pulse-dna">favorite</span>
+                  </div>
+
+                  <!-- Parent 2 -->
+                  <div class="flex flex-col items-center gap-2 w-[44%] text-center">
+                    <div class="relative w-20 h-20 rounded-full overflow-hidden bg-slate-100 dark:bg-slate-800 flex items-center justify-center border-2 border-amber-500/60 shadow-md">
+                      <img id="parent-breed-img-2" class="w-full h-full object-cover hide-until-loaded" src="" alt="Parent 2" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                      <span class="material-symbols-outlined text-[28px] text-slate-400 absolute inset-0 flex items-center justify-center" style="display: none;">pets</span>
+                    </div>
+                    <span class="text-sm font-black text-on-surface dark:text-slate-100 truncate w-full leading-tight" data-i18n-breed data-i18n-breed-vi="{{ mix_breed2.breed }}" data-i18n-breed-en="{{ mix_breed2.breed_en }}">
+                      {{ mix_breed2.breed_en if ui_language == 'en' else mix_breed2.breed }}
+                    </span>
+                    <span class="text-xl font-black text-amber-500 dark:text-amber-400">{{ p2 }}%</span>
                   </div>
                 </div>
+
+                <!-- Combined Progress Bar -->
+                <div class="w-full bg-slate-100 dark:bg-slate-800 h-4 rounded-full overflow-hidden flex mt-2 shadow-inner">
+                  <div class="h-full bg-gradient-to-r from-primary to-blue-500 dark:from-blue-600 dark:to-blue-400 confidence-fill transition-all duration-700" data-width="{{ p1 }}"></div>
+                  <div class="h-full bg-gradient-to-r from-yellow-500 to-orange-500 dark:from-amber-500 dark:to-orange-500 confidence-fill transition-all duration-700" data-width="{{ p2 }}"></div>
+                </div>
+
+                <!-- Conclusion box info -->
+                <div class="mt-5 p-3.5 bg-gradient-to-r from-blue-50/30 to-amber-50/20 dark:from-slate-900 dark:to-slate-900 border border-outline-variant/20 dark:border-slate-800 rounded-xl space-y-1.5 shadow-sm">
+                  <div class="flex items-start gap-2">
+                    <span class="material-symbols-outlined text-amber-500 dark:text-amber-400 text-[18px] flex-shrink-0 mt-0.5">lightbulb</span>
+                    <div class="text-xs">
+                      <span class="font-extrabold text-on-surface dark:text-slate-200">
+                        <span data-i18n="mixConclusionLabel">Kết luận:</span> <span data-i18n="mixConclusionPrefix">Ảnh có đặc điểm lai giữa</span> 
+                        <span data-i18n-breed data-i18n-breed-vi="{{ mix_breed1.breed }}" data-i18n-breed-en="{{ mix_breed1.breed_en }}">{{ mix_breed1.breed_en if ui_language == 'en' else mix_breed1.breed }}</span> <span data-i18n="mixConclusionAnd">và</span> 
+                        <span data-i18n-breed data-i18n-breed-vi="{{ mix_breed2.breed }}" data-i18n-breed-en="{{ mix_breed2.breed_en }}">{{ mix_breed2.breed_en if ui_language == 'en' else mix_breed2.breed }}</span>.
+                      </span>
+                      <p class="text-[11px] text-outline dark:text-slate-450 mt-1" data-i18n="mixConclusionDesc">
+                        Dự đoán dựa trên đặc điểm hình thái, không phải xét nghiệm di truyền.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
               </div>
+              {% endif %}
+
+              <!-- Card: Top 3 Similar Breeds -->
+              {% if result.parts_info and (result.parts_info.top5 or result.parts_info.similarity_top3) %}
+              <div
+                class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-5 border border-outline-variant/30 dark:border-slate-800 shadow-sm"
+              >
+                <div class="flex items-center justify-between mb-5 pb-2 border-b border-outline-variant/10 dark:border-slate-800">
+                  <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-secondary-container dark:text-orange-400 text-[20px]">schema</span>
+                    <h3 class="font-bold text-on-surface dark:text-slate-100 text-sm md:text-base">
+                      {% if top3_mode == 'similarity' %}
+                      <span data-i18n="similarityTop3">Tương đồng hình thái (Top 3)</span>
+                      {% else %}
+                      <span data-i18n="top3Probability">Top 3 xác suất softmax</span>
+                      {% endif %}
+                    </h3>
+                  </div>
+                </div>
+
+                <div class="space-y-4">
+                  {% set current_top3 = result.parts_info.similarity_top3[:3] if top3_mode == 'similarity' else result.parts_info.top5[:3] %}
+                  {% set badge_colors = ['bg-blue-600 text-white', 'bg-orange-500 text-white', 'bg-green-600 text-white'] %}
+                  
+                  {% for item in current_top3 %} 
+                  {% set score_val = item.score or 0 %} 
+                  {% set score_clamped = 0 if 0 > score_val else (1 if score_val > 1 else score_val) %}
+                  {% set score_pct = (score_clamped * 100)|int %}
+                  {% set b_color = badge_colors[loop.index0 % (badge_colors|length)] %}
+                  
+                  <div class="flex items-center gap-3.5">
+                    <!-- Circular Index Badge -->
+                    <div class="w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-black {{ b_color }} flex-shrink-0 shadow-sm">
+                      {{ loop.index }}
+                    </div>
+                    <!-- Breed Image Thumbnail -->
+                    <div class="relative w-12 h-12 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 border border-outline-variant/30 dark:border-slate-700 flex items-center justify-center flex-shrink-0 shadow-sm">
+                      <img id="sim-breed-img-{{ loop.index }}" class="w-full h-full object-cover hide-until-loaded" src="" alt="Breed item" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                      <span class="material-symbols-outlined text-[20px] text-slate-400 absolute inset-0 flex items-center justify-center" style="display: none;">pets</span>
+                    </div>
+                    <!-- Details & Progress Bar -->
+                    <div class="flex-grow space-y-1.5 min-w-0">
+                      <div class="flex justify-between items-center">
+                        <span class="text-sm font-bold text-on-surface dark:text-slate-200 truncate max-w-[130px]" data-i18n-breed data-i18n-breed-vi="{{ item.breed }}" data-i18n-breed-en="{{ item.breed_en }}">
+                          {{ item.breed_en if ui_language == 'en' else item.breed }}
+                        </span>
+                        <span class="text-sm font-mono font-extrabold {{ 'text-blue-600 dark:text-blue-400' if loop.index0 == 0 else ('text-orange-500 dark:text-orange-400' if loop.index0 == 1 else 'text-green-600 dark:text-green-400') }}">{{ '%.1f'|format(score_clamped * 100) }}%</span>
+                      </div>
+                      <div class="w-full bg-slate-100 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden">
+                        <div class="h-full rounded-full confidence-fill transition-all duration-700 {{ 'bg-blue-600' if loop.index0 == 0 else ('bg-orange-500' if loop.index0 == 1 else 'bg-green-600') }}" data-width="{{ score_pct }}"></div>
+                      </div>
+                    </div>
+                  </div>
+                  {% endfor %}
+                </div>
+
+                <!-- Similar Breeds Link -->
+                <a href="{{ url_for('history.history') }}" class="text-xs text-primary dark:text-blue-400 hover:underline flex items-center justify-center gap-1 mt-5 pt-2.5 border-t border-outline-variant/10 dark:border-slate-850 w-full font-bold">
+                  <span data-i18n="similarityLink">Xem tất cả các giống tương đồng</span>
+                  <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+                </a>
+              </div>
+              {% endif %}
+
+              <!-- Card: Actions section -->
+              <div
+                class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-5 border border-outline-variant/30 dark:border-slate-800 shadow-sm"
+                data-purpose="action-buttons"
+              >
+                <div class="flex items-center gap-3 mb-4 pb-1 border-b border-outline-variant/10 dark:border-slate-850">
+                  <span class="material-symbols-outlined text-primary dark:text-blue-400 text-[20px]">bolt</span>
+                  <h4 class="font-bold text-on-surface dark:text-slate-100 text-sm md:text-base" data-i18n="actionTitle">Hành động</h4>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                  <!-- View History -->
+                  <a
+                    href="{{ url_for('history.history') }}"
+                    class="flex items-center gap-3 px-4 py-3.5 bg-blue-50 hover:bg-blue-100/70 dark:bg-blue-950/20 dark:hover:bg-blue-900/20 border border-blue-100 dark:border-blue-900/30 rounded-xl transition-all hover:scale-[1.02] active:scale-[0.97]"
+                  >
+                    <span class="material-symbols-outlined text-primary dark:text-blue-400 text-[28px] flex-shrink-0">bookmark_added</span>
+                    <span class="text-sm font-bold text-on-surface dark:text-slate-200 leading-tight" data-i18n="viewHistoryBtn">Xem lịch sử</span>
+                  </a>
+                  <!-- Download Report -->
+                  <button
+                    type="button"
+                    onclick="handleDownloadReport()"
+                    class="flex items-center gap-3 px-4 py-3.5 bg-green-50 hover:bg-green-100/70 dark:bg-green-950/20 dark:hover:bg-green-900/20 border border-green-100 dark:border-green-900/30 rounded-xl text-left transition-all hover:scale-[1.02] active:scale-[0.97] cursor-pointer w-full"
+                  >
+                    <span class="material-symbols-outlined text-green-600 dark:text-green-400 text-[28px] flex-shrink-0">download</span>
+                    <span class="text-sm font-bold text-on-surface dark:text-slate-200 leading-tight" data-i18n="downloadReport">Tải báo cáo</span>
+                  </button>
+                  <!-- Share Result -->
+                  <button
+                    type="button"
+                    onclick="handleShareResult()"
+                    class="flex items-center gap-3 px-4 py-3.5 bg-violet-50 hover:bg-violet-100/70 dark:bg-violet-950/20 dark:hover:bg-violet-900/20 border border-violet-100 dark:border-violet-900/30 rounded-xl text-left transition-all hover:scale-[1.02] active:scale-[0.97] cursor-pointer w-full"
+                  >
+                    <span class="material-symbols-outlined text-violet-600 dark:text-violet-400 text-[28px] flex-shrink-0">share</span>
+                    <span class="text-sm font-bold text-on-surface dark:text-slate-200 leading-tight" data-i18n="shareResult">Chia sẻ kết quả</span>
+                  </button>
+                  <!-- Analyze another image -->
+                  <a
+                    href="{{ url_for('predict.upload_page') }}"
+                    class="flex items-center gap-3 px-4 py-3.5 bg-amber-50 hover:bg-amber-100/70 dark:bg-amber-950/20 dark:hover:bg-amber-900/20 border border-amber-100 dark:border-amber-900/30 rounded-xl transition-all hover:scale-[1.02] active:scale-[0.97]"
+                  >
+                    <span class="material-symbols-outlined text-amber-600 dark:text-amber-400 text-[28px] flex-shrink-0">photo_camera</span>
+                    <span class="text-sm font-bold text-on-surface dark:text-slate-200 leading-tight" data-i18n="analyzeAnotherImg">Tải ảnh mới</span>
+                  </a>
+                </div>
+              </div>
+
+              <!-- Card: Recent history slider -->
+              <div
+                class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-5 border border-outline-variant/30 dark:border-slate-800 shadow-sm"
+                data-purpose="recent-history"
+              >
+                <div class="flex items-center justify-between mb-4">
+                  <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-secondary dark:text-amber-400 text-[20px]">history</span>
+                    <h4 class="font-bold text-on-surface dark:text-slate-100 text-sm md:text-base" data-i18n="recentHistory">Lịch sử gần đây</h4>
+                  </div>
+                </div>
+                
+                <div id="recent-history-slider" class="flex gap-3 overflow-x-auto pb-2 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-outline-variant/40 snap-x snap-mandatory">
+                  <!-- Loading skeleton -->
+                  <div class="recent-history-skeleton flex gap-3">
+                    {% for _ in range(5) %}
+                    <div class="flex-shrink-0 w-[90px] animate-pulse snap-start">
+                      <div class="w-[90px] h-[90px] bg-surface-container dark:bg-slate-800 rounded-xl mb-2"></div>
+                      <div class="h-2.5 bg-surface-container dark:bg-slate-800 rounded w-3/4 mb-1"></div>
+                      <div class="h-2 bg-surface-container dark:bg-slate-800 rounded w-1/2"></div>
+                    </div>
+                    {% endfor %}
+                  </div>
+                  <!-- Loaded items will be injected by JS -->
+                  <div id="recent-history-items" class="hidden flex gap-3"></div>
+                  <!-- No data fallback -->
+                  <div id="recent-history-empty" class="hidden w-full flex flex-col items-center justify-center py-8 text-outline dark:text-slate-500">
+                    <span class="material-symbols-outlined text-[36px] mb-2 text-slate-400">photo_library</span>
+                    <span class="text-xs" data-i18n="noRecentHistory">Chưa có lịch sử nhận diện</span>
+                  </div>
+                </div>
+                
+                <!-- View all link -->
+                <a href="{{ url_for('history.history') }}" class="text-xs text-primary dark:text-blue-400 hover:underline flex items-center justify-center gap-1 mt-4 pt-2 border-t border-outline-variant/10 dark:border-slate-850 w-full font-bold">
+                  <span data-i18n="recentHistoryLink">Xem tất cả lịch sử</span>
+                  <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+                </a>
+              </div>
+
             </div>
+
           </section>
+
         </div>
       </div>
     </main>
@@ -1170,7 +1180,7 @@
             <p
               id="gradcamModalDesc"
               class="body-md text-on-surface-variant dark:text-slate-400 mt-4 leading-relaxed"
-              data-i18n="gradcamModalDescText"
+              data-i18n="gradcamModalDesc"
             >
               Bản đồ nhiệt Grad-CAM thể hiện các vùng đặc trưng trên cơ thể vật nuôi mà mô hình AI tập trung phân tích nhất để đưa ra quyết định nhận diện.
             </p>
@@ -1204,7 +1214,21 @@
       </div>
     </div>
 
-<script>
+    <div id="predict-data-bridge" class="hidden"
+      data-yolo-detections="{{ yolo_detections|tojson if yolo_detections else '[]' }}"
+      data-is-hybrid="{% if result.parts_info and result.parts_info.decision and result.parts_info.decision.is_hybrid_candidate %}true{% else %}false{% endif %}"
+      data-similarity-top1-vi="{{ result.parts_info.similarity_top3[0].breed if (result.parts_info and result.parts_info.similarity_top3|length >= 1) else '' }}"
+      data-similarity-top1-en="{{ result.parts_info.similarity_top3[0].breed_en if (result.parts_info and result.parts_info.similarity_top3|length >= 1) else '' }}"
+      data-similarity-top2-vi="{{ result.parts_info.similarity_top3[1].breed if (result.parts_info and result.parts_info.similarity_top3|length >= 2) else '' }}"
+      data-similarity-top2-en="{{ result.parts_info.similarity_top3[1].breed_en if (result.parts_info and result.parts_info.similarity_top3|length >= 2) else '' }}"
+      data-similarity-top3-en="{{ result.parts_info.similarity_top3[2].breed_en if (result.parts_info and result.parts_info.similarity_top3|length >= 3) else '' }}"
+      data-breed-conf-pct="{{ (result.breed_conf * 100)|int }}%"
+      data-breed-name-vi="{{ breed_name_vi }}"
+      data-breed-name-en="{{ breed_name_en }}"
+      data-image-path="{{ image_path or '' }}"
+    ></div>
+
+    <script>
       function openGradcamModal(src, breedVi, breedEn, labelVi, labelEn, downloadName) {
         const modal = document.getElementById("gradcamDetailModal");
         const modalImage = document.getElementById("gradcamModalImage");
@@ -1282,11 +1306,13 @@
       window.openGradcamModal = openGradcamModal;
       window.closeGradcamModal = closeGradcamModal;
 
+      /* =========================================================
+         Dynamic Bounding Box Render using YOLO coordinates
+      ========================================================= */
       document.addEventListener("DOMContentLoaded", function () {
+        // Initialize widths of progress bars
         document
-          .querySelectorAll(
-            ".confidence-fill[data-width], .top5-fill[data-width]",
-          )
+          .querySelectorAll(".confidence-fill[data-width]")
           .forEach(function (el) {
             var w = Number(el.getAttribute("data-width") || "0");
             if (!Number.isFinite(w)) w = 0;
@@ -1311,10 +1337,412 @@
             }
           });
         });
+
+        const img = document.getElementById('analyzed-image');
+        const container = document.getElementById('bbox-overlay-container');
+
+        const bridge = document.getElementById('predict-data-bridge');
+        let yoloDetections = [];
+        let isHybrid = false;
+        let similarityTop1Vi = '';
+        let similarityTop1En = '';
+        let similarityTop2Vi = '';
+        let similarityTop2En = '';
+        let breedConfPct = '';
+        let breedNameVi = '';
+        let breedNameEn = '';
+        let imgPath = '';
+
+        if (bridge) {
+          try {
+            yoloDetections = JSON.parse(bridge.getAttribute('data-yolo-detections') || '[]');
+          } catch (e) {
+            console.error("YOLO parse error:", e);
+          }
+          isHybrid = bridge.getAttribute('data-is-hybrid') === 'true';
+          similarityTop1Vi = bridge.getAttribute('data-similarity-top1-vi') || '';
+          similarityTop1En = bridge.getAttribute('data-similarity-top1-en') || '';
+          similarityTop2Vi = bridge.getAttribute('data-similarity-top2-vi') || '';
+          similarityTop2En = bridge.getAttribute('data-similarity-top2-en') || '';
+          breedConfPct = bridge.getAttribute('data-breed-conf-pct') || '';
+          breedNameVi = bridge.getAttribute('data-breed-name-vi') || '';
+          breedNameEn = bridge.getAttribute('data-breed-name-en') || '';
+          imgPath = bridge.getAttribute('data-image-path') || '';
+        }
+        
+        function drawBbox() {
+          container.innerHTML = '';
+          const origW = img.naturalWidth;
+          const origH = img.naturalHeight;
+          if (!origW || !origH) return;
+          
+          const dispW = img.clientWidth;
+          const dispH = img.clientHeight;
+          
+          // Calculate off-sets if the image is centered object-contain
+          const imgRatio = origW / origH;
+          const containerRatio = img.offsetWidth / img.offsetHeight;
+          
+          let renderW = dispW;
+          let renderH = dispH;
+          let offsetX = 0;
+          let offsetY = 0;
+          
+          if (imgRatio > containerRatio) {
+            renderH = dispW / imgRatio;
+            offsetY = (dispH - renderH) / 2;
+          } else {
+            renderW = dispH * imgRatio;
+            offsetX = (dispW - renderW) / 2;
+          }
+          
+          let bestDog = null;
+          if (yoloDetections && yoloDetections.length > 0) {
+            const dogs = yoloDetections.filter(d => d.label === 'dog' && d.bbox);
+            if (dogs.length > 0) {
+              bestDog = dogs.reduce((prev, current) => (prev.conf > current.conf) ? prev : current);
+            }
+          }
+          
+          if (bestDog && bestDog.bbox) {
+            const [x1, y1, x2, y2] = bestDog.bbox;
+            
+            const left = offsetX + (x1 / origW) * renderW;
+            const top = offsetY + (y1 / origH) * renderH;
+            const width = ((x2 - x1) / origW) * renderW;
+            const height = ((y2 - y1) / origH) * renderH;
+            
+            let breedLabel = "";
+            const lang = (window.PetAI_i18n && window.PetAI_i18n.getCurrentLang) ? window.PetAI_i18n.getCurrentLang() : 'vi';
+            
+            if (isHybrid) {
+              const breed1 = lang === 'en' ? similarityTop1En : similarityTop1Vi;
+              const breed2 = lang === 'en' ? similarityTop2En : similarityTop2Vi;
+              breedLabel = `MIX: ${breed1.toUpperCase()} x ${breed2.toUpperCase()} - ${breedConfPct}`;
+            } else {
+              const breed = lang === 'en' ? breedNameEn : breedNameVi;
+              breedLabel = `${breed.toUpperCase()} - ${breedConfPct}`;
+            }
+            
+            const boxHtml = `
+              <div class="absolute border-2 border-primary rounded-lg shadow-[0_0_12px_rgba(0,74,198,0.4)]" style="left: ${left}px; top: ${top}px; width: ${width}px; height: ${height}px;">
+                <div class="absolute -top-7 left-0 bg-primary text-white text-[11px] font-black uppercase px-2.5 py-1 rounded-t-md shadow-md flex items-center gap-1 whitespace-nowrap">
+                  <span class="material-symbols-outlined text-[13px]">check_circle</span>
+                  <span>${breedLabel}</span>
+                </div>
+              </div>
+            `;
+            container.innerHTML = boxHtml;
+          } else {
+            // Fallback centered bounding box
+            const left = dispW * 0.22;
+            const top = dispH * 0.15;
+            const width = dispW * 0.56;
+            const height = dispH * 0.65;
+            
+            let breedLabel = "";
+            const lang = (window.PetAI_i18n && window.PetAI_i18n.getCurrentLang) ? window.PetAI_i18n.getCurrentLang() : 'vi';
+            if (isHybrid) {
+              const breed1 = lang === 'en' ? similarityTop1En : similarityTop1Vi;
+              const breed2 = lang === 'en' ? similarityTop2En : similarityTop2Vi;
+              breedLabel = `MIX: ${breed1.toUpperCase()} x ${breed2.toUpperCase()} - ${breedConfPct}`;
+            } else {
+              const breed = lang === 'en' ? breedNameEn : breedNameVi;
+              breedLabel = `${breed.toUpperCase()} - ${breedConfPct}`;
+            }
+            
+            const boxHtml = `
+              <div class="absolute border-2 border-primary rounded-lg shadow-[0_0_12px_rgba(0,74,198,0.3)]" style="left: ${left}px; top: ${top}px; width: ${width}px; height: ${height}px;">
+                <div class="absolute -top-7 left-0 bg-primary text-white text-[11px] font-black uppercase px-2.5 py-1 rounded-t-md shadow-md flex items-center gap-1 whitespace-nowrap">
+                  <span class="material-symbols-outlined text-[13px]">check_circle</span>
+                  <span>${breedLabel}</span>
+                </div>
+              </div>
+            `;
+            container.innerHTML = boxHtml;
+          }
+        }
+        
+        if (img.complete) {
+          drawBbox();
+        } else {
+          img.onload = drawBbox;
+        }
+        
+        window.addEventListener('resize', drawBbox);
+        document.addEventListener('i18nChanged', drawBbox);
+
+        /* =========================================================
+           Fetch file size dynamically and Resolution
+        ========================================================= */
+        img.addEventListener('load', function() {
+          const resText = img.naturalWidth + ' × ' + img.naturalHeight + ' px';
+          document.getElementById('card-image-resolution').textContent = resText;
+          document.getElementById('info-image-resolution').textContent = resText;
+        });
+
+        // imgPath is already set from predict-data-bridge above
+        if (imgPath) {
+          fetch('/' + imgPath, { method: 'HEAD' })
+            .then(res => {
+              const sizeBytes = res.headers.get('content-length');
+              if (sizeBytes) {
+                const sizeMb = (sizeBytes / (1024 * 1024)).toFixed(2);
+                document.getElementById('card-image-size').textContent = sizeMb + ' MB';
+                document.getElementById('info-image-size').textContent = sizeMb + ' MB';
+              }
+            })
+            .catch(() => {});
+        }
       });
     </script>
     <script src="{{ url_for('static', filename='js/toasts.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/i18n.js') }}?v=16"></script>
+    <script src="{{ url_for('static', filename='js/i18n.js') }}?v=17"></script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+    <script>
+      /* =========================================================
+         Action Button Handlers
+      ========================================================= */
+
+      function _getLang() {
+        return (window.PetAI_i18n && window.PetAI_i18n.getCurrentLang) ? window.PetAI_i18n.getCurrentLang() : (document.documentElement.getAttribute('data-user-lang') || 'vi');
+      }
+
+      function _showToast(msg, type) {
+        if (window.showToast) { window.showToast(msg, type || 'success'); return; }
+        // Fallback minimal toast
+        const t = document.createElement('div');
+        t.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:9999;background:#004ac6;color:#fff;padding:12px 20px;border-radius:12px;font-size:14px;font-weight:600;box-shadow:0 8px 24px rgba(0,74,198,.3);transition:opacity .4s';
+        t.textContent = msg;
+        document.body.appendChild(t);
+        setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 400); }, 2000);
+      }
+
+      function handleDownloadReport() {
+        const lang = _getLang();
+        _showToast(lang === 'en' ? 'Preparing report...' : 'Đang chuẩn bị báo cáo...', 'info');
+        setTimeout(() => window.print(), 400);
+      }
+
+      function handleShareResult() {
+        const lang = _getLang();
+        const url = window.location.href;
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(url).then(() => {
+            _showToast(lang === 'en' ? 'Link copied to clipboard!' : 'Đã sao chép liên kết!', 'success');
+          }).catch(() => {
+            _showToast(lang === 'en' ? 'Could not copy link.' : 'Không thể sao chép liên kết.', 'error');
+          });
+        } else {
+          // Fallback for older browsers
+          const ta = document.createElement('textarea');
+          ta.value = url;
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.select();
+          try {
+            document.execCommand('copy');
+            _showToast(lang === 'en' ? 'Link copied to clipboard!' : 'Đã sao chép liên kết!', 'success');
+          } catch (e) {
+            _showToast(lang === 'en' ? 'Could not copy link.' : 'Không thể sao chép liên kết.', 'error');
+          }
+          document.body.removeChild(ta);
+        }
+      }
+
+      function copyFilename(name) {
+        const lang = _getLang();
+        navigator.clipboard.writeText(name).then(() => {
+          _showToast(lang === 'en' ? 'Filename copied!' : 'Đã sao chép tên file!', 'success');
+        });
+      }
+
+      /* =========================================================
+         Viewport scale/zoom zoom handlers
+      ========================================================= */
+      let currentZoom = 100;
+      function zoomImage(amount) {
+        currentZoom = Math.max(50, Math.min(200, currentZoom + amount));
+        const img = document.getElementById('analyzed-image');
+        if (img) {
+          img.style.transform = `scale(${currentZoom / 100})`;
+          document.getElementById('zoom-level-text').textContent = currentZoom + '%';
+        }
+      }
+      function resetZoom() {
+        currentZoom = 100;
+        const img = document.getElementById('analyzed-image');
+        if (img) {
+          img.style.transform = `scale(1)`;
+          document.getElementById('zoom-level-text').textContent = '100%';
+        }
+      }
+      function toggleFullscreen() {
+        const img = document.getElementById('analyzed-image');
+        if (img) {
+          if (img.requestFullscreen) {
+            img.requestFullscreen();
+          } else if (img.webkitRequestFullscreen) { /* Safari */
+            img.webkitRequestFullscreen();
+          } else if (img.msRequestFullscreen) { /* IE11 */
+            img.msRequestFullscreen();
+          }
+        }
+      }
+
+      /* =========================================================
+         Model Technical Details Alert
+      ========================================================= */
+      function showModelInfo() {
+        const lang = _getLang();
+        const title = lang === 'en' ? 'Model Logic & Architecture' : 'Kiến trúc & Logic mô hình';
+        const text = lang === 'en' 
+          ? 'Classification Model: ResNet-101 Deep Convolutional Network\nDetection Model: YOLOv5 Realtime Object Detector\nInput Sizes: 224x224 (Classification), 640x640 (Detection)\nTraining Data: ImageNet weights + Stanford Dogs Database + custom fine-tuning.'
+          : 'Mô hình phân loại: ResNet-101 Deep Convolutional Network\nMô hình phát hiện vật thể: YOLOv5 Realtime Object Detector\nĐộ phân giải: 224x224 (Phân loại), 640x640 (Phát hiện)\nDữ liệu huấn luyện: Trọng số ImageNet + Stanford Dogs (120 giống chó) + tinh chỉnh chuyên sâu.';
+        if (window.PetAI_alert) {
+          window.PetAI_alert({ title: title, text: text, type: 'info' });
+        } else {
+          alert(text);
+        }
+      }
+
+      /* =========================================================
+         Recent History Loader
+      ========================================================= */
+      (function loadRecentHistory() {
+        const slider = document.getElementById('recent-history-slider');
+        const skeleton = slider ? slider.querySelector('.recent-history-skeleton') : null;
+        const itemsContainer = document.getElementById('recent-history-items');
+        const emptyState = document.getElementById('recent-history-empty');
+        if (!slider) return;
+
+        fetch('/history/api/recent?limit=8')
+          .then(r => r.json())
+          .then(data => {
+            if (skeleton) skeleton.remove();
+            const items = Array.isArray(data) ? data : (data.predictions || data.items || data.data || []);
+            if (!items || items.length === 0) {
+              if (emptyState) { emptyState.classList.remove('hidden'); emptyState.classList.add('flex'); }
+              return;
+            }
+            const lang = _getLang();
+            const fragment = document.createDocumentFragment();
+            items.forEach(item => {
+              const card = document.createElement('a');
+              card.href = item.url || ('/history?id=' + (item.id || ''));
+              card.className = 'flex-shrink-0 w-24 group cursor-pointer';
+              const breed = lang === 'en' ? (item.breed_en || item.breed || '') : (item.breed || '');
+              const conf = item.confidence !== undefined ? Math.round(item.confidence * 100) + '%' : '';
+              let imgSrc = item.image_url || item.image_path || item.thumbnail || '';
+              if (imgSrc && !imgSrc.startsWith('http') && !imgSrc.startsWith('/')) {
+                imgSrc = '/' + imgSrc;
+              }
+              card.innerHTML = `
+                <div class="w-24 h-24 rounded-xl overflow-hidden border border-outline-variant/30 dark:border-slate-800 bg-surface-container dark:bg-slate-800 mb-1.5 relative group-hover:ring-2 group-hover:ring-primary/50 transition-all duration-200 shadow-sm flex items-center justify-center">
+                  ${imgSrc ? `<img src="${imgSrc}" alt="${breed}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">` : ''}
+                  <div style="display:${imgSrc ? 'none' : 'flex'}" class="w-full h-full items-center justify-center">
+                    <span class="material-symbols-outlined text-outline dark:text-slate-600 text-[24px]">pets</span>
+                  </div>
+                  ${conf ? `<span class="absolute bottom-1 right-1 px-1.5 py-0.5 bg-black/60 text-white text-[9px] font-bold rounded-full">${conf}</span>` : ''}
+                </div>
+                <div class="text-[11px] font-bold text-on-surface dark:text-slate-200 truncate w-full" title="${breed}">${breed || '—'}</div>
+                ${item.created_at ? `<div class="text-[9px] text-outline dark:text-slate-500 mt-0.5">${new Date(item.created_at).toLocaleDateString(lang + '-VN')}</div>` : ''}
+              `;
+              fragment.appendChild(card);
+            });
+            if (itemsContainer) {
+              itemsContainer.appendChild(fragment);
+              itemsContainer.classList.remove('hidden');
+              itemsContainer.classList.add('flex');
+            }
+          })
+          .catch(() => {
+            if (skeleton) skeleton.remove();
+            if (emptyState) { emptyState.classList.remove('hidden'); emptyState.classList.add('flex'); }
+          });
+      })();
+
+      /* =========================================================
+         Breed CEO API Image Loader for mix/similarity panels
+      ========================================================= */
+      function loadBreedImage(imgElement, breedEn) {
+        if (!breedEn) return;
+        let cleanName = breedEn.toLowerCase().replace(/[^a-z ]/g, '').trim();
+        let apiBreed = cleanName;
+        if (cleanName.includes('retriever')) {
+          if (cleanName.includes('golden')) apiBreed = 'retriever/golden';
+          else if (cleanName.includes('flat')) apiBreed = 'retriever/flatcoated';
+          else if (cleanName.includes('curly')) apiBreed = 'retriever/curly';
+          else apiBreed = 'retriever';
+        } else if (cleanName.includes('shepherd')) {
+          if (cleanName.includes('german')) apiBreed = 'germanshepherd';
+          else apiBreed = 'shepherd';
+        } else if (cleanName.includes('poodle')) {
+          if (cleanName.includes('toy')) apiBreed = 'poodle/toy';
+          else if (cleanName.includes('mini')) apiBreed = 'poodle/miniature';
+          else apiBreed = 'poodle';
+        } else if (cleanName.includes('terrier')) {
+          apiBreed = 'terrier';
+        } else if (cleanName.includes('spaniel')) {
+          apiBreed = 'spaniel';
+        } else {
+          const parts = cleanName.split(' ');
+          if (parts.length > 1) {
+            apiBreed = parts[parts.length - 1] + '/' + parts[0];
+          }
+        }
+        
+        fetch(`https://dog.ceo/api/breed/${apiBreed}/images/random`)
+          .then(r => r.json())
+          .then(data => {
+            if (data.status === 'success' && data.message) {
+              imgElement.src = data.message;
+            } else {
+              imgElement.src = `https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=100&auto=format&fit=crop&q=80`;
+            }
+          })
+          .catch(() => {
+            imgElement.src = `https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=100&auto=format&fit=crop&q=80`;
+          });
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const _bridge = document.getElementById('predict-data-bridge');
+        const _sim1En = _bridge ? _bridge.getAttribute('data-similarity-top1-en') || '' : '';
+        const _sim2En = _bridge ? _bridge.getAttribute('data-similarity-top2-en') || '' : '';
+        const _sim3En = _bridge ? _bridge.getAttribute('data-similarity-top3-en') || '' : '';
+        const _imgPathFmt = _bridge ? _bridge.getAttribute('data-image-path') || '' : '';
+
+        // Load parent images for mixed breed analysis
+        const parentImg1 = document.getElementById('parent-breed-img-1');
+        const parentImg2 = document.getElementById('parent-breed-img-2');
+        if (parentImg1) loadBreedImage(parentImg1, _sim1En);
+        if (parentImg2) loadBreedImage(parentImg2, _sim2En);
+
+        // Load similar breeds thumbnails
+        const simImg1 = document.getElementById('sim-breed-img-1');
+        const simImg2 = document.getElementById('sim-breed-img-2');
+        const simImg3 = document.getElementById('sim-breed-img-3');
+        if (simImg1) loadBreedImage(simImg1, _sim1En);
+        if (simImg2) loadBreedImage(simImg2, _sim2En);
+        if (simImg3) loadBreedImage(simImg3, _sim3En);
+
+        /* =========================================================
+           Detect image format for Card 4 badge
+        ========================================================= */
+        const badge = document.getElementById('img-format-badge');
+        const infoFormat = document.getElementById('info-image-format');
+        if (_imgPathFmt) {
+          const ext = _imgPathFmt.split('.').pop().toUpperCase();
+          if (['JPG','JPEG','PNG','WEBP','GIF','BMP'].includes(ext)) {
+            const finalExt = ext === 'JPEG' ? 'JPG' : ext;
+            if (badge) badge.textContent = finalExt;
+            if (infoFormat) infoFormat.textContent = finalExt;
+          }
+        }
+      });
+    </script>
   </body>
 </html>

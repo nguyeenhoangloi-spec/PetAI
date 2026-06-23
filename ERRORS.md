@@ -345,5 +345,22 @@
 - **Prevention**: Chỉ sử dụng các mã màu chuẩn của Tailwind CSS (các số từ 100-900 chia hết cho 100) trừ khi dự án cấu hình thêm các màu tùy chỉnh đặc biệt trong `tailwind.config`.
 - **Status**: Fixed
 
+---
+
+## [2026-06-23 13:14] - Lỗi BuildError không tạo được URL cho endpoint history_page trong predict.html
+
+- **Type**: Agent
+- **Severity**: High
+- **File**: `templates/predict.html:1224, 1273`
+- **Agent**: @frontend-specialist
+- **Root Cause**: Trong lần cải tiến giao diện trang Kết quả nhận diện, tác nhân đã gọi nhầm endpoint `history.history_page` (không tồn tại) thay vì `history.history` (được định nghĩa trong blueprint history.py), dẫn đến sập trang `/predict` do lỗi BuildError của Flask/Werkzeug.
+- **Error Message**:
+  ```text
+  werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'history.history_page'. Did you mean 'history.history' instead?
+  ```
+- **Fix Applied**: Thay đổi tất cả các vị trí gọi `history.history_page` thành `history.history` trong file `predict.html` (dòng 1224 và 1273).
+- **Prevention**: Luôn đối chiếu kỹ tên các endpoint trong tệp route Python (Blueprint) khi tạo các liên kết động bằng `url_for` trong các template Jinja2, chạy kiểm thử tự động để phát hiện các lỗi xây dựng URL trước khi báo cáo hoàn thành.
+- **Status**: Fixed
+
 
 
