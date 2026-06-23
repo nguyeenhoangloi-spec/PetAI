@@ -744,105 +744,141 @@
           </div>
         </section>
 
-        <!-- Section: Biểu đồ phụ & Kết quả gần đây (Top 5 giống & Lịch sử) -->
-        <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <!-- Doughnut Chart: Top 5 giống phổ biến (1/3 width) -->
-          <div class="lg:col-span-1 chart-card bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
-            <div class="mb-4">
-              <h3 class="text-lg font-bold text-on-surface" data-i18n="top5Breeds">Top 5 giống phổ biến nhất</h3>
-              <p class="text-xs text-on-surface-variant mt-0.5" data-i18n="top5BreedsSubtitle">
-                Các giống chó được nhận diện nhiều nhất
-              </p>
+        <!-- Section: Phân tích phụ (Top 5, Donut, Insights) -->
+        <section class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-6 mb-8">
+          <!-- Card 1: Top 5 giống phổ biến nhất (Progress Bars) -->
+          <div class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-2xl p-6 shadow-sm flex flex-col">
+            <div class="flex items-center gap-2 mb-4">
+              <span class="material-symbols-outlined text-[20px] text-amber-500">emoji_events</span>
+              <div>
+                <h3 class="text-base font-bold text-on-surface" data-i18n="top5Breeds">Top 5 giống phổ biến nhất</h3>
+                <p class="text-[11px] text-on-surface-variant" data-i18n="top5BreedsSubtitle">Các giống chó được nhận diện nhiều nhất</p>
+              </div>
             </div>
-            <div class="chart-container relative h-[260px] flex items-center justify-center">
-              <canvas id="topBreedsChart"></canvas>
+            <div id="dashTopBreedsProgressList" class="flex-grow flex flex-col justify-center gap-3">
+              <!-- JS will render progress bars here -->
+              <div class="flex flex-col items-center justify-center py-8 text-center text-on-surface-variant/60">
+                <span class="material-symbols-outlined text-[32px] mb-1">emoji_events</span>
+                <p class="text-xs font-medium" data-i18n="noTopBreedData">Chưa có đủ dữ liệu</p>
+              </div>
+            </div>
+            <div class="mt-4 border-t border-outline-variant/10 pt-3 flex justify-center">
+              <a href="{{ url_for('history.history') }}" class="text-primary hover:underline text-xs font-bold flex items-center gap-1">
+                <span data-i18n="viewAllBreeds">Xem tất cả giống</span>
+                <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+              </a>
             </div>
           </div>
 
-          <!-- Table/Card List: Kết quả nhận diện gần đây (2/3 width) -->
-          <div class="lg:col-span-2 bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
-            <div class="flex items-center justify-between mb-6">
+          <!-- Card 2: Phân bố giống chó (Donut Chart với tâm số) -->
+          <div class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-2xl p-6 shadow-sm flex flex-col">
+            <div class="flex items-center gap-2 mb-4">
+              <span class="material-symbols-outlined text-[20px] text-indigo-500">donut_large</span>
               <div>
-                <h3 class="text-lg font-bold text-on-surface" data-i18n="recentResults">Kết quả nhận diện gần đây</h3>
-                <p class="text-xs text-on-surface-variant mt-0.5" data-i18n="recentPredictionsDesc">
-                  Danh sách ảnh chó vừa nhận diện trong hệ thống
-                </p>
+                <h3 class="text-base font-bold text-on-surface" data-i18n="breedDistTitle">Phân bố giống chó</h3>
+                <p class="text-[11px] text-on-surface-variant" data-i18n="breedDistDesc">Tỉ lệ các giống chó được nhận diện</p>
               </div>
-              <div class="flex items-center gap-2">
-                <div class="flex items-center gap-1.5 p-1 bg-surface-container-low dark:bg-slate-800 rounded-xl">
-                  <a class="px-3 py-1 rounded-lg text-xs transition-all {% if active_range == 'today' %}bg-primary text-white shadow-sm font-semibold{% else %}text-on-surface-variant hover:bg-surface-container-high font-medium{% endif %}" href="{{ url_for('dashboard.dashboard', range='today') }}">
-                    <span data-i18n="todayNew">hôm nay</span>
-                  </a>
-                  <a class="px-3 py-1 rounded-lg text-xs transition-all {% if active_range == 'yesterday' %}bg-primary text-white shadow-sm font-semibold{% else %}text-on-surface-variant hover:bg-surface-container-high font-medium{% endif %}" href="{{ url_for('dashboard.dashboard', range='yesterday') }}">
-                    <span data-i18n="yesterday">Hôm qua</span>
-                  </a>
-                  <a class="px-3 py-1 rounded-lg text-xs transition-all {% if active_range == '7days' %}bg-primary text-white shadow-sm font-semibold{% else %}text-on-surface-variant hover:bg-surface-container-high font-medium{% endif %}" href="{{ url_for('dashboard.dashboard', range='7days') }}">
-                    <span data-i18n="last7daysTab">7 ngày gần đây</span>
-                  </a>
+            </div>
+            <div class="flex-grow flex flex-col items-center justify-center">
+              <div class="relative w-full h-[180px] flex items-center justify-center" id="dashDonutWrapper">
+                <canvas id="dashBreedDonutChart"></canvas>
+                <!-- Central total label -->
+                <div id="dashDonutCenter" class="absolute flex flex-col items-center justify-center pointer-events-none text-center">
+                  <span class="text-[10px] text-on-surface-variant/70 font-semibold uppercase tracking-wider" data-i18n="all">Tổng</span>
+                  <span id="dashDonutTotal" class="text-2xl font-bold text-on-surface tracking-tight">0</span>
+                  <span class="text-[10px] text-on-surface-variant/70 font-semibold" data-i18n="timesCount">lượt</span>
                 </div>
-                <a class="text-primary font-semibold text-xs hover:underline flex items-center gap-0.5 ml-2" href="{{ url_for('history.history') }}">
-                  <span data-i18n="viewAll">Xem tất cả</span>
-                  <span class="material-symbols-outlined text-[14px]">chevron_right</span>
-                </a>
               </div>
+              <!-- Custom legend with percentages -->
+              <div id="dashDonutLegend" class="mt-3 w-full space-y-1.5 text-xs">
+                <!-- JS will render legend items here -->
+              </div>
+            </div>
+            <div class="mt-4 border-t border-outline-variant/10 pt-3 flex justify-center">
+              <a href="{{ url_for('statistics.statistics') }}" class="text-primary hover:underline text-xs font-bold flex items-center gap-1">
+                <span data-i18n="detailedStats">Chi tiết</span>
+                <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Card 3: Thông tin nổi bật (Insights) -->
+          <div class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-2xl p-6 shadow-sm flex flex-col">
+            <div class="flex items-center gap-2 mb-4">
+              <span class="material-symbols-outlined text-[20px] text-emerald-500">insights</span>
+              <div>
+                <h3 class="text-base font-bold text-on-surface" data-i18n="statsHighlights">Thông tin nổi bật</h3>
+                <p class="text-[11px] text-on-surface-variant" data-i18n="statsHighlightsDesc">Các chỉ số quan trọng trong kỳ</p>
+              </div>
+            </div>
+            <div id="dashInsightsList" class="flex-grow flex flex-col justify-center gap-4">
+              <!-- JS will render insights here -->
+              <div class="flex flex-col items-center justify-center py-8 text-center text-on-surface-variant/60">
+                <span class="material-symbols-outlined text-[32px] mb-1">insights</span>
+                <p class="text-xs font-medium" data-i18n="statsNoData">Chưa có dữ liệu để tính toán</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 4: Kết quả gần đây (Compact Table) -->
+          <div class="xl:col-span-2 bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-2xl p-6 shadow-sm flex flex-col">
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-[20px] text-blue-500">history</span>
+                <h3 class="text-base font-bold text-on-surface" data-i18n="recentResults">Kết quả gần đây</h3>
+              </div>
+              <a class="text-primary font-semibold text-xs hover:underline flex items-center gap-0.5" href="{{ url_for('history.history') }}">
+                <span data-i18n="viewAll">Xem tất cả</span>
+                <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+              </a>
             </div>
 
             {% if recent_predictions and recent_predictions|length > 0 %}
-              <!-- Desktop/Tablet Table -->
-              <div class="hidden sm:block overflow-x-auto">
+              <div class="flex-grow overflow-y-auto" style="max-height: 340px;">
                 <table class="w-full text-left border-collapse">
-                  <thead>
-                    <tr class="border-b border-outline-variant/20 text-xs font-semibold text-on-surface-variant/80">
-                      <th class="pb-3" data-i18n="imageCol">Ảnh</th>
-                      <th class="pb-3" data-i18n="breedCol">Giống chó</th>
-                      <th class="pb-3" data-i18n="confidenceCol">Độ tin cậy</th>
-                      <th class="pb-3" data-i18n="timeCol">Thời gian</th>
-                      <th class="pb-3 text-right" data-i18n="actionsCol">Thao tác</th>
+                  <thead class="sticky top-0 bg-surface-container-lowest dark:bg-slate-900 z-10">
+                    <tr class="border-b border-outline-variant/20 text-[11px] font-semibold text-on-surface-variant/80">
+                      <th class="pb-2" data-i18n="imageCol">Ảnh</th>
+                      <th class="pb-2" data-i18n="breedCol">Giống chó</th>
+                      <th class="pb-2" data-i18n="confidenceCol">Độ tin cậy</th>
+                      <th class="pb-2" data-i18n="timeCol">Thời gian</th>
+                      <th class="pb-2 text-right" data-i18n="actionsCol">Thao tác</th>
                     </tr>
                   </thead>
                   <tbody class="divide-y divide-outline-variant/10">
                     {% for pred in recent_predictions %}
-                      <tr class="text-sm text-on-surface hover:bg-surface-container-low/30 transition-colors">
-                        <td class="py-3">
-                          <img src="/{{ pred.image_path }}" alt="Dog" class="w-10 h-10 rounded-lg object-cover border border-outline-variant/15">
+                      <tr class="text-xs text-on-surface hover:bg-surface-container-low/30 transition-colors">
+                        <td class="py-2">
+                          <img src="/{{ pred.image_path }}" alt="Dog" class="w-8 h-8 rounded-lg object-cover border border-outline-variant/15">
                         </td>
-                        <td class="py-3 font-semibold">
+                        <td class="py-2 font-semibold text-[11px]">
                           {% if pred.breed %}
                             <span data-i18n-breed="{{ pred.breed }}">{{ pred.breed }}</span>
                           {% else %}
-                            <span data-i18n="notDetermined">{{ 'Undetermined' if ui_language == 'en' else 'Chưa xác định' }}</span>
+                            <span data-i18n="notDetermined">{{ 'N/A' if ui_language == 'en' else 'N/A' }}</span>
                           {% endif %}
                         </td>
-                        <td class="py-3">
+                        <td class="py-2">
                           {% set conf = (pred.confidence or 0) * 100 %}
                           {% if conf >= 85 %}
                             {% set badge_class = "bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400" %}
-                            {% set level = "Rất cao" %}
-                            {% set level_en = "Very High" %}
                           {% elif conf >= 70 %}
                             {% set badge_class = "bg-blue-500/10 text-blue-600 dark:bg-blue-500/20 dark:text-blue-400" %}
-                            {% set level = "Cao" %}
-                            {% set level_en = "High" %}
                           {% elif conf >= 50 %}
                             {% set badge_class = "bg-amber-500/10 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400" %}
-                            {% set level = "Trung bình" %}
-                            {% set level_en = "Medium" %}
                           {% else %}
                             {% set badge_class = "bg-rose-500/10 text-rose-600 dark:bg-rose-500/20 dark:text-rose-400" %}
-                            {% set level = "Thấp" %}
-                            {% set level_en = "Low" %}
                           {% endif %}
-                          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold {{ badge_class }}">
-                            <span class="current-lang-text">{{ level if ui_language == 'vi' else level_en }}</span>
-                            <span class="ml-1 font-bold">{{ '%.1f'|format(conf) }}%</span>
+                          <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-bold {{ badge_class }}">
+                            {{ '%.0f'|format(conf) }}%
                           </span>
                         </td>
-                        <td class="py-3 text-on-surface-variant/90 text-xs">
+                        <td class="py-2 text-on-surface-variant/90 text-[10px] whitespace-nowrap">
                           {{ pred.created_at.strftime('%d/%m/%Y %H:%M') if pred.created_at else '' }}
                         </td>
-                        <td class="py-3 text-right">
-                          <button type="button" onclick="openDetailModal(this)" data-image="{{ pred.image_path|escape }}" data-breed="{{ (pred.breed or 'Chưa xác định')|escape }}" data-confidence="{{ '%.1f'|format((pred.confidence or 0)*100) }}" data-species="{{ (pred.species or 'Chó')|escape }}" data-date="{{ pred.created_at.strftime('%d/%m/%Y %H:%M') if pred.created_at else '' }}" class="text-primary hover:bg-surface-container-high p-1.5 rounded-lg inline-flex items-center justify-center transition-colors cursor-pointer" title="{{ 'View Details' if ui_language == 'en' else 'Xem chi tiết' }}" data-i18n-title="viewDetail">
-                            <span class="material-symbols-outlined text-[18px]">visibility</span>
+                        <td class="py-2 text-right">
+                          <button type="button" onclick="openDetailModal(this)" data-image="{{ pred.image_path|escape }}" data-breed="{{ (pred.breed or 'Chưa xác định')|escape }}" data-confidence="{{ '%.1f'|format((pred.confidence or 0)*100) }}" data-species="{{ (pred.species or 'Chó')|escape }}" data-date="{{ pred.created_at.strftime('%d/%m/%Y %H:%M') if pred.created_at else '' }}" class="text-primary hover:bg-surface-container-high p-1 rounded-lg inline-flex items-center justify-center transition-colors cursor-pointer" title="{{ 'View Details' if ui_language == 'en' else 'Xem chi tiết' }}" data-i18n-title="viewDetail">
+                            <span class="material-symbols-outlined text-[16px]">visibility</span>
                           </button>
                         </td>
                       </tr>
@@ -851,69 +887,38 @@
                 </table>
               </div>
 
-              <!-- Mobile Card List -->
-              <div class="sm:hidden space-y-3">
-                {% for pred in recent_predictions %}
-                  <div class="flex items-center justify-between p-3 bg-surface-container-low dark:bg-slate-800/50 border border-outline-variant/20 rounded-xl">
-                    <div class="flex items-center gap-3 overflow-hidden">
-                      <img src="/{{ pred.image_path }}" alt="Dog" class="w-12 h-12 rounded-lg object-cover border border-outline-variant/15 flex-shrink-0">
-                      <div class="flex flex-col justify-center overflow-hidden">
-                        {% if pred.breed %}
-                          <span class="text-sm font-semibold truncate" data-i18n-breed="{{ pred.breed }}">{{ pred.breed }}</span>
-                        {% else %}
-                          <span class="text-sm font-semibold truncate" data-i18n="notDetermined">{{ 'Undetermined' if ui_language == 'en' else 'Chưa xác định' }}</span>
-                        {% endif %}
-                        <span class="text-[11px] text-on-surface-variant mt-0.5">{{ pred.created_at.strftime('%d/%m/%Y %H:%M') if pred.created_at else '' }}</span>
-                      </div>
-                    </div>
-                    <div class="flex items-center gap-2">
-                      {% set conf = (pred.confidence or 0) * 100 %}
-                      {% if conf >= 85 %}
-                        {% set badge_class = "bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400" %}
-                      {% elif conf >= 70 %}
-                        {% set badge_class = "bg-blue-500/10 text-blue-600 dark:bg-blue-500/20 dark:text-blue-400" %}
-                      {% elif conf >= 50 %}
-                        {% set badge_class = "bg-amber-500/10 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400" %}
-                      {% else %}
-                        {% set badge_class = "bg-rose-500/10 text-rose-600 dark:bg-rose-500/20 dark:text-rose-400" %}
-                      {% endif %}
-                      <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold {{ badge_class }}">
-                        {{ '%.1f'|format(conf) }}%
-                      </span>
-                      <button type="button" onclick="openDetailModal(this)" data-image="{{ pred.image_path|escape }}" data-breed="{{ (pred.breed or 'Chưa xác định')|escape }}" data-confidence="{{ '%.1f'|format((pred.confidence or 0)*100) }}" data-species="{{ (pred.species or 'Chó')|escape }}" data-date="{{ pred.created_at.strftime('%d/%m/%Y %H:%M') if pred.created_at else '' }}" class="text-primary hover:bg-surface-container-high p-1.5 rounded-lg inline-flex items-center justify-center transition-colors cursor-pointer" title="{{ 'View Details' if ui_language == 'en' else 'Xem chi tiết' }}" data-i18n-title="viewDetail">
-                        <span class="material-symbols-outlined text-[18px]">visibility</span>
-                      </button>
-                    </div>
-                  </div>
-                {% endfor %}
-              </div>
-
               <!-- Pagination -->
               {% if total_pages and total_pages > 1 %}
-                <div class="flex justify-center mt-6">
-                  <nav aria-label="Pagination" class="inline-flex items-center gap-1 rounded-xl bg-surface-container-low dark:bg-slate-800 p-1">
-                    <a aria-label="Trang truoc" data-i18n-aria="prevPage" class="px-2 py-1 label-sm rounded-lg {% if page <= 1 %}text-slate-500/40 pointer-events-none{% else %}text-on-surface-variant hover:text-primary hover:bg-surface-container-high{% endif %}" href="{{ url_for('dashboard.dashboard', range=active_range, page=page-1) }}">
+                <div class="flex justify-center mt-3">
+                  <nav aria-label="Pagination" class="inline-flex items-center gap-0.5 rounded-lg bg-surface-container-low dark:bg-slate-800 p-0.5">
+                    <a aria-label="Trang truoc" data-i18n-aria="prevPage" class="px-1.5 py-0.5 text-[10px] rounded {% if page <= 1 %}text-slate-500/40 pointer-events-none{% else %}text-on-surface-variant hover:text-primary hover:bg-surface-container-high{% endif %}" href="{{ url_for('dashboard.dashboard', range=active_range, page=page-1) }}">
                       &lsaquo;
                     </a>
                     {% for p in range(1, total_pages + 1) %}
-                      <a class="px-2.5 py-1 label-sm rounded-lg {% if p == page %}bg-primary text-white font-semibold{% else %}text-on-surface-variant hover:text-primary hover:bg-surface-container-high{% endif %}" href="{{ url_for('dashboard.dashboard', range=active_range, page=p) }}">
+                      <a class="px-1.5 py-0.5 text-[10px] rounded {% if p == page %}bg-primary text-white font-semibold{% else %}text-on-surface-variant hover:text-primary hover:bg-surface-container-high{% endif %}" href="{{ url_for('dashboard.dashboard', range=active_range, page=p) }}">
                         {{ p }}
                       </a>
                     {% endfor %}
-                    <a aria-label="Trang sau" data-i18n-aria="nextPage" class="px-2 py-1 label-sm rounded-lg {% if page >= total_pages %}text-slate-500/40 pointer-events-none{% else %}text-on-surface-variant hover:text-primary hover:bg-surface-container-high{% endif %}" href="{{ url_for('dashboard.dashboard', range=active_range, page=page+1) }}">
+                    <a aria-label="Trang sau" data-i18n-aria="nextPage" class="px-1.5 py-0.5 text-[10px] rounded {% if page >= total_pages %}text-slate-500/40 pointer-events-none{% else %}text-on-surface-variant hover:text-primary hover:bg-surface-container-high{% endif %}" href="{{ url_for('dashboard.dashboard', range=active_range, page=page+1) }}">
                       &rsaquo;
                     </a>
                   </nav>
                 </div>
               {% endif %}
 
+              <div class="mt-3 border-t border-outline-variant/10 pt-3 flex justify-center">
+                <a href="{{ url_for('history.history') }}" class="text-primary hover:underline text-xs font-bold flex items-center gap-1">
+                  <span data-i18n="viewAllResults">Xem tất cả kết quả</span>
+                  <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+                </a>
+              </div>
             {% else %}
               <!-- Empty State -->
-              <div class="flex flex-col items-center justify-center py-12 text-center text-on-surface-variant/80">
-                <span class="material-symbols-outlined text-5xl text-outline-variant/40 mb-3">pets</span>
-                <p class="label-sm font-medium" data-i18n="emptyDashboard">Bạn chưa có lịch sử nhận diện nào.</p>
-                <a class="mt-4 bg-primary text-on-primary px-4 py-2.5 rounded-xl label-sm shadow-sm hover:shadow-md transition-all flex items-center gap-2 font-semibold" href="{{ url_for('predict.upload_page') }}">
-                  <span class="material-symbols-outlined text-[18px]">add_a_photo</span>
+              <div class="flex-grow flex flex-col items-center justify-center py-8 text-center text-on-surface-variant/80">
+                <span class="material-symbols-outlined text-4xl text-outline-variant/40 mb-2">pets</span>
+                <p class="text-xs font-medium" data-i18n="emptyDashboard">Bạn chưa có lịch sử nhận diện nào.</p>
+                <a class="mt-3 bg-primary text-on-primary px-3 py-2 rounded-xl text-xs shadow-sm hover:shadow-md transition-all flex items-center gap-1.5 font-semibold" href="{{ url_for('predict.upload_page') }}">
+                  <span class="material-symbols-outlined text-[16px]">add_a_photo</span>
                   <span data-i18n="uploadNew">Tải ảnh mới</span>
                 </a>
               </div>
@@ -968,7 +973,6 @@
         let revenueChart = null;
         let subscriptionChartInstance = null;
         let dailyChartInstance = null;
-        let topBreedsChartInstance = null;
         let confidenceChartInstance = null;
 
         // Detect dark mode from html class or attribute
@@ -1457,7 +1461,6 @@
 
         // ─── Activity / Prediction Charts ───────────────────────────────
         dailyChartInstance = null;
-        topBreedsChartInstance = null;
         confidenceChartInstance = null;
 
         const initData = activityDatasets["7days"];
@@ -1530,75 +1533,222 @@
           });
         }
 
-        // Chart 2: Doughnut Chart (Top Breeds)
-        const ctxTop = document.getElementById("topBreedsChart");
-        if (ctxTop) {
-          const colors = [
-            "#004ac6", // Primary
-            "#fea619", // Secondary
-            "#943700", // Tertiary
-            "#10b981", // Emerald
-            "#8b5cf6", // Purple
-          ];
-          const hasData = initData.topBreeds.length > 0;
-          let topBreedsLabels = hasData
-            ? initData.topBreeds
-            : [
-                typeof window.PetAI_i18n !== "undefined"
-                  ? window.PetAI_i18n.t("noDataChart")
-                  : "Chưa có dữ liệu",
-              ];
-          if (hasData && typeof window.PetAI_i18n !== "undefined" && window.PetAI_i18n.getCurrentLang() === "en") {
-            topBreedsLabels = topBreedsLabels.map(function (label) {
-              return window.PetAI_i18n.translateBreed(label);
-            });
+        // ── Dashboard Bottom Cards Rendering ──────────────────────────────
+        const dashDonutColors = ["#2563eb", "#f59e0b", "#ea580c", "#6366f1", "#10b981"];
+        const dashDonutDark = ["#60a5fa", "#fbbf24", "#fb923c", "#a5b4fc", "#34d399"];
+        let dashDonutChartInstance = null;
+
+        function t(key) {
+          return typeof window.PetAI_i18n !== "undefined" ? window.PetAI_i18n.t(key) : key;
+        }
+        function tBreed(breed) {
+          if (typeof window.PetAI_i18n !== "undefined" && window.PetAI_i18n.getCurrentLang() === "en") {
+            return window.PetAI_i18n.translateBreed(breed);
+          }
+          return breed;
+        }
+
+        // Card 1: Top 5 progress bars
+        function renderDashTopBreeds(breeds, counts) {
+          const el = document.getElementById("dashTopBreedsProgressList");
+          if (!el) return;
+          if (!breeds || breeds.length === 0) {
+            el.innerHTML = '<div class="flex flex-col items-center justify-center py-8 text-center text-on-surface-variant/60"><span class="material-symbols-outlined text-[32px] mb-1">emoji_events</span><p class="text-xs font-medium">' + t("noTopBreedData") + '</p></div>';
+            return;
+          }
+          const maxCount = Math.max(...counts, 1);
+          const rankColors = ["#2563eb", "#f59e0b", "#ea580c", "#6366f1", "#10b981"];
+          let html = "";
+          breeds.forEach(function (breed, i) {
+            const count = counts[i] || 0;
+            const pct = Math.round((count / maxCount) * 100);
+            const rank = i + 1;
+            const displayBreed = tBreed(breed);
+            const timesLabel = t("timesCount") || "lần";
+            html += '<div class="flex flex-col gap-1">' +
+              '<div class="flex items-center gap-2.5">' +
+                '<span class="inline-flex items-center justify-center w-5 h-5 rounded-md text-[10px] font-bold text-white flex-shrink-0" style="background:' + rankColors[i % rankColors.length] + '">' + rank + '</span>' +
+                '<span class="text-xs font-semibold text-on-surface flex-1 truncate" title="' + displayBreed + '">' + displayBreed + '</span>' +
+                '<span class="text-[11px] font-bold text-on-surface-variant tabular-nums whitespace-nowrap">' + count + ' ' + timesLabel + '</span>' +
+              '</div>' +
+              '<div class="h-1.5 rounded-full bg-surface-container-high dark:bg-slate-700 overflow-hidden">' +
+                '<div class="h-full rounded-full transition-all duration-700" style="width:' + pct + '%;background:' + rankColors[i % rankColors.length] + '"></div>' +
+              '</div>' +
+            '</div>';
+          });
+          el.innerHTML = html;
+        }
+
+        // Card 2: Donut chart + custom legend
+        function renderDashDonut(breeds, counts) {
+          const canvasEl = document.getElementById("dashBreedDonutChart");
+          const totalEl = document.getElementById("dashDonutTotal");
+          const legendEl = document.getElementById("dashDonutLegend");
+          if (!canvasEl) return;
+
+          const hasData = breeds && breeds.length > 0;
+          const total = hasData ? counts.reduce(function (a, b) { return a + b; }, 0) : 0;
+          if (totalEl) totalEl.textContent = total;
+
+          let displayLabels = hasData ? breeds.map(function (b) { return tBreed(b); }) : [t("noDataChart") || "Chưa có dữ liệu"];
+          const colors = isDarkMode ? dashDonutDark : dashDonutColors;
+
+          // Destroy old instance
+          if (dashDonutChartInstance) {
+            dashDonutChartInstance.destroy();
+            dashDonutChartInstance = null;
           }
 
-          topBreedsChartInstance = new Chart(ctxTop.getContext("2d"), {
+          dashDonutChartInstance = new Chart(canvasEl.getContext("2d"), {
             type: "doughnut",
             data: {
-              labels: topBreedsLabels,
-              datasets: [
-                {
-                  data: hasData ? initData.topBreedsCounts : [1],
-                  backgroundColor: hasData
-                    ? colors
-                    : [isDarkMode ? "#334155" : "#cbd5e1"],
-                  borderWidth: isDarkMode ? 2 : 1,
-                  borderColor: isDarkMode ? "#0f172a" : "#ffffff",
-                },
-              ],
+              labels: displayLabels,
+              datasets: [{
+                data: hasData ? counts : [1],
+                backgroundColor: hasData ? colors : [isDarkMode ? "#334155" : "#cbd5e1"],
+                borderColor: isDarkMode ? "#0f172a" : "#ffffff",
+                borderWidth: 3,
+                hoverOffset: 6,
+              }],
             },
             options: {
               responsive: true,
               maintainAspectRatio: false,
+              cutout: "70%",
               plugins: {
-                legend: {
-                  position: "right",
-                  labels: {
-                    color: textColor,
-                    font: { family: "Inter", size: 12 },
-                    boxWidth: 12,
-                    padding: 15,
-                  },
-                },
+                legend: { display: false },
                 tooltip: {
                   enabled: hasData,
-                  padding: 12,
+                  padding: 8,
                   backgroundColor: isDarkMode ? "#1e293b" : "#ffffff",
                   titleColor: isDarkMode ? "#ffffff" : "#0f172a",
                   bodyColor: isDarkMode ? "#cbd5e1" : "#475569",
                   borderColor: isDarkMode ? "#334155" : "#e2e8f0",
                   borderWidth: 1,
-                  titleFont: { family: "Inter", weight: "bold" },
-                  bodyFont: { family: "Inter" },
+                  callbacks: {
+                    label: function (ctx) {
+                      const pct = total > 0 ? ((ctx.parsed / total) * 100).toFixed(1) : "0.0";
+                      return " " + ctx.label + ": " + ctx.parsed + " (" + pct + "%)";
+                    },
+                  },
                 },
               },
-              cutout: "70%",
             },
           });
-          topBreedsChartInstance.originalLabels = initData.topBreeds || [];
+
+          // Custom legend
+          if (legendEl) {
+            if (!hasData) {
+              legendEl.innerHTML = "";
+              return;
+            }
+            let legendHtml = "";
+            displayLabels.forEach(function (label, i) {
+              const count = counts[i] || 0;
+              const pct = total > 0 ? ((count / total) * 100).toFixed(1) : "0.0";
+              const color = colors[i % colors.length];
+              legendHtml += '<div class="flex items-center gap-2">' +
+                '<span class="inline-block w-2.5 h-2.5 rounded-full flex-shrink-0" style="background:' + color + '"></span>' +
+                '<span class="flex-1 truncate text-on-surface font-medium">' + label + '</span>' +
+                '<span class="text-on-surface-variant font-semibold tabular-nums">' + pct + '%</span>' +
+              '</div>';
+            });
+            legendEl.innerHTML = legendHtml;
+          }
         }
+
+        // Card 3: Insights
+        function renderDashInsights(breeds, counts, dailyLabels, dailyData, confidenceDist) {
+          const el = document.getElementById("dashInsightsList");
+          if (!el) return;
+
+          const hasData = breeds && breeds.length > 0;
+          if (!hasData) {
+            el.innerHTML = '<div class="flex flex-col items-center justify-center py-8 text-center text-on-surface-variant/60"><span class="material-symbols-outlined text-[32px] mb-1">insights</span><p class="text-xs font-medium">' + t("statsNoData") + '</p></div>';
+            return;
+          }
+
+          // 1. Most common breed
+          const mostCommon = tBreed(breeds[0]);
+          let mostCommonValueHtml = '<span class="font-bold">' + mostCommon + '</span>';
+          if (mostCommon.indexOf(':') !== -1) {
+            const colonIdx = mostCommon.indexOf(':');
+            const prefix = mostCommon.substring(0, colonIdx + 1).trim();
+            const rest = mostCommon.substring(colonIdx + 1).trim();
+            mostCommonValueHtml = '<span class="font-bold block">' + prefix + '</span>' +
+                                  '<span class="text-[11px] text-on-surface-variant font-medium block mt-0.5">' + rest + '</span>';
+          }
+
+          // 2. Peak confidence bracket
+          const confBrackets = ["0% - 20%", "20% - 40%", "40% - 60%", "60% - 80%", "80% - 100%"];
+          let peakConfIdx = 0;
+          let peakConfVal = 0;
+          if (confidenceDist) {
+            confidenceDist.forEach(function (v, i) {
+              if (v > peakConfVal) { peakConfVal = v; peakConfIdx = i; }
+            });
+          }
+          const peakConfBracket = confBrackets[peakConfIdx] || "80% - 100%";
+
+          // 3. Total scans change (simple sum comparison)
+          const total = counts.reduce(function (a, b) { return a + b; }, 0);
+          const changeLabel = "+" + total;
+
+          // 4. Peak active day
+          let peakDay = "--";
+          let peakDayVal = 0;
+          if (dailyLabels && dailyData) {
+            dailyData.forEach(function (v, i) {
+              if (v > peakDayVal) { peakDayVal = v; peakDay = dailyLabels[i]; }
+            });
+          }
+
+          const items = [
+            {
+              icon: "trophy",
+              iconBg: "bg-orange-500/10 text-orange-600 dark:text-orange-400",
+              label: t("statsMostCommonBreed") || "Giống phổ biến nhất",
+              value: mostCommonValueHtml,
+            },
+            {
+              icon: "target",
+              iconBg: "bg-blue-500/10 text-blue-600 dark:text-blue-400",
+              label: t("statsPeakConfidence") || "Khoảng tin cậy phổ biến",
+              value: '<span class="font-bold">' + peakConfBracket + '</span>',
+            },
+            {
+              icon: "trending_up",
+              iconBg: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
+              label: (t("statsComparisonLabel") || "So với 30 ngày trước"),
+              value: '<span class="font-bold text-emerald-600 dark:text-emerald-400">' + changeLabel + '</span>',
+            },
+            {
+              icon: "calendar_today",
+              iconBg: "bg-purple-500/10 text-purple-600 dark:text-purple-400",
+              label: t("statsPeakActiveDay") || "Ngày nhiều lượt nhất",
+              value: '<span class="font-bold">' + peakDay + '</span>',
+            },
+          ];
+
+          let html = "";
+          items.forEach(function (item) {
+            html += '<div class="flex items-start gap-3">' +
+              '<div class="w-8 h-8 rounded-xl ' + item.iconBg + ' flex items-center justify-center flex-shrink-0 mt-0.5">' +
+                '<span class="material-symbols-outlined text-[18px]">' + item.icon + '</span>' +
+              '</div>' +
+              '<div class="flex flex-col min-w-0">' +
+                '<span class="text-[10px] text-on-surface-variant font-medium">' + item.label + '</span>' +
+                '<span class="text-xs text-on-surface">' + item.value + '</span>' +
+              '</div>' +
+            '</div>';
+          });
+          el.innerHTML = html;
+        }
+
+        // ── Initialize bottom cards with 7-day data ──
+        renderDashTopBreeds(initData.topBreeds, initData.topBreedsCounts);
+        renderDashDonut(initData.topBreeds, initData.topBreedsCounts);
+        renderDashInsights(initData.topBreeds, initData.topBreedsCounts, initData.dailyLabels, initData.dailyData, initData.confidenceDist);
 
         // Chart 3: Bar Chart (Confidence Distribution)
         const ctxConf = document.getElementById("confidenceDistChart");
@@ -1733,34 +1883,10 @@
                 }
               }
 
-              // 2. Top Breeds Chart
-              if (topBreedsChartInstance) {
-                const hasData = d.topBreeds && d.topBreeds.length > 0;
-                topBreedsChartInstance.originalLabels = d.topBreeds || [];
-                let topBreedsLabels = hasData
-                  ? d.topBreeds
-                  : [
-                      typeof window.PetAI_i18n !== "undefined"
-                        ? window.PetAI_i18n.t("noDataChart")
-                        : "Chưa có dữ liệu",
-                    ];
-                if (hasData && typeof window.PetAI_i18n !== "undefined" && window.PetAI_i18n.getCurrentLang() === "en") {
-                  topBreedsLabels = topBreedsLabels.map(function (label) {
-                    return window.PetAI_i18n.translateBreed(label);
-                  });
-                }
-                topBreedsChartInstance.data.labels = topBreedsLabels;
-                topBreedsChartInstance.data.datasets[0].data = hasData
-                  ? d.topBreedsCounts
-                  : [1];
-                topBreedsChartInstance.data.datasets[0].backgroundColor =
-                  hasData
-                    ? ["#004ac6", "#fea619", "#943700", "#10b981", "#8b5cf6"]
-                    : [isDarkMode ? "#334155" : "#cbd5e1"];
-                topBreedsChartInstance.options.plugins.tooltip.enabled =
-                  hasData;
-                topBreedsChartInstance.update();
-              }
+              // 2. Update bottom cards (progress bars, donut, insights)
+              renderDashTopBreeds(d.topBreeds, d.topBreedsCounts);
+              renderDashDonut(d.topBreeds, d.topBreedsCounts);
+              renderDashInsights(d.topBreeds, d.topBreedsCounts, d.dailyLabels, d.dailyData, d.confidenceDist);
 
               // 3. Confidence Distribution Chart
               if (confidenceChartInstance) {
@@ -1994,7 +2120,7 @@
             } else if (canvasId === "dailyPredictionsChart") {
               ds.backgroundColor = isDark ? "rgba(0, 74, 198, 0.15)" : "rgba(0, 74, 198, 0.05)";
               ds.pointBorderColor = isDark ? "#0f172a" : "#fff";
-            } else if (canvasId === "subscriptionChart" || canvasId === "topBreedsChart") {
+            } else if (canvasId === "subscriptionChart" || canvasId === "dashBreedDonutChart") {
               ds.borderColor = isDark ? "#0f172a" : "#ffffff";
               ds.borderWidth = isDark ? 2 : 1;
               if (ds.backgroundColor && ds.backgroundColor.length === 1) {
@@ -2011,7 +2137,7 @@
           mutations.forEach(function (mutation) {
             if (mutation.attributeName === "class" || mutation.attributeName === "data-theme") {
               const currentDark = document.documentElement.classList.contains("dark");
-              [revenueChart, subscriptionChartInstance, dailyChartInstance, topBreedsChartInstance, confidenceChartInstance].forEach(chart => {
+              [revenueChart, subscriptionChartInstance, dailyChartInstance, dashDonutChartInstance, confidenceChartInstance].forEach(chart => {
                 if (chart) {
                   updateChartColors(chart, currentDark);
                 }
@@ -2108,25 +2234,19 @@
             dailyChartInstance.update();
           }
 
-          if (topBreedsChartInstance) {
-            const originalLabels = topBreedsChartInstance.originalLabels || [];
-            const hasData = originalLabels.length > 0;
-            let displayLabels = hasData
-              ? originalLabels
-              : [
-                  typeof window.PetAI_i18n !== "undefined"
-                    ? window.PetAI_i18n.t("noDataChart")
-                    : (lang === "en" ? "No data" : "Chưa có dữ liệu")
-                ];
-            
-            if (hasData && lang === "en" && typeof window.PetAI_i18n !== "undefined") {
-              topBreedsChartInstance.data.labels = displayLabels.map(function (label) {
-                return window.PetAI_i18n.translateBreed(label);
-              });
-            } else {
-              topBreedsChartInstance.data.labels = displayLabels;
-            }
-            topBreedsChartInstance.update();
+          // Re-render all 3 bottom cards with current data on language change
+          if (typeof renderDashTopBreeds === "function") {
+            const activeActTab = document.querySelector(".act-tab.bg-primary");
+            const currentPeriod = activeActTab ? activeActTab.getAttribute("data-period") : "7days";
+            // Fetch fresh data for current period and re-render
+            fetch("/dashboard/api/activity-stats?period=" + currentPeriod)
+              .then(function(r) { return r.json(); })
+              .then(function(d) {
+                renderDashTopBreeds(d.topBreeds, d.topBreedsCounts);
+                renderDashDonut(d.topBreeds, d.topBreedsCounts);
+                renderDashInsights(d.topBreeds, d.topBreedsCounts, d.dailyLabels, d.dailyData, d.confidenceDist);
+              })
+              .catch(function() {});
           }
 
           if (typeof renderSubscriptionBreakdown === "function") {

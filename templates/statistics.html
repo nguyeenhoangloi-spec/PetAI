@@ -1155,21 +1155,27 @@
             </div>
 
             {% if stats.total_predictions > 0 %}
-              <div class="flex-grow flex flex-col justify-center gap-4.5">
+              <div class="flex-grow grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5 items-start mt-2">
                 <!-- Insight 1: Giống phổ biến nhất -->
-                <div class="flex items-center gap-3">
-                  <div class="w-9 h-9 rounded-xl bg-orange-500/10 text-orange-600 dark:text-orange-400 flex items-center justify-center flex-shrink-0">
+                <div class="flex items-start gap-3">
+                  <div class="w-9 h-9 rounded-xl bg-orange-500/10 text-orange-600 dark:text-orange-400 flex items-center justify-center flex-shrink-0 mt-0.5">
                     <span class="material-symbols-outlined text-[20px]">trophy</span>
                   </div>
                   <div class="flex flex-col min-w-0">
                     <span class="text-xs text-on-surface-variant font-medium" data-i18n="statsMostCommonBreed">Giống phổ biến nhất</span>
-                    <span class="text-sm font-bold text-on-surface truncate" data-i18n-breed="{{ most_common_breed }}">{{ most_common_breed }}</span>
+                    {% if most_common_breed and ':' in most_common_breed %}
+                      {% set parts = most_common_breed.split(':') %}
+                      <span class="text-sm font-bold text-on-surface block">{{ parts[0] }}:</span>
+                      <span class="text-xs text-on-surface-variant font-medium block mt-0.5" data-i18n-breed="{{ parts[1]|trim }}">{{ parts[1]|trim }}</span>
+                    {% else %}
+                      <span class="text-sm font-bold text-on-surface truncate" data-i18n-breed="{{ most_common_breed }}">{{ most_common_breed }}</span>
+                    {% endif %}
                   </div>
                 </div>
 
                 <!-- Insight 2: Khoảng tin cậy phổ biến nhất -->
-                <div class="flex items-center gap-3">
-                  <div class="w-9 h-9 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center flex-shrink-0">
+                <div class="flex items-start gap-3">
+                  <div class="w-9 h-9 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center flex-shrink-0 mt-0.5">
                     <span class="material-symbols-outlined text-[20px]">target</span>
                   </div>
                   <div class="flex flex-col min-w-0">
@@ -1179,8 +1185,8 @@
                 </div>
 
                 <!-- Insight 3: Xu hướng so với kỳ trước -->
-                <div class="flex items-center gap-3">
-                  <div class="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center flex-shrink-0">
+                <div class="flex items-start gap-3">
+                  <div class="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center flex-shrink-0 mt-0.5">
                     <span class="material-symbols-outlined text-[20px]">trending_up</span>
                   </div>
                   <div class="flex flex-col min-w-0">
@@ -1198,8 +1204,8 @@
                 </div>
 
                 <!-- Insight 4: Ngày hoạt động nhiều nhất -->
-                <div class="flex items-center gap-3">
-                  <div class="w-9 h-9 rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center flex-shrink-0">
+                <div class="flex items-start gap-3">
+                  <div class="w-9 h-9 rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center flex-shrink-0 mt-0.5">
                     <span class="material-symbols-outlined text-[20px]">calendar_today</span>
                   </div>
                   <div class="flex flex-col min-w-0">
