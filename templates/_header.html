@@ -4,7 +4,8 @@
     <button id="menuToggle" type="button" aria-label="Toggle sidebar" aria-expanded="false" class="header-menu-toggle flex items-center justify-center w-9 h-9 rounded-xl transition-all duration-300">
       <span class="material-symbols-outlined text-[22px]">menu</span>
     </button>
-    <a href="{{ url_for('home.index') }}" class="flex items-center gap-2">
+    {% set logo_url = url_for('users.system_config') if (session.get('role') == 'admin' and request.blueprint == 'users') else url_for('home.index') %}
+    <a href="{{ logo_url }}" class="flex items-center gap-2">
       <img alt="PetAI Logo" class="w-8 h-8 md:w-9 md:h-9 object-contain" src="{{ url_for('static', filename='images/logo.png') }}">
       <span class="text-lg md:text-xl font-bold text-primary tracking-wide">{{ get_config('site_name', 'PetAI') }}</span>
     </a>

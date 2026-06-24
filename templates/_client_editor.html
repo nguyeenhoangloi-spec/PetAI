@@ -208,6 +208,23 @@
     cursor: default !important;
   }
 
+  /* ── Inplace Preview Bar styling ── */
+  #inplace-preview-bar {
+    background-color: rgba(15, 23, 42, 0.96) !important;
+    border: 1px solid rgba(51, 65, 85, 0.5) !important;
+    color: #ffffff !important;
+  }
+  #inplace-preview-bar h4 {
+    color: #ffffff !important;
+  }
+  #inplace-preview-bar p {
+    color: #94a3b8 !important;
+  }
+  html.dark #inplace-preview-bar {
+    background-color: rgba(2, 6, 23, 0.96) !important;
+    border: 1px solid rgba(30, 41, 59, 0.8) !important;
+  }
+
   /* Bypass theme-dark.css blanket !important overrides on bg-white, bg-slate-50, etc. */
   .editor-nested-card {
     background-color: #ffffff;
@@ -605,8 +622,15 @@
     }
   };
 
+  function getEditorTranslation() {
+    var uiLang = (window.PetAI_i18n && typeof window.PetAI_i18n.getCurrentLang === "function") 
+      ? window.PetAI_i18n.getCurrentLang() 
+      : "{{ ui_language or 'vi' }}";
+    return EDITOR_TRANSLATIONS[uiLang] || EDITOR_TRANSLATIONS.vi;
+  }
+
   function translateEditorUI() {
-    var t = EDITOR_TRANSLATIONS[visualEditorLang] || EDITOR_TRANSLATIONS.vi;
+    var t = getEditorTranslation();
     
     // Float bar
     var heading = document.getElementById("editor-page-heading");
@@ -999,7 +1023,7 @@
     const card = document.getElementById("legal-content-card");
     if (!card) return;
     if (pageKey === 'home') return;
-    var t = EDITOR_TRANSLATIONS[visualEditorLang] || EDITOR_TRANSLATIONS.vi;
+    var t = getEditorTranslation();
 
     const h1 = card.querySelector("h1");
     card.innerHTML = "";
@@ -1354,7 +1378,7 @@
   }
 
   async function removeVisualSection(id) {
-    var t = EDITOR_TRANSLATIONS[visualEditorLang] || EDITOR_TRANSLATIONS.vi;
+    var t = getEditorTranslation();
     if (window.PetAI_confirm) {
       const ok = await window.PetAI_confirm({
         text: t.confirmRemoveSection,
@@ -1448,7 +1472,7 @@
       contentDiv.appendChild(textarea);
       textarea.focus();
 
-      var t = EDITOR_TRANSLATIONS[visualEditorLang] || EDITOR_TRANSLATIONS.vi;
+      var t = getEditorTranslation();
       if (iconSpan) iconSpan.textContent = "text_fields";
       btn.title = t.btnViewVisual;
       btn.classList.add("bg-primary/20", "text-primary");
@@ -1461,7 +1485,7 @@
       contentDiv.setAttribute("contenteditable", "true");
       delete contentDiv.dataset.htmlMode;
 
-      var t = EDITOR_TRANSLATIONS[visualEditorLang] || EDITOR_TRANSLATIONS.vi;
+      var t = getEditorTranslation();
       if (iconSpan) iconSpan.textContent = "code";
       btn.title = t.btnEditHtml;
       btn.classList.remove("bg-primary/20", "text-primary");
@@ -1495,7 +1519,7 @@
 
     if (!needsTranslation) return;
 
-    var t = EDITOR_TRANSLATIONS[visualEditorLang] || EDITOR_TRANSLATIONS.vi;
+    var t = getEditorTranslation();
     if (window.showToast) {
       window.showToast("info", t.toastAutoTransEmpty, { timeout: 2000 });
     }
@@ -1624,7 +1648,7 @@
     fd.append("content_vi", JSON.stringify(viData));
     fd.append("content_en", JSON.stringify(enData));
 
-    var t = EDITOR_TRANSLATIONS[visualEditorLang] || EDITOR_TRANSLATIONS.vi;
+    var t = getEditorTranslation();
     try {
       const res = await fetch("/users/system-config/save-legal", { method: "POST", body: fd });
       if (res.ok) {
@@ -1680,7 +1704,7 @@
 
   /* FIX 2: Reset – clears DB entry, reloads page to show original template */
   async function resetToDefault() {
-    var t = EDITOR_TRANSLATIONS[visualEditorLang] || EDITOR_TRANSLATIONS.vi;
+    var t = getEditorTranslation();
     if (window.PetAI_confirm) {
       const ok = await window.PetAI_confirm({
         text: t.confirmResetText,
@@ -1809,7 +1833,7 @@
       if (content) html += `<div class="text-slate-600 dark:text-slate-300" style="line-height:1.75;margin-bottom:1rem;">${content}</div>`;
     });
 
-    var t = EDITOR_TRANSLATIONS[visualEditorLang] || EDITOR_TRANSLATIONS.vi;
+    var t = getEditorTranslation();
     area.innerHTML = html || `<p style="text-align:center;padding:3rem;color:#94a3b8;font-style:italic;">${t.emptyPreview}</p>`;
     modal.classList.add("open");
     document.body.style.overflow = "hidden";
@@ -1895,7 +1919,7 @@
   }
 
   async function loadVersionHistory() {
-    var t = EDITOR_TRANSLATIONS[visualEditorLang] || EDITOR_TRANSLATIONS.vi;
+    var t = getEditorTranslation();
     const container = document.getElementById("version-list-container");
     if (!container) return;
     container.innerHTML = `
@@ -1947,7 +1971,7 @@
   }
 
   async function restoreVersion(versionId) {
-    var t = EDITOR_TRANSLATIONS[visualEditorLang] || EDITOR_TRANSLATIONS.vi;
+    var t = getEditorTranslation();
     if (window.PetAI_confirm) {
       const ok = await window.PetAI_confirm({
         text: t.confirmRestoreVersion,

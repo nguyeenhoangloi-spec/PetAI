@@ -160,32 +160,14 @@ class HTMLTranslator(HTMLParser):
             
             parent_tag, parent_attrs = self.tag_stack[-1][0], self.tag_stack[-1][1]
             
-            # Process style tags to remove i18n-loading hiding styles
+            # Process style tags to keep i18n-loading hiding styles
             if parent_tag.lower() == "style":
-                cleaned_style = data
-                if "html.i18n-loading body" in cleaned_style or "html.i18n-loading" in cleaned_style:
-                    # Remove rules targeting i18n-loading body visibility
-                    cleaned_style = re.sub(
-                        r'html\.i18n-loading\s+body\s*\{\s*visibility\s*:\s*[^;\}]+!important;\s*\}',
-                        '/* i18n-loading rule removed by server */',
-                        cleaned_style,
-                        flags=re.IGNORECASE
-                    )
-                self.result.append(cleaned_style)
+                self.result.append(data)
                 return
                 
-            # Process script tags to prevent classList.add("i18n-loading")
+            # Process script tags to keep classList.add("i18n-loading")
             if parent_tag.lower() == "script":
-                cleaned_script = data
-                if "i18n-loading" in cleaned_script:
-                    cleaned_script = cleaned_script.replace(
-                        'document.documentElement.classList.add("i18n-loading");',
-                        '/* classList.add("i18n-loading") removed by server */'
-                    ).replace(
-                        "document.documentElement.classList.add('i18n-loading');",
-                        "/* classList.add('i18n-loading') removed by server */"
-                    )
-                self.result.append(cleaned_script)
+                self.result.append(data)
                 return
             
             # 1. Translate via data-i18n key
