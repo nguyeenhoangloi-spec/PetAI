@@ -373,10 +373,221 @@
 - **Root Cause**: Hàm xử lý ngữ cảnh `inject_system_config` trong `context_processors.py` sử dụng biến `request` của Flask để đọc cookie ngôn ngữ `siteLanguage`. Tuy nhiên, thư viện `request` chưa được import trong phạm vi của hàm này, dẫn đến lỗi `NameError`.
 - **Error Message**:
   ```text
+- **Type**: Logic
+- **Severity**: High
+- **File**: `templates/_client_editor.html:2`
+- **Agent**: Antigravity Orchestrator
+- **Root Cause**: Giao diện soạn thảo trực quan (`_client_editor.html`) được nhúng trực tiếp vào 7 trang chính sách (như `/privacy-policy`, `/terms-of-service`, v.v.). Khi admin nhấn nút "Lưu thay đổi", script gọi hàm `savePageChanges()` gửi yêu cầu `POST` đến `/users/system-config/save-legal` kèm theo trường `csrf_token` được lấy từ thẻ `<meta name="csrf-token">`. Tuy nhiên, 7 trang chính sách này không hề khai báo thẻ `<meta name="csrf-token">` trong `<head>` của mình, dẫn đến giá trị CSRF truyền lên bị rỗng `""` và bị bộ lọc bảo mật chặn lại.
+- **Error Message**:
+  ```text
+  Lỗi Phiên thao tác không hợp lệ (CSRF). Vui lòng thử lại
+  ```
+- **Fix Applied**: Thêm thẻ `<meta name="csrf-token" content="{{ csrf_token() }}">` vào ngay đầu file `templates/_client_editor.html`. Vì file này chỉ được nhúng vào các trang chính sách khi admin mở chế độ chỉnh sửa (`?edit=true`), thẻ meta này sẽ tự động được inject vào DOM động và cung cấp token hợp lệ cho tất cả các thao tác lưu (`savePageChanges`), reset gốc (`resetToDefault`), và phục hồi phiên bản (`restoreVersion`).
+- **Prevention**: Khi tạo biểu mẫu hoặc yêu cầu thay đổi trạng thái (POST/PUT) qua fetch/ajax trong các phần tử nhúng hoặc dùng chung, cần đảm bảo thẻ meta CSRF luôn đồng hành hoặc khai báo dự phòng tại chính phần tử nhúng đó.
+- **Status**: Fixed
+
+---
+
+## [2026-06-21 19:01] - Lỗi không chạy Script trong trang Cài đặt (settings) do PJAX xoá Node trước khi truy vấn
+
+- **Type**: Logic
+- **Severity**: High
+- **File**: `static/js/script.js:452`
+- **Agent**: @frontend-specialist
+- **Root Cause**: Trong PJAX Router, sự kiện `updateDOM()` hoán đổi phân vùng `#content-area` mới vào live DOM trước khi `postUpdate()` truy vấn `doc.body.querySelectorAll("script:not([src])")` để lấy danh sách inline scripts cần thực thi. Do các inline scripts của trang settings được đặt trong `#content-area` để đồng hành cùng PJAX, khi `updateDOM()` chạy, nó di chuyển `#content-area` ra khỏi `doc.body` của document ảo. Điều này khiến `querySelectorAll` trong `postUpdate()` trả về kết quả trống rỗng, làm các inline scripts trong trang settings không bao giờ được biên dịch hay thực thi, khiến nút xóa tài khoản (gọi hàm `openDeleteModal`) bị tê liệt và báo lỗi `openDeleteModal is not defined`.
+- **Error Message**:
+  ```text
+  Uncaught ReferenceError: openDeleteModal is not defined
+  ```
+- **Fix Applied**: Truy vấn và lưu danh sách inline scripts từ `doc.body` vào biến `inlineScripts` ở đầu hàm `handleHtml()` trước khi chạy `updateDOM()`. Trong `postUpdate()`, sử dụng trực tiếp biến lưu trữ này thay vì truy vấn lại từ `doc.body`.
+- **Prevention**: Luôn lưu giữ hoặc xử lý các tài nguyên động của trang ảo (inline scripts, stylesheets) trước khi thay đổi hoặc huỷ cấu trúc của trang đó.
+- **Status**: Fixed
+
+---
+
+## [2026-06-21 22:30] - Lỗi nút chuyển đổi Anh-Việt không làm mới trang để tải bản dịch từ Server
+
+- **Type**: Logic
+- **Severity**: High
+- **File**: `static/js/i18n.js:4055`
+- **Agent**: @frontend-specialist
+- **Root Cause**: Khi người dùng nhấn nút chuyển đổi ngôn ngữ, file JS thiết lập cookie ngôn ngữ mới (`siteLanguage`) và tiến hành dịch cục bộ các thẻ có thuộc tính `data-i18n`. Tuy nhiên, các nội dung động do server render (như dữ liệu từ cơ sở dữ liệu, các cảnh báo lỗi, thông tin cấu hình và gói dịch vụ) không có thuộc tính `data-i18n` vẫn hiển thị ở ngôn ngữ cũ. Việc này làm giao diện bị lai tạp nửa Anh nửa Việt, khiến người dùng cảm thấy tính năng không hoạt động.
+- **Error Message**: Không có lỗi console trực tiếp, nhưng giao diện hiển thị không đồng bộ và không dịch hết nội dung server-side.
+- **Fix Applied**: Bổ sung lệnh `window.location.reload()` vào hàm `setLanguage` trong `i18n.js` khi phát hiện ngôn ngữ thực sự thay đổi (`oldLang !== lang`). Việc này giúp tải lại toàn bộ trang từ Flask với cookie ngôn ngữ mới để server tự động biên dịch và trả về HTML sạch 100% tiếng Anh hoặc tiếng Việt.
+- **Prevention**: Với ứng dụng dùng cơ chế render song song (phía Server dịch HTML thô qua middleware và phía Client dịch thẻ tĩnh), việc chuyển đổi ngôn ngữ cần đi kèm lệnh reload trang hoặc PJAX reload để đồng bộ hoá trạng thái.
+- **Status**: Fixed
+
+---
+
+## [2026-06-21 22:52] - Lỗi cú pháp JavaScript trong i18n.js vô hiệu hóa nút chuyển đổi ngôn ngữ
+
+- **Type**: Syntax
+- **Severity**: High
+- **File**: `static/js/i18n.js:1698`
+- **Agent**: @frontend-specialist
+- **Root Cause**: Khai báo khóa `deletePendingHeaderTitle` trong danh sách dịch tiếng Việt bị thừa dấu đóng ngoặc kép (`deletePendingHeaderTitle"`), dẫn đến lỗi cú pháp `SyntaxError: Unexpected string` khiến trình duyệt không biên dịch và thực thi được file `i18n.js`.
+- **Error Message**:
+  ```text
+  SyntaxError: Unexpected string at static/js/i18n.js:1698
+  ```
+- **Fix Applied**: Loại bỏ dấu ngoặc kép dư thừa ở khóa `deletePendingHeaderTitle` tại dòng 1698.
+- **Prevention**: Sử dụng các công cụ lint hoặc lệnh kiểm tra cú pháp (như `node --check`) để phát hiện và ngăn chặn các lỗi đánh máy (typo) trước khi lưu/commit code.
+- **Status**: Fixed
+
+---
+
+## [2026-06-22 00:58] - Lỗi cú pháp Jinja2 và code rác làm hỏng trang Cài đặt (settings)
+
+- **Type**: Syntax
+- **Severity**: High
+- **File**: `templates/settings.html:382`
+- **Agent**: @frontend-specialist
+- **Root Cause**: Thiếu đóng ngoặc Jinja2 `{% include '_header.html ... %}` ở dòng 382 gây lỗi cú pháp Jinja2 (`TemplateSyntaxError: expected token 'end of statement block', got '_sidebar'`). Ngoài ra có đoạn code rác trùng lặp chèn vào cuối file sau thẻ đóng `</html>`.
+- **Error Message**:
+  ```text
+  jinja2.exceptions.TemplateSyntaxError: expected token 'end of statement block', got '_sidebar'
+  ```
+- **Fix Applied**: Đóng chuẩn cú pháp dòng 382 và xóa sạch đoạn code rác dư thừa ở cuối file.
+- **Prevention**: Luôn chạy bộ test unit tests hoặc biên dịch template sau khi chỉnh sửa HTML để phát hiện các thẻ Jinja2 bị mở mà chưa đóng.
+- **Status**: Fixed
+
+---
+
+## [2026-06-22 01:00] - Lỗi tiêu chuẩn HTML-Validate trong Trang Cài đặt (settings)
+
+- **Type**: Process
+- **Severity**: Low
+- **File**: `templates/settings.html:586`
+- **Agent**: @frontend-specialist
+- **Root Cause**: Trình kiểm tra cú pháp HTML báo lỗi: phần tử `<div>` không được phép nằm bên dưới phần tử `<label>` (cho các toggle switch thông báo và email). Ngoài ra có khoảng trắng dư thừa (trailing whitespace) ở dòng 387.
+- **Error Message**:
+  ```text
+  element-permitted-content: <div> element is not permitted as content under <label>
+  no-trailing-whitespace: Trailing whitespace
+  ```
+- **Fix Applied**: Đổi thẻ `<div>` thành `<span>` và thêm thuộc tính hiển thị `block` cho toggle switch. Dùng script Python để dọn dẹp toàn bộ khoảng trắng dư thừa trong file.
+- **Prevention**: Tránh lồng các thẻ block-level (như div) bên dưới thẻ label. Luôn sử dụng span và định dạng hiển thị flex/inline-block/block để tuân thủ chuẩn HTML.
+- **Status**: Fixed
+
+---
+
+## [2026-06-22 01:20] - Lỗi truyền sai tham số set_cookie và assertion decode unicode trong unit test
+
+- **Type**: Process
+- **Severity**: Medium
+- **File**: `tests/test_app.py:568`
+- **Agent**: Antigravity Orchestrator
+- **Root Cause**: 
+  1. Sử dụng sai chữ ký hàm của `self.client.set_cookie` (truyền 4 đối số thay vì tối đa 3 đối số do Werkzeug/Flask test client không yêu cầu domain `localhost` theo kiểu truyền vị trí).
+  2. Lỗi assertion so sánh trực tiếp chuỗi Unicode Tiếng Việt có dấu với chuỗi thô JSON đã được escape dạng ascii (`\u1ea1n...`) trong `response.data.decode('utf-8')`.
+- **Error Message**:
+  ```text
+  TypeError: Client.set_cookie() takes from 2 to 3 positional arguments but 4 were given
+  AssertionError: 'Quản trị viên (Admin) hoạt động duy nhất' not found in '{"message":"B\\u1ea1n l\\u00e0 Qu\\u1ea3n..."}'
+  ```
+- **Fix Applied**: 
+  1. Sửa hàm gọi cookie thành `self.client.set_cookie('siteLanguage', 'en')`.
+  2. Sử dụng thư viện `json.loads` để giải mã dữ liệu JSON phản hồi trước khi thực hiện so sánh chuỗi có dấu.
+- **Prevention**: Luôn giải mã JSON trước khi kiểm tra các trường dữ liệu text chứa ký tự unicode/UTF-8. Đảm bảo truyền đúng chữ ký của Client.set_cookie trong các phiên bản Flask/Werkzeug khác nhau.
+- **Status**: Fixed
+
+---
+
+## [2026-06-22 02:45] - Lỗi thiếu đóng ngoặc nhọn trong Javascript trên trang Dashboard
+
+- **Type**: Agent
+- **Severity**: High
+- **File**: `templates/dashboard.html:2043`
+- **Agent**: @frontend-specialist
+- **Root Cause**: Trong khối xử lý sự kiện `i18nChanged` tại `templates/dashboard.html`, điều kiện rà soát `if (topBreedsChartInstance) {` không được đóng ngoặc nhọn `}` ở cuối block trước khi gọi hàm đóng sự kiện `});`. Điều này tạo ra lỗi cú pháp JavaScript, khiến trình duyệt từ chối biên dịch và chạy toàn bộ mã Script trên trang Dashboard, làm cho các chart bị trắng và hoạt cảnh đếm số bị dừng ở 0.
+- **Error Message**:
+  ```text
+  Uncaught SyntaxError: Unexpected token '}' (phá vỡ cấu trúc biên dịch script)
+  ```
+- **Fix Applied**: Bổ sung dấu đóng ngoặc nhọn `}` tại dòng 2043 để đóng khối lệnh điều kiện `if (topBreedsChartInstance)` một cách chính xác trước khi đóng sự kiện `i18nChanged`.
+- **Prevention**: Luôn kiểm tra kỹ các cặp đóng mở ngoặc `{}` của Javascript khi chỉnh sửa hoặc copy-paste trong các file HTML template.
+- **Status**: Fixed
+
+---
+
+## [2026-06-22 12:05] - Lỗi cú pháp Javascript dư thừa ngoặc đóng trên trang Xác nhận thanh toán (Confirmations)
+
+- **Type**: Agent
+- **Severity**: High
+- **File**: `templates/confirmations.html:1697-1699`
+- **Agent**: @frontend-specialist
+- **Root Cause**: Khai báo thừa dấu đóng ngoặc nhọn/ngoặc tròn `}); }` ở dòng 1697-1699 của file `confirmations.html` (có khả năng do sự kiện click của nút `clearFilters` bị xóa nhầm một phần trong các đợt refactor trước). Điều này gây ra lỗi cú pháp Javascript, khiến trình duyệt từ chối biên dịch toàn bộ script trong thẻ `<script>`, dẫn đến việc các bảng xác nhận thanh toán không thể khởi tạo hay nạp dữ liệu (trang bị trống trơn).
+- **Error Message**:
+  ```text
+  Uncaught SyntaxError: Unexpected token '}' (compilation error in confirmations.html)
+  ```
+- **Fix Applied**: Thay thế phần code lỗi dư thừa bằng việc định nghĩa lại đầy đủ sự kiện click cho nút xóa lọc `clearBtn` (`id="clearFilters"`), đặt lại các giá trị lọc về mặc định và gọi hàm `refreshUI()` để tải lại dữ liệu.
+- **Prevention**: Sử dụng script kiểm tra cú pháp JS (`node --check`) tự động sau khi chỉnh sửa các template chứa khối script lớn để phát hiện lỗi cú pháp sớm.
+- **Status**: Fixed
+
+---
+
+## [2026-06-22 13:00] - Lỗi nút xác nhận (Confirm) của Modal động bị ẩn do dùng sai màu nền Tailwind
+
+- **Type**: Logic
+- **Severity**: High
+- **File**: `static/js/i18n.js:4855`
+- **Agent**: @frontend-specialist
+- **Root Cause**: Trong hàm tạo modal động `createDynamicModal()`, màu nền của nút xác nhận cho các trạng thái modal (`danger`, `success`, `info`) được cấu hình bằng các class Tailwind không tồn tại trong hệ thống như `bg-red-650`, `bg-emerald-650`, `bg-blue-650`. Do các class này không hợp lệ, nút bị mất màu nền (trở thành trong suốt) và khi kết hợp với màu chữ trắng (`text-white`) làm nút xác nhận bị ẩn hoàn toàn (trắng tinh) trên nền trắng của modal.
+- **Error Message**: Nút xác nhận trong hộp thoại "Hủy đơn hàng" bị hiển thị trống trơn không có chữ hay màu nền.
+- **Fix Applied**: Thay thế các màu nền bị lỗi bằng các class màu nền chuẩn trong thang điểm của Tailwind CSS như `bg-red-600`, `bg-emerald-600`, `bg-blue-600` và cập nhật các class hover và dark-mode tương ứng.
+- **Prevention**: Chỉ sử dụng các mã màu chuẩn của Tailwind CSS (các số từ 100-900 chia hết cho 100) trừ khi dự án cấu hình thêm các màu tùy chỉnh đặc biệt trong `tailwind.config`.
+- **Status**: Fixed
+
+---
+
+## [2026-06-23 13:14] - Lỗi BuildError không tạo được URL cho endpoint history_page trong predict.html
+
+- **Type**: Agent
+- **Severity**: High
+- **File**: `templates/predict.html:1224, 1273`
+- **Agent**: @frontend-specialist
+- **Root Cause**: Trong lần cải tiến giao diện trang Kết quả nhận diện, tác nhân đã gọi nhầm endpoint `history.history_page` (không tồn tại) thay vì `history.history` (được định nghĩa trong blueprint history.py), dẫn đến sập trang `/predict` do lỗi BuildError của Flask/Werkzeug.
+- **Error Message**:
+  ```text
+  werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'history.history_page'. Did you mean 'history.history' instead?
+  ```
+- **Fix Applied**: Thay đổi tất cả các vị trí gọi `history.history_page` thành `history.history` trong file `predict.html` (dòng 1224 và 1273).
+- **Prevention**: Luôn đối chiếu kỹ tên các endpoint trong tệp route Python (Blueprint) khi tạo các liên kết động bằng `url_for` trong các template Jinja2, chạy kiểm thử tự động để phát hiện các lỗi xây dựng URL trước khi báo cáo hoàn thành.
+- **Status**: Fixed
+
+---
+
+## [2026-06-24 00:23] - Lỗi NameError: name 'request' is not defined trong context_processors.py
+
+- **Type**: Agent
+- **Severity**: Critical
+- **File**: `context_processors.py:165`
+- **Agent**: Antigravity Orchestrator
+- **Root Cause**: Hàm xử lý ngữ cảnh `inject_system_config` trong `context_processors.py` sử dụng biến `request` của Flask để đọc cookie ngôn ngữ `siteLanguage`. Tuy nhiên, thư viện `request` chưa được import trong phạm vi của hàm này, dẫn đến lỗi `NameError`.
+- **Error Message**:
+  ```text
   File "d:\KhoaLuan - Copy (new) - Copy\context_processors.py", line 165, in inject_system_config
     _lang_for_ht = request.cookies.get("siteLanguage")
   NameError: name 'request' is not defined
   ```
 - **Fix Applied**: Thêm dòng import cục bộ `from flask import request` vào ngay đầu hàm `inject_system_config()`.
 - **Prevention**: Luôn đảm bảo import đầy đủ các đối tượng được sử dụng trong hàm con, đặc biệt khi viết các helper context processors chạy cục bộ.
+- **Status**: Fixed
+
+---
+
+## [2026-06-24 15:08] - Lỗi khởi tạo môi trường trình duyệt con (CDP Port parsing error)
+
+- **Type**: Process
+- **Severity**: Low
+- **File**: `N/A (Browser Subagent Environment)`
+- **Agent**: Antigravity Orchestrator
+- **Root Cause**: Khi khởi tạo `browser_subagent` để kiểm thử giao diện trang `/predict` tự động, công cụ `open_browser_url` bị lỗi do môi trường ảo không phân tích được cổng CDP của trình duyệt.
+- **Error Message**:
+  ```text
+  failed to create browser context: failed to resolve CDP URLs: failed to parse CDP port
+  ```
+- **Fix Applied**: Báo cáo sự cố hệ thống thử nghiệm cho người dùng và hướng dẫn người dùng tự tải lại trang `/predict` để kiểm tra giao diện thủ công.
+- **Prevention**: Đây là lỗi môi trường chạy độc lập của agent nằm ngoài tầm kiểm soát của code dự án. Vẫn giữ các phương pháp chạy và kiểm tra thủ công làm phương án dự phòng khi môi trường browser tự động bị lỗi.
 - **Status**: Fixed
