@@ -1,7 +1,7 @@
 <!-- html-validate-disable no-dup-class, void-style, title-length -->
 <!DOCTYPE html>
 
-<html class="{{ 'dark' if ui_theme == 'dark' else 'light' }}{{ ' i18n-loading' if ui_language == 'en' else '' }}"
+<html class="{{ 'dark' if ui_theme == 'dark' else 'light' }} i18n-loading"
   lang="{{ ui_language or 'vi' }}" data-theme="{{ ui_theme or 'light' }}">
 
 <head>
@@ -17,15 +17,34 @@
           }
         } catch (e) {}
         document.documentElement.setAttribute("data-user-lang", savedLang);
-      if (savedLang === "en") {
         document.documentElement.classList.add("i18n-loading");
-      }
-    })();
+      })();
   </script>
   <style>
     html.i18n-loading body {
       visibility: hidden !important;
+      opacity: 0 !important;
     }
+
+    /* Prevent layout shift / text flash by hiding/showing correct languages early based on html[data-user-lang] */
+    html[data-user-lang="en"] #dynamic-content-vi { display: none !important; }
+    html[data-user-lang="en"] #dynamic-content-en { display: block !important; }
+    html[data-user-lang="vi"] #dynamic-content-en { display: none !important; }
+    html[data-user-lang="vi"] #dynamic-content-vi { display: block !important; }
+
+    html[data-user-lang="en"] .footer-address-vi,
+    html[data-user-lang="en"] .contact-address-vi,
+    html[data-user-lang="en"] .contact-hours-vi { display: none !important; }
+    html[data-user-lang="en"] .footer-address-en,
+    html[data-user-lang="en"] .contact-address-en,
+    html[data-user-lang="en"] .contact-hours-en { display: inline !important; }
+
+    html[data-user-lang="vi"] .footer-address-en,
+    html[data-user-lang="vi"] .contact-address-en,
+    html[data-user-lang="vi"] .contact-hours-en { display: none !important; }
+    html[data-user-lang="vi"] .footer-address-vi,
+    html[data-user-lang="vi"] .contact-address-vi,
+    html[data-user-lang="vi"] .contact-hours-vi { display: inline !important; }
   </style>
   <noscript>
     <style>
@@ -700,7 +719,6 @@
 
     </div>
   </main>
-          {
   <footer class="bg-surface-container-low border-t border-outline-variant/30 px-6 py-12">
     <div class="max-w-container-max mx-auto">
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-10">
@@ -826,7 +844,7 @@
       window.PetAI_DynamicSettings.en.footerDescText = descEn;
     })();
   </script>
-  <script src="{{ url_for('static', filename='js/i18n.js') }}?v=16"></script>
+  <script src="{{ url_for('static', filename='js/i18n.js') }}?v=23"></script>
   <script src="{{ url_for('static', filename='js/script.js') }}"></script>
   <script>
     (function () {

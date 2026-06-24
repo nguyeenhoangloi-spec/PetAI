@@ -26,6 +26,26 @@
     html.i18n-loading body {
       visibility: hidden !important;
     }
+
+    /* Prevent layout shift / text flash by hiding/showing correct languages early based on html[data-user-lang] */
+    html[data-user-lang="en"] #dynamic-content-vi { display: none !important; }
+    html[data-user-lang="en"] #dynamic-content-en { display: block !important; }
+    html[data-user-lang="vi"] #dynamic-content-en { display: none !important; }
+    html[data-user-lang="vi"] #dynamic-content-vi { display: block !important; }
+
+    html[data-user-lang="en"] .footer-address-vi,
+    html[data-user-lang="en"] .contact-address-vi,
+    html[data-user-lang="en"] .contact-hours-vi { display: none !important; }
+    html[data-user-lang="en"] .footer-address-en,
+    html[data-user-lang="en"] .contact-address-en,
+    html[data-user-lang="en"] .contact-hours-en { display: inline !important; }
+
+    html[data-user-lang="vi"] .footer-address-en,
+    html[data-user-lang="vi"] .contact-address-en,
+    html[data-user-lang="vi"] .contact-hours-en { display: none !important; }
+    html[data-user-lang="vi"] .footer-address-vi,
+    html[data-user-lang="vi"] .contact-address-vi,
+    html[data-user-lang="vi"] .contact-hours-vi { display: inline !important; }
   </style>
   <noscript>
     <style>
@@ -45,9 +65,9 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/typography.css') }}" />
   <link rel="stylesheet" href="{{ url_for('static', filename='css/theme-dark.css') }}" />
   <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile-header-fix.css') }}" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link
-    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
     rel="stylesheet" />
   <style>
     body {
@@ -382,7 +402,7 @@
             Chúng tôi luôn sẵn sàng lắng nghe mọi phản hồi từ phía bạn.
           </p>
           <div class="flex items-center gap-1.5 text-xs text-neutral-400">
-            <span class="material-symbols-outlined text-[14px]">schedule</span>
+            <span class="material-symbols-outlined text-[14px] notranslate">schedule</span>
             <span>
               <span data-i18n="supportHoursLabel">Giờ hỗ trợ</span>:
               <span class="contact-hours-vi{% if ui_language == 'en' %} hidden{% endif %}">{{ get_config('support_hours_vi', '8:00 \u2013 22:00 m\u1ed7i ng\u00e0y (K\u1ec3 c\u1ea3 T7, CN)') }}</span>
@@ -595,7 +615,7 @@
             </div>
           </div>
           <div class="flex items-start gap-3">
-            <span class="material-symbols-outlined text-primary mt-0.5">schedule</span>
+            <span class="material-symbols-outlined text-primary mt-0.5 notranslate">schedule</span>
             <div>
               <span class="block text-xs font-semibold text-neutral-400 uppercase tracking-wider" data-i18n="supportTimeLabel">Thời gian hỗ trợ</span>
               <span class="text-slate-800 dark:text-slate-200 font-medium">
@@ -738,7 +758,7 @@
       window.PetAI_DynamicSettings.en.footerDescText = descEn;
     })();
   </script>
-  <script src="{{ url_for('static', filename='js/i18n.js') }}?v=16"></script>
+  <script src="{{ url_for('static', filename='js/i18n.js') }}?v=23"></script>
   <script src="{{ url_for('static', filename='js/script.js') }}"></script>
   <script>
     (function () {

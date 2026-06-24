@@ -326,7 +326,8 @@
     "loginWithGoogle": "Đăng nhập bằng Google",
     "noAccount": "Chưa có tài khoản?",
     "registerNow": "Đăng ký ngay",
-    "loginLeftTitle": "Nhận diện giống chó nhanh và chính xác",
+    "loginLeftTitle": "Nhận diện giống chó nhanh chóng và ",
+    "loginLeftTitleAccent": "chính xác",
     "loginLeftSubtitle": "Trợ lý thông minh giúp bạn nhận diện và hiểu hơn về thú cưng của mình.",
     "loginFeature1Title": "Điểm tin cậy rõ ràng",
     "loginFeature1Desc": "Phân tích chi tiết từ AI",
@@ -349,7 +350,8 @@
     "registerWithGoogle": "Đăng ký bằng Google",
     "alreadyHaveAccount": "Đã có tài khoản?",
     "loginNow": "Đăng nhập ngay",
-    "regLeftTitle": "Tham gia cộng đồng yêu chó cùng AI",
+    "regLeftTitle": "Tham gia cộng đồng yêu chó cùng ",
+    "regLeftTitleAccent": "PetAI",
     "regLeftSubtitle": "Lưu lịch sử nhận diện, phân tích thói quen và nhận cảnh báo sức khỏe thông minh cho cún cưng của bạn.",
     "regFeature1Title": "Chào mừng thành viên mới",
     "regFeature1Desc": "Bắt đầu với gói Free ngay hôm nay",
@@ -2058,7 +2060,9 @@
     "allBreedsModalTitle": "Giống chó hỗ trợ",
     "searchBreedPlaceholder": "Tìm kiếm giống chó...",
     "noBreedsFound": "Không tìm thấy giống chó phù hợp",
-    "viewAllBreeds": "Xem tất cả các giống hỗ trợ"
+    "viewAllBreeds": "Xem tất cả các giống hỗ trợ",
+    "supportHoursLabel": "Giờ hỗ trợ",
+    "supportTimeLabel": "Thời gian hỗ trợ"
   },
   "en": {
     "homePageTitle": "PetAI | Intelligent Dog Breed Identification",
@@ -2377,7 +2381,8 @@
     "loginWithGoogle": "Login with Google",
     "noAccount": "Don't have an account?",
     "registerNow": "Register now",
-    "loginLeftTitle": "Fast and accurate dog breed identification",
+    "loginLeftTitle": "Fast and accurate dog breed ",
+    "loginLeftTitleAccent": "identification",
     "loginLeftSubtitle": "A smart assistant that helps you identify and understand your pets better.",
     "loginFeature1Title": "Clear confidence scores",
     "loginFeature1Desc": "Detailed AI analysis",
@@ -2400,7 +2405,8 @@
     "registerWithGoogle": "Register with Google",
     "alreadyHaveAccount": "Already have an account?",
     "loginNow": "Sign in",
-    "regLeftTitle": "Join the dog-loving community with AI",
+    "regLeftTitle": "Join the dog-loving community with ",
+    "regLeftTitleAccent": "PetAI",
     "regLeftSubtitle": "Save identification history, analyze habits, and receive smart health alerts for your furry friend.",
     "regFeature1Title": "Welcome new member",
     "regFeature1Desc": "Start with the Free plan today",
@@ -4118,7 +4124,9 @@
       "allBreedsModalTitle": "Supported Dog Breeds",
       "searchBreedPlaceholder": "Search dog breeds...",
       "noBreedsFound": "No matching dog breeds found",
-      "viewAllBreeds": "View all supported breeds"
+      "viewAllBreeds": "View all supported breeds",
+      "supportHoursLabel": "Support Hours",
+      "supportTimeLabel": "Support Hours"
     }
 };
 
@@ -5368,7 +5376,7 @@
   }
 
   function loadRemoteTranslations(lang, callback) {
-    fetch("/static/locales/translations.json")
+    fetch("/static/locales/translations.json?v=" + new Date().getTime())
       .then(function (res) {
         if (!res.ok) throw new Error("Network response not ok");
         return res.json();
@@ -5523,6 +5531,8 @@
         predict: TRANSLATIONS.vi.predict,
         dogBreedsNav: TRANSLATIONS.vi.dogBreedsNav
       }));
+      // Instantly sync dynamic elements visibility before unhiding the body
+      updateDynamicContentVisibility(saved);
       updateSwitcherUI(saved);
       // Ensure cookie is synced on initialization (e.g. if cookie was cleared/expired but localStorage exists)
       // to prevent FOUC / translation flash on subsequent page reloads (F5) or PJAX request triggers.
@@ -5544,8 +5554,16 @@
     } catch (err) {
       console.error("i18n initialization error:", err);
     } finally {
-      document.documentElement.classList.remove("i18n-loading");
-      document.documentElement.classList.add("ready");
+      // Delay displaying the body until all fonts (like Google Fonts Inter) are loaded to prevent font layout shifts (FOUT)
+      if (document.fonts && typeof document.fonts.ready.then === "function") {
+        document.fonts.ready.then(function () {
+          document.documentElement.classList.remove("i18n-loading");
+          document.documentElement.classList.add("ready");
+        });
+      } else {
+        document.documentElement.classList.remove("i18n-loading");
+        document.documentElement.classList.add("ready");
+      }
     }
 
     try {
@@ -5575,23 +5593,31 @@
         if (code !== null) {
           val = val.replace("{{ code }}", code);
         }
-        el.textContent = val;
+        if (el.textContent !== val) {
+          el.textContent = val;
+        }
       }
     });
 
     root.querySelectorAll("[data-i18n-placeholder]").forEach(function (el) {
       var key = el.getAttribute("data-i18n-placeholder");
-      if (dict[key] !== undefined) el.setAttribute("placeholder", dict[key]);
+      if (dict[key] !== undefined && el.getAttribute("placeholder") !== dict[key]) {
+        el.setAttribute("placeholder", dict[key]);
+      }
     });
 
     root.querySelectorAll("[data-i18n-aria]").forEach(function (el) {
       var key = el.getAttribute("data-i18n-aria");
-      if (dict[key] !== undefined) el.setAttribute("aria-label", dict[key]);
+      if (dict[key] !== undefined && el.getAttribute("aria-label") !== dict[key]) {
+        el.setAttribute("aria-label", dict[key]);
+      }
     });
 
     root.querySelectorAll("[data-i18n-title]").forEach(function (el) {
       var key = el.getAttribute("data-i18n-title");
-      if (dict[key] !== undefined) el.setAttribute("title", dict[key]);
+      if (dict[key] !== undefined && el.getAttribute("title") !== dict[key]) {
+        el.setAttribute("title", dict[key]);
+      }
     });
 
     root.querySelectorAll("[data-i18n-html]").forEach(function (el) {
@@ -5603,16 +5629,20 @@
         }
       }
       var key = el.getAttribute("data-i18n-html");
-      if (dict[key] !== undefined) el.innerHTML = dict[key];
+      if (dict[key] !== undefined && el.innerHTML !== dict[key]) {
+        el.innerHTML = dict[key];
+      }
     });
 
     root.querySelectorAll("[data-i18n-breed]").forEach(function (el) {
       var vi = el.getAttribute("data-i18n-breed") || el.getAttribute("data-i18n-breed-vi");
       var en = el.getAttribute("data-i18n-breed-en");
       if (lang === "en") {
-        el.textContent = en || translateBreedViToEn(vi);
+        var valEn = en || translateBreedViToEn(vi);
+        if (el.textContent !== valEn) el.textContent = valEn;
       } else {
-        el.textContent = vi || "Chưa xác định";
+        var valVi = vi || "Chưa xác định";
+        if (el.textContent !== valVi) el.textContent = valVi;
       }
     });
   }

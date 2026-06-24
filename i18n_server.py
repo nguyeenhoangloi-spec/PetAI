@@ -104,13 +104,9 @@ class HTMLTranslator(HTMLParser):
         if tag.lower() not in VOID_ELEMENTS:
             self.tag_stack.append([tag, attrs_dict, False])
         
-        # Modify html tag lang attribute and remove i18n-loading class
+        # Modify html tag lang attribute but KEEP i18n-loading class to prevent FOUT/FOUC on client
         if tag.lower() == "html":
             attrs_dict["lang"] = self.lang
-            classes = attrs_dict.get("class", "").split()
-            if "i18n-loading" in classes:
-                classes.remove("i18n-loading")
-            attrs_dict["class"] = " ".join(classes)
         
         # Translate dynamic attributes
         if "data-i18n-placeholder" in attrs_dict:

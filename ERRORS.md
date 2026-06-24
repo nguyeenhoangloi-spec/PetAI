@@ -2,6 +2,48 @@
 
 ---
 
+## [2026-06-24 15:50] - Lỗi nhãn giờ hỗ trợ chưa dịch và lỗi font icon hiển thị chữ "chedule" trên trang Support/Contact
+
+- **Type**: Agent
+- **Severity**: Low
+- **File**: `templates/support.html:48-50, 385, 387, 598, 600`, `templates/contact.html:56-62, 379, 483, 485`, `static/locales/vi.json:705`, `static/locales/en.json:705`
+- **Agent**: @frontend-specialist
+- **Root Cause**:
+  1. Thiếu các key dịch `supportHoursLabel` và `supportTimeLabel` trong các file ngôn ngữ khiến chữ luôn hiển thị fallback tiếng Việt.
+  2. Ký tự thực thể HTML `&amp;` ở query parameter của link tải Google Fonts có thể bị tải lỗi/chặn ở một số trình duyệt, làm font không tải được và hiển thị chữ thay thế `"schedule"` (sau đó bị che khuất chữ s do giới hạn width, hiển thị thành `"chedule"`).
+- **Error Message**:
+  ```text
+  [Giờ hỗ trợ: 8:00 AM – 10:00 PM (không đổi sang Support Hours) / Chữ chedule hiển thị thay thế cho biểu tượng đồng hồ]
+  ```
+- **Fix Applied**:
+  1. Thêm key dịch `supportHoursLabel` và `supportTimeLabel` vào `vi.json` và `en.json`.
+  2. Chuẩn hóa link tải Google Fonts sang `&display=swap` và thêm class `notranslate` vào thẻ icon `schedule` trong HTML.
+- **Prevention**: Luôn khai báo đầy đủ key dịch cho tất cả nhãn đa ngôn ngữ; không dùng `&amp;` trong thẻ `<link>` của font nếu không cần thiết và thêm `notranslate` cho các thẻ icon font.
+- **Status**: Fixed
+
+---
+
+## [2026-06-24 15:42] - Lỗi dư chữ trên trang Đăng nhập/Đăng ký và chớp sáng trắng khi F5 trang Quên mật khẩu
+
+- **Type**: Agent
+- **Severity**: Medium
+- **File**: `templates/login.html:23-27`, `templates/register.html:23-27`, `templates/forgot_password.html:23-27`, `static/locales/vi.json:192-215`, `static/locales/en.json:192-215`
+- **Agent**: @frontend-specialist
+- **Root Cause**:
+  1. Thẻ tiêu đề chứa cả phần dịch toàn bộ câu và phần accent hiển thị từ gốc, dẫn đến lặp lại từ ở cuối câu.
+  2. Tailwind script chạy đồng bộ chặn DOM rendering và nằm trước phần CSS dark theme, khiến trình duyệt hiển thị nền trắng mặc định trong khoảnh khắc tải/xử lý script.
+- **Error Message**: 
+  ```text
+  [Nhận diện giống chó nhanh và chính xácchính xác / Join the dog-loving community with AIPetAI / Chớp sáng trắng khi refresh trang]
+  ```
+- **Fix Applied**: 
+  1. Tách các key dịch tiêu đề (loginLeftTitle, loginLeftTitleAccent, regLeftTitle, regLeftTitleAccent) để dịch riêng phần chữ thường và phần accent nổi bật.
+  2. Thêm style nội tuyến body { background-color: #060f1e !important; } lên đầu thẻ <head> để ép hiển thị màu nền tối ngay lập tức khi tải trang.
+- **Prevention**: Luôn tách riêng các cụm text dịch khi kết hợp với thẻ accent HTML và đặt inline style định nghĩa background tối màu ở dòng đầu tiên của <head> đối với các trang dark mode.
+- **Status**: Fixed
+
+---
+
 ## [2026-06-24 15:23] - Lỗi hiển thị Input Đăng nhập bị đè màu nền và lệch Icon khi trình duyệt Autofill
 
 - **Type**: Process

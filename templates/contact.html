@@ -24,6 +24,26 @@
       html.i18n-loading body {
         visibility: hidden !important;
       }
+
+      /* Prevent layout shift / text flash by hiding/showing correct languages early based on html[data-user-lang] */
+      html[data-user-lang="en"] #dynamic-content-vi { display: none !important; }
+      html[data-user-lang="en"] #dynamic-content-en { display: block !important; }
+      html[data-user-lang="vi"] #dynamic-content-en { display: none !important; }
+      html[data-user-lang="vi"] #dynamic-content-vi { display: block !important; }
+
+      html[data-user-lang="en"] .footer-address-vi,
+      html[data-user-lang="en"] .contact-address-vi,
+      html[data-user-lang="en"] .contact-hours-vi { display: none !important; }
+      html[data-user-lang="en"] .footer-address-en,
+      html[data-user-lang="en"] .contact-address-en,
+      html[data-user-lang="en"] .contact-hours-en { display: inline !important; }
+
+      html[data-user-lang="vi"] .footer-address-en,
+      html[data-user-lang="vi"] .contact-address-en,
+      html[data-user-lang="vi"] .contact-hours-en { display: none !important; }
+      html[data-user-lang="vi"] .footer-address-vi,
+      html[data-user-lang="vi"] .contact-address-vi,
+      html[data-user-lang="vi"] .contact-hours-vi { display: inline !important; }
     </style>
     <noscript>
       <style>
@@ -54,11 +74,11 @@
       href="{{ url_for('static', filename='css/mobile-header-fix.css') }}"
     />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
     <link
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
       rel="stylesheet"
     />
     <style>
@@ -376,7 +396,7 @@
             Đội ngũ chúng tôi luôn sẵn sàng hỗ trợ bạn. Hãy gửi câu hỏi hoặc phản hồi theo các kênh bên dưới.
           </p>
           <div class="flex items-center gap-1.5 text-xs text-neutral-400">
-            <span class="material-symbols-outlined text-[14px]">schedule</span>
+            <span class="material-symbols-outlined text-[14px] notranslate">schedule</span>
             <span data-i18n="supportHoursShort">Phản hồi trong 1–3 ngày làm việc</span>
           </div>
         </div>
@@ -480,7 +500,7 @@
               </div>
             </div>
             <div class="flex items-start gap-3">
-              <span class="material-symbols-outlined text-primary mt-0.5 text-[22px]">schedule</span>
+              <span class="material-symbols-outlined text-primary mt-0.5 text-[22px] notranslate">schedule</span>
               <div>
                 <div class="text-[11px] font-bold text-neutral-400 tracking-wider uppercase mb-1" data-i18n="supportTimeLabel">THỜI GIAN HỖ TRỢ</div>
                 <div class="text-sm font-semibold text-slate-800 dark:text-slate-200">
@@ -703,7 +723,7 @@
       Object.assign(window.PetAI_DynamicSettings.en, dbEn);
     })();
   </script>
-  <script src="{{ url_for('static', filename='js/i18n.js') }}?v=16"></script>
+  <script src="{{ url_for('static', filename='js/i18n.js') }}?v=23"></script>
   <script src="{{ url_for('static', filename='js/script.js') }}"></script>
   <script>
     (function () {
