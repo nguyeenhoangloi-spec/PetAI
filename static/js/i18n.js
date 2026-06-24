@@ -910,8 +910,27 @@
     "supportPageTitle": "Hỗ trợ | PetAI",
     "supportHeaderTitle": "Hỗ trợ",
     "supportSubtitle": "Chúng tôi luôn sẵn sàng lắng nghe mọi phản hồi từ phía bạn.",
+    "privacySubtitle": "Cách PetAI thu thập, sử dụng và bảo vệ dữ liệu của bạn khi sử dụng dịch vụ.",
+    "paymentSubtitle": "Thông tin về phương thức thanh toán và các gói dịch vụ của PetAI.",
     "supportQuickInfoTitle": "Thông tin nhanh",
     "supportEmailLabel": "Email hỗ trợ:",
+    "supportPhoneLabel": "Số điện thoại",
+    "supportTimeLabel": "Thời gian hỗ trợ",
+    "supportDisclaimer": "Chúng tôi sẽ phản hồi sớm nhất có thể để hỗ trợ bạn.",
+    "lastUpdatedText": "Cập nhật lần cuối",
+    "supportCardTitle": "Cần hỗ trợ thêm?",
+    "supportCardDesc": "Chưa tìm thấy câu trả lời? Đội ngũ PetAI luôn sẵn sàng trợ giúp bạn.",
+    "contactSupport": "Liên hệ hỗ trợ",
+    "sendEmail": "Gửi email",
+    "contactSubtitle": "Đội ngũ chúng tôi luôn sẵn sàng hỗ trợ bạn. Hãy gửi câu hỏi hoặc phản hồi theo các kênh bên dưới.",
+    "supportHoursShort": "Phản hồi trong 1–3 ngày làm việc",
+    "userGuide": "Hướng dẫn sử dụng",
+    "userGuideSubtitle": "Tìm hiểu cách sử dụng PetAI để nhận diện giống chó nhanh chóng và chính xác nhất.",
+    "privacyPolicySubtitle": "Cách PetAI thu thập, sử dụng và bảo vệ dữ liệu của bạn khi sử dụng dịch vụ.",
+    "termsSubtitle": "Các điều khoản và điều kiện sử dụng dịch vụ PetAI.",
+    "paymentPolicySubtitle": "Thông tin về phương thức thanh toán và các gói dịch vụ của PetAI.",
+    "dataDeletionSubtitle": "Quy trình yêu cầu xóa dữ liệu và tài khoản của bạn khỏi hệ thống PetAI.",
+    "supportPageSubtitle": "Chúng tôi luôn sẵn sàng hỗ trợ bạn 24/7 qua email và hotline.",
     "supportResponseTimeLabel": "Thời gian phản hồi dự kiến:",
     "supportResponseTimeValue": "Từ 1–3 ngày làm việc",
     "supportBasicGuideTitle": "Hướng dẫn sử dụng cơ bản",
@@ -1604,6 +1623,8 @@
     "sysLabelContactAddressVi": "Địa chỉ (Tiếng Việt)",
     "sysLabelContactAddressEn": "Địa chỉ (Tiếng Anh)",
     "sysLabelContactWebsite": "Website",
+    "sysLabelSupportHoursVi": "Giờ hỗ trợ (Tiếng Việt)",
+    "sysLabelSupportHoursEn": "Giờ hỗ trợ (Tiếng Anh)",
     "sysCardParamsTitle": "Thiết lập hệ thống",
     "sysCardParamsDesc": "Các thiết lập chung cho hoạt động của hệ thống.",
     "sysLabelDefaultLang": "Ngôn ngữ mặc định",
@@ -2940,8 +2961,27 @@
     "supportPageTitle": "Support | PetAI",
     "supportHeaderTitle": "Support",
     "supportSubtitle": "We are always ready to listen to your feedback.",
+    "privacySubtitle": "How PetAI collects, uses, and protects your data when you use our services.",
+    "paymentSubtitle": "Information about payment methods and PetAI service plans.",
     "supportQuickInfoTitle": "Quick Info",
     "supportEmailLabel": "Support Email:",
+    "supportPhoneLabel": "Phone Number",
+    "supportTimeLabel": "Support Hours",
+    "supportDisclaimer": "We will respond as soon as possible to assist you.",
+    "lastUpdatedText": "Last updated",
+    "supportCardTitle": "Need more help?",
+    "supportCardDesc": "Can't find an answer? The PetAI team is always ready to help you.",
+    "contactSupport": "Contact Support",
+    "sendEmail": "Send Email",
+    "contactSubtitle": "Our team is always ready to assist you. Send your questions or feedback via the channels below.",
+    "supportHoursShort": "Response within 1–3 business days",
+    "userGuide": "User Guide",
+    "userGuideSubtitle": "Learn how to use PetAI to identify dog breeds quickly and accurately.",
+    "privacyPolicySubtitle": "How PetAI collects, uses, and protects your data when you use our services.",
+    "termsSubtitle": "Terms and conditions for using PetAI services.",
+    "paymentPolicySubtitle": "Information about payment methods and PetAI service plans.",
+    "dataDeletionSubtitle": "Process for requesting deletion of your data and account from the PetAI system.",
+    "supportPageSubtitle": "We are always ready to support you 24/7 via email and hotline.",
     "supportResponseTimeLabel": "Expected Response Time:",
     "supportResponseTimeValue": "Within 1–3 business days",
     "supportBasicGuideTitle": "Basic Usage Guide",
@@ -3633,6 +3673,8 @@
     "sysLabelContactAddressVi": "Address (Vietnamese)",
     "sysLabelContactAddressEn": "Address (English)",
     "sysLabelContactWebsite": "Website",
+    "sysLabelSupportHoursVi": "Support Hours (Vietnamese)",
+    "sysLabelSupportHoursEn": "Support Hours (English)",
     "sysCardParamsTitle": "System Settings",
     "sysCardParamsDesc": "General configurations for system operations.",
     "sysLabelDefaultLang": "Default Language",
@@ -5581,10 +5623,14 @@
     var enDiv = document.getElementById("dynamic-content-en");
     if (viDiv && enDiv) {
       if (lang === "en") {
+        viDiv.style.display = "none";
         viDiv.classList.add("hidden");
+        enDiv.style.display = "";
         enDiv.classList.remove("hidden");
       } else {
+        enDiv.style.display = "none";
         enDiv.classList.add("hidden");
+        viDiv.style.display = "";
         viDiv.classList.remove("hidden");
       }
     }

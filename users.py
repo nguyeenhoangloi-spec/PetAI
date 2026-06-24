@@ -835,7 +835,12 @@ def save_system_config():
             SystemConfig.set(conn, "contact_website", request.form.get("contact_website", "").strip(), "Website liên hệ")
         elif "contact_fb" in request.form:
             SystemConfig.set(conn, "contact_website", request.form.get("contact_fb", "").strip(), "Website liên hệ")
+        if "support_hours_vi" in request.form:
+            SystemConfig.set(conn, "support_hours_vi", request.form.get("support_hours_vi", "").strip(), "Giờ hỗ trợ (Tiếng Việt)")
+        if "support_hours_en" in request.form:
+            SystemConfig.set(conn, "support_hours_en", request.form.get("support_hours_en", "").strip(), "Giờ hỗ trợ (Tiếng Anh)")
         if "default_lang" in request.form:
+
             SystemConfig.set(conn, "default_lang", request.form.get("default_lang", "").strip(), "Ngôn ngữ mặc định")
         if "default_theme" in request.form:
             SystemConfig.set(conn, "default_theme", request.form.get("default_theme", "").strip(), "Theme mặc định")

@@ -692,8 +692,26 @@
                           <input type="text" name="contact_website" value="{{ configs.get('contact_website', configs.get('contact_fb', 'https://pet.ai')) }}" class="premium-input w-full pl-11 pr-4 py-2.5 bg-slate-50 dark:bg-slate-955 border border-outline-variant/40 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none" />
                         </div>
                       </div>
+
+                      <div class="flex flex-col gap-1.5">
+                        <label class="text-xs font-bold text-on-surface-variant dark:text-slate-350" data-i18n="sysLabelSupportHoursVi">Giờ hỗ trợ (Tiếng Việt)</label>
+                        <div class="relative">
+                          <span class="material-symbols-outlined text-slate-450 absolute left-4 top-1/2 -translate-y-1/2 text-lg">schedule</span>
+                          <input type="text" name="support_hours_vi" value="{{ configs.get('support_hours_vi', '8:00 – 22:00 mỗi ngày (Kể cả T7, CN)') }}" class="premium-input w-full pl-11 pr-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none" />
+                        </div>
+                      </div>
+
+
+                      <div class="flex flex-col gap-1.5">
+                        <label class="text-xs font-bold text-on-surface-variant dark:text-slate-350" data-i18n="sysLabelSupportHoursEn">Giờ hỗ trợ (Tiếng Anh)</label>
+                        <div class="relative">
+                          <span class="material-symbols-outlined text-slate-450 absolute left-4 top-1/2 -translate-y-1/2 text-lg">schedule</span>
+                          <input type="text" name="support_hours_en" value="{{ configs.get('support_hours_en', '8:00 AM – 10:00 PM daily (Including Sat, Sun)') }}" class="premium-input w-full pl-11 pr-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none" />
+                        </div>
+                      </div>
                     </div>
                   </div>
+
 
                   <!-- Params Card -->
                   <div class="glass-card bg-white dark:bg-slate-900/60 rounded-2xl p-6 border border-outline-variant/30 dark:border-slate-800 shadow-sm flex flex-col gap-5">

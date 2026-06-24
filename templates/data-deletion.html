@@ -330,88 +330,116 @@
       </div>
     </div>
   </nav>
-  <main class="relative z-10 pt-20">
-    <section class="px-4 md:px-6 w-full py-16 mb-16 max-w-4xl mx-auto dashboard-width">
-      <div id="legal-content-card" class="glass-card p-gutter rounded-3xl bg-surface-container-low border border-outline-variant/30">
-        <h1 class="headline-lg text-on-surface mb-6 font-bold" data-i18n="dataDeletion">
-          <span data-i18n="dataDeletion">Chính sách xóa dữ liệu</span>
-        </h1>
+  <main class="relative z-10 pt-24 pb-16">
+    <div class="max-w-4xl mx-auto px-4 md:px-6">
+      
+      <!-- Breadcrumb -->
+      <div class="flex items-center gap-2 text-xs text-on-surface-variant/70 mb-6">
+        <a href="{{ url_for('home.index') }}" class="hover:text-primary transition-colors flex items-center gap-1">
+          <span class="material-symbols-outlined text-[14px]">home</span>
+          <span data-i18n="home">Trang chủ</span>
+        </a>
+        <span class="material-symbols-outlined text-[12px] text-neutral-400">chevron_right</span>
+        <span class="font-medium text-on-surface" data-i18n="dataDeletion">Chính sách xóa dữ liệu</span>
+      </div>
+
+      <!-- Page Header -->
+      <div class="flex items-start gap-5 mb-8">
+        <div class="flex items-center justify-center w-16 h-16 rounded-2xl bg-primary-container/10 text-primary shrink-0">
+          <span class="material-symbols-outlined text-[36px]">delete_forever</span>
+        </div>
+        <div>
+          <h1 class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-2" data-i18n="dataDeletion">
+            Chính sách xóa dữ liệu
+          </h1>
+          <p class="text-sm md:text-base text-neutral-500 dark:text-slate-400 mb-1" data-i18n="dataDeletionSubtitle">
+            Quyền xóa tài khoản và dữ liệu cá nhân của bạn trên PetAI.
+          </p>
+          <div class="flex items-center gap-1.5 text-xs text-neutral-400">
+            <span class="material-symbols-outlined text-[14px]">calendar_today</span>
+            <span><span data-i18n="lastUpdatedText">Cập nhật lần cuối</span>: 24/06/2026</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Content Card -->
+      <div id="legal-content-card" class="bg-white dark:bg-slate-900 border border-outline-variant/30 rounded-3xl p-6 md:p-8 shadow-sm">
         {% set default_sections_vi = [
           {
-            "title": "1. Quyền yêu cầu xóa tài khoản và dữ liệu cá nhân",
+            "title": "Quyền yêu cầu xóa tài khoản và dữ liệu cá nhân",
             "content": "Tại " ~ get_config('site_name', 'PetAI') ~ ", chúng tôi tôn trọng quyền kiểm soát dữ liệu cá nhân của bạn. Người dùng luôn có quyền yêu cầu xóa bỏ vĩnh viễn tài khoản của mình cũng như tất cả các dữ liệu đã tải lên hoặc phát sinh trong quá trình sử dụng dịch vụ."
           },
           {
-            "title": "2. Các loại dữ liệu được hỗ trợ xóa bỏ",
+            "title": "Các loại dữ liệu được hỗ trợ xóa bỏ",
             "content": "Khi bạn thực hiện yêu cầu xóa, các dữ liệu sau sẽ được loại bỏ hoàn toàn khỏi cơ sở dữ liệu hoạt động của hệ thống:<br>" ~
                        "• Thông tin hồ sơ tài khoản: Họ tên, email, tên đăng nhập, ảnh đại diện.<br>" ~
                        "• Lịch sử nhận diện giống chó: Toàn bộ ảnh cún cưng bạn đã tải lên, kết quả phân tích AI và điểm tin cậy đi kèm.<br>" ~
                        "• Các thiết lập cá nhân hóa trong ứng dụng."
           },
           {
-            "title": "3. Hướng dẫn xóa lịch sử nhận diện giống chó",
+            "title": "Hướng dẫn xóa lịch sử nhận diện giống chó",
             "content": "Nếu bạn chỉ muốn xóa lịch sử quét hình ảnh mà không muốn xóa tài khoản, bạn có thể thực hiện bằng cách truy cập vào trang <strong>Cài đặt</strong> > mục <strong>Quyền riêng tư</strong> > bấm nút <strong>Xóa toàn bộ lịch sử</strong>. Hành động này sẽ lập tức loại bỏ toàn bộ dữ liệu ảnh quét và lịch sử AI của bạn một cách an toàn."
           },
           {
-            "title": "4. Hướng dẫn yêu cầu xóa tài khoản",
+            "title": "Hướng dẫn yêu cầu xóa tài khoản",
             "content": "Bạn có thể thực hiện yêu cầu xóa toàn bộ tài khoản và thông tin cá nhân theo một trong hai cách sau:<br>" ~
                        "• <strong>Thực hiện trực tiếp trong ứng dụng:</strong> Đăng nhập vào tài khoản, truy cập mục <strong>Cài đặt</strong> > chọn <strong>Quyền riêng tư</strong> > kéo xuống phần <strong>Xóa tài khoản</strong>, xác nhận mật khẩu hoặc OTP để gửi yêu cầu.<br>" ~
                        "• <strong>Gửi email yêu cầu hỗ trợ:</strong> Trong trường hợp không đăng nhập được, bạn hãy sử dụng địa chỉ email đã dùng đăng ký tài khoản gửi thư về địa chỉ: <a href=\"mailto:" ~ get_config('site_email', 'support@pet.ai') ~ "\" class=\"text-primary hover:underline font-medium\">" ~ get_config('site_email', 'support@pet.ai') ~ "</a> với tiêu đề 'Yêu cầu xóa tài khoản PetAI' để bộ phận kỹ thuật hỗ trợ xác thực và xử lý thủ công."
           },
           {
-            "title": "5. Thời gian xử lý và Trạng thái chờ xóa 30 ngày",
+            "title": "Thời gian xử lý và Trạng thái chờ xóa 30 ngày",
             "content": "Nhằm đảm bảo an toàn và ngăn ngừa các yêu cầu xóa nhầm hoặc do tài khoản bị xâm nhập trái phép, khi bạn bấm xác nhận xóa tài khoản, tài khoản sẽ được chuyển sang trạng thái <strong>'Chờ xóa' (Pending Delete) trong vòng 30 ngày</strong>. Trong thời gian 30 ngày này, thông tin tài khoản sẽ bị ẩn đi, bạn không thể sử dụng các tính năng quét ảnh nâng cao, nhưng dữ liệu của bạn chưa bị xóa vĩnh viễn khỏi hệ thống lưu trữ."
           },
           {
-            "title": "6. Khôi phục tài khoản trong thời gian chờ xóa",
+            "title": "Khôi phục tài khoản trong thời gian chờ xóa",
             "content": "Trong thời gian 30 ngày chờ xử lý xóa tài khoản, nếu bạn đổi ý hoặc muốn hủy bỏ yêu cầu xóa, bạn có thể thực hiện khôi phục tài khoản hoạt động bình thường rất đơn giản bằng cách đăng nhập lại vào hệ thống bằng thông tin đăng nhập cũ và xác nhận khôi phục tài khoản, hoặc liên hệ ngay với bộ phận hỗ trợ khách hàng để được trợ giúp."
           },
           {
-            "title": "7. Các dữ liệu bắt buộc giữ lại vì lý do pháp lý",
+            "title": "Các dữ liệu bắt buộc giữ lại vì lý do pháp lý",
             "content": "Xin lưu ý rằng theo các quy định hiện hành liên quan đến tài chính, thuế và kế toán, một số thông tin nhất định bao gồm lịch sử giao dịch mua gói nâng cấp, hóa đơn thanh toán và các chứng từ đối soát tài chính sẽ không được xóa bỏ và vẫn được lưu trữ bảo mật trong thời gian tối thiểu theo quy định của pháp luật."
           },
           {
-            "title": "8. Thông tin liên hệ hỗ trợ xóa dữ liệu",
+            "title": "Thông tin liên hệ hỗ trợ xóa dữ liệu",
             "content": "Nếu bạn gặp bất kỳ sự cố nào hoặc cần giải đáp thêm về quy trình xóa dữ liệu cá nhân, vui lòng liên hệ bộ phận kỹ thuật của chúng tôi:<br>• Email hỗ trợ: <a href=\"mailto:" ~ get_config('site_email', 'support@pet.ai') ~ "\" class=\"text-primary hover:underline font-medium\">" ~ get_config('site_email', 'support@pet.ai') ~ "</a><br>• Hotline hỗ trợ: " ~ get_config('contact_phone', '0916 416 409') ~ "<br>• Địa chỉ: " ~ get_config("contact_address_vi", get_config("contact_address", "P16, Đường số 8, KDC lô 49, Khu đô thị Nam Cần Thơ, Phường Cái Răng, TP. Cần Thơ"))
           }
         ] %}
 
         {% set default_sections_en = [
           {
-            "title": "1. Right to Account and Personal Data Deletion",
+            "title": "Right to Account and Personal Data Deletion",
             "content": "At " ~ get_config('site_name', 'PetAI') ~ ", we respect your right to control your personal data. Users have the right to request the permanent deletion of their account and all associated personal data collected during the usage of our services."
           },
           {
-            "title": "2. Data Eligible for Deletion",
+            "title": "Data Eligible for Deletion",
             "content": "Upon processing a deletion request, the following data points will be permanently purged from our active operational databases:<br>" ~
                        "• Account profile information: Full name, email address, username, profile avatar.<br>" ~
                        "• Dog breed scan history: All uploaded pet images, AI prediction results, and associated confidence scores.<br>" ~
                        "• Customized user preferences and settings."
           },
           {
-            "title": "3. How to Clear Dog Breed Scan History",
+            "title": "How to Clear Dog Breed Scan History",
             "content": "If you wish to clear your photo scan history without deleting your account, you can do so by navigating to <strong>Settings</strong> > <strong>Privacy</strong> > click the <strong>Clear All History</strong> button. This action instantly and securely removes all your scan photos and AI predictions from your history logs."
           },
           {
-            "title": "4. How to Request Account Deletion",
+            "title": "How to Request Account Deletion",
             "content": "You can request permanent deletion of your account and data through one of the following methods:<br>" ~
                        "• <strong>In-App Deletion:</strong> Log into your account, go to <strong>Settings</strong> > select <strong>Privacy</strong> > scroll down to <strong>Delete Account</strong>, enter your password or OTP to confirm and submit.<br>" ~
                        "• <strong>Email Request:</strong> If you cannot access your account, use your registered email address to send a request to: <a href=\"mailto:" ~ get_config('site_email', 'support@pet.ai') ~ "\" class=\"text-primary hover:underline font-medium\">" ~ get_config('site_email', 'support@pet.ai') ~ "</a> with the subject 'PetAI Account Deletion Request'. Our technical team will verify and process the deletion manually."
           },
           {
-            "title": "5. Processing Timeline & 30-Day Retention Window",
+            "title": "Processing Timeline & 30-Day Retention Window",
             "content": "To prevent accidental deletion or unauthorized requests due to account compromise, accounts are placed in a <strong>'Pending Delete' status for 30 days</strong>. During this retention window, your account details will be hidden, you will not have access to premium scan features, but your data is not yet permanently erased from our backups."
           },
           {
-            "title": "6. Cancelling Deletion Request during Retention Window",
+            "title": "Cancelling Deletion Request during Retention Window",
             "content": "During the 30-day pending retention window, if you change your mind, you can cancel the deletion and restore your account to active status simply by logging back into the system using your original credentials and confirming restoration, or by contacting customer support."
           },
           {
-            "title": "7. Data Retained for Legal Compliance",
+            "title": "Data Retained for Legal Compliance",
             "content": "Please note that in compliance with accounting, tax, and financial regulations, certain transaction records, including payment history invoices for subscription upgrades, cannot be deleted and will be securely retained for the minimum duration required by applicable local laws."
           },
           {
-            "title": "8. Contact for Deletion Support",
+            "title": "Contact for Deletion Support",
             "content": "If you encounter any issues or have questions regarding the personal data deletion process, please contact our technical support team:<br>• Support Email: <a href=\"mailto:" ~ get_config('site_email', 'support@pet.ai') ~ "\" class=\"text-primary hover:underline font-medium\">" ~ get_config('site_email', 'support@pet.ai') ~ "</a><br>• Hotline: " ~ get_config('contact_phone', '0916 416 409') ~ "<br>• Address: " ~ get_config("contact_address_en", get_config("contact_address", "P16, Street 8, Lot 49 residential area, Nam Can Tho Urban Area, Cai Rang District, Can Tho City, Vietnam"))
           }
         ] %}
@@ -422,32 +450,121 @@
         {% set active_sections_en = sections_en if sections_en else default_sections_en %}
 
         <!-- Vietnamese View -->
-        <div id="dynamic-content-vi" class="space-y-6 text-neutral-800 dark:text-slate-350 body-md leading-relaxed legal-content-rich {{ 'hidden' if ui_language == 'en' else '' }}">
+        <div id="dynamic-content-vi" class="space-y-6" {% if ui_language == 'en' %}style="display:none"{% endif %}>
           {% for sec in active_sections_vi %}
-            {% if sec.title %}
-              <h2 class="text-xl font-bold text-primary mt-6 mb-2">{{ sec.title }}</h2>
-            {% endif %}
-            {% if sec.content %}
-              <div class="text-neutral-800 dark:text-slate-300 body-md leading-relaxed">{{ sec.content | safe }}</div>
+            {% if active_sections_vi|length == 1 and not sec.title %}
+              <div class="text-neutral-700 dark:text-slate-350 text-[15px] md:text-[16px] leading-[1.7]">{{ sec.content | safe }}</div>
+            {% else %}
+              <section class="policy-section flex items-start gap-4 pb-6 mb-6 border-b border-outline-variant/10 last:border-b-0 last:pb-0 last:mb-0">
+                <div class="policy-number flex items-center justify-center w-8 h-8 rounded-lg bg-primary-container/20 text-primary font-bold text-sm shrink-0 mt-0.5">
+                  {{ loop.index }}
+                </div>
+                <div class="flex-1">
+                  {% if sec.title %}
+                    <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-2">{{ sec.title }}</h2>
+                  {% endif %}
+                  {% if sec.content %}
+                    <div class="text-neutral-700 dark:text-slate-350 text-[15px] md:text-[16px] leading-[1.7]">{{ sec.content | safe }}</div>
+                  {% endif %}
+                </div>
+              </section>
             {% endif %}
           {% endfor %}
         </div>
 
         <!-- English View -->
-        <div id="dynamic-content-en" class="space-y-6 text-neutral-800 dark:text-slate-350 body-md leading-relaxed legal-content-rich {{ 'hidden' if ui_language != 'en' else '' }}">
+        <div id="dynamic-content-en" class="space-y-6" {% if ui_language != 'en' %}style="display:none"{% endif %}>
           {% for sec in active_sections_en %}
-            {% if sec.title %}
-              <h2 class="text-xl font-bold text-primary mt-6 mb-2">{{ sec.title }}</h2>
-            {% endif %}
-            {% if sec.content %}
-              <div class="text-neutral-800 dark:text-slate-300 body-md leading-relaxed">{{ sec.content | safe }}</div>
+            {% if active_sections_en|length == 1 and not sec.title %}
+              <div class="text-neutral-700 dark:text-slate-350 text-[15px] md:text-[16px] leading-[1.7]">{{ sec.content | safe }}</div>
+            {% else %}
+              <section class="policy-section flex items-start gap-4 pb-6 mb-6 border-b border-outline-variant/10 last:border-b-0 last:pb-0 last:mb-0">
+                <div class="policy-number flex items-center justify-center w-8 h-8 rounded-lg bg-primary-container/20 text-primary font-bold text-sm shrink-0 mt-0.5">
+                  {{ loop.index }}
+                </div>
+                <div class="flex-1">
+                  {% if sec.title %}
+                    <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-2">{{ sec.title }}</h2>
+                  {% endif %}
+                  {% if sec.content %}
+                    <div class="text-neutral-700 dark:text-slate-350 text-[15px] md:text-[16px] leading-[1.7]">{{ sec.content | safe }}</div>
+                  {% endif %}
+                </div>
+              </section>
             {% endif %}
           {% endfor %}
         </div>
-
       </div>
-    </section>
-  </main>  <footer class="bg-surface-container-low border-t border-outline-variant/30 px-6 py-12">
+
+      <!-- Contact Card / Support Section -->
+      <div class="mt-8 bg-white dark:bg-slate-900 border border-outline-variant/30 rounded-3xl p-8 shadow-sm">
+        <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 pb-6 mb-6 border-b border-outline-variant/10">
+          <div class="flex items-start gap-4">
+            <div class="flex items-center justify-center w-12 h-12 rounded-2xl bg-primary-container/10 text-primary shrink-0">
+              <span class="material-symbols-outlined text-[28px]">support_agent</span>
+            </div>
+            <div>
+              <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-1" data-i18n="supportCardTitle">Cần hỗ trợ?</h3>
+              <p class="text-sm text-neutral-500 dark:text-slate-400" data-i18n="supportCardDesc">Nếu bạn cần hỗ trợ hoặc có thắc mắc về quy trình xóa dữ liệu, hãy liên hệ với đội ngũ PetAI.</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 flex-wrap sm:flex-nowrap w-full lg:w-auto">
+            <a href="{{ url_for('legal.contact') }}" class="shrink-0 whitespace-nowrap bg-primary text-white hover:bg-primary/90 transition-colors px-5 py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-1.5 shadow-sm" data-i18n="contactSupport">
+              <span class="material-symbols-outlined text-[18px]">support_agent</span>
+              <span>Liên hệ hỗ trợ</span>
+            </a>
+            <a href="mailto:{{ get_config('site_email', 'support@pet.ai') }}" class="shrink-0 whitespace-nowrap border border-outline text-slate-700 dark:text-slate-200 hover:bg-neutral-50 dark:hover:bg-slate-800 transition-colors px-5 py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-1.5" data-i18n="sendEmail">
+              <span class="material-symbols-outlined text-[18px]">mail</span>
+              <span>Gửi email</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-sm">
+          <div class="flex items-start gap-3">
+            <span class="material-symbols-outlined text-primary mt-0.5">mail</span>
+            <div>
+              <span class="block text-xs font-semibold text-neutral-400 uppercase tracking-wider" data-i18n="supportEmailLabel">Email hỗ trợ</span>
+              <a href="mailto:{{ get_config('site_email', 'support@pet.ai') }}" class="text-slate-800 dark:text-slate-200 hover:text-primary transition-colors font-medium break-all">{{ get_config('site_email', 'support@pet.ai') }}</a>
+            </div>
+          </div>
+          <div class="flex items-start gap-3">
+            <span class="material-symbols-outlined text-primary mt-0.5">call</span>
+            <div>
+              <span class="block text-xs font-semibold text-neutral-400 uppercase tracking-wider" data-i18n="supportPhoneLabel">Số điện thoại</span>
+              <span class="text-slate-800 dark:text-slate-200 font-medium">{{ get_config('contact_phone', '0916 416 409') }}</span>
+            </div>
+          </div>
+          <div class="flex items-start gap-3">
+            <span class="material-symbols-outlined text-primary mt-0.5">pin_drop</span>
+            <div>
+              <span class="block text-xs font-semibold text-neutral-400 uppercase tracking-wider" data-i18n="sysLabelContactAddress">Địa chỉ</span>
+              <span class="text-slate-800 dark:text-slate-200 font-medium">
+                <span class="contact-address-vi{% if ui_language == 'en' %} hidden{% endif %}">{{ get_config("contact_address_vi", get_config("contact_address", "P16, Đường số 8, KDC lô 49, Khu đô thị Nam Cần Thơ, Phường Cái Răng, TP. Cần Thơ")) }}</span>
+                <span class="contact-address-en{% if ui_language != 'en' %} hidden{% endif %}">{{ get_config("contact_address_en", get_config("contact_address", "P16, Street 8, Lot 49 residential area, Nam Can Tho Urban Area, Cai Rang District, Can Tho City, Vietnam")) }}</span>
+              </span>
+            </div>
+          </div>
+          <div class="flex items-start gap-3">
+            <span class="material-symbols-outlined text-primary mt-0.5">schedule</span>
+            <div>
+              <span class="block text-xs font-semibold text-neutral-400 uppercase tracking-wider" data-i18n="supportTimeLabel">Thời gian hỗ trợ</span>
+              <span class="text-slate-800 dark:text-slate-200 font-medium">
+                <span class="contact-hours-vi{% if ui_language == 'en' %} hidden{% endif %}">{{ get_config('support_hours_vi', '8:00 – 22:00 mỗi ngày (Kể cả T7, CN)') }}</span>
+                <span class="contact-hours-en{% if ui_language != 'en' %} hidden{% endif %}">{{ get_config('support_hours_en', '8:00 AM – 10:00 PM daily (Including Sat, Sun)') }}</span>
+              </span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="mt-6 pt-4 border-t border-outline-variant/10 flex items-center justify-center gap-2 text-xs text-neutral-400">
+          <span class="material-symbols-outlined text-[16px] text-primary">verified_user</span>
+          <span data-i18n="supportDisclaimer">Chúng tôi sẽ phản hồi sớm nhất có thể để hỗ trợ bạn.</span>
+        </div>
+      </div>
+
+    </div>
+  </main>
     <div class="max-w-container-max mx-auto">
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-10">
         <!-- Column 1: Brand & Logo -->

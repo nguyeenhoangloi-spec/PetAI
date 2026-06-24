@@ -360,9 +360,44 @@
       </div>
     </div>
   </nav>
-  <main class="relative z-10 pt-20">
-    <section class="px-4 md:px-6 w-full py-16 mb-16 max-w-4xl mx-auto dashboard-width">
-      <div id="legal-content-card" class="glass-card p-gutter rounded-3xl bg-surface-container-low border border-outline-variant/30">
+  <main class="relative z-10 pt-24 pb-16">
+    <div class="max-w-4xl mx-auto px-4 md:px-6">
+
+      <!-- Breadcrumb -->
+      <div class="flex items-center gap-2 text-xs text-on-surface-variant/70 mb-6">
+        <a href="{{ url_for('home.index') }}" class="hover:text-primary transition-colors flex items-center gap-1">
+          <span class="material-symbols-outlined text-[14px]">home</span>
+          <span data-i18n="home">Trang chủ</span>
+        </a>
+        <span class="material-symbols-outlined text-[12px] text-neutral-400">chevron_right</span>
+        <span class="font-medium text-on-surface" data-i18n="userGuide">Hướng dẫn sử dụng</span>
+      </div>
+
+      <!-- Page Header -->
+      <div class="flex items-start gap-5 mb-8">
+        <div class="flex items-center justify-center w-16 h-16 rounded-2xl bg-primary-container/10 text-primary shrink-0">
+          <span class="material-symbols-outlined text-[36px]">menu_book</span>
+        </div>
+        <div>
+          <h1 class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-2" data-i18n="userGuide">
+            Hướng dẫn sử dụng
+          </h1>
+          <p class="text-sm md:text-base text-neutral-500 dark:text-slate-400 mb-1" data-i18n="userGuideSubtitle">
+            Tìm hiểu cách sử dụng PetAI để nhận diện giống chó nhanh chóng và chính xác nhất.
+          </p>
+          <div class="flex items-center gap-1.5 text-xs text-neutral-400">
+            <span class="material-symbols-outlined text-[14px]">calendar_today</span>
+            <span><span data-i18n="lastUpdatedText">Cập nhật lần cuối</span>: 24/06/2026</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Content Card -->
+      <div id="legal-content-card" class="bg-white dark:bg-slate-900 border border-outline-variant/30 rounded-3xl p-6 md:p-8 shadow-sm">
+
+        {% set step_icons_vi = ["info", "person_add", "cloud_upload", "fact_check", "hourglass_empty", "visibility", "upgrade", "contact_support", "tips_and_updates", "warning", "mail"] %}
+        {% set step_icons_en = ["info", "person_add", "cloud_upload", "fact_check", "hourglass_empty", "visibility", "upgrade", "contact_support", "tips_and_updates", "warning", "mail"] %}
+
         {% set default_sections_vi = [
           {
             "title": "Giới thiệu về PetAI",
@@ -413,23 +448,15 @@
                        '</ul>'
           },
           {
-            "title": "Bước 6: Xem lịch sử nhận diện",
-            "content": '<p class="mb-3">Tất cả các lần quét ảnh thành công đều được hệ thống tự động lưu trữ:</p>' ~
-                       '<ul class="list-disc pl-5 space-y-2">' ~
-                       '  <li>Truy cập mục <strong>Lịch sử</strong> trên menu điều hướng bên trái để xem lại toàn bộ danh sách các lượt quét trước đây kèm theo mốc thời gian và kết quả chi tiết.</li>' ~
-                       '  <li>Bạn cũng có thể xem trang <strong>Thống kê</strong> để cập nhật biểu đồ phân bổ giống chó phát hiện nhiều nhất và biểu đồ xu hướng quét cá nhân của mình.</li>' ~
-                       '</ul>'
-          },
-          {
-            "title": "Bước 7: Nâng cấp gói nếu cần",
+            "title": "Bước 6: Nâng cấp gói nếu cần",
             "content": '<p class="mb-3">Hệ thống áp dụng hạn mức sử dụng để đảm bảo hiệu năng tối ưu cho cộng đồng:</p>' ~
                        '<ul class="list-disc pl-5 space-y-2">' ~
                        '  <li>Mỗi tài khoản miễn phí mặc định nhận được 10 lượt nhận diện ban đầu. Khi hết lượt, bạn có thể xem quảng cáo ngắn để nhận thêm lượt miễn phí (tối đa 3 lượt/ngày).</li>' ~
-                       '  <li>Nếu có nhu cầu quét liên tục không giới hạn và không có quảng cáo, bạn hãy vào mục <strong>Nâng cấp gói</strong> để lựa chọn gói Basic, Pro hoặc Enterprise và tiến hành chuyển khoản qua mã VietQR tự động. Gói dịch vụ của bạn sẽ được kích hoạt ngay sau 1-5 phút khi giao dịch được xác thực thành công.</li>' ~
+                       '  <li>Nếu có nhu cầu quét liên tục không giới hạn và không có quảng cáo, bạn hãy vào mục <strong>Nâng cấp gói</strong> để lựa chọn gói Basic, Pro hoặc Enterprise và tiến hành chuyển khoản qua mã VietQR tự động.</li>' ~
                        '</ul>'
           },
           {
-            "title": "Bước 8: Liên hệ hỗ trợ khi gặp lỗi",
+            "title": "Bước 7: Liên hệ hỗ trợ khi gặp lỗi",
             "content": '<p class="mb-3">Trong trường hợp gặp các sự cố kỹ thuật như giao dịch chuyển khoản chưa được ghi nhận quá 15 phút, lỗi ảnh tải lên liên tục hoặc không đăng nhập được tài khoản:</p>' ~
                        '<ul class="list-disc pl-5 space-y-2">' ~
                        '  <li>Bạn hãy chụp lại ảnh màn hình lỗi hoặc biên lai chuyển khoản (đối với lỗi thanh toán).</li>' ~
@@ -448,16 +475,7 @@
           {
             "title": "Lưu ý quan trọng về kết quả AI",
             "content": '<p class="mb-3"><span class="material-symbols-outlined text-amber-500 text-[18px] align-middle mr-1">warning</span><strong>Thông tin tham khảo:</strong> Kết quả phân tích giống chó và tỷ lệ lai (đối với chó lai) được hệ thống PetAI đưa ra hoàn toàn dựa trên sự tương đồng hình thái học bên ngoài được phân tích từ hình ảnh bạn cung cấp.</p>' ~
-                       '<p class="mb-3">Hệ thống của chúng tôi <strong>KHÔNG</strong> thực hiện bất kỳ hình thức xét nghiệm sinh học di truyền (DNA) nào. Kết quả nhận diện chỉ mang tính chất tham khảo học tập khách quan và không thể thay thế cho các kết luận y khoa thú y chuyên môn hoặc giấy chứng nhận thuần chủng pháp lý chính thức từ các hiệp hội nuôi chó giống.</p>'
-          },
-          {
-            "title": "Thông tin liên hệ hỗ trợ",
-            "content": '<p class="mb-3">Mọi thắc mắc, đóng góp ý kiến hoặc phản hồi về chính sách và chất lượng dịch vụ của PetAI, vui lòng liên hệ với chúng tôi qua các kênh sau:</p>' ~
-                       '<ul class="space-y-2">' ~
-                       '  <li class="flex items-center gap-2"><span class="material-symbols-outlined text-primary text-[18px]">mail</span><span><strong>Email:</strong> <a href="mailto:' ~ get_config('site_email', 'support@pet.ai') ~ '" class="text-primary hover:underline font-medium">' ~ get_config('site_email', 'support@pet.ai') ~ '</a></span></li>' ~
-                       '  <li class="flex items-center gap-2"><span class="material-symbols-outlined text-primary text-[18px]">call</span><span><strong>Số điện thoại:</strong> ' ~ get_config('contact_phone', '0916 416 409') ~ '</span></li>' ~
-                       '  <li class="flex items-start gap-2"><span class="material-symbols-outlined text-primary text-[18px] mt-0.5">location_on</span><span><strong>Địa chỉ:</strong> ' ~ get_config("contact_address_vi", get_config("contact_address", "P16, Đường số 8, KDC lô 49, Khu đô thị Nam Cần Thơ, Phường Cái Răng, TP. Cần Thơ")) ~ '</span></li>' ~
-                       '</ul>'
+                       '<p>Hệ thống của chúng tôi <strong>KHÔNG</strong> thực hiện bất kỳ hình thức xét nghiệm sinh học di truyền (DNA) nào. Kết quả nhận diện chỉ mang tính chất tham khảo học tập khách quan và không thể thay thế cho các kết luận y khoa thú y chuyên môn hoặc giấy chứng nhận thuần chủng pháp lý chính thức từ các hiệp hội nuôi chó giống.</p>'
           }
         ] %}
 
@@ -511,23 +529,15 @@
                        '</ul>'
           },
           {
-            "title": "Step 6: View Scan History",
-            "content": '<p class="mb-3">Every successful breed scan is automatically saved for your convenience:</p>' ~
-                       '<ul class="list-disc pl-5 space-y-2">' ~
-                       '  <li>Access the <strong>History</strong> section in the left sidebar to view a chronological log of all your scans with timestamps and full reports.</li>' ~
-                       '  <li>You can also visit the <strong>Statistics</strong> page to explore charts showing your most scanned breeds and usage trends over time.</li>' ~
-                       '</ul>'
-          },
-          {
-            "title": "Step 7: Upgrade Plan if Needed",
+            "title": "Step 6: Upgrade Plan if Needed",
             "content": '<p class="mb-3">Our platform uses quota limits to ensure high availability and fair usage for everyone:</p>' ~
                        '<ul class="list-disc pl-5 space-y-2">' ~
                        '  <li>Every free account starts with 10 free scans. When depleted, you can watch short video ads to claim extra free scans (up to 3 times daily).</li>' ~
-                       '  <li>If you require ad-free, high-speed, and unlimited scanning, click <strong>Upgrade</strong> to select between our Basic, Pro, or Enterprise plans. Payments are processed via automated VietQR bank transfers and are activated within 1-5 minutes after successful transaction validation.</li>' ~
+                       '  <li>If you require ad-free, high-speed, and unlimited scanning, click <strong>Upgrade</strong> to select between our Basic, Pro, or Enterprise plans. Payments are processed via automated VietQR bank transfers.</li>' ~
                        '</ul>'
           },
           {
-            "title": "Step 8: Contact Support on Errors",
+            "title": "Step 7: Contact Support on Errors",
             "content": '<p class="mb-3">If you experience technical issues such as pending transactions exceeding 15 minutes, persistent image upload errors, or account login issues:</p>' ~
                        '<ul class="list-disc pl-5 space-y-2">' ~
                        '  <li>Take a screenshot of the error page or your transfer receipt (for payment-related issues).</li>' ~
@@ -545,122 +555,136 @@
           },
           {
             "title": "Important Disclaimer on AI Predictions",
-            "content": '<p class="mb-3"><span class="material-symbols-outlined text-amber-500 text-[18px] align-middle mr-1">warning</span><strong>Reference Only:</strong> The breed predictions and hybrid ratio estimations (for mixed breeds) provided by PetAI are strictly calculated based on external morphological patterns from your uploaded images.</p>' ~
-                       '<p class="mb-3">Our platform does <strong>NOT</strong> perform any biological genetic (DNA) tests. The results are strictly for educational and reference purposes, and cannot substitute professional veterinary medical diagnosis or official purebred registry certificates from national kennel clubs.</p>'
-          },
-          {
-            "title": "Support Contact Information",
-            "content": '<p class="mb-3">If you have any questions, feedback, or suggestions regarding PetAI\'s services or policies, please reach out to us:</p>' ~
-                       '<ul class="space-y-2">' ~
-                       '  <li class="flex items-center gap-2"><span class="material-symbols-outlined text-primary text-[18px]">mail</span><span><strong>Email:</strong> <a href="mailto:' ~ get_config('site_email', 'support@pet.ai') ~ '" class="text-primary hover:underline font-medium">' ~ get_config('site_email', 'support@pet.ai') ~ '</a></span></li>' ~
-                       '  <li class="flex items-center gap-2"><span class="material-symbols-outlined text-primary text-[18px]">call</span><span><strong>Phone:</strong> ' ~ get_config('contact_phone', '0916 416 409') ~ '</span></li>' ~
-                       '  <li class="flex items-start gap-2"><span class="material-symbols-outlined text-primary text-[18px] mt-0.5">location_on</span><span><strong>Address:</strong> ' ~ get_config("contact_address_en", get_config("contact_address", "P16, Street 8, Lot 49 residential area, Nam Can Tho Urban Area, Cai Rang District, Can Tho City, Vietnam")) ~ '</span></li>' ~
-                       '</ul>'
+            "content": '<p class="mb-3"><span class="material-symbols-outlined text-amber-500 text-[18px] align-middle mr-1">warning</span><strong>Reference Only:</strong> The breed predictions and hybrid ratio estimations provided by PetAI are strictly calculated based on external morphological patterns from your uploaded images.</p>' ~
+                       '<p>Our platform does <strong>NOT</strong> perform any biological genetic (DNA) tests. The results are strictly for educational and reference purposes, and cannot substitute professional veterinary medical diagnosis or official purebred registry certificates from national kennel clubs.</p>'
           }
         ] %}
 
         {% set sections_vi = get_legal_sections('user-guide', 'vi') %}
         {% set sections_en = get_legal_sections('user-guide', 'en') %}
-
         {% set active_sections_vi = sections_vi if sections_vi else default_sections_vi %}
         {% set active_sections_en = sections_en if sections_en else default_sections_en %}
 
         <!-- Vietnamese View -->
-        <div id="dynamic-content-vi" class="space-y-6 text-on-surface-variant body-md leading-relaxed legal-content-rich {{ 'hidden' if ui_language == 'en' else '' }}">
-          <div class="text-center mb-10">
-            <h1 class="headline-lg text-on-surface mb-4 font-bold" data-i18n="userGuideHeaderTitle">
-              <span data-i18n="userGuideHeaderTitle">Hướng dẫn sử dụng</span>
-            </h1>
-            <p class="body-md text-on-surface-variant max-w-2xl mx-auto" data-i18n="userGuideSubtitle">
-              <span data-i18n="userGuideSubtitle">Tìm hiểu cách sử dụng PetAI để nhận diện giống chó nhanh chóng và chính xác nhất.</span>
-            </p>
-          </div>
-
-          <!-- Table of Contents / Quick Jump -->
-          <div class="mb-10 p-6 bg-white border border-outline-variant/20 rounded-2xl shadow-sm">
-            <h2 class="text-lg font-bold text-primary mb-4 flex items-center gap-2">
-              <span class="material-symbols-outlined text-[20px]">menu_book</span>
-              <span data-i18n="guideStepsTitle">Mục lục hướng dẫn</span>
-            </h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 text-sm">
-              {% for sec in active_sections_vi %}
-                {% set target_ids = ["intro", "register", "login", "freeplan", "identify", "result", "modes", "upgrade", "history", "stats", "faq", "contact"] %}
-                {% set tid = target_ids[loop.index0] if loop.index0 < 12 else "sec_" ~ loop.index0 %}
-                <a href="#{{ tid }}" class="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors">
-                  <span class="w-1.5 h-1.5 rounded-full bg-primary/60"></span>
-                  <span>{{ sec.title }}</span>
-                </a>
-              {% endfor %}
-            </div>
-          </div>
-
-          <!-- Documentation Content -->
-          <div class="space-y-8 text-on-surface-variant body-md leading-relaxed">
-            {% set target_ids = ["intro", "register", "login", "freeplan", "identify", "result", "modes", "upgrade", "history", "stats", "faq", "contact"] %}
-            {% for sec in active_sections_vi %}
-              {% set tid = target_ids[loop.index0] if loop.index0 < 12 else "sec_" ~ loop.index0 %}
-              <div id="{{ tid }}" class="scroll-mt-24 bg-white border border-outline-variant/30 rounded-2xl p-6 shadow-sm">
-                <h3 class="text-xl font-bold text-primary mb-3 flex items-center gap-2">
-                  {% set icon_names = ["info", "person_add", "cloud_upload", "fact_check", "hourglass_empty", "visibility", "history", "upgrade", "contact_support", "tips_and_updates", "warning", "mail"] %}
-                  {% set icon = icon_names[loop.index0] if loop.index0 < 12 else "article" %}
-                  <span class="material-symbols-outlined text-[24px]">{{ icon }}</span>
-                  <span>{{ sec.title }}</span>
-                </h3>
-                <div class="text-on-surface-variant">{{ sec.content | safe }}</div>
-              </div>
-            {% endfor %}
-          </div>
+        <div id="dynamic-content-vi" class="space-y-6" {% if ui_language == 'en' %}style="display:none"{% endif %}>
+          {% for sec in active_sections_vi %}
+            {% if active_sections_vi|length == 1 and not sec.title %}
+              <div class="text-neutral-700 dark:text-slate-350 text-[15px] md:text-[16px] leading-[1.7]">{{ sec.content | safe }}</div>
+            {% else %}
+              {% set icons = ["info", "person_add", "cloud_upload", "fact_check", "hourglass_empty", "visibility", "upgrade", "contact_support", "tips_and_updates", "warning", "mail"] %}
+              {% set icon = icons[loop.index0] if loop.index0 < icons|length else "article" %}
+              <section class="policy-section flex items-start gap-4 pb-6 mb-6 border-b border-outline-variant/10 last:border-b-0 last:pb-0 last:mb-0">
+                <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-primary-container/20 text-primary shrink-0 mt-0.5">
+                  <span class="material-symbols-outlined text-[22px]">{{ icon }}</span>
+                </div>
+                <div class="flex-1">
+                  {% if sec.title %}
+                    <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-2">{{ sec.title }}</h2>
+                  {% endif %}
+                  {% if sec.content %}
+                    <div class="text-neutral-700 dark:text-slate-350 text-[15px] md:text-[16px] leading-[1.7]">{{ sec.content | safe }}</div>
+                  {% endif %}
+                </div>
+              </section>
+            {% endif %}
+          {% endfor %}
         </div>
 
         <!-- English View -->
-        <div id="dynamic-content-en" class="space-y-6 text-on-surface-variant body-md leading-relaxed legal-content-rich {{ 'hidden' if ui_language != 'en' else '' }}">
-          <div class="text-center mb-10">
-            <h1 class="headline-lg text-on-surface mb-4 font-bold">
-              <span>User Guide</span>
-            </h1>
-            <p class="body-md text-on-surface-variant max-w-2xl mx-auto">
-              <span>Learn how to use PetAI to identify dog breeds quickly and accurately.</span>
-            </p>
-          </div>
-
-          <!-- Table of Contents / Quick Jump -->
-          <div class="mb-10 p-6 bg-white border border-outline-variant/20 rounded-2xl shadow-sm">
-            <h2 class="text-lg font-bold text-primary mb-4 flex items-center gap-2">
-              <span class="material-symbols-outlined text-[20px]">menu_book</span>
-              <span>Guide Contents</span>
-            </h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 text-sm">
-              {% for sec in active_sections_en %}
-                {% set target_ids = ["intro", "register", "login", "freeplan", "identify", "result", "modes", "upgrade", "history", "stats", "faq", "contact"] %}
-                {% set tid = target_ids[loop.index0] if loop.index0 < 12 else "sec_" ~ loop.index0 %}
-                <a href="#{{ tid }}" class="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors">
-                  <span class="w-1.5 h-1.5 rounded-full bg-primary/60"></span>
-                  <span>{{ sec.title }}</span>
-                </a>
-              {% endfor %}
-            </div>
-          </div>
-
-          <!-- Documentation Content -->
-          <div class="space-y-8 text-on-surface-variant body-md leading-relaxed">
-            {% set target_ids = ["intro", "register", "login", "freeplan", "identify", "result", "modes", "upgrade", "history", "stats", "faq", "contact"] %}
-            {% for sec in active_sections_en %}
-              {% set tid = target_ids[loop.index0] if loop.index0 < 12 else "sec_" ~ loop.index0 %}
-              <div id="{{ tid }}" class="scroll-mt-24 bg-white border border-outline-variant/30 rounded-2xl p-6 shadow-sm">
-                <h3 class="text-xl font-bold text-primary mb-3 flex items-center gap-2">
-                  {% set icon_names = ["info", "person_add", "cloud_upload", "fact_check", "hourglass_empty", "visibility", "history", "upgrade", "contact_support", "tips_and_updates", "warning", "mail"] %}
-                  {% set icon = icon_names[loop.index0] if loop.index0 < 12 else "article" %}
-                  <span class="material-symbols-outlined text-[24px]">{{ icon }}</span>
-                  <span>{{ sec.title }}</span>
-                </h3>
-                <div class="text-on-surface-variant">{{ sec.content | safe }}</div>
-              </div>
-            {% endfor %}
-          </div>
+        <div id="dynamic-content-en" class="space-y-6" {% if ui_language != 'en' %}style="display:none"{% endif %}>
+          {% for sec in active_sections_en %}
+            {% if active_sections_en|length == 1 and not sec.title %}
+              <div class="text-neutral-700 dark:text-slate-350 text-[15px] md:text-[16px] leading-[1.7]">{{ sec.content | safe }}</div>
+            {% else %}
+              {% set icons = ["info", "person_add", "cloud_upload", "fact_check", "hourglass_empty", "visibility", "upgrade", "contact_support", "tips_and_updates", "warning", "mail"] %}
+              {% set icon = icons[loop.index0] if loop.index0 < icons|length else "article" %}
+              <section class="policy-section flex items-start gap-4 pb-6 mb-6 border-b border-outline-variant/10 last:border-b-0 last:pb-0 last:mb-0">
+                <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-primary-container/20 text-primary shrink-0 mt-0.5">
+                  <span class="material-symbols-outlined text-[22px]">{{ icon }}</span>
+                </div>
+                <div class="flex-1">
+                  {% if sec.title %}
+                    <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-2">{{ sec.title }}</h2>
+                  {% endif %}
+                  {% if sec.content %}
+                    <div class="text-neutral-700 dark:text-slate-350 text-[15px] md:text-[16px] leading-[1.7]">{{ sec.content | safe }}</div>
+                  {% endif %}
+                </div>
+              </section>
+            {% endif %}
+          {% endfor %}
         </div>
       </div>
-    </section>
+
+      <!-- Contact Card -->
+      <div class="mt-8 bg-white dark:bg-slate-900 border border-outline-variant/30 rounded-3xl p-8 shadow-sm">
+        <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 pb-6 mb-6 border-b border-outline-variant/10">
+          <div class="flex items-start gap-4">
+            <div class="flex items-center justify-center w-12 h-12 rounded-2xl bg-primary-container/10 text-primary shrink-0">
+              <span class="material-symbols-outlined text-[28px]">support_agent</span>
+            </div>
+            <div>
+              <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-1" data-i18n="supportCardTitle">Cần hỗ trợ thêm?</h3>
+              <p class="text-sm text-neutral-500 dark:text-slate-400" data-i18n="supportCardDesc">Chưa tìm thấy câu trả lời? Đội ngũ PetAI luôn sẵn sàng trợ giúp bạn.</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 flex-wrap sm:flex-nowrap w-full lg:w-auto">
+            <a href="{{ url_for('legal.contact') }}" class="shrink-0 whitespace-nowrap bg-primary text-white hover:bg-primary/90 transition-colors px-5 py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-1.5 shadow-sm" data-i18n="contactSupport">
+              <span class="material-symbols-outlined text-[18px]">support_agent</span>
+              <span>Liên hệ hỗ trợ</span>
+            </a>
+            <a href="mailto:{{ get_config('site_email', 'support@pet.ai') }}" class="shrink-0 whitespace-nowrap border border-outline text-slate-700 dark:text-slate-200 hover:bg-neutral-50 dark:hover:bg-slate-800 transition-colors px-5 py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-1.5" data-i18n="sendEmail">
+              <span class="material-symbols-outlined text-[18px]">mail</span>
+              <span>Gửi email</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-sm">
+          <div class="flex items-start gap-3">
+            <span class="material-symbols-outlined text-primary mt-0.5">mail</span>
+            <div>
+              <span class="block text-xs font-semibold text-neutral-400 uppercase tracking-wider" data-i18n="supportEmailLabel">Email hỗ trợ</span>
+              <a href="mailto:{{ get_config('site_email', 'support@pet.ai') }}" class="text-slate-800 dark:text-slate-200 hover:text-primary transition-colors font-medium break-all">{{ get_config('site_email', 'support@pet.ai') }}</a>
+            </div>
+          </div>
+          <div class="flex items-start gap-3">
+            <span class="material-symbols-outlined text-primary mt-0.5">call</span>
+            <div>
+              <span class="block text-xs font-semibold text-neutral-400 uppercase tracking-wider" data-i18n="supportPhoneLabel">Số điện thoại</span>
+              <span class="text-slate-800 dark:text-slate-200 font-medium">{{ get_config('contact_phone', '0916 416 409') }}</span>
+            </div>
+          </div>
+          <div class="flex items-start gap-3">
+            <span class="material-symbols-outlined text-primary mt-0.5">pin_drop</span>
+            <div>
+              <span class="block text-xs font-semibold text-neutral-400 uppercase tracking-wider" data-i18n="sysLabelContactAddress">Địa chỉ</span>
+              <span class="text-slate-800 dark:text-slate-200 font-medium">
+                <span class="contact-address-vi{% if ui_language == 'en' %} hidden{% endif %}">{{ get_config("contact_address_vi", get_config("contact_address", "P16, Đường số 8, KDC lô 49, Khu đô thị Nam Cần Thơ, Phường Cái Răng, TP. Cần Thơ")) }}</span>
+                <span class="contact-address-en{% if ui_language != 'en' %} hidden{% endif %}">{{ get_config("contact_address_en", get_config("contact_address", "P16, Street 8, Lot 49 residential area, Nam Can Tho Urban Area, Cai Rang District, Can Tho City, Vietnam")) }}</span>
+              </span>
+            </div>
+          </div>
+          <div class="flex items-start gap-3">
+            <span class="material-symbols-outlined text-primary mt-0.5">schedule</span>
+            <div>
+              <span class="block text-xs font-semibold text-neutral-400 uppercase tracking-wider" data-i18n="supportTimeLabel">Thời gian hỗ trợ</span>
+              <span class="text-slate-800 dark:text-slate-200 font-medium">
+                <span class="contact-hours-vi{% if ui_language == 'en' %} hidden{% endif %}">{{ get_config('support_hours_vi', '8:00 – 22:00 mỗi ngày (Kể cả T7, CN)') }}</span>
+                <span class="contact-hours-en{% if ui_language != 'en' %} hidden{% endif %}">{{ get_config('support_hours_en', '8:00 AM – 10:00 PM daily (Including Sat, Sun)') }}</span>
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="mt-6 pt-4 border-t border-outline-variant/10 flex items-center justify-center gap-2 text-xs text-neutral-400">
+          <span class="material-symbols-outlined text-[16px] text-primary">verified_user</span>
+          <span data-i18n="supportDisclaimer">Chúng tôi sẽ phản hồi sớm nhất có thể để hỗ trợ bạn.</span>
+        </div>
+      </div>
+
+    </div>
   </main>
+          {
   <footer class="bg-surface-container-low border-t border-outline-variant/30 px-6 py-12">
     <div class="max-w-container-max mx-auto">
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-10">

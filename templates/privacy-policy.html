@@ -328,94 +328,122 @@
       </div>
     </div>
   </nav>
-  <main class="relative z-10 pt-20">
-    <section class="px-4 md:px-6 w-full py-16 mb-16 max-w-4xl mx-auto dashboard-width">
-      <div id="legal-content-card" class="glass-card p-gutter rounded-3xl bg-surface-container-low border border-outline-variant/30">
-        <h1 class="headline-lg text-on-surface mb-6 font-bold" data-i18n="privacy">
-          <span data-i18n="privacy">Chính sách quyền riêng tư</span>
-        </h1>
+  <main class="relative z-10 pt-24 pb-16">
+    <div class="max-w-4xl mx-auto px-4 md:px-6">
+      
+      <!-- Breadcrumb -->
+      <div class="flex items-center gap-2 text-xs text-on-surface-variant/70 mb-6">
+        <a href="{{ url_for('home.index') }}" class="hover:text-primary transition-colors flex items-center gap-1">
+          <span class="material-symbols-outlined text-[14px]">home</span>
+          <span data-i18n="home">Trang chủ</span>
+        </a>
+        <span class="material-symbols-outlined text-[12px] text-neutral-400">chevron_right</span>
+        <span class="font-medium text-on-surface" data-i18n="privacy">Chính sách quyền riêng tư</span>
+      </div>
+
+      <!-- Page Header -->
+      <div class="flex items-start gap-5 mb-8">
+        <div class="flex items-center justify-center w-16 h-16 rounded-2xl bg-primary-container/10 text-primary shrink-0">
+          <span class="material-symbols-outlined text-[36px]">shield_lock</span>
+        </div>
+        <div>
+          <h1 class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-2" data-i18n="privacy">
+            Chính sách quyền riêng tư
+          </h1>
+          <p class="text-sm md:text-base text-neutral-500 dark:text-slate-400 mb-1" data-i18n="privacySubtitle">
+            Cách PetAI thu thập, sử dụng và bảo vệ dữ liệu của bạn khi sử dụng dịch vụ.
+          </p>
+          <div class="flex items-center gap-1.5 text-xs text-neutral-400">
+            <span class="material-symbols-outlined text-[14px]">calendar_today</span>
+            <span><span data-i18n="lastUpdatedText">Cập nhật lần cuối</span>: 24/06/2026</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Content Card -->
+      <div id="legal-content-card" class="bg-white dark:bg-slate-900 border border-outline-variant/30 rounded-3xl p-6 md:p-8 shadow-sm">
         {% set default_sections_vi = [
           {
-            "title": "1. Giới thiệu về chính sách",
+            "title": "Giới thiệu về chính sách",
             "content": "Chào mừng bạn đến với " ~ get_config('site_name', 'PetAI') ~ ". Chúng tôi cam kết bảo vệ thông tin cá nhân và quyền riêng tư của bạn khi bạn sử dụng dịch vụ của chúng tôi. Chính sách quyền riêng tư này giải thích cách chúng tôi thu thập, sử dụng, lưu trữ và bảo mật dữ liệu của bạn."
           },
           {
-            "title": "2. Thông tin PetAI thu thập",
+            "title": "Thông tin PetAI thu thập",
             "content": "Chúng tôi thu thập các thông tin tài khoản cần thiết để vận hành dịch vụ bao gồm: Họ và tên, Email, Tên đăng nhập và Mật khẩu (mật khẩu được mã hóa an toàn ở phía máy chủ bằng thuật toán bảo mật cao)."
           },
           {
-            "title": "3. Hình ảnh người dùng tải lên",
+            "title": "Hình ảnh người dùng tải lên",
             "content": "Hình ảnh cún cưng do bạn tải lên hệ thống được sử dụng duy nhất cho mục đích nhận diện giống chó bằng công nghệ AI. Chúng tôi không sử dụng hình ảnh hay dữ liệu cá nhân của bạn cho bất kỳ mục đích thương mại ngoài hệ thống nào khác khi chưa được sự đồng ý rõ ràng từ phía bạn."
           },
           {
-            "title": "4. Mục đích sử dụng dữ liệu",
+            "title": "Mục đích sử dụng dữ liệu",
             "content": "Dữ liệu thu thập được sử dụng để cung cấp quyền truy cập dịch vụ, xác thực tài khoản, hỗ trợ kỹ thuật, tối ưu hóa thuật toán nhận diện của mô hình AI qua thời gian và gửi thông tin quan trọng liên quan đến tài khoản."
           },
           {
-            "title": "5. Lưu trữ lịch sử nhận diện",
+            "title": "Lưu trữ lịch sử nhận diện",
             "content": "Hệ thống tự động lưu trữ lịch sử nhận diện giống chó (bao gồm hình ảnh đã tải lên, giống chó dự đoán, độ tin cậy và thời gian nhận diện) để bạn có thể xem lại trong mục Bộ sưu tập hoặc Lịch sử quét. Bạn có toàn quyền xóa các bản ghi lịch sử này bất kỳ lúc nào trong phần Cài đặt."
           },
           {
-            "title": "6. Bảo mật dữ liệu",
+            "title": "Bảo mật dữ liệu",
             "content": "Chúng tôi áp dụng các biện pháp kỹ thuật và tổ chức bảo mật nghiêm ngặt (như truyền tải mã hóa qua giao thức SSL/TLS, lưu trữ dữ liệu an toàn tại hệ thống cơ sở dữ liệu bảo mật cao) để ngăn chặn hành vi truy cập trái phép, tiết lộ hoặc phá hủy dữ liệu của bạn."
           },
           {
-            "title": "7. Chia sẻ dữ liệu với bên thứ ba",
+            "title": "Chia sẻ dữ liệu với bên thứ ba",
             "content": "Chúng tôi tuyệt đối không bán, cho thuê hay chia sẻ thông tin cá nhân của bạn cho bên thứ ba vì mục đích tiếp thị. Dữ liệu chỉ được chia sẻ với các nhà cung cấp dịch vụ hạ tầng cốt lõi đáng tin cậy (như Firebase, Google Analytics) để giúp vận hành hệ thống, hoặc khi có yêu cầu bằng văn bản chính thức từ cơ quan nhà nước có thẩm quyền theo quy định của pháp luật."
           },
           {
-            "title": "8. Quyền của người dùng",
+            "title": "Quyền của người dùng",
             "content": "Bạn có quyền kiểm soát thông tin cá nhân của mình bao gồm: Xem và chỉnh sửa thông tin tài khoản, thay đổi thiết lập lưu trữ lịch sử, và yêu cầu xóa tài khoản vĩnh viễn trực tiếp trong mục Cài đặt. Khi bạn chọn xóa tài khoản, hệ thống sẽ đưa tài khoản vào trạng thái chờ xóa trong 30 ngày trước khi loại bỏ hoàn toàn dữ liệu của bạn khỏi hệ thống chính thức."
           },
           {
-            "title": "9. Giới hạn trách nhiệm về kết quả AI",
+            "title": "Giới hạn trách nhiệm về kết quả AI",
             "content": "Xin lưu ý rằng kết quả nhận diện giống chó từ công nghệ AI của hệ thống chỉ mang tính chất tham khảo dựa trên hình ảnh và độ tương đồng về hình thái học. Kết quả này không phải là xét nghiệm DNA di truyền hoặc kết luận di truyền tuyệt đối và không thay thế cho các chẩn đoán hoặc tư vấn chuyên môn từ bác sĩ thú y."
           },
           {
-            "title": "10. Thông tin liên hệ về quyền riêng tư",
+            "title": "Thông tin liên hệ về quyền riêng tư",
             "content": "Mọi câu hỏi, khiếu nại hoặc yêu cầu liên quan đến Chính sách quyền riêng tư này, vui lòng liên hệ với chúng tôi:<br>• Email hỗ trợ: <a href=\"mailto:" ~ get_config('site_email', 'support@pet.ai') ~ "\" class=\"text-primary hover:underline font-medium\">" ~ get_config('site_email', 'support@pet.ai') ~ "</a><br>• Website: <a href=\"" ~ get_config('contact_website', 'https://pet.ai') ~ "\" class=\"text-primary hover:underline font-medium\" target=\"_blank\" rel=\"noopener noreferrer\">" ~ get_config('contact_website', 'https://pet.ai') ~ "</a><br>• Địa chỉ: " ~ get_config("contact_address_vi", get_config("contact_address", "P16, Đường số 8, KDC lô 49, Khu đô thị Nam Cần Thơ, Phường Cái Răng, TP. Cần Thơ"))
           }
         ] %}
 
         {% set default_sections_en = [
           {
-            "title": "1. Introduction to Privacy Policy",
+            "title": "Introduction to Privacy Policy",
             "content": "Welcome to " ~ get_config('site_name', 'PetAI') ~ ". We are committed to protecting your personal information and privacy when you use our services. This Privacy Policy explains how we collect, use, store, and secure your data."
           },
           {
-            "title": "2. Data PetAI Collects",
+            "title": "Data PetAI Collects",
             "content": "We collect necessary account information to operate our services, including: Full Name, Email Address, Username, and Password (passwords are securely encrypted on the server side using advanced security algorithms)."
           },
           {
-            "title": "3. User Uploaded Images",
+            "title": "User Uploaded Images",
             "content": "Images of dogs uploaded by you are used solely for breed identification via AI technology. We do not use your images or personal data for any external commercial purposes without your explicit consent."
           },
           {
-            "title": "4. Purpose of Data Usage",
+            "title": "Purpose of Data Usage",
             "content": "The collected data is used to provide access to our services, authenticate accounts, provide technical support, optimize the AI breed classification models over time, and send important account-related updates."
           },
           {
-            "title": "5. Scan History Storage",
+            "title": "Scan History Storage",
             "content": "The system automatically stores your dog breed scan history (including uploaded images, predicted breeds, confidence scores, and timestamps) so you can review them in your Collection or Scan History. You have the right to delete these history records at any time in the Settings page."
           },
           {
-            "title": "6. Data Security",
+            "title": "Data Security",
             "content": "We implement strict technical and organizational security measures (such as encrypted data transmission via SSL/TLS, secure database storage) to prevent unauthorized access, disclosure, alteration, or destruction of your data."
           },
           {
-            "title": "7. Third-Party Data Sharing",
+            "title": "Third-Party Data Sharing",
             "content": "We absolutely do not sell, rent, or share your personal information with third parties for marketing purposes. Data is only shared with core infrastructure service providers (like Firebase or Google Analytics) to operate the platform, or when required by official written requests from authorized state agencies under applicable law."
           },
           {
-            "title": "8. User Rights",
+            "title": "User Rights",
             "content": "You have full control over your personal data, including the right to view and update your profile, toggle scan history storage, and request permanent account deletion directly in the Settings page. Upon confirming account deletion, your account enters a 30-day pending state before all your data is permanently removed from our active databases."
           },
           {
-            "title": "9. AI Result Limitations",
+            "title": "AI Result Limitations",
             "content": "Please note that the dog breed recognition results provided by our AI technology are for informational and educational reference based on morphological similarity. These results do not constitute DNA genetic testing or absolute genetic conclusions and should not replace professional veterinary consultation or diagnosis."
           },
           {
-            "title": "10. Privacy Contact Information",
+            "title": "Privacy Contact Information",
             "content": "For any questions, concerns, or requests regarding this Privacy Policy, please reach out to us:<br>• Support Email: <a href=\"mailto:" ~ get_config('site_email', 'support@pet.ai') ~ "\" class=\"text-primary hover:underline font-medium\">" ~ get_config('site_email', 'support@pet.ai') ~ "</a><br>• Website: <a href=\"" ~ get_config('contact_website', 'https://pet.ai') ~ "\" class=\"text-primary hover:underline font-medium\" target=\"_blank\" rel=\"noopener noreferrer\">" ~ get_config('contact_website', 'https://pet.ai') ~ "</a><br>• Address: " ~ get_config("contact_address_en", get_config("contact_address", "P16, Street 8, Lot 49 residential area, Nam Can Tho Urban Area, Cai Rang District, Can Tho City, Vietnam"))
           }
         ] %}
@@ -426,30 +454,120 @@
         {% set active_sections_en = sections_en if sections_en else default_sections_en %}
 
         <!-- Vietnamese View -->
-        <div id="dynamic-content-vi" class="space-y-6 text-neutral-800 dark:text-slate-350 body-md leading-relaxed legal-content-rich {{ 'hidden' if ui_language == 'en' else '' }}">
+        <div id="dynamic-content-vi" class="space-y-6" {% if ui_language == 'en' %}style="display:none"{% endif %}>
           {% for sec in active_sections_vi %}
-            {% if sec.title %}
-              <h2 class="text-xl font-bold text-primary mt-6 mb-2">{{ sec.title }}</h2>
-            {% endif %}
-            {% if sec.content %}
-              <div class="text-neutral-800 dark:text-slate-300 body-md leading-relaxed">{{ sec.content | safe }}</div>
+            {% if active_sections_vi|length == 1 and not sec.title %}
+              <div class="text-neutral-700 dark:text-slate-350 text-[15px] md:text-[16px] leading-[1.7]">{{ sec.content | safe }}</div>
+            {% else %}
+              <section class="policy-section flex items-start gap-4 pb-6 mb-6 border-b border-outline-variant/10 last:border-b-0 last:pb-0 last:mb-0">
+                <div class="policy-number flex items-center justify-center w-8 h-8 rounded-lg bg-primary-container/20 text-primary font-bold text-sm shrink-0 mt-0.5">
+                  {{ loop.index }}
+                </div>
+                <div class="flex-1">
+                  {% if sec.title %}
+                    <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-2">{{ sec.title }}</h2>
+                  {% endif %}
+                  {% if sec.content %}
+                    <div class="text-neutral-700 dark:text-slate-350 text-[15px] md:text-[16px] leading-[1.7]">{{ sec.content | safe }}</div>
+                  {% endif %}
+                </div>
+              </section>
             {% endif %}
           {% endfor %}
         </div>
 
         <!-- English View -->
-        <div id="dynamic-content-en" class="space-y-6 text-neutral-800 dark:text-slate-350 body-md leading-relaxed legal-content-rich {{ 'hidden' if ui_language != 'en' else '' }}">
+        <div id="dynamic-content-en" class="space-y-6" {% if ui_language != 'en' %}style="display:none"{% endif %}>
           {% for sec in active_sections_en %}
-            {% if sec.title %}
-              <h2 class="text-xl font-bold text-primary mt-6 mb-2">{{ sec.title }}</h2>
-            {% endif %}
-            {% if sec.content %}
-              <div class="text-neutral-800 dark:text-slate-300 body-md leading-relaxed">{{ sec.content | safe }}</div>
+            {% if active_sections_en|length == 1 and not sec.title %}
+              <div class="text-neutral-700 dark:text-slate-350 text-[15px] md:text-[16px] leading-[1.7]">{{ sec.content | safe }}</div>
+            {% else %}
+              <section class="policy-section flex items-start gap-4 pb-6 mb-6 border-b border-outline-variant/10 last:border-b-0 last:pb-0 last:mb-0">
+                <div class="policy-number flex items-center justify-center w-8 h-8 rounded-lg bg-primary-container/20 text-primary font-bold text-sm shrink-0 mt-0.5">
+                  {{ loop.index }}
+                </div>
+                <div class="flex-1">
+                  {% if sec.title %}
+                    <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-2">{{ sec.title }}</h2>
+                  {% endif %}
+                  {% if sec.content %}
+                    <div class="text-neutral-700 dark:text-slate-350 text-[15px] md:text-[16px] leading-[1.7]">{{ sec.content | safe }}</div>
+                  {% endif %}
+                </div>
+              </section>
             {% endif %}
           {% endfor %}
         </div>
       </div>
-    </section>
+
+      <!-- Contact Card / Support Section -->
+      <div class="mt-8 bg-white dark:bg-slate-900 border border-outline-variant/30 rounded-3xl p-8 shadow-sm">
+        <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 pb-6 mb-6 border-b border-outline-variant/10">
+          <div class="flex items-start gap-4">
+            <div class="flex items-center justify-center w-12 h-12 rounded-2xl bg-primary-container/10 text-primary shrink-0">
+              <span class="material-symbols-outlined text-[28px]">support_agent</span>
+            </div>
+            <div>
+              <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-1" data-i18n="supportCardTitle">Cần hỗ trợ?</h3>
+              <p class="text-sm text-neutral-500 dark:text-slate-400" data-i18n="supportCardDesc">Nếu bạn cần hỗ trợ hoặc có thắc mắc về chính sách quyền riêng tư, hãy liên hệ với đội ngũ PetAI.</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 flex-wrap sm:flex-nowrap w-full lg:w-auto">
+            <a href="{{ url_for('legal.contact') }}" class="shrink-0 whitespace-nowrap bg-primary text-white hover:bg-primary/90 transition-colors px-5 py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-1.5 shadow-sm" data-i18n="contactSupport">
+              <span class="material-symbols-outlined text-[18px]">support_agent</span>
+              <span>Liên hệ hỗ trợ</span>
+            </a>
+            <a href="mailto:{{ get_config('site_email', 'support@pet.ai') }}" class="shrink-0 whitespace-nowrap border border-outline text-slate-700 dark:text-slate-200 hover:bg-neutral-50 dark:hover:bg-slate-800 transition-colors px-5 py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-1.5" data-i18n="sendEmail">
+              <span class="material-symbols-outlined text-[18px]">mail</span>
+              <span>Gửi email</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-sm">
+          <div class="flex items-start gap-3">
+            <span class="material-symbols-outlined text-primary mt-0.5">mail</span>
+            <div>
+              <span class="block text-xs font-semibold text-neutral-400 uppercase tracking-wider" data-i18n="supportEmailLabel">Email hỗ trợ</span>
+              <a href="mailto:{{ get_config('site_email', 'support@pet.ai') }}" class="text-slate-800 dark:text-slate-200 hover:text-primary transition-colors font-medium break-all">{{ get_config('site_email', 'support@pet.ai') }}</a>
+            </div>
+          </div>
+          <div class="flex items-start gap-3">
+            <span class="material-symbols-outlined text-primary mt-0.5">call</span>
+            <div>
+              <span class="block text-xs font-semibold text-neutral-400 uppercase tracking-wider" data-i18n="supportPhoneLabel">Số điện thoại</span>
+              <span class="text-slate-800 dark:text-slate-200 font-medium">{{ get_config('contact_phone', '0916 416 409') }}</span>
+            </div>
+          </div>
+          <div class="flex items-start gap-3">
+            <span class="material-symbols-outlined text-primary mt-0.5">pin_drop</span>
+            <div>
+              <span class="block text-xs font-semibold text-neutral-400 uppercase tracking-wider" data-i18n="sysLabelContactAddress">Địa chỉ</span>
+              <span class="text-slate-800 dark:text-slate-200 font-medium">
+                <span class="contact-address-vi{% if ui_language == 'en' %} hidden{% endif %}">{{ get_config("contact_address_vi", get_config("contact_address", "P16, Đường số 8, KDC lô 49, Khu đô thị Nam Cần Thơ, Phường Cái Răng, TP. Cần Thơ")) }}</span>
+                <span class="contact-address-en{% if ui_language != 'en' %} hidden{% endif %}">{{ get_config("contact_address_en", get_config("contact_address", "P16, Street 8, Lot 49 residential area, Nam Can Tho Urban Area, Cai Rang District, Can Tho City, Vietnam")) }}</span>
+              </span>
+            </div>
+          </div>
+          <div class="flex items-start gap-3">
+            <span class="material-symbols-outlined text-primary mt-0.5">schedule</span>
+            <div>
+              <span class="block text-xs font-semibold text-neutral-400 uppercase tracking-wider" data-i18n="supportTimeLabel">Thời gian hỗ trợ</span>
+              <span class="text-slate-800 dark:text-slate-200 font-medium">
+                <span class="contact-hours-vi{% if ui_language == 'en' %} hidden{% endif %}">{{ get_config('support_hours_vi', '8:00 – 22:00 mỗi ngày (Kể cả T7, CN)') }}</span>
+                <span class="contact-hours-en{% if ui_language != 'en' %} hidden{% endif %}">{{ get_config('support_hours_en', '8:00 AM – 10:00 PM daily (Including Sat, Sun)') }}</span>
+              </span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="mt-6 pt-4 border-t border-outline-variant/10 flex items-center justify-center gap-2 text-xs text-neutral-400">
+          <span class="material-symbols-outlined text-[16px] text-primary">verified_user</span>
+          <span data-i18n="supportDisclaimer">Chúng tôi sẽ phản hồi sớm nhất có thể để hỗ trợ bạn.</span>
+        </div>
+      </div>
+
+    </div>
   </main>
   <footer class="bg-surface-container-low border-t border-outline-variant/30 px-6 py-12">
     <div class="max-w-container-max mx-auto">
