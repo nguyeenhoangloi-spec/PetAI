@@ -92,11 +92,9 @@ def dashboard():
             "ad_unlocks_remaining": quota.get("ad_unlocks_remaining", 0)
         }
 
-        recent_predictions_count = PredictionHistory.count_by_user_in_range(
+        recent_predictions_count = PredictionHistory.count_by_user(
             conn,
             user_id,
-            start_at,
-            end_at,
         )
         avg_confidence = PredictionHistory.avg_confidence_by_user_in_range(
             conn,
@@ -109,11 +107,9 @@ def dashboard():
             page = total_pages
 
         offset = (page - 1) * PREDICTIONS_PER_PAGE
-        recent_predictions = PredictionHistory.get_by_user_in_range(
+        recent_predictions = PredictionHistory.get_by_user(
             conn,
             user_id,
-            start_at,
-            end_at,
             limit=PREDICTIONS_PER_PAGE,
             offset=offset,
         )
