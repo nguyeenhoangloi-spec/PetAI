@@ -699,6 +699,7 @@
             <button
               id="exportReportBtn"
               type="button"
+              onclick="openStatsExportModal()"
               class="bg-surface-container-lowest dark:bg-slate-900 text-on-surface dark:text-slate-200 border border-outline-variant/60 dark:border-slate-800 hover:border-primary hover:text-primary dark:hover:text-blue-400 px-4 py-2.5 rounded-lg label-sm shadow-sm hover:shadow-md transition-all flex items-center gap-2 font-semibold cursor-pointer"
             >
               <span class="material-symbols-outlined text-[18px]">download</span>
@@ -1784,70 +1785,6 @@
         }
       });
     </script>
-
-    <!-- CSV Export script -->
-    <script>
-      (function () {
-        const exportBtn = document.getElementById("exportReportBtn");
-        if (exportBtn) {
-          exportBtn.addEventListener("click", function () {
-            const stats = document.querySelectorAll("[data-counter]");
-            const totalPredictions = stats[0]
-              ? stats[0].getAttribute("data-counter") || "0"
-              : "0";
-            const avgConfidence = stats[1]
-              ? stats[1].getAttribute("data-counter") || "0"
-              : "0";
-            const uniqueBreeds = stats[2]
-              ? stats[2].getAttribute("data-counter") || "0"
-              : "0";
-            const recentActivity = stats[3]
-              ? stats[3].getAttribute("data-counter") || "0"
-              : "0";
-
-            let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
-            csvContent += "BÁO CÁO THỐNG KÊ NHẬN DIỆN PETAI\n";
-            csvContent += "Thời gian xuất: ," + new Date().toLocaleString("vi-VN") + "\n\n";
-            csvContent += "CHỈ SỐ TỔNG QUAN\n";
-            csvContent += "Tổng lượt nhận diện," + totalPredictions + "\n";
-            csvContent += "Độ tin cậy trung bình," + avgConfidence + "%\n";
-            csvContent += "Số giống đã khám phá," + uniqueBreeds + "\n";
-            csvContent += "Lượt nhận diện gần nhất," + recentActivity + "\n\n";
-
-            csvContent += "DANH SÁCH GIỐNG CHÓ PHỔ BIẾN NHẤT\n";
-            csvContent += "Hạng,Giống chó,Số lần nhận diện\n";
-
-            const topBreedsEl = document.getElementById("topBreedsData");
-            let topBreeds = [];
-            if (topBreedsEl) {
-              try {
-                topBreeds = JSON.parse(topBreedsEl.textContent || "[]");
-              } catch (e) {}
-            }
-
-            if (topBreeds && topBreeds.length > 0) {
-              topBreeds.forEach((item, index) => {
-                csvContent += index + 1 + ',"' + item.breed + '",' + item.count + "\n";
-              });
-            } else {
-              csvContent += ",Chưa có dữ liệu,\n";
-            }
-
-            const encodedUri = encodeURI(csvContent);
-            const link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute(
-              "download",
-              "BaoCaoThongKe_PetAI_" + new Date().toISOString().slice(0, 10) + ".csv",
-            );
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-          });
-        }
-      })();
-    </script>
-
     <!-- Chart.js setup with Light/Dark and Bilingual support -->
     <script>
       (function () {
@@ -2155,8 +2092,355 @@
         });
       })();
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="{{ url_for('static', filename='js/toasts.js') }}"></script>
     <script src="{{ url_for('static', filename='js/i18n.js') }}?v=23"></script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script>
+      console.log("[PetAI Debug] statistics.html script loaded!");
+      // ── Statistics Export Modal ──
+      function openStatsExportModal() {
+        const modal = document.getElementById("statsExportModal");
+
+        // Build period label from current URL params
+        const params = new URLSearchParams(window.location.search);
+        const days = params.get("days") || "30";
+        const startDate = params.get("start_date") || "";
+        const endDate = params.get("end_date") || "";
+        const labelEl = document.getElementById("statsExportPeriodLabel");
+        if (days === "7") labelEl.textContent = "Khoảng thời gian: 7 ngày qua";
+        else if (days === "30") labelEl.textContent = "Khoảng thời gian: 30 ngày qua";
+        else if (days === "90") labelEl.textContent = "Khoảng thời gian: 90 ngày qua";
+        else if (days === "0") labelEl.textContent = "Khoảng thời gian: Toàn bộ";
+        else if (days === "custom" && startDate && endDate)
+          labelEl.textContent = "Khoảng thời gian: " + startDate.replace(/-/g,"/") + " – " + endDate.replace(/-/g,"/");
+        else labelEl.textContent = "Khoảng thời gian: 30 ngày qua";
+
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+        setTimeout(() => {
+          modal.querySelector(".max-w-md").classList.remove("scale-95");
+          modal.querySelector(".max-w-md").classList.add("scale-100");
+        }, 10);
+      }
+
+      function closeStatsExportModal() {
+        const modal = document.getElementById("statsExportModal");
+        modal.querySelector(".max-w-md").classList.remove("scale-100");
+        modal.querySelector(".max-w-md").classList.add("scale-95");
+        setTimeout(() => {
+          modal.classList.remove("flex");
+          modal.classList.add("hidden");
+        }, 150);
+      }
+
+      window.addEventListener("click", function(e) {
+        const modal = document.getElementById("statsExportModal");
+        if (e.target === modal) closeStatsExportModal();
+      });
+
+      function triggerStatsExport() {
+        const fmt = document.querySelector('input[name="statsExportFormat"]:checked').value;
+        console.log("[PetAI Debug] triggerStatsExport() called with format:", fmt);
+        const params = new URLSearchParams(window.location.search);
+        const days = params.get("days") || "30";
+        const startDate = params.get("start_date") || "";
+        const endDate = params.get("end_date") || "";
+
+        closeStatsExportModal();
+
+        if (fmt === "pdf") {
+          const contentEl = document.getElementById("content-area");
+          if (!contentEl) {
+            if (typeof showToast !== "undefined") showToast("Không thể tạo PDF.", "error");
+            return;
+          }
+
+          if (typeof showToast !== "undefined") showToast("Đang tạo file PDF...", "info");
+
+          const runPdfExport = () => {
+            const opt = {
+              margin: [15, 15, 15, 15],
+              filename: "baocao_thongke_petai.pdf",
+              image: { type: "jpeg", quality: 0.98 },
+              html2canvas: { 
+                scale: 2, 
+                useCORS: true, 
+                logging: false,
+                scrollX: 0,
+                scrollY: 0,
+                onclone: function (clonedDoc) {
+                  // 1. Tìm phần tử content-area trong bản sao clone
+                  const cloneContent = clonedDoc.getElementById("content-area");
+                  if (cloneContent) {
+                    // Thêm class đánh dấu in ấn để áp dụng style CSS
+                    cloneContent.classList.add("is-printing-pdf");
+
+                    // Tự động điều chỉnh màu nền và màu chữ theo theme hiện tại trong bản in PDF
+                    const isDark = document.documentElement.classList.contains("dark");
+                    cloneContent.style.backgroundColor = isDark ? "#0f172a" : "#ffffff";
+                    cloneContent.style.color = isDark ? "#f8fafc" : "#0f172a";
+                    cloneContent.style.padding = "30px";
+                    cloneContent.style.borderRadius = "0px";
+
+                    // 2. Loại bỏ các nút bấm và bộ lọc (parent div của nút exportReportBtn)
+                    const exportBtn = cloneContent.querySelector("#exportReportBtn");
+                    if (exportBtn && exportBtn.parentElement) {
+                      exportBtn.parentElement.remove();
+                    }
+
+                    // Loại bỏ tất cả các liên kết điều hướng (như Xem tất cả, Phân tích sâu)
+                    cloneContent.querySelectorAll("a[href*='/history']").forEach(el => el.remove());
+
+                    // 3. Loại bỏ cột "Thao tác" (cột cuối cùng) khỏi bảng khi in ấn
+                    cloneContent.querySelectorAll("table tr").forEach(tr => {
+                      if (tr.cells && tr.cells.length > 4) {
+                        tr.deleteCell(-1); // Xóa cell cuối
+                      }
+                    });
+
+                    // 4. Thay thế các canvas biểu đồ bằng ảnh tĩnh (Base64) lấy từ canvas thực tế
+                    const chartIds = ["trendChart", "breedDonutChart", "confBarChart"];
+                    chartIds.forEach(id => {
+                      const realCanvas = document.getElementById(id);
+                      const cloneCanvas = cloneContent.querySelector("#" + id);
+                      if (realCanvas && cloneCanvas) {
+                        const img = document.createElement("img");
+                        try {
+                          img.src = realCanvas.toDataURL("image/png");
+                          if (id === "breedDonutChart") {
+                            img.style.width = "180px";
+                            img.style.height = "180px";
+                            img.style.objectFit = "contain";
+                            img.style.margin = "0 auto";
+                          } else {
+                            img.style.width = "100%";
+                            img.style.height = "320px";
+                            img.style.objectFit = "contain";
+                          }
+                          img.style.display = "block";
+                          cloneCanvas.parentNode.replaceChild(img, cloneCanvas);
+                        } catch (e) {
+                          console.error("Lỗi chuyển đổi canvas " + id + " sang ảnh:", e);
+                        }
+                      }
+                    });
+                  }
+
+                  // 5. Tiêm các quy tắc CSS chuyên dụng vào head của document clone
+                  const styleOverride = clonedDoc.createElement("style");
+                  styleOverride.innerHTML = `
+                    /* Tránh chia cắt các thẻ/bảng giữa chừng khi chuyển trang */
+                    .is-printing-pdf .stat-card, 
+                    .is-printing-pdf .bg-surface-container-lowest,
+                    .is-printing-pdf section, 
+                    .is-printing-pdf table, 
+                    .is-printing-pdf tr, 
+                    .is-printing-pdf tbody { 
+                      break-inside: avoid !important; 
+                      page-break-inside: avoid !important; 
+                    }
+                    
+                    /* 1. Thiết lập 4 thẻ KPI thành lưới 2x2 cân đối */
+                    .is-printing-pdf section[class*='lg:grid-cols-4'] { 
+                      grid-template-columns: repeat(2, minmax(0, 1fr)) !important; 
+                      gap: 16px !important; 
+                      display: grid !important;
+                    }
+                    
+                    /* 2. Thiết lập Biểu đồ Xu hướng & Phân bố độ tin cậy xếp chồng dọc (full-width) */
+                    .is-printing-pdf section[class*='lg:grid-cols-3'] { 
+                      grid-template-columns: repeat(1, minmax(0, 1fr)) !important; 
+                      gap: 24px !important; 
+                      display: grid !important;
+                    }
+                    .is-printing-pdf section[class*='lg:grid-cols-3'] > div { 
+                      grid-column: span 1 / span 1 !important; 
+                    }
+                    
+                    /* 3. Tái cấu trúc Sub-Analysis (Top 5 giống, Donut, Insights) */
+                    .is-printing-pdf section[class*='md:grid-cols-12'] { 
+                      grid-template-columns: repeat(12, minmax(0, 1fr)) !important; 
+                      gap: 20px !important; 
+                      display: grid !important;
+                    }
+                    .is-printing-pdf section[class*='md:grid-cols-12'] > div:nth-child(1) { 
+                      grid-column: span 12 / span 12 !important; 
+                    }
+                    .is-printing-pdf section[class*='md:grid-cols-12'] > div:nth-child(2) { 
+                      grid-column: span 6 / span 6 !important; 
+                    }
+                    .is-printing-pdf section[class*='md:grid-cols-12'] > div:nth-child(3) { 
+                      grid-column: span 6 / span 6 !important; 
+                    }
+                    
+                    /* 4. Mở rộng chiều cao danh sách chú thích biểu đồ Donut để không bị ẩn/mất chữ */
+                    .is-printing-pdf .custom-scrollbar { 
+                      max-height: none !important; 
+                      overflow: visible !important; 
+                    }
+                  `;
+                  clonedDoc.head.appendChild(styleOverride);
+                }
+              },
+              jsPDF: { unit: "mm", format: "a4", orientation: "portrait" }
+            };
+
+            // Chờ dựng layout ổn định (khoảng 800ms) trước khi chụp PDF
+            setTimeout(() => {
+              html2pdf()
+                .from(contentEl)
+                .set(opt)
+                .save()
+                .then(() => {
+                  if (typeof showToast !== "undefined") showToast("Xuất PDF thành công!", "success");
+                })
+                .catch(err => {
+                  console.error("Lỗi xuất PDF:", err);
+                  if (typeof showToast !== "undefined") showToast("Gặp sự cố khi tạo PDF.", "error");
+                });
+            }, 800);
+          };
+
+          // Tải động html2pdf.js từ CDN nếu chưa được định nghĩa (do chuyển trang PJAX)
+          if (typeof html2pdf === "undefined") {
+            const script = document.createElement("script");
+            script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js";
+            script.onload = () => {
+              runPdfExport();
+            };
+            script.onerror = () => {
+              if (typeof showToast !== "undefined") showToast("Không thể tải thư viện xuất PDF.", "error");
+            };
+            document.head.appendChild(script);
+          } else {
+            runPdfExport();
+          }
+
+          return;
+        }
+
+        // Excel / CSV: call backend route
+        const exportUrl = new URL("/statistics/export", window.location.origin);
+        exportUrl.searchParams.set("format", fmt);
+        exportUrl.searchParams.set("days", days);
+        if (startDate) exportUrl.searchParams.set("start_date", startDate);
+        if (endDate) exportUrl.searchParams.set("end_date", endDate);
+
+        if (typeof showToast !== "undefined") showToast("Đang chuẩn bị file...", "info");
+
+        // Dùng fetch() + Blob URL - hoàn toàn không trigger navigation event hay PJAX
+        const btn = document.getElementById("statsExportDownloadBtn");
+        if (btn) { btn.disabled = true; btn.style.opacity = "0.6"; }
+
+        fetch(exportUrl.toString(), { credentials: "same-origin" })
+          .then(function(response) {
+            if (!response.ok) throw new Error("Export failed: " + response.status);
+            // Lấy filename từ Content-Disposition header nếu có
+            const disposition = response.headers.get("Content-Disposition") || "";
+            const match = disposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+            const filename = match ? match[1].replace(/['"]/g, "") : ("thongke_petai." + fmt);
+            return response.blob().then(function(blob) { return { blob: blob, filename: filename }; });
+          })
+          .then(function(data) {
+            const blobUrl = URL.createObjectURL(data.blob);
+            const a = document.createElement("a");
+            a.href = blobUrl;
+            a.download = data.filename;
+            // Không appendChild - tránh PJAX, dùng dispatchEvent thay a.click()
+            document.body.appendChild(a);
+            a.dispatchEvent(new MouseEvent("click", { bubbles: false, cancelable: false }));
+            document.body.removeChild(a);
+            setTimeout(function() { URL.revokeObjectURL(blobUrl); }, 2000);
+            if (typeof showToast !== "undefined") showToast("Tải file thành công!", "success");
+          })
+          .catch(function(err) {
+            console.error("Export error:", err);
+            if (typeof showToast !== "undefined") showToast("Xuất file thất bại. Vui lòng thử lại.", "error");
+          })
+          .finally(function() {
+            if (btn) { btn.disabled = false; btn.style.opacity = ""; }
+          });
+      }
+    </script>
+    <!-- ── Statistics Export Modal ── -->
+    <div
+      id="statsExportModal"
+      class="fixed inset-0 z-[1100] hidden items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm transition-all duration-300"
+    >
+      <div
+        class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl max-w-md w-full border border-outline-variant/30 dark:border-slate-800 overflow-hidden shadow-2xl transition-transform transform scale-95 duration-300 p-6 flex flex-col gap-5 text-left text-slate-850 dark:text-slate-100"
+      >
+        <!-- Header -->
+        <div class="flex items-center justify-between border-b border-slate-200/60 dark:border-slate-800 pb-3">
+          <h3 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary dark:text-blue-400">bar_chart</span>
+            <span>Xuất báo cáo thống kê</span>
+          </h3>
+          <button
+            type="button"
+            onclick="closeStatsExportModal()"
+            class="w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center text-slate-500 dark:text-slate-400 transition-colors cursor-pointer"
+          >
+            <span class="material-symbols-outlined text-[18px]">close</span>
+          </button>
+        </div>
+
+        <!-- Period info -->
+        <div class="flex items-center gap-2 px-3 py-2 bg-blue-50 dark:bg-blue-950/30 rounded-lg border border-blue-100 dark:border-blue-900/40 text-xs text-blue-700 dark:text-blue-300">
+          <span class="material-symbols-outlined text-[16px]">calendar_today</span>
+          <span id="statsExportPeriodLabel">Đang tải khoảng thời gian...</span>
+        </div>
+
+        <!-- Format selection -->
+        <div class="space-y-2">
+          <label class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">Định dạng xuất tệp</label>
+          <div class="grid grid-cols-3 gap-2.5">
+            <label class="flex flex-col items-center justify-center p-3 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/60 cursor-pointer transition-all text-center gap-1.5">
+              <input type="radio" name="statsExportFormat" value="xlsx" checked class="w-3.5 h-3.5 text-primary dark:text-blue-500 focus:ring-0">
+              <div class="text-[11px]">
+                <span class="font-bold text-slate-900 dark:text-white block">Excel</span>
+                <span class="text-[9px] text-slate-450 dark:text-slate-500">.xlsx</span>
+              </div>
+            </label>
+            <label class="flex flex-col items-center justify-center p-3 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/60 cursor-pointer transition-all text-center gap-1.5">
+              <input type="radio" name="statsExportFormat" value="csv" class="w-3.5 h-3.5 text-primary dark:text-blue-500 focus:ring-0">
+              <div class="text-[11px]">
+                <span class="font-bold text-slate-900 dark:text-white block">CSV</span>
+                <span class="text-[9px] text-slate-450 dark:text-slate-500">.csv</span>
+              </div>
+            </label>
+            <label class="flex flex-col items-center justify-center p-3 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/60 cursor-pointer transition-all text-center gap-1.5">
+              <input type="radio" name="statsExportFormat" value="pdf" class="w-3.5 h-3.5 text-primary dark:text-blue-500 focus:ring-0">
+              <div class="text-[11px]">
+                <span class="font-bold text-slate-900 dark:text-white block">PDF</span>
+                <span class="text-[9px] text-slate-450 dark:text-slate-500">.pdf</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex items-center gap-3 border-t border-slate-200/60 dark:border-slate-800 pt-4 mt-1">
+          <button
+            type="button"
+            onclick="closeStatsExportModal()"
+            class="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-350 font-semibold rounded-lg text-xs transition-colors cursor-pointer text-center"
+          >
+            Hủy
+          </button>
+          <button
+            type="button"
+            id="statsExportDownloadBtn"
+            onclick="triggerStatsExport()"
+            class="flex-1 py-2.5 bg-primary hover:bg-primary/95 text-white font-semibold rounded-lg text-xs transition-colors cursor-pointer shadow-sm text-center flex items-center justify-center gap-2"
+          >
+            <span class="material-symbols-outlined text-[16px]">download</span>
+            <span>Tải file về</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
   </body>
 </html>

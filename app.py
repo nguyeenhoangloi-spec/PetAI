@@ -13,7 +13,6 @@ from connect import get_connection
 from pymysql.cursors import DictCursor
 from werkzeug.security import generate_password_hash
 
-
 def _load_dotenv_if_present(path: str = ".env") -> None:
     """Load simple KEY=VALUE pairs into os.environ if not already set.
 

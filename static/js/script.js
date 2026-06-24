@@ -407,8 +407,16 @@ document.addEventListener("DOMContentLoaded", function () {
     const isInternal = absoluteUrl.startsWith(window.location.origin);
     if (!isInternal) return;
 
-    // Check if path uses the sidebar dashboard template layout
     const relativePath = absoluteUrl.replace(window.location.origin, "");
+
+    // Skip export/download endpoints — they return files, not HTML pages
+    if (relativePath.startsWith("/statistics/export") ||
+        relativePath.startsWith("/history/export") ||
+        relativePath.startsWith("/history/print")) {
+      return;
+    }
+
+    // Check if path uses the sidebar dashboard template layout
     const isPjaxRoute = relativePath === "/" ||
       relativePath.startsWith("/dashboard") ||
       relativePath.startsWith("/history") ||
@@ -517,6 +525,8 @@ document.addEventListener("DOMContentLoaded", function () {
       const newMetaCsrf = doc.querySelector('meta[name="csrf-token"]');
       const newDeleteConfirmModal = doc.querySelector("#deleteConfirmModal");
       const newExportModal = doc.querySelector("#exportModal");
+      const newStatsExportModal = doc.querySelector("#statsExportModal");
+      const newOrderDetailModal = doc.querySelector("#orderDetailModal");
 
       const updateDOM = () => {
 
@@ -702,6 +712,26 @@ document.addEventListener("DOMContentLoaded", function () {
           document.body.appendChild(newExportModal);
         } else if (currentExportModal) {
           currentExportModal.remove();
+        }
+
+        // 4.687 Update statsExportModal if present (statistics page export modal)
+        const currentStatsExportModal = document.getElementById("statsExportModal");
+        if (currentStatsExportModal && newStatsExportModal) {
+          currentStatsExportModal.parentNode.replaceChild(newStatsExportModal, currentStatsExportModal);
+        } else if (newStatsExportModal) {
+          document.body.appendChild(newStatsExportModal);
+        } else if (currentStatsExportModal) {
+          currentStatsExportModal.remove();
+        }
+
+        // 4.688 Update orderDetailModal if present (order confirmations page drawer modal)
+        const currentOrderDetailModal = document.getElementById("orderDetailModal");
+        if (currentOrderDetailModal && newOrderDetailModal) {
+          currentOrderDetailModal.parentNode.replaceChild(newOrderDetailModal, currentOrderDetailModal);
+        } else if (newOrderDetailModal) {
+          document.body.appendChild(newOrderDetailModal);
+        } else if (currentOrderDetailModal) {
+          currentOrderDetailModal.remove();
         }
 
         // 4.67 Sync body dataset attributes
