@@ -831,8 +831,10 @@ def save_system_config():
             SystemConfig.set(conn, "contact_address_en", address_en, "Địa chỉ liên hệ (Tiếng Anh)")
             # Backward compatibility fallback
             SystemConfig.set(conn, "contact_address", address_vi, "Địa chỉ liên hệ")
-        if "contact_fb" in request.form:
-            SystemConfig.set(conn, "contact_fb", request.form.get("contact_fb", "").strip(), "Facebook liên hệ")
+        if "contact_website" in request.form:
+            SystemConfig.set(conn, "contact_website", request.form.get("contact_website", "").strip(), "Website liên hệ")
+        elif "contact_fb" in request.form:
+            SystemConfig.set(conn, "contact_website", request.form.get("contact_fb", "").strip(), "Website liên hệ")
         if "default_lang" in request.form:
             SystemConfig.set(conn, "default_lang", request.form.get("default_lang", "").strip(), "Ngôn ngữ mặc định")
         if "default_theme" in request.form:
