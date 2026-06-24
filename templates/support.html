@@ -204,7 +204,22 @@
         padding-top: 60px !important;
       }
     }
-  </style>
+  
+    #topNavbar.navbar-scrolled {
+      background-color: rgba(255, 255, 255, 0.8) !important;
+      backdrop-filter: blur(12px) !important;
+      -webkit-backdrop-filter: blur(12px) !important;
+      border-bottom-color: rgba(0, 0, 0, 0.05) !important;
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
+    }
+    html.dark #topNavbar.navbar-scrolled {
+      background-color: rgba(15, 23, 42, 0.8) !important;
+      backdrop-filter: blur(12px) !important;
+      -webkit-backdrop-filter: blur(12px) !important;
+      border-bottom-color: rgba(255, 255, 255, 0.05) !important;
+      box-shadow: 0 4px 35px rgba(0, 0, 0, 0.2);
+    }
+</style>
   <script id="tailwind-config">
     tailwind.config = {
       darkMode: "class",
@@ -329,13 +344,14 @@
   <div class="aura-glow bg-primary-container w-[600px] h-[600px] -top-48 -left-48"></div>
   <div class="aura-glow bg-secondary-container w-[500px] h-[500px] top-1/2 -right-24"></div>
     <!-- TopNavBar -->
-  <nav
-    class="fixed top-0 w-full z-50 bg-surface/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-outline-variant/30 dark:border-slate-800 font-['Inter'] antialiased nav-reduce-height">
-    <div class="flex justify-between items-center w-full px-4 md:px-6 h-16">
-      <div class="flex items-center gap-gutter">
-        <a href="{{ url_for('home.index') }}" class="inline-flex items-center gap-0">
-          <img alt="PetAI New Logo" class="w-auto h-10 md:h-12" src="{{ url_for('static', filename='images/logo.png') }}">
-          <span class="ml-0 text-lg md:text-2xl font-semibold text-primary">{{ get_config('site_name', 'PetAI') }}</span>
+  <nav id="topNavbar"
+    class="fixed top-0 w-full z-50 border-b border-transparent font-['Inter'] antialiased transition-all duration-300">
+    <div class="flex items-center w-full px-5 md:px-7 h-20">
+      <!-- Left: Logo -->
+      <div class="flex items-center">
+        <a href="{{ url_for('home.index') }}" class="inline-flex items-center gap-2 hover:opacity-90 transition-opacity">
+          <img alt="PetAI New Logo" class="w-auto h-9 md:h-10 animate-fade-in" src="{{ url_for('static', filename='images/logo.png') }}">
+          <span class="text-xl md:text-2xl font-bold text-primary tracking-tight">{{ get_config('site_name', 'PetAI') }}</span>
         </a>
       </div>
     </div>
@@ -724,6 +740,21 @@
   </script>
   <script src="{{ url_for('static', filename='js/i18n.js') }}?v=16"></script>
   <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+  <script>
+    (function () {
+      const navbar = document.getElementById("topNavbar");
+      if (!navbar) return;
+      const handleScroll = () => {
+        if (window.scrollY > 20) {
+          navbar.classList.add("navbar-scrolled");
+        } else {
+          navbar.classList.remove("navbar-scrolled");
+        }
+      };
+      window.addEventListener("scroll", handleScroll);
+      handleScroll();
+    })();
+  </script>
     <script>
       document.body.style.opacity = "1";
     </script>
