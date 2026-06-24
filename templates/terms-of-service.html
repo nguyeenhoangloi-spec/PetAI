@@ -53,10 +53,18 @@
   <style>
     body {
       background-color: #f9f9ff;
-      opacity: 0;
-      transition: opacity 0.15s ease-in;
       color: #181c22;
       overflow-x: hidden;
+    }
+
+    html.i18n-loading body {
+      visibility: hidden !important;
+      opacity: 0 !important;
+    }
+    html.ready body {
+      visibility: visible;
+      opacity: 1;
+      transition: opacity 0.15s ease-in;
     }
 
     .aura-glow {
@@ -339,100 +347,120 @@
         <h1 class="headline-lg text-on-surface mb-6 font-bold" data-i18n="terms">
           <span data-i18n="terms">Điều khoản sử dụng</span>
         </h1>
+        {% set default_sections_vi = [
+          {
+            "title": "1. Chấp nhận điều khoản",
+            "content": "Bằng việc truy cập, đăng ký tài khoản hoặc sử dụng bất kỳ dịch vụ nào trên hệ thống " ~ get_config('site_name', 'PetAI') ~ ", bạn đồng ý chịu sự ràng buộc bởi các Điều khoản dịch vụ này cùng với Chính sách quyền riêng tư của chúng tôi. Nếu bạn không đồng ý với bất kỳ phần nào của các điều khoản này, vui lòng ngừng sử dụng dịch vụ ngay lập tức."
+          },
+          {
+            "title": "2. Tài khoản người dùng",
+            "content": "Để sử dụng các tính năng nhận diện giống chó hoặc lưu lịch sử, bạn cần tạo một tài khoản người dùng cá nhân. Bạn chịu hoàn toàn trách nhiệm về tính chính xác của thông tin cung cấp khi đăng ký, cũng như chịu trách nhiệm bảo mật thông tin tài khoản và mật khẩu của mình. Nghiêm cấm mọi hành vi mua bán, chuyển nhượng hoặc chia sẻ quyền truy cập tài khoản cho người khác sử dụng chung."
+          },
+          {
+            "title": "3. Quy định sử dụng hệ thống",
+            "content": "Khi sử dụng hệ thống PetAI, bạn cam kết tuân thủ các quy định của pháp luật và chuẩn mực đạo đức. Nghiêm cấm tải lên hệ thống các hình ảnh vi phạm pháp luật, có nội dung phản cảm, bạo lực, xúc phạm động vật hoặc các hình ảnh không liên quan đến mục đích nhận diện giống thú cưng của hệ thống."
+          },
+          {
+            "title": "4. Dịch vụ nhận diện bằng AI",
+            "content": "PetAI cung cấp tính năng phân tích hình thái học để nhận diện giống chó bằng công nghệ AI học sâu (YOLOv8 phát hiện cún cưng và mô hình phân loại để dự đoán giống chó). Dịch vụ bao gồm gói Miễn phí (giới hạn lượt quét, có hiển thị quảng cáo) và các gói Nâng cấp trả phí (Basic, Pro, Enterprise) để phục vụ các hạn mức và tính năng cao cấp hơn."
+          },
+          {
+            "title": "5. Giới hạn của kết quả nhận diện",
+            "content": "Mọi kết quả nhận diện giống chó do mô hình AI của PetAI cung cấp chỉ mang tính chất tham khảo khách quan dựa trên hình thái học bên ngoài của chú chó từ ảnh chụp đầu vào. Kết quả này KHÔNG phải là xét nghiệm DNA di truyền và không có giá trị kết luận di truyền tuyệt đối. PetAI không thay thế các đánh giá chuyên môn, tư vấn y tế hoặc chẩn đoán lâm sàng từ bác sĩ thú y có chứng chỉ."
+          },
+          {
+            "title": "6. Gói dịch vụ và quyền sử dụng",
+            "content": "Người dùng đăng ký gói dịch vụ tự nguyện thanh toán chi phí tương ứng để nâng cấp tài khoản của mình. Chi tiết giá cả, thời hạn sử dụng và giới hạn lượt quét của các gói Basic, Pro, Enterprise được niêm yết công khai trên hệ thống. Quyền lợi của gói dịch vụ sẽ được kích hoạt ngay khi hệ thống xác nhận thanh toán thành công."
+          },
+          {
+            "title": "7. Hành vi bị nghiêm cấm",
+            "content": "Nghiêm cấm mọi hành vi lạm dụng, phá hoại hệ thống bao gồm: (a) Tấn công hoặc can thiệp trái phép vào hệ thống máy chủ, cơ sở dữ liệu của PetAI; (b) Sử dụng công cụ tự động (bot, crawl, script) để lạm dụng hoặc làm quá tải API; (c) Sao chép, chỉnh sửa, dịch ngược hoặc thương mại hóa mô hình AI học sâu và mã nguồn của PetAI khi chưa có sự đồng ý bằng văn bản."
+          },
+          {
+            "title": "8. Tạm khóa hoặc chấm dứt tài khoản",
+            "content": "Chúng tôi bảo lưu quyền đơn phương tạm khóa hoặc chấm dứt vĩnh viễn tài khoản người dùng mà không cần báo trước nếu phát hiện có hành vi vi phạm nghiêm trọng các Điều khoản dịch vụ này, lạm dụng hệ thống hoặc gây hại cho cộng đồng người nuôi thú cưng khác."
+          },
+          {
+            "title": "9. Thay đổi điều khoản dịch vụ",
+            "content": "Chúng tôi có thể cập nhật các Điều khoản dịch vụ này theo thời gian để phù hợp với các cải tiến công nghệ hoặc quy định pháp luật mới. Mọi thay đổi sẽ có hiệu lực ngay khi được đăng tải công khai trên website. Việc bạn tiếp tục sử dụng hệ thống đồng nghĩa với việc chấp nhận các điều khoản đã được cập nhật."
+          },
+          {
+            "title": "10. Thông tin liên hệ giải đáp",
+            "content": "Nếu bạn có bất kỳ câu hỏi nào liên quan đến các Điều khoản dịch vụ này, vui lòng gửi phản hồi cho chúng tôi:<br>• Email hỗ trợ: <a href=\"mailto:" ~ get_config('site_email', 'support@pet.ai') ~ "\" class=\"text-primary hover:underline font-medium\">" ~ get_config('site_email', 'support@pet.ai') ~ "</a><br>• Hotline hỗ trợ: " ~ get_config('contact_phone', '0916 416 409') ~ "<br>• Địa chỉ: " ~ get_config("contact_address_vi", get_config("contact_address", "P16, Đường số 8, KDC lô 49, Khu đô thị Nam Cần Thơ, Phường Cái Răng, TP. Cần Thơ"))
+          }
+        ] %}
+
+        {% set default_sections_en = [
+          {
+            "title": "1. Acceptance of Terms",
+            "content": "By accessing, registering, or using any services provided by " ~ get_config('site_name', 'PetAI') ~ ", you agree to be bound by these Terms of Service and our Privacy Policy. If you do not agree to any part of these terms, please immediately stop using our services."
+          },
+          {
+            "title": "2. User Accounts",
+            "content": "To access breed identification features or save your scan history, you must create a personal user account. You are solely responsible for the accuracy of the information provided during registration, as well as for safeguarding your account credentials. Sharing, selling, or transferring your account access to others is strictly prohibited."
+          },
+          {
+            "title": "3. Acceptable Use Guidelines",
+            "content": "When using PetAI, you agree to comply with all applicable laws and ethical standards. You are strictly prohibited from uploading images that are unlawful, offensive, violent, harmful to animals, or completely unrelated to the system's purpose of dog breed identification."
+          },
+          {
+            "title": "4. AI Identification Service",
+            "content": "PetAI provides morphological analysis to identify dog breeds using deep learning AI models (YOLOv8 object detection and custom classification). Services include the Free plan (limited scans with ads) and premium upgrade packages (Basic, Pro, Enterprise) for higher limits and prioritised features."
+          },
+          {
+            "title": "5. Limitations of AI Results",
+            "content": "All breed identification results provided by PetAI's AI technology are for educational and reference purposes based on morphological patterns. These results DO NOT constitute DNA genetic testing and do not provide absolute genetic conclusions. PetAI is not a substitute for professional veterinary consultation, medical advice, or clinical diagnosis."
+          },
+          {
+            "title": "6. Service Packages and Usage Rights",
+            "content": "Users may voluntarily purchase upgrade packages to expand account limits. Details on pricing, duration, and scan quotas for Basic, Pro, and Enterprise packages are publicly listed. Rights to premium features are activated automatically as soon as payment is confirmed by the system."
+          },
+          {
+            "title": "7. Prohibited Activities",
+            "content": "You are strictly forbidden from: (a) Attacking or gaining unauthorized access to PetAI servers or databases; (b) Using automated tools (bots, scripts, crawlers) to abuse or overload our APIs; (c) Copying, modifying, reverse-engineering, or commercializing PetAI's deep learning models and source code without prior written consent."
+          },
+          {
+            "title": "8. Account Suspension and Termination",
+            "content": "We reserve the right to temporarily suspend or permanently terminate user accounts without prior notice if we detect severe violations of these Terms of Service, abuse of platform infrastructure, or actions harmful to other pet owners."
+          },
+          {
+            "title": "9. Changes to Terms",
+            "content": "We may update these Terms of Service from time to time to align with technical improvements or legal changes. Updates will become effective immediately upon posting. Your continued use of the system indicates your acceptance of the updated terms."
+          },
+          {
+            "title": "10. Contact Information",
+            "content": "If you have any questions regarding these Terms of Service, please contact us at:<br>• Support Email: <a href=\"mailto:" ~ get_config('site_email', 'support@pet.ai') ~ "\" class=\"text-primary hover:underline font-medium\">" ~ get_config('site_email', 'support@pet.ai') ~ "</a><br>• Hotline: " ~ get_config('contact_phone', '0916 416 409') ~ "<br>• Address: " ~ get_config("contact_address_en", get_config("contact_address", "P16, Street 8, Lot 49 residential area, Nam Can Tho Urban Area, Cai Rang District, Can Tho City, Vietnam"))
+          }
+        ] %}
+
         {% set sections_vi = get_legal_sections('terms-of-service', 'vi') %}
         {% set sections_en = get_legal_sections('terms-of-service', 'en') %}
-        {% if sections_vi or sections_en %}
-          <!-- Vietnamese View (Dynamic) -->
-          <div id="dynamic-content-vi" class="space-y-6 text-on-surface-variant body-md leading-relaxed legal-content-rich {{ 'hidden' if ui_language == 'en' else '' }}">
-            {% for sec in sections_vi %}
-              {% if sec.title %}
-                <h2 class="text-xl font-bold text-primary mt-6 mb-2">{{ sec.title }}</h2>
-              {% endif %}
-              {% if sec.content %}
-                <div class="text-on-surface-variant dark:text-slate-350 body-md leading-relaxed">{{ sec.content | safe }}</div>
-              {% endif %}
-            {% endfor %}
-          </div>
+        {% set active_sections_vi = sections_vi if sections_vi else default_sections_vi %}
+        {% set active_sections_en = sections_en if sections_en else default_sections_en %}
 
-          <!-- English View (Dynamic) -->
-          <div id="dynamic-content-en" class="space-y-6 text-on-surface-variant body-md leading-relaxed legal-content-rich {{ 'hidden' if ui_language != 'en' else '' }}">
-            {% for sec in sections_en %}
-              {% if sec.title %}
-                <h2 class="text-xl font-bold text-primary mt-6 mb-2">{{ sec.title }}</h2>
-              {% endif %}
-              {% if sec.content %}
-                <div class="text-on-surface-variant dark:text-slate-350 body-md leading-relaxed">{{ sec.content | safe }}</div>
-              {% endif %}
-            {% endfor %}
-          </div>
-        {% else %}
-          <div class="space-y-6 text-on-surface-variant body-md leading-relaxed">
-            <h2 class="text-xl font-bold text-primary mt-6 mb-2" data-i18n="termsSection1Title">
-              <span data-i18n="termsSection1Title">1. Điều kiện sử dụng ứng dụng/website</span>
-            </h2>
-            <p data-i18n="termsSection1Desc">
-              <span data-i18n="termsSection1Desc">Việc bạn truy cập và sử dụng dịch vụ đồng nghĩa với việc bạn
-                xác nhận đã đọc, hiểu và chấp thuận toàn bộ các điều khoản được
-                quy định tại văn bản này.</span>
-            </p>
+        <!-- Vietnamese View -->
+        <div id="dynamic-content-vi" class="space-y-6 text-neutral-800 dark:text-slate-350 body-md leading-relaxed legal-content-rich {{ 'hidden' if ui_language == 'en' else '' }}">
+          {% for sec in active_sections_vi %}
+            {% if sec.title %}
+              <h2 class="text-xl font-bold text-primary mt-6 mb-2">{{ sec.title }}</h2>
+            {% endif %}
+            {% if sec.content %}
+              <div class="text-neutral-800 dark:text-slate-300 body-md leading-relaxed">{{ sec.content | safe }}</div>
+            {% endif %}
+          {% endfor %}
+        </div>
 
-            <h2 class="text-xl font-bold text-primary mt-6 mb-2" data-i18n="termsSection2Title">
-              <span data-i18n="termsSection2Title">2. Quyền và trách nhiệm của người dùng</span>
-            </h2>
-            <p data-i18n="termsSection2Desc">
-              <span data-i18n="termsSection2Desc">Người dùng cam kết cung cấp thông tin chân thực khi tạo tài
-                khoản, và tự chịu trách nhiệm bảo mật thông tin đăng nhập của
-                chính bản thân.</span>
-            </p>
-
-            <h2 class="text-xl font-bold text-primary mt-6 mb-2" data-i18n="termsSection3Title">
-              <span data-i18n="termsSection3Title">3. Quy định về tài khoản</span>
-            </h2>
-            <p data-i18n="termsSection3Desc">
-              <span data-i18n="termsSection3Desc">Việc sử dụng các tính năng cao cấp có thể yêu cầu đăng nhập.
-                Mỗi tài khoản cá nhân chỉ được ủy quyền cho một người, cấm việc
-                mua bán tài khoản.</span>
-            </p>
-
-            <h2 class="text-xl font-bold text-primary mt-6 mb-2" data-i18n="termsSection4Title">
-              <span data-i18n="termsSection4Title">4. Nội dung hoặc hành vi bị cấm</span>
-            </h2>
-            <p data-i18n="termsSection4Desc">
-              <span data-i18n="termsSection4Desc">Bạn không được phép: (a) sử dụng ứng dụng vào các mục đích phi
-                pháp; (b) khai thác lạm dụng hệ thống API của chúng tôi; (c) can
-                thiệp, sao chép hay dịch ngược phần mềm cũng như mô hình AI mà
-                chúng tôi cung cấp.</span>
-            </p>
-
-            <h2 class="text-xl font-bold text-primary mt-6 mb-2" data-i18n="termsSection5Title">
-              <span data-i18n="termsSection5Title">5. Giới hạn trách nhiệm của nhà phát triển</span>
-            </h2>
-            <p data-i18n="termsSection5Desc">
-              <span data-i18n="termsSection5Desc">Các phân tích và nhận diện dựa trên AI chỉ mang tính tham khảo
-                và có thể xuất hiện xác suất sai lệch. Chúng tôi không nhận
-                trách nhiệm cho các hậu quả gián tiếp gây ra từ tư vấn kết quả
-                của phần mềm.</span>
-            </p>
-
-            <h2 class="text-xl font-bold text-primary mt-6 mb-2" data-i18n="termsSection6Title">
-              <span data-i18n="termsSection6Title">6. Chấm dứt tài khoản khi vi phạm</span>
-            </h2>
-            <p data-i18n="termsSection6Desc">
-              <span data-i18n="termsSection6Desc">Chúng tôi bảo lưu toàn quyền đơn phương khóa hoặc xóa sạch tài
-                khoản và dữ liệu liên quan nếu phát hiện người dùng vi phạm
-                nghiêm trọng những điều kiện đã nêu.</span>
-            </p>
-
-            <h2 class="text-xl font-bold text-primary mt-6 mb-2" data-i18n="termsSection7Title">
-              <span data-i18n="termsSection7Title">7. Thông tin liên hệ</span>
-            </h2>
-            <p>
-              <span data-i18n="termsSection7Desc">Mọi thắc mắc và góp ý vui lòng gửi về: </span><a
-                href="mailto:{{ get_config('site_email', 'support@pet.ai') }}"
-                class="text-primary hover:underline font-medium">{{ get_config('site_email', 'support@pet.ai') }}</a>
-            </p>
-          </div>
-        {% endif %}
+        <!-- English View -->
+        <div id="dynamic-content-en" class="space-y-6 text-neutral-800 dark:text-slate-350 body-md leading-relaxed legal-content-rich {{ 'hidden' if ui_language != 'en' else '' }}">
+          {% for sec in active_sections_en %}
+            {% if sec.title %}
+              <h2 class="text-xl font-bold text-primary mt-6 mb-2">{{ sec.title }}</h2>
+            {% endif %}
+            {% if sec.content %}
+              <div class="text-neutral-800 dark:text-slate-300 body-md leading-relaxed">{{ sec.content | safe }}</div>
+            {% endif %}
+          {% endfor %}
+        </div>
       </div>
     </section>
   </main>

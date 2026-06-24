@@ -53,10 +53,18 @@
   <style>
     body {
       background-color: #f9f9ff;
-      opacity: 0;
-      transition: opacity 0.15s ease-in;
       color: #181c22;
       overflow-x: hidden;
+    }
+
+    html.i18n-loading body {
+      visibility: hidden !important;
+      opacity: 0 !important;
+    }
+    html.ready body {
+      visibility: visible;
+      opacity: 1;
+      transition: opacity 0.15s ease-in;
     }
 
     .aura-glow {
@@ -328,111 +336,115 @@
         <h1 class="headline-lg text-on-surface mb-6 font-bold" data-i18n="dataDeletion">
           <span data-i18n="dataDeletion">Chính sách xóa dữ liệu</span>
         </h1>
+        {% set default_sections_vi = [
+          {
+            "title": "1. Quyền yêu cầu xóa tài khoản và dữ liệu cá nhân",
+            "content": "Tại " ~ get_config('site_name', 'PetAI') ~ ", chúng tôi tôn trọng quyền kiểm soát dữ liệu cá nhân của bạn. Người dùng luôn có quyền yêu cầu xóa bỏ vĩnh viễn tài khoản của mình cũng như tất cả các dữ liệu đã tải lên hoặc phát sinh trong quá trình sử dụng dịch vụ."
+          },
+          {
+            "title": "2. Các loại dữ liệu được hỗ trợ xóa bỏ",
+            "content": "Khi bạn thực hiện yêu cầu xóa, các dữ liệu sau sẽ được loại bỏ hoàn toàn khỏi cơ sở dữ liệu hoạt động của hệ thống:<br>" ~
+                       "• Thông tin hồ sơ tài khoản: Họ tên, email, tên đăng nhập, ảnh đại diện.<br>" ~
+                       "• Lịch sử nhận diện giống chó: Toàn bộ ảnh cún cưng bạn đã tải lên, kết quả phân tích AI và điểm tin cậy đi kèm.<br>" ~
+                       "• Các thiết lập cá nhân hóa trong ứng dụng."
+          },
+          {
+            "title": "3. Hướng dẫn xóa lịch sử nhận diện giống chó",
+            "content": "Nếu bạn chỉ muốn xóa lịch sử quét hình ảnh mà không muốn xóa tài khoản, bạn có thể thực hiện bằng cách truy cập vào trang <strong>Cài đặt</strong> > mục <strong>Quyền riêng tư</strong> > bấm nút <strong>Xóa toàn bộ lịch sử</strong>. Hành động này sẽ lập tức loại bỏ toàn bộ dữ liệu ảnh quét và lịch sử AI của bạn một cách an toàn."
+          },
+          {
+            "title": "4. Hướng dẫn yêu cầu xóa tài khoản",
+            "content": "Bạn có thể thực hiện yêu cầu xóa toàn bộ tài khoản và thông tin cá nhân theo một trong hai cách sau:<br>" ~
+                       "• <strong>Thực hiện trực tiếp trong ứng dụng:</strong> Đăng nhập vào tài khoản, truy cập mục <strong>Cài đặt</strong> > chọn <strong>Quyền riêng tư</strong> > kéo xuống phần <strong>Xóa tài khoản</strong>, xác nhận mật khẩu hoặc OTP để gửi yêu cầu.<br>" ~
+                       "• <strong>Gửi email yêu cầu hỗ trợ:</strong> Trong trường hợp không đăng nhập được, bạn hãy sử dụng địa chỉ email đã dùng đăng ký tài khoản gửi thư về địa chỉ: <a href=\"mailto:" ~ get_config('site_email', 'support@pet.ai') ~ "\" class=\"text-primary hover:underline font-medium\">" ~ get_config('site_email', 'support@pet.ai') ~ "</a> với tiêu đề 'Yêu cầu xóa tài khoản PetAI' để bộ phận kỹ thuật hỗ trợ xác thực và xử lý thủ công."
+          },
+          {
+            "title": "5. Thời gian xử lý và Trạng thái chờ xóa 30 ngày",
+            "content": "Nhằm đảm bảo an toàn và ngăn ngừa các yêu cầu xóa nhầm hoặc do tài khoản bị xâm nhập trái phép, khi bạn bấm xác nhận xóa tài khoản, tài khoản sẽ được chuyển sang trạng thái <strong>'Chờ xóa' (Pending Delete) trong vòng 30 ngày</strong>. Trong thời gian 30 ngày này, thông tin tài khoản sẽ bị ẩn đi, bạn không thể sử dụng các tính năng quét ảnh nâng cao, nhưng dữ liệu của bạn chưa bị xóa vĩnh viễn khỏi hệ thống lưu trữ."
+          },
+          {
+            "title": "6. Khôi phục tài khoản trong thời gian chờ xóa",
+            "content": "Trong thời gian 30 ngày chờ xử lý xóa tài khoản, nếu bạn đổi ý hoặc muốn hủy bỏ yêu cầu xóa, bạn có thể thực hiện khôi phục tài khoản hoạt động bình thường rất đơn giản bằng cách đăng nhập lại vào hệ thống bằng thông tin đăng nhập cũ và xác nhận khôi phục tài khoản, hoặc liên hệ ngay với bộ phận hỗ trợ khách hàng để được trợ giúp."
+          },
+          {
+            "title": "7. Các dữ liệu bắt buộc giữ lại vì lý do pháp lý",
+            "content": "Xin lưu ý rằng theo các quy định hiện hành liên quan đến tài chính, thuế và kế toán, một số thông tin nhất định bao gồm lịch sử giao dịch mua gói nâng cấp, hóa đơn thanh toán và các chứng từ đối soát tài chính sẽ không được xóa bỏ và vẫn được lưu trữ bảo mật trong thời gian tối thiểu theo quy định của pháp luật."
+          },
+          {
+            "title": "8. Thông tin liên hệ hỗ trợ xóa dữ liệu",
+            "content": "Nếu bạn gặp bất kỳ sự cố nào hoặc cần giải đáp thêm về quy trình xóa dữ liệu cá nhân, vui lòng liên hệ bộ phận kỹ thuật của chúng tôi:<br>• Email hỗ trợ: <a href=\"mailto:" ~ get_config('site_email', 'support@pet.ai') ~ "\" class=\"text-primary hover:underline font-medium\">" ~ get_config('site_email', 'support@pet.ai') ~ "</a><br>• Hotline hỗ trợ: " ~ get_config('contact_phone', '0916 416 409') ~ "<br>• Địa chỉ: " ~ get_config("contact_address_vi", get_config("contact_address", "P16, Đường số 8, KDC lô 49, Khu đô thị Nam Cần Thơ, Phường Cái Răng, TP. Cần Thơ"))
+          }
+        ] %}
+
+        {% set default_sections_en = [
+          {
+            "title": "1. Right to Account and Personal Data Deletion",
+            "content": "At " ~ get_config('site_name', 'PetAI') ~ ", we respect your right to control your personal data. Users have the right to request the permanent deletion of their account and all associated personal data collected during the usage of our services."
+          },
+          {
+            "title": "2. Data Eligible for Deletion",
+            "content": "Upon processing a deletion request, the following data points will be permanently purged from our active operational databases:<br>" ~
+                       "• Account profile information: Full name, email address, username, profile avatar.<br>" ~
+                       "• Dog breed scan history: All uploaded pet images, AI prediction results, and associated confidence scores.<br>" ~
+                       "• Customized user preferences and settings."
+          },
+          {
+            "title": "3. How to Clear Dog Breed Scan History",
+            "content": "If you wish to clear your photo scan history without deleting your account, you can do so by navigating to <strong>Settings</strong> > <strong>Privacy</strong> > click the <strong>Clear All History</strong> button. This action instantly and securely removes all your scan photos and AI predictions from your history logs."
+          },
+          {
+            "title": "4. How to Request Account Deletion",
+            "content": "You can request permanent deletion of your account and data through one of the following methods:<br>" ~
+                       "• <strong>In-App Deletion:</strong> Log into your account, go to <strong>Settings</strong> > select <strong>Privacy</strong> > scroll down to <strong>Delete Account</strong>, enter your password or OTP to confirm and submit.<br>" ~
+                       "• <strong>Email Request:</strong> If you cannot access your account, use your registered email address to send a request to: <a href=\"mailto:" ~ get_config('site_email', 'support@pet.ai') ~ "\" class=\"text-primary hover:underline font-medium\">" ~ get_config('site_email', 'support@pet.ai') ~ "</a> with the subject 'PetAI Account Deletion Request'. Our technical team will verify and process the deletion manually."
+          },
+          {
+            "title": "5. Processing Timeline & 30-Day Retention Window",
+            "content": "To prevent accidental deletion or unauthorized requests due to account compromise, accounts are placed in a <strong>'Pending Delete' status for 30 days</strong>. During this retention window, your account details will be hidden, you will not have access to premium scan features, but your data is not yet permanently erased from our backups."
+          },
+          {
+            "title": "6. Cancelling Deletion Request during Retention Window",
+            "content": "During the 30-day pending retention window, if you change your mind, you can cancel the deletion and restore your account to active status simply by logging back into the system using your original credentials and confirming restoration, or by contacting customer support."
+          },
+          {
+            "title": "7. Data Retained for Legal Compliance",
+            "content": "Please note that in compliance with accounting, tax, and financial regulations, certain transaction records, including payment history invoices for subscription upgrades, cannot be deleted and will be securely retained for the minimum duration required by applicable local laws."
+          },
+          {
+            "title": "8. Contact for Deletion Support",
+            "content": "If you encounter any issues or have questions regarding the personal data deletion process, please contact our technical support team:<br>• Support Email: <a href=\"mailto:" ~ get_config('site_email', 'support@pet.ai') ~ "\" class=\"text-primary hover:underline font-medium\">" ~ get_config('site_email', 'support@pet.ai') ~ "</a><br>• Hotline: " ~ get_config('contact_phone', '0916 416 409') ~ "<br>• Address: " ~ get_config("contact_address_en", get_config("contact_address", "P16, Street 8, Lot 49 residential area, Nam Can Tho Urban Area, Cai Rang District, Can Tho City, Vietnam"))
+          }
+        ] %}
+
         {% set sections_vi = get_legal_sections('data-deletion', 'vi') %}
         {% set sections_en = get_legal_sections('data-deletion', 'en') %}
-        {% if sections_vi or sections_en %}
-          <!-- Vietnamese View (Dynamic) -->
-          <div id="dynamic-content-vi" class="space-y-6 text-on-surface-variant body-md leading-relaxed legal-content-rich {{ 'hidden' if ui_language == 'en' else '' }}">
-            {% for sec in sections_vi %}
-              {% if sec.title %}
-                <h2 class="text-xl font-bold text-primary mt-6 mb-2">{{ sec.title }}</h2>
-              {% endif %}
-              {% if sec.content %}
-                <div class="text-on-surface-variant dark:text-slate-350 body-md leading-relaxed">{{ sec.content | safe }}</div>
-              {% endif %}
-            {% endfor %}
-          </div>
+        {% set active_sections_vi = sections_vi if sections_vi else default_sections_vi %}
+        {% set active_sections_en = sections_en if sections_en else default_sections_en %}
 
-          <!-- English View (Dynamic) -->
-          <div id="dynamic-content-en" class="space-y-6 text-on-surface-variant body-md leading-relaxed legal-content-rich {{ 'hidden' if ui_language != 'en' else '' }}">
-            {% for sec in sections_en %}
-              {% if sec.title %}
-                <h2 class="text-xl font-bold text-primary mt-6 mb-2">{{ sec.title }}</h2>
-              {% endif %}
-              {% if sec.content %}
-                <div class="text-on-surface-variant dark:text-slate-350 body-md leading-relaxed">{{ sec.content | safe }}</div>
-              {% endif %}
-            {% endfor %}
-          </div>
-        {% else %}
-          <div class="space-y-6 text-on-surface-variant body-md leading-relaxed">
-            <h2 class="text-xl font-bold text-primary mt-6 mb-2" data-i18n="dataDeletionSection1Title">
-              <span data-i18n="dataDeletionSection1Title">1. Quyền yêu cầu xóa tài khoản và dữ liệu</span>
-            </h2>
-            <p data-i18n="dataDeletionSection1Desc">
-              <span data-i18n="dataDeletionSection1Desc">Người dùng luôn có quyền yêu cầu xóa bỏ tài khoản cũng như tất
-                cả dữ liệu cá nhân (tên, email, hình ảnh) đã tích lũy trong quá
-                trình sử dụng hệ thống.</span>
-            </p>
+        <!-- Vietnamese View -->
+        <div id="dynamic-content-vi" class="space-y-6 text-neutral-800 dark:text-slate-350 body-md leading-relaxed legal-content-rich {{ 'hidden' if ui_language == 'en' else '' }}">
+          {% for sec in active_sections_vi %}
+            {% if sec.title %}
+              <h2 class="text-xl font-bold text-primary mt-6 mb-2">{{ sec.title }}</h2>
+            {% endif %}
+            {% if sec.content %}
+              <div class="text-neutral-800 dark:text-slate-300 body-md leading-relaxed">{{ sec.content | safe }}</div>
+            {% endif %}
+          {% endfor %}
+        </div>
 
-            <h2 class="text-xl font-bold text-primary mt-6 mb-2" data-i18n="dataDeletionSection2Title">
-              <span data-i18n="dataDeletionSection2Title">2. Hướng dẫn xóa tài khoản trong ứng dụng</span>
-            </h2>
-            <p data-i18n-html="dataDeletionSection2Desc">
-              Nếu ứng dụng đã cập nhật chức năng này, vui lòng đi tới phần
-              <strong data-i18n="settingsLabel"><span data-i18n="settingsLabel">Thiết lập / Settings</span></strong><span
-                data-i18n="arrowSelect">&gt; Chọn</span><strong data-i18n="accountManagement"><span
-                  data-i18n="accountManagement">Quản lý tài khoản</span></strong><span data-i18n="arrowClick">&gt;
-                Nhấn</span><strong data-i18n="deleteAccount"><span data-i18n="deleteAccount">Xóa tài
-                  khoản</span></strong><span data-i18n="autoDeleteInfoDesc">để hệ thống tự động loại bỏ thông tin của
-                bạn.</span>
-            </p>
+        <!-- English View -->
+        <div id="dynamic-content-en" class="space-y-6 text-neutral-800 dark:text-slate-350 body-md leading-relaxed legal-content-rich {{ 'hidden' if ui_language != 'en' else '' }}">
+          {% for sec in active_sections_en %}
+            {% if sec.title %}
+              <h2 class="text-xl font-bold text-primary mt-6 mb-2">{{ sec.title }}</h2>
+            {% endif %}
+            {% if sec.content %}
+              <div class="text-neutral-800 dark:text-slate-300 body-md leading-relaxed">{{ sec.content | safe }}</div>
+            {% endif %}
+          {% endfor %}
+        </div>
 
-            <h2 class="text-xl font-bold text-primary mt-6 mb-2" data-i18n="dataDeletionSection3Title">
-              <span data-i18n="dataDeletionSection3Title">3. Gửi email yêu cầu</span>
-            </h2>
-            <p data-i18n="dataDeletionSection3Desc">
-              <span data-i18n="dataDeletionSection3Desc">Trong trường hợp hệ thống chưa có chức năng xóa trực tiếp, bạn
-                hoàn toàn có thể yêu cầu xóa bằng cách gửi thư. Hãy làm theo
-                hướng dẫn sau:</span>
-            </p>
-            <ul class="list-disc pl-5 mt-2 space-y-2">
-              <li>
-                <strong data-i18n="dataDeletionEmailLabel"><span data-i18n="dataDeletionEmailLabel">Email nhận yêu
-                    cầu:</span></strong>
-                <a href="mailto:{{ get_config('site_email', 'support@pet.ai') }}"
-                  class="text-primary hover:underline font-medium">{{ get_config('site_email', 'support@pet.ai') }}</a>
-              </li>
-              <li>
-                <strong data-i18n="dataDeletionSubjectLabel"><span data-i18n="dataDeletionSubjectLabel">Tiêu đề
-                    email:</span></strong><span data-i18n="dataDeletionSubjectValue">Yêu cầu xóa dữ liệu/tài khoản</span>
-              </li>
-              <li>
-                <span data-i18n="dataDeletionVerificationHint">Hãy nêu rõ địa chỉ Email bạn dùng để đăng ký để chúng tôi
-                  đối
-                  chứng.</span>
-              </li>
-            </ul>
-
-            <h2 class="text-xl font-bold text-primary mt-6 mb-2" data-i18n="dataDeletionSection4Title">
-              <span data-i18n="dataDeletionSection4Title">4. Quá trình xử lý</span>
-            </h2>
-            <p data-i18n-html="dataDeletionSection4Desc">
-              Tất cả các định dạng dữ liệu, hình ảnh, tài khoản của bạn sẽ được
-              xử lý và xóa vĩnh viễn trong vòng
-              <strong data-i18n="days30"><span data-i18n="homePricing30Days">30 ngày</span></strong><span
-                data-i18n="fromRequestTime">kể từ khi có yêu cầu.</span>
-            </p>
-
-            <h2 class="text-xl font-bold text-primary mt-6 mb-2" data-i18n="dataDeletionSection5Title">
-              <span data-i18n="dataDeletionSection5Title">5. Một số dữ liệu có thể được giữ lại</span>
-            </h2>
-            <p data-i18n="retainedDataDesc">
-              Một số dữ liệu thuộc về báo cáo thanh toán, giao dịch hoá đơn hoặc
-              các chi tiết nhằm phục vụ tranh chấp có thể sẽ được tiếp tục lưu
-              giữ tùy thuộc vào quy định pháp luật sở tại yêu cầu.
-            </p>
-
-            <h2 class="text-xl font-bold text-primary mt-6 mb-2" data-i18n="dataDeletionSection6Title">
-              <span data-i18n="dataDeletionSection6Title">6. Thông tin liên hệ</span>
-            </h2>
-            <p>
-              <span data-i18n="dataDeletionSection6Desc">Mọi khó khăn vui lòng liên lạc: </span><a
-                href="mailto:{{ get_config('site_email', 'support@pet.ai') }}"
-                class="text-primary hover:underline font-medium">{{ get_config('site_email', 'support@pet.ai') }}</a>
-            </p>
-          </div>
-        {% endif %}
       </div>
     </section>
   </main>  <footer class="bg-surface-container-low border-t border-outline-variant/30 px-6 py-12">

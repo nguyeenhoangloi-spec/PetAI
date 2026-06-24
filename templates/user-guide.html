@@ -53,10 +53,18 @@
   <style>
     body {
       background-color: #f9f9ff;
-      opacity: 0;
-      transition: opacity 0.15s ease-in;
       color: #181c22;
       overflow-x: hidden;
+    }
+
+    html.i18n-loading body {
+      visibility: hidden !important;
+      opacity: 0 !important;
+    }
+    html.ready body {
+      visibility: visible;
+      opacity: 1;
+      transition: opacity 0.15s ease-in;
     }
 
     .aura-glow {
@@ -196,6 +204,25 @@
       main.relative.z-10.pt-20 {
         padding-top: 60px !important;
       }
+    }
+
+    /* Fix light mode text colors for readability */
+    html:not(.dark) .legal-content-rich,
+    html:not(.dark) .legal-content-rich p,
+    html:not(.dark) .legal-content-rich li,
+    html:not(.dark) .legal-content-rich span:not(.text-primary):not(.material-symbols-outlined) {
+      color: #1f2937 !important; /* Near black */
+    }
+    html.dark .legal-content-rich,
+    html.dark .legal-content-rich p,
+    html.dark .legal-content-rich li,
+    html.dark .legal-content-rich span:not(.text-primary):not(.material-symbols-outlined) {
+      color: #cbd5e1 !important; /* text-slate-300 */
+    }
+    
+    html.dark .bg-white {
+      background-color: #1e293b !important; /* dark:bg-slate-800 */
+      border-color: #334155 !important;
     }
   </style>
   <script id="tailwind-config">
@@ -338,103 +365,197 @@
       <div id="legal-content-card" class="glass-card p-gutter rounded-3xl bg-surface-container-low border border-outline-variant/30">
         {% set default_sections_vi = [
           {
-            "title": "1. Giới thiệu về PetAI",
-            "content": 'PetAI là hệ thống nhận diện giống chó thông minh sử dụng trí tuệ nhân tạo (AI). Quy trình xử lý hình ảnh bao gồm:<br><br><strong>1. Phát hiện &amp; Khoanh vùng (YOLOv8):</strong> Quét và định vị đối tượng chú chó, cắt ảnh loại bỏ nhiễu.<br><strong>2. Phân tích &amp; Phân loại:</strong> Phân tích đặc trưng hình thái đối với hơn 120 giống chó.<br><strong>3. Xác định Thuần chủng/Chó lai:</strong> Trả về kết luận giống thuần hoặc ước tính tỷ lệ lai trong Top-3 giống.<br><strong>4. Giải thích trực quan (Grad-CAM):</strong> Hiển thị bản đồ nhiệt làm nổi bật vùng đặc trưng.'
+            "title": "Giới thiệu về PetAI",
+            "content": '<p class="mb-3">Chào mừng bạn đến với <strong>PetAI</strong> – Hệ thống nhận dạng giống chó thông minh hàng đầu được phát triển trên nền tảng Trí tuệ nhân tạo (AI). Hệ thống của chúng tôi áp dụng các mô hình học sâu hiện đại như YOLOv8 để tự động định vị và phân tích các đặc điểm ngoại hình cún cưng của bạn.</p>' ~
+                       '<p>Dịch vụ giúp người yêu thú cưng nhanh chóng xác định giống chó, tìm hiểu các thông tin chăm sóc cơ bản và lưu trữ bộ sưu tập cún cưng cá nhân một cách tiện lợi nhất.</p>'
           },
           {
-            "title": "2. Hướng dẫn đăng ký tài khoản",
-            "content": '<p class="text-on-surface-variant mb-4">Để bắt đầu lưu lịch sử nhận diện và quản lý hạn mức, bạn cần tạo tài khoản mới:</p><ul class="space-y-3 pl-1"><li class="flex items-start gap-3"><span class="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs mt-0.5">1</span><span class="text-on-surface-variant">Truy cập trang đăng ký từ menu góc trên bên phải hoặc vào route /register.</span></li><li class="flex items-start gap-3"><span class="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs mt-0.5">2</span><span class="text-on-surface-variant">Nhập đầy đủ thông tin cá nhân: Họ tên, Tên đăng nhập (username), Email hợp lệ và Mật khẩu bảo mật.</span></li><li class="flex items-start gap-3"><span class="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs mt-0.5">3</span><span class="text-on-surface-variant">Xác nhận đồng ý điều khoản dịch vụ và nhấp nút \'Tạo tài khoản\' để hoàn tất.</span></li></ul>'
+            "title": "Bước 1: Đăng ký hoặc đăng nhập tài khoản",
+            "content": '<p class="mb-3">Để bắt đầu lưu trữ lịch sử nhận dạng và quản lý hạn mức cá nhân, bạn cần sở hữu một tài khoản trên hệ thống:</p>' ~
+                       '<ul class="list-disc pl-5 space-y-2">' ~
+                       '  <li><strong>Đăng ký tài khoản mới:</strong> Nhấp vào nút "Đăng ký" ở góc trên bên phải, điền các thông tin cơ bản gồm Họ tên, Tên đăng nhập (username), Email và Mật khẩu bảo mật.</li>' ~
+                       '  <li><strong>Đăng nhập hệ thống:</strong> Sử dụng Tên đăng nhập hoặc Email cùng Mật khẩu để đăng nhập thông thường, hoặc chọn "Đăng nhập bằng Google" để liên kết và truy cập nhanh chỉ bằng một cú nhấp chuột.</li>' ~
+                       '</ul>'
           },
           {
-            "title": "3. Hướng dẫn đăng nhập",
-            "content": '<p class="text-on-surface-variant mb-4">Sau khi đăng ký thành công, bạn có thể đăng nhập vào hệ thống bằng hai cách:</p><ul class="space-y-3 pl-1"><li class="flex items-start gap-3"><span class="material-symbols-outlined text-primary/70 flex-shrink-0 mt-0.5">vpn_key</span><span class="text-on-surface-variant">Đăng nhập thông thường: Sử dụng Tên đăng nhập hoặc Email cùng Mật khẩu đã đăng ký.</span></li><li class="flex items-start gap-3"><span class="material-symbols-outlined text-primary/70 flex-shrink-0 mt-0.5">account_circle</span><span class="text-on-surface-variant">Đăng nhập nhanh: Chọn \'Đăng nhập bằng Google\' để liên kết và đăng nhập nhanh bằng tài khoản Google cá nhân.</span></li></ul>'
+            "title": "Bước 2: Tải ảnh chó lên hệ thống",
+            "content": '<p class="mb-3">Sau khi đăng nhập, bạn truy cập trang <strong>Nhận dạng</strong> để tải hình ảnh cún cưng lên:</p>' ~
+                       '<ul class="list-disc pl-5 space-y-2">' ~
+                       '  <li>Bạn có thể nhấp trực tiếp vào vùng tải ảnh để chọn tệp từ máy tính/điện thoại hoặc kéo và thả tệp hình ảnh vào khung quy định.</li>' ~
+                       '  <li>Hệ thống hỗ trợ chụp ảnh trực tiếp bằng camera thiết bị đối với các trình duyệt trên thiết bị di động.</li>' ~
+                       '</ul>'
           },
           {
-            "title": "4. Giới thiệu Gói Miễn Phí (Free Plan)",
-            "content": '<p class="text-on-surface-variant mb-4">Mỗi người dùng mới đăng ký sẽ tự động được gán gói dịch vụ Miễn phí:</p><div class="grid grid-cols-1 md:grid-cols-3 gap-4"><div class="p-4 bg-surface-container rounded-xl border border-outline-variant/20"><h4 class="font-bold text-primary mb-2 flex items-center gap-1.5 text-sm"><span class="material-symbols-outlined text-[16px]">filter_1</span><span>10 lượt nhận diện</span></h4><p class="text-xs text-on-surface-variant leading-relaxed">Hạn mức mặc định: Bạn nhận được 10 lượt nhận diện giống chó miễn phí vĩnh viễn.</p></div><div class="p-4 bg-surface-container rounded-xl border border-outline-variant/20"><h4 class="font-bold text-primary mb-2 flex items-center gap-1.5 text-sm"><span class="material-symbols-outlined text-[16px]">ads_click</span><span>Xem quảng cáo</span></h4><p class="text-xs text-on-surface-variant leading-relaxed">Xem quảng cáo để nhận thêm lượt: Khi sử dụng hết 10 lượt mặc định, bạn có thể xem quảng cáo ngắn (tối đa 3 lần) để nhận thêm 3 lượt quét mỗi lần.</p></div><div class="p-4 bg-surface-container rounded-xl border border-outline-variant/20"><h4 class="font-bold text-primary mb-2 flex items-center gap-1.5 text-sm"><span class="material-symbols-outlined text-[16px]">warning</span><span>Khi hết lượt</span></h4><p class="text-xs text-on-surface-variant leading-relaxed">Khi hết lượt: Khi đã sử dụng hết cả lượt miễn phí và lượt từ quảng cáo, bạn cần nâng cấp gói dịch vụ để tiếp tục sử dụng hệ thống.</p></div></div>'
+            "title": "Bước 3: Kiểm tra ảnh hợp lệ",
+            "content": '<p class="mb-3">Để AI có thể phân tích chính xác nhất, bạn vui lòng kiểm tra hình ảnh tải lên theo các tiêu chuẩn sau:</p>' ~
+                       '<ul class="list-disc pl-5 space-y-2">' ~
+                       '  <li><strong>Định dạng được hỗ trợ:</strong> Chỉ chấp nhận các định dạng tệp <code>.jpg</code>, <code>.jpeg</code>, hoặc <code>.png</code>.</li>' ~
+                       '  <li><strong>Giới hạn dung lượng:</strong> Dung lượng tệp tải lên tối đa là <strong>10MB</strong>.</li>' ~
+                       '  <li><strong>Nội dung ảnh:</strong> Ảnh chụp rõ ràng đối tượng chó cưng, tránh chụp ảnh không có chó hoặc ảnh các loài động vật khác.</li>' ~
+                       '</ul>'
           },
           {
-            "title": "5. Hướng dẫn cách nhận diện",
-            "content": '<p class="text-on-surface-variant mb-4">Để thực hiện quét hình ảnh nhận diện giống chó, hãy làm theo quy trình dưới đây:</p><div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4"><div class="p-4 bg-surface-container-low rounded-xl border border-outline-variant/10 text-center"><span class="text-2xl font-bold text-primary mb-1 block">01</span><h5 class="font-bold text-sm mb-1">Tải ảnh lên</h5><p class="text-xs text-on-surface-variant leading-relaxed">Nhấp vào khu vực tải ảnh hoặc kéo thả tệp ảnh vào khung tải lên tại trang Nhận diện.</p></div><div class="p-4 bg-surface-container-low rounded-xl border border-outline-variant/10 text-center"><span class="text-2xl font-bold text-primary mb-1 block">02</span><h5 class="font-bold text-sm mb-1">Chọn ảnh phù hợp</h5><p class="text-xs text-on-surface-variant leading-relaxed">Hệ thống chỉ hỗ trợ định dạng JPG, JPEG hoặc PNG với dung lượng tối đa 10MB.</p></div><div class="p-4 bg-surface-container-low rounded-xl border border-outline-variant/10 text-center"><span class="text-2xl font-bold text-primary mb-1 block">03</span><h5 class="font-bold text-sm mb-1">Chờ AI xử lý</h5><p class="text-xs text-on-surface-variant leading-relaxed">Nhấn nút \'Phân tích ngay\' và đợi từ 2 đến 4 giây để hệ thống AI nhận diện đối tượng và chạy mô hình phân loại.</p></div><div class="p-4 bg-surface-container-low rounded-xl border border-outline-variant/10 text-center"><span class="text-2xl font-bold text-primary mb-1 block">04</span><h5 class="font-bold text-sm mb-1">Xem kết quả</h5><p class="text-xs text-on-surface-variant leading-relaxed">Giao diện sẽ tự động chuyển sang trang hiển thị kết quả chi tiết.</p></div></div><div class="mt-6 p-4 bg-primary/5 rounded-xl border border-primary/10"><h4 class="font-bold text-primary mb-2 flex items-center gap-1.5 text-sm">Mẹo chụp ảnh để có kết quả chính xác nhất</h4><ul class="list-disc pl-5 space-y-1.5 text-xs text-on-surface-variant"><li>Chụp ảnh cận cảnh, rõ nét khuôn mặt của chó.</li><li>Đảm bảo điều kiện ánh sáng tốt, tránh ngược sáng hoặc quá tối.</li><li>Tránh chụp ảnh có nhiều con chó cùng lúc hoặc quá nhiều vật thể gây nhiễu xung quanh.</li><li>Góc chụp chính diện khuôn mặt chó luôn mang lại kết quả tối ưu từ mô hình AI.</li></ul></div>'
+            "title": "Bước 4: Chờ AI phân tích",
+            "content": '<p class="mb-3">Sau khi tải ảnh hợp lệ lên, bạn tiến hành bấm nút <strong>"Phân tích ngay"</strong>:</p>' ~
+                       '<ul class="list-disc pl-5 space-y-2">' ~
+                       '  <li>Hệ thống AI sẽ tự động kích hoạt tiến trình phát hiện đối tượng, cắt ảnh tập trung vào khu vực chú chó và chạy mô hình học sâu phân loại đặc trưng.</li>' ~
+                       '  <li>Thời gian xử lý trung bình dao động từ <strong>2 đến 4 giây</strong> tùy thuộc vào tốc độ đường truyền và tải lượng của máy chủ tại thời điểm quét.</li>' ~
+                       '</ul>'
           },
           {
-            "title": "6. Giải thích kết quả nhận diện",
-            "content": '<p class="text-on-surface-variant mb-4">Trang kết quả phân tích chứa nhiều thông tin chi tiết giúp bạn hiểu rõ về cún cưng của mình:</p><div class="grid grid-cols-1 sm:grid-cols-2 gap-4"><div class="flex gap-3 items-start p-3 bg-surface-container rounded-xl"><span class="material-symbols-outlined text-primary text-[20px] mt-0.5">pets</span><div><strong class="text-sm text-primary block">Tên giống chó</strong><span class="text-xs text-on-surface-variant leading-relaxed">Giống chó được nhận diện có độ tương đồng cao nhất.</span></div></div><div class="flex gap-3 items-start p-3 bg-surface-container rounded-xl"><span class="material-symbols-outlined text-primary text-[20px] mt-0.5">percent</span><div><strong class="text-sm text-primary block">Độ chính xác (Độ tin cậy)</strong><span class="text-xs text-on-surface-variant leading-relaxed">Thể hiện tỷ lệ phần trăm chắc chắn của AI đối với giống chó đó.</span></div></div><div class="flex gap-3 items-start p-3 bg-surface-container rounded-xl"><span class="material-symbols-outlined text-primary text-[20px] mt-0.5">description</span><div><strong class="text-sm text-primary block">Thông tin giống chó</strong><span class="text-xs text-on-surface-variant leading-relaxed">Các thông tin bách khoa toàn thư bao gồm: Nguồn gốc xuất xứ, Đặc điểm ngoại hình, Tính cách đặc trưng và Hướng dẫn chăm sóc sức khỏe.</span></div></div><div class="flex gap-3 items-start p-3 bg-surface-container rounded-xl"><span class="material-symbols-outlined text-primary text-[20px] mt-0.5">insights</span><div><strong class="text-sm text-primary block">Bản đồ nhiệt Grad-CAM</strong><span class="text-xs text-on-surface-variant leading-relaxed">Vùng màu sáng (đỏ/vàng) trên ảnh thể hiện vị trí đặc trưng (như tai, mắt, mõm...) mà AI tập trung phân tích để đưa ra quyết định.</span></div></div></div>'
+            "title": "Bước 5: Xem kết quả nhận diện",
+            "content": '<p class="mb-3">Giao diện sẽ tự động hiển thị kết quả phân tích chi tiết của AI bao gồm:</p>' ~
+                       '<ul class="list-disc pl-5 space-y-2">' ~
+                       '  <li><strong>Tên giống chó:</strong> Giống chó có tỷ lệ tương đồng hình thái cao nhất được dự đoán.</li>' ~
+                       '  <li><strong>Độ chính xác (Độ tin cậy):</strong> Thể hiện phần trăm độ tin cậy của mô hình AI.</li>' ~
+                       '  <li><strong>Thông tin bách khoa:</strong> Các đặc điểm ngoại hình, tính cách, nguồn gốc và cẩm nang chăm sóc giống chó tương ứng.</li>' ~
+                       '  <li><strong>Bản đồ nhiệt Grad-CAM:</strong> Trực quan hóa vùng đặc trưng (tai, mắt, mõm...) mà AI tập trung phân tích để đưa ra kết luận.</li>' ~
+                       '</ul>'
           },
           {
-            "title": "7. Các chế độ nhận diện",
-            "content": '<p class="text-on-surface-variant mb-4">Hệ thống tự động phân loại kết quả nhận diện dựa trên độ tin cậy của mô hình:</p><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div class="p-4 bg-surface-container rounded-xl border border-outline-variant/20"><h4 class="font-bold text-primary mb-1.5 text-sm">Kết luận Thuần chủng</h4><p class="text-xs text-on-surface-variant leading-relaxed">Khi giống chó có tỷ lệ tin cậy vượt trội (thường trên 80%), hệ thống sẽ đưa ra kết quả kết luận giống chó thuần chủng.</p></div><div class="p-4 bg-surface-container rounded-xl border border-outline-variant/20"><h4 class="font-bold text-primary mb-1.5 text-sm">Phân tích Tỷ lệ Lai dự tính</h4><p class="text-xs text-on-surface-variant leading-relaxed">Trường hợp giống chó lai (hoặc khi Top-1 và Top-2 có xác suất gần sát nhau), hệ thống hiển thị Top 3 giống chó tương đồng nhất kèm theo biểu đồ ước tính tỷ lệ lai dựa trên phân tích hình thái học.</p></div></div>'
+            "title": "Bước 6: Xem lịch sử nhận diện",
+            "content": '<p class="mb-3">Tất cả các lần quét ảnh thành công đều được hệ thống tự động lưu trữ:</p>' ~
+                       '<ul class="list-disc pl-5 space-y-2">' ~
+                       '  <li>Truy cập mục <strong>Lịch sử</strong> trên menu điều hướng bên trái để xem lại toàn bộ danh sách các lượt quét trước đây kèm theo mốc thời gian và kết quả chi tiết.</li>' ~
+                       '  <li>Bạn cũng có thể xem trang <strong>Thống kê</strong> để cập nhật biểu đồ phân bổ giống chó phát hiện nhiều nhất và biểu đồ xu hướng quét cá nhân của mình.</li>' ~
+                       '</ul>'
           },
           {
-            "title": "8. Nâng cấp gói dịch vụ",
-            "content": '<p class="text-on-surface-variant mb-4">Khi cần mở rộng giới hạn sử dụng, bạn có thể nâng cấp tài khoản của mình:</p><div class="space-y-4 pl-1"><div class="flex gap-3 items-start"><span class="material-symbols-outlined text-primary text-[20px] mt-0.5">event_busy</span><div><strong class="text-sm text-primary block">Khi nào cần nâng cấp</strong><span class="text-xs text-on-surface-variant leading-relaxed">Khi đã dùng hết hạn mức miễn phí hoặc muốn trải nghiệm tốc độ ưu tiên và không có quảng cáo.</span></div></div><div class="flex gap-3 items-start"><span class="material-symbols-outlined text-primary text-[20px] mt-0.5">widgets</span><div><strong class="text-sm text-primary block">Cách chọn gói</strong><span class="text-xs text-on-surface-variant leading-relaxed">Truy cập trang \'Nâng cấp gói\' và chọn một trong ba gói: Basic (50 lượt/7 ngày/1,000đ), Pro (200 lượt/30 ngày/5,000đ) hoặc Enterprise (Không giới hạn/90 ngày/15,000đ).</span></div></div><div class="flex gap-3 items-start"><span class="material-symbols-outlined text-primary text-[20px] mt-0.5">qr_code_2</span><div><strong class="text-sm text-primary block">Cách thanh toán (VietQR)</strong><span class="text-xs text-on-surface-variant leading-relaxed">Hệ thống tạo mã thanh toán QR tự động. Hãy mở ứng dụng ngân hàng và quét mã để chuyển khoản chính xác số tiền cùng nội dung chuyển khoản được hiển thị.</span></div></div><div class="flex gap-3 items-start"><span class="material-symbols-outlined text-primary text-[20px] mt-0.5">sync_saved_locally</span><div><strong class="text-sm text-primary block">Hệ thống xử lý</strong><span class="text-xs text-on-surface-variant leading-relaxed">Sau khi chuyển khoản thành công, hệ thống VietQR tự động ghi nhận và kích hoạt gói nâng cấp cho tài khoản của bạn sau 1-5 phút mà không cần admin duyệt thủ công.</span></div></div></div>'
+            "title": "Bước 7: Nâng cấp gói nếu cần",
+            "content": '<p class="mb-3">Hệ thống áp dụng hạn mức sử dụng để đảm bảo hiệu năng tối ưu cho cộng đồng:</p>' ~
+                       '<ul class="list-disc pl-5 space-y-2">' ~
+                       '  <li>Mỗi tài khoản miễn phí mặc định nhận được 10 lượt nhận diện ban đầu. Khi hết lượt, bạn có thể xem quảng cáo ngắn để nhận thêm lượt miễn phí (tối đa 3 lượt/ngày).</li>' ~
+                       '  <li>Nếu có nhu cầu quét liên tục không giới hạn và không có quảng cáo, bạn hãy vào mục <strong>Nâng cấp gói</strong> để lựa chọn gói Basic, Pro hoặc Enterprise và tiến hành chuyển khoản qua mã VietQR tự động. Gói dịch vụ của bạn sẽ được kích hoạt ngay sau 1-5 phút khi giao dịch được xác thực thành công.</li>' ~
+                       '</ul>'
           },
           {
-            "title": "9. Xem lịch sử nhận diện",
-            "content": '<p class="text-on-surface-variant mb-4">Tất cả kết quả quét ảnh được lưu tự động để tra cứu lại bất cứ lúc nào:</p><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div class="p-4 bg-surface-container rounded-xl border border-outline-variant/20 flex gap-3 items-start"><span class="material-symbols-outlined text-primary text-[20px]">list_alt</span><div><h5 class="font-bold text-primary mb-1 text-sm">Danh sách lịch sử</h5><p class="text-xs text-on-surface-variant leading-relaxed">Truy cập trang \'Lịch sử\' từ thanh bên trái để xem danh sách toàn bộ các lượt nhận diện đã thực hiện.</p></div></div><div class="p-4 bg-surface-container rounded-xl border border-outline-variant/20 flex gap-3 items-start"><span class="material-symbols-outlined text-primary text-[20px]">manage_search</span><div><h5 class="font-bold text-primary mb-1 text-sm">Quản lý lịch sử</h5><p class="text-xs text-on-surface-variant leading-relaxed">Bạn có thể tìm kiếm nhanh theo giống chó, xem chi tiết từng lượt quét hoặc chọn xóa các bản ghi không cần thiết.</p></div></div></div>'
+            "title": "Bước 8: Liên hệ hỗ trợ khi gặp lỗi",
+            "content": '<p class="mb-3">Trong trường hợp gặp các sự cố kỹ thuật như giao dịch chuyển khoản chưa được ghi nhận quá 15 phút, lỗi ảnh tải lên liên tục hoặc không đăng nhập được tài khoản:</p>' ~
+                       '<ul class="list-disc pl-5 space-y-2">' ~
+                       '  <li>Bạn hãy chụp lại ảnh màn hình lỗi hoặc biên lai chuyển khoản (đối với lỗi thanh toán).</li>' ~
+                       '  <li>Gửi ngay thông tin về hòm thư hỗ trợ chính thức của chúng tôi tại <a href="mailto:' ~ get_config('site_email', 'support@pet.ai') ~ '" class="text-primary hover:underline font-medium">' ~ get_config('site_email', 'support@pet.ai') ~ '</a> để đội ngũ kỹ thuật viên kiểm tra và xử lý thủ công cho bạn.</li>' ~
+                       '</ul>'
           },
           {
-            "title": "10. Xem thống kê cá nhân",
-            "content": '<p class="text-on-surface-variant mb-4">Trang thống kê giúp bạn có cái nhìn tổng quan về lịch sử sử dụng của mình:</p><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div class="p-4 bg-surface-container rounded-xl border border-outline-variant/20 flex gap-3 items-start"><span class="material-symbols-outlined text-primary text-[20px]">analytics</span><div><h5 class="font-bold text-primary mb-1 text-sm">Tổng quan</h5><p class="text-xs text-on-surface-variant leading-relaxed">Xem tổng số lượt quét, độ tin cậy trung bình của các lần nhận diện và số lượng giống chó khác nhau bạn từng phát hiện.</p></div></div><div class="p-4 bg-surface-container rounded-xl border border-outline-variant/20 flex gap-3 items-start"><span class="material-symbols-outlined text-primary text-[20px]">insert_chart</span><div><h5 class="font-bold text-primary mb-1 text-sm">Biểu đồ trực quan</h5><p class="text-xs text-on-surface-variant leading-relaxed">Biểu đồ trực quan: Biểu đồ xu hướng nhận diện theo thời gian, biểu đồ Top 5 giống chó bạn quét nhiều nhất và biểu đồ phân bổ mức độ tin cậy của phân loại AI.</p></div></div></div>'
+            "title": "Mẹo chụp và chọn ảnh chuẩn xác",
+            "content": '<p class="mb-3">Để tối ưu hóa độ chính xác khi nhận dạng cún cưng bằng mô hình AI, bạn nên áp dụng các mẹo sau:</p>' ~
+                       '<ul class="list-disc pl-5 space-y-2">' ~
+                       '  <li><strong>Ánh sáng tốt:</strong> Ưu tiên ảnh chụp cún cưng dưới ánh sáng tự nhiên rõ ràng, tránh ảnh bị ngược sáng, bóng mờ hoặc quá tối.</li>' ~
+                       '  <li><strong>Độ nét cao:</strong> Tránh các ảnh bị rung tay, nhòe mờ hoặc mất nét ở vùng đầu của chó.</li>' ~
+                       '  <li><strong>Bố cục tập trung:</strong> Chụp trực diện hoặc góc nghiêng rõ ràng khuôn mặt cún. Ưu tiên ảnh chỉ chứa duy nhất một chú chó, không bị các vật cản che khuất và ít vật thể nhiễu xung quanh.</li>' ~
+                       '</ul>'
           },
           {
-            "title": "11. Các câu hỏi thường gặp (FAQ)",
-            "content": '<div class="space-y-3"><details class="group bg-surface-container-low rounded-xl p-4 border border-outline-variant/10 [&_summary::-webkit-details-marker]:hidden"><summary class="flex items-center justify-between cursor-pointer focus:outline-none"><h5 class="font-bold text-primary text-sm flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">help_outline</span><span>AI nhận diện có chính xác không?</span></h5><span class="relative flex-shrink-0 ml-1.5 w-5 h-5"><span class="material-symbols-outlined transition-transform duration-300 group-open:-rotate-180 text-primary">expand_more</span></span></summary><p class="mt-2 text-xs text-on-surface-variant pl-7 leading-relaxed">Mô hình AI nhận diện dựa trên đặc trưng hình thái học bên ngoài từ tập dữ liệu huấn luyện. Kết quả chỉ mang tính tham khảo khách quan, không thể thay thế cho các kiểm tra xét nghiệm di truyền (DNA).</p></details><details class="group bg-surface-container-low rounded-xl p-4 border border-outline-variant/10 [&_summary::-webkit-details-marker]:hidden"><summary class="flex items-center justify-between cursor-pointer focus:outline-none"><h5 class="font-bold text-primary text-sm flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">help_outline</span><span>Làm sao để có kết quả tốt nhất?</span></h5><span class="relative flex-shrink-0 ml-1.5 w-5 h-5"><span class="material-symbols-outlined transition-transform duration-300 group-open:-rotate-180 text-primary">expand_more</span></span></summary><p class="mt-2 text-xs text-on-surface-variant pl-7 leading-relaxed">Nên chụp ảnh cún cưng ở góc chính diện khuôn mặt, ánh sáng rõ ràng, ảnh không bị rung mờ và chỉ có duy nhất khuôn mặt của một chú chó trong khung hình.</p></details><details class="group bg-surface-container-low rounded-xl p-4 border border-outline-variant/10 [&_summary::-webkit-details-marker]:hidden"><summary class="flex items-center justify-between cursor-pointer focus:outline-none"><h5 class="font-bold text-primary text-sm flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">help_outline</span><span>Hết lượt miễn phí tôi phải làm gì?</span></h5><span class="relative flex-shrink-0 ml-1.5 w-5 h-5"><span class="material-symbols-outlined transition-transform duration-300 group-open:-rotate-180 text-primary">expand_more</span></span></summary><p class="mt-2 text-xs text-on-surface-variant pl-7 leading-relaxed">Bạn có thể chọn \'Xem quảng cáo\' ở khu vực nhận diện để nhận thêm lượt nhận diện hoặc tiến hành nâng cấp gói dịch vụ trả phí phù hợp.</p></details><details class="group bg-surface-container-low rounded-xl p-4 border border-outline-variant/10 [&_summary::-webkit-details-marker]:hidden"><summary class="flex items-center justify-between cursor-pointer focus:outline-none"><h5 class="font-bold text-primary text-sm flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">help_outline</span><span>Thanh toán không thành công thì phải làm sao?</span></h5><span class="relative flex-shrink-0 ml-1.5 w-5 h-5"><span class="material-symbols-outlined transition-transform duration-300 group-open:-rotate-180 text-primary">expand_more</span></span></summary><p class="mt-2 text-xs text-on-surface-variant pl-7 leading-relaxed">Giao dịch tự động có thể mất từ 1-5 phút để xử lý. Nếu quá thời gian trên tài khoản vẫn chưa được kích hoạt, vui lòng gửi yêu cầu hỗ trợ đính kèm mã đơn hàng hoặc ảnh chụp biên lai chuyển khoản.</p></details><details class="group bg-surface-container-low rounded-xl p-4 border border-outline-variant/10 [&_summary::-webkit-details-marker]:hidden"><summary class="flex items-center justify-between cursor-pointer focus:outline-none"><h5 class="font-bold text-primary text-sm flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">help_outline</span><span>Làm thế nào để liên hệ hỗ trợ?</span></h5><span class="relative flex-shrink-0 ml-1.5 w-5 h-5"><span class="material-symbols-outlined transition-transform duration-300 group-open:-rotate-180 text-primary">expand_more</span></span></summary><p class="mt-2 text-xs text-on-surface-variant pl-7 leading-relaxed">Bạn có thể gửi email trực tiếp tới {{ get_config("site_email", "support@pet.ai") }} hoặc điền biểu mẫu liên hệ tại trang \'Liên hệ\' của website.</p></details></div>'
+            "title": "Lưu ý quan trọng về kết quả AI",
+            "content": '<p class="mb-3"><span class="material-symbols-outlined text-amber-500 text-[18px] align-middle mr-1">warning</span><strong>Thông tin tham khảo:</strong> Kết quả phân tích giống chó và tỷ lệ lai (đối với chó lai) được hệ thống PetAI đưa ra hoàn toàn dựa trên sự tương đồng hình thái học bên ngoài được phân tích từ hình ảnh bạn cung cấp.</p>' ~
+                       '<p class="mb-3">Hệ thống của chúng tôi <strong>KHÔNG</strong> thực hiện bất kỳ hình thức xét nghiệm sinh học di truyền (DNA) nào. Kết quả nhận diện chỉ mang tính chất tham khảo học tập khách quan và không thể thay thế cho các kết luận y khoa thú y chuyên môn hoặc giấy chứng nhận thuần chủng pháp lý chính thức từ các hiệp hội nuôi chó giống.</p>'
           },
           {
-            "title": "12. Thông tin liên hệ hỗ trợ",
-            "content": '<p class="text-on-surface-variant mb-4">Nếu gặp bất kỳ khó khăn hay sự cố nào trong quá trình sử dụng hệ thống PetAI, vui lòng liên hệ:</p><div class="space-y-3 text-sm"><div class="flex items-center gap-3"><span class="material-symbols-outlined text-primary text-[20px]">mail</span><span class="text-on-surface-variant">Email: {{ get_config("site_email", "support@pet.ai") }} (Hỗ trợ 24/7)</span></div><div class="flex items-center gap-3"><span class="material-symbols-outlined text-primary text-[20px]">call</span><span class="text-on-surface-variant">Hotline: {{ get_config("contact_phone", "0916 416 409") }}</span></div><div class="flex items-center gap-3"><span class="material-symbols-outlined text-primary text-[20px]">location_on</span><span class="text-on-surface-variant">Địa chỉ: {{ get_config("contact_address_vi", get_config("contact_address", "P16, Đường số 8, KDC lô 49, Khu đô thị Nam Cần Thơ, Phường Cái Răng, TP. Cần Thơ")) }}</span></div></div>'
+            "title": "Thông tin liên hệ hỗ trợ",
+            "content": '<p class="mb-3">Mọi thắc mắc, đóng góp ý kiến hoặc phản hồi về chính sách và chất lượng dịch vụ của PetAI, vui lòng liên hệ với chúng tôi qua các kênh sau:</p>' ~
+                       '<ul class="space-y-2">' ~
+                       '  <li class="flex items-center gap-2"><span class="material-symbols-outlined text-primary text-[18px]">mail</span><span><strong>Email:</strong> <a href="mailto:' ~ get_config('site_email', 'support@pet.ai') ~ '" class="text-primary hover:underline font-medium">' ~ get_config('site_email', 'support@pet.ai') ~ '</a></span></li>' ~
+                       '  <li class="flex items-center gap-2"><span class="material-symbols-outlined text-primary text-[18px]">call</span><span><strong>Số điện thoại:</strong> ' ~ get_config('contact_phone', '0916 416 409') ~ '</span></li>' ~
+                       '  <li class="flex items-start gap-2"><span class="material-symbols-outlined text-primary text-[18px] mt-0.5">location_on</span><span><strong>Địa chỉ:</strong> ' ~ get_config("contact_address_vi", get_config("contact_address", "P16, Đường số 8, KDC lô 49, Khu đô thị Nam Cần Thơ, Phường Cái Răng, TP. Cần Thơ")) ~ '</span></li>' ~
+                       '</ul>'
           }
         ] %}
 
         {% set default_sections_en = [
           {
-            "title": "1. Introduction to PetAI",
-            "content": 'PetAI is an intelligent dog breed identification system powered by Artificial Intelligence (AI). When you upload an image, the system processes it through the following automated pipeline:<br><br><strong>1. Detection &amp; Bounding Box (YOLOv8):</strong> The YOLOv8 model scans the image to identify the dog, draws a bounding box around its body, and automatically crops the region to focus solely on the dog and eliminate background noise.<br><strong>2. Feature Analysis &amp; Classification:</strong> The cropped image is fed into a custom deep learning classifier to analyze morphological features across 120+ popular dog breeds.<br><strong>3. Purebred vs. Mixed Breed Decision:</strong> If the top breed candidate has a dominant confidence score (typically &gt;80%), the AI concludes a purebred breed. If scores for the top candidates are close or moderate, the system visualizes estimated hybrid ratios using the Top-3 candidates.<br><strong>4. Visual Explanations (Grad-CAM):</strong> Generates a heatmap highlighting key regions (ears, eyes, snout) that the AI focused on to make its decision.'
+            "title": "Introduction to PetAI",
+            "content": '<p class="mb-3">Welcome to <strong>PetAI</strong> – A state-of-the-art dog breed identification system built on advanced Artificial Intelligence (AI) technologies. Our platform utilizes modern deep learning models like YOLOv8 to automatically detect and analyze the morphological characteristics of your pet.</p>' ~
+                       '<p>Our service helps pet lovers quickly determine their dog\'s breed, learn basic care information, and easily build a personalized pet collection registry.</p>'
           },
           {
-            "title": "2. Account Registration Guide",
-            "content": '<p class="text-on-surface-variant mb-4">To save your identification history and manage your usage limits, you need to create an account:</p><ul class="space-y-3 pl-1"><li class="flex items-start gap-3"><span class="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs mt-0.5">1</span><span class="text-on-surface-variant">Access the Registration page from the top-right header menu or navigate directly to /register.</span></li><li class="flex items-start gap-3"><span class="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs mt-0.5">2</span><span class="text-on-surface-variant">Fill in your details: Full Name, unique Username, a valid Email address, and a secure Password.</span></li><li class="flex items-start gap-3"><span class="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs mt-0.5">3</span><span class="text-on-surface-variant">Accept the Terms of Service and click \'Create Account\' to complete the registration.</span></li></ul>'
+            "title": "Step 1: Sign Up or Sign In",
+            "content": '<p class="mb-3">To store your breed identification history and manage your usage limits, you need to sign up for an account:</p>' ~
+                       '<ul class="list-disc pl-5 space-y-2">' ~
+                       '  <li><strong>Sign Up a New Account:</strong> Click the "Register" button in the top-right corner, and enter basic details including your Full Name, unique Username, a valid Email, and a secure Password.</li>' ~
+                       '  <li><strong>Sign In:</strong> Enter your Username or Email with your Password for a standard login, or choose "Sign in with Google" to authenticate instantly with a single click.</li>' ~
+                       '</ul>'
           },
           {
-            "title": "3. User Sign In Guide",
-            "content": '<p class="text-on-surface-variant mb-4">After successful registration, you can log into the system in two ways:</p><ul class="space-y-3 pl-1"><li class="flex items-start gap-3"><span class="material-symbols-outlined text-primary/70 flex-shrink-0 mt-0.5">vpn_key</span><span class="text-on-surface-variant">Standard Login: Enter your registered Username/Email and Password.</span></li><li class="flex items-start gap-3"><span class="material-symbols-outlined text-primary/70 flex-shrink-0 mt-0.5">account_circle</span><span class="text-on-surface-variant">Google Sign-In: Click \'Sign in with Google\' to authenticate instantly using your Google account.</span></li></ul>'
+            "title": "Step 2: Upload Dog Photo",
+            "content": '<p class="mb-3">Once logged in, go to the <strong>Identify</strong> page to upload your pet\'s image:</p>' ~
+                       '<ul class="list-disc pl-5 space-y-2">' ~
+                       '  <li>You can click inside the upload box to select a file from your device, or drag and drop your image directly.</li>' ~
+                       '  <li>The system supports taking direct photos using your device\'s camera when accessed from mobile browsers.</li>' ~
+                       '</ul>'
           },
           {
-            "title": "4. Free Plan Benefits & Limits",
-            "content": '<p class="text-on-surface-variant mb-4">Every newly registered account starts automatically on the Free plan:</p><div class="grid grid-cols-1 md:grid-cols-3 gap-4"><div class="p-4 bg-surface-container rounded-xl border border-outline-variant/20"><h4 class="font-bold text-primary mb-2 flex items-center gap-1.5 text-sm"><span class="material-symbols-outlined text-[16px]">filter_1</span><span>10 free AI scans</span></h4><p class="text-xs text-on-surface-variant leading-relaxed">Default scan limit: You receive 10 free AI scans forever.</p></div><div class="p-4 bg-surface-container rounded-xl border border-outline-variant/20"><h4 class="font-bold text-primary mb-2 flex items-center gap-1.5 text-sm"><span class="material-symbols-outlined text-[16px]">ads_click</span><span>Ad-supported scanning</span></h4><p class="text-xs text-on-surface-variant leading-relaxed">Watch ads to unlock extra scans: Once the 10 free scans run out, you can watch a short simulated ad (up to 3 times) to unlock 3 extra scans per view.</p></div><div class="p-4 bg-surface-container rounded-xl border border-outline-variant/20"><h4 class="font-bold text-primary mb-2 flex items-center gap-1.5 text-sm"><span class="material-symbols-outlined text-[16px]">warning</span><span>Quota exhaustion</span></h4><p class="text-xs text-on-surface-variant leading-relaxed">Once both the default and ad-unlocked limits are exhausted, you must purchase an upgrade package.</p></div></div>'
+            "title": "Step 3: Check Photo Requirements",
+            "content": '<p class="mb-3">To get the most accurate analysis from our AI, please verify that your uploaded image meets these standards:</p>' ~
+                       '<ul class="list-disc pl-5 space-y-2">' ~
+                       '  <li><strong>Supported Formats:</strong> Only <code>.jpg</code>, <code>.jpeg</code>, and <code>.png</code> files are accepted.</li>' ~
+                       '  <li><strong>Maximum File Size:</strong> The uploaded image must not exceed <strong>10MB</strong>.</li>' ~
+                       '  <li><strong>Image Content:</strong> Make sure the photo clearly features a dog, avoiding images without dogs or featuring other animal species.</li>' ~
+                       '</ul>'
           },
           {
-            "title": "5. How to Identify Dog Breeds",
-            "content": '<p class="text-on-surface-variant mb-4">To identify a dog breed, follow this quick procedure:</p><div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4"><div class="p-4 bg-surface-container-low rounded-xl border border-outline-variant/10 text-center"><span class="text-2xl font-bold text-primary mb-1 block">01</span><h5 class="font-bold text-sm mb-1">Upload Photo</h5><p class="text-xs text-on-surface-variant leading-relaxed">Drag and drop or click to select a dog image file from your device on the Identify page.</p></div><div class="p-4 bg-surface-container-low rounded-xl border border-outline-variant/10 text-center"><span class="text-2xl font-bold text-primary mb-1 block">02</span><h5 class="font-bold text-sm mb-1">Supported Formats</h5><p class="text-xs text-on-surface-variant leading-relaxed">Ensure the file is in JPG, JPEG, or PNG format and does not exceed 10MB.</p></div><div class="p-4 bg-surface-container-low rounded-xl border border-outline-variant/10 text-center"><span class="text-2xl font-bold text-primary mb-1 block">03</span><h5 class="font-bold text-sm mb-1">Wait for AI Processing</h5><p class="text-xs text-on-surface-variant leading-relaxed">Click \'Analyze Now\' and wait 2-5 seconds for YOLOv8 and classification models to process.</p></div><div class="p-4 bg-surface-container-low rounded-xl border border-outline-variant/10 text-center"><span class="text-2xl font-bold text-primary mb-1 block">04</span><h5 class="font-bold text-sm mb-1">View Results</h5><p class="text-xs text-on-surface-variant leading-relaxed">The page will automatically load the detailed prediction results page.</p></div></div><div class="mt-6 p-4 bg-primary/5 rounded-xl border border-primary/10"><h4 class="font-bold text-primary mb-2 flex items-center gap-1.5 text-sm">Photo Tips for Best Accuracy</h4><ul class="list-disc pl-5 space-y-1.5 text-xs text-on-surface-variant"><li>Take close-up, clear photos of the dog\'s face.</li><li>Ensure good lighting conditions; avoid backlighting or overly dark settings.</li><li>Avoid photos with multiple dogs or cluttered backgrounds.</li><li>A straight-on shot of the dog\'s face always yields optimal AI results.</li></ul></div>'
+            "title": "Step 4: Wait for AI Analysis",
+            "content": '<p class="mb-3">After uploading a valid image, click the <strong>"Analyze Now"</strong> button:</p>' ~
+                       '<ul class="list-disc pl-5 space-y-2">' ~
+                       '  <li>The AI system automatically runs object detection to isolate the dog\'s body, crops background noise, and runs the deep learning classification model.</li>' ~
+                       '  <li>The average processing time is between <strong>2 to 4 seconds</strong>, depending on network speeds and current server loads.</li>' ~
+                       '</ul>'
           },
           {
-            "title": "6. Understanding Prediction Results",
-            "content": '<p class="text-on-surface-variant mb-4">The result page is packed with detailed AI insights about your pet:</p><div class="grid grid-cols-1 sm:grid-cols-2 gap-4"><div class="flex gap-3 items-start p-3 bg-surface-container rounded-xl"><span class="material-symbols-outlined text-primary text-[20px] mt-0.5">pets</span><div><strong class="text-sm text-primary block">Breed Name</strong><span class="text-xs text-on-surface-variant leading-relaxed">The primary identified breed with the highest confidence level.</span></div></div><div class="flex gap-3 items-start p-3 bg-surface-container rounded-xl"><span class="material-symbols-outlined text-primary text-[20px] mt-0.5">percent</span><div><strong class="text-sm text-primary block">Confidence Level</strong><span class="text-xs text-on-surface-variant leading-relaxed">Shows the percentage probability computed by the AI model.</span></div></div><div class="flex gap-3 items-start p-3 bg-surface-container rounded-xl"><span class="material-symbols-outlined text-primary text-[20px] mt-0.5">description</span><div><strong class="text-sm text-primary block">Breed Information</strong><span class="text-xs text-on-surface-variant leading-relaxed">Encyclopedia facts including Origin, Physical features, Temperament, and Care instructions.</span></div></div><div class="flex gap-3 items-start p-3 bg-surface-container rounded-xl"><span class="material-symbols-outlined text-primary text-[20px] mt-0.5">insights</span><div><strong class="text-sm text-primary block">Grad-CAM Heatmap</strong><span class="text-xs text-on-surface-variant leading-relaxed">Highlights the visual regions (e.g. ears, eyes, snout) the AI focused on to make its decision.</span></div></div></div>'
+            "title": "Step 5: View Identification Results",
+            "content": '<p class="mb-3">The result page will display a comprehensive AI analysis report including:</p>' ~
+                       '<ul class="list-disc pl-5 space-y-2">' ~
+                       '  <li><strong>Breed Name:</strong> The identified dog breed with the highest morphological similarity.</li>' ~
+                       '  <li><strong>Accuracy (Confidence Score):</strong> Shows the percentage probability calculated by the AI model.</li>' ~
+                       '  <li><strong>Encyclopedia Information:</strong> Physical characteristics, temperament traits, origin, and standard care manuals for the breed.</li>' ~
+                       '  <li><strong>Grad-CAM Heatmap:</strong> A visual highlighting of the specific regions (ears, eyes, snout) the AI analyzed to make its prediction.</li>' ~
+                       '</ul>'
           },
           {
-            "title": "7. AI Recognition Modes",
-            "content": '<p class="text-on-surface-variant mb-4">The system automatically handles breed classifications based on model probabilities:</p><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div class="p-4 bg-surface-container rounded-xl border border-outline-variant/20"><h4 class="font-bold text-primary mb-1.5 text-sm">Purebred Classification</h4><p class="text-xs text-on-surface-variant leading-relaxed">If the top breed has a dominant probability (typically &gt;80%), the AI concludes a purebred breed.</p></div><div class="p-4 bg-surface-container rounded-xl border border-outline-variant/20"><h4 class="font-bold text-primary mb-1.5 text-sm">Estimated Hybrid Ratio Analysis</h4><p class="text-xs text-on-surface-variant leading-relaxed">For mixed/hybrid dogs, the system displays morphological similarities for the Top-3 breeds and visualizes an estimated hybrid ratio.</p></div></div>'
+            "title": "Step 6: View Scan History",
+            "content": '<p class="mb-3">Every successful breed scan is automatically saved for your convenience:</p>' ~
+                       '<ul class="list-disc pl-5 space-y-2">' ~
+                       '  <li>Access the <strong>History</strong> section in the left sidebar to view a chronological log of all your scans with timestamps and full reports.</li>' ~
+                       '  <li>You can also visit the <strong>Statistics</strong> page to explore charts showing your most scanned breeds and usage trends over time.</li>' ~
+                       '</ul>'
           },
           {
-            "title": "8. Upgrading Subscription Packages",
-            "content": '<p class="text-on-surface-variant mb-4">To extend scan limits and experience premium speed, you can upgrade your plan:</p><div class="space-y-4 pl-1"><div class="flex gap-3 items-start"><span class="material-symbols-outlined text-primary text-[20px] mt-0.5">event_busy</span><div><strong class="text-sm text-primary block">When to Upgrade</strong><span class="text-xs text-on-surface-variant leading-relaxed">When you run out of free scans, want ad-free usage, or require priority server response.</span></div></div><div class="flex gap-3 items-start"><span class="material-symbols-outlined text-primary text-[20px] mt-0.5">widgets</span><div><strong class="text-sm text-primary block">Choose a Plan</strong><span class="text-xs text-on-surface-variant leading-relaxed">Go to the Upgrade page and select a plan: Basic (50 scans / 7 days / 1,000 VND), Pro (200 scans / 30 days / 5,000 VND), or Enterprise (Unlimited scans / 90 days / 15,000 VND).</span></div></div><div class="flex gap-3 items-start"><span class="material-symbols-outlined text-primary text-[20px] mt-0.5">qr_code_2</span><div><strong class="text-sm text-primary block">Payment (VietQR)</strong><span class="text-xs text-on-surface-variant leading-relaxed">The system creates a dynamic payment invoice and VietQR code. Open your banking app, scan the code, and transfer the exact amount with the exact memo.</span></div></div><div class="flex gap-3 items-start"><span class="material-symbols-outlined text-primary text-[20px] mt-0.5">sync_saved_locally</span><div><strong class="text-sm text-primary block">Automatic Activation</strong><span class="text-xs text-on-surface-variant leading-relaxed">Once the transfer is completed, the VietQR gateway automatically confirms payment and upgrades your account in 1-5 minutes.</span></div></div></div>'
+            "title": "Step 7: Upgrade Plan if Needed",
+            "content": '<p class="mb-3">Our platform uses quota limits to ensure high availability and fair usage for everyone:</p>' ~
+                       '<ul class="list-disc pl-5 space-y-2">' ~
+                       '  <li>Every free account starts with 10 free scans. When depleted, you can watch short video ads to claim extra free scans (up to 3 times daily).</li>' ~
+                       '  <li>If you require ad-free, high-speed, and unlimited scanning, click <strong>Upgrade</strong> to select between our Basic, Pro, or Enterprise plans. Payments are processed via automated VietQR bank transfers and are activated within 1-5 minutes after successful transaction validation.</li>' ~
+                       '</ul>'
           },
           {
-            "title": "9. Viewing Scan History",
-            "content": '<p class="text-on-surface-variant mb-4">Every scanned photo is saved automatically to let you query them anytime:</p><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div class="p-4 bg-surface-container rounded-xl border border-outline-variant/20 flex gap-3 items-start"><span class="material-symbols-outlined text-primary text-[20px]">list_alt</span><div><h5 class="font-bold text-primary mb-1 text-sm">Viewing Scan History</h5><p class="text-xs text-on-surface-variant leading-relaxed">Navigate to the \'History\' page from the sidebar to view a chronological list of all scans.</p></div></div><div class="p-4 bg-surface-container rounded-xl border border-outline-variant/20 flex gap-3 items-start"><span class="material-symbols-outlined text-primary text-[20px]">manage_search</span><div><h5 class="font-bold text-primary mb-1 text-sm">Managing History</h5><p class="text-xs text-on-surface-variant leading-relaxed">You can filter the list by breed name, open details to view the full report, or delete individual records.</p></div></div></div>'
+            "title": "Step 8: Contact Support on Errors",
+            "content": '<p class="mb-3">If you experience technical issues such as pending transactions exceeding 15 minutes, persistent image upload errors, or account login issues:</p>' ~
+                       '<ul class="list-disc pl-5 space-y-2">' ~
+                       '  <li>Take a screenshot of the error page or your transfer receipt (for payment-related issues).</li>' ~
+                       '  <li>Send an email to our official helpdesk at <a href="mailto:' ~ get_config('site_email', 'support@pet.ai') ~ '" class="text-primary hover:underline font-medium">' ~ get_config('site_email', 'support@pet.ai') ~ '</a>, and our technical staff will manually resolve the issue for you.</li>' ~
+                       '</ul>'
           },
           {
-            "title": "10. Exploring Personal Analytics",
-            "content": '<p class="text-on-surface-variant mb-4">The statistics page displays high-level trends of your scanning activity:</p><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div class="p-4 bg-surface-container rounded-xl border border-outline-variant/20 flex gap-3 items-start"><span class="material-symbols-outlined text-primary text-[20px]">analytics</span><div><h5 class="font-bold text-primary mb-1 text-sm">Overview</h5><p class="text-xs text-on-surface-variant leading-relaxed">Total scans performed, average AI confidence score, and unique breeds discovered.</p></div></div><div class="p-4 bg-surface-container rounded-xl border border-outline-variant/20 flex gap-3 items-start"><span class="material-symbols-outlined text-primary text-[20px]">insert_chart</span><div><h5 class="font-bold text-primary mb-1 text-sm">Charts</h5><p class="text-xs text-on-surface-variant leading-relaxed">Charts: Activity trend graph, top 5 identified breeds chart, and probability distribution breakdowns.</p></div></div></div>'
+            "title": "Tips for Accurate Photo Selection",
+            "content": '<p class="mb-3">To optimize the accuracy of breed identification from our AI models, we recommend the following tips:</p>' ~
+                       '<ul class="list-disc pl-5 space-y-2">' ~
+                       '  <li><strong>Good Lighting:</strong> Capture photos in clear, natural lighting, avoiding harsh backlighting, heavy shadows, or low-light situations.</li>' ~
+                       '  <li><strong>High Sharpness:</strong> Avoid blurred, shaky, or out-of-focus images, especially around the dog\'s facial region.</li>' ~
+                       '  <li><strong>Focused Composition:</strong> Prefer a straight-on facial view of the cún. Choose photos containing only one dog, free of obstructions, and with minimal background clutter.</li>' ~
+                       '</ul>'
           },
           {
-            "title": "11. Frequently Asked Questions (FAQ)",
-            "content": '<div class="space-y-3"><details class="group bg-surface-container-low rounded-xl p-4 border border-outline-variant/10 [&_summary::-webkit-details-marker]:hidden"><summary class="flex items-center justify-between cursor-pointer focus:outline-none"><h5 class="font-bold text-primary text-sm flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">help_outline</span><span>Is the AI prediction 100% accurate?</span></h5><span class="relative flex-shrink-0 ml-1.5 w-5 h-5"><span class="material-symbols-outlined transition-transform duration-300 group-open:-rotate-180 text-primary">expand_more</span></span></summary><p class="mt-2 text-xs text-on-surface-variant pl-7 leading-relaxed">AI models predict based on morphological features learned from training data. The outputs are for objective reference and cannot replace genetic (DNA) tests.</p></details><details class="group bg-surface-container-low rounded-xl p-4 border border-outline-variant/10 [&_summary::-webkit-details-marker]:hidden"><summary class="flex items-center justify-between cursor-pointer focus:outline-none"><h5 class="font-bold text-primary text-sm flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">help_outline</span><span>How can I get the best results?</span></h5><span class="relative flex-shrink-0 ml-1.5 w-5 h-5"><span class="material-symbols-outlined transition-transform duration-300 group-open:-rotate-180 text-primary">expand_more</span></span></summary><p class="mt-2 text-xs text-on-surface-variant pl-7 leading-relaxed">Ensure the photo features a straight-on shot of the dog\'s face, has clear lighting, is not blurry, and contains only one dog.</p></details><details class="group bg-surface-container-low rounded-xl p-4 border border-outline-variant/10 [&_summary::-webkit-details-marker]:hidden"><summary class="flex items-center justify-between cursor-pointer focus:outline-none"><h5 class="font-bold text-primary text-sm flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">help_outline</span><span>What should I do when free scans run out?</span></h5><span class="relative flex-shrink-0 ml-1.5 w-5 h-5"><span class="material-symbols-outlined transition-transform duration-300 group-open:-rotate-180 text-primary">expand_more</span></span></summary><p class="mt-2 text-xs text-on-surface-variant pl-7 leading-relaxed">You can click \'Watch Ad\' in the pop-up to unlock additional scans or purchase a plan upgrade.</p></details><details class="group bg-surface-container-low rounded-xl p-4 border border-outline-variant/10 [&_summary::-webkit-details-marker]:hidden"><summary class="flex items-center justify-between cursor-pointer focus:outline-none"><h5 class="font-bold text-primary text-sm flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">help_outline</span><span>What if my payment is unsuccessful?</span></h5><span class="relative flex-shrink-0 ml-1.5 w-5 h-5"><span class="material-symbols-outlined transition-transform duration-300 group-open:-rotate-180 text-primary">expand_more</span></span></summary><p class="mt-2 text-xs text-on-surface-variant pl-7 leading-relaxed">VietQR transactions take 1-5 minutes to complete. If it takes longer, please contact us with your order ID or bank receipt.</p></details><details class="group bg-surface-container-low rounded-xl p-4 border border-outline-variant/10 [&_summary::-webkit-details-marker]:hidden"><summary class="flex items-center justify-between cursor-pointer focus:outline-none"><h5 class="font-bold text-primary text-sm flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">help_outline</span><span>How do I contact support?</span></h5><span class="relative flex-shrink-0 ml-1.5 w-5 h-5"><span class="material-symbols-outlined transition-transform duration-300 group-open:-rotate-180 text-primary">expand_more</span></span></summary><p class="mt-2 text-xs text-on-surface-variant pl-7 leading-relaxed">You can email us at {{ get_config("site_email", "support@pet.ai") }} or use the contact form under the Contact page.</p></details></div>'
+            "title": "Important Disclaimer on AI Predictions",
+            "content": '<p class="mb-3"><span class="material-symbols-outlined text-amber-500 text-[18px] align-middle mr-1">warning</span><strong>Reference Only:</strong> The breed predictions and hybrid ratio estimations (for mixed breeds) provided by PetAI are strictly calculated based on external morphological patterns from your uploaded images.</p>' ~
+                       '<p class="mb-3">Our platform does <strong>NOT</strong> perform any biological genetic (DNA) tests. The results are strictly for educational and reference purposes, and cannot substitute professional veterinary medical diagnosis or official purebred registry certificates from national kennel clubs.</p>'
           },
           {
-            "title": "12. Support Contact Information",
-            "content": '<p class="text-on-surface-variant mb-4">If you encounter any issues while using the PetAI platform, feel free to contact us:</p><div class="space-y-3 text-sm"><div class="flex items-center gap-3"><span class="material-symbols-outlined text-primary text-[20px]">mail</span><span class="text-on-surface-variant">Email: {{ get_config("site_email", "support@pet.ai") }} (24/7 Support)</span></div><div class="flex items-center gap-3"><span class="material-symbols-outlined text-primary text-[20px]">call</span><span class="text-on-surface-variant">Hotline: {{ get_config("contact_phone", "0916 416 409") }}</span></div><div class="flex items-center gap-3"><span class="material-symbols-outlined text-primary text-[20px]">location_on</span><span class="text-on-surface-variant">Address: {{ get_config("contact_address_en", get_config("contact_address", "P16, Street 8, Lot 49 residential area, Nam Can Tho Urban Area, Cai Rang District, Can Tho City, Vietnam")) }}</span></div></div>'
+            "title": "Support Contact Information",
+            "content": '<p class="mb-3">If you have any questions, feedback, or suggestions regarding PetAI\'s services or policies, please reach out to us:</p>' ~
+                       '<ul class="space-y-2">' ~
+                       '  <li class="flex items-center gap-2"><span class="material-symbols-outlined text-primary text-[18px]">mail</span><span><strong>Email:</strong> <a href="mailto:' ~ get_config('site_email', 'support@pet.ai') ~ '" class="text-primary hover:underline font-medium">' ~ get_config('site_email', 'support@pet.ai') ~ '</a></span></li>' ~
+                       '  <li class="flex items-center gap-2"><span class="material-symbols-outlined text-primary text-[18px]">call</span><span><strong>Phone:</strong> ' ~ get_config('contact_phone', '0916 416 409') ~ '</span></li>' ~
+                       '  <li class="flex items-start gap-2"><span class="material-symbols-outlined text-primary text-[18px] mt-0.5">location_on</span><span><strong>Address:</strong> ' ~ get_config("contact_address_en", get_config("contact_address", "P16, Street 8, Lot 49 residential area, Nam Can Tho Urban Area, Cai Rang District, Can Tho City, Vietnam")) ~ '</span></li>' ~
+                       '</ul>'
           }
         ] %}
 
@@ -480,7 +601,7 @@
               {% set tid = target_ids[loop.index0] if loop.index0 < 12 else "sec_" ~ loop.index0 %}
               <div id="{{ tid }}" class="scroll-mt-24 bg-white border border-outline-variant/30 rounded-2xl p-6 shadow-sm">
                 <h3 class="text-xl font-bold text-primary mb-3 flex items-center gap-2">
-                  {% set icon_names = ["info", "person_add", "login", "card_giftcard", "photo_camera", "troubleshoot", "psychology", "upgrade", "history", "query_stats", "help", "contact_support"] %}
+                  {% set icon_names = ["info", "person_add", "cloud_upload", "fact_check", "hourglass_empty", "visibility", "history", "upgrade", "contact_support", "tips_and_updates", "warning", "mail"] %}
                   {% set icon = icon_names[loop.index0] if loop.index0 < 12 else "article" %}
                   <span class="material-symbols-outlined text-[24px]">{{ icon }}</span>
                   <span>{{ sec.title }}</span>
@@ -527,7 +648,7 @@
               {% set tid = target_ids[loop.index0] if loop.index0 < 12 else "sec_" ~ loop.index0 %}
               <div id="{{ tid }}" class="scroll-mt-24 bg-white border border-outline-variant/30 rounded-2xl p-6 shadow-sm">
                 <h3 class="text-xl font-bold text-primary mb-3 flex items-center gap-2">
-                  {% set icon_names = ["info", "person_add", "login", "card_giftcard", "photo_camera", "troubleshoot", "psychology", "upgrade", "history", "query_stats", "help", "contact_support"] %}
+                  {% set icon_names = ["info", "person_add", "cloud_upload", "fact_check", "hourglass_empty", "visibility", "history", "upgrade", "contact_support", "tips_and_updates", "warning", "mail"] %}
                   {% set icon = icon_names[loop.index0] if loop.index0 < 12 else "article" %}
                   <span class="material-symbols-outlined text-[24px]">{{ icon }}</span>
                   <span>{{ sec.title }}</span>

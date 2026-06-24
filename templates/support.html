@@ -52,10 +52,18 @@
   <style>
     body {
       background-color: #f9f9ff;
-      opacity: 0;
-      transition: opacity 0.15s ease-in;
       color: #181c22;
       overflow-x: hidden;
+    }
+
+    html.i18n-loading body {
+      visibility: hidden !important;
+      opacity: 0 !important;
+    }
+    html.ready body {
+      visibility: visible;
+      opacity: 1;
+      transition: opacity 0.15s ease-in;
     }
 
     .aura-glow {
@@ -340,55 +348,83 @@
         </h1>
         {% set default_sections_vi = [
           {
-            "title": "Thông tin nhanh",
-            "content": '<p><strong>Email hỗ trợ:</strong> <a href="mailto:' ~ get_config('site_email', 'support@pet.ai') ~ '" class="text-primary hover:underline font-medium">' ~ get_config('site_email', 'support@pet.ai') ~ '</a></p><p class="mt-2"><strong>Thời gian phản hồi dự kiến:</strong> Từ <strong>1 – 3 ngày làm việc</strong>.</p>'
+            "title": "Thông tin & Kênh liên hệ",
+            "content": '<p class="mb-3">Chúng tôi luôn sẵn sàng hỗ trợ bạn trong suốt quá trình trải nghiệm hệ thống nhận diện giống chó PetAI.</p>' ~
+                       '<p class="mb-2"><strong>• Email hỗ trợ:</strong> <a href="mailto:' ~ get_config('site_email', 'support@pet.ai') ~ '" class="text-primary hover:underline font-medium">' ~ get_config('site_email', 'support@pet.ai') ~ '</a></p>' ~
+                       '<p class="mb-2"><strong>• Hotline:</strong> ' ~ get_config('contact_phone', '0916 416 409') ~ '</p>' ~
+                       '<p class="mb-2"><strong>• Địa chỉ:</strong> ' ~ get_config("contact_address_vi", get_config("contact_address", "P16, Đường số 8, KDC lô 49, Khu đô thị Nam Cần Thơ, Phường Cái Răng, TP. Cần Thơ")) ~ '</p>' ~
+                       '<p class="mt-3"><strong>Thời gian phản hồi dự kiến:</strong> Từ <strong>1 – 3 ngày làm việc</strong>.</p>'
           },
           {
-            "title": "Hướng dẫn sử dụng cơ bản",
-            "content": '<p class="mb-2">1. Tại giao diện chính, chọn <strong>Đăng nhập</strong> hoặc tạo tài khoản mới.</p><p class="mb-2">2. Vào trang Nhận Diện, cho quyền máy ảnh hoặc tải lên hình.</p><p>3. Chờ từ 2 - 4 giây và AI sẽ trả về kết quả 3 giống chó tiềm năng nhất cùng với lịch sử thống kê.</p>'
+            "title": "Liên kết nhanh chính sách",
+            "content": '<p class="mb-3">Tìm hiểu chi tiết các quy định, chính sách và hướng dẫn của hệ thống PetAI:</p>' ~
+                       '<ul class="space-y-2.5">' ~
+                       '  <li><a href="' ~ url_for('legal.user_guide') ~ '" class="text-primary hover:underline font-medium flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">menu_book</span><span>Hướng dẫn sử dụng hệ thống</span></a></li>' ~
+                       '  <li><a href="' ~ url_for('legal.payment_policy') ~ '" class="text-primary hover:underline font-medium flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">payments</span><span>Chính sách thanh toán</span></a></li>' ~
+                       '  <li><a href="' ~ url_for('legal.privacy_policy') ~ '" class="text-primary hover:underline font-medium flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">security</span><span>Chính sách quyền riêng tư</span></a></li>' ~
+                       '  <li><a href="' ~ url_for('legal.data_deletion') ~ '" class="text-primary hover:underline font-medium flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">delete_forever</span><span>Chính sách xóa dữ liệu</span></a></li>' ~
+                       '</ul>'
           },
           {
-            "title": "Làm sao để đăng nhập?",
-            "content": 'Bạn nhấp vào nút Đăng nhập ở góc trên cùng của Website hoặc qua menu di động để sử dụng Email/Google.'
+            "title": "Làm sao để đăng nhập hoặc khắc phục lỗi không nhận được OTP/Email?",
+            "content": "Bạn có thể đăng nhập bằng tài khoản đăng ký truyền thống (Username/Email) hoặc đăng nhập nhanh thông qua liên kết Google. Trường hợp không nhận được OTP kích hoạt hoặc link quên mật khẩu, bạn hãy vui lòng kiểm tra kỹ hòm thư rác (Spam/Quảng cáo). Nếu vẫn không nhận được sau 5 phút, hãy gửi thư hỗ trợ về địa chỉ email của hệ thống."
           },
           {
-            "title": "Làm sao để xóa tài khoản?",
-            "content": 'Gửi thư theo <a href="' ~ url_for('legal.data_deletion') ~ '" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">Chính sách xóa dữ liệu</a> của chúng tôi để được trợ giúp.'
+            "title": "Thanh toán đơn hàng nâng cấp gói chưa được kích hoạt thì phải làm sao?",
+            "content": "PetAI áp dụng cổng thanh toán VietQR tự động, tài khoản sẽ được nâng cấp sau 1-5 phút khi bạn quét mã QR và chuyển khoản chính xác số tiền cùng nội dung được yêu cầu. Nếu sau 15 phút gói của bạn vẫn chưa kích hoạt, vui lòng gửi email đính kèm ảnh chụp biên lai giao dịch hoặc mã đơn hàng (Order Code) đến hỗ trợ để quản trị viên đối soát thủ công."
           },
           {
-            "title": "Làm sao để liên hệ hỗ trợ?",
-            "content": 'Bạn có thể sử dụng biểu mẫu phía dưới mục <a href="' ~ url_for('legal.contact') ~ '" class="text-primary hover:underline" target="_blank" rel="noopener noreferrer">Liên hệ</a> hoặc gửi thư về ' ~ get_config('site_email', 'support@pet.ai') ~ '.'
+            "title": "Tại sao hình ảnh tải lên báo không hợp lệ?",
+            "content": "Hãy đảm bảo tệp ảnh tải lên của bạn có định dạng hợp lệ (JPG, JPEG hoặc PNG) và dung lượng tệp không vượt quá 10MB. Ảnh tải lên cần rõ nét, tránh mờ rung, không quá tối hoặc bị che khuất và chỉ chứa duy nhất một đối tượng chú chó để AI có thể phân tích chính xác nhất."
           },
           {
-            "title": "Tôi gặp lỗi trong ứng dụng thì phải làm gì?",
-            "content": 'Rất mong bạn thông cảm, hãy chụp lại lỗi đó (screenshot), ghi rõ hành động dẫn tới lỗi và gửi email về cho chúng tôi sớm nhất!'
+            "title": "Kết quả nhận diện bằng AI của PetAI có chính xác tuyệt đối không?",
+            "content": "Không. Mô hình AI của chúng tôi phân tích các đặc trưng hình thái học bên ngoài của chó (tai, mắt, mõm...) từ tập dữ liệu huấn luyện để dự đoán giống chó phù hợp nhất. Kết quả hiển thị (bao gồm Top-3 giống chó và biểu đồ ước tính tỷ lệ lai) chỉ mang tính chất tham khảo khách quan, không thay thế cho các đánh giá thú y chuyên môn hoặc xét nghiệm DNA di truyền lâm sàng."
+          },
+          {
+            "title": "Làm thế nào để xóa dữ liệu lịch sử hoặc tài khoản người dùng?",
+            "content": "Để xóa lịch sử quét, bạn vào Cài đặt > Quyền riêng tư > Xóa toàn bộ lịch sử. Để xóa tài khoản, bạn chọn mục Xóa tài khoản tại trang cài đặt. Khi xác nhận xóa, tài khoản sẽ chuyển sang trạng thái chờ xóa trong 30 ngày. Trong thời gian này, bạn có thể đăng nhập lại bất kỳ lúc nào để hủy yêu cầu xóa."
           }
         ] %}
 
         {% set default_sections_en = [
           {
-            "title": "Quick Info",
-            "content": '<p><strong>Support Email:</strong> <a href="mailto:' ~ get_config('site_email', 'support@pet.ai') ~ '" class="text-primary hover:underline font-medium">' ~ get_config('site_email', 'support@pet.ai') ~ '</a></p><p class="mt-2"><strong>Estimated Response Time:</strong> From <strong>1 – 3 business days</strong>.</p>'
+            "title": "Information & Contact Channels",
+            "content": '<p class="mb-3">We are always ready to support you throughout your experience with the PetAI breed identification system.</p>' ~
+                       '<p class="mb-2"><strong>• Support Email:</strong> <a href="mailto:' ~ get_config('site_email', 'support@pet.ai') ~ '" class="text-primary hover:underline font-medium">' ~ get_config('site_email', 'support@pet.ai') ~ '</a></p>' ~
+                       '<p class="mb-2"><strong>• Hotline:</strong> ' ~ get_config('contact_phone', '0916 416 409') ~ '</p>' ~
+                       '<p class="mb-2"><strong>• Address:</strong> ' ~ get_config("contact_address_en", get_config("contact_address", "P16, Street 8, Lot 49 residential area, Nam Can Tho Urban Area, Cai Rang District, Can Tho City, Vietnam")) ~ '</p>' ~
+                       '<p class="mt-3"><strong>Estimated Response Time:</strong> From <strong>1 – 3 business days</strong>.</p>'
           },
           {
-            "title": "Basic User Guide",
-            "content": '<p class="mb-2">1. From the main interface, select <strong>Login</strong> or create a new account.</p><p class="mb-2">2. Go to the Identification page, grant camera permission or upload a photo.</p><p>3. Wait 2 - 4 seconds and the AI will return the top 3 potential dog breeds along with scan history statistics.</p>'
+            "title": "Quick Policy Links",
+            "content": '<p class="mb-3">Read more details on our rules, policies, and guidelines:</p>' ~
+                       '<ul class="space-y-2.5">' ~
+                       '  <li><a href="' ~ url_for('legal.user_guide') ~ '" class="text-primary hover:underline font-medium flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">menu_book</span><span>User Guide & Manual</span></a></li>' ~
+                       '  <li><a href="' ~ url_for('legal.payment_policy') ~ '" class="text-primary hover:underline font-medium flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">payments</span><span>Payment Policy</span></a></li>' ~
+                       '  <li><a href="' ~ url_for('legal.privacy_policy') ~ '" class="text-primary hover:underline font-medium flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">security</span><span>Privacy Policy</span></a></li>' ~
+                       '  <li><a href="' ~ url_for('legal.data_deletion') ~ '" class="text-primary hover:underline font-medium flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">delete_forever</span><span>Data Deletion Policy</span></a></li>' ~
+                       '</ul>'
           },
           {
-            "title": "How do I log in?",
-            "content": 'Click the Login button at the top corner of the Website or via the mobile menu to log in using Email/Google.'
+            "title": "How do I log in or fix not receiving OTP/Verification Emails?",
+            "content": "You can sign in using traditional credentials (Username/Email) or instantly via Google Link. If you do not receive an activation OTP or a forgot password link, please verify your Spam/Junk folders. If the email is still missing after 5 minutes, send an email request to our support address."
           },
           {
-            "title": "How do I delete my account?",
-            "content": 'Send a request according to our <a href="' ~ url_for('legal.data_deletion') ~ '" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">Data Deletion Policy</a> for assistance.'
+            "title": "What should I do if my payment for upgrade package is not activated yet?",
+            "content": "PetAI uses automated VietQR payments; accounts are upgraded within 1-5 minutes of scanning the bank code and transferring the exact amount and memo. If your package is not activated after 15 minutes, send an email attaching your transaction receipt or Order Code for manual processing."
           },
           {
-            "title": "How do I contact support?",
-            "content": 'You can use the form under the <a href="' ~ url_for('legal.contact') ~ '" class="text-primary hover:underline" target="_blank" rel="noopener noreferrer">Contact</a> page or send an email to ' ~ get_config('site_email', 'support@pet.ai') ~ '.'
+            "title": "Why does the system say my uploaded photo is invalid?",
+            "content": "Ensure your image file is in a supported format (JPG, JPEG, or PNG) and does not exceed 10MB. The photo should be clear, not blurry or shaking, avoid low lighting, and feature only one dog in the frame to help the AI model perform better detection and analysis."
           },
           {
-            "title": "What should I do if I encounter an error?",
-            "content": 'We apologize for any inconvenience. Please take a screenshot of the error, describe the steps that led to it, and send an email to us as soon as possible!'
+            "title": "Are the AI identification results provided by PetAI 100% accurate?",
+            "content": "No. Our AI models analyze external morphological features (ears, eyes, snout...) from the training dataset to predict breed compatibility. Results (including Top-3 breeds and mixed breed ratio charts) are for reference purposes only and are not a substitute for professional veterinary clinical diagnosis or genetic DNA testing."
+          },
+          {
+            "title": "How do I clear my history or delete my user account?",
+            "content": "To clear scan history, go to Settings > Privacy > click Clear All History. To delete your account, click Delete Account in the privacy settings. Once confirmed, your account enters a 30-day retention window. You can log back in at any point during these 30 days to cancel the request."
           }
         ] %}
 

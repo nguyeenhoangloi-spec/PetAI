@@ -52,10 +52,18 @@
   <style>
     body {
       background-color: #f9f9ff;
-      opacity: 0;
-      transition: opacity 0.15s ease-in;
       color: #181c22;
       overflow-x: hidden;
+    }
+
+    html.i18n-loading body {
+      visibility: hidden !important;
+      opacity: 0 !important;
+    }
+    html.ready body {
+      visibility: visible;
+      opacity: 1;
+      transition: opacity 0.15s ease-in;
     }
 
     .aura-glow {
@@ -326,101 +334,120 @@
         <h1 class="headline-lg text-on-surface mb-6 font-bold" data-i18n="privacy">
           <span data-i18n="privacy">Chính sách quyền riêng tư</span>
         </h1>
+        {% set default_sections_vi = [
+          {
+            "title": "1. Giới thiệu về chính sách",
+            "content": "Chào mừng bạn đến với " ~ get_config('site_name', 'PetAI') ~ ". Chúng tôi cam kết bảo vệ thông tin cá nhân và quyền riêng tư của bạn khi bạn sử dụng dịch vụ của chúng tôi. Chính sách quyền riêng tư này giải thích cách chúng tôi thu thập, sử dụng, lưu trữ và bảo mật dữ liệu của bạn."
+          },
+          {
+            "title": "2. Thông tin PetAI thu thập",
+            "content": "Chúng tôi thu thập các thông tin tài khoản cần thiết để vận hành dịch vụ bao gồm: Họ và tên, Email, Tên đăng nhập và Mật khẩu (mật khẩu được mã hóa an toàn ở phía máy chủ bằng thuật toán bảo mật cao)."
+          },
+          {
+            "title": "3. Hình ảnh người dùng tải lên",
+            "content": "Hình ảnh cún cưng do bạn tải lên hệ thống được sử dụng duy nhất cho mục đích nhận diện giống chó bằng công nghệ AI. Chúng tôi không sử dụng hình ảnh hay dữ liệu cá nhân của bạn cho bất kỳ mục đích thương mại ngoài hệ thống nào khác khi chưa được sự đồng ý rõ ràng từ phía bạn."
+          },
+          {
+            "title": "4. Mục đích sử dụng dữ liệu",
+            "content": "Dữ liệu thu thập được sử dụng để cung cấp quyền truy cập dịch vụ, xác thực tài khoản, hỗ trợ kỹ thuật, tối ưu hóa thuật toán nhận diện của mô hình AI qua thời gian và gửi thông tin quan trọng liên quan đến tài khoản."
+          },
+          {
+            "title": "5. Lưu trữ lịch sử nhận diện",
+            "content": "Hệ thống tự động lưu trữ lịch sử nhận diện giống chó (bao gồm hình ảnh đã tải lên, giống chó dự đoán, độ tin cậy và thời gian nhận diện) để bạn có thể xem lại trong mục Bộ sưu tập hoặc Lịch sử quét. Bạn có toàn quyền xóa các bản ghi lịch sử này bất kỳ lúc nào trong phần Cài đặt."
+          },
+          {
+            "title": "6. Bảo mật dữ liệu",
+            "content": "Chúng tôi áp dụng các biện pháp kỹ thuật và tổ chức bảo mật nghiêm ngặt (như truyền tải mã hóa qua giao thức SSL/TLS, lưu trữ dữ liệu an toàn tại hệ thống cơ sở dữ liệu bảo mật cao) để ngăn chặn hành vi truy cập trái phép, tiết lộ hoặc phá hủy dữ liệu của bạn."
+          },
+          {
+            "title": "7. Chia sẻ dữ liệu với bên thứ ba",
+            "content": "Chúng tôi tuyệt đối không bán, cho thuê hay chia sẻ thông tin cá nhân của bạn cho bên thứ ba vì mục đích tiếp thị. Dữ liệu chỉ được chia sẻ với các nhà cung cấp dịch vụ hạ tầng cốt lõi đáng tin cậy (như Firebase, Google Analytics) để giúp vận hành hệ thống, hoặc khi có yêu cầu bằng văn bản chính thức từ cơ quan nhà nước có thẩm quyền theo quy định của pháp luật."
+          },
+          {
+            "title": "8. Quyền của người dùng",
+            "content": "Bạn có quyền kiểm soát thông tin cá nhân của mình bao gồm: Xem và chỉnh sửa thông tin tài khoản, thay đổi thiết lập lưu trữ lịch sử, và yêu cầu xóa tài khoản vĩnh viễn trực tiếp trong mục Cài đặt. Khi bạn chọn xóa tài khoản, hệ thống sẽ đưa tài khoản vào trạng thái chờ xóa trong 30 ngày trước khi loại bỏ hoàn toàn dữ liệu của bạn khỏi hệ thống chính thức."
+          },
+          {
+            "title": "9. Giới hạn trách nhiệm về kết quả AI",
+            "content": "Xin lưu ý rằng kết quả nhận diện giống chó từ công nghệ AI của hệ thống chỉ mang tính chất tham khảo dựa trên hình ảnh và độ tương đồng về hình thái học. Kết quả này không phải là xét nghiệm DNA di truyền hoặc kết luận di truyền tuyệt đối và không thay thế cho các chẩn đoán hoặc tư vấn chuyên môn từ bác sĩ thú y."
+          },
+          {
+            "title": "10. Thông tin liên hệ về quyền riêng tư",
+            "content": "Mọi câu hỏi, khiếu nại hoặc yêu cầu liên quan đến Chính sách quyền riêng tư này, vui lòng liên hệ với chúng tôi:<br>• Email hỗ trợ: <a href=\"mailto:" ~ get_config('site_email', 'support@pet.ai') ~ "\" class=\"text-primary hover:underline font-medium\">" ~ get_config('site_email', 'support@pet.ai') ~ "</a><br>• Website: <a href=\"https://pet.ai\" class=\"text-primary hover:underline font-medium\" target=\"_blank\" rel=\"noopener noreferrer\">https://pet.ai</a><br>• Địa chỉ: " ~ get_config("contact_address_vi", get_config("contact_address", "P16, Đường số 8, KDC lô 49, Khu đô thị Nam Cần Thơ, Phường Cái Răng, TP. Cần Thơ"))
+          }
+        ] %}
+
+        {% set default_sections_en = [
+          {
+            "title": "1. Introduction to Privacy Policy",
+            "content": "Welcome to " ~ get_config('site_name', 'PetAI') ~ ". We are committed to protecting your personal information and privacy when you use our services. This Privacy Policy explains how we collect, use, store, and secure your data."
+          },
+          {
+            "title": "2. Data PetAI Collects",
+            "content": "We collect necessary account information to operate our services, including: Full Name, Email Address, Username, and Password (passwords are securely encrypted on the server side using advanced security algorithms)."
+          },
+          {
+            "title": "3. User Uploaded Images",
+            "content": "Images of dogs uploaded by you are used solely for breed identification via AI technology. We do not use your images or personal data for any external commercial purposes without your explicit consent."
+          },
+          {
+            "title": "4. Purpose of Data Usage",
+            "content": "The collected data is used to provide access to our services, authenticate accounts, provide technical support, optimize the AI breed classification models over time, and send important account-related updates."
+          },
+          {
+            "title": "5. Scan History Storage",
+            "content": "The system automatically stores your dog breed scan history (including uploaded images, predicted breeds, confidence scores, and timestamps) so you can review them in your Collection or Scan History. You have the right to delete these history records at any time in the Settings page."
+          },
+          {
+            "title": "6. Data Security",
+            "content": "We implement strict technical and organizational security measures (such as encrypted data transmission via SSL/TLS, secure database storage) to prevent unauthorized access, disclosure, alteration, or destruction of your data."
+          },
+          {
+            "title": "7. Third-Party Data Sharing",
+            "content": "We absolutely do not sell, rent, or share your personal information with third parties for marketing purposes. Data is only shared with core infrastructure service providers (like Firebase or Google Analytics) to operate the platform, or when required by official written requests from authorized state agencies under applicable law."
+          },
+          {
+            "title": "8. User Rights",
+            "content": "You have full control over your personal data, including the right to view and update your profile, toggle scan history storage, and request permanent account deletion directly in the Settings page. Upon confirming account deletion, your account enters a 30-day pending state before all your data is permanently removed from our active databases."
+          },
+          {
+            "title": "9. AI Result Limitations",
+            "content": "Please note that the dog breed recognition results provided by our AI technology are for informational and educational reference based on morphological similarity. These results do not constitute DNA genetic testing or absolute genetic conclusions and should not replace professional veterinary consultation or diagnosis."
+          },
+          {
+            "title": "10. Privacy Contact Information",
+            "content": "For any questions, concerns, or requests regarding this Privacy Policy, please reach out to us:<br>• Support Email: <a href=\"mailto:" ~ get_config('site_email', 'support@pet.ai') ~ "\" class=\"text-primary hover:underline font-medium\">" ~ get_config('site_email', 'support@pet.ai') ~ "</a><br>• Website: <a href=\"https://pet.ai\" class=\"text-primary hover:underline font-medium\" target=\"_blank\" rel=\"noopener noreferrer\">https://pet.ai</a><br>• Address: " ~ get_config("contact_address_en", get_config("contact_address", "P16, Street 8, Lot 49 residential area, Nam Can Tho Urban Area, Cai Rang District, Can Tho City, Vietnam"))
+          }
+        ] %}
+
         {% set sections_vi = get_legal_sections('privacy-policy', 'vi') %}
         {% set sections_en = get_legal_sections('privacy-policy', 'en') %}
-        {% if sections_vi or sections_en %}
-          <!-- Vietnamese View (Dynamic) -->
-          <div id="dynamic-content-vi" class="space-y-6 text-on-surface-variant body-md leading-relaxed legal-content-rich {{ 'hidden' if ui_language == 'en' else '' }}">
-            {% for sec in sections_vi %}
-              {% if sec.title %}
-                <h2 class="text-xl font-bold text-primary mt-6 mb-2">{{ sec.title }}</h2>
-              {% endif %}
-              {% if sec.content %}
-                <div class="text-on-surface-variant dark:text-slate-300 body-md leading-relaxed">{{ sec.content | safe }}</div>
-              {% endif %}
-            {% endfor %}
-          </div>
+        {% set active_sections_vi = sections_vi if sections_vi else default_sections_vi %}
+        {% set active_sections_en = sections_en if sections_en else default_sections_en %}
 
-          <!-- English View (Dynamic) -->
-          <div id="dynamic-content-en" class="space-y-6 text-on-surface-variant body-md leading-relaxed legal-content-rich {{ 'hidden' if ui_language != 'en' else '' }}">
-            {% for sec in sections_en %}
-              {% if sec.title %}
-                <h2 class="text-xl font-bold text-primary mt-6 mb-2">{{ sec.title }}</h2>
-              {% endif %}
-              {% if sec.content %}
-                <div class="text-on-surface-variant dark:text-slate-300 body-md leading-relaxed">{{ sec.content | safe }}</div>
-              {% endif %}
-            {% endfor %}
-          </div>
-        {% else %}
-          <div class="space-y-6 text-on-surface-variant body-md leading-relaxed">
-            <p class="mb-4 text-on-surface-variant">
-              <span data-i18n="updateDatePrefix">Ngày cập nhật: 16/06/2026</span>
-            </p>
+        <!-- Vietnamese View -->
+        <div id="dynamic-content-vi" class="space-y-6 text-neutral-800 dark:text-slate-350 body-md leading-relaxed legal-content-rich {{ 'hidden' if ui_language == 'en' else '' }}">
+          {% for sec in active_sections_vi %}
+            {% if sec.title %}
+              <h2 class="text-xl font-bold text-primary mt-6 mb-2">{{ sec.title }}</h2>
+            {% endif %}
+            {% if sec.content %}
+              <div class="text-neutral-800 dark:text-slate-300 body-md leading-relaxed">{{ sec.content | safe }}</div>
+            {% endif %}
+          {% endfor %}
+        </div>
 
-            <h2 class="text-xl font-bold text-primary mt-6 mb-2">
-              <span data-i18n="privacySection1Title">1. Thông tin nhà phát triển/công ty</span>
-            </h2>
-            <p>
-              <span data-i18n="devIntroText">Dịch vụ được phát triển và thiết kế bởi</span>
-              <strong data-i18n="companyNamePlaceholder">CÔNG TY TNHH MỘT THÀNH VIÊN CÔNG NGHỆ KỸ THUẬT TIÊN PHONG</strong><span data-i18n="devIntroTextSuffix">. Chúng tôi cam kết bảo vệ thông tin cá nhân và quyền riêng tư của bạn an toàn nhất có thể.</span>
-            </p>
-
-            <h2 class="text-xl font-bold text-primary mt-6 mb-2">
-              <span data-i18n="privacySection2Title">2. Dữ liệu nào được thu thập</span>
-            </h2>
-            <p>
-              <span data-i18n="privacySection2Desc">Chúng tôi có thể thu thập các loại dữ liệu bao gồm: Tên tài khoản, Email, Mật khẩu (đã mã hóa an toàn), hình ảnh chó bạn tải về hệ thống nhận diện, cũng như các hành vi tương tác trên ứng dụng.</span>
-            </p>
-
-            <h2 class="text-xl font-bold text-primary mt-6 mb-2">
-              <span data-i18n="privacySection3Title">3. Mục đích sử dụng dữ liệu</span>
-            </h2>
-            <p>
-              <span data-i18n="privacySection3Desc">Dữ liệu được dùng để cung cấp quyền truy cập, xác thực bảo mật, tối ưu hóa các mẫu nhận dạng AI qua thời gian, và hỗ trợ kĩ thuật cần thiết.</span>
-            </p>
-
-            <h2 class="text-xl font-bold text-primary mt-6 mb-2">
-              <span data-i18n="privacySection4Title">4. Có chia sẻ dữ liệu với bên thứ ba hay không</span>
-            </h2>
-            <p>
-              <span data-i18n="privacySection4Desc">Tuyệt đối không, trừ các hệ thống hạ tầng lõi cần thiết (Firebase, Google Analytics) hoặc nếu có yêu cầu chặt chẽ từ cơ quan có thẩm quyền theo pháp luật.</span>
-            </p>
-
-            <h2 class="text-xl font-bold text-primary mt-6 mb-2">
-              <span data-i18n="privacySection5Title">5. Cookies, Firebase, Analytics</span>
-            </h2>
-            <p>
-              <span data-i18n="privacySection5Desc">Ứng dụng có thể sử dụng Cookies, Google Analytics để đo đạc và Crashlytics để thu thập lỗi giúp chúng tôi hoàn thiện chất lượng nhanh chóng hơn.</span>
-            </p>
-
-            <h2 class="text-xl font-bold text-primary mt-6 mb-2">
-              <span data-i18n="privacySection6Title">6. Quyền của người dùng</span>
-            </h2>
-            <p>
-              <span data-i18n="privacySection6Desc">Bạn luôn có quyền kiểm soát nội dung cá nhân của mình, yêu cầu xem, chỉnh sửa, trích xuất dữ liệu, hoặc yêu cầu dừng xử lý tại bất kỳ thời điểm nào.</span>
-            </p>
-
-            <h2 class="text-xl font-bold text-primary mt-6 mb-2">
-              <span data-i18n="privacySection7Title">7. Cách yêu cầu xóa dữ liệu</span>
-            </h2>
-            <p>
-              <span data-i18n="privacySection7Desc">Bạn có thể chủ động vào Cài đặt -> Xóa tài khoản, hoặc xem hướng dẫn chi tiết tại</span>
-              <a href="{{ url_for('legal.data_deletion') }}" class="text-primary hover:underline font-medium" target="_blank" rel="noopener noreferrer" data-i18n="dataDeletion">Chính sách xóa dữ liệu</a>.
-            </p>
-
-            <h2 class="text-xl font-bold text-primary mt-6 mb-2">
-              <span data-i18n="privacySection8Title">8. Thông tin liên hệ</span>
-            </h2>
-            <p class="leading-loose">
-              Email:
-              <a href="mailto:{{ get_config('site_email', 'support@pet.ai') }}" class="text-primary hover:underline font-medium">{{ get_config('site_email', 'support@pet.ai') }}</a><br>
-              Website:
-              <a href="https://pet.ai" class="text-primary hover:underline font-medium" target="_blank" rel="noopener noreferrer">https://pet.ai</a><br>
-              <span ><span data-i18n="sysLabelContactAddress">Địa chỉ</span>: {{ get_config("contact_address_en" if ui_language == "en" else "contact_address_vi", get_config("contact_address", "P16, Đường số 8, KDC lô 49, Khu đô thị Nam Cần Thơ, Phường Cái Răng, TP. Cần Thơ")) }}</span>
-            </p>
-          </div>
-        {% endif %}
+        <!-- English View -->
+        <div id="dynamic-content-en" class="space-y-6 text-neutral-800 dark:text-slate-350 body-md leading-relaxed legal-content-rich {{ 'hidden' if ui_language != 'en' else '' }}">
+          {% for sec in active_sections_en %}
+            {% if sec.title %}
+              <h2 class="text-xl font-bold text-primary mt-6 mb-2">{{ sec.title }}</h2>
+            {% endif %}
+            {% if sec.content %}
+              <div class="text-neutral-800 dark:text-slate-300 body-md leading-relaxed">{{ sec.content | safe }}</div>
+            {% endif %}
+          {% endfor %}
+        </div>
       </div>
     </section>
   </main>
