@@ -238,6 +238,326 @@ def delete_prediction(pred_id):
             conn.close()
 
 
+@history_bp.route("/export")
+def export_history():
+    """Xuất lịch sử nhận diện động theo bộ lọc sang Excel hoặc CSV"""
+    user_id_raw = session.get("user_id")
+    if not user_id_raw:
+        flash("Vui lòng đăng nhập để thực hiện xuất dữ liệu.", "warning")
+        return redirect(url_for("login.login"))
+    
+    conn = None
+    try:
+        conn = get_connection()
+        user_id = int(user_id_raw)
+        
+        # 1. Extraction of search & filters
+        breed_type = request.args.get('type', 'all')
+        if breed_type not in ('all', 'pure', 'hybrid', 'high_conf', 'low_conf'):
+            breed_type = 'all'
+            
+        search_query = request.args.get('q', '').strip()
+        date_filter = request.args.get('date', 'all')
+        if date_filter not in ('today', '7days', '30days', 'all'):
+            date_filter = 'all'
+            
+        sort_by = request.args.get('sort', 'newest')
+        if sort_by not in ('newest', 'oldest', 'conf_highest', 'conf_lowest'):
+            sort_by = 'newest'
+            
+        scope = request.args.get('scope', 'all')
+        export_format = request.args.get('format', 'csv')
+        
+        # 2. Build SQL conditions
+        query_conds = ["user_id = %s"]
+        query_params = [user_id]
+        
+        if scope == "filtered":
+            if breed_type == "hybrid":
+                query_conds.append("breed LIKE 'Nghi lai:%%'")
+            elif breed_type == "pure":
+                query_conds.append("breed NOT LIKE 'Nghi lai:%%'")
+            elif breed_type == "high_conf":
+                query_conds.append("confidence >= 0.8")
+            elif breed_type == "low_conf":
+                query_conds.append("confidence < 0.8")
+                
+            if search_query:
+                query_conds.append("breed LIKE %s")
+                query_params.append(f"%{search_query}%")
+                
+            if date_filter == "today":
+                query_conds.append("created_at >= DATE_SUB(NOW(), INTERVAL 1 DAY)")
+            elif date_filter == "7days":
+                query_conds.append("created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)")
+            elif date_filter == "30days":
+                query_conds.append("created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)")
+                
+        where_clause = " AND ".join(query_conds)
+        
+        # Sắp xếp
+        order_clause = "ORDER BY created_at DESC"
+        if sort_by == "oldest":
+            order_clause = "ORDER BY created_at ASC"
+        elif sort_by == "conf_highest":
+            order_clause = "ORDER BY confidence DESC"
+        elif sort_by == "conf_lowest":
+            order_clause = "ORDER BY confidence ASC"
+            
+        query = f"""
+            SELECT id, breed, confidence, species, created_at
+            FROM prediction_history
+            WHERE {where_clause}
+            {order_clause}
+        """
+        
+        from i18n_server import translate_breed_vi_to_en
+        with conn.cursor() as cur:
+            cur.execute(query, tuple(query_params))
+            rows = cur.fetchall() or []
+            
+        ui_language = request.cookies.get("siteLanguage", "vi")
+        if ui_language not in ("vi", "en"):
+            ui_language = "vi"
+            
+        import io
+        import csv
+        from flask import Response, send_file
+        
+        # Translate headers and rows based on selected UI language
+        if ui_language == "en":
+            headers = ["ID", "Breed", "Confidence", "Species", "Scan Date"]
+            predictions = []
+            for row in rows:
+                raw_breed = to_common_vietnamese_breed_name(row[1])
+                breed_en = translate_breed_vi_to_en(raw_breed)
+                predictions.append({
+                    'id': row[0],
+                    'breed': breed_en,
+                    'confidence': f"{round(row[2] * 100, 1)}%" if row[2] else "0%",
+                    'species': "Dog" if row[3] == "Dog" else ("Cat" if row[3] == "Cat" else row[3]),
+                    'created_at': row[4].strftime("%Y-%m-%d %H:%M:%S") if row[4] else ""
+                })
+        else:
+            headers = ["ID", "Giống chó", "Độ tin cậy", "Loài", "Ngày quét"]
+            predictions = []
+            for row in rows:
+                raw_breed = to_common_vietnamese_breed_name(row[1])
+                predictions.append({
+                    'id': row[0],
+                    'breed': raw_breed,
+                    'confidence': f"{round(row[2] * 100, 1)}%" if row[2] else "0%",
+                    'species': "Chó" if row[3] == "Dog" else ("Mèo" if row[3] == "Cat" else row[3]),
+                    'created_at': row[4].strftime("%Y-%m-%d %H:%M:%S") if row[4] else ""
+                })
+                
+        filename = f"PetAI_History_{datetime.now().strftime('%Y%m%d')}"
+        
+        if export_format == "xlsx":
+            try:
+                import pandas as pd
+                df = pd.DataFrame(predictions)
+                # Rename columns
+                df.columns = headers
+                
+                output = io.BytesIO()
+                with pd.ExcelWriter(output, engine='openpyxl') as writer:
+                    df.to_excel(writer, index=False, sheet_name="History")
+                output.seek(0)
+                
+                return send_file(
+                    output,
+                    mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    as_attachment=True,
+                    download_name=f"{filename}.xlsx"
+                )
+            except Exception as ex_excel:
+                print(f"Excel export failed (falling back to CSV): {ex_excel}")
+                export_format = "csv"
+                
+        if export_format == "csv":
+            output = io.StringIO()
+            writer = csv.writer(output, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+            writer.writerow(headers)
+            for p in predictions:
+                writer.writerow([p['id'], p['breed'], p['confidence'], p['species'], p['created_at']])
+            
+            # UTF-8 with BOM (\uFEFF)
+            csv_data = "\uFEFF" + output.getvalue()
+            return Response(
+                csv_data,
+                mimetype="text/csv",
+                headers={"Content-disposition": f"attachment; filename={filename}.csv"}
+            )
+            
+    except Exception as e:
+        print(f"Error in export_history: {e}")
+        flash("Không thể xuất lịch sử. Vui lòng thử lại sau.", "error")
+        return redirect(url_for("history.history"))
+    finally:
+        if conn:
+            conn.close()
+
+
+@history_bp.route("/print")
+def print_history():
+    """Render trang in báo cáo lịch sử A4 theo bộ lọc"""
+    user_id_raw = session.get("user_id")
+    if not user_id_raw:
+        flash("Vui lòng đăng nhập để thực hiện.", "warning")
+        return redirect(url_for("login.login"))
+    
+    conn = None
+    try:
+        conn = get_connection()
+        user_id = int(user_id_raw)
+        
+        # 1. Extraction of search & filters
+        breed_type = request.args.get('type', 'all')
+        if breed_type not in ('all', 'pure', 'hybrid', 'high_conf', 'low_conf'):
+            breed_type = 'all'
+            
+        search_query = request.args.get('q', '').strip()
+        date_filter = request.args.get('date', 'all')
+        if date_filter not in ('today', '7days', '30days', 'all'):
+            date_filter = 'all'
+            
+        sort_by = request.args.get('sort', 'newest')
+        if sort_by not in ('newest', 'oldest', 'conf_highest', 'conf_lowest'):
+            sort_by = 'newest'
+            
+        scope = request.args.get('scope', 'all')
+        
+        # 2. Build SQL conditions
+        query_conds = ["user_id = %s"]
+        query_params = [user_id]
+        
+        if scope == "filtered":
+            if breed_type == "hybrid":
+                query_conds.append("breed LIKE 'Nghi lai:%%'")
+            elif breed_type == "pure":
+                query_conds.append("breed NOT LIKE 'Nghi lai:%%'")
+            elif breed_type == "high_conf":
+                query_conds.append("confidence >= 0.8")
+            elif breed_type == "low_conf":
+                query_conds.append("confidence < 0.8")
+                
+            if search_query:
+                query_conds.append("breed LIKE %s")
+                query_params.append(f"%{search_query}%")
+                
+            if date_filter == "today":
+                query_conds.append("created_at >= DATE_SUB(NOW(), INTERVAL 1 DAY)")
+            elif date_filter == "7days":
+                query_conds.append("created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)")
+            elif date_filter == "30days":
+                query_conds.append("created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)")
+                
+        where_clause = " AND ".join(query_conds)
+        
+        # Sắp xếp
+        order_clause = "ORDER BY created_at DESC"
+        if sort_by == "oldest":
+            order_clause = "ORDER BY created_at ASC"
+        elif sort_by == "conf_highest":
+            order_clause = "ORDER BY confidence DESC"
+        elif sort_by == "conf_lowest":
+            order_clause = "ORDER BY confidence ASC"
+            
+        query = f"""
+            SELECT id, breed, confidence, species, created_at, image_path
+            FROM prediction_history
+            WHERE {where_clause}
+            {order_clause}
+        """
+        
+        from i18n_server import translate_breed_vi_to_en
+        with conn.cursor() as cur:
+            cur.execute(query, tuple(query_params))
+            rows = cur.fetchall() or []
+            
+        ui_language = request.cookies.get("siteLanguage", "vi")
+        if ui_language not in ("vi", "en"):
+            ui_language = "vi"
+            
+        predictions = []
+        pure_count = 0
+        hybrid_count = 0
+        total_conf = 0.0
+        
+        for row in rows:
+            raw_breed = row[1]
+            is_hybrid = raw_breed.startswith("Nghi lai:")
+            if is_hybrid:
+                hybrid_count += 1
+            else:
+                pure_count += 1
+                
+            conf_val = row[2] or 0.0
+            total_conf += conf_val
+            
+            clean_breed = to_common_vietnamese_breed_name(raw_breed)
+            if ui_language == "en":
+                breed_display = translate_breed_vi_to_en(clean_breed)
+                species_display = "Dog" if row[3] == "Dog" else ("Cat" if row[3] == "Cat" else row[3])
+            else:
+                breed_display = clean_breed
+                species_display = "Chó" if row[3] == "Dog" else ("Mèo" if row[3] == "Cat" else row[3])
+                
+            predictions.append({
+                'id': row[0],
+                'breed': breed_display,
+                'confidence': f"{round(conf_val * 100, 1)}%",
+                'species': species_display,
+                'created_at': row[4].strftime("%Y-%m-%d %H:%M:%S") if row[4] else "",
+                'image_path': row[5]
+            })
+            
+        total_records = len(predictions)
+        avg_conf = round((total_conf / total_records * 100), 1) if total_records > 0 else 0.0
+        
+        # Lấy thông tin user lập báo cáo
+        user_name = "N/A"
+        user_plan = "free"
+        with conn.cursor() as cur:
+            cur.execute("SELECT fullname, username FROM users WHERE id = %s", (user_id,))
+            u_row = cur.fetchone()
+            if u_row:
+                user_name = u_row[0] or u_row[1]
+                
+            from models import UserQuota
+            quota = UserQuota.get_or_create(conn, user_id)
+            if quota:
+                user_plan = quota.get("plan", "free")
+                
+        # Bản dịch cho thông tin gói
+        plan_display = user_plan.upper()
+        if ui_language == "vi":
+            if user_plan == "free": plan_display = "Miễn phí"
+            elif user_plan == "basic": plan_display = "Cơ bản (Basic)"
+            elif user_plan == "pro": plan_display = "Chuyên nghiệp (Pro)"
+            elif user_plan == "enterprise": plan_display = "Doanh nghiệp (Enterprise)"
+            
+        return render_template("history_print.html",
+                               predictions=predictions,
+                               total_records=total_records,
+                               pure_count=pure_count,
+                               hybrid_count=hybrid_count,
+                               avg_conf=avg_conf,
+                               user_name=user_name,
+                               plan_display=plan_display,
+                               print_date=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                               ui_language=ui_language)
+                               
+    except Exception as e:
+        print(f"Error in print_history: {e}")
+        flash("Không thể mở bản in báo cáo. Vui lòng thử lại sau.", "error")
+        return redirect(url_for("history.history"))
+    finally:
+        if conn:
+            conn.close()
+
+
 @history_bp.route("/api/recent")
 def api_recent():
     """API lấy lịch sử gần đây"""

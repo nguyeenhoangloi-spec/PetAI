@@ -2140,8 +2140,8 @@
       el.setAttribute("contenteditable", "true");
       el.classList.add("home-editable-element");
 
-      // Handle blur to update translation dict instantly
       el.addEventListener("blur", async function() {
+        var t = getEditorTranslation();
         const val = el.innerHTML.trim();
         
         // Check if value actually changed
@@ -2156,14 +2156,14 @@
             window.PetAI_DynamicSettings.vi[key] = val;
           }
           if (autoTrans && val) {
-            if (window.showToast) window.showToast("info", "Đang tự động dịch sang tiếng Anh...", { timeout: 2000 });
+            if (window.showToast) window.showToast("info", t.toastAutoTransStartEn, { timeout: 2000 });
             const translated = await translateHTML(val, "vi", "en");
             existingEn[key] = translated;
             TRANSLATIONS.en[key] = translated;
             if (window.PetAI_DynamicSettings && window.PetAI_DynamicSettings.en) {
               window.PetAI_DynamicSettings.en[key] = translated;
             }
-            if (window.showToast) window.showToast("success", "Đã dịch tự động xong!", { timeout: 2000 });
+            if (window.showToast) window.showToast("success", t.toastAutoTransDone, { timeout: 2000 });
           }
         } else {
           existingEn[key] = val;
@@ -2172,14 +2172,14 @@
             window.PetAI_DynamicSettings.en[key] = val;
           }
           if (autoTrans && val) {
-            if (window.showToast) window.showToast("info", "Đang tự động dịch sang tiếng Việt...", { timeout: 2000 });
+            if (window.showToast) window.showToast("info", t.toastAutoTransStartVi, { timeout: 2000 });
             const translated = await translateHTML(val, "en", "vi");
             existingVi[key] = translated;
             TRANSLATIONS.vi[key] = translated;
             if (window.PetAI_DynamicSettings && window.PetAI_DynamicSettings.vi) {
               window.PetAI_DynamicSettings.vi[key] = translated;
             }
-            if (window.showToast) window.showToast("success", "Đã dịch tự động xong!", { timeout: 2000 });
+            if (window.showToast) window.showToast("success", t.toastAutoTransDone, { timeout: 2000 });
           }
         }
 
@@ -2195,6 +2195,7 @@
 
     // Override savePageChanges for In-place editing
     window.savePageChanges = async function() {
+      var t = getEditorTranslation();
       // Force save any currently focused element
       const activeEl = document.activeElement;
       if (activeEl && activeEl.classList.contains("home-editable-element")) {
@@ -2226,10 +2227,10 @@
       try {
         const res = await fetch("/users/system-config/save-legal", { method: "POST", body: fd });
         if (res.ok) {
-          if (window.showToast) window.showToast("success", "Đã lưu nội dung trang thành công!", { timeout: 2000 });
+          if (window.showToast) window.showToast("success", t.toastSaveSuccess, { timeout: 2000 });
           else {
-            if (window.PetAI_alert) window.PetAI_alert({ text: "Lưu trang thành công!", type: "success" });
-            else alert("Lưu trang thành công!");
+            if (window.PetAI_alert) window.PetAI_alert({ text: t.toastSaveSuccess, type: "success" });
+            else alert(t.toastSaveSuccess);
           }
           
           setTimeout(() => {
@@ -2244,13 +2245,13 @@
             }, 250);
           }, 650);
         } else {
-          if (window.showToast) window.showToast("error", "Lỗi khi lưu nội dung.", { timeout: 2000 });
-          else alert("Lỗi khi lưu nội dung.");
+          if (window.showToast) window.showToast("error", t.toastSaveError, { timeout: 2000 });
+          else alert(t.toastSaveError);
         }
       } catch(e) {
         console.error(e);
-        if (window.showToast) window.showToast("error", "Lỗi kết nối: " + e.message, { timeout: 2000 });
-        else alert("Lỗi kết nối: " + e.message);
+        if (window.showToast) window.showToast("error", t.toastConnError + e.message, { timeout: 2000 });
+        else alert(t.toastConnError + e.message);
       }
     };
     

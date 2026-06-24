@@ -1083,12 +1083,12 @@
                 else { window.location.href = res.url; }
               } else {
                 watchAdCompleteBtn.disabled = false; watchAdCompleteBtn.innerHTML = orig;
-                if (typeof window.showToast === "function") window.showToast("error", "Đã xảy ra lỗi");
+                if (typeof window.showToast === "function") window.showToast("error", t("toastErrorOccurred") || "Đã xảy ra lỗi");
               }
             } catch (err) {
               console.error(err); closeWatchAdModal();
               watchAdCompleteBtn.disabled = false; watchAdCompleteBtn.innerHTML = orig;
-              if (typeof window.showToast === "function") window.showToast("error", "Đã xảy ra lỗi");
+              if (typeof window.showToast === "function") window.showToast("error", t("toastErrorOccurred") || "Đã xảy ra lỗi");
             }
           });
         }

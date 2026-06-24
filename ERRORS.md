@@ -650,3 +650,44 @@
 - **Fix Applied**: Báo cáo sự cố hệ thống thử nghiệm cho người dùng và hướng dẫn người dùng tự tải lại trang `/predict` để kiểm tra giao diện thủ công.
 - **Prevention**: Đây là lỗi môi trường chạy độc lập của agent nằm ngoài tầm kiểm soát của code dự án. Vẫn giữ các phương pháp chạy và kiểm tra thủ công làm phương án dự phòng khi môi trường browser tự động bị lỗi.
 - **Status**: Fixed
+
+---
+
+## [2026-06-25 00:15] - Lỗi xuất file PDF bị trắng trơn và nút Xuất lịch sử không phản hồi sau khi chuyển trang qua PJAX
+
+- **Type**: Logic
+- **Severity**: High
+- **File**: `templates/history.html:1400-1528`, `static/js/script.js`
+- **Agent**: Antigravity Orchestrator
+- **Root Cause**: Do thư viện `html2pdf.js` được import qua thẻ `<script src="...">` ở cuối trang `history.html` nhưng PJAX chỉ thực thi các thẻ script nội tuyến (inline scripts) và bỏ qua các script ngoài khi nạp động, dẫn đến biến `html2pdf` bị `undefined`. Đồng thời, các modal ẩn (`deleteConfirmModal` và `exportModal`) đặt bên trong vùng chứa PJAX `#content-area` bị ảnh hưởng bởi CSS layout của trang cha (như transform hoặc transition) làm lệch vị trí hiển thị và không thể tương tác đúng cách khi không tải lại trang.
+- **Error Message**:
+  ```text
+  Uncaught ReferenceError: html2pdf is not defined (khi gọi triggerExportDownload)
+  Modal hiển thị lệch vị trí hoặc không hiển thị (do ảnh hưởng của stacking context trong #content-area)
+  ```
+- **Fix Applied**:
+  1. Cập nhật hàm `triggerExportDownload` để kiểm tra và tải động thư viện `html2pdf.js` từ CDN theo nhu cầu (on-demand loading) trước khi xuất PDF.
+  2. Thêm cơ chế quản lý lifecycle cho `#deleteConfirmModal` và `#exportModal` trong tệp `static/js/script.js` để tự động di chuyển các modal ra trực tiếp `document.body` khi chuyển trang qua PJAX, và dọn dẹp sạch sẽ khi rời trang.
+  3. Thêm script di chuyển modal ra `document.body` khi tải trang lần đầu (F5) trong sự kiện `DOMContentLoaded` của `templates/history.html`.
+- **Prevention**: Luôn kiểm tra cơ chế tải tài nguyên của PJAX/AJAX đối với các thư viện bên thứ ba và di chuyển các phần tử modal có vị trí cố định (`fixed inset-0`) ra ngoài vùng chứa bị giới hạn CSS (như `#content-area`) trực tiếp lên `document.body` để tránh lỗi vị trí hiển thị.
+- **Status**: Fixed
+
+---
+
+## [2026-06-25 00:20] - Lỗi co giật, nhảy lệch giao diện trang Lịch sử khi tải trang và khi xuất báo cáo PDF
+
+- **Type**: Logic
+- **Severity**: Medium
+- **File**: `templates/history.html`
+- **Agent**: Antigravity Orchestrator
+- **Root Cause**:
+  1. Iframe dùng để in báo cáo PDF ẩn được đính vào `document.body` ở vị trí cố định `left: 0; top: 0` với kích cỡ A4 (1024x1448px) lớn hơn màn hình thực tế, làm xuất hiện thanh cuộn trình duyệt tạm thời, gây co giật layout chính.
+  2. Modals nằm bên trong `#content-area` được di chuyển động bằng JS sau khi load trang, gây ra hiện tượng nhấp nháy/nhảy layout (FOUC).
+- **Error Message**: Giao diện bị giật lệch trái/phải hoặc co giãn thanh cuộn khi click Xuất lịch sử hoặc khi chuyển trang.
+- **Fix Applied**:
+  1. Cấu hình tọa độ iframe kết xuất PDF nằm hoàn toàn ngoài màn hình (`left: -9999px; top: -9999px; position: fixed;`) để triệt tiêu việc kích hoạt thanh cuộn của trình duyệt chính.
+  2. Đưa định nghĩa HTML của `#deleteConfirmModal` và `#exportModal` ra ngoài vùng PJAX `#content-area` (nằm ở đáy `<body>`), giúp trình duyệt dựng modal tĩnh chuẩn ngay từ đầu.
+- **Prevention**: Luôn dựng các phần tử ẩn hoặc iframe render ngầm ở vị trí hoàn toàn off-screen (ví dụ: `left: -9999px`) để tránh ảnh hưởng đến thanh cuộn viewport của cửa sổ chính.
+- **Status**: Fixed
+
+

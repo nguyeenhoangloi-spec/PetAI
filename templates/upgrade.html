@@ -1569,9 +1569,8 @@
             if (data.order_id) {
               startStatusChecking(data.order_id);
             }
-          } else {
             if (typeof window.showToast === "function") {
-              window.showToast("error", data.message_vi || "Đã xảy ra lỗi");
+              window.showToast("error", (lang === "en" ? data.message_en : data.message_vi) || (lang === "en" ? "An error occurred" : "Đã xảy ra lỗi"));
             }
             hideCheckout();
           }
@@ -1591,7 +1590,7 @@
       } catch (err) {
         console.error("Checkout AJAX failed:", err);
         if (typeof window.showToast === "function") {
-          window.showToast("error", "Đã xảy ra lỗi hệ thống");
+          window.showToast("error", lang === "en" ? "A system error occurred" : "Đã xảy ra lỗi hệ thống");
         }
         hideCheckout();
       }

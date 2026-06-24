@@ -515,6 +515,8 @@ document.addEventListener("DOMContentLoaded", function () {
       const newWatchAdModal = doc.querySelector("#watchAdModal");
       const newToastStack = doc.querySelector(".toast-stack");
       const newMetaCsrf = doc.querySelector('meta[name="csrf-token"]');
+      const newDeleteConfirmModal = doc.querySelector("#deleteConfirmModal");
+      const newExportModal = doc.querySelector("#exportModal");
 
       const updateDOM = () => {
 
@@ -680,6 +682,26 @@ document.addEventListener("DOMContentLoaded", function () {
           document.body.appendChild(newGradcamModal);
         } else if (currentGradcamModal) {
           currentGradcamModal.remove();
+        }
+
+        // 4.685 Update deleteConfirmModal if present
+        const currentDeleteConfirmModal = document.getElementById("deleteConfirmModal");
+        if (currentDeleteConfirmModal && newDeleteConfirmModal) {
+          currentDeleteConfirmModal.parentNode.replaceChild(newDeleteConfirmModal, currentDeleteConfirmModal);
+        } else if (newDeleteConfirmModal) {
+          document.body.appendChild(newDeleteConfirmModal);
+        } else if (currentDeleteConfirmModal) {
+          currentDeleteConfirmModal.remove();
+        }
+
+        // 4.686 Update exportModal if present
+        const currentExportModal = document.getElementById("exportModal");
+        if (currentExportModal && newExportModal) {
+          currentExportModal.parentNode.replaceChild(newExportModal, currentExportModal);
+        } else if (newExportModal) {
+          document.body.appendChild(newExportModal);
+        } else if (currentExportModal) {
+          currentExportModal.remove();
         }
 
         // 4.67 Sync body dataset attributes

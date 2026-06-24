@@ -320,6 +320,14 @@
       .material-symbols-outlined {
         font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
       }
+      /* Subtle fade-in for history content after tab switch — no full-page flash */
+      @keyframes history-content-in {
+        from { opacity: 0; transform: translateY(4px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+      .history-content-enter {
+        animation: history-content-in 0.15s ease-out forwards;
+      }
     </style>
   </head>
 
@@ -475,6 +483,7 @@
 
           <!-- Filters, Search & View Controls -->
           <div id="history-pjax-container" class="space-y-5 transition-all duration-300">
+            <input type="hidden" id="pjax-total-pages" value="{{ total_pages or 1 }}">
             <section class="flex flex-col gap-4 border-t border-slate-200/60 dark:border-slate-800/80 pt-5">
               
               <!-- Tab bar, View Switch & Search Bar -->
@@ -485,6 +494,7 @@
                   <a
                     class="px-4 py-2 rounded-lg text-xs font-semibold tracking-wide transition-all duration-250 flex items-center gap-1.5 {% if selected_type == 'all' or not selected_type %}bg-primary text-white shadow-sm{% else %}text-slate-650 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/60{% endif %}"
                     href="{{ url_for('history.history', type='all', q=search_query, date=date_filter, sort=sort_by) }}"
+                    onclick="navigateHistoryWithAjax(event, this.href)"
                   >
                     <span data-i18n="all">Tất cả</span>
                     <span class="px-1.5 py-0.5 text-[9px] rounded-full {% if selected_type == 'all' or not selected_type %}bg-white/20 text-white{% else %}bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-400{% endif %}">{{ total_records_all }}</span>
@@ -494,6 +504,7 @@
                   <a
                     class="px-4 py-2 rounded-lg text-xs font-semibold tracking-wide transition-all duration-250 flex items-center gap-1.5 {% if selected_type == 'pure' %}bg-primary text-white shadow-sm{% else %}text-slate-650 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/60{% endif %}"
                     href="{{ url_for('history.history', type='pure', q=search_query, date=date_filter, sort=sort_by) }}"
+                    onclick="navigateHistoryWithAjax(event, this.href)"
                   >
                     <span data-i18n="pureDog">Thuần chủng</span>
                     <span class="px-1.5 py-0.5 text-[9px] rounded-full {% if selected_type == 'pure' %}bg-white/20 text-white{% else %}bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-400{% endif %}">{{ pure_count }}</span>
@@ -503,6 +514,7 @@
                   <a
                     class="px-4 py-2 rounded-lg text-xs font-semibold tracking-wide transition-all duration-250 flex items-center gap-1.5 {% if selected_type == 'hybrid' %}bg-primary text-white shadow-sm{% else %}text-slate-650 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/60{% endif %}"
                     href="{{ url_for('history.history', type='hybrid', q=search_query, date=date_filter, sort=sort_by) }}"
+                    onclick="navigateHistoryWithAjax(event, this.href)"
                   >
                     <span data-i18n="hybridDog">Chó lai</span>
                     <span class="px-1.5 py-0.5 text-[9px] rounded-full {% if selected_type == 'hybrid' %}bg-white/20 text-white{% else %}bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-400{% endif %}">{{ hybrid_count }}</span>
@@ -512,6 +524,7 @@
                   <a
                     class="px-4 py-2 rounded-lg text-xs font-semibold tracking-wide transition-all duration-250 {% if selected_type == 'high_conf' %}bg-primary text-white shadow-sm{% else %}text-slate-650 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/60{% endif %}"
                     href="{{ url_for('history.history', type='high_conf', q=search_query, date=date_filter, sort=sort_by) }}"
+                    onclick="navigateHistoryWithAjax(event, this.href)"
                     data-i18n="highConf"
                   >
                     Độ tin cậy cao
@@ -521,6 +534,7 @@
                   <a
                     class="px-4 py-2 rounded-lg text-xs font-semibold tracking-wide transition-all duration-250 {% if selected_type == 'low_conf' %}bg-primary text-white shadow-sm{% else %}text-slate-650 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/60{% endif %}"
                     href="{{ url_for('history.history', type='low_conf', q=search_query, date=date_filter, sort=sort_by) }}"
+                    onclick="navigateHistoryWithAjax(event, this.href)"
                     data-i18n="lowConf"
                   >
                     Độ tin cậy thấp
@@ -569,6 +583,7 @@
                     {% if search_query %}
                     <a
                       href="{{ url_for('history.history', type=selected_type, date=date_filter, sort=sort_by) }}"
+                      onclick="navigateHistoryWithAjax(event, this.href)"
                       class="absolute inset-y-0 right-0 pr-2.5 flex items-center text-slate-400 hover:text-slate-650"
                       title="Xoá tìm kiếm"
                     >
@@ -628,6 +643,7 @@
                 {% if selected_type != 'all' or search_query or date_filter != 'all' or sort_by != 'newest' %}
                 <a
                   href="/history"
+                  onclick="navigateHistoryWithAjax(event, this.href)"
                   class="px-4 py-2 border border-dashed border-red-200 hover:border-red-450 dark:border-red-950/40 dark:hover:border-red-900 text-red-650 hover:text-red-750 dark:text-red-400 dark:hover:text-red-300 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-sm"
                 >
                   <span class="material-symbols-outlined text-[16px]">filter_alt_off</span>
@@ -996,6 +1012,104 @@
       </div>
     </div>
 
+    <!-- Export Configuration Modal -->
+    <div
+      id="exportModal"
+      class="fixed inset-0 z-[1100] hidden items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm transition-all duration-300"
+    >
+      <div
+        class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl max-w-md w-full border border-outline-variant/30 dark:border-slate-800 overflow-hidden shadow-2xl transition-transform transform scale-95 duration-300 p-6 flex flex-col gap-5 text-left text-slate-850 dark:text-slate-100"
+      >
+        <div class="flex items-center justify-between border-b border-slate-200/60 dark:border-slate-800 pb-3">
+          <h3 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary dark:text-blue-400">download</span>
+            <span data-i18n="exportModalTitle">Xuất lịch sử nhận diện</span>
+          </h3>
+          <button
+            type="button"
+            onclick="closeExportModal()"
+            class="w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center text-slate-500 dark:text-slate-400 transition-colors cursor-pointer"
+          >
+            <span class="material-symbols-outlined text-[18px]">close</span>
+          </button>
+        </div>
+        
+        <!-- Options content -->
+        <div class="space-y-4">
+          <!-- 1. Data Scope -->
+          <div class="space-y-2">
+            <label class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block" data-i18n="exportScopeLabel">
+              Phạm vi dữ liệu
+            </label>
+            <div class="grid grid-cols-1 gap-2">
+              <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/60 cursor-pointer transition-all">
+                <input type="radio" name="exportScope" value="all" checked class="w-4 h-4 text-primary dark:text-blue-500 focus:ring-0">
+                <div class="text-xs">
+                  <span class="font-semibold block text-slate-900 dark:text-white" data-i18n="exportScopeAll">Toàn bộ lịch sử</span>
+                </div>
+              </label>
+              <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/60 cursor-pointer transition-all">
+                <input type="radio" name="exportScope" value="filtered" class="w-4 h-4 text-primary dark:text-blue-500 focus:ring-0">
+                <div class="text-xs">
+                  <span class="font-semibold block text-slate-900 dark:text-white" data-i18n="exportScopeFiltered">Theo bộ lọc hiện tại</span>
+                </div>
+              </label>
+            </div>
+          </div>
+          
+          <!-- 2. Export Format -->
+          <div class="space-y-2">
+            <label class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block" data-i18n="exportFormatLabel">
+              Định dạng xuất tệp
+            </label>
+            <div class="grid grid-cols-3 gap-2.5">
+              <label class="flex flex-col items-center justify-center p-3 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/60 cursor-pointer transition-all text-center gap-1.5">
+                <input type="radio" name="exportFormat" value="xlsx" checked class="w-3.5 h-3.5 text-primary dark:text-blue-500 focus:ring-0">
+                <div class="text-[11px]">
+                  <span class="font-bold text-slate-900 dark:text-white block">Excel</span>
+                  <span class="text-[9px] text-slate-450 dark:text-slate-500">.xlsx</span>
+                </div>
+              </label>
+              <label class="flex flex-col items-center justify-center p-3 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/60 cursor-pointer transition-all text-center gap-1.5">
+                <input type="radio" name="exportFormat" value="csv" class="w-3.5 h-3.5 text-primary dark:text-blue-500 focus:ring-0">
+                <div class="text-[11px]">
+                  <span class="font-bold text-slate-900 dark:text-white block">CSV</span>
+                  <span class="text-[9px] text-slate-450 dark:text-slate-500">.csv</span>
+                </div>
+              </label>
+              <label class="flex flex-col items-center justify-center p-3 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/60 cursor-pointer transition-all text-center gap-1.5">
+                <input type="radio" name="exportFormat" value="pdf" class="w-3.5 h-3.5 text-primary dark:text-blue-500 focus:ring-0">
+                <div class="text-[11px]">
+                  <span class="font-bold text-slate-900 dark:text-white block" data-i18n="exportFormatPDF">Báo cáo PDF</span>
+                  <span class="text-[9px] text-slate-450 dark:text-slate-500">.pdf</span>
+                </div>
+              </label>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Actions -->
+        <div class="flex items-center gap-3 border-t border-slate-200/60 dark:border-slate-800 pt-4 mt-2">
+          <button
+            type="button"
+            onclick="closeExportModal()"
+            class="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-350 font-semibold rounded-lg text-xs transition-colors cursor-pointer text-center"
+            data-i18n="cancel"
+          >
+            Hủy
+          </button>
+          <button
+            type="button"
+            onclick="triggerExportDownload()"
+            class="flex-1 py-2.5 bg-primary hover:bg-primary/95 text-white font-semibold rounded-lg text-xs transition-colors cursor-pointer shadow-sm text-center flex items-center justify-center gap-2"
+          >
+            <span class="material-symbols-outlined text-[16px]">download</span>
+            <span data-i18n="exportBtn">Tải file về</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- Scripts Block -->
     <script>
       // ── Animate width fills ──
@@ -1254,47 +1368,212 @@
         }
       });
 
-      // ── Export History to CSV via API client-side ──
+      // ── Export Modal Controls ──
       function exportHistoryData() {
-        fetch('/history/api/recent?limit=100')
-          .then(res => res.json())
-          .then(data => {
-            const list = data.predictions || [];
-            if (!list.length) {
-              if (typeof showToast !== "undefined") {
-                showToast(typeof window.PetAI_i18n !== "undefined" ? window.PetAI_i18n.t("noUserData") : "Không có dữ liệu.", "warning");
-              }
-              return;
-            }
-            
-            // Build CSV
-            let csv = "\uFEFFID,Breed,Confidence,Species,Date\n";
-            list.forEach(p => {
-              const breed = p.breed || "";
-              const conf = p.confidence ? (p.confidence * 100).toFixed(1) + "%" : "0%";
-              const species = p.species || "Dog";
-              const date = p.created_at || "";
-              const cleanBreed = breed.replace(/"/g, '""');
-              csv += `${p.id},"${cleanBreed}",${conf},${species},${date}\n`;
-            });
-            
-            const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-            const link = document.createElement("a");
-            const url = URL.createObjectURL(blob);
-            link.setAttribute("href", url);
-            link.setAttribute("download", "PetAI_History_" + new Date().toISOString().slice(0,10) + ".csv");
-            link.style.visibility = "hidden";
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-          })
-          .catch(err => {
-            console.error(err);
+        const modal = document.getElementById("exportModal");
+        
+        // Translate elements in the export modal specifically before showing
+        if (typeof window.PetAI_i18n !== "undefined") {
+          window.PetAI_i18n.applyToElement(modal, window.PetAI_i18n.getCurrentLang());
+        }
+        
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+        setTimeout(() => {
+          modal.querySelector(".max-w-md").classList.remove("scale-95");
+          modal.querySelector(".max-w-md").classList.add("scale-100");
+        }, 10);
+      }
+
+      function closeExportModal() {
+        const modal = document.getElementById("exportModal");
+        modal.querySelector(".max-w-md").classList.remove("scale-100");
+        modal.querySelector(".max-w-md").classList.add("scale-95");
+        setTimeout(() => {
+          modal.classList.remove("flex");
+          modal.classList.add("hidden");
+        }, 150);
+      }
+
+      function triggerExportDownload() {
+        const scope = document.querySelector('input[name="exportScope"]:checked').value;
+        const format = document.querySelector('input[name="exportFormat"]:checked').value;
+        
+        closeExportModal();
+        
+        // Get current filters from URL query parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        urlParams.set("scope", scope);
+        
+        if (format === "pdf") {
+          if (typeof html2pdf === "undefined") {
             if (typeof showToast !== "undefined") {
-              showToast("Lỗi khi tải dữ liệu xuất.", "error");
+              showToast(
+                typeof window.PetAI_i18n !== "undefined"
+                  ? window.PetAI_i18n.t("toastExportStart")
+                  : "Hệ thống đang chuẩn bị tệp tin...",
+                "info"
+              );
+            }
+            // Dynamic load html2pdf.js via CDN
+            const script = document.createElement("script");
+            script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js";
+            script.onload = function() {
+              startPdfExport(urlParams);
+            };
+            script.onerror = function() {
+              if (typeof showToast !== "undefined") {
+                showToast(
+                  typeof window.PetAI_i18n !== "undefined"
+                    ? window.PetAI_i18n.t("toastExportError")
+                    : "Không thể tải thư viện xuất PDF.",
+                  "error"
+                );
+              }
+            };
+            document.body.appendChild(script);
+          } else {
+            startPdfExport(urlParams);
+          }
+        } else {
+          if (typeof showToast !== "undefined") {
+            showToast(typeof window.PetAI_i18n !== "undefined" ? window.PetAI_i18n.t("toastExportStart") : "Đang chuẩn bị file xuất...", "info");
+          }
+          
+          urlParams.set("format", format);
+          const exportUrl = "/history/export?" + urlParams.toString();
+          
+          // Trigger download direct
+          const link = document.createElement("a");
+          link.href = exportUrl;
+          link.style.display = "none";
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        }
+      }
+
+      function startPdfExport(urlParams) {
+        if (typeof showToast !== "undefined") {
+          showToast(
+            typeof window.PetAI_i18n !== "undefined"
+              ? window.PetAI_i18n.t("toastExportStart")
+              : "Hệ thống đang chuẩn bị tệp tin...",
+            "info"
+          );
+        }
+        
+        const printUrl = "/history/print?" + urlParams.toString();
+        
+        fetch(printUrl)
+          .then(response => {
+            if (!response.ok) {
+              throw new Error("Network response was not ok");
+            }
+            return response.text();
+          })
+          .then(htmlText => {
+            // Create an isolated iframe to render the A4 report cleanly
+            const iframe = document.createElement("iframe");
+            iframe.style.position = "fixed";
+            iframe.style.left = "-9999px";
+            iframe.style.top = "-9999px";
+            iframe.style.width = "1024px"; // Standard desktop viewport width for grid layout
+            iframe.style.height = "1448px";
+            iframe.style.border = "none";
+            iframe.style.zIndex = "-9999";
+            iframe.style.pointerEvents = "none";
+            
+            document.body.appendChild(iframe);
+            
+            // Comment out the auto-print trigger script
+            const cleanedHtml = htmlText.replace(/window\.print\(\)/g, "// window.print()");
+            
+            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+            iframeDoc.open();
+            iframeDoc.write(cleanedHtml);
+            iframeDoc.close();
+            
+            // Wait for style calculation, Tailwind scripts, and image assets to load fully inside the iframe
+            setTimeout(() => {
+              try {
+                const printContainer = iframeDoc.querySelector(".max-w-5xl:not(.no-print)");
+                if (!printContainer) {
+                  throw new Error("Could not find printable container inside iframe.");
+                }
+                
+                // Hide any leftover .no-print elements inside the printable container
+                printContainer.querySelectorAll(".no-print").forEach(el => el.remove());
+                
+                const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+                const filename = `PetAI_History_${dateStr}.pdf`;
+                
+                const opt = {
+                  margin:       10,
+                  filename:     filename,
+                  image:        { type: "jpeg", quality: 0.98 },
+                  html2canvas:  { 
+                    scale: 2, 
+                    useCORS: true, 
+                    logging: false,
+                    letterRendering: true,
+                    scrollX: 0,
+                    scrollY: 0
+                  },
+                  jsPDF:        { unit: "mm", format: "a4", orientation: "portrait" }
+                };
+                
+                html2pdf()
+                  .from(printContainer)
+                  .set(opt)
+                  .save()
+                  .then(() => {
+                    document.body.removeChild(iframe);
+                    if (typeof showToast !== "undefined") {
+                      showToast(
+                        typeof window.PetAI_i18n !== "undefined"
+                          ? window.PetAI_i18n.t("toastExportSuccess")
+                          : "Xuất dữ liệu thành công!",
+                        "success"
+                      );
+                    }
+                  })
+                  .catch(err => {
+                    console.error("html2pdf save error:", err);
+                    if (iframe.parentNode) {
+                      document.body.removeChild(iframe);
+                    }
+                    throw err;
+                  });
+              } catch (innerError) {
+                console.error("Iframe rendering error:", innerError);
+                if (iframe.parentNode) {
+                  document.body.removeChild(iframe);
+                }
+                throw innerError;
+              }
+            }, 1200);
+          })
+          .catch(error => {
+            console.error("PDF export error:", error);
+            if (typeof showToast !== "undefined") {
+              showToast(
+                typeof window.PetAI_i18n !== "undefined"
+                  ? window.PetAI_i18n.t("toastExportError")
+                  : "Gặp sự cố khi xuất dữ liệu.",
+                "error"
+              );
             }
           });
       }
+
+      // Close modal on click outside
+      window.addEventListener("click", function (e) {
+        const exportModal = document.getElementById("exportModal");
+        if (e.target === exportModal) {
+          closeExportModal();
+        }
+      });
 
       // ── Apply search & select filter parameter values ──
       function applyFilters() {
@@ -1314,7 +1593,127 @@
         url.searchParams.set("sort", sortBy);
         url.searchParams.set("page", "1");
         
-        window.location.href = url.toString();
+        navigateHistoryWithAjax(null, url.toString());
+      }
+
+      // ── AJAX PJAX Filter Navigation ──
+      function navigateHistoryWithAjax(event, url) {
+        if (event) {
+          event.preventDefault();
+          // Stop script.js global PJAX router from intercepting this click
+          // and triggering a full-page loadPagePjax() call
+          event.stopPropagation();
+        }
+        
+        const container = document.getElementById("history-pjax-container");
+        if (!container) return;
+        
+        // NO opacity dimming — avoid full-area flash when switching tabs
+        // Just fetch and swap content sections directly
+        fetch(url)
+          .then(res => res.text())
+          .then(htmlText => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(htmlText, "text/html");
+            const newContainer = doc.getElementById("history-pjax-container");
+            
+            if (newContainer && container) {
+              // Swap full container content (tabs + grid/table)
+              container.innerHTML = newContainer.innerHTML;
+              
+              // Update browser URL
+              history.pushState(null, '', url);
+              
+              // Reset current page and update total pages from dynamic hidden field
+              currentPage = 1;
+              const pjaxTotalEl = document.getElementById("pjax-total-pages");
+              if (pjaxTotalEl) {
+                totalPages = parseInt(pjaxTotalEl.value || "1");
+              }
+              
+              // Re-run initializations
+              initAnimations();
+              
+              // Trigger counter animations by resetting state
+              document.querySelectorAll("[data-counter]").forEach(el => {
+                el.dataset.animated = "false";
+              });
+              if (typeof initCounters === "function") {
+                initCounters();
+              } else {
+                // Inline implementation fallback for counters
+                const DURATION = 1000;
+                function easeOutExpo(t) {
+                  return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+                }
+                function formatNumber(num, isFloat, decimals, useCommas) {
+                  let formatted = isFloat ? num.toFixed(decimals) : Math.round(num).toString();
+                  if (useCommas) {
+                    const parts = formatted.split(".");
+                    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                    formatted = parts.join(".");
+                  }
+                  return formatted;
+                }
+                function animateValue(el) {
+                  if (el.dataset.animated === "true") return;
+                  el.dataset.animated = "true";
+                  const target = parseFloat(el.getAttribute("data-counter"));
+                  const suffix = el.getAttribute("data-suffix") || "";
+                  const useCommas = el.getAttribute("data-use-commas") === "true";
+                  const isFloat = String(target).includes(".") && !useCommas;
+                  const decimals = isFloat ? String(target).split(".")[1].length : 0;
+                  let start = null;
+
+                  function step(ts) {
+                    if (!start) start = ts;
+                    const progress = Math.min((ts - start) / DURATION, 1);
+                    const value = easeOutExpo(progress) * target;
+                    el.textContent = formatNumber(value, isFloat, decimals, useCommas) + suffix;
+                    if (progress < 1) requestAnimationFrame(step);
+                  }
+                  requestAnimationFrame(step);
+                }
+                document.querySelectorAll("[data-counter]").forEach(el => animateValue(el));
+              }
+              
+              // Reapply translation tags
+              if (typeof window.PetAI_i18n !== "undefined") {
+                window.PetAI_i18n.applyToElement(container, window.PetAI_i18n.getCurrentLang());
+              }
+              
+              // Apply View Mode (Grid vs Table)
+              const savedMode = localStorage.getItem("history-view-mode") || "grid";
+              toggleViewMode(savedMode);
+              
+              // Update progress bar widths in new results
+              document.querySelectorAll(".progress-bar-item").forEach(function (bar) {
+                const pct = bar.getAttribute("data-pct") || "0";
+                bar.style.width = pct + "%";
+              });
+              
+              // Apply subtle fade-in animation only to the content areas (grid + table)
+              // This gives a smooth transition without any blank/dim flash
+              const contentSections = container.querySelectorAll("#grid-view-section, #table-view-section");
+              contentSections.forEach(function(sec) {
+                sec.classList.remove("history-content-enter");
+                // Force reflow to restart animation
+                void sec.offsetWidth;
+                sec.classList.add("history-content-enter");
+                // Auto-remove class after animation completes
+                sec.addEventListener("animationend", function() {
+                  sec.classList.remove("history-content-enter");
+                }, { once: true });
+              });
+            }
+          })
+          .catch(err => {
+            console.error("PJAX load failed:", err);
+            // Fallback to normal navigation if AJAX fails
+            if (url) {
+              window.location.href = url;
+            }
+          });
       }
 
       // ── View Mode persistence (Grid vs Table) ──
@@ -1424,6 +1823,16 @@
       }
 
       document.addEventListener("DOMContentLoaded", function () {
+        // Move modals to body to prevent stacking context or transform cutoff issues
+        const deleteConfirmModal = document.getElementById("deleteConfirmModal");
+        const exportModal = document.getElementById("exportModal");
+        if (deleteConfirmModal && deleteConfirmModal.parentNode !== document.body) {
+          document.body.appendChild(deleteConfirmModal);
+        }
+        if (exportModal && exportModal.parentNode !== document.body) {
+          document.body.appendChild(exportModal);
+        }
+
         // Initialize View Mode
         const savedMode = localStorage.getItem("history-view-mode") || "grid";
         toggleViewMode(savedMode);
@@ -1448,6 +1857,7 @@
       });
     </script>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="{{ url_for('static', filename='js/toasts.js') }}"></script>
     <script src="{{ url_for('static', filename='js/i18n.js') }}?v=23"></script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
