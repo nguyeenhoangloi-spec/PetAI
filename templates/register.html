@@ -92,7 +92,7 @@
     </script>
     <title data-i18n="registerPageTitle">{{ 'Register - ' ~ get_config('site_name', 'PetAI') if ui_language == 'en' else 'Đăng ký - ' ~ get_config('site_name', 'PetAI') }}</title>
     <script src="{{ url_for('static', filename='js/tailwindcss.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/chart.umd.min.js') }}"></script>
+
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='css/typography.css') }}"
@@ -119,96 +119,79 @@
         theme: {
           extend: {
             colors: {
-              background: "#f8f9ff",
-              "on-surface-variant": "#434655",
-              "on-background": "#0b1c30",
+              "error-container": "#ffdad6",
+              "surface-tint": "#0053db",
+              "on-primary-fixed": "#00174b",
+              "on-error-container": "#93000a",
+              "inverse-primary": "#b4c5ff",
+              "tertiary-container": "#bc4800",
+              "on-tertiary-fixed": "#360f00",
+              "on-tertiary": "#ffffff",
+              "surface-variant": "#d3e4fe",
+              "secondary-fixed-dim": "#ffb95f",
+              "on-tertiary-fixed-variant": "#7d2d00",
+              tertiary: "#943700",
+              "surface-dim": "#cbdbf5",
+              "on-error": "#ffffff",
+              "outline-variant": "#c3c6d7",
+              "on-surface": "#0b1c30",
+              "surface-container-lowest": "#ffffff",
+              "surface-bright": "#f8f9ff",
+              "on-secondary-container": "#684000",
+              primary: "#004ac6",
+              "on-primary": "#ffffff",
+              "on-secondary-fixed-variant": "#653e00",
               "primary-fixed": "#dbe1ff",
-              secondary: "#855300",
+              "surface-container-high": "#dce9ff",
+              surface: "#f8f9ff",
+              "tertiary-fixed": "#ffdbcd",
+              "tertiary-fixed-dim": "#ffb596",
+              "on-tertiary-container": "#ffede6",
+              "on-primary-fixed-variant": "#003ea8",
+              "on-secondary": "#ffffff",
+              "secondary-container": "#fea619",
+              outline: "#737686",
               "inverse-surface": "#213145",
               "inverse-on-surface": "#eaf1ff",
-              "surface-bright": "#f8f9ff",
-              "surface-container-high": "#dce9ff",
-              "on-secondary-fixed": "#2a1700",
-              tertiary: "#943700",
-              "on-error-container": "#93000a",
-              "on-primary-fixed-variant": "#003ea8",
-              error: "#ba1a1a",
-              surface: "#f8f9ff",
-              "on-secondary": "#ffffff",
-              "surface-variant": "#d3e4fe",
-              "on-primary-container": "#eeefff",
-              "on-secondary-fixed-variant": "#653e00",
-              primary: "#004ac6",
-              "on-surface": "#0b1c30",
-              "on-error": "#ffffff",
-              "on-tertiary-fixed-variant": "#7d2d00",
-              "on-tertiary": "#ffffff",
-              "outline-variant": "#c3c6d7",
-              "surface-container-highest": "#d3e4fe",
-              "on-tertiary-fixed": "#360f00",
-              "on-tertiary-container": "#ffede6",
-              "surface-dim": "#cbdbf5",
-              outline: "#737686",
-              "tertiary-fixed-dim": "#ffb596",
-              "primary-fixed-dim": "#b4c5ff",
-              "on-primary": "#ffffff",
-              "primary-container": "#2563eb",
-              "surface-container": "#e5eeff",
-              "secondary-fixed-dim": "#ffb95f",
-              "tertiary-fixed": "#ffdbcd",
-              "tertiary-container": "#bc4800",
-              "surface-container-lowest": "#ffffff",
-              "secondary-container": "#fea619",
-              "on-secondary-container": "#684000",
-              "on-primary-fixed": "#00174b",
-              "inverse-primary": "#b4c5ff",
-              "error-container": "#ffdad6",
               "surface-container-low": "#eff4ff",
+              "primary-fixed-dim": "#b4c5ff",
+              "on-surface-variant": "#434655",
+              "on-primary-container": "#eeefff",
+              "on-background": "#0b1c30",
+              "surface-container-highest": "#d3e4fe",
+              background: "#f8f9ff",
+              "surface-container": "#e5eeff",
+              "on-secondary-fixed": "#2a1700",
+              secondary: "#855300",
+              error: "#ba1a1a",
               "secondary-fixed": "#ffddb8",
-              "surface-tint": "#0053db",
-            },
-            borderRadius: {
-              DEFAULT: "0.25rem",
-              lg: "0.5rem",
-              xl: "0.75rem",
-              full: "9999px",
-            },
-            spacing: {
-              sm: "12px",
-              xs: "4px",
-              md: "24px",
-              lg: "48px",
-              gutter: "24px",
-              base: "8px",
-              xl: "80px",
-              margin: "32px",
-            },
-            fontFamily: {
-              "headline-md": ["Inter"],
-              "body-lg": ["Inter"],
-              "body-md": ["Inter"],
-              "display-xl": ["Inter"],
-              "headline-lg": ["Inter"],
-              "label-sm": ["Inter"],
-            },
-            fontSize: {
-              "headline-lg": [
-                "30px",
-                { lineHeight: "40px", fontWeight: "600" },
-              ],
-              "headline-md": [
-                "20px",
-                { lineHeight: "28px", fontWeight: "600" },
-              ],
-              "body-md": ["15px", { lineHeight: "22px", fontWeight: "400" }],
-              "label-sm": ["12px", { lineHeight: "16px", fontWeight: "500" }],
-              "body-lg": ["18px", { lineHeight: "28px", fontWeight: "400" }],
+              "primary-container": "#2563eb",
             },
           },
         },
       };
     </script>
     <style>
+      :root {
+        --login-bg: #060f1e;
+        --login-card-bg: #0b1a2e;
+        --login-right-bg: #0d1f35;
+        --login-input-bg: #132033;
+        --login-input-border: #1e3a5f;
+        --login-input-focus: #2563eb;
+        --login-text: #e8edf5;
+        --login-text-muted: #7a8fa6;
+        --login-text-label: #b0c0d4;
+        --login-primary: #2563eb;
+        --login-primary-hover: #1d4ed8;
+        --login-google-bg: #132033;
+        --login-google-border: #1e3a5f;
+        --login-divider: #1e3a5f;
+        --login-card-border: #1a3050;
+        --login-feature-bg: rgba(37, 99, 235, 0.1);
+        --login-feature-border: rgba(37, 99, 235, 0.2);
+      }
+
       .material-symbols-outlined {
         font-variation-settings:
           "FILL" 0,
@@ -216,478 +199,1022 @@
           "GRAD" 0,
           "opsz" 24;
       }
+
+      /* ── Page shell ── */
+      body.register-page {
+        background: var(--login-bg);
+        background-image:
+          radial-gradient(ellipse at 20% 50%, rgba(37, 99, 235, 0.06) 0%, transparent 60%),
+          radial-gradient(ellipse at 80% 20%, rgba(37, 99, 235, 0.04) 0%, transparent 50%);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        font-family: "Inter", sans-serif;
+        color: var(--login-text);
+      }
+
+      /* ── Outer card ── */
+      .register-card {
+        background: var(--login-card-bg);
+        border: 1px solid var(--login-card-border);
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow:
+          0 0 0 1px rgba(37, 99, 235, 0.08),
+          0 32px 80px rgba(0, 0, 0, 0.6),
+          0 8px 24px rgba(0, 0, 0, 0.4);
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        min-height: 700px;
+        width: 100%;
+        max-width: 1080px;
+      }
+
+      /* ── LEFT PANEL ── */
+      .register-left {
+        position: relative;
+        overflow: hidden;
+        border-radius: 18px 0 0 18px;
+        min-height: 640px;
+      }
+
+      .register-left-img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center center;
+      }
+
+      /* Multi-layer overlay */
+      .register-left-overlay {
+        position: absolute;
+        inset: 0;
+        background:
+          linear-gradient(
+            to bottom,
+            rgba(6, 15, 30, 0.4) 0%,
+            rgba(6, 15, 30, 0.2) 35%,
+            rgba(6, 15, 30, 0.72) 70%,
+            rgba(6, 15, 30, 0.96) 100%
+          );
+      }
+
+      /* Top logo */
+      .register-left-logo {
+        position: absolute;
+        top: 28px;
+        left: 28px;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+      }
+
+      .register-left-logo .logo-icon {
+        font-size: 26px;
+        color: #60a5fa;
+        font-variation-settings: "FILL" 1, "wght" 500, "GRAD" 0, "opsz" 24;
+      }
+
+      .register-left-logo .logo-text {
+        font-size: 18px;
+        font-weight: 700;
+        color: #ffffff;
+        letter-spacing: -0.3px;
+      }
+
+      /* Bottom content */
+      .register-left-content {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 10;
+        padding: 28px 28px 24px;
+      }
+
+      .register-left-title {
+        font-size: 25px;
+        font-weight: 700;
+        line-height: 1.3;
+        color: #ffffff;
+        margin-bottom: 10px;
+        letter-spacing: -0.5px;
+      }
+
+      .register-left-title .accent {
+        color: #60a5fa;
+      }
+
+      .register-left-subtitle {
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.7);
+        line-height: 1.6;
+        margin-bottom: 20px;
+      }
+
+      /* Feature cards grid (3 items) */
+      .register-features {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .register-feature-card {
+        background: var(--login-feature-bg);
+        border: 1px solid var(--login-feature-border);
+        border-radius: 12px;
+        padding: 12px 14px;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        transition: background 0.2s;
+      }
+
+      .register-feature-card:hover {
+        background: rgba(37, 99, 235, 0.16);
+      }
+
+      /* Make 3rd card span full width */
+      .register-feature-card:last-child {
+        grid-column: 1 / -1;
+      }
+
+      .register-feature-icon {
+        font-size: 20px;
+        color: #60a5fa;
+        margin-bottom: 6px;
+        font-variation-settings: "FILL" 1, "wght" 400, "GRAD" 0, "opsz" 24;
+      }
+
+      .register-feature-title {
+        font-size: 13px;
+        font-weight: 600;
+        color: #ffffff;
+        margin-bottom: 3px;
+      }
+
+      .register-feature-desc {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.58);
+        line-height: 1.5;
+      }
+
+      /* ── RIGHT PANEL ── */
+      .register-right {
+        background: var(--login-right-bg);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 36px 44px;
+        border-radius: 0 18px 18px 0;
+        position: relative;
+        overflow-y: auto;
+      }
+
+      .register-form-inner {
+        width: 100%;
+        max-width: 380px;
+        margin: 0 auto;
+      }
+
+      /* Heading */
+      .register-heading {
+        font-size: 26px;
+        font-weight: 700;
+        color: #ffffff;
+        text-align: center;
+        margin-bottom: 6px;
+        letter-spacing: -0.4px;
+      }
+
+      .register-subheading {
+        font-size: 14px;
+        color: var(--login-text-muted);
+        text-align: center;
+        margin-bottom: 22px;
+        line-height: 1.5;
+      }
+
+      /* Two-column grid for paired inputs */
+      .register-grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 14px;
+      }
+
+      /* Form group */
+      .register-form-group {
+        margin-bottom: 14px;
+      }
+
+      .register-label {
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--login-text-label);
+        display: block;
+        margin-bottom: 6px;
+      }
+
+      /* Input with icon */
+      .register-input-wrap {
+        position: relative;
+      }
+
+      .register-input-icon {
+        position: absolute;
+        left: 13px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 17px;
+        color: var(--login-text-muted);
+        pointer-events: none;
+        font-variation-settings: "FILL" 0, "wght" 300, "GRAD" 0, "opsz" 20;
+        z-index: 2;
+      }
+
+      .register-input {
+        width: 100% !important;
+        background: var(--login-input-bg) !important;
+        border: 1px solid var(--login-input-border) !important;
+        border-radius: 10px !important;
+        color: var(--login-text) !important;
+        font-size: 13.5px !important;
+        font-family: "Inter", sans-serif !important;
+        padding: 11px 42px 11px 40px !important;
+        outline: none !important;
+        transition: border-color 0.2s, box-shadow 0.2s !important;
+        box-sizing: border-box !important;
+        position: relative;
+        z-index: 1;
+      }
+
+      .register-input::placeholder {
+        color: var(--login-text-muted) !important;
+        font-size: 12.5px !important;
+      }
+
+      .register-input:focus {
+        border-color: var(--login-input-focus) !important;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18) !important;
+      }
+
+      .register-input.is-invalid {
+        border-color: #f87171 !important;
+        box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.12) !important;
+      }
+
+      /* Fix Chrome/Edge autofill background & text color override */
+      .register-input:-webkit-autofill,
+      .register-input:-webkit-autofill:hover,
+      .register-input:-webkit-autofill:focus,
+      .register-input:-webkit-autofill:active {
+        -webkit-box-shadow: 0 0 0 1000px var(--login-input-bg) inset !important;
+        -webkit-text-fill-color: var(--login-text) !important;
+        caret-color: var(--login-text) !important;
+        transition: background-color 5000s ease-in-out 0s;
+      }
+
+      .register-input-toggle {
+        position: absolute;
+        right: 11px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        padding: 2px;
+        cursor: pointer;
+        color: var(--login-text-muted);
+        display: flex;
+        align-items: center;
+        transition: color 0.2s;
+        z-index: 2;
+      }
+
+      .register-input-toggle:hover {
+        color: var(--login-text);
+      }
+
+      .register-input-toggle .material-symbols-outlined {
+        font-size: 18px;
+      }
+
+      /* Field error */
+      .register-field-error {
+        font-size: 11.5px;
+        color: #f87171;
+        margin-top: 3px;
+        min-height: 15px;
+        display: block;
+      }
+
+      /* Password strength bar */
+      .pwd-strength-bar {
+        display: flex;
+        gap: 4px;
+        margin-top: 5px;
+      }
+
+      .pwd-strength-seg {
+        height: 3px;
+        flex: 1;
+        border-radius: 2px;
+        background: var(--login-input-border);
+        transition: background 0.3s;
+      }
+
+      /* Terms row */
+      .register-terms-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 9px;
+        margin-bottom: 16px;
+        margin-top: 2px;
+      }
+
+      .register-checkbox {
+        width: 15px;
+        height: 15px;
+        border-radius: 4px;
+        border: 1.5px solid var(--login-input-border);
+        background: var(--login-input-bg);
+        accent-color: var(--login-primary);
+        cursor: pointer;
+        flex-shrink: 0;
+        margin-top: 2px;
+      }
+
+      .register-terms-text {
+        font-size: 12.5px;
+        color: var(--login-text-muted);
+        line-height: 1.5;
+      }
+
+      .register-terms-text a {
+        color: #60a5fa;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s;
+      }
+
+      .register-terms-text a:hover {
+        color: #93c5fd;
+      }
+
+      /* Submit button */
+      .register-btn-submit {
+        width: 100%;
+        background: var(--login-primary);
+        color: #ffffff;
+        border: none;
+        border-radius: 12px;
+        font-size: 15px;
+        font-weight: 600;
+        font-family: "Inter", sans-serif;
+        padding: 12px 20px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+        box-shadow: 0 4px 16px rgba(37, 99, 235, 0.35);
+        letter-spacing: 0.1px;
+        margin-bottom: 18px;
+      }
+
+      .register-btn-submit:hover {
+        background: var(--login-primary-hover);
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px rgba(37, 99, 235, 0.45);
+      }
+
+      .register-btn-submit:active {
+        transform: scale(0.98);
+        box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+      }
+
+      .register-btn-submit .material-symbols-outlined {
+        font-size: 18px;
+        font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 20;
+      }
+
+      /* Divider */
+      .register-divider {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 14px;
+      }
+
+      .register-divider-line {
+        flex: 1;
+        height: 1px;
+        background: var(--login-divider);
+      }
+
+      .register-divider-text {
+        font-size: 12px;
+        color: var(--login-text-muted);
+        white-space: nowrap;
+      }
+
+      /* Google button */
+      .register-btn-google {
+        width: 100%;
+        background: var(--login-google-bg);
+        border: 1px solid var(--login-google-border);
+        border-radius: 12px;
+        color: var(--login-text);
+        font-size: 14px;
+        font-weight: 500;
+        font-family: "Inter", sans-serif;
+        padding: 11px 20px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        text-decoration: none;
+        transition: background 0.2s, border-color 0.2s, transform 0.15s;
+        margin-bottom: 18px;
+      }
+
+      .register-btn-google:hover {
+        background: rgba(37, 99, 235, 0.08);
+        border-color: rgba(37, 99, 235, 0.35);
+        transform: translateY(-1px);
+      }
+
+      .register-btn-google:active {
+        transform: scale(0.98);
+      }
+
+      .register-btn-google img {
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+      }
+
+      /* Login link row */
+      .register-login-row {
+        text-align: center;
+        font-size: 14px;
+        color: var(--login-text-muted);
+      }
+
+      .register-login-row a {
+        color: #60a5fa;
+        font-weight: 500;
+        text-decoration: none;
+        margin-left: 4px;
+        transition: color 0.2s;
+      }
+
+      .register-login-row a:hover {
+        color: #93c5fd;
+      }
+
+      /* ── FOOTER ── */
+      .register-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 28px;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .register-footer-home {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+        color: var(--login-text-muted);
+        text-decoration: none;
+        transition: color 0.2s;
+      }
+
+      .register-footer-home:hover {
+        color: var(--login-text);
+      }
+
+      .register-footer-home .material-symbols-outlined {
+        font-size: 16px;
+      }
+
+      .register-footer-security {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.3);
+      }
+
+      .register-footer-security .material-symbols-outlined {
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.25);
+      }
+
+      /* Mobile logo (right column top) */
+      .register-mobile-logo {
+        display: none;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin-bottom: 22px;
+      }
+
+      .register-mobile-logo .logo-icon {
+        font-size: 24px;
+        color: #60a5fa;
+        font-variation-settings: "FILL" 1, "wght" 500, "GRAD" 0, "opsz" 24;
+      }
+
+      .register-mobile-logo .logo-text {
+        font-size: 18px;
+        font-weight: 700;
+        color: #ffffff;
+      }
+
+      /* ── RESPONSIVE ── */
+      @media (max-width: 767px) {
+        .register-card {
+          grid-template-columns: 1fr;
+          border-radius: 16px;
+          min-height: unset;
+          max-width: 100%;
+        }
+
+        .register-left {
+          border-radius: 16px 16px 0 0;
+          min-height: 200px;
+          max-height: 240px;
+        }
+
+        .register-left-content {
+          padding: 14px 16px 16px;
+        }
+
+        .register-left-title {
+          font-size: 16px;
+          margin-bottom: 6px;
+        }
+
+        .register-left-subtitle {
+          font-size: 12px;
+          margin-bottom: 10px;
+        }
+
+        .register-features {
+          grid-template-columns: 1fr 1fr;
+          gap: 6px;
+        }
+
+        .register-feature-card {
+          padding: 7px 9px;
+        }
+
+        .register-feature-desc {
+          display: none;
+        }
+
+        .register-feature-card:last-child {
+          grid-column: 1 / -1;
+        }
+
+        .register-right {
+          border-radius: 0 0 16px 16px;
+          padding: 24px 18px 20px;
+        }
+
+        .register-mobile-logo {
+          display: flex;
+        }
+
+        .register-grid-2 {
+          grid-template-columns: 1fr;
+        }
+
+        .register-btn-submit,
+        .register-btn-google {
+          font-size: 15px;
+        }
+
+        .register-footer {
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+          padding: 12px 16px;
+        }
+      }
+
+      @media (min-width: 768px) and (max-width: 1023px) {
+        .register-card {
+          grid-template-columns: 44% 56%;
+          max-width: 840px;
+        }
+
+        .register-right {
+          padding: 32px 34px;
+        }
+
+        .register-left-title {
+          font-size: 20px;
+        }
+      }
     </style>
   </head>
-  <body
-    class="bg-background text-on-background body-md min-h-screen flex flex-col"
-  >
+  <body class="register-page">
     {% include '_toasts.html' %}
-    <main class="flex-grow flex items-center justify-center p-md lg:p-margin">
-      <div
-        class="max-w-[1280px] w-full mx-auto grid grid-cols-1 lg:grid-cols-2 gap-md bg-surface-container-lowest rounded-xl border border-slate-100 shadow-sm overflow-hidden min-h-[700px]"
-      >
-        <section
-          class="hidden lg:flex flex-col relative rounded-l overflow-hidden bg-surface-container"
-        >
-          <div class="absolute inset-0 z-0">
-            <img
-              alt="Chó Golden Retriever thân thiện trong công viên nắng"
-              class="w-full h-full object-cover"
-              data-alt="Chó Golden Retriever thân thiện trong công viên nắng với ánh sáng tự nhiên"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCv_JZXtfI0byUsF7ZQ0o6SDtj2FJKChgUPAnUZF7td1932KGYEAIwxaNsmMuU8D-fAQRtnGWl1l7dmCT5y_knQsOUA9VmvzOBFKFeznzAi0F59sJGQsRFgD-fevO1_YT6ZAPGC06HUWKxdLUdky_RtUsRc1R8dCulVbAmtAmkBCj3mdvLxl-fUwq3bdyVaL-stLC8R_ueyd3CJnMY8IUD88Gm6nJqPcnuIo-CGGbHWkEPQXxhis0PjdTW-lo_F4Ud3pXxyRkzIwGM"
-            />
-            <div
-              class="absolute inset-0 bg-gradient-to-t from-on-background/80 via-on-background/40 to-transparent"
-            ></div>
-          </div>
-          <div
-            class="relative z-10 p-lg mt-auto flex flex-col gap-md text-on-primary"
-          >
-            <div>
-              <div class="flex items-center gap-xs mb-md">
-                <span
-                  class="material-symbols-outlined text-primary-fixed"
-                  data-icon="pets"
-                  data-weight="fill"
-                  style="font-variation-settings: &quot;FILL&quot; 1"
-                  >pets</span
-                >
-                <span class="text-sm md:text-lg font-semibold text-on-primary"
-                  >{{ get_config('site_name', 'PetAI') }}</span
-                >
+    <main style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px 16px; min-height: calc(100vh - 56px);">
+      <div class="register-card">
+
+        <!-- ═══════════════════════════════ LEFT PANEL ═══════════════════════════════ -->
+        <section class="register-left">
+          <!-- Background dog image -->
+          <img
+            class="register-left-img"
+            src="{{ url_for('static', filename='images/register_dog_hero.png') }}"
+            alt="PetAI - Tham gia cộng đồng yêu chó"
+          />
+          <!-- Dark overlay -->
+          <div class="register-left-overlay"></div>
+
+          <!-- Logo top-left -->
+          <a class="register-left-logo" href="{{ url_for('home.index') }}" aria-label="{{ get_config('site_name', 'PetAI') }}">
+            <span class="material-symbols-outlined logo-icon">pets</span>
+            <span class="logo-text">{{ get_config('site_name', 'PetAI') }}</span>
+          </a>
+
+          <!-- Bottom content -->
+          <div class="register-left-content">
+            <h1 class="register-left-title">
+              <span data-i18n="regLeftTitle">Tham gia cộng đồng yêu chó cùng </span><span class="accent" data-i18n="regLeftTitleAccent">PetAI</span>
+            </h1>
+            <p class="register-left-subtitle" data-i18n="regLeftSubtitle">
+              Lưu lịch sử nhận diện, phân tích thói quen và nhận cảnh báo sức khỏe thông minh cho cún cưng của bạn.
+            </p>
+            <div class="register-features">
+              <div class="register-feature-card">
+                <div class="material-symbols-outlined register-feature-icon">stars</div>
+                <div class="register-feature-title" data-i18n="regFeature1Title">Chào mừng thành viên mới</div>
+                <div class="register-feature-desc" data-i18n="regFeature1Desc">Bắt đầu với gói Free ngay hôm nay.</div>
               </div>
-              <h1 class="headline-lg mb-sm" data-i18n="regLeftTitle">
-                <span data-i18n="regLeftTitle"
-                  >Tham gia cộng đồng yêu chó cùng AI</span
-                >
-              </h1>
-              <p
-                class="body-md text-primary-fixed-dim"
-                data-i18n="regLeftSubtitle"
-              >
-                <span data-i18n="regLeftSubtitle"
-                  >Lưu lịch sử nhận diện, phân tích thói quen và nhận cảnh báo
-                  sức khỏe thông minh cho cún cưng của bạn.</span
-                >
-              </p>
-            </div>
-            <div class="space-y-sm">
-              <div
-                class="flex items-center gap-sm bg-on-background/30 backdrop-blur-sm p-sm rounded-lg border border-on-primary/10"
-              >
-                <span
-                  class="material-symbols-outlined text-secondary-fixed"
-                  data-icon="stars"
-                  data-weight="fill"
-                  style="font-variation-settings: &quot;FILL&quot; 1"
-                  >stars</span
-                >
-                <div>
-                  <h3
-                    class="label-sm text-on-primary"
-                    data-i18n="regFeature1Title"
-                  >
-                    <span data-i18n="regFeature1Title"
-                      >Chào mừng thành viên mới</span
-                    >
-                  </h3>
-                  <p
-                    class="body-md text-primary-fixed-dim"
-                    data-i18n="regFeature1Desc"
-                  >
-                    <span data-i18n="regFeature1Desc"
-                      >Bắt đầu với gói Free ngay hôm nay</span
-                    >
-                  </p>
-                </div>
+              <div class="register-feature-card">
+                <div class="material-symbols-outlined register-feature-icon">check_circle</div>
+                <div class="register-feature-title" data-i18n="regFeature2Title">10 lượt miễn phí</div>
+                <div class="register-feature-desc" data-i18n="regFeature2Desc">Mỗi tài khoản có sẵn lượt trải nghiệm ban đầu.</div>
               </div>
-              <div
-                class="flex items-center gap-sm bg-on-background/30 backdrop-blur-sm p-sm rounded-lg border border-on-primary/10"
-              >
-                <span
-                  class="material-symbols-outlined text-secondary-fixed"
-                  data-icon="check_circle"
-                  data-weight="fill"
-                  style="font-variation-settings: &quot;FILL&quot; 1"
-                  >check_circle</span
-                >
-                <div>
-                  <h3
-                    class="label-sm text-on-primary"
-                    data-i18n="regFeature2Title"
-                  >
-                    <span data-i18n="regFeature2Title">10 lượt miễn phí</span>
-                  </h3>
-                  <p
-                    class="body-md text-primary-fixed-dim"
-                    data-i18n="regFeature2Desc"
-                  >
-                    <span data-i18n="regFeature2Desc"
-                      >Mỗi tài khoản có sẵn lượt trải nghiệm ban đầu</span
-                    >
-                  </p>
-                </div>
-              </div>
-              <div
-                class="flex items-center gap-sm bg-on-background/30 backdrop-blur-sm p-sm rounded-lg border border-on-primary/10"
-              >
-                <span
-                  class="material-symbols-outlined text-secondary-fixed"
-                  data-icon="shield"
-                  data-weight="fill"
-                  style="font-variation-settings: &quot;FILL&quot; 1"
-                  >shield</span
-                >
-                <div>
-                  <h3
-                    class="label-sm text-on-primary"
-                    data-i18n="regFeature3Title"
-                  >
-                    <span data-i18n="regFeature3Title">Bảo mật tài khoản</span>
-                  </h3>
-                  <p
-                    class="body-md text-primary-fixed-dim"
-                    data-i18n="regFeature3Desc"
-                  >
-                    <span data-i18n="regFeature3Desc"
-                      >Thông tin cá nhân được bảo vệ an toàn</span
-                    >
-                  </p>
-                </div>
+              <div class="register-feature-card">
+                <div class="material-symbols-outlined register-feature-icon">shield</div>
+                <div class="register-feature-title" data-i18n="regFeature3Title">Bảo mật tài khoản</div>
+                <div class="register-feature-desc" data-i18n="regFeature3Desc">Thông tin cá nhân được bảo vệ an toàn.</div>
               </div>
             </div>
           </div>
         </section>
-        <section class="flex flex-col justify-center p-md lg:p-xl relative">
-          <div class="lg:hidden flex items-center justify-center gap-xs mb-lg">
-            <img
-              alt="PetAI New Logo"
-              class="h-8 w-auto md:h-10"
-              src="{{ url_for('static', filename='images/logo.png') }}"
-            />
-            <span class="text-sm md:text-lg font-semibold text-primary"
-              >{{ get_config('site_name', 'PetAI') }}</span
-            >
+
+        <!-- ═══════════════════════════════ RIGHT PANEL ═══════════════════════════════ -->
+        <section class="register-right">
+          <!-- Mobile logo (only visible on small screens) -->
+          <div class="register-mobile-logo">
+            <span class="material-symbols-outlined logo-icon">pets</span>
+            <span class="logo-text">{{ get_config('site_name', 'PetAI') }}</span>
           </div>
-          <div class="w-full max-w-[400px] mx-auto flex flex-col gap-md">
-            <div class="text-center mb-md">
-              <h2 class="headline-lg text-on-surface" data-i18n="registerTitle">
-                <span data-i18n="registerTitle">Tạo tài khoản mới</span>
-              </h2>
-              <p
-                class="body-md text-on-surface-variant mt-xs"
-                data-i18n="registerSubtitle"
-              >
-                <span data-i18n="registerSubtitle"
-                  >Điền thông tin bên dưới để bắt đầu nhận diện giống chó.</span
-                >
-              </p>
-            </div>
+
+          <div class="register-form-inner">
+            <!-- Heading -->
+            <h2 class="register-heading" data-i18n="registerTitle">Tạo tài khoản mới</h2>
+            <p class="register-subheading" data-i18n="registerSubtitle">Điền thông tin bên dưới để bắt đầu nhận diện giống chó.</p>
+
             <form
               action="{{ url_for('register.register') }}"
-              class="flex flex-col gap-md"
               id="registerForm"
               method="post"
               novalidate
             >
-              <input
-                type="hidden"
-                name="csrf_token"
-                value="{{ csrf_token() }}"
-              />
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-sm">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
+              <!-- Fullname + Username (2 cols) -->
+              <div class="register-grid-2">
                 <div>
-                  <label
-                    class="block label-sm text-on-surface mb-xs"
-                    for="fullname"
-                    data-i18n="fullnameLabel"
-                    ><span data-i18n="fullnameLabel">Họ và tên</span></label
-                  >
-                  <input
-                    class="w-full h-11 px-sm rounded-xl border border-outline-variant bg-surface-container-lowest text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all body-md"
-                    id="fullname"
-                    name="fullname"
-                    placeholder="Nguyễn Văn A"
-                    type="text"
-                    autocomplete="name"
-                    required
-                    data-i18n-placeholder="fullnamePlaceholder"
-                    value="{{ fullname or '' }}"
-                  />
-                  <small
-                    class="label-sm text-error mt-xs"
-                    id="fullnameError"
-                  ></small>
-                </div>
-                <div>
-                  <label
-                    class="block label-sm text-on-surface mb-xs"
-                    for="username"
-                    data-i18n="usernameLabel"
-                    ><span data-i18n="usernameLabel">Tên đăng nhập</span></label
-                  >
-                  <input
-                    class="w-full h-11 px-sm rounded-xl border border-outline-variant bg-surface-container-lowest text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all body-md"
-                    id="username"
-                    name="username"
-                    placeholder="3-20 ký tự, chữ/số/_"
-                    type="text"
-                    autocomplete="username"
-                    required
-                    data-i18n-placeholder="usernamePlaceholderReg"
-                    value="{{ username or '' }}"
-                  />
-                  <small
-                    class="label-sm text-error mt-xs"
-                    id="usernameError"
-                  ></small>
-                </div>
-              </div>
-              <div>
-                <label
-                  class="block label-sm text-on-surface mb-xs"
-                  for="email"
-                  data-i18n="emailLabel"
-                  ><span data-i18n="emailLabel">Email</span></label
-                >
-                <input
-                  class="w-full h-11 px-sm rounded-xl border border-outline-variant bg-surface-container-lowest text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all body-md"
-                  id="email"
-                  name="email"
-                  placeholder="name@email.com"
-                  type="email"
-                  autocomplete="email"
-                  required
-                  value="{{ email or '' }}"
-                />
-                <small
-                  class="label-sm text-error mt-xs"
-                  id="emailError"
-                ></small>
-              </div>
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-sm">
-                <div>
-                  <label
-                    class="block label-sm text-on-surface mb-xs"
-                    for="password"
-                    data-i18n="passwordLabel"
-                    ><span data-i18n="passwordLabel">Mật khẩu</span></label
-                  >
-                  <div class="relative">
+                  <label class="register-label" for="fullname" data-i18n="fullnameLabel">Họ và tên</label>
+                  <div class="register-input-wrap">
+                    <span class="material-symbols-outlined register-input-icon">person</span>
                     <input
-                      class="w-full h-11 pl-sm pr-10 rounded-xl border border-outline-variant bg-surface-container-lowest text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all body-md"
+                      class="register-input"
+                      id="fullname"
+                      name="fullname"
+                      type="text"
+                      placeholder="Nguyễn Văn A"
+                      data-i18n-placeholder="fullnamePlaceholder"
+                      autocomplete="name"
+                      required
+                      value="{{ fullname or '' }}"
+                    />
+                  </div>
+                  <small class="register-field-error" id="fullnameError"></small>
+                </div>
+                <div>
+                  <label class="register-label" for="username" data-i18n="usernameLabel">Tên đăng nhập</label>
+                  <div class="register-input-wrap">
+                    <span class="material-symbols-outlined register-input-icon">alternate_email</span>
+                    <input
+                      class="register-input"
+                      id="username"
+                      name="username"
+                      type="text"
+                      placeholder="3-20 ký tự, chữ/số/_"
+                      data-i18n-placeholder="usernamePlaceholderReg"
+                      autocomplete="username"
+                      required
+                      value="{{ username or '' }}"
+                    />
+                  </div>
+                  <small class="register-field-error" id="usernameError"></small>
+                </div>
+              </div>
+
+              <!-- Email -->
+              <div class="register-form-group">
+                <label class="register-label" for="email">Email</label>
+                <div class="register-input-wrap">
+                  <span class="material-symbols-outlined register-input-icon">mail</span>
+                  <input
+                    class="register-input"
+                    id="email"
+                    name="email"
+                    type="email"
+                    placeholder="name@gmail.com"
+                    autocomplete="email"
+                    required
+                    value="{{ email or '' }}"
+                  />
+                </div>
+                <small class="register-field-error" id="emailError"></small>
+              </div>
+
+              <!-- Password + Confirm (2 cols) -->
+              <div class="register-grid-2">
+                <div>
+                  <label class="register-label" for="password" data-i18n="passwordLabel">Mật khẩu</label>
+                  <div class="register-input-wrap">
+                    <span class="material-symbols-outlined register-input-icon">lock</span>
+                    <input
+                      class="register-input"
                       id="password"
                       name="password"
-                      placeholder="Ít nhất 6 ký tự"
                       type="password"
+                      placeholder="Ít nhất 6 ký tự"
+                      data-i18n-placeholder="passwordPlaceholderReg"
                       autocomplete="new-password"
                       required
-                      data-i18n-placeholder="passwordPlaceholderReg"
+                      style="padding-right: 40px;"
                     />
                     <button
-                      class="absolute right-3 top-1/2 -translate-y-1/2 text-outline hover:text-on-surface"
+                      class="register-input-toggle"
                       type="button"
                       id="togglePassword"
+                      aria-label="Toggle password visibility"
                     >
-                      <span
-                        class="material-symbols-outlined text-lg"
-                        id="eyeIcon"
-                        >visibility</span
-                      >
+                      <span class="material-symbols-outlined" id="eyeIcon">visibility</span>
                     </button>
                   </div>
-                  <small
-                    class="label-sm text-error mt-xs"
-                    id="passwordError"
-                  ></small>
+                  <!-- Strength bar -->
+                  <div class="pwd-strength-bar" id="pwdStrengthBar" aria-hidden="true">
+                    <div class="pwd-strength-seg" id="seg1"></div>
+                    <div class="pwd-strength-seg" id="seg2"></div>
+                    <div class="pwd-strength-seg" id="seg3"></div>
+                  </div>
+                  <small class="register-field-error" id="passwordError"></small>
                 </div>
                 <div>
-                  <label
-                    class="block label-sm text-on-surface mb-xs"
-                    for="confirmPassword"
-                    data-i18n="confirmPassword"
-                    ><span data-i18n="confirmPassword"
-                      >Xác nhận mật khẩu</span
-                    ></label
-                  >
-                  <div class="relative">
+                  <label class="register-label" for="confirmPassword" data-i18n="confirmPassword">Xác nhận mật khẩu</label>
+                  <div class="register-input-wrap">
+                    <span class="material-symbols-outlined register-input-icon">lock_reset</span>
                     <input
-                      class="w-full h-11 pl-sm pr-10 rounded-xl border border-outline-variant bg-surface-container-lowest text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all body-md"
+                      class="register-input"
                       id="confirmPassword"
                       name="confirmPassword"
-                      placeholder="Nhập lại mật khẩu"
                       type="password"
+                      placeholder="Nhập lại mật khẩu"
+                      data-i18n-placeholder="confirmPasswordPlaceholder"
                       autocomplete="new-password"
                       required
-                      data-i18n-placeholder="confirmPasswordPlaceholder"
+                      style="padding-right: 40px;"
                     />
                     <button
-                      class="absolute right-3 top-1/2 -translate-y-1/2 text-outline hover:text-on-surface"
+                      class="register-input-toggle"
                       type="button"
                       id="toggleConfirmPassword"
+                      aria-label="Toggle confirm password visibility"
                     >
-                      <span
-                        class="material-symbols-outlined text-lg"
-                        id="eyeIconConfirm"
-                        >visibility</span
-                      >
+                      <span class="material-symbols-outlined" id="eyeIconConfirm">visibility</span>
                     </button>
                   </div>
-                  <small
-                    class="label-sm text-error mt-xs"
-                    id="confirmPasswordError"
-                  ></small>
+                  <small class="register-field-error" id="confirmPasswordError"></small>
                 </div>
               </div>
-              <label class="flex items-start gap-sm">
+
+              <!-- Terms checkbox -->
+              <div class="register-terms-row">
                 <input
-                  class="mt-1 h-4 w-4 rounded border-outline-variant text-primary focus:ring-primary bg-surface-container-lowest"
+                  class="register-checkbox"
                   type="checkbox"
                   id="terms"
                   name="terms"
                   required
                   {% if terms %}checked{% endif %}
                 />
-                <span
-                  class="body-md text-on-surface-variant"
-                  data-i18n="agreeTerms"
-                  >Tôi đồng ý với điều khoản dịch vụ và chính sách bảo
-                  mật.</span
-                >
-              </label>
-              <button
-                class="w-full h-11 bg-primary-container text-on-primary label-sm rounded-xl border border-slate-100 hover:bg-primary transition-colors hover:-translate-y-[1px] active:translate-y-0 shadow-sm flex justify-center items-center"
-                type="submit"
-                data-i18n="createAccount"
-              >
-                <span data-i18n="createAccount">Tạo tài khoản</span>
-              </button>
-              <div class="relative flex items-center py-sm">
-                <div class="flex-grow border-t border-outline-variant/50"></div>
-                <span
-                  class="flex-shrink-0 mx-sm body-md text-outline"
-                  data-i18n="orContinueWith"
-                  >hoặc tiếp tục với</span
-                >
-                <div class="flex-grow border-t border-outline-variant/50"></div>
+                <span class="register-terms-text" data-i18n="agreeTerms">
+                  Tôi đồng ý với
+                  <a href="{{ url_for('legal.terms_of_service') }}" target="_blank" rel="noopener noreferrer" data-i18n="termsLink">Điều khoản dịch vụ</a>
+                  và
+                  <a href="{{ url_for('legal.privacy_policy') }}" target="_blank" rel="noopener noreferrer" data-i18n="privacyLink">Chính sách bảo mật</a>
+                  của PetAI.
+                </span>
               </div>
-              <a
-                class="w-full py-3 px-4 bg-surface-container-lowest border border-outline-variant text-on-surface label-sm rounded hover:bg-surface-container hover:-translate-y-[1px] transition-all shadow-sm flex items-center justify-center gap-sm"
-                href="{{ url_for('login_google') }}"
-              >
-                <img
-                  alt="Logo Google"
-                  class="w-5 h-5"
-                  data-alt="Logo chữ G của Google"
-                  src="https://www.gstatic.com/images/branding/googleg/1x/googleg_standard_color_128dp.png"
-                /><span data-i18n="registerWithGoogle"
-                  >Đăng ký bằng Google</span
-                ></a
-              >
+
+              <!-- Submit -->
+              <button class="register-btn-submit" type="submit" id="registerSubmitBtn">
+                <span data-i18n="createAccount">Tạo tài khoản</span>
+                <span class="material-symbols-outlined">person_add</span>
+              </button>
             </form>
-            <p class="text-center body-md text-on-surface-variant mt-sm">
-              <span data-i18n="alreadyHaveAccount">Đã có tài khoản?</span
-              ><a
-                class="label-sm text-primary hover:text-primary-container transition-colors"
+
+            <!-- Divider -->
+            <div class="register-divider">
+              <div class="register-divider-line"></div>
+              <span class="register-divider-text" data-i18n="orContinueWith">hoặc tiếp tục với</span>
+              <div class="register-divider-line"></div>
+            </div>
+
+            <!-- Google signup -->
+            <a
+              class="register-btn-google"
+              href="{{ url_for('login_google') }}"
+            >
+              <img
+                src="https://www.gstatic.com/images/branding/googleg/1x/googleg_standard_color_128dp.png"
+                alt="Google"
+              />
+              <span data-i18n="registerWithGoogle">Đăng ký bằng Google</span>
+            </a>
+
+            <!-- Login link -->
+            <p class="register-login-row">
+              <span data-i18n="alreadyHaveAccount">Đã có tài khoản?</span><a
                 href="{{ url_for('login.login') }}"
                 data-i18n="loginNow"
-                ><span data-i18n="loginNow">Đăng nhập ngay</span></a
-              >
+              > Đăng nhập ngay</a>
             </p>
           </div>
         </section>
-      </div>
-    </main>
-<script>
-      (function () {
-        const form = document.getElementById("registerForm");
-        const passwordInput = document.getElementById("password");
-        const confirmInput = document.getElementById("confirmPassword");
 
+      </div><!-- /.register-card -->
+    </main>
+
+    <!-- ═══════════════════════════════ FOOTER ═══════════════════════════════ -->
+    <footer class="register-footer">
+      <a class="register-footer-home" href="{{ url_for('home.index') }}">
+        <span class="material-symbols-outlined">home</span>
+        <span data-i18n="backToHome">Quay về trang chủ</span>
+      </a>
+      <div class="register-footer-security">
+        <span class="material-symbols-outlined">shield</span>
+        <span data-i18n="registerSecurityNote">PetAI cam kết bảo mật thông tin của bạn.</span>
+      </div>
+    </footer>
+
+    <script>
+      (function () {
+        /* ─── Password toggle ─── */
         function wireToggle(btnId, inputId, iconId) {
           const btn = document.getElementById(btnId);
           const input = document.getElementById(inputId);
           const icon = document.getElementById(iconId);
           if (!btn || !input || !icon) return;
           btn.addEventListener("click", function () {
-            const nextType =
-              input.getAttribute("type") === "password" ? "text" : "password";
+            const nextType = input.getAttribute("type") === "password" ? "text" : "password";
             input.setAttribute("type", nextType);
-            icon.textContent =
-              nextType === "password" ? "visibility" : "visibility_off";
+            icon.textContent = nextType === "password" ? "visibility" : "visibility_off";
+          });
+        }
+        wireToggle("togglePassword", "password", "eyeIcon");
+        wireToggle("toggleConfirmPassword", "confirmPassword", "eyeIconConfirm");
+
+        /* ─── Password strength indicator ─── */
+        const pwdInput = document.getElementById("password");
+        const seg1 = document.getElementById("seg1");
+        const seg2 = document.getElementById("seg2");
+        const seg3 = document.getElementById("seg3");
+
+        function getStrength(pwd) {
+          if (!pwd || pwd.length === 0) return 0;
+          if (pwd.length < 6) return 1;
+          const has_upper = /[A-Z]/.test(pwd);
+          const has_num   = /[0-9]/.test(pwd);
+          const has_sym   = /[^a-zA-Z0-9]/.test(pwd);
+          const extras    = (has_upper ? 1 : 0) + (has_num ? 1 : 0) + (has_sym ? 1 : 0);
+          if (pwd.length >= 10 && extras >= 2) return 3;
+          if (pwd.length >= 8 || extras >= 1) return 2;
+          return 1;
+        }
+
+        const STRENGTH_COLORS = ["", "#f87171", "#fbbf24", "#34d399"];
+
+        if (pwdInput && seg1 && seg2 && seg3) {
+          pwdInput.addEventListener("input", function () {
+            const s = getStrength(pwdInput.value);
+            const segs = [seg1, seg2, seg3];
+            segs.forEach(function (seg, i) {
+              seg.style.background = i < s ? STRENGTH_COLORS[s] : "var(--login-input-border)";
+            });
           });
         }
 
-        wireToggle("togglePassword", "password", "eyeIcon");
-        wireToggle(
-          "toggleConfirmPassword",
-          "confirmPassword",
-          "eyeIconConfirm",
-        );
+        /* ─── Form validation ─── */
+        const form = document.getElementById("registerForm");
+        const confirmInput = document.getElementById("confirmPassword");
 
-        if (!form) return;
-        form.addEventListener("submit", function (e) {
-          const fields = {
-            fullname: document.getElementById("fullname"),
-            email: document.getElementById("email"),
-            username: document.getElementById("username"),
-            password: passwordInput,
-            confirmPassword: confirmInput,
-          };
+        const fields = {
+          fullname: document.getElementById("fullname"),
+          email: document.getElementById("email"),
+          username: document.getElementById("username"),
+          password: pwdInput,
+          confirmPassword: confirmInput,
+        };
 
-          const errors = {
-            fullname: document.getElementById("fullnameError"),
-            email: document.getElementById("emailError"),
-            username: document.getElementById("usernameError"),
-            password: document.getElementById("passwordError"),
-            confirmPassword: document.getElementById("confirmPasswordError"),
-          };
+        const errors = {
+          fullname: document.getElementById("fullnameError"),
+          email: document.getElementById("emailError"),
+          username: document.getElementById("usernameError"),
+          password: document.getElementById("passwordError"),
+          confirmPassword: document.getElementById("confirmPasswordError"),
+        };
 
-          Object.values(errors).forEach((node) => {
-            if (node) node.textContent = "";
+        function t(key, fallback) {
+          try {
+            return (typeof window.PetAI_i18n !== "undefined")
+              ? (window.PetAI_i18n.t(key) || fallback)
+              : fallback;
+          } catch (e) {
+            return fallback;
+          }
+        }
+
+        function setError(field, errEl, msg) {
+          if (field) field.classList.add("is-invalid");
+          if (errEl) errEl.textContent = msg;
+        }
+
+        function clearError(field, errEl) {
+          if (field) field.classList.remove("is-invalid");
+          if (errEl) errEl.textContent = "";
+        }
+
+        if (form) {
+          form.addEventListener("submit", function (e) {
+            let ok = true;
+
+            Object.keys(fields).forEach(function (k) {
+              clearError(fields[k], errors[k]);
+            });
+
+            if ((fields.fullname.value || "").trim().length < 2) {
+              setError(fields.fullname, errors.fullname, t("fullnameTooShort", "Họ tên cần ít nhất 2 ký tự."));
+              ok = false;
+            }
+
+            const emailVal = (fields.email.value || "").trim().toLowerCase();
+            if (!/^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(emailVal)) {
+              setError(fields.email, errors.email, t("emailGmailOnly", "Email phải đúng định dạng @gmail.com."));
+              ok = false;
+            }
+
+            if (!/^[a-zA-Z0-9_]{3,20}$/.test((fields.username.value || "").trim())) {
+              setError(fields.username, errors.username, t("usernameInvalid", "Tên đăng nhập 3-20 ký tự (chữ, số, _)."));
+              ok = false;
+            }
+
+            if ((fields.password.value || "").length < 6) {
+              setError(fields.password, errors.password, t("passwordTooShort", "Mật khẩu cần ít nhất 6 ký tự."));
+              ok = false;
+            }
+
+            if (fields.confirmPassword.value !== fields.password.value) {
+              setError(fields.confirmPassword, errors.confirmPassword, t("passwordMismatch", "Mật khẩu xác nhận chưa khớp."));
+              ok = false;
+            }
+
+            if (!ok) e.preventDefault();
           });
-
-          let ok = true;
-          if ((fields.fullname.value || "").trim().length < 2) {
-            errors.fullname.textContent =
-              typeof window.PetAI_i18n !== "undefined"
-                ? window.PetAI_i18n.t("fullnameTooShort")
-                : "Họ tên cần ít nhất 2 ký tự.";
-            ok = false;
-          }
-
-          const emailVal = (fields.email.value || "").trim().toLowerCase();
-          if (!/^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(emailVal)) {
-            errors.email.textContent = "Email phải đúng định dạng Gmail (đuôi @gmail.com).";
-            ok = false;
-          }
-
-          if (
-            !/^[a-zA-Z0-9_]{3,20}$/.test((fields.username.value || "").trim())
-          ) {
-            errors.username.textContent =
-              "Tên đăng nhập phải 3-20 ký tự (chữ, số, _).";
-            ok = false;
-          }
-
-          if ((fields.password.value || "").length < 6) {
-            errors.password.textContent =
-              typeof window.PetAI_i18n !== "undefined"
-                ? window.PetAI_i18n.t("passwordTooShort")
-                : "Mật khẩu cần ít nhất 6 ký tự.";
-            ok = false;
-          }
-
-          if (fields.confirmPassword.value !== fields.password.value) {
-            errors.confirmPassword.textContent =
-              typeof window.PetAI_i18n !== "undefined"
-                ? window.PetAI_i18n.t("passwordMismatch")
-                : "Mật khẩu xác nhận chưa khớp.";
-            ok = false;
-          }
-
-          if (!ok) e.preventDefault();
-        });
+        }
       })();
     </script>
     <script src="{{ url_for('static', filename='js/toasts.js') }}"></script>
