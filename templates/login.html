@@ -63,7 +63,7 @@
         }
         const storedTheme = (function () {
           try {
-            return (themeStorageKey ? localStorage.getItem(themeStorageKey) : null) || localStorage.getItem("theme");
+            return themeStorageKey ? localStorage.getItem(themeStorageKey) : null;
           } catch (e) {
             return null;
           }
