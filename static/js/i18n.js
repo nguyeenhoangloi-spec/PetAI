@@ -5636,14 +5636,25 @@
     }
 
     // Toggle footer bilingual address elements
-    var viAddresses = document.querySelectorAll(".footer-address-vi");
-    var enAddresses = document.querySelectorAll(".footer-address-en");
+    var viAddresses = document.querySelectorAll(".footer-address-vi, .contact-address-vi");
+    var enAddresses = document.querySelectorAll(".footer-address-en, .contact-address-en");
     if (lang === "en") {
       viAddresses.forEach(function(el) { el.classList.add("hidden"); });
       enAddresses.forEach(function(el) { el.classList.remove("hidden"); });
     } else {
       enAddresses.forEach(function(el) { el.classList.add("hidden"); });
       viAddresses.forEach(function(el) { el.classList.remove("hidden"); });
+    }
+
+    // Toggle bilingual support hours
+    var viHours = document.querySelectorAll(".contact-hours-vi");
+    var enHours = document.querySelectorAll(".contact-hours-en");
+    if (lang === "en") {
+      viHours.forEach(function(el) { el.classList.add("hidden"); });
+      enHours.forEach(function(el) { el.classList.remove("hidden"); });
+    } else {
+      enHours.forEach(function(el) { el.classList.add("hidden"); });
+      viHours.forEach(function(el) { el.classList.remove("hidden"); });
     }
   }
 

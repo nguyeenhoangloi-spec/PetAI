@@ -498,7 +498,7 @@
                       </div>
                       <h3 class="text-base font-bold text-slate-800 dark:text-slate-100" data-i18n="personalInfoTitle">Thông tin cá nhân</h3>
                     </div>
-                    <button type="button" id="editProfileBtn" class="px-3 py-1.5 border border-slate-200 dark:border-slate-850 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-350 font-semibold text-xs rounded-xl transition-colors flex items-center gap-1.5 focus:outline-none">
+                    <button type="button" id="editProfileBtn" class="px-3 py-1.5 border border-slate-200 dark:border-slate-850 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold text-xs rounded-xl transition-colors flex items-center gap-1.5 focus:outline-none">
                       <span class="material-symbols-outlined text-[14px]">edit</span>
                       <span data-i18n="editBtn">Chỉnh sửa</span>
                     </button>
@@ -516,7 +516,7 @@
                       <label class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block" data-i18n="usernameLabel">Tên đăng nhập</label>
                       <div class="flex items-center bg-slate-50 dark:bg-slate-950/40 border border-slate-200 dark:border-slate-800 rounded-xl cursor-not-allowed opacity-80">
                         <input class="w-full bg-transparent border-none px-4 py-3 text-sm text-slate-500 dark:text-slate-500 cursor-not-allowed" disabled type="text" value="{{ session.get('username', '') }}">
-                        <span class="material-symbols-outlined mr-4 text-slate-400 dark:text-slate-655 text-[18px]">lock</span>
+                        <span class="material-symbols-outlined mr-4 text-slate-400 dark:text-slate-600 text-[18px]">lock</span>
                       </div>
                     </div>
 
@@ -524,7 +524,7 @@
                       <label class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block" data-i18n="emailLabel">Địa chỉ Email</label>
                       <div class="flex items-center bg-slate-50 dark:bg-slate-950/40 border border-slate-200 dark:border-slate-800 rounded-xl cursor-not-allowed opacity-80">
                         <input class="w-full bg-transparent border-none px-4 py-3 text-sm text-slate-500 dark:text-slate-500 cursor-not-allowed" disabled type="text" value="{{ display_email or '-' }}">
-                        <span class="material-symbols-outlined mr-4 text-slate-400 dark:text-slate-655 text-[18px]">lock</span>
+                        <span class="material-symbols-outlined mr-4 text-slate-400 dark:text-slate-600 text-[18px]">lock</span>
                       </div>
                     </div>
                   </div>
@@ -567,7 +567,7 @@
                           {% if force_change_password %}disabled{% endif %}
                         >
                         {% if not force_change_password %}
-                        <button type="button" class="absolute right-3 text-slate-400 hover:text-slate-600 dark:hover:text-slate-350 focus:outline-none flex items-center justify-center toggle-password-btn" data-target="currentPasswordInput">
+                        <button type="button" class="absolute right-3 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 focus:outline-none flex items-center justify-center toggle-password-btn" data-target="currentPasswordInput">
                           <span class="material-symbols-outlined text-[18px]">visibility</span>
                         </button>
                         {% endif %}
@@ -578,7 +578,7 @@
                       <label class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block" data-i18n="newPasswordLabel">Mật khẩu mới</label>
                       <div class="flex items-center bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all relative">
                         <input id="newPasswordInput" class="w-full bg-transparent border-none px-4 py-3 pr-10 text-sm text-slate-800 dark:text-slate-100 focus:ring-0" name="new_password" type="password" data-i18n-placeholder="newPasswordPlaceholder" placeholder="Nhập mật khẩu mới (>= 6 ký tự)" autocomplete="new-password">
-                        <button type="button" class="absolute right-3 text-slate-400 hover:text-slate-600 dark:hover:text-slate-350 focus:outline-none flex items-center justify-center toggle-password-btn" data-target="newPasswordInput">
+                        <button type="button" class="absolute right-3 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 focus:outline-none flex items-center justify-center toggle-password-btn" data-target="newPasswordInput">
                           <span class="material-symbols-outlined text-[18px]">visibility</span>
                         </button>
                       </div>
@@ -589,7 +589,7 @@
                       <label class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block" data-i18n="confirmNewPasswordLabel">Xác nhận mật khẩu mới</label>
                       <div class="flex items-center bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all relative">
                         <input id="confirmPasswordInput" class="w-full bg-transparent border-none px-4 py-3 pr-10 text-sm text-slate-800 dark:text-slate-100 focus:ring-0" name="confirm_new_password" type="password" data-i18n-placeholder="confirmNewPasswordPlaceholder" placeholder="Xác nhận mật khẩu mới" autocomplete="new-password">
-                        <button type="button" class="absolute right-3 text-slate-400 hover:text-slate-600 dark:hover:text-slate-350 focus:outline-none flex items-center justify-center toggle-password-btn" data-target="confirmPasswordInput">
+                        <button type="button" class="absolute right-3 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 focus:outline-none flex items-center justify-center toggle-password-btn" data-target="confirmPasswordInput">
                           <span class="material-symbols-outlined text-[18px]">visibility</span>
                         </button>
                       </div>

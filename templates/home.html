@@ -81,6 +81,18 @@
       box-shadow: none;
     }
 
+    html.dark .glass-card,
+    html[data-theme="dark"] .glass-card {
+      background: #111827;
+      border: 1px solid #222c45;
+    }
+
+    html.dark .glass-card:hover,
+    html[data-theme="dark"] .glass-card:hover {
+      background: #162036;
+    }
+
+
     .home-rounded main a.rounded-xl,
     .home-rounded main a.rounded-lg,
     .home-rounded main a.rounded-full,
@@ -622,7 +634,7 @@
   <!-- TopNavBar -->
   <nav id="topNavbar"
     class="fixed top-0 w-full z-50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-slate-100 dark:border-slate-800/80 font-['Inter'] antialiased transition-all duration-300">
-    <div class="flex justify-between items-center w-full px-5 md:px-7 h-20">
+    <div class="flex items-center w-full px-5 md:px-7 h-20">
       <!-- Left: Logo -->
       <div class="flex items-center">
         <a href="{{ url_for('home.index') }}" class="inline-flex items-center gap-2 hover:opacity-90 transition-opacity">
@@ -632,7 +644,7 @@
       </div>
 
       <!-- Middle: Navigation Menu -->
-      <div class="hidden md:flex items-center gap-1 lg:gap-2">
+      <div class="hidden md:flex items-center gap-1 lg:gap-2 ml-8 lg:ml-12">
         <a class="desktop-nav-link text-[15px] font-medium text-on-surface-variant dark:text-slate-300 hover:text-primary dark:hover:text-primary px-3.5 py-2 rounded-[10px] transition-all duration-200" href="#product" data-i18n="product">
           <span data-i18n="product">{{ 'Sản phẩm' if ui_language != 'en' else 'Product' }}</span>
         </a>
@@ -652,7 +664,7 @@
 
       <!-- Right: Actions -->
       {% if not request.args.get('edit') %}
-      <div class="flex items-center gap-3 md:gap-4">
+      <div class="flex items-center gap-3 md:gap-4 ml-auto">
         <!-- Auth Actions (Desktop) -->
         <div class="hidden md:flex items-center gap-2">
           {% if session.get('user_id') %}
@@ -673,6 +685,8 @@
           <span class="material-symbols-outlined text-[24px]">menu</span>
         </button>
       </div>
+      {% else %}
+      <div class="ml-auto"></div>
       {% endif %}
     </div>
   </nav>
@@ -1192,11 +1206,31 @@
         background: #f1f3fc;
       }
 
+      html.dark .breed-tag,
+      html[data-theme="dark"] .breed-tag {
+        background: #111827;
+        border-color: #222c45;
+      }
+
+      html.dark .breed-tag:hover,
+      html[data-theme="dark"] .breed-tag:hover {
+        background: #162036;
+        border-color: #3b82f6;
+      }
+
       .ai-chip {
         background: #ebedf7;
         border: 1px solid #b6d0ff;
         color: #005ab4;
       }
+
+      html.dark .ai-chip,
+      html[data-theme="dark"] .ai-chip {
+        background: #1e293b;
+        border-color: #334155;
+        color: #3b82f6;
+      }
+
 
       /* Header Custom Premium Styles */
       #topNavbar {

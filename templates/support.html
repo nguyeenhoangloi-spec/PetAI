@@ -369,8 +369,8 @@
             <span class="material-symbols-outlined text-[14px]">schedule</span>
             <span>
               <span data-i18n="supportHoursLabel">Giờ hỗ trợ</span>:
-              <span class="{{ 'hidden' if ui_language == 'en' }}">{{ get_config('support_hours_vi', '8:00 \u2013 22:00 m\u1ed7i ng\u00e0y (K\u1ec3 c\u1ea3 T7, CN)') }}</span>
-              <span class="{{ '' if ui_language == 'en' else 'hidden' }}">{{ get_config('support_hours_en', '8:00 AM \u2013 10:00 PM daily (Including Sat, Sun)') }}</span>
+              <span class="contact-hours-vi{% if ui_language == 'en' %} hidden{% endif %}">{{ get_config('support_hours_vi', '8:00 \u2013 22:00 m\u1ed7i ng\u00e0y (K\u1ec3 c\u1ea3 T7, CN)') }}</span>
+              <span class="contact-hours-en{% if ui_language != 'en' %} hidden{% endif %}">{{ get_config('support_hours_en', '8:00 AM \u2013 10:00 PM daily (Including Sat, Sun)') }}</span>
             </span>
           </div>
         </div>
@@ -485,8 +485,8 @@
         <!-- Vietnamese View -->
         <div id="dynamic-content-vi" class="space-y-6" {% if ui_language == 'en' %}style="display:none"{% endif %}>
           {% for sec in active_sections_vi %}
-            {% if active_sections_vi|length == 1 and not sec.title %}
-              <div class="text-neutral-700 dark:text-slate-350 text-[15px] md:text-[16px] leading-[1.7]">{{ sec.content | safe }}</div>
+            {% if (active_sections_vi|length == 1 and not sec.title) or 'policy-section' in sec.content %}
+              <div class="text-neutral-700 dark:text-slate-300 text-[15px] md:text-[16px] leading-[1.7]">{{ sec.content | safe }}</div>
             {% else %}
               <section class="policy-section flex items-start gap-4 pb-6 mb-6 border-b border-outline-variant/10 last:border-b-0 last:pb-0 last:mb-0">
                 <div class="policy-number flex items-center justify-center w-8 h-8 rounded-lg bg-primary-container/20 text-primary font-bold text-sm shrink-0 mt-0.5">
@@ -497,7 +497,7 @@
                     <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-2">{{ sec.title }}</h2>
                   {% endif %}
                   {% if sec.content %}
-                    <div class="text-neutral-700 dark:text-slate-350 text-[15px] md:text-[16px] leading-[1.7]">{{ sec.content | safe }}</div>
+                    <div class="text-neutral-700 dark:text-slate-300 text-[15px] md:text-[16px] leading-[1.7]">{{ sec.content | safe }}</div>
                   {% endif %}
                 </div>
               </section>
@@ -508,8 +508,8 @@
         <!-- English View -->
         <div id="dynamic-content-en" class="space-y-6" {% if ui_language != 'en' %}style="display:none"{% endif %}>
           {% for sec in active_sections_en %}
-            {% if active_sections_en|length == 1 and not sec.title %}
-              <div class="text-neutral-700 dark:text-slate-350 text-[15px] md:text-[16px] leading-[1.7]">{{ sec.content | safe }}</div>
+            {% if (active_sections_en|length == 1 and not sec.title) or 'policy-section' in sec.content %}
+              <div class="text-neutral-700 dark:text-slate-300 text-[15px] md:text-[16px] leading-[1.7]">{{ sec.content | safe }}</div>
             {% else %}
               <section class="policy-section flex items-start gap-4 pb-6 mb-6 border-b border-outline-variant/10 last:border-b-0 last:pb-0 last:mb-0">
                 <div class="policy-number flex items-center justify-center w-8 h-8 rounded-lg bg-primary-container/20 text-primary font-bold text-sm shrink-0 mt-0.5">
@@ -520,7 +520,7 @@
                     <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-2">{{ sec.title }}</h2>
                   {% endif %}
                   {% if sec.content %}
-                    <div class="text-neutral-700 dark:text-slate-350 text-[15px] md:text-[16px] leading-[1.7]">{{ sec.content | safe }}</div>
+                    <div class="text-neutral-700 dark:text-slate-300 text-[15px] md:text-[16px] leading-[1.7]">{{ sec.content | safe }}</div>
                   {% endif %}
                 </div>
               </section>
@@ -542,7 +542,7 @@
             </div>
           </div>
           <div class="flex items-center gap-2 flex-wrap sm:flex-nowrap w-full lg:w-auto">
-            <a href="mailto:{{ get_config('site_email', 'support@pet.ai') }}" class="shrink-0 whitespace-nowrap bg-primary text-white hover:bg-primary/90 transition-colors px-5 py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-1.5 shadow-sm" data-i18n="sendEmail">
+            <a href="{{ url_for('legal.contact') }}" class="shrink-0 whitespace-nowrap bg-primary text-white hover:bg-primary/90 transition-colors px-5 py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-1.5 shadow-sm" data-i18n="sendEmail">
               <span class="material-symbols-outlined text-[18px]">mail</span>
               <span>Gửi email</span>
             </a>

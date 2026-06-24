@@ -568,8 +568,8 @@
         <!-- Vietnamese View -->
         <div id="dynamic-content-vi" class="space-y-6" {% if ui_language == 'en' %}style="display:none"{% endif %}>
           {% for sec in active_sections_vi %}
-            {% if active_sections_vi|length == 1 and not sec.title %}
-              <div class="text-neutral-700 dark:text-slate-350 text-[15px] md:text-[16px] leading-[1.7]">{{ sec.content | safe }}</div>
+            {% if (active_sections_vi|length == 1 and not sec.title) or 'policy-section' in sec.content %}
+              <div class="text-neutral-700 dark:text-slate-300 text-[15px] md:text-[16px] leading-[1.7]">{{ sec.content | safe }}</div>
             {% else %}
               {% set icons = ["info", "person_add", "cloud_upload", "fact_check", "hourglass_empty", "visibility", "upgrade", "contact_support", "tips_and_updates", "warning", "mail"] %}
               {% set icon = icons[loop.index0] if loop.index0 < icons|length else "article" %}
@@ -582,7 +582,7 @@
                     <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-2">{{ sec.title }}</h2>
                   {% endif %}
                   {% if sec.content %}
-                    <div class="text-neutral-700 dark:text-slate-350 text-[15px] md:text-[16px] leading-[1.7]">{{ sec.content | safe }}</div>
+                    <div class="text-neutral-700 dark:text-slate-300 text-[15px] md:text-[16px] leading-[1.7]">{{ sec.content | safe }}</div>
                   {% endif %}
                 </div>
               </section>
@@ -593,8 +593,8 @@
         <!-- English View -->
         <div id="dynamic-content-en" class="space-y-6" {% if ui_language != 'en' %}style="display:none"{% endif %}>
           {% for sec in active_sections_en %}
-            {% if active_sections_en|length == 1 and not sec.title %}
-              <div class="text-neutral-700 dark:text-slate-350 text-[15px] md:text-[16px] leading-[1.7]">{{ sec.content | safe }}</div>
+            {% if (active_sections_en|length == 1 and not sec.title) or 'policy-section' in sec.content %}
+              <div class="text-neutral-700 dark:text-slate-300 text-[15px] md:text-[16px] leading-[1.7]">{{ sec.content | safe }}</div>
             {% else %}
               {% set icons = ["info", "person_add", "cloud_upload", "fact_check", "hourglass_empty", "visibility", "upgrade", "contact_support", "tips_and_updates", "warning", "mail"] %}
               {% set icon = icons[loop.index0] if loop.index0 < icons|length else "article" %}
@@ -607,7 +607,7 @@
                     <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-2">{{ sec.title }}</h2>
                   {% endif %}
                   {% if sec.content %}
-                    <div class="text-neutral-700 dark:text-slate-350 text-[15px] md:text-[16px] leading-[1.7]">{{ sec.content | safe }}</div>
+                    <div class="text-neutral-700 dark:text-slate-300 text-[15px] md:text-[16px] leading-[1.7]">{{ sec.content | safe }}</div>
                   {% endif %}
                 </div>
               </section>
@@ -629,11 +629,11 @@
             </div>
           </div>
           <div class="flex items-center gap-2 flex-wrap sm:flex-nowrap w-full lg:w-auto">
-            <a href="{{ url_for('legal.contact') }}" class="shrink-0 whitespace-nowrap bg-primary text-white hover:bg-primary/90 transition-colors px-5 py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-1.5 shadow-sm" data-i18n="contactSupport">
+            <a href="{{ url_for('legal.support') }}" class="shrink-0 whitespace-nowrap bg-primary text-white hover:bg-primary/90 transition-colors px-5 py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-1.5 shadow-sm" data-i18n="contactSupport">
               <span class="material-symbols-outlined text-[18px]">support_agent</span>
               <span>Liên hệ hỗ trợ</span>
             </a>
-            <a href="mailto:{{ get_config('site_email', 'support@pet.ai') }}" class="shrink-0 whitespace-nowrap border border-outline text-slate-700 dark:text-slate-200 hover:bg-neutral-50 dark:hover:bg-slate-800 transition-colors px-5 py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-1.5" data-i18n="sendEmail">
+            <a href="{{ url_for('legal.contact') }}" class="shrink-0 whitespace-nowrap border border-outline text-slate-700 dark:text-slate-200 hover:bg-neutral-50 dark:hover:bg-slate-800 transition-colors px-5 py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-1.5" data-i18n="sendEmail">
               <span class="material-symbols-outlined text-[18px]">mail</span>
               <span>Gửi email</span>
             </a>

@@ -207,6 +207,26 @@
     background-color: transparent !important;
     cursor: default !important;
   }
+
+  /* Bypass theme-dark.css blanket !important overrides on bg-white, bg-slate-50, etc. */
+  .editor-nested-card {
+    background-color: #ffffff;
+  }
+  html.dark .editor-nested-card {
+    background-color: #1e293b !important;
+  }
+  .editor-nested-card-half {
+    background-color: #ffffff;
+  }
+  html.dark .editor-nested-card-half {
+    background-color: rgba(30, 41, 59, 0.5) !important;
+  }
+  .editor-active-lang-btn {
+    background-color: #ffffff;
+  }
+  html.dark .editor-active-lang-btn {
+    background-color: #334155 !important;
+  }
 </style>
 
 <!-- ══════════════════════════════════════════════════════════════════
@@ -227,9 +247,9 @@
     <!-- Language switcher -->
     <div class="flex gap-0.5 bg-slate-100 dark:bg-slate-950 p-1 rounded-lg border border-slate-200 dark:border-slate-800">
       <button type="button" id="editor-lang-vi-btn" onclick="switchEditorLanguage('vi')"
-        class="px-2.5 py-1 rounded-md text-xs {% if ui_language != 'en' %}font-bold bg-white dark:bg-slate-800 text-primary shadow-sm{% else %}font-semibold text-slate-500 dark:text-slate-400 hover:text-primary{% endif %} transition-all">VI</button>
+        class="px-2.5 py-1 rounded-md text-xs {% if ui_language != 'en' %}font-bold editor-active-lang-btn text-primary shadow-sm{% else %}font-semibold text-slate-500 dark:text-slate-400 hover:text-primary{% endif %} transition-all">VI</button>
       <button type="button" id="editor-lang-en-btn" onclick="switchEditorLanguage('en')"
-        class="px-2.5 py-1 rounded-md text-xs {% if ui_language == 'en' %}font-bold bg-white dark:bg-slate-800 text-primary shadow-sm{% else %}font-semibold text-slate-500 dark:text-slate-400 hover:text-primary{% endif %} transition-all">EN</button>
+        class="px-2.5 py-1 rounded-md text-xs {% if ui_language == 'en' %}font-bold editor-active-lang-btn text-primary shadow-sm{% else %}font-semibold text-slate-500 dark:text-slate-400 hover:text-primary{% endif %} transition-all">EN</button>
     </div>
 
     <div class="editor-divider"></div>
@@ -719,7 +739,7 @@
 
       // Left Column wrapper (Cards info)
       const leftCol = document.createElement("div");
-      leftCol.className = "bg-white dark:bg-slate-800 border border-outline-variant/30 dark:border-slate-700 rounded-2xl p-6 shadow-sm h-fit space-y-6";
+      leftCol.className = "editor-nested-card border border-outline-variant/30 dark:border-slate-700 rounded-2xl p-6 shadow-sm h-fit space-y-6";
       grid.appendChild(leftCol);
 
       // Right Column wrapper (FAQs Accordions)
@@ -784,7 +804,7 @@
           // Accordion items in the right column
           secWrapper.className = "visual-sec-wrapper relative";
           secWrapper.innerHTML += `
-            <details class="glass-card p-4 rounded-xl cursor-pointer bg-white dark:bg-slate-800/50 group border border-outline-variant/30 dark:border-slate-700">
+            <details class="glass-card p-4 rounded-xl cursor-pointer editor-nested-card-half group border border-outline-variant/30 dark:border-slate-700">
               <summary class="font-bold flex justify-between items-center text-on-surface dark:text-slate-100 select-none">
                 <span contenteditable="true"
                     class="font-bold text-on-surface dark:text-slate-100 select-none pr-10 focus:outline-none flex-grow"
@@ -824,7 +844,7 @@
 
       // Render Table of Contents
       const tocDiv = document.createElement("div");
-      tocDiv.className = "mb-10 p-6 bg-white dark:bg-slate-800 border border-outline-variant/20 dark:border-slate-700 rounded-2xl shadow-sm";
+      tocDiv.className = "mb-10 p-6 editor-nested-card border border-outline-variant/20 dark:border-slate-700 rounded-2xl shadow-sm";
       
       let tocInner = `
         <h2 class="text-lg font-bold text-primary dark:text-blue-400 mb-4 flex items-center gap-2">
@@ -839,7 +859,7 @@
         const title = visualEditorLang === 'vi' ? sec.title_vi : sec.title_en;
         const tid = target_ids[idx] || ("sec_" + idx);
         tocInner += `
-          <a href="#${tid}" class="flex items-center gap-2 text-on-surface-variant dark:text-slate-350 hover:text-primary transition-colors">
+          <a href="#${tid}" class="flex items-center gap-2 text-on-surface-variant dark:text-slate-300 hover:text-primary transition-colors">
             <span class="w-1.5 h-1.5 rounded-full bg-primary/60 dark:bg-blue-500/60"></span>
             <span>${escapeHtml(title || (visualEditorLang === 'vi' ? 'Mục mới' : 'New Section'))}</span>
           </a>
@@ -875,7 +895,7 @@
           const tid = target_ids[idx] || ("sec_" + idx);
 
           const secWrapper = document.createElement("div");
-          secWrapper.className = "visual-sec-wrapper relative scroll-mt-24 bg-white dark:bg-slate-800 border border-outline-variant/30 dark:border-slate-700 rounded-2xl p-6 shadow-sm";
+          secWrapper.className = "visual-sec-wrapper relative scroll-mt-24 editor-nested-card border border-outline-variant/30 dark:border-slate-700 rounded-2xl p-6 shadow-sm";
           secWrapper.setAttribute("id", tid);
           secWrapper.setAttribute("data-id", sec.id);
 
@@ -908,7 +928,7 @@
             </h3>
 
             <div contenteditable="true"
-                 class="text-on-surface-variant dark:text-slate-350 body-md leading-relaxed legal-content-rich focus:outline-none"
+                 class="text-on-surface-variant dark:text-slate-300 body-md leading-relaxed legal-content-rich focus:outline-none"
                  placeholder="${visualEditorLang === 'vi' ? 'Nhập nội dung hướng dẫn...' : 'Enter guide content...'}"
                  onblur="handleSectionBlur('${sec.id}', 'content', this)"
             >${rendered}</div>
@@ -1147,7 +1167,7 @@
       contentDiv.dataset.htmlMode = "true";
 
       const textarea = document.createElement("textarea");
-      textarea.className = "w-full p-3 font-mono text-xs bg-slate-50 dark:bg-slate-950 border border-slate-350 dark:border-slate-800 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary block resize-y whitespace-pre-wrap leading-relaxed";
+      textarea.className = "w-full p-3 font-mono text-xs bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-300 dark:border-slate-800 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary block resize-y whitespace-pre-wrap leading-relaxed";
       textarea.style.minHeight = Math.max(isHeading ? 60 : 120, currentHeight) + "px";
       textarea.value = formatHtmlString(rawHtml);
 
@@ -1263,7 +1283,7 @@
     visualEditorLang = lang;
     const vi = document.getElementById("editor-lang-vi-btn");
     const en = document.getElementById("editor-lang-en-btn");
-    const act = "px-2.5 py-1 rounded-md text-xs font-bold bg-white dark:bg-slate-800 text-primary shadow-sm transition-all";
+    const act = "px-2.5 py-1 rounded-md text-xs font-bold editor-active-lang-btn text-primary shadow-sm transition-all";
     const inact = "px-2.5 py-1 rounded-md text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-primary transition-all";
     if (vi) vi.className = lang === 'vi' ? act : inact;
     if (en) en.className = lang === 'en' ? act : inact;
@@ -1505,7 +1525,7 @@
       const title = visualEditorLang === 'vi' ? sec.title_vi : sec.title_en;
       const content = visualEditorLang === 'vi' ? sec.content_vi : sec.content_en;
       if (title) html += `<h2 style="font-size:1.25rem;font-weight:700;color:var(--primary,#0053db);margin:2rem 0 0.75rem;">${title}</h2>`;
-      if (content) html += `<div style="color:#475569;line-height:1.75;margin-bottom:1rem;">${content}</div>`;
+      if (content) html += `<div class="text-slate-600 dark:text-slate-300" style="line-height:1.75;margin-bottom:1rem;">${content}</div>`;
     });
 
     area.innerHTML = html || '<p style="text-align:center;padding:3rem;color:#94a3b8;font-style:italic;">Chưa có nội dung để xem trước</p>';
@@ -1616,7 +1636,7 @@
       data.versions.forEach((v, i) => {
         const isLatest = i === 0;
         html += `
-          <div class="border border-slate-200 dark:border-slate-700/80 rounded-xl p-4 bg-white dark:bg-slate-800/50 hover:border-primary/40 transition-all group">
+          <div class="border border-slate-200 dark:border-slate-700/80 rounded-xl p-4 editor-nested-card-half hover:border-primary/40 transition-all group">
             <div class="flex items-start justify-between gap-2">
               <div class="flex items-start gap-2.5 min-w-0">
                 <div class="w-8 h-8 rounded-lg ${isLatest ? 'bg-primary/10' : 'bg-slate-100 dark:bg-slate-800'} flex items-center justify-center flex-shrink-0 mt-0.5">
