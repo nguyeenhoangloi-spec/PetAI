@@ -412,8 +412,12 @@ def artifacts_gradcam(filename: str):
 if __name__ == "__main__":
     url = "http://127.0.0.1:5000"
     print(f"\nTruy cập ứng dụng tại: {url}\n")
-    try:
-        from waitress import serve
-        serve(app, host="0.0.0.0", port=5000)
-    except Exception:
-        app.run(debug=True)
+    # Waitress server (Production) - Bỏ ghi chú để chạy production nếu cần
+    # try:
+    #     from waitress import serve
+    #     serve(app, host="0.0.0.0", port=5000)
+    # except Exception:
+    #     app.run(debug=True)
+
+    # Flask Debug Server (Development) - Hỗ trợ auto-reload khi sửa code
+    app.run(host="0.0.0.0", port=5000, debug=True)

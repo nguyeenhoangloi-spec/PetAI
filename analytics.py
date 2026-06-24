@@ -352,8 +352,6 @@ def export_statistics():
                 "value": "Giá trị",
                 "total_scans": "Tổng lượt nhận diện",
                 "avg_confidence": "Độ tin cậy trung bình (%)",
-                "pure_count": "Chó thuần chủng",
-                "hybrid_count": "Chó lai",
                 "unique_breeds": "Số giống chó đã khám phá",
                 
                 "insights_header": "== THÔNG TIN NỔI BẬT ==",
@@ -375,6 +373,12 @@ def export_statistics():
                 
                 "conf_header": "== PHÂN BỐ ĐỘ TIN CẬY ==",
                 "conf_interval": "Khoảng độ tin cậy",
+
+                "recent_header": "== KẾT QUẢ NHẬN DIỆN GẦN ĐÂY ==",
+                "time": "Thời gian",
+                "species": "Loài",
+                "conf": "Độ tin cậy",
+                "species_dog": "Chó",
                 
                 "no_data": "Chưa có dữ liệu",
                 "others": "Khác",
@@ -384,6 +388,7 @@ def export_statistics():
                 "sheet_top5": "Top 5 giống phổ biến",
                 "sheet_dist": "Phân bố giống chó",
                 "sheet_conf": "Phân bố độ tin cậy",
+                "sheet_recent": "Kết quả gần đây",
                 "all_time": "Tất cả",
                 "compared_to_days": "so với {} ngày trước",
                 "times": "lần"
@@ -396,8 +401,6 @@ def export_statistics():
                 "value": "Value",
                 "total_scans": "Total Scans",
                 "avg_confidence": "Avg Confidence (%)",
-                "pure_count": "Purebred Dogs",
-                "hybrid_count": "Crossbred Dogs",
                 "unique_breeds": "Unique Breeds Explored",
                 
                 "insights_header": "== HIGHLIGHTED INSIGHTS ==",
@@ -419,6 +422,12 @@ def export_statistics():
                 
                 "conf_header": "== CONFIDENCE DISTRIBUTION ==",
                 "conf_interval": "Confidence Interval",
+
+                "recent_header": "== RECENT RECOGNITION RESULTS ==",
+                "time": "Time",
+                "species": "Species",
+                "conf": "Confidence",
+                "species_dog": "Dog",
                 
                 "no_data": "No data available",
                 "others": "Others",
@@ -428,6 +437,7 @@ def export_statistics():
                 "sheet_top5": "Top 5 Popular Breeds",
                 "sheet_dist": "Breed Distribution",
                 "sheet_conf": "Confidence Distribution",
+                "sheet_recent": "Recent Results",
                 "all_time": "All time",
                 "compared_to_days": "compared to {} days ago",
                 "times": "times"
@@ -472,12 +482,11 @@ def export_statistics():
             end_at=end_at
         )
         confidence_dist = PredictionHistory.get_confidence_distribution(conn, user_id, start_at=start_at, end_at=end_at)
+        recent_predictions = PredictionHistory.get_by_user(conn, user_id, limit=5)
 
         top_breeds = stats.get("top_breeds", [])
         total_preds = stats.get("total_predictions", 0)
         avg_conf = round((stats.get("avg_confidence", 0) or 0) * 100, 1)
-        pure_count = stats.get("pure_count", 0)
-        hybrid_count = stats.get("hybrid_count", 0)
 
         # 1. Insights: Most common breed
         most_common_breed = T["no_data"]
@@ -595,8 +604,6 @@ def export_statistics():
             writer.writerow([T["metric"], T["value"]])
             writer.writerow([T["total_scans"], total_preds])
             writer.writerow([T["avg_confidence"], avg_conf])
-            writer.writerow([T["pure_count"], pure_count])
-            writer.writerow([T["hybrid_count"], hybrid_count])
             writer.writerow([T["unique_breeds"], unique_breed_count])
             writer.writerow([])
 
@@ -640,6 +647,20 @@ def export_statistics():
             writer.writerow([T["conf_interval"], T["scans_count"]])
             for label, val in zip(conf_labels, confidence_dist):
                 writer.writerow([label, val])
+            writer.writerow([])
+
+            # Recent results Section
+            writer.writerow([T["recent_header"]])
+            writer.writerow([T["time"], T["breed"], T["species"], T["conf"]])
+            for p in recent_predictions:
+                p_date = p["created_at"].strftime('%d/%m/%Y %H:%M') if p.get("created_at") else ""
+                p_breed = p["breed"]
+                if lang == "en":
+                    from i18n_server import translate_breed_vi_to_en
+                    p_breed = p.get("breed_en") or translate_breed_vi_to_en(p_breed)
+                p_species = T["species_dog"] if p.get("species") in ("Dog", "Chó") else p.get("species", "")
+                p_conf_val = f"{round((p.get('confidence') or 0) * 100)}%"
+                writer.writerow([p_date, p_breed, p_species, p_conf_val])
 
             output.seek(0)
             from flask import Response
@@ -714,8 +735,6 @@ def export_statistics():
         summary_rows = [
             (T["total_scans"], total_preds),
             (T["avg_confidence"], avg_conf),
-            (T["pure_count"], pure_count),
-            (T["hybrid_count"], hybrid_count),
             (T["unique_breeds"], unique_breed_count),
         ]
         for idx, (k, v) in enumerate(summary_rows, 6):
@@ -724,7 +743,7 @@ def export_statistics():
             ws1.row_dimensions[idx].height = 20
 
         # 2. Highlighted Insights Table
-        start_row_ins = 12
+        start_row_ins = 11
         ws1.merge_cells(start_row=start_row_ins, start_column=1, end_row=start_row_ins, end_column=2)
         ws1.cell(row=start_row_ins, column=1).value = T["insights_header"].replace("==", "").strip()
         ws1.cell(row=start_row_ins, column=1).font = subheader_font
@@ -809,6 +828,30 @@ def export_statistics():
             ws5.row_dimensions[idx].height = 20
         ws5.column_dimensions["A"].width = 24
         ws5.column_dimensions["B"].width = 16
+
+        # ── Sheet 6: Recent Results (Kết quả gần đây) ──
+        ws6 = wb.create_sheet(T["sheet_recent"])
+        for col_idx, header_text in enumerate([T["time"], T["breed"], T["species"], T["conf"]], 1):
+            style_header(ws6.cell(row=1, column=col_idx), header_text)
+        ws6.row_dimensions[1].height = 20
+        for idx, p in enumerate(recent_predictions, 2):
+            p_date = p["created_at"].strftime('%d/%m/%Y %H:%M') if p.get("created_at") else ""
+            p_breed = p["breed"]
+            if lang == "en":
+                from i18n_server import translate_breed_vi_to_en
+                p_breed = p.get("breed_en") or translate_breed_vi_to_en(p_breed)
+            p_species = T["species_dog"] if p.get("species") in ("Dog", "Chó") else p.get("species", "")
+            p_conf_val = f"{round((p.get('confidence') or 0) * 100)}%"
+            
+            style_cell(ws6.cell(row=idx, column=1), p_date, align="center")
+            style_cell(ws6.cell(row=idx, column=2), p_breed)
+            style_cell(ws6.cell(row=idx, column=3), p_species, align="center")
+            style_cell(ws6.cell(row=idx, column=4), p_conf_val, align="center")
+            ws6.row_dimensions[idx].height = 20
+        ws6.column_dimensions["A"].width = 20
+        ws6.column_dimensions["B"].width = 32
+        ws6.column_dimensions["C"].width = 16
+        ws6.column_dimensions["D"].width = 16
 
         # Save to buffer
         buf = io.BytesIO()
