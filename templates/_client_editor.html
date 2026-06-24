@@ -238,7 +238,7 @@
     <span class="material-symbols-outlined text-primary text-2xl animate-pulse">edit_note</span>
     <div>
       <h4 class="text-sm font-bold text-slate-800 dark:text-slate-100 leading-tight" id="editor-page-heading">Chế độ Chỉnh sửa Trực tiếp</h4>
-      <p class="text-[10px] text-slate-400 dark:text-slate-500 leading-tight">Rà chuột vào mục để chỉnh sửa nội dung</p>
+      <p id="editor-page-sub" class="text-[10px] text-slate-400 dark:text-slate-500 leading-tight">Rà chuột vào mục để chỉnh sửa nội dung</p>
     </div>
   </div>
 
@@ -267,13 +267,13 @@
     <!-- Preview -->
     <button type="button" onclick="openPreviewModal()" title="Xem trước trang như người dùng" class="editor-action-btn ghost">
       <span class="material-symbols-outlined">preview</span>
-      <span class="hidden sm:inline">Xem trước</span>
+      <span class="hidden sm:inline" id="editor-preview-btn-text">Xem trước</span>
     </button>
 
     <!-- Version History -->
     <button type="button" onclick="openVersionHistory()" title="Lịch sử phiên bản" class="editor-action-btn ghost">
       <span class="material-symbols-outlined">history</span>
-      <span class="hidden sm:inline">Lịch sử</span>
+      <span class="hidden sm:inline" id="editor-history-btn-text">Lịch sử</span>
     </button>
 
     <div class="editor-divider"></div>
@@ -281,7 +281,7 @@
     <!-- Auto translate -->
     <label class="flex items-center gap-1.5 cursor-pointer select-none">
       <input type="checkbox" id="editor-auto-translate" class="w-3.5 h-3.5 accent-primary" checked onchange="handleAutoTranslateChange(this)">
-      <span class="text-xs text-slate-500 dark:text-slate-400 font-medium hidden sm:inline">Tự động dịch</span>
+      <span class="text-xs text-slate-500 dark:text-slate-400 font-medium hidden sm:inline" id="editor-auto-trans-text">Tự động dịch</span>
     </label>
 
     <div class="editor-divider"></div>
@@ -289,17 +289,17 @@
     <!-- Reset to default -->
     <button type="button" onclick="resetToDefault()" title="Khôi phục nội dung gốc từ template" class="editor-action-btn danger">
       <span class="material-symbols-outlined">restart_alt</span>
-      <span class="hidden sm:inline">Gốc</span>
+      <span class="hidden sm:inline" id="editor-reset-btn-text">Gốc</span>
     </button>
 
     <!-- Save -->
     <button type="button" onclick="savePageChanges()"
       class="flex items-center gap-1.5 bg-primary text-white hover:bg-primary/90 px-4 py-2 rounded-lg text-xs font-bold transition-all shadow-sm">
-      <span class="material-symbols-outlined !text-sm">save</span> Lưu trang
+      <span class="material-symbols-outlined !text-sm">save</span> <span id="editor-save-btn-text">Lưu trang</span>
     </button>
 
     <!-- Cancel -->
-    <button type="button" onclick="cancelPageEdit()"
+    <button type="button" onclick="cancelPageEdit()" id="editor-cancel-btn-text"
       class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 px-3 py-2 rounded-lg text-xs font-bold transition-all">
       Hủy
     </button>
@@ -308,7 +308,7 @@
 
 <!-- ══════════════════════════════════════════════════════════════════
      IN-PLACE HOMEPAGE PREVIEW BAR
-══════════════════════════════════════════════════════════════════ -->
+ ══════════════════════════════════════════════════════════════════ -->
 <div id="inplace-preview-bar" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[9999] bg-slate-900/96 dark:bg-slate-950/96 backdrop-blur border border-slate-800 shadow-2xl rounded-2xl px-5 py-3 flex items-center justify-between gap-4 w-[93%] max-w-lg transition-all duration-300 font-['Inter'] antialiased text-white hidden animate-scale-up">
   <div class="flex items-center gap-2.5">
     <span class="material-symbols-outlined text-amber-500 text-xl animate-pulse">visibility</span>
@@ -325,38 +325,38 @@
 
 <!-- ══════════════════════════════════════════════════════════════════
      SELECTION RICH-TEXT TOOLBAR (floats near selection)
-══════════════════════════════════════════════════════════════════ -->
+ ══════════════════════════════════════════════════════════════════ -->
 <div id="inline-format-toolbar">
-  <button type="button" class="format-btn" onclick="applyFormat('bold')" title="In đậm (Ctrl+B)"><b>B</b></button>
-  <button type="button" class="format-btn" onclick="applyFormat('italic')" title="In nghiêng (Ctrl+I)"><i>I</i></button>
-  <button type="button" class="format-btn" onclick="applyFormat('underline')" title="Gạch chân (Ctrl+U)"><u>U</u></button>
+  <button type="button" id="fmt-btn-bold" class="format-btn" onclick="applyFormat('bold')" title="In đậm (Ctrl+B)"><b>B</b></button>
+  <button type="button" id="fmt-btn-italic" class="format-btn" onclick="applyFormat('italic')" title="In nghiêng (Ctrl+I)"><i>I</i></button>
+  <button type="button" id="fmt-btn-underline" class="format-btn" onclick="applyFormat('underline')" title="Gạch chân (Ctrl+U)"><u>U</u></button>
   <div class="fmt-sep"></div>
-  <button type="button" class="format-btn text-[10px]" onclick="applyFormatBlock('h2')" title="Tiêu đề H2">H2</button>
-  <button type="button" class="format-btn text-[10px]" onclick="applyFormatBlock('h3')" title="Tiêu đề H3">H3</button>
-  <button type="button" class="format-btn text-[10px]" onclick="applyFormatBlock('p')" title="Đoạn văn">P</button>
+  <button type="button" id="fmt-btn-h2" class="format-btn text-[10px]" onclick="applyFormatBlock('h2')" title="Tiêu đề H2">H2</button>
+  <button type="button" id="fmt-btn-h3" class="format-btn text-[10px]" onclick="applyFormatBlock('h3')" title="Tiêu đề H3">H3</button>
+  <button type="button" id="fmt-btn-p" class="format-btn text-[10px]" onclick="applyFormatBlock('p')" title="Đoạn văn">P</button>
   <div class="fmt-sep"></div>
-  <button type="button" class="format-btn" onclick="applyFormat('insertUnorderedList')" title="Danh sách dấu chấm">
+  <button type="button" id="fmt-btn-ul" class="format-btn" onclick="applyFormat('insertUnorderedList')" title="Danh sách dấu chấm">
     <span class="material-symbols-outlined">format_list_bulleted</span>
   </button>
-  <button type="button" class="format-btn" onclick="applyFormat('insertOrderedList')" title="Danh sách số">
+  <button type="button" id="fmt-btn-ol" class="format-btn" onclick="applyFormat('insertOrderedList')" title="Danh sách số">
     <span class="material-symbols-outlined">format_list_numbered</span>
   </button>
   <div class="fmt-sep"></div>
-  <button type="button" class="format-btn" onclick="applyFormat('createLink')" title="Thêm liên kết">
+  <button type="button" id="fmt-btn-link" class="format-btn" onclick="applyFormat('createLink')" title="Thêm liên kết">
     <span class="material-symbols-outlined">link</span>
   </button>
-  <button type="button" class="format-btn" onclick="applyFormat('unlink')" title="Gỡ liên kết">
+  <button type="button" id="fmt-btn-unlink" class="format-btn" onclick="applyFormat('unlink')" title="Gỡ liên kết">
     <span class="material-symbols-outlined">link_off</span>
   </button>
   <div class="fmt-sep"></div>
-  <button type="button" class="format-btn" onclick="applyFormat('removeFormat')" title="Xóa định dạng">
+  <button type="button" id="fmt-btn-clear" class="format-btn" onclick="applyFormat('removeFormat')" title="Xóa định dạng">
     <span class="material-symbols-outlined">format_clear</span>
   </button>
 </div>
 
 <!-- ══════════════════════════════════════════════════════════════════
      VERSION HISTORY PANEL (slide from right)
-══════════════════════════════════════════════════════════════════ -->
+ ══════════════════════════════════════════════════════════════════ -->
 <div id="version-history-overlay" onclick="closeVersionHistory()"></div>
 <div id="version-history-panel">
   <!-- Header -->
@@ -366,8 +366,8 @@
         <span class="material-symbols-outlined text-primary text-[18px]">history</span>
       </div>
       <div>
-        <h3 class="font-bold text-slate-800 dark:text-slate-100 text-sm leading-tight">Lịch sử phiên bản</h3>
-        <p class="text-[10px] text-slate-400 dark:text-slate-500 leading-tight">Tối đa 10 phiên bản gần nhất</p>
+        <h3 id="history-panel-heading" class="font-bold text-slate-800 dark:text-slate-100 text-sm leading-tight">Lịch sử phiên bản</h3>
+        <p id="history-panel-sub" class="text-[10px] text-slate-400 dark:text-slate-500 leading-tight">Tối đa 10 phiên bản gần nhất</p>
       </div>
     </div>
     <button type="button" onclick="closeVersionHistory()"
@@ -386,7 +386,7 @@
 
 <!-- ══════════════════════════════════════════════════════════════════
      PREVIEW MODAL (shows rendered page content)
-══════════════════════════════════════════════════════════════════ -->
+ ══════════════════════════════════════════════════════════════════ -->
 <div id="preview-modal" onclick="handlePreviewBackdropClick(event)">
   <div id="preview-modal-inner">
     <!-- Modal Header -->
@@ -396,13 +396,13 @@
           <span class="material-symbols-outlined text-primary text-[16px]">preview</span>
         </div>
         <div>
-          <h3 class="font-bold text-slate-800 dark:text-slate-100 text-sm leading-tight">Xem trước trang</h3>
-          <p class="text-[10px] text-slate-400 leading-tight">Chế độ người dùng (read-only)</p>
+          <h3 id="preview-modal-heading" class="font-bold text-slate-800 dark:text-slate-100 text-sm leading-tight">Xem trước trang</h3>
+          <p id="preview-modal-sub" class="text-[10px] text-slate-400 leading-tight">Chế độ người dùng (read-only)</p>
         </div>
       </div>
       <button type="button" onclick="closePreviewModal()"
         class="flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 px-3 py-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-all border border-transparent hover:border-slate-200 dark:hover:border-slate-700">
-        <span class="material-symbols-outlined text-sm">close</span> Đóng
+        <span class="material-symbols-outlined text-sm">close</span> <span id="preview-modal-close-btn-text">Đóng</span>
       </button>
     </div>
     <!-- Modal Content -->
@@ -421,6 +421,279 @@
   var existingVi = {};
   var existingEn = {};
   var TRANSLATIONS = window.PetAI_i18n ? window.PetAI_i18n.getTranslations() : { vi: {}, en: {} };
+
+  var EDITOR_TRANSLATIONS = {
+    vi: {
+      editorHeading: "Chế độ Chỉnh sửa Trực tiếp",
+      editorSub: "Rà chuột vào mục để chỉnh sửa nội dung",
+      undoTitle: "Hoàn tác (Ctrl+Z)",
+      redoTitle: "Làm lại (Ctrl+Y)",
+      previewTitle: "Xem trước trang như người dùng",
+      previewBtn: "Xem trước",
+      historyTitle: "Lịch sử phiên bản",
+      historyBtn: "Lịch sử",
+      autoTransLabel: "Tự động dịch",
+      resetTitle: "Khôi phục nội dung gốc từ template",
+      resetBtn: "Gốc",
+      saveBtn: "Lưu trang",
+      cancelBtn: "Hủy",
+      
+      previewModeHeading: "Chế độ Xem trước",
+      previewModeSub: "Giao diện hiển thị thực tế của người dùng",
+      backToEditBtn: "Quay lại soạn thảo",
+      
+      boldTitle: "In đậm (Ctrl+B)",
+      italicTitle: "In nghiêng (Ctrl+I)",
+      underlineTitle: "Gạch chân (Ctrl+U)",
+      h2Title: "Tiêu đề H2",
+      h3Title: "Tiêu đề H3",
+      pTitle: "Đoạn văn",
+      ulTitle: "Danh sách dấu chấm",
+      olTitle: "Danh sách số",
+      linkTitle: "Thêm liên kết",
+      unlinkTitle: "Gỡ liên kết",
+      clearFmtTitle: "Xóa định dạng",
+      
+      historyPanelHeading: "Lịch sử phiên bản",
+      historyPanelSub: "Tối đa 10 phiên bản gần nhất",
+      historyVersionsFound: "phiên bản được tìm thấy",
+      historyLoading: "Đang tải...",
+      historyEmpty: "Chưa có phiên bản nào",
+      historyEmptySub: "Lưu trang lần đầu để tạo lịch sử tự động.",
+      versionLabel: "Phiên bản",
+      latestBadge: "Mới nhất",
+      restoreBtn: "Khôi phục",
+      
+      previewModalHeading: "Xem trước trang",
+      previewModalSub: "Chế độ người dùng (read-only)",
+      closeBtn: "Đóng",
+      emptyPreview: "Chưa có nội dung để xem trước",
+      
+      confirmResetText: "Khôi phục về nội dung mặc định từ template?\n\nToàn bộ nội dung đã chỉnh sửa trong DB sẽ bị xoá. Trang sẽ hiển thị lại nội dung gốc.",
+      confirmRemoveSection: "Bạn có chắc muốn xóa mục này?",
+      confirmRestoreVersion: "Khôi phục phiên bản này?\n\nNội dung hiện tại sẽ bị thay thế bởi phiên bản đã chọn.",
+      linkPrompt: "Nhập đường dẫn liên kết (URL):",
+      
+      toastSaveSuccess: "Đã lưu nội dung trang thành công!",
+      toastResetSuccess: "Đã khôi phục nội dung gốc!",
+      toastRestoreVersionSuccess: "Đã khôi phục phiên bản thành công!",
+      toastAutoTransStartEn: "Đang tự động dịch sang tiếng Anh...",
+      toastAutoTransStartVi: "Đang tự động dịch sang tiếng Việt...",
+      toastAutoTransDone: "Đã dịch tự động xong!",
+      toastAutoTransEmpty: "Đang tự động dịch các mục chưa có bản dịch...",
+      toastSaveError: "Lỗi khi lưu nội dung",
+      toastErrorHeader: "Lỗi: ",
+      toastConnError: "Lỗi kết nối: ",
+      toastLoadHistoryError: "Lỗi tải lịch sử: ",
+      toastResetError: "Không thể khôi phục",
+      toastRestoreError: "Không thể khôi phục",
+      
+      addSectionBtn: "Thêm mục mới",
+      placeholderTermTitle: "Nhập tiêu đề điều khoản...",
+      placeholderTermContent: "Nhập nội dung điều khoản...",
+      placeholderTitle: "Nhập tiêu đề...",
+      placeholderContent: "Nhập nội dung...",
+      placeholderFaqTitle: "Câu hỏi (Title)...",
+      placeholderFaqContent: "Câu trả lời (Content)...",
+      placeholderGuideTitle: "Nhập tiêu đề...",
+      placeholderGuideContent: "Nhập nội dung hướng dẫn...",
+      
+      btnMoveUp: "Di chuyển lên",
+      btnMoveDown: "Di chuyển xuống",
+      btnDuplicate: "Nhân đôi mục này (Duplicate)",
+      btnEditHtml: "Chỉnh sửa mã HTML (Edit HTML)",
+      btnViewVisual: "Xem giao diện trực quan (Visual View)",
+      btnDeleteSec: "Xóa mục",
+      
+      supportFaqTitle: "Các câu hỏi thường gặp (FAQ)",
+      guideHeaderTitle: "Hướng dẫn sử dụng",
+      guideSubtitle: "Tìm hiểu cách sử dụng PetAI để nhận diện giống chó nhanh chóng và chính xác nhất.",
+      guideStepsTitle: "Mục lục hướng dẫn",
+      guideNewSection: "Mục mới",
+      guideNoSections: "Chưa có mục nào",
+      guideClickToAdd: "Nhấn \"Thêm mục mới\" bên dưới để bắt đầu soạn nội dung."
+    },
+    en: {
+      editorHeading: "Live Editing Mode",
+      editorSub: "Hover over items to edit content",
+      undoTitle: "Undo (Ctrl+Z)",
+      redoTitle: "Redo (Ctrl+Y)",
+      previewTitle: "Preview page as user",
+      previewBtn: "Preview",
+      historyTitle: "Version History",
+      historyBtn: "History",
+      autoTransLabel: "Auto Translate",
+      resetTitle: "Restore original content from template",
+      resetBtn: "Reset",
+      saveBtn: "Save Page",
+      cancelBtn: "Cancel",
+      
+      previewModeHeading: "Preview Mode",
+      previewModeSub: "Actual user view of the page",
+      backToEditBtn: "Back to Editing",
+      
+      boldTitle: "Bold (Ctrl+B)",
+      italicTitle: "Italic (Ctrl+I)",
+      underlineTitle: "Underline (Ctrl+U)",
+      h2Title: "H2 Heading",
+      h3Title: "H3 Heading",
+      pTitle: "Paragraph",
+      ulTitle: "Bulleted List",
+      olTitle: "Numbered List",
+      linkTitle: "Insert Link",
+      unlinkTitle: "Remove Link",
+      clearFmtTitle: "Clear Formatting",
+      
+      historyPanelHeading: "Version History",
+      historyPanelSub: "Max 10 recent versions",
+      historyVersionsFound: "versions found",
+      historyLoading: "Loading...",
+      historyEmpty: "No versions yet",
+      historyEmptySub: "Save page for the first time to create version history.",
+      versionLabel: "Version",
+      latestBadge: "Latest",
+      restoreBtn: "Restore",
+      
+      previewModalHeading: "Preview Page",
+      previewModalSub: "User mode (read-only)",
+      closeBtn: "Close",
+      emptyPreview: "No content to preview",
+      
+      confirmResetText: "Restore to default content from template?\n\nAll edited content in the database will be deleted. The page will revert to the original content.",
+      confirmRemoveSection: "Are you sure you want to delete this section?",
+      confirmRestoreVersion: "Restore this version?\n\nThe current content will be replaced by the selected version.",
+      linkPrompt: "Enter hyperlink URL:",
+      
+      toastSaveSuccess: "Page content saved successfully!",
+      toastResetSuccess: "Original content restored!",
+      toastRestoreVersionSuccess: "Version restored successfully!",
+      toastAutoTransStartEn: "Auto-translating to English...",
+      toastAutoTransStartVi: "Auto-translating to Vietnamese...",
+      toastAutoTransDone: "Auto-translation complete!",
+      toastAutoTransEmpty: "Auto-translating untranslated items...",
+      toastSaveError: "Error saving content",
+      toastErrorHeader: "Error: ",
+      toastConnError: "Connection error: ",
+      toastLoadHistoryError: "Error loading history: ",
+      toastResetError: "Could not restore",
+      toastRestoreError: "Could not restore",
+      
+      addSectionBtn: "Add Section",
+      placeholderTermTitle: "Enter section title...",
+      placeholderTermContent: "Enter section content...",
+      placeholderTitle: "Enter title...",
+      placeholderContent: "Enter content...",
+      placeholderFaqTitle: "Question (Title)...",
+      placeholderFaqContent: "Answer (Content)...",
+      placeholderGuideTitle: "Enter title...",
+      placeholderGuideContent: "Enter guide content...",
+      
+      btnMoveUp: "Move Up",
+      btnMoveDown: "Move Down",
+      btnDuplicate: "Duplicate this section",
+      btnEditHtml: "Edit HTML code",
+      btnViewVisual: "View Visual layout",
+      btnDeleteSec: "Delete Section",
+      
+      supportFaqTitle: "Frequently Asked Questions (FAQ)",
+      guideHeaderTitle: "User Guide",
+      guideSubtitle: "Learn how to use PetAI to identify dog breeds quickly and accurately.",
+      guideStepsTitle: "Guide Contents",
+      guideNewSection: "New Section",
+      guideNoSections: "No sections yet",
+      guideClickToAdd: "Click \"Add Section\" below to start composing content."
+    }
+  };
+
+  function translateEditorUI() {
+    var t = EDITOR_TRANSLATIONS[visualEditorLang] || EDITOR_TRANSLATIONS.vi;
+    
+    // Float bar
+    var heading = document.getElementById("editor-page-heading");
+    if (heading) heading.textContent = t.editorHeading;
+    var sub = document.getElementById("editor-page-sub");
+    if (sub) sub.textContent = t.editorSub;
+    
+    var undo = document.getElementById("undo-btn");
+    if (undo) undo.title = t.undoTitle;
+    var redo = document.getElementById("redo-btn");
+    if (redo) redo.title = t.redoTitle;
+    
+    var previewBtn = document.querySelector('button[onclick="openPreviewModal()"]');
+    if (previewBtn) {
+      previewBtn.title = t.previewTitle;
+      var text = document.getElementById("editor-preview-btn-text");
+      if (text) text.textContent = t.previewBtn;
+    }
+    
+    var historyBtn = document.querySelector('button[onclick="openVersionHistory()"]');
+    if (historyBtn) {
+      historyBtn.title = t.historyTitle;
+      var text = document.getElementById("editor-history-btn-text");
+      if (text) text.textContent = t.historyBtn;
+    }
+    
+    var autoTrans = document.getElementById("editor-auto-trans-text");
+    if (autoTrans) autoTrans.textContent = t.autoTransLabel;
+    
+    var resetBtn = document.querySelector('button[onclick="resetToDefault()"]');
+    if (resetBtn) {
+      resetBtn.title = t.resetTitle;
+      var text = document.getElementById("editor-reset-btn-text");
+      if (text) text.textContent = t.resetBtn;
+    }
+    
+    var saveBtn = document.getElementById("editor-save-btn-text");
+    if (saveBtn) saveBtn.textContent = t.saveBtn;
+    var cancelBtn = document.getElementById("editor-cancel-btn-text");
+    if (cancelBtn) cancelBtn.textContent = t.cancelBtn;
+    
+    // In-place preview bar
+    var inplaceHeading = document.getElementById("preview-mode-heading");
+    if (inplaceHeading) inplaceHeading.textContent = t.previewModeHeading;
+    var inplaceSub = document.getElementById("preview-mode-sub");
+    if (inplaceSub) inplaceSub.textContent = t.previewModeSub;
+    var backBtnText = document.getElementById("back-to-edit-btn-text");
+    if (backBtnText) backBtnText.textContent = t.backToEditBtn;
+    
+    // Format toolbar
+    var btnBold = document.getElementById("fmt-btn-bold");
+    if (btnBold) btnBold.title = t.boldTitle;
+    var btnItalic = document.getElementById("fmt-btn-italic");
+    if (btnItalic) btnItalic.title = t.italicTitle;
+    var btnUnderline = document.getElementById("fmt-btn-underline");
+    if (btnUnderline) btnUnderline.title = t.underlineTitle;
+    var btnH2 = document.getElementById("fmt-btn-h2");
+    if (btnH2) btnH2.title = t.h2Title;
+    var btnH3 = document.getElementById("fmt-btn-h3");
+    if (btnH3) btnH3.title = t.h3Title;
+    var btnP = document.getElementById("fmt-btn-p");
+    if (btnP) btnP.title = t.pTitle;
+    var btnUl = document.getElementById("fmt-btn-ul");
+    if (btnUl) btnUl.title = t.ulTitle;
+    var btnOl = document.getElementById("fmt-btn-ol");
+    if (btnOl) btnOl.title = t.olTitle;
+    var btnLink = document.getElementById("fmt-btn-link");
+    if (btnLink) btnLink.title = t.linkTitle;
+    var btnUnlink = document.getElementById("fmt-btn-unlink");
+    if (btnUnlink) btnUnlink.title = t.unlinkTitle;
+    var btnClear = document.getElementById("fmt-btn-clear");
+    if (btnClear) btnClear.title = t.clearFmtTitle;
+    
+    // Version history panel
+    var histHeading = document.getElementById("history-panel-heading");
+    if (histHeading) histHeading.textContent = t.historyPanelHeading;
+    var histSub = document.getElementById("history-panel-sub");
+    if (histSub) histSub.textContent = t.historyPanelSub;
+    
+    // Preview modal
+    var prevHeading = document.getElementById("preview-modal-heading");
+    if (prevHeading) prevHeading.textContent = t.previewModalHeading;
+    var prevSub = document.getElementById("preview-modal-sub");
+    if (prevSub) prevSub.textContent = t.previewModalSub;
+    var prevCloseText = document.getElementById("preview-modal-close-btn-text");
+    if (prevCloseText) prevCloseText.textContent = t.closeBtn;
+  }
 
   /* ─── Undo/Redo history ─── */
   var historyStack = [];
@@ -726,6 +999,7 @@
     const card = document.getElementById("legal-content-card");
     if (!card) return;
     if (pageKey === 'home') return;
+    var t = EDITOR_TRANSLATIONS[visualEditorLang] || EDITOR_TRANSLATIONS.vi;
 
     const h1 = card.querySelector("h1");
     card.innerHTML = "";
@@ -767,19 +1041,19 @@
 
         secWrapper.innerHTML = `
           <div class="visual-sec-controls">
-            <button type="button" onclick="moveVisualSectionUp('${sec.id}')" class="visual-sec-btn" title="Di chuyển lên">
+            <button type="button" onclick="moveVisualSectionUp('${sec.id}')" class="visual-sec-btn" title="${t.btnMoveUp}">
               <span class="material-symbols-outlined !text-sm">arrow_upward</span>
             </button>
-            <button type="button" onclick="moveVisualSectionDown('${sec.id}')" class="visual-sec-btn" title="Di chuyển xuống">
+            <button type="button" onclick="moveVisualSectionDown('${sec.id}')" class="visual-sec-btn" title="${t.btnMoveDown}">
               <span class="material-symbols-outlined !text-sm">arrow_downward</span>
             </button>
-            <button type="button" onclick="duplicateVisualSection('${sec.id}')" class="visual-sec-btn" title="Nhân đôi mục này (Duplicate)">
+            <button type="button" onclick="duplicateVisualSection('${sec.id}')" class="visual-sec-btn" title="${t.btnDuplicate}">
               <span class="material-symbols-outlined !text-sm">content_copy</span>
             </button>
-            <button type="button" onclick="toggleHtmlEdit('${sec.id}', this)" class="visual-sec-btn html-toggle" title="Chỉnh sửa mã HTML (Edit HTML)">
+            <button type="button" onclick="toggleHtmlEdit('${sec.id}', this)" class="visual-sec-btn html-toggle" title="${t.btnEditHtml}">
               <span class="material-symbols-outlined !text-sm">code</span>
             </button>
-            <button type="button" onclick="removeVisualSection('${sec.id}')" class="visual-sec-btn delete" title="Xóa mục">
+            <button type="button" onclick="removeVisualSection('${sec.id}')" class="visual-sec-btn delete" title="${t.btnDeleteSec}">
               <span class="material-symbols-outlined !text-sm">delete</span>
             </button>
           </div>
@@ -790,12 +1064,12 @@
           secWrapper.innerHTML += `
             <h3 contenteditable="true"
                 class="text-xl font-bold text-primary dark:text-blue-400 mb-4"
-                placeholder="Nhập tiêu đề..."
+                placeholder="${t.placeholderTitle}"
                 onblur="handleSectionBlur('${sec.id}', 'title', this)"
             >${escapeHtml(title)}</h3>
             <div contenteditable="true"
                  class="text-on-surface-variant dark:text-slate-300 body-md leading-relaxed legal-content-rich"
-                 placeholder="Nhập nội dung..."
+                 placeholder="${t.placeholderContent}"
                  onblur="handleSectionBlur('${sec.id}', 'content', this)"
             >${rendered}</div>
           `;
@@ -808,15 +1082,15 @@
               <summary class="font-bold flex justify-between items-center text-on-surface dark:text-slate-100 select-none">
                 <span contenteditable="true"
                     class="font-bold text-on-surface dark:text-slate-100 select-none pr-10 focus:outline-none flex-grow"
-                    placeholder="Câu hỏi (Title)..."
+                    placeholder="${t.placeholderFaqTitle}"
                     onblur="handleSectionBlur('${sec.id}', 'title', this)"
                     onclick="event.stopPropagation();"
                 >${escapeHtml(title)}</span>
-                <span class="group-open:rotate-180 transition-transform">▼</span>
+                <span class="group-open:rotate-180 transition-transform">&#9660;</span>
               </summary>
               <div contenteditable="true"
                    class="mt-2 text-on-surface-variant dark:text-slate-300 text-sm leading-relaxed legal-content-rich focus:outline-none"
-                   placeholder="Câu trả lời (Content)..."
+                   placeholder="${t.placeholderFaqContent}"
                    onblur="handleSectionBlur('${sec.id}', 'content', this)"
                >${rendered}</div>
             </details>
@@ -832,12 +1106,10 @@
       headerDiv.className = "text-center mb-10";
       headerDiv.innerHTML = `
         <h1 class="headline-lg text-on-surface mb-4 font-bold" data-i18n="userGuideHeaderTitle">
-          ${visualEditorLang === 'vi' ? 'Hướng dẫn sử dụng' : 'User Guide'}
+          ${t.guideHeaderTitle}
         </h1>
         <p class="body-md text-on-surface-variant max-w-2xl mx-auto" data-i18n="userGuideSubtitle">
-          ${visualEditorLang === 'vi' 
-            ? 'Tìm hiểu cách sử dụng PetAI để nhận diện giống chó nhanh chóng và chính xác nhất.' 
-            : 'Learn how to use PetAI to identify dog breeds quickly and accurately.'}
+          ${t.guideSubtitle}
         </p>
       `;
       card.appendChild(headerDiv);
@@ -849,7 +1121,7 @@
       let tocInner = `
         <h2 class="text-lg font-bold text-primary dark:text-blue-400 mb-4 flex items-center gap-2">
           <span class="material-symbols-outlined text-[20px]">menu_book</span>
-          <span data-i18n="guideStepsTitle">${visualEditorLang === 'vi' ? 'Mục lục hướng dẫn' : 'Guide Contents'}</span>
+          <span data-i18n="guideStepsTitle">${t.guideStepsTitle}</span>
         </h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 text-sm">
       `;
@@ -861,7 +1133,7 @@
         tocInner += `
           <a href="#${tid}" class="flex items-center gap-2 text-on-surface-variant dark:text-slate-300 hover:text-primary transition-colors">
             <span class="w-1.5 h-1.5 rounded-full bg-primary/60 dark:bg-blue-500/60"></span>
-            <span>${escapeHtml(title || (visualEditorLang === 'vi' ? 'Mục mới' : 'New Section'))}</span>
+            <span>${escapeHtml(title || t.guideNewSection)}</span>
           </a>
         `;
       });
@@ -879,8 +1151,8 @@
         container.innerHTML = `
           <div class="border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-2xl p-10 text-center">
             <span class="material-symbols-outlined text-4xl text-slate-300 dark:text-slate-600 mb-3 block">article</span>
-            <p class="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-1">Chưa có mục nào</p>
-            <p class="text-xs text-slate-400 dark:text-slate-500">Nhấn "Thêm mục mới" bên dưới để bắt đầu soạn nội dung.</p>
+            <p class="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-1">${t.guideNoSections}</p>
+            <p class="text-xs text-slate-400 dark:text-slate-500">${t.guideClickToAdd}</p>
           </div>
         `;
       } else {
@@ -901,19 +1173,19 @@
 
           secWrapper.innerHTML = `
             <div class="visual-sec-controls">
-              <button type="button" onclick="moveVisualSectionUp('${sec.id}')" class="visual-sec-btn" title="Di chuyển lên">
+              <button type="button" onclick="moveVisualSectionUp('${sec.id}')" class="visual-sec-btn" title="${t.btnMoveUp}">
                 <span class="material-symbols-outlined !text-sm">arrow_upward</span>
               </button>
-              <button type="button" onclick="moveVisualSectionDown('${sec.id}')" class="visual-sec-btn" title="Di chuyển xuống">
+              <button type="button" onclick="moveVisualSectionDown('${sec.id}')" class="visual-sec-btn" title="${t.btnMoveDown}">
                 <span class="material-symbols-outlined !text-sm">arrow_downward</span>
               </button>
-              <button type="button" onclick="duplicateVisualSection('${sec.id}')" class="visual-sec-btn" title="Nhân đôi mục này (Duplicate)">
+              <button type="button" onclick="duplicateVisualSection('${sec.id}')" class="visual-sec-btn" title="${t.btnDuplicate}">
                 <span class="material-symbols-outlined !text-sm">content_copy</span>
               </button>
-              <button type="button" onclick="toggleHtmlEdit('${sec.id}', this)" class="visual-sec-btn html-toggle" title="Chỉnh sửa mã HTML (Edit HTML)">
+              <button type="button" onclick="toggleHtmlEdit('${sec.id}', this)" class="visual-sec-btn html-toggle" title="${t.btnEditHtml}">
                 <span class="material-symbols-outlined !text-sm">code</span>
               </button>
-              <button type="button" onclick="removeVisualSection('${sec.id}')" class="visual-sec-btn delete" title="Xóa mục">
+              <button type="button" onclick="removeVisualSection('${sec.id}')" class="visual-sec-btn delete" title="${t.btnDeleteSec}">
                 <span class="material-symbols-outlined !text-sm">delete</span>
               </button>
             </div>
@@ -922,14 +1194,14 @@
               <span class="material-symbols-outlined text-[24px]">${icon}</span>
               <span contenteditable="true"
                     class="focus:outline-none flex-grow"
-                    placeholder="${visualEditorLang === 'vi' ? 'Nhập tiêu đề...' : 'Enter title...'}"
+                    placeholder="${t.placeholderGuideTitle}"
                     onblur="handleSectionBlur('${sec.id}', 'title', this)"
               >${escapeHtml(title)}</span>
             </h3>
 
             <div contenteditable="true"
                  class="text-on-surface-variant dark:text-slate-300 body-md leading-relaxed legal-content-rich focus:outline-none"
-                 placeholder="${visualEditorLang === 'vi' ? 'Nhập nội dung hướng dẫn...' : 'Enter guide content...'}"
+                 placeholder="${t.placeholderGuideContent}"
                  onblur="handleSectionBlur('${sec.id}', 'content', this)"
             >${rendered}</div>
           `;
@@ -947,8 +1219,8 @@
         container.innerHTML = `
           <div class="border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-2xl p-10 text-center">
             <span class="material-symbols-outlined text-4xl text-slate-300 dark:text-slate-600 mb-3 block">article</span>
-            <p class="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-1">Chưa có mục nào</p>
-            <p class="text-xs text-slate-400 dark:text-slate-500">Nhấn "Thêm mục mới" bên dưới để bắt đầu soạn nội dung.</p>
+            <p class="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-1">${t.guideNoSections}</p>
+            <p class="text-xs text-slate-400 dark:text-slate-500">${t.guideClickToAdd}</p>
           </div>
         `;
       } else {
@@ -967,19 +1239,19 @@
           html += `
             <div class="visual-sec-wrapper" data-id="${sec.id}">
               <div class="visual-sec-controls">
-                <button type="button" onclick="moveVisualSectionUp('${sec.id}')" class="visual-sec-btn" title="Di chuyển lên">
+                <button type="button" onclick="moveVisualSectionUp('${sec.id}')" class="visual-sec-btn" title="${t.btnMoveUp}">
                   <span class="material-symbols-outlined !text-sm">arrow_upward</span>
                 </button>
-                <button type="button" onclick="moveVisualSectionDown('${sec.id}')" class="visual-sec-btn" title="Di chuyển xuống">
+                <button type="button" onclick="moveVisualSectionDown('${sec.id}')" class="visual-sec-btn" title="${t.btnMoveDown}">
                   <span class="material-symbols-outlined !text-sm">arrow_downward</span>
                 </button>
-                <button type="button" onclick="duplicateVisualSection('${sec.id}')" class="visual-sec-btn" title="Nhân đôi mục này (Duplicate)">
+                <button type="button" onclick="duplicateVisualSection('${sec.id}')" class="visual-sec-btn" title="${t.btnDuplicate}">
                   <span class="material-symbols-outlined !text-sm">content_copy</span>
                 </button>
-                <button type="button" onclick="toggleHtmlEdit('${sec.id}', this)" class="visual-sec-btn html-toggle" title="Chỉnh sửa mã HTML (Edit HTML)">
+                <button type="button" onclick="toggleHtmlEdit('${sec.id}', this)" class="visual-sec-btn html-toggle" title="${t.btnEditHtml}">
                   <span class="material-symbols-outlined !text-sm">code</span>
                 </button>
-                <button type="button" onclick="removeVisualSection('${sec.id}')" class="visual-sec-btn delete" title="Xóa mục">
+                <button type="button" onclick="removeVisualSection('${sec.id}')" class="visual-sec-btn delete" title="${t.btnDeleteSec}">
                   <span class="material-symbols-outlined !text-sm">delete</span>
                 </button>
               </div>`;
@@ -988,7 +1260,7 @@
             html += `
               <h2 contenteditable="true"
                   class="text-xl font-bold text-primary dark:text-blue-400 mt-6 mb-2"
-                  placeholder="Nhập tiêu đề điều khoản..."
+                  placeholder="${t.placeholderTermTitle}"
                   onblur="handleSectionBlur('${sec.id}', 'title', this)"
               >${escapeHtml(title)}</h2>`;
           }
@@ -997,7 +1269,7 @@
             html += `
               <div contenteditable="true"
                    class="text-on-surface-variant dark:text-slate-300 body-md leading-relaxed legal-content-rich"
-                   placeholder="Nhập nội dung điều khoản..."
+                   placeholder="${t.placeholderTermContent}"
                    onblur="handleSectionBlur('${sec.id}', 'content', this)"
               >${rendered}</div>`;
           }
@@ -1015,7 +1287,7 @@
       <button type="button" onclick="addSectionVisual()"
         class="flex items-center gap-1.5 bg-primary/10 hover:bg-primary/20 text-primary py-2 px-4 rounded-xl text-xs font-bold transition-all">
         <span class="material-symbols-outlined text-sm">add_circle</span>
-        Thêm mục mới (Add Section)
+        ${t.addSectionBtn}
       </button>`;
     card.appendChild(addBtn);
   }
@@ -1082,14 +1354,15 @@
   }
 
   async function removeVisualSection(id) {
+    var t = EDITOR_TRANSLATIONS[visualEditorLang] || EDITOR_TRANSLATIONS.vi;
     if (window.PetAI_confirm) {
       const ok = await window.PetAI_confirm({
-        text: "Bạn có chắc muốn xóa mục này?",
+        text: t.confirmRemoveSection,
         type: "danger"
       });
       if (!ok) return;
     } else {
-      if (!confirm("Bạn có chắc muốn xóa mục này?")) return;
+      if (!confirm(t.confirmRemoveSection)) return;
     }
     sections = sections.filter(s => s.id !== id);
     pushToHistory(); renderVisualSections();
@@ -1175,8 +1448,9 @@
       contentDiv.appendChild(textarea);
       textarea.focus();
 
+      var t = EDITOR_TRANSLATIONS[visualEditorLang] || EDITOR_TRANSLATIONS.vi;
       if (iconSpan) iconSpan.textContent = "text_fields";
-      btn.title = "Xem giao diện trực quan (Visual View)";
+      btn.title = t.btnViewVisual;
       btn.classList.add("bg-primary/20", "text-primary");
     } else {
       // Switch back to rich text visual mode
@@ -1187,8 +1461,9 @@
       contentDiv.setAttribute("contenteditable", "true");
       delete contentDiv.dataset.htmlMode;
 
+      var t = EDITOR_TRANSLATIONS[visualEditorLang] || EDITOR_TRANSLATIONS.vi;
       if (iconSpan) iconSpan.textContent = "code";
-      btn.title = "Chỉnh sửa mã HTML (Edit HTML)";
+      btn.title = t.btnEditHtml;
       btn.classList.remove("bg-primary/20", "text-primary");
 
       // Sync changes to the model
@@ -1220,8 +1495,9 @@
 
     if (!needsTranslation) return;
 
+    var t = EDITOR_TRANSLATIONS[visualEditorLang] || EDITOR_TRANSLATIONS.vi;
     if (window.showToast) {
-      window.showToast("info", "Đang tự động dịch các mục chưa có bản dịch...", { timeout: 2000 });
+      window.showToast("info", t.toastAutoTransEmpty, { timeout: 2000 });
     }
 
     const promises = sections.map(async (sec) => {
@@ -1245,7 +1521,7 @@
     await Promise.all(promises);
 
     if (window.showToast) {
-      window.showToast("success", "Đã tự động dịch thành công!", { timeout: 2000 });
+      window.showToast("success", t.toastAutoTransDone, { timeout: 2000 });
     }
   }
 
@@ -1288,6 +1564,9 @@
     if (vi) vi.className = lang === 'vi' ? act : inact;
     if (en) en.className = lang === 'en' ? act : inact;
     renderVisualSections();
+
+    // Sync editor UI labels to the newly selected language
+    translateEditorUI();
 
     if (pageKey === 'home' && window.PetAI_i18n) {
       window.PetAI_i18n.applyToElement(document.body, lang);
@@ -1345,13 +1624,14 @@
     fd.append("content_vi", JSON.stringify(viData));
     fd.append("content_en", JSON.stringify(enData));
 
+    var t = EDITOR_TRANSLATIONS[visualEditorLang] || EDITOR_TRANSLATIONS.vi;
     try {
       const res = await fetch("/users/system-config/save-legal", { method: "POST", body: fd });
       if (res.ok) {
-        if (window.showToast) window.showToast("success", "Đã lưu nội dung trang thành công!", { timeout: 2000 });
+        if (window.showToast) window.showToast("success", t.toastSaveSuccess, { timeout: 2000 });
         else {
-          if (window.PetAI_alert) window.PetAI_alert({ text: "Lưu trang thành công!", type: "success" });
-          else alert("Lưu trang thành công!");
+          if (window.PetAI_alert) window.PetAI_alert({ text: t.toastSaveSuccess, type: "success" });
+          else alert(t.toastSaveSuccess);
         }
         
         setTimeout(() => {
@@ -1373,8 +1653,8 @@
         }, 650);
       } else throw new Error("HTTP " + res.status);
     } catch(e) {
-      if (window.PetAI_alert) window.PetAI_alert({ text: "Lỗi khi lưu trang: " + e.message, type: "danger" });
-      else alert("Lỗi khi lưu trang: " + e.message);
+      if (window.PetAI_alert) window.PetAI_alert({ text: t.toastSaveError + ": " + e.message, type: "danger" });
+      else alert(t.toastSaveError + ": " + e.message);
     }
   }
 
@@ -1400,14 +1680,15 @@
 
   /* FIX 2: Reset – clears DB entry, reloads page to show original template */
   async function resetToDefault() {
+    var t = EDITOR_TRANSLATIONS[visualEditorLang] || EDITOR_TRANSLATIONS.vi;
     if (window.PetAI_confirm) {
       const ok = await window.PetAI_confirm({
-        text: "Khôi phục về nội dung mặc định từ template?\n\nToàn bộ nội dung đã chỉnh sửa trong DB sẽ bị xoá. Trang sẽ hiển thị lại nội dung gốc.",
+        text: t.confirmResetText,
         type: "danger"
       });
       if (!ok) return;
     } else {
-      if (!confirm("Khôi phục về nội dung mặc định từ template?\n\nToàn bộ nội dung đã chỉnh sửa trong DB sẽ bị xoá. Trang sẽ hiển thị lại nội dung gốc.")) return;
+      if (!confirm(t.confirmResetText)) return;
     }
     const fd = new FormData();
     const csrfMeta = document.querySelector('meta[name="csrf-token"]');
@@ -1417,15 +1698,15 @@
       const res = await fetch("/users/system-config/reset-legal", { method: "POST", body: fd });
       const data = await res.json();
       if (data.success) {
-        if (window.showToast) window.showToast("success", "Đã khôi phục nội dung gốc!", { timeout: 2000 });
+        if (window.showToast) window.showToast("success", t.toastResetSuccess, { timeout: 2000 });
         setTimeout(() => window.location.reload(), 800);
       } else {
-        if (window.PetAI_alert) window.PetAI_alert({ text: "Lỗi: " + (data.error || "Không thể khôi phục"), type: "danger" });
-        else alert("Lỗi: " + (data.error || "Không thể khôi phục"));
+        if (window.PetAI_alert) window.PetAI_alert({ text: t.toastErrorHeader + (data.error || t.toastResetError), type: "danger" });
+        else alert(t.toastErrorHeader + (data.error || t.toastResetError));
       }
     } catch(e) {
-      if (window.PetAI_alert) window.PetAI_alert({ text: "Lỗi kết nối: " + e.message, type: "danger" });
-      else alert("Lỗi kết nối: " + e.message);
+      if (window.PetAI_alert) window.PetAI_alert({ text: t.toastConnError + e.message, type: "danger" });
+      else alert(t.toastConnError + e.message);
     }
   }
 
@@ -1528,7 +1809,8 @@
       if (content) html += `<div class="text-slate-600 dark:text-slate-300" style="line-height:1.75;margin-bottom:1rem;">${content}</div>`;
     });
 
-    area.innerHTML = html || '<p style="text-align:center;padding:3rem;color:#94a3b8;font-style:italic;">Chưa có nội dung để xem trước</p>';
+    var t = EDITOR_TRANSLATIONS[visualEditorLang] || EDITOR_TRANSLATIONS.vi;
+    area.innerHTML = html || `<p style="text-align:center;padding:3rem;color:#94a3b8;font-style:italic;">${t.emptyPreview}</p>`;
     modal.classList.add("open");
     document.body.style.overflow = "hidden";
   }
@@ -1613,12 +1895,13 @@
   }
 
   async function loadVersionHistory() {
+    var t = EDITOR_TRANSLATIONS[visualEditorLang] || EDITOR_TRANSLATIONS.vi;
     const container = document.getElementById("version-list-container");
     if (!container) return;
     container.innerHTML = `
       <div class="flex flex-col items-center py-8 text-slate-400">
         <span class="material-symbols-outlined text-2xl animate-spin mb-2">progress_activity</span>
-        <p class="text-xs">Đang tải...</p>
+        <p class="text-xs">${t.historyLoading}</p>
       </div>`;
     try {
       const res = await fetch(`/users/system-config/legal-versions?page=${encodeURIComponent(pageKey)}`);
@@ -1627,12 +1910,12 @@
         container.innerHTML = `
           <div class="text-center py-10 px-4">
             <span class="material-symbols-outlined text-4xl text-slate-300 dark:text-slate-600 mb-3 block">history_toggle_off</span>
-            <p class="text-sm font-semibold text-slate-500 dark:text-slate-400">Chưa có phiên bản nào</p>
-            <p class="text-xs text-slate-400 dark:text-slate-500 mt-1">Lưu trang lần đầu để tạo lịch sử tự động.</p>
+            <p class="text-sm font-semibold text-slate-500 dark:text-slate-400">${t.historyEmpty}</p>
+            <p class="text-xs text-slate-400 dark:text-slate-500 mt-1">${t.historyEmptySub}</p>
           </div>`;
         return;
       }
-      let html = `<p class="text-xs text-slate-400 dark:text-slate-500 mb-3 px-1">${data.versions.length} phiên bản được tìm thấy</p>`;
+      let html = `<p class="text-xs text-slate-400 dark:text-slate-500 mb-3 px-1">${data.versions.length} ${t.historyVersionsFound}</p>`;
       data.versions.forEach((v, i) => {
         const isLatest = i === 0;
         html += `
@@ -1644,34 +1927,35 @@
                 </div>
                 <div class="min-w-0">
                   <p class="text-sm font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-1.5">
-                    Phiên bản ${data.versions.length - i}
-                    ${isLatest ? '<span class="text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded font-bold">Mới nhất</span>' : ''}
+                    ${t.versionLabel} ${data.versions.length - i}
+                    ${isLatest ? `<span class="text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded font-bold">${t.latestBadge}</span>` : ''}
                   </p>
                   <p class="text-xs text-slate-400 dark:text-slate-500 mt-0.5">${v.saved_at}</p>
                 </div>
               </div>
               <button onclick="restoreVersion(${v.id})"
                 class="flex-shrink-0 text-xs px-3 py-1.5 bg-primary/10 hover:bg-primary text-primary hover:text-white rounded-lg font-semibold transition-all whitespace-nowrap">
-                Khôi phục
+                ${t.restoreBtn}
               </button>
             </div>
           </div>`;
       });
       container.innerHTML = html;
     } catch(e) {
-      container.innerHTML = `<p class="text-sm text-red-500 p-4">Lỗi tải lịch sử: ${e.message}</p>`;
+      container.innerHTML = `<p class="text-sm text-red-500 p-4">${t.toastLoadHistoryError}${e.message}</p>`;
     }
   }
 
   async function restoreVersion(versionId) {
+    var t = EDITOR_TRANSLATIONS[visualEditorLang] || EDITOR_TRANSLATIONS.vi;
     if (window.PetAI_confirm) {
       const ok = await window.PetAI_confirm({
-        text: "Khôi phục phiên bản này?\n\nNội dung hiện tại sẽ bị thay thế bởi phiên bản đã chọn.",
+        text: t.confirmRestoreVersion,
         type: "warning"
       });
       if (!ok) return;
     } else {
-      if (!confirm("Khôi phục phiên bản này?\n\nNội dung hiện tại sẽ bị thay thế bởi phiên bản đã chọn.")) return;
+      if (!confirm(t.confirmRestoreVersion)) return;
     }
     const fd = new FormData();
     const csrfMeta = document.querySelector('meta[name="csrf-token"]');
@@ -1681,15 +1965,15 @@
       const res = await fetch("/users/system-config/restore-version", { method: "POST", body: fd });
       const data = await res.json();
       if (data.success) {
-        if (window.showToast) window.showToast("success", "Đã khôi phục phiên bản thành công!", { timeout: 2000 });
+        if (window.showToast) window.showToast("success", t.toastRestoreVersionSuccess, { timeout: 2000 });
         setTimeout(() => window.location.reload(), 800);
       } else {
-        if (window.PetAI_alert) window.PetAI_alert({ text: "Lỗi: " + (data.error || "Không thể khôi phục"), type: "danger" });
-        else alert("Lỗi: " + (data.error || "Không thể khôi phục"));
+        if (window.PetAI_alert) window.PetAI_alert({ text: t.toastErrorHeader + (data.error || t.toastRestoreError), type: "danger" });
+        else alert(t.toastErrorHeader + (data.error || t.toastRestoreError));
       }
     } catch(e) {
-      if (window.PetAI_alert) window.PetAI_alert({ text: "Lỗi kết nối: " + e.message, type: "danger" });
-      else alert("Lỗi kết nối: " + e.message);
+      if (window.PetAI_alert) window.PetAI_alert({ text: t.toastConnError + e.message, type: "danger" });
+      else alert(t.toastConnError + e.message);
     }
   }
 
@@ -1698,7 +1982,8 @@
   ═══════════════════════════════════════════════ */
   function applyFormat(command) {
     if (command === 'createLink') {
-      const url = prompt("Nhập đường dẫn liên kết (URL):", "https://");
+      var t = EDITOR_TRANSLATIONS[visualEditorLang] || EDITOR_TRANSLATIONS.vi;
+      const url = prompt(t.linkPrompt, "https://");
       if (url) document.execCommand(command, false, url);
     } else {
       document.execCommand(command, false, null);
@@ -1778,6 +2063,9 @@
         renderVisualSections();
       }
     }
+
+    // Apply UI translations for editor interface on load
+    translateEditorUI();
 
     document.addEventListener("selectionchange", checkSelection);
 
