@@ -92,7 +92,6 @@
     </script>
     <title data-i18n="loginPageTitle">{{ 'Login - ' ~ get_config('site_name', 'PetAI') if ui_language == 'en' else 'Đăng nhập - ' ~ get_config('site_name', 'PetAI') }}</title>
     <script src="{{ url_for('static', filename='js/tailwindcss.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/chart.umd.min.js') }}"></script>
 
     <link
       rel="stylesheet"
@@ -227,6 +226,26 @@
       };
     </script>
     <style>
+      :root {
+        --login-bg: #060f1e;
+        --login-card-bg: #0b1a2e;
+        --login-right-bg: #0d1f35;
+        --login-input-bg: #132033;
+        --login-input-border: #1e3a5f;
+        --login-input-focus: #2563eb;
+        --login-text: #e8edf5;
+        --login-text-muted: #7a8fa6;
+        --login-text-label: #b0c0d4;
+        --login-primary: #2563eb;
+        --login-primary-hover: #1d4ed8;
+        --login-google-bg: #132033;
+        --login-google-border: #1e3a5f;
+        --login-divider: #1e3a5f;
+        --login-card-border: #1a3050;
+        --login-feature-bg: rgba(37, 99, 235, 0.1);
+        --login-feature-border: rgba(37, 99, 235, 0.2);
+      }
+
       .material-symbols-outlined {
         font-variation-settings:
           "FILL" 0,
@@ -234,290 +253,782 @@
           "GRAD" 0,
           "opsz" 24;
       }
+
+      /* ── Page shell ── */
+      body.login-page {
+        background: var(--login-bg);
+        background-image:
+          radial-gradient(ellipse at 20% 50%, rgba(37, 99, 235, 0.06) 0%, transparent 60%),
+          radial-gradient(ellipse at 80% 20%, rgba(37, 99, 235, 0.04) 0%, transparent 50%);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        font-family: "Inter", sans-serif;
+        color: var(--login-text);
+      }
+
+      /* ── Outer card ── */
+      .login-card {
+        background: var(--login-card-bg);
+        border: 1px solid var(--login-card-border);
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow:
+          0 0 0 1px rgba(37, 99, 235, 0.08),
+          0 32px 80px rgba(0, 0, 0, 0.6),
+          0 8px 24px rgba(0, 0, 0, 0.4);
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        min-height: 640px;
+        width: 100%;
+        max-width: 1040px;
+      }
+
+      /* ── LEFT PANEL ── */
+      .login-left {
+        position: relative;
+        overflow: hidden;
+        border-radius: 18px 0 0 18px;
+        min-height: 600px;
+      }
+
+      .login-left-img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center top;
+      }
+
+      /* Multi-layer overlay */
+      .login-left-overlay {
+        position: absolute;
+        inset: 0;
+        background:
+          linear-gradient(
+            to bottom,
+            rgba(6, 15, 30, 0.45) 0%,
+            rgba(6, 15, 30, 0.25) 40%,
+            rgba(6, 15, 30, 0.75) 75%,
+            rgba(6, 15, 30, 0.95) 100%
+          );
+      }
+
+      /* Top logo */
+      .login-left-logo {
+        position: absolute;
+        top: 28px;
+        left: 28px;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+      }
+
+      .login-left-logo .logo-icon {
+        font-size: 26px;
+        color: #60a5fa;
+        font-variation-settings: "FILL" 1, "wght" 500, "GRAD" 0, "opsz" 24;
+      }
+
+      .login-left-logo .logo-text {
+        font-size: 18px;
+        font-weight: 700;
+        color: #ffffff;
+        letter-spacing: -0.3px;
+      }
+
+      /* Bottom content */
+      .login-left-content {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 10;
+        padding: 28px 28px 24px;
+      }
+
+      .login-left-title {
+        font-size: 26px;
+        font-weight: 700;
+        line-height: 1.3;
+        color: #ffffff;
+        margin-bottom: 10px;
+        letter-spacing: -0.5px;
+      }
+
+      .login-left-title .accent {
+        color: #60a5fa;
+      }
+
+      .login-left-subtitle {
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.7);
+        line-height: 1.6;
+        margin-bottom: 20px;
+      }
+
+      /* Feature cards */
+      .login-features {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .login-feature-card {
+        background: var(--login-feature-bg);
+        border: 1px solid var(--login-feature-border);
+        border-radius: 12px;
+        padding: 12px 14px;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        transition: background 0.2s;
+      }
+
+      .login-feature-card:hover {
+        background: rgba(37, 99, 235, 0.16);
+      }
+
+      .login-feature-icon {
+        font-size: 20px;
+        color: #60a5fa;
+        margin-bottom: 6px;
+        font-variation-settings: "FILL" 1, "wght" 400, "GRAD" 0, "opsz" 24;
+      }
+
+      .login-feature-title {
+        font-size: 13px;
+        font-weight: 600;
+        color: #ffffff;
+        margin-bottom: 3px;
+      }
+
+      .login-feature-desc {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.58);
+        line-height: 1.5;
+      }
+
+      /* ── RIGHT PANEL ── */
+      .login-right {
+        background: var(--login-right-bg);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 48px 44px;
+        border-radius: 0 18px 18px 0;
+        position: relative;
+      }
+
+      .login-form-inner {
+        width: 100%;
+        max-width: 360px;
+        margin: 0 auto;
+      }
+
+      /* Heading */
+      .login-heading {
+        font-size: 28px;
+        font-weight: 700;
+        color: #ffffff;
+        text-align: center;
+        margin-bottom: 6px;
+        letter-spacing: -0.4px;
+      }
+
+      .login-subheading {
+        font-size: 14px;
+        color: var(--login-text-muted);
+        text-align: center;
+        margin-bottom: 28px;
+        line-height: 1.5;
+      }
+
+      /* Form group */
+      .login-form-group {
+        margin-bottom: 16px;
+      }
+
+      .login-label-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 7px;
+      }
+
+      .login-label {
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--login-text-label);
+      }
+
+      .login-forgot-link {
+        font-size: 13px;
+        color: #60a5fa;
+        text-decoration: none;
+        transition: color 0.2s;
+      }
+
+      .login-forgot-link:hover {
+        color: #93c5fd;
+      }
+
+      /* Input with icon */
+      .login-input-wrap {
+        position: relative;
+      }
+
+      .login-input-icon {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 18px;
+        color: var(--login-text-muted);
+        pointer-events: none;
+        font-variation-settings: "FILL" 0, "wght" 300, "GRAD" 0, "opsz" 20;
+        z-index: 2;
+      }
+
+      .login-input {
+        width: 100% !important;
+        background: var(--login-input-bg) !important;
+        border: 1px solid var(--login-input-border) !important;
+        border-radius: 10px !important;
+        color: var(--login-text) !important;
+        font-size: 14px !important;
+        font-family: "Inter", sans-serif !important;
+        padding: 12px 44px 12px 42px !important;
+        outline: none !important;
+        transition: border-color 0.2s, box-shadow 0.2s !important;
+        box-sizing: border-box !important;
+        position: relative;
+        z-index: 1;
+      }
+
+      .login-input::placeholder {
+        color: var(--login-text-muted) !important;
+        font-size: 13px !important;
+      }
+
+      .login-input:focus {
+        border-color: var(--login-input-focus) !important;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18) !important;
+      }
+
+      /* Fix Chrome/Edge autofill background & text color override */
+      .login-input:-webkit-autofill,
+      .login-input:-webkit-autofill:hover,
+      .login-input:-webkit-autofill:focus,
+      .login-input:-webkit-autofill:active {
+        -webkit-box-shadow: 0 0 0 1000px var(--login-input-bg) inset !important;
+        -webkit-text-fill-color: var(--login-text) !important;
+        caret-color: var(--login-text) !important;
+        transition: background-color 5000s ease-in-out 0s;
+      }
+
+      .login-input-toggle {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        padding: 2px;
+        cursor: pointer;
+        color: var(--login-text-muted);
+        display: flex;
+        align-items: center;
+        transition: color 0.2s;
+        z-index: 2;
+      }
+
+      .login-input-toggle:hover {
+        color: var(--login-text);
+      }
+
+      .login-input-toggle .material-symbols-outlined {
+        font-size: 19px;
+      }
+
+      /* Field error */
+      .login-field-error {
+        font-size: 12px;
+        color: #f87171;
+        margin-top: 4px;
+        min-height: 16px;
+        display: block;
+      }
+
+      /* Remember row */
+      .login-remember-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 20px;
+        margin-top: 2px;
+      }
+
+      .login-checkbox {
+        width: 16px;
+        height: 16px;
+        border-radius: 4px;
+        border: 1.5px solid var(--login-input-border);
+        background: var(--login-input-bg);
+        accent-color: var(--login-primary);
+        cursor: pointer;
+        flex-shrink: 0;
+      }
+
+      .login-remember-label {
+        font-size: 13px;
+        color: var(--login-text-muted);
+        cursor: pointer;
+        user-select: none;
+      }
+
+      /* Submit button */
+      .login-btn-submit {
+        width: 100%;
+        background: var(--login-primary);
+        color: #ffffff;
+        border: none;
+        border-radius: 12px;
+        font-size: 15px;
+        font-weight: 600;
+        font-family: "Inter", sans-serif;
+        padding: 13px 20px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+        box-shadow: 0 4px 16px rgba(37, 99, 235, 0.35);
+        letter-spacing: 0.1px;
+        margin-bottom: 20px;
+      }
+
+      .login-btn-submit:hover {
+        background: var(--login-primary-hover);
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px rgba(37, 99, 235, 0.45);
+      }
+
+      .login-btn-submit:active {
+        transform: scale(0.98);
+        box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+      }
+
+      .login-btn-submit .material-symbols-outlined {
+        font-size: 18px;
+        font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 20;
+      }
+
+      /* Divider */
+      .login-divider {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+
+      .login-divider-line {
+        flex: 1;
+        height: 1px;
+        background: var(--login-divider);
+      }
+
+      .login-divider-text {
+        font-size: 12px;
+        color: var(--login-text-muted);
+        white-space: nowrap;
+      }
+
+      /* Google button */
+      .login-btn-google {
+        width: 100%;
+        background: var(--login-google-bg);
+        border: 1px solid var(--login-google-border);
+        border-radius: 12px;
+        color: var(--login-text);
+        font-size: 14px;
+        font-weight: 500;
+        font-family: "Inter", sans-serif;
+        padding: 12px 20px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        text-decoration: none;
+        transition: background 0.2s, border-color 0.2s, transform 0.15s;
+        margin-bottom: 20px;
+      }
+
+      .login-btn-google:hover {
+        background: rgba(37, 99, 235, 0.08);
+        border-color: rgba(37, 99, 235, 0.35);
+        transform: translateY(-1px);
+      }
+
+      .login-btn-google:active {
+        transform: scale(0.98);
+      }
+
+      .login-btn-google img {
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+      }
+
+      /* Register link */
+      .login-register-row {
+        text-align: center;
+        font-size: 14px;
+        color: var(--login-text-muted);
+      }
+
+      .login-register-row a {
+        color: #60a5fa;
+        font-weight: 500;
+        text-decoration: none;
+        margin-left: 4px;
+        transition: color 0.2s;
+      }
+
+      .login-register-row a:hover {
+        color: #93c5fd;
+      }
+
+      /* ── FOOTER ── */
+      .login-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 28px;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .login-footer-home {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+        color: var(--login-text-muted);
+        text-decoration: none;
+        transition: color 0.2s;
+      }
+
+      .login-footer-home:hover {
+        color: var(--login-text);
+      }
+
+      .login-footer-home .material-symbols-outlined {
+        font-size: 16px;
+      }
+
+      .login-footer-security {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.3);
+      }
+
+      .login-footer-security .material-symbols-outlined {
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.25);
+      }
+
+      /* Mobile logo (right column top, hidden on desktop) */
+      .login-mobile-logo {
+        display: none;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin-bottom: 24px;
+      }
+
+      .login-mobile-logo .logo-icon {
+        font-size: 24px;
+        color: #60a5fa;
+        font-variation-settings: "FILL" 1, "wght" 500, "GRAD" 0, "opsz" 24;
+      }
+
+      .login-mobile-logo .logo-text {
+        font-size: 18px;
+        font-weight: 700;
+        color: #ffffff;
+      }
+
+      /* ── RESPONSIVE ── */
+      @media (max-width: 767px) {
+        .login-card {
+          grid-template-columns: 1fr;
+          border-radius: 16px;
+          min-height: unset;
+          max-width: 100%;
+        }
+
+        .login-left {
+          border-radius: 16px 16px 0 0;
+          min-height: 220px;
+          max-height: 260px;
+        }
+
+        .login-left-content {
+          padding: 16px 18px 18px;
+        }
+
+        .login-left-title {
+          font-size: 18px;
+          margin-bottom: 6px;
+        }
+
+        .login-left-subtitle {
+          font-size: 13px;
+          margin-bottom: 12px;
+        }
+
+        .login-features {
+          grid-template-columns: 1fr 1fr;
+          gap: 8px;
+        }
+
+        .login-feature-card {
+          padding: 8px 10px;
+        }
+
+        .login-feature-desc {
+          display: none;
+        }
+
+        .login-right {
+          border-radius: 0 0 16px 16px;
+          padding: 28px 20px 24px;
+        }
+
+        .login-mobile-logo {
+          display: flex;
+        }
+
+        .login-btn-submit,
+        .login-btn-google {
+          font-size: 15px;
+        }
+
+        .login-footer {
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+          padding: 12px 16px;
+        }
+      }
+
+      @media (min-width: 768px) and (max-width: 1023px) {
+        .login-card {
+          grid-template-columns: 45% 55%;
+          max-width: 820px;
+        }
+
+        .login-right {
+          padding: 40px 36px;
+        }
+
+        .login-left-title {
+          font-size: 22px;
+        }
+      }
     </style>
   </head>
-  <body
-    class="bg-background text-on-background body-md min-h-screen flex flex-col"
-  >
+  <body class="login-page">
     {% include '_toasts.html' %}
-    <main class="flex-grow flex items-center justify-center p-md lg:p-margin">
-      <div
-        class="max-w-[1280px] w-full mx-auto grid grid-cols-1 lg:grid-cols-2 gap-md bg-surface-container-lowest rounded-xl border border-slate-100 shadow-sm overflow-hidden min-h-[700px]"
-      >
-        <section
-          class="hidden lg:flex flex-col relative rounded-l overflow-hidden bg-surface-container"
-        >
-          <div class="absolute inset-0 z-0">
-            <img
-              alt="Beagle"
-              class="w-full h-full object-cover"
-              data-alt="Beagle close-up portrait"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5fynjldTqzOeKUmgn9EN68dTw34EIKyLxt0PGNI2uSCmNkUn8JDlAhjZyoP048x6EDyYnM_0Jxu33O7MS_gI_RF6IImVuYwRWgTjCL156CU6J85f0aL6HuMR8e2k_qBPQYK2szZ3gkqEFDv4n9urLGwtng38kqg1O51qQAH3yeu1YVZo92hbsFb-l9bFV08j0kq8N1c0NcNnhYmi1ojx6TC9Qd_d7t_P4EjdDxm3XYyi2dZA5QemVz0eRpMuvnPX21_SxBiYGfBM"
-            />
-            <div
-              class="absolute inset-0 bg-gradient-to-t from-on-background/80 via-on-background/40 to-transparent"
-            ></div>
-          </div>
-          <div
-            class="relative z-10 p-lg mt-auto flex flex-col gap-md text-on-primary"
-          >
-            <div>
-              <div class="flex items-center gap-xs mb-md">
-                <span
-                  class="material-symbols-outlined text-primary-fixed"
-                  data-icon="pets"
-                  data-weight="fill"
-                  style="font-variation-settings: &quot;FILL&quot; 1"
-                  >pets</span
-                >
-                <span class="text-sm md:text-lg font-semibold text-on-primary"
-                  >{{ get_config('site_name', 'PetAI') }}</span
-                >
+    <main style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px 16px; min-height: calc(100vh - 56px);">
+      <div class="login-card">
+
+        <!-- ═══════════════════════════════ LEFT PANEL ═══════════════════════════════ -->
+        <section class="login-left">
+          <!-- Background dog image -->
+          <img
+            class="login-left-img"
+            src="{{ url_for('static', filename='images/login_dog_hero.png') }}"
+            alt="PetAI - Dog breed identification"
+          />
+          <!-- Dark overlay -->
+          <div class="login-left-overlay"></div>
+
+          <!-- Logo top-left -->
+          <a class="login-left-logo" href="{{ url_for('home.index') }}" aria-label="{{ get_config('site_name', 'PetAI') }}">
+            <span class="material-symbols-outlined logo-icon">pets</span>
+            <span class="logo-text">{{ get_config('site_name', 'PetAI') }}</span>
+          </a>
+
+          <!-- Bottom content -->
+          <div class="login-left-content">
+            <h1 class="login-left-title">
+              <span data-i18n="loginLeftTitle">Nhận diện giống chó nhanh chóng và </span><span class="accent" data-i18n="loginLeftTitleAccent">chính xác</span>
+            </h1>
+            <p class="login-left-subtitle" data-i18n="loginLeftSubtitle">
+              Trợ lý AI thông minh giúp bạn nhận diện và hiểu hơn về người bạn bốn chân của mình.
+            </p>
+            <div class="login-features">
+              <div class="login-feature-card">
+                <div class="material-symbols-outlined login-feature-icon">verified_user</div>
+                <div class="login-feature-title" data-i18n="loginFeature1Title">Độ tin cậy rõ ràng</div>
+                <div class="login-feature-desc" data-i18n="loginFeature1Desc">Kết quả AI kèm theo phần trăm độ tin cậy minh bạch.</div>
               </div>
-              <h1 class="headline-lg mb-sm" data-i18n="loginLeftTitle">
-                <span data-i18n="loginLeftTitle"
-                  >Nhận diện giống chó nhanh và chính xác</span
-                >
-              </h1>
-              <p
-                class="body-md text-primary-fixed-dim"
-                data-i18n="loginLeftSubtitle"
-              >
-                <span data-i18n="loginLeftSubtitle"
-                  >Trợ lý thông minh giúp bạn nhận diện và hiểu hơn về thú cưng
-                  của mình.</span
-                >
-              </p>
-            </div>
-            <div class="space-y-sm">
-              <div
-                class="flex items-center gap-sm bg-on-background/30 backdrop-blur-sm p-sm rounded-lg border border-on-primary/10"
-              >
-                <span
-                  class="material-symbols-outlined text-secondary-fixed"
-                  data-icon="analytics"
-                  data-weight="fill"
-                  style="font-variation-settings: &quot;FILL&quot; 1"
-                  >analytics</span
-                >
-                <div>
-                  <h3
-                    class="label-sm text-on-primary"
-                    data-i18n="loginFeature1Title"
-                  >
-                    <span data-i18n="loginFeature1Title"
-                      >Điểm tin cậy rõ ràng</span
-                    >
-                  </h3>
-                  <p
-                    class="body-md text-primary-fixed-dim"
-                    data-i18n="loginFeature1Desc"
-                  >
-                    <span data-i18n="loginFeature1Desc"
-                      >Phân tích chi tiết từ AI</span
-                    >
-                  </p>
-                </div>
-              </div>
-              <div
-                class="flex items-center gap-sm bg-on-background/30 backdrop-blur-sm p-sm rounded-lg border border-on-primary/10"
-              >
-                <span
-                  class="material-symbols-outlined text-secondary-fixed"
-                  data-icon="history"
-                  data-weight="fill"
-                  style="font-variation-settings: &quot;FILL&quot; 1"
-                  >history</span
-                >
-                <div>
-                  <h3
-                    class="label-sm text-on-primary"
-                    data-i18n="loginFeature2Title"
-                  >
-                    <span data-i18n="loginFeature2Title">Lịch sử quét</span>
-                  </h3>
-                  <p
-                    class="body-md text-primary-fixed-dim"
-                    data-i18n="loginFeature2Desc"
-                  >
-                    <span data-i18n="loginFeature2Desc"
-                      >Lưu lại các kết quả nhận diện</span
-                    >
-                  </p>
-                </div>
+              <div class="login-feature-card">
+                <div class="material-symbols-outlined login-feature-icon">history</div>
+                <div class="login-feature-title" data-i18n="loginFeature2Title">Lịch sử nhận diện</div>
+                <div class="login-feature-desc" data-i18n="loginFeature2Desc">Lưu lại và quản lý tất cả kết quả nhận diện của bạn dễ dàng.</div>
               </div>
             </div>
           </div>
         </section>
-        <section class="flex flex-col justify-center p-md lg:p-xl relative">
-          <div class="lg:hidden flex items-center justify-center gap-xs mb-lg">
-            <img
-              alt="PetAI New Logo"
-              class="h-8 w-auto md:h-10"
-              src="{{ url_for('static', filename='images/logo.png') }}"
-            />
-            <span class="text-sm md:text-lg font-semibold text-primary"
-              >{{ get_config('site_name', 'PetAI') }}</span
-            >
+
+        <!-- ═══════════════════════════════ RIGHT PANEL ═══════════════════════════════ -->
+        <section class="login-right">
+          <!-- Mobile logo (only visible on small screens) -->
+          <div class="login-mobile-logo">
+            <span class="material-symbols-outlined logo-icon">pets</span>
+            <span class="logo-text">{{ get_config('site_name', 'PetAI') }}</span>
           </div>
-          <div class="w-full max-w-[400px] mx-auto flex flex-col gap-md">
-            <div class="text-center mb-md">
-              <h2 class="headline-lg text-on-surface" data-i18n="loginTitle">
-                <span data-i18n="loginTitle">Đăng nhập tài khoản</span>
-              </h2>
-              <p
-                class="body-md text-on-surface-variant mt-xs"
-                data-i18n="loginSubtitle"
-              >
-                <span data-i18n="loginSubtitle"
-                  >Chào mừng bạn quay lại! Vui lòng nhập thông tin.</span
-                >
-              </p>
-            </div>
+
+          <div class="login-form-inner">
+            <!-- Heading -->
+            <h2 class="login-heading" data-i18n="loginTitle">Đăng nhập</h2>
+            <p class="login-subheading" data-i18n="loginSubtitle">Chào mừng bạn quay lại! Vui lòng đăng nhập để tiếp tục.</p>
+
             <form
               action="{{ url_for('login.login') }}"
-              class="flex flex-col gap-md"
               id="loginForm"
               method="post"
               novalidate
             >
-              <input
-                type="hidden"
-                name="csrf_token"
-                value="{{ csrf_token() }}"
-              />
-              <div class="flex flex-col gap-xs">
-                <label
-                  class="label-sm text-on-surface"
-                  for="username"
-                  data-i18n="usernameOrEmail"
-                  ><span data-i18n="usernameOrEmail"
-                    >Tên đăng nhập hoặc email</span
-                  ></label
-                >
-                <input
-                  class="w-full px-4 py-3 rounded border border-outline-variant bg-surface-container-lowest text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all body-md"
-                  id="username"
-                  name="username"
-                  placeholder="vd: username hoặc email@example.com"
-                  data-i18n-placeholder="usernamePlaceholder"
-                  required
-                  type="text"
-                  autocomplete="username"
-                />
-                <small
-                  class="label-sm text-error mt-xs"
-                  id="usernameError"
-                ></small>
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
+              <!-- Username / Email -->
+              <div class="login-form-group">
+                <label class="login-label" for="username" data-i18n="usernameOrEmail">Tên đăng nhập hoặc Email</label>
+                <div class="login-input-wrap">
+                  <span class="material-symbols-outlined login-input-icon">person</span>
+                  <input
+                    class="login-input"
+                    id="username"
+                    name="username"
+                    type="text"
+                    placeholder="Nhập tên đăng nhập hoặc email"
+                    data-i18n-placeholder="usernamePlaceholder"
+                    required
+                    autocomplete="username"
+                  />
+                </div>
+                <small class="login-field-error" id="usernameError"></small>
               </div>
-              <div class="flex flex-col gap-xs">
-                <div class="flex justify-between items-center">
-                  <label
-                    class="label-sm text-on-surface"
-                    for="password"
-                    data-i18n="passwordLabel"
-                    ><span data-i18n="passwordLabel">Mật khẩu</span></label
-                  >
+
+              <!-- Password -->
+              <div class="login-form-group">
+                <div class="login-label-row">
+                  <label class="login-label" for="password" data-i18n="passwordLabel">Mật khẩu</label>
                   <a
-                    class="label-sm text-primary hover:text-primary-container transition-colors"
+                    class="login-forgot-link"
                     href="{{ url_for('account.forgot') }}"
                     data-i18n="forgotPassword"
-                    ><span data-i18n="forgotPassword">Quên mật khẩu?</span></a
-                  >
+                  >Quên mật khẩu?</a>
                 </div>
-                <div class="relative">
+                <div class="login-input-wrap">
+                  <span class="material-symbols-outlined login-input-icon">lock</span>
                   <input
-                    class="w-full px-4 py-3 pr-10 rounded border border-outline-variant bg-surface-container-lowest text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all body-md"
+                    class="login-input"
                     id="password"
                     name="password"
+                    type="password"
                     placeholder="Nhập mật khẩu"
                     data-i18n-placeholder="passwordPlaceholder"
                     required
-                    type="password"
                     autocomplete="current-password"
+                    style="padding-right: 44px;"
                   />
                   <button
-                    class="absolute right-3 top-1/2 -translate-y-1/2 text-outline hover:text-on-surface"
+                    class="login-input-toggle"
                     type="button"
                     id="togglePassword"
+                    aria-label="Toggle password visibility"
                   >
-                    <span
-                      class="material-symbols-outlined"
-                      id="eyeIcon"
-                      data-icon="visibility"
-                      >visibility</span
-                    >
+                    <span class="material-symbols-outlined" id="eyeIcon">visibility</span>
                   </button>
                 </div>
-                <small
-                  class="label-sm text-error mt-xs"
-                  id="passwordError"
-                ></small>
+                <small class="login-field-error" id="passwordError"></small>
               </div>
-              <div class="flex items-center">
+
+              <!-- Remember me -->
+              <div class="login-remember-row">
                 <input
-                  class="h-4 w-4 rounded border-outline-variant text-primary focus:ring-primary bg-surface-container-lowest"
+                  class="login-checkbox"
                   id="remember"
                   name="remember"
                   type="checkbox"
                 />
-                <label
-                  class="ml-2 body-md text-on-surface-variant"
-                  for="remember"
-                  data-i18n="rememberLogin"
-                  ><span data-i18n="rememberLogin"
-                    >Ghi nhớ đăng nhập</span
-                  ></label
-                >
+                <label class="login-remember-label" for="remember" data-i18n="rememberLogin">Ghi nhớ đăng nhập</label>
               </div>
-              <button
-                class="w-full py-3 px-4 bg-primary text-on-primary label-sm rounded hover:bg-primary-container hover:-translate-y-[1px] transition-all shadow-sm active:scale-95 flex items-center justify-center gap-xs"
-                type="submit"
-              >
-                <span data-i18n="login">Đăng nhập</span
-                ><span
-                  class="material-symbols-outlined text-[18px]"
-                  data-icon="arrow_forward"
-                  >arrow_forward</span
-                >
+
+              <!-- Submit -->
+              <button class="login-btn-submit" type="submit" id="loginSubmitBtn">
+                <span data-i18n="login">Đăng nhập</span>
+                <span class="material-symbols-outlined">arrow_forward</span>
               </button>
             </form>
-            <div class="relative flex items-center py-sm">
-              <div class="flex-grow border-t border-outline-variant"></div>
-              <span
-                class="flex-shrink-0 mx-4 text-on-surface-variant body-md"
-                data-i18n="orContinueWith"
-                >hoặc tiếp tục với</span
-              >
-              <div class="flex-grow border-t border-outline-variant"></div>
+
+            <!-- Divider -->
+            <div class="login-divider">
+              <div class="login-divider-line"></div>
+              <span class="login-divider-text" data-i18n="orContinueWith">hoặc tiếp tục với</span>
+              <div class="login-divider-line"></div>
             </div>
+
+            <!-- Google login -->
             <a
-              class="w-full py-3 px-4 bg-surface-container-lowest border border-outline-variant text-on-surface label-sm rounded hover:bg-surface-container hover:-translate-y-[1px] transition-all shadow-sm flex items-center justify-center gap-sm"
+              class="login-btn-google"
               href="{{ url_for('login_google') }}"
             >
               <img
-                alt="Google Logo"
-                class="w-5 h-5"
-                data-alt="Google G Logo"
                 src="https://www.gstatic.com/images/branding/googleg/1x/googleg_standard_color_128dp.png"
-              /><span data-i18n="loginWithGoogle"
-                >Đăng nhập bằng Google</span
-              ></a
-            >
-            <p class="text-center body-md text-on-surface-variant mt-sm">
-              <span data-i18n="noAccount">Chưa có tài khoản?</span
-              ><a
-                class="label-sm text-primary hover:text-primary-container transition-colors"
+                alt="Google"
+              />
+              <span data-i18n="loginWithGoogle">Đăng nhập bằng Google</span>
+            </a>
+
+            <!-- Register link -->
+            <p class="login-register-row">
+              <span data-i18n="noAccount">Chưa có tài khoản?</span><a
                 href="{{ url_for('register.register') }}"
                 data-i18n="registerNow"
-                ><span data-i18n="registerNow">Đăng ký ngay</span></a
-              >
+              > Đăng ký ngay</a>
             </p>
           </div>
         </section>
-      </div>
+
+      </div><!-- /.login-card -->
     </main>
-<script>
+
+    <!-- ═══════════════════════════════ FOOTER ═══════════════════════════════ -->
+    <footer class="login-footer">
+      <a class="login-footer-home" href="{{ url_for('home.index') }}">
+        <span class="material-symbols-outlined">home</span>
+        <span data-i18n="backToHome">Quay về trang chủ</span>
+      </a>
+      <div class="login-footer-security">
+        <span class="material-symbols-outlined">shield</span>
+        <span data-i18n="loginSecurityNote">PetAI cam kết bảo mật thông tin của bạn.</span>
+      </div>
+    </footer>
+
+    <script>
       (function () {
         const messages = JSON.parse(
           `{{ {'usernameShort': 'Tên đăng nhập/email cần ít nhất 3 ký tự.', 'passwordShort': 'Mật khẩu cần ít nhất 6 ký tự.'} | tojson }}`,

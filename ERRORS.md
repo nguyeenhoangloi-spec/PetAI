@@ -2,6 +2,23 @@
 
 ---
 
+## [2026-06-24 15:23] - Lỗi hiển thị Input Đăng nhập bị đè màu nền và lệch Icon khi trình duyệt Autofill
+
+- **Type**: Process
+- **Severity**: Medium
+- **File**: `templates/login.html:483-539`
+- **Agent**: @frontend-specialist
+- **Root Cause**: Khi trình duyệt tự động điền (Autofill) tài khoản và mật khẩu đã lưu, nó áp dụng các style mặc định của user-agent (màu nền trắng/xanh nhạt và màu chữ đen) ghi đè lên các style của giao diện tối. Đồng thời, do độ ưu tiên CSS chưa đủ cao, padding-left bị bỏ qua khiến chữ nhập vào đè lên các absolute icons.
+- **Error Message**: 
+  ```text
+  [Lỗi hiển thị giao diện: ô input đổi thành màu nền sáng, chữ bị đè lên icon người dùng và ổ khóa]
+  ```
+- **Fix Applied**: Thêm các thuộc tính `!important` vào padding, background, border của `.login-input`. Áp dụng bộ lọc `:-webkit-autofill` để ghi đè shadow màu nền tối và giữ màu chữ sáng khi autofill. Đặt `z-index` phân lớp rõ ràng cho input (1) và icon/toggle button (2).
+- **Prevention**: Luôn sử dụng kỹ thuật cản autofill background của Chrome/Edge và sử dụng `!important` cho padding của các input có chứa icon tuyệt đối (absolute icon).
+- **Status**: Fixed
+
+---
+
 ## [2026-06-20 02:05] - Lỗi logic kích hoạt đổi mật khẩu do trình duyệt tự động điền (Auto-fill)
 
 - **Type**: Logic
