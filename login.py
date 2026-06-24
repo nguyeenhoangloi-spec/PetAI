@@ -31,9 +31,25 @@ def _is_safe_next_url(target: str | None) -> bool:
 
 @login_bp.route("/", methods=["GET", "POST"])
 def login():
+    # Kiểm tra xem chế độ bảo trì có bật không
+    maintenance_active = False
+    try:
+        from models import SystemConfig
+        conn = get_connection()
+        try:
+            val = SystemConfig.get(conn, "maintenance_mode", "0")
+            maintenance_active = (val == "1")
+        finally:
+            conn.close()
+    except Exception:
+        pass
+
     # Nếu đã đăng nhập, chuyển hướng về dashboard
     if session.get("user_id"):
-        return redirect(url_for("dashboard.dashboard"))
+        if maintenance_active and session.get("role") != "admin":
+            session.clear()
+        else:
+            return redirect(url_for("dashboard.dashboard"))
     
     if request.method == "POST":
         username_or_email = request.form.get("username", "").strip()
@@ -86,6 +102,17 @@ def login():
 
         if not check_password_hash(user["password_hash"], password):
             flash("Mật khẩu không đúng.", "error")
+            return render_template("login.html")
+
+        # Chặn đăng nhập nếu hệ thống đang bảo trì và không phải admin
+        if maintenance_active and user.get("role", "user") != "admin":
+            lang = request.cookies.get("siteLanguage", "vi")
+            if lang not in {"vi", "en"}:
+                lang = "vi"
+            if lang == "en":
+                flash("The system is undergoing maintenance. Only administrator accounts can log in.", "error")
+            else:
+                flash("Hệ thống đang bảo trì. Chỉ tài khoản quản trị viên mới có thể đăng nhập.", "error")
             return render_template("login.html")
 
         # Chặn đăng nhập nếu tài khoản bị khóa

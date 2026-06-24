@@ -324,6 +324,29 @@ def authorize_google():
         flash("Đăng nhập Google thất bại. Vui lòng thử lại.", "error")
         return redirect(url_for("login.login"))
 
+    # Kiểm tra xem chế độ bảo trì có bật không và user không phải admin
+    maintenance_active = False
+    try:
+        from models import SystemConfig
+        conn = get_connection()
+        try:
+            val = SystemConfig.get(conn, "maintenance_mode", "0")
+            maintenance_active = (val == "1")
+        finally:
+            conn.close()
+    except Exception:
+        pass
+
+    if maintenance_active and user.get("role", "user") != "admin":
+        lang = request.cookies.get("siteLanguage", "vi")
+        if lang not in {"vi", "en"}:
+            lang = "vi"
+        if lang == "en":
+            flash("The system is undergoing maintenance. Only administrator accounts can log in.", "error")
+        else:
+            flash("Hệ thống đang bảo trì. Chỉ tài khoản quản trị viên mới có thể đăng nhập.", "error")
+        return redirect(url_for("login.login"))
+
     _set_login_session(user)
     flash(f"Xin chào, {session.get('fullname') or 'bạn'}!", "success")
 

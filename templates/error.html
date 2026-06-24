@@ -237,6 +237,15 @@
         <div
           class="w-full flex flex-col sm:flex-row items-center justify-center gap-sm relative z-10"
         >
+          {% if code == 503 and session.get('user_id') %}
+          <a
+            class="w-full sm:w-auto bg-primary-container text-on-primary-container hover:bg-primary transition-colors px-md py-sm rounded-lg label-sm flex items-center justify-center gap-xs shadow-sm hover:-translate-y-[1px] duration-150"
+            href="{{ url_for('logout.logout') }}"
+          >
+            <span class="material-symbols-outlined text-[18px]">logout</span>
+            <span data-i18n="logout">Đăng xuất</span></a
+          >
+          {% else %}
           <a
             class="w-full sm:w-auto bg-primary-container text-on-primary-container hover:bg-primary transition-colors px-md py-sm rounded-lg label-sm flex items-center justify-center gap-xs shadow-sm hover:-translate-y-[1px] duration-150"
             href="{{ url_for('home.index') }}"
@@ -244,6 +253,7 @@
             <span class="material-symbols-outlined text-[18px]">home</span
             ><span data-i18n="backToHome">Quay lại trang chủ</span></a
           >
+          {% endif %}
           <a
             class="w-full sm:w-auto border border-outline text-on-surface hover:bg-surface-container-highest transition-colors px-md py-sm rounded-lg label-sm flex items-center justify-center gap-xs duration-150"
             href="{{ url_for('health.health') }}"
