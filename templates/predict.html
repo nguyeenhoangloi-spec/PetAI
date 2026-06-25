@@ -1,4 +1,4 @@
-﻿<!-- html-validate-disable no-dup-class -->
+<!-- html-validate-disable no-dup-class -->
 <!-- htmlhint spec-char-escape:false -->
 <!DOCTYPE html>
 <html class="{{ 'dark' if ui_theme == 'dark' else 'light' }}{{ ' i18n-loading' if ui_language == 'en' else '' }}"
@@ -1162,7 +1162,7 @@
 
             <!-- Card: Actions and Recent History -->
             <div
-              class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-5 border border-outline-variant/30 dark:border-slate-800 shadow-sm relative group/slider flex flex-col"
+              class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-5 border border-outline-variant/30 dark:border-slate-800 shadow-sm relative group/slider flex flex-col flex-grow"
               data-purpose="actions-and-recent-history">
               
               <!-- Section: Actions -->
@@ -1171,53 +1171,90 @@
                 <h4 class="font-bold text-on-surface dark:text-slate-100 text-sm md:text-base" data-i18n="actionTitle">
                   Hành động</h4>
               </div>
-              <div class="grid grid-cols-4 gap-2 mb-5">
+              <div class="flex flex-col gap-3">
                 <!-- View History / Save -->
                 <a href="{{ url_for('history.history') }}"
-                  class="flex flex-col items-center justify-center p-2 bg-slate-50 hover:bg-slate-100/80 border border-slate-200/80 dark:bg-[#0d1527] dark:hover:bg-[#131f38] dark:border-blue-500/20 dark:hover:border-blue-500/40 rounded-xl text-center transition-all hover:scale-[1.03] active:scale-[0.97] group">
-                  <span class="material-symbols-outlined text-blue-600 dark:text-blue-400 text-[24px]">bookmark_added</span>
-                  <span class="text-[9px] font-bold text-slate-800 dark:text-slate-200 mt-1 leading-tight text-center"
-                    data-i18n="viewHistoryBtn">Lưu kết quả</span>
+                  class="flex items-center justify-between p-3.5 bg-slate-50 hover:bg-slate-100/80 border border-slate-200/80 dark:bg-[#0d1527]/60 dark:hover:bg-[#131f38] dark:border-blue-500/10 dark:hover:border-blue-500/30 rounded-xl transition-all hover:scale-[1.01] active:scale-[0.99] group">
+                  <div class="flex items-center gap-3.5 min-w-0">
+                    <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
+                      <span class="material-symbols-outlined text-[22px]">bookmark_added</span>
+                    </div>
+                    <div class="text-left min-w-0">
+                      <p class="text-[13px] font-bold text-slate-800 dark:text-slate-200 leading-normal" data-i18n="saveResultTitle">Lưu lịch sử</p>
+                      <p class="text-[10px] text-slate-400 dark:text-slate-550 truncate" data-i18n="saveResultDesc">Lưu trữ kết quả để xem lại sau này</p>
+                    </div>
+                  </div>
+                  <span class="material-symbols-outlined text-[18px] text-slate-400 dark:text-slate-500 group-hover:translate-x-0.5 transition-transform shrink-0">chevron_right</span>
                 </a>
+
                 <!-- Download Report -->
                 <button type="button" onclick="handleDownloadReport()"
-                  class="flex flex-col items-center justify-center p-2 bg-slate-50 hover:bg-slate-100/80 border border-slate-200/80 dark:bg-[#0d1527] dark:hover:bg-[#131f38] dark:border-green-500/20 dark:hover:border-green-500/40 rounded-xl text-center transition-all hover:scale-[1.03] active:scale-[0.97] cursor-pointer group">
-                  <span class="material-symbols-outlined text-green-600 dark:text-green-400 text-[24px]">picture_as_pdf</span>
-                  <span class="text-[9px] font-bold text-slate-800 dark:text-slate-200 mt-1 leading-tight text-center"
-                    data-i18n="downloadReport">Tải báo cáo</span>
+                  class="flex items-center justify-between p-3.5 bg-slate-50 hover:bg-slate-100/80 border border-slate-200/80 dark:bg-[#0d1527]/60 dark:hover:bg-[#131f38] dark:border-green-500/10 dark:hover:border-green-500/30 rounded-xl transition-all hover:scale-[1.01] active:scale-[0.99] cursor-pointer group w-full">
+                  <div class="flex items-center gap-3.5 min-w-0">
+                    <div class="w-10 h-10 rounded-xl bg-green-500/10 text-green-600 dark:text-green-400 flex items-center justify-center shrink-0">
+                      <span class="material-symbols-outlined text-[22px]">picture_as_pdf</span>
+                    </div>
+                    <div class="text-left min-w-0">
+                      <p class="text-[13px] font-bold text-slate-800 dark:text-slate-200 leading-normal" data-i18n="downloadReportTitle">Tải báo cáo PDF</p>
+                      <p class="text-[10px] text-slate-400 dark:text-slate-550 truncate" data-i18n="downloadReportDesc">Xuất tệp báo cáo chi tiết của AI</p>
+                    </div>
+                  </div>
+                  <span class="material-symbols-outlined text-[18px] text-slate-400 dark:text-slate-500 group-hover:translate-x-0.5 transition-transform shrink-0">chevron_right</span>
                 </button>
+
                 <!-- Share Result -->
                 <button type="button" onclick="handleShareResult()"
-                  class="flex flex-col items-center justify-center p-2 bg-slate-50 hover:bg-slate-100/80 border border-slate-200/80 dark:bg-[#0d1527] dark:hover:bg-[#131f38] dark:border-purple-500/20 dark:hover:border-purple-500/40 rounded-xl text-center transition-all hover:scale-[1.03] active:scale-[0.97] cursor-pointer group">
-                  <span class="material-symbols-outlined text-purple-600 dark:text-purple-400 text-[24px]">share</span>
-                  <span class="text-[9px] font-bold text-slate-800 dark:text-slate-200 mt-1 leading-tight text-center"
-                    data-i18n="shareResult">Chia sẻ kết quả</span>
+                  class="flex items-center justify-between p-3.5 bg-slate-50 hover:bg-slate-100/80 border border-slate-200/80 dark:bg-[#0d1527]/60 dark:hover:bg-[#131f38] dark:border-purple-500/10 dark:hover:border-purple-500/30 rounded-xl transition-all hover:scale-[1.01] active:scale-[0.99] cursor-pointer group w-full">
+                  <div class="flex items-center gap-3.5 min-w-0">
+                    <div class="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center shrink-0">
+                      <span class="material-symbols-outlined text-[22px]">share</span>
+                    </div>
+                    <div class="text-left min-w-0">
+                      <p class="text-[13px] font-bold text-slate-800 dark:text-slate-200 leading-normal" data-i18n="shareResultTitle">Chia sẻ kết quả</p>
+                      <p class="text-[10px] text-slate-400 dark:text-slate-550 truncate" data-i18n="shareResultDesc">Chia sẻ kết quả này với bạn bè</p>
+                    </div>
+                  </div>
+                  <span class="material-symbols-outlined text-[18px] text-slate-400 dark:text-slate-500 group-hover:translate-x-0.5 transition-transform shrink-0">chevron_right</span>
                 </button>
+
                 <!-- Analyze another image -->
                 <a href="{{ url_for('predict.upload_page') }}"
-                  class="flex flex-col items-center justify-center p-2 bg-slate-50 hover:bg-slate-100/80 border border-slate-200/80 dark:bg-[#0d1527] dark:hover:bg-[#131f38] dark:border-amber-500/20 dark:hover:border-amber-500/40 rounded-xl text-center transition-all hover:scale-[1.03] active:scale-[0.97] group">
-                  <span class="material-symbols-outlined text-amber-600 dark:text-amber-400 text-[24px]">photo_camera</span>
-                  <span class="text-[9px] font-bold text-slate-800 dark:text-slate-200 mt-1 leading-tight text-center"
-                    data-i18n="btnChangeImage">Phân tích ảnh khác</span>
+                  class="flex items-center justify-between p-3.5 bg-slate-50 hover:bg-slate-100/80 border border-slate-200/80 dark:bg-[#0d1527]/60 dark:hover:bg-[#131f38] dark:border-amber-500/10 dark:hover:border-amber-500/30 rounded-xl transition-all hover:scale-[1.01] active:scale-[0.99] group">
+                  <div class="flex items-center gap-3.5 min-w-0">
+                    <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
+                      <span class="material-symbols-outlined text-[22px]">photo_camera</span>
+                    </div>
+                    <div class="text-left min-w-0">
+                      <p class="text-[13px] font-bold text-slate-800 dark:text-slate-200 leading-normal" data-i18n="analyzeAnotherTitle">Phân tích ảnh khác</p>
+                      <p class="text-[10px] text-slate-400 dark:text-slate-550 truncate" data-i18n="analyzeAnotherDesc">Chọn ảnh khác để tiếp tục phân tích</p>
+                    </div>
+                  </div>
+                  <span class="material-symbols-outlined text-[18px] text-slate-400 dark:text-slate-500 group-hover:translate-x-0.5 transition-transform shrink-0">chevron_right</span>
                 </a>
               </div>
 
               <!-- Divider line -->
-              <div class="mt-6 mb-4 border-t border-outline-variant/10 dark:border-slate-850"></div>
+              <div class="mt-auto pt-6 mb-4 border-t border-outline-variant/10 dark:border-slate-850"></div>
+
+              <!-- Header of slider with small neat navigation buttons -->
+              <div class="flex items-center justify-between mb-3.5">
+                <span class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider" data-i18n="recentHistory">Lịch sử gần đây</span>
+                <div class="flex items-center gap-1.5">
+                  <button type="button" onclick="scrollRecentHistory('left')"
+                    class="w-7 h-7 rounded-lg bg-slate-50 hover:bg-slate-100/80 text-slate-700 border border-slate-200/60 dark:bg-slate-800 dark:hover:bg-slate-750 dark:text-slate-350 dark:border-slate-700/60 flex items-center justify-center transition-all focus:outline-none cursor-pointer"
+                    aria-label="Scroll left">
+                    <span class="material-symbols-outlined text-[16px]">chevron_left</span>
+                  </button>
+                  <button type="button" onclick="scrollRecentHistory('right')"
+                    class="w-7 h-7 rounded-lg bg-slate-50 hover:bg-slate-100/80 text-slate-700 border border-slate-200/60 dark:bg-slate-800 dark:hover:bg-slate-750 dark:text-slate-350 dark:border-slate-700/60 flex items-center justify-center transition-all focus:outline-none cursor-pointer"
+                    aria-label="Scroll right">
+                    <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+                  </button>
+                </div>
+              </div>
 
               <!-- Slider wrapper to center navigation arrows vertically relative to the image thumbnails -->
               <div class="relative">
-                <!-- Navigation buttons (visible on hover) -->
-                <button type="button" onclick="scrollRecentHistory('left')"
-                  class="absolute left-2 top-[32px] w-8 h-8 rounded-full bg-slate-950/75 backdrop-blur text-white border border-slate-800/80 flex items-center justify-center opacity-0 group-hover/slider:opacity-100 transition-opacity duration-200 shadow-lg z-20 hover:bg-slate-900 cursor-pointer"
-                  aria-label="Scroll left">
-                  <span class="material-symbols-outlined text-[18px]">chevron_left</span>
-                </button>
-                <button type="button" onclick="scrollRecentHistory('right')"
-                  class="absolute right-2 top-[32px] w-8 h-8 rounded-full bg-slate-950/75 backdrop-blur text-white border border-slate-800/80 flex items-center justify-center opacity-0 group-hover/slider:opacity-100 transition-opacity duration-200 shadow-lg z-20 hover:bg-slate-900 cursor-pointer"
-                  aria-label="Scroll right">
-                  <span class="material-symbols-outlined text-[18px]">chevron_right</span>
-                </button>
 
                 <div id="recent-history-slider"
                   class="flex gap-3 overflow-x-auto pb-2 scrollbar-none snap-x snap-mandatory scroll-smooth">
