@@ -274,6 +274,38 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
+    // 2b. Sidebar Collapsed Icon Clicks (Language and Theme)
+    const langClick = e.target.closest("#sidebarLangClickArea");
+    if (langClick) {
+      e.preventDefault();
+      e.stopPropagation();
+      const isCollapsed = root.classList.contains("sidebar-collapsed");
+      if (isCollapsed) {
+        if (window.PetAI_i18n && typeof window.PetAI_i18n.getCurrentLang === "function" && typeof window.PetAI_i18n.setLanguage === "function") {
+          const curr = window.PetAI_i18n.getCurrentLang();
+          const next = curr === "vi" ? "en" : "vi";
+          window.PetAI_i18n.setLanguage(next);
+        }
+      } else {
+        const trigger = document.getElementById("sidebarLangTrigger");
+        if (trigger) {
+          trigger.click();
+        }
+      }
+      return;
+    }
+
+    const themeClick = e.target.closest("#sidebarThemeClickArea");
+    if (themeClick) {
+      e.preventDefault();
+      e.stopPropagation();
+      const switchBtn = document.querySelector("#sidebarThemeToggle .theme-switch-btn");
+      if (switchBtn) {
+        switchBtn.click();
+      }
+      return;
+    }
+
     // 3. Avatar Dropdown Click Wrapper
     const avatarWrapper = e.target.closest(".avatar-wrapper");
     if (avatarWrapper) {
