@@ -1159,3 +1159,161 @@ def delete_system_asset():
     except Exception as e:
         logger.exception("[ADMIN] Delete asset error")
         return jsonify({"error": f"Lỗi: {str(e)}"}), 500
+
+
+@users_bp.route("/delete-requests")
+def delete_requests_list():
+    if not require_admin():
+        return redirect(url_for("login.login"))
+
+    conn = None
+    delete_users = []
+    total_pending = 0
+    total_deleted = 0
+    try:
+        conn = get_connection()
+        from models import DeleteAccountManager
+        DeleteAccountManager.ensure_columns(conn)
+        
+        with conn.cursor(DictCursor) as cur:
+            cur.execute(
+                """
+                SELECT id, username, fullname, email, account_status, 
+                       delete_requested_at, delete_scheduled_at, delete_reason, 
+                       delete_cancelled_at, deleted_at, is_active
+                FROM users
+                WHERE account_status IN ('pending_delete', 'deleted')
+                ORDER BY delete_requested_at DESC, deleted_at DESC
+                """
+            )
+            delete_users = cur.fetchall() or []
+            
+            total_pending = sum(1 for u in delete_users if u.get("account_status") == "pending_delete")
+            total_deleted = sum(1 for u in delete_users if u.get("account_status") == "deleted")
+    except Exception:
+        logger.exception("[ADMIN] Query delete requests error")
+        flash("Không thể tải danh sách yêu cầu xóa.", "error")
+    finally:
+        if conn:
+            conn.close()
+
+    # Format dates
+    for u in delete_users:
+        requested = u.get("delete_requested_at")
+        scheduled = u.get("delete_scheduled_at")
+        deleted = u.get("deleted_at")
+        u["requested_str"] = requested.strftime('%d/%m/%Y %H:%M') if requested else ""
+        u["scheduled_str"] = scheduled.strftime('%d/%m/%Y %H:%M') if scheduled else ""
+        u["deleted_str"] = deleted.strftime('%d/%m/%Y %H:%M') if deleted else ""
+
+    return render_template(
+        "delete_requests.html",
+        delete_users=delete_users,
+        total_pending=total_pending,
+        total_deleted=total_deleted,
+        active_page="delete_requests",
+    )
+
+
+@users_bp.route("/delete-requests/restore/<int:user_id>", methods=["POST"])
+def delete_request_restore(user_id):
+    if not require_admin():
+        return jsonify({"success": False, "message": "Unauthorized"}), 403
+
+    conn = None
+    try:
+        conn = get_connection()
+        from models import DeleteAccountManager
+        
+        # Check user info first
+        with conn.cursor() as cur:
+            cur.execute("SELECT email, fullname, username, account_status FROM users WHERE id = %s", (user_id,))
+            row = cur.fetchone()
+        if not row:
+            return jsonify({"success": False, "message": "Không tìm thấy người dùng."}), 404
+            
+        email, fullname, username, account_status = row[0], row[1], row[2], row[3]
+        if account_status != "pending_delete":
+            return jsonify({"success": False, "message": "Tài khoản không ở trạng thái chờ xóa."}), 400
+            
+        DeleteAccountManager.restore_account(conn, user_id)
+        
+        # Send email
+        from notifications import send_restore_success_email
+        send_restore_success_email(email, fullname or username or "")
+        
+        return jsonify({"success": True, "message": "Khôi phục tài khoản thành công!"})
+    except Exception as e:
+        logger.exception("[ADMIN] Restore delete request error")
+        return jsonify({"success": False, "message": f"Lỗi hệ thống: {str(e)}"}), 500
+    finally:
+        if conn:
+            conn.close()
+
+
+@users_bp.route("/delete-requests/force-delete/<int:user_id>", methods=["POST"])
+def delete_request_force(user_id):
+    if not require_admin():
+        return jsonify({"success": False, "message": "Unauthorized"}), 403
+
+    conn = None
+    try:
+        conn = get_connection()
+        
+        # Check user info first
+        with conn.cursor() as cur:
+            cur.execute("SELECT email, fullname, username, account_status FROM users WHERE id = %s", (user_id,))
+            row = cur.fetchone()
+        if not row:
+            return jsonify({"success": False, "message": "Không tìm thấy người dùng."}), 404
+            
+        email, fullname, username, account_status = row[0], row[1], row[2], row[3]
+        if account_status != "pending_delete":
+            return jsonify({"success": False, "message": "Tài khoản không ở trạng thái chờ xóa."}), 400
+            
+        # Execute immediate delete
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                UPDATE users
+                SET account_status = 'deleted',
+                    deleted_at = NOW(),
+                    is_active = 0
+                WHERE id = %s
+                """,
+                (user_id,),
+            )
+        conn.commit()
+        
+        # Send email
+        from notifications import send_account_deleted_email
+        send_account_deleted_email(email, fullname or username or "")
+        
+        return jsonify({"success": True, "message": "Đã xóa vĩnh viễn tài khoản!"})
+    except Exception as e:
+        logger.exception("[ADMIN] Force delete request error")
+        return jsonify({"success": False, "message": f"Lỗi hệ thống: {str(e)}"}), 500
+    finally:
+        if conn:
+            conn.close()
+
+
+@users_bp.route("/delete-requests/cleanup", methods=["POST"])
+def delete_request_cleanup():
+    if not require_admin():
+        return jsonify({"success": False, "message": "Unauthorized"}), 403
+
+    conn = None
+    try:
+        conn = get_connection()
+        from models import DeleteAccountManager
+        
+        affected = DeleteAccountManager.auto_cleanup_expired(conn)
+        return jsonify({"success": True, "message": f"Đã dọn dẹp {affected} tài khoản hết hạn!", "affected_count": affected})
+    except Exception as e:
+        logger.exception("[ADMIN] Cleanup expired delete requests error")
+        return jsonify({"success": False, "message": f"Lỗi hệ thống: {str(e)}"}), 500
+    finally:
+        if conn:
+            conn.close()
+

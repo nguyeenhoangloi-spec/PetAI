@@ -413,5 +413,5 @@ def translate_html(html_content: str, lang: str, dynamic_translations: dict = No
         print(f"[i18n Server] Error parsing HTML: {e}")
         return html_content
 
-# Initialize translations
+# Initialize translations (trigger reload comment)
 load_translations()

@@ -1,0 +1,888 @@
+<!-- htmlhint spec-char-escape:false, tag-pair:false -->
+<!-- html-validate-disable attribute-allowed-values -->
+<!DOCTYPE html>
+{% set html_class = 'dark' if ui_theme == 'dark' else 'light' %}
+{% if ui_language == 'en' %}{% set html_class = html_class ~ ' i18n-loading' %}{% endif %}
+<html class="{{ html_class }}"
+  lang="{{ ui_language or 'vi' }}" data-theme="{{ ui_theme or 'light' }}">
+
+<head>
+  <script>
+    (function() {
+      document.documentElement.classList.add("preload");
+      try {
+        if (window.innerWidth >= 768) {
+          const isCollapsed = localStorage.getItem("sidebar-collapsed") === "true";
+          if (isCollapsed) {
+            document.documentElement.classList.add("sidebar-collapsed");
+          } else {
+            document.documentElement.classList.remove("sidebar-collapsed");
+          }
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <style id="early-sidebar-style">
+    html.preload body {
+      opacity: 0 !important;
+    }
+    html.preload .sidebar,
+    html.preload main,
+    html.preload footer {
+      transition: none !important;
+    }
+    body>nav .flex.items-center.gap-gutter {
+      gap: 12px !important;
+    }
+    body>nav #menuToggle {
+      margin-left: 4px !important;
+      margin-right: 0 !important;
+      position: relative !important;
+    }
+    .sidebar-wrapper {
+      display: flex !important;
+      flex-direction: column !important;
+      height: 100% !important;
+      justify-content: space-between !important;
+      padding: 16px 10px 12px 10px !important;
+      box-sizing: border-box !important;
+      gap: 12px !important;
+    }
+    .sidebar-menu {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 6px !important;
+      flex-grow: 1 !important;
+    }
+    .sidebar-menu-item {
+      display: flex !important;
+      align-items: center !important;
+      gap: 10px !important;
+      height: 40px !important;
+      padding: 0 10px !important;
+      border-radius: 12px !important;
+      box-sizing: border-box !important;
+    }
+    
+    @media (min-width: 768px) {
+      .sidebar {
+        position: fixed !important;
+        top: 64px !important;
+        left: 0 !important;
+        bottom: 0 !important;
+        width: 224px !important;
+        height: calc(100vh - 64px) !important;
+        z-index: 100 !important;
+      }
+      html.sidebar-collapsed .sidebar {
+        transform: translateX(-100%) !important;
+        opacity: 0 !important;
+        visibility: hidden !important;
+      }
+      html.sidebar-collapsed main,
+      html.sidebar-collapsed footer {
+        margin-left: 0 !important;
+        width: 100% !important;
+      }
+      html:not(.sidebar-collapsed) .sidebar {
+        transform: translateX(0) !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+      }
+      html:not(.sidebar-collapsed) main,
+      html:not(.sidebar-collapsed) footer {
+        margin-left: 224px !important;
+        width: calc(100% - 224px) !important;
+      }
+      html main {
+        grid-template-columns: 1fr !important;
+        gap: 0 !important;
+      }
+    }
+    
+    @media (max-width: 767px) {
+      .sidebar {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        height: 100vh !important;
+        width: 224px !important;
+        transform: translateX(-100%) !important;
+        z-index: 1000 !important;
+      }
+      .sidebar.active {
+        transform: translateX(0) !important;
+      }
+    }
+  </style>
+  <script>
+    (function () {
+        var savedLang = "vi";
+        try {
+          var match = document.cookie.match(new RegExp('(^| )siteLanguage=([^;]+)'));
+          if (match) {
+            savedLang = match[2];
+          } else {
+            savedLang = localStorage.getItem("siteLanguage") || "vi";
+          }
+        } catch (e) {}
+        document.documentElement.setAttribute("data-user-lang", savedLang);
+      if (savedLang === "en") {
+        document.documentElement.classList.add("i18n-loading");
+      }
+    })();
+  </script>
+  <style>
+    html.i18n-loading body {
+      visibility: hidden !important;
+    }
+  </style>
+  <noscript>
+    <style>
+      html.i18n-loading body {
+        visibility: visible !important;
+      }
+    </style>
+  </noscript>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+  <script>
+    (function () {
+      const root = document.documentElement;
+      const themeStorageKey = "{{ 'theme:' ~ session.get('user_id') if session.get('user_id') else '' }}";
+      const serverTheme = "{{ ui_theme or 'light' }}";
+      if (themeStorageKey) {
+        try {
+          localStorage.setItem(themeStorageKey, serverTheme);
+        } catch (e) { }
+      }
+      const storedTheme = (function () {
+        if (!themeStorageKey) return null;
+        try {
+          return localStorage.getItem(themeStorageKey);
+        } catch (e) {
+          return null;
+        }
+      })();
+      const preferredTheme = storedTheme || serverTheme;
+
+      function resolveTheme(theme) {
+        if (theme !== "auto") return theme;
+        try {
+          return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        } catch (e) {
+          return "light";
+        }
+      }
+
+      function applyTheme(theme) {
+        const resolved = resolveTheme(theme);
+        root.classList.toggle("dark", resolved === "dark");
+        root.classList.toggle("light", resolved !== "dark");
+        root.setAttribute("data-theme", resolved);
+      }
+
+      applyTheme(preferredTheme);
+    })();
+  </script>
+
+  {% set page_title = 'Delete Requests - ' ~ get_config('site_name', 'PetAI') if ui_language == 'en' else 'Yêu cầu xóa - ' ~ get_config('site_name', 'PetAI') %}
+  <title data-i18n="adminDeleteRequestsPageTitle">{{ page_title }}</title>
+  <script src="{{ url_for('static', filename='js/tailwindcss.js') }}"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/typography.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/theme-dark.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/toasts.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile-header-fix.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin-dashboard-content.css') }}">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "on-tertiary-fixed": "#360f00",
+            "secondary-fixed-dim": "#ffb95f",
+            "surface-container": "#e5eeff",
+            "on-primary-fixed": "#00174b",
+            error: "#ba1a1a",
+            "secondary-container": "#fea619",
+            primary: "#004ac6",
+            "tertiary-container": "#bc4800",
+            "surface-tint": "#0053db",
+            "on-secondary": "#ffffff",
+            "surface-variant": "#d3e4fe",
+            "on-secondary-container": "#684000",
+            "tertiary-fixed-dim": "#ffb596",
+            "surface-dim": "#cbdbf5",
+            outline: "#737686",
+            "inverse-on-surface": "#eaf1ff",
+            "on-error": "#ffffff",
+            "secondary-fixed": "#ffddb8",
+            "on-primary": "#ffffff",
+            "on-primary-container": "#eeefff",
+            "surface-container-highest": "#d3e4fe",
+            "on-surface": "#0b1c30",
+            "surface-container-lowest": "#ffffff",
+            "on-primary-fixed-variant": "#003ea8",
+            "outline-variant": "#c3c6d7",
+            "primary-fixed": "#dbe1ff",
+            "inverse-primary": "#b4c5ff",
+            "on-error-container": "#93000a",
+            "on-tertiary": "#ffffff",
+            surface: "#f8f9ff",
+            "primary-fixed-dim": "#b4c5ff",
+            "on-background": "#0b1c30",
+            "surface-bright": "#f8f9ff",
+            "inverse-surface": "#213145",
+            "on-tertiary-fixed-variant": "#7d2d00",
+            "on-surface-variant": "#434655",
+            "tertiary-fixed": "#ffdbcd",
+            "surface-container-high": "#dce9ff",
+            "on-secondary-fixed": "#2a1700",
+            "on-tertiary-container": "#ffede6",
+            secondary: "#855300",
+            tertiary: "#943700",
+            background: "#f8f9ff",
+            "primary-container": "#2563eb",
+            "surface-container-low": "#eff4ff",
+            "on-secondary-fixed-variant": "#653e00",
+            "error-container": "#ffdad6",
+          },
+          borderRadius: {
+            DEFAULT: "0.25rem",
+            lg: "0.5rem",
+            xl: "0.75rem",
+            full: "9999px",
+          },
+          spacing: {
+            md: "24px",
+            base: "8px",
+            sm: "12px",
+            margin: "32px",
+            lg: "48px",
+            xl: "80px",
+            gutter: "24px",
+            xs: "4px",
+          },
+          fontFamily: {
+            "headline-md": ["Inter"],
+            "headline-lg": ["Inter"],
+            "display-xl": ["Inter"],
+            "body-md": ["Inter"],
+            "label-sm": ["Inter"],
+            "body-lg": ["Inter"],
+          },
+          fontSize: {
+            "headline-md": [
+              "24px",
+              { lineHeight: "32px", fontWeight: "600" },
+            ],
+            "headline-lg": [
+              "36px",
+              {
+                lineHeight: "44px",
+                letterSpacing: "-0.01em",
+                fontWeight: "600",
+              },
+            ],
+            "display-xl": [
+              "60px",
+              {
+                lineHeight: "72px",
+                letterSpacing: "-0.02em",
+                fontWeight: "700",
+              },
+            ],
+            "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+            "label-sm": ["14px", { lineHeight: "20px", fontWeight: "500" }],
+            "body-lg": ["18px", { lineHeight: "28px", fontWeight: "400" }],
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    .material-symbols-outlined {
+      font-variation-settings:
+        "FILL" 0,
+        "wght" 400,
+        "GRAD" 0,
+        "opsz" 24;
+    }
+  </style>
+</head>
+
+<body class="bg-background text-on-background body-md antialiased min-h-screen flex flex-col">
+  {% include '_toasts.html' %}
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  {% set display_role = session.get('role') or 'user' %}
+  {% set display_plan = current_plan or 'free' %}
+
+  {% include '_header.html' %}
+
+  <main tabindex="-1"
+    class="flex-grow w-full px-4 md:px-6 py-margin grid grid-cols-1 gap-0">
+    {% set active_page = 'delete_requests' %}
+    {% include '_sidebar.html' %}
+
+    <div id="content-area" class="col-span-1 flex flex-col min-w-0 gap-6">
+
+      <!-- Header Section -->
+      <section class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-outline-variant/20 dark:border-slate-800 pb-5">
+        <div class="flex flex-col gap-1.5">
+          <h1 class="headline-lg font-semibold text-on-surface dark:text-slate-100" data-i18n="deleteRequestsTitle">Quản lý yêu cầu xóa tài khoản</h1>
+          <p class="body-md text-on-surface-variant dark:text-slate-400" data-i18n="deleteRequestsSubtitle">Xem, khôi phục hoặc xóa vĩnh viễn các tài khoản người dùng đã gửi yêu cầu xóa.</p>
+        </div>
+        <div class="flex items-center gap-3 mt-2 md:mt-0">
+          <button id="triggerCleanupBtn" class="bg-primary hover:bg-primary/95 text-on-primary dark:bg-blue-600 dark:hover:bg-blue-500 px-4 py-2 rounded-lg label-sm shadow-sm hover:shadow transition-all flex items-center justify-center gap-2 font-semibold cursor-pointer" type="button">
+            <span class="material-symbols-outlined text-[18px]">clean_hands</span>
+            <span data-i18n="triggerCleanup">Dọn dẹp hệ thống</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- Info Banner -->
+      <section class="bg-blue-50 dark:bg-blue-950/20 border border-blue-100 dark:border-blue-900/30 rounded-xl p-4 flex items-start gap-3 shadow-xs">
+        <span class="material-symbols-outlined text-blue-600 dark:text-blue-400 mt-0.5">info</span>
+        <div class="flex-grow">
+          <h4 class="text-sm font-semibold text-blue-800 dark:text-blue-300" data-i18n="deleteRequestsInfoTitle">Quy trình xóa tài khoản 30 ngày</h4>
+          <p class="text-xs text-blue-705 dark:text-blue-400/90 mt-1 leading-relaxed" data-i18n="deleteRequestsInfoText">Khi người dùng xác nhận yêu cầu xóa, tài khoản sẽ được đưa vào danh sách chờ xóa vĩnh viễn trong 30 ngày. Trong thời gian này, Admin có quyền khôi phục tài khoản nếu người dùng thay đổi quyết định, hoặc thực thi xóa vĩnh viễn ngay lập tức (Force Delete) nếu cần thiết.</p>
+        </div>
+      </section>
+
+      <!-- MoM Overview Cards -->
+      <section class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <!-- Card 1: Chờ xóa -->
+        <div class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-5 flex flex-col justify-between border border-outline-variant/25 dark:border-slate-800/80 shadow-sm min-h-[135px]">
+          <div class="flex items-center justify-between">
+            <span class="label-sm text-on-surface-variant dark:text-slate-400 font-semibold uppercase tracking-wider" data-i18n="pendingDeleteCount">Đang chờ xóa</span>
+            <div class="w-9 h-9 rounded-lg bg-amber-100 text-amber-600 dark:bg-amber-950/40 dark:text-amber-400 flex items-center justify-center">
+              <span class="material-symbols-outlined text-[20px]">hourglass_empty</span>
+            </div>
+          </div>
+          <div class="mt-3 flex flex-col">
+            <span class="text-3xl font-bold text-on-surface dark:text-slate-100 tracking-tight" id="statPendingCount">{{ total_pending }}</span>
+            <div class="flex items-center justify-between mt-2">
+              <span class="text-xs text-on-surface-variant/75 dark:text-slate-400/80" data-i18n="pendingDeleteAccounts">Tài khoản ở trạng thái pending_delete</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2: Đã xóa vĩnh viễn -->
+        <div class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-5 flex flex-col justify-between border border-outline-variant/25 dark:border-slate-800/80 shadow-sm min-h-[135px]">
+          <div class="flex items-center justify-between">
+            <span class="label-sm text-on-surface-variant dark:text-slate-400 font-semibold uppercase tracking-wider" data-i18n="deletedCount">Đã xóa vĩnh viễn</span>
+            <div class="w-9 h-9 rounded-lg bg-rose-100 text-rose-600 dark:bg-rose-950/40 dark:text-rose-400 flex items-center justify-center">
+              <span class="material-symbols-outlined text-[20px]">delete_forever</span>
+            </div>
+          </div>
+          <div class="mt-3 flex flex-col">
+            <span class="text-3xl font-bold text-on-surface dark:text-slate-100 tracking-tight" id="statDeletedCount">{{ total_deleted }}</span>
+            <div class="flex items-center justify-between mt-2">
+              <span class="text-xs text-on-surface-variant/75 dark:text-slate-400/80" data-i18n="deletedAccounts">Tài khoản đã bị vô hiệu hóa hoàn toàn</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Main Controls and Table Container -->
+      <section class="bg-surface-container-lowest dark:bg-slate-900 rounded-2xl border border-outline-variant/30 dark:border-slate-800/60 shadow-sm flex flex-col overflow-hidden">
+        <!-- Controls Bar -->
+        <div class="p-4 md:p-5 border-b border-outline-variant/15 dark:border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-surface-container-lowest/50 dark:bg-slate-900/50">
+          <!-- Search Input -->
+          <div class="relative w-full md:max-w-md">
+            <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 text-[18px]">search</span>
+            <input
+              type="text"
+              id="searchInput"
+              class="w-full pl-10 pr-4 py-2 bg-surface-container-low dark:bg-slate-850 border border-outline-variant/40 dark:border-slate-800 rounded-lg text-on-surface dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary/20 dark:focus:ring-blue-500/20 focus:border-primary dark:focus:border-blue-500 transition-all text-sm font-medium"
+              placeholder="Tìm kiếm theo Tên, Email..."
+              data-i18n-placeholder="searchUserPlaceholder">
+          </div>
+
+          <!-- Filters -->
+          <div class="flex items-center gap-3">
+            <div class="relative w-full sm:w-auto min-w-[150px]">
+              <select
+                id="statusFilter"
+                class="w-full bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/40 dark:border-slate-800 rounded-lg py-2 pl-3 pr-8 label-sm text-on-surface dark:text-slate-100 focus:ring-1 focus:ring-primary focus:border-primary dark:focus:ring-blue-500 dark:focus:border-blue-500 appearance-none bg-none cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-850 transition-colors">
+                <option value="" data-i18n="allStatuses">Tất cả trạng thái</option>
+                <option value="pending_delete" data-i18n="pendingDeleteCount">Đang chờ xóa</option>
+                <option value="deleted" data-i18n="deletedCount">Đã xóa vĩnh viễn</option>
+              </select>
+              <span class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-450 dark:text-slate-500">
+                <span class="material-symbols-outlined text-[16px]">expand_more</span>
+              </span>
+            </div>
+
+            <!-- Clear button -->
+            <button
+              id="clearFiltersBtn"
+              class="p-2 border border-outline-variant/40 dark:border-slate-800 rounded-lg text-on-surface-variant hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 transition-all cursor-pointer flex items-center justify-center"
+              title="Xóa bộ lọc"
+              data-i18n-title="clearFilters">
+              <span class="material-symbols-outlined text-[18px]">filter_alt_off</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Table Container -->
+        <div class="overflow-x-auto w-full min-w-0">
+          <table class="w-full text-left border-collapse table-fixed min-w-[800px]">
+            <thead>
+              <tr class="bg-surface-container-low dark:bg-slate-850 border-b border-outline-variant/20 dark:border-slate-800 label-sm text-on-surface-variant dark:text-slate-400 uppercase tracking-wider font-semibold">
+                <th class="px-6 py-3.5 w-[30%]" data-i18n="userColHeader">Người dùng</th>
+                <th class="px-6 py-3.5 w-[15%]" data-i18n="statusColHeader">Trạng thái</th>
+                <th class="px-6 py-3.5 w-[25%]" data-i18n="deleteReason">Lý do xóa</th>
+                <th class="px-6 py-3.5 w-[20%]" data-i18n="deleteRequestedAt">Ngày yêu cầu</th>
+                <th class="px-6 py-3.5 w-[10%]" data-i18n="actionColHeader">Hành động</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+
+          <!-- Empty State -->
+          <div id="emptyState" class="hidden flex-col items-center justify-center p-12 text-center bg-surface-container-lowest dark:bg-slate-900 gap-3 border-t border-outline-variant/10 dark:border-slate-800">
+            <span class="material-symbols-outlined text-[48px] text-slate-350 dark:text-slate-600">person_off</span>
+            <div class="flex flex-col gap-1">
+              <h5 class="text-base font-semibold text-on-surface dark:text-slate-300" data-i18n="noDeleteRequests">Không tìm thấy yêu cầu xóa nào</h5>
+              <p class="text-sm text-on-surface-variant dark:text-slate-500" data-i18n="noDeleteRequestsDesc">Không có người dùng nào khớp với bộ lọc tìm kiếm.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pagination Section -->
+        <div id="paginationSection" class="p-4 md:p-5 border-t border-outline-variant/15 dark:border-slate-800 flex items-center justify-between bg-surface-container-lowest/50 dark:bg-slate-900/50">
+          <div class="label-sm text-on-surface-variant/80 dark:text-slate-400/80 font-medium">
+            <span data-i18n="showingText">Hiển thị</span>
+            <span id="paginationRangeText" class="font-bold text-on-surface dark:text-slate-200">1 - 10</span>
+            <span data-i18n="ofText">trên</span>
+            <span id="paginationTotalText" class="font-bold text-on-surface dark:text-slate-200">10</span>
+            <span data-i18n="usersText">người dùng</span>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <!-- Rows per page select -->
+            <div class="relative flex items-center">
+              <select
+                id="rowsPerPageSelect"
+                class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/40 dark:border-slate-800 rounded-lg pl-2 pr-7 py-1 text-xs font-semibold text-on-surface-variant dark:text-slate-350 focus:outline-none appearance-none bg-none cursor-pointer transition-colors font-medium">
+                <option value="10">10</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+              </select>
+              <span class="absolute right-1.5 flex items-center pointer-events-none text-slate-500 dark:text-slate-400">
+                <span class="material-symbols-outlined text-[14px]">expand_more</span>
+              </span>
+            </div>
+
+            <!-- Page indicators -->
+            <div class="flex items-center gap-1.5" id="paginationPages">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Script block containing data and filtering logic -->
+  <script>
+    const DELETIONS_DATA = {{ delete_users|tojson|safe }};
+
+    document.addEventListener("DOMContentLoaded", function () {
+      const searchInput = document.getElementById("searchInput");
+      const statusFilter = document.getElementById("statusFilter");
+      const clearFiltersBtn = document.getElementById("clearFiltersBtn");
+      const tableBody = document.getElementById("tableBody");
+      const emptyState = document.getElementById("emptyState");
+      const paginationSection = document.getElementById("paginationSection");
+      const paginationRangeText = document.getElementById("paginationRangeText");
+      const paginationTotalText = document.getElementById("paginationTotalText");
+      const paginationPages = document.getElementById("paginationPages");
+      const rowsPerPageSelect = document.getElementById("rowsPerPageSelect");
+      const triggerCleanupBtn = document.getElementById("triggerCleanupBtn");
+
+      let currentPage = 1;
+      let currentRowsPerPage = parseInt(rowsPerPageSelect.value) || 10;
+
+      function getTranslations() {
+        var lang = document.documentElement.getAttribute("lang") || "vi";
+        if (window.PetAI_i18n && window.PetAI_i18n.getTranslations) {
+          return window.PetAI_i18n.getTranslations()[lang] || window.PetAI_i18n.getTranslations().vi;
+        }
+        return {};
+      }
+
+      function t(key, defaultText) {
+        var tDict = getTranslations();
+        return tDict[key] || defaultText || key;
+      }
+
+      function getAvatarColor(username) {
+        if (!username) return "bg-slate-200 text-slate-700";
+        var code = username.charCodeAt(0) % 5;
+        switch (code) {
+          case 0: return "bg-red-100 text-red-700 dark:bg-red-950/40 dark:text-red-400";
+          case 1: return "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400";
+          case 2: return "bg-blue-100 text-blue-700 dark:bg-blue-950/40 dark:text-blue-400";
+          case 3: return "bg-amber-100 text-amber-700 dark:bg-amber-950/40 dark:text-amber-400";
+          default: return "bg-indigo-100 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-400";
+        }
+      }
+
+      function drawTable() {
+        const searchVal = (searchInput.value || "").trim().toLowerCase();
+        const selectedStatus = statusFilter.value || "";
+
+        const filtered = DELETIONS_DATA.filter(function (item) {
+          const textHay = ((item.username || "") + " " + (item.fullname || "") + " " + (item.email || "")).toLowerCase();
+          const okQ = !searchVal || textHay.includes(searchVal);
+          const okStatus = !selectedStatus || item.account_status === selectedStatus;
+          return okQ && okStatus;
+        });
+
+        if (filtered.length === 0) {
+          tableBody.innerHTML = "";
+          emptyState.classList.remove("hidden");
+          emptyState.classList.add("flex");
+          paginationSection.classList.add("hidden");
+          return;
+        }
+
+        emptyState.classList.add("hidden");
+        emptyState.classList.remove("flex");
+        paginationSection.classList.remove("hidden");
+
+        const total = filtered.length;
+        const totalPages = Math.ceil(total / currentRowsPerPage) || 1;
+        if (currentPage > totalPages) currentPage = totalPages;
+
+        const startOffset = (currentPage - 1) * currentRowsPerPage;
+        const endOffset = Math.min(startOffset + currentRowsPerPage, total);
+
+        paginationRangeText.textContent = (startOffset + 1) + " - " + endOffset;
+        paginationTotalText.textContent = total;
+
+        const paginatedData = filtered.slice(startOffset, endOffset);
+        let html = "";
+
+        paginatedData.forEach(function (u) {
+          const avatarCol = getAvatarColor(u.username);
+          const firstLetter = (u.username || "?").substring(0, 1).toUpperCase();
+
+          let statusBadge = "";
+          if (u.account_status === "pending_delete") {
+            statusBadge = '<span class="inline-flex items-center px-2.5 py-0.5 bg-amber-100 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400 label-sm rounded-full font-semibold uppercase tracking-wide text-[10px]">' + t("pendingDeleteCount", "Đang chờ xóa") + '</span>';
+          } else {
+            statusBadge = '<span class="inline-flex items-center px-2.5 py-0.5 bg-rose-100 text-rose-700 dark:bg-rose-950/30 dark:text-rose-400 label-sm rounded-full font-semibold uppercase tracking-wide text-[10px]">' + t("deletedCount", "Đã xóa vĩnh viễn") + '</span>';
+          }
+
+          const reasonText = u.delete_reason || "-";
+
+          let dateStr = "";
+          if (u.account_status === "pending_delete") {
+            dateStr = '<div class="flex flex-col gap-0.5">';
+            dateStr += '  <div class="label-sm text-on-surface-variant dark:text-slate-400"><span class="font-medium text-slate-400 dark:text-slate-500">Yêu cầu:</span> ' + (u.requested_str || "-") + '</div>';
+            dateStr += '  <div class="label-sm text-amber-600 dark:text-amber-400 font-semibold"><span class="font-medium text-slate-400 dark:text-slate-500">Dự kiến:</span> ' + (u.scheduled_str || "-") + '</div>';
+            dateStr += '</div>';
+          } else {
+            dateStr = '<div class="flex flex-col gap-0.5">';
+            dateStr += '  <div class="label-sm text-on-surface-variant dark:text-slate-400"><span class="font-medium text-slate-400 dark:text-slate-500">Xác nhận xóa:</span> ' + (u.deleted_str || "-") + '</div>';
+            dateStr += '</div>';
+          }
+
+          let actionsHtml = "";
+          if (u.account_status === "pending_delete") {
+            actionsHtml += '<div class="flex items-center gap-2">';
+            actionsHtml += '  <button class="action-restore bg-emerald-500 hover:bg-emerald-600 text-white px-2.5 py-1 rounded-md text-[12px] font-semibold flex items-center gap-1 cursor-pointer transition-colors" data-user-id="' + u.id + '" data-username="' + u.username + '" title="' + t("actionRestore", "Khôi phục") + '">';
+            actionsHtml += '    <span class="material-symbols-outlined text-[14px]">undo</span>' + t("actionRestore", "Khôi phục") + '';
+            actionsHtml += '  </button>';
+            actionsHtml += '  <button class="action-force bg-rose-505 hover:bg-rose-600 text-white px-2.5 py-1 rounded-md text-[12px] font-semibold flex items-center gap-1 cursor-pointer transition-colors" data-user-id="' + u.id + '" data-username="' + u.username + '" title="' + t("actionDeleteNow", "Xóa ngay") + '">';
+            actionsHtml += '    <span class="material-symbols-outlined text-[14px]">delete</span>' + t("actionDeleteNow", "Xóa ngay") + '';
+            actionsHtml += '  </button>';
+            actionsHtml += '</div>';
+          } else {
+            actionsHtml += '<span class="text-xs text-slate-450 dark:text-slate-600 font-semibold uppercase tracking-wider">Completed</span>';
+          }
+
+          html += '<tr class="hover:bg-primary/5 dark:hover:bg-slate-800/40 border-b border-outline-variant/10 dark:border-slate-800/60 transition-colors">';
+          html += '<td class="px-6 py-4">';
+          html += '  <div class="flex items-center gap-3">';
+          html += '    <div class="w-9 h-9 rounded-full ' + avatarCol + ' flex items-center justify-center label-sm font-semibold shadow-sm">' + firstLetter + '</div>';
+          html += '    <div class="flex flex-col min-w-0">';
+          html += '      <div class="body-md font-semibold text-on-surface dark:text-slate-200 truncate max-w-[220px]">' + u.username + '</div>';
+          html += '      <div class="label-sm text-on-surface-variant/85 dark:text-slate-400/80 truncate max-w-[220px]">' + (u.email || "-") + '</div>';
+          html += '    </div>';
+          html += '  </div>';
+          html += '</td>';
+          html += '<td class="px-6 py-4 whitespace-nowrap">' + statusBadge + '</td>';
+          html += '<td class="px-6 py-4 text-sm text-on-surface dark:text-slate-350 break-words max-w-[250px]">' + reasonText + '</td>';
+          html += '<td class="px-6 py-4 whitespace-nowrap">' + dateStr + '</td>';
+          html += '<td class="px-6 py-4 text-center whitespace-nowrap">' + actionsHtml + '</td>';
+          html += '</tr>';
+        });
+
+        tableBody.innerHTML = html;
+
+        let paginationHtml = "";
+        if (currentPage > 1) {
+          paginationHtml += '<button class="p-1.5 rounded-lg border border-outline-variant/30 dark:border-slate-700 text-on-surface-variant dark:text-slate-400 hover:bg-surface-container-low dark:hover:bg-slate-800 transition-colors cursor-pointer" type="button" id="prevPageBtn">';
+          paginationHtml += '  <span class="material-symbols-outlined text-[16px]">chevron_left</span>';
+          paginationHtml += '</button>';
+        } else {
+          paginationHtml += '<span class="p-1.5 rounded-lg border border-outline-variant/25 dark:border-slate-800 text-on-surface-variant/40 dark:text-slate-600 cursor-not-allowed">';
+          paginationHtml += '  <span class="material-symbols-outlined text-[16px]">chevron_left</span>';
+          paginationHtml += '</span>';
+        }
+
+        for (let p = 1; p <= totalPages; p++) {
+          if (p === 1 || p === totalPages || (p >= currentPage - 2 && p <= currentPage + 2)) {
+            const activeClass = p === currentPage
+              ? "bg-primary text-on-primary dark:bg-blue-600 dark:text-white"
+              : "border border-outline-variant/30 dark:border-slate-700 text-on-surface dark:text-slate-300 hover:bg-surface-container-low dark:hover:bg-slate-800";
+            paginationHtml += '<button class="w-8 h-8 rounded-lg label-sm font-semibold transition-all cursor-pointer ' + activeClass + '" type="button" data-page="' + p + '">' + p + '</button>';
+          } else if (p === currentPage - 3 || p === currentPage + 3) {
+            paginationHtml += '<span class="px-1 text-slate-400 dark:text-slate-600">...</span>';
+          }
+        }
+
+        if (currentPage < totalPages) {
+          paginationHtml += '<button class="p-1.5 rounded-lg border border-outline-variant/30 dark:border-slate-700 text-on-surface-variant dark:text-slate-400 hover:bg-surface-container-low dark:hover:bg-slate-800 transition-colors cursor-pointer" type="button" id="nextPageBtn">';
+          paginationHtml += '  <span class="material-symbols-outlined text-[16px]">chevron_right</span>';
+          paginationHtml += '</button>';
+        } else {
+          paginationHtml += '<span class="p-1.5 rounded-lg border border-outline-variant/25 dark:border-slate-800 text-on-surface-variant/40 dark:text-slate-600 cursor-not-allowed">';
+          paginationHtml += '  <span class="material-symbols-outlined text-[16px]">chevron_right</span>';
+          paginationHtml += '</span>';
+        }
+
+        paginationPages.innerHTML = paginationHtml;
+
+        bindTableElements();
+      }
+
+      function bindTableElements() {
+        const prevBtn = document.getElementById("prevPageBtn");
+        if (prevBtn) {
+          prevBtn.addEventListener("click", function () {
+            currentPage--;
+            drawTable();
+          });
+        }
+
+        const nextBtn = document.getElementById("nextPageBtn");
+        if (nextBtn) {
+          nextBtn.addEventListener("click", function () {
+            currentPage++;
+            drawTable();
+          });
+        }
+
+        paginationPages.querySelectorAll("button[data-page]").forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            currentPage = parseInt(this.getAttribute("data-page"));
+            drawTable();
+          });
+        });
+
+        document.querySelectorAll(".action-restore").forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            const uid = this.getAttribute("data-user-id");
+            const username = this.getAttribute("data-username");
+            const title = t("confirmRestoreUserTitle", "Khôi phục tài khoản");
+            const text = t("confirmRestoreUserText", "Bạn có chắc chắn muốn khôi phục tài khoản {username}?").replace("{username}", username);
+
+            if (window.PetAI_confirm) {
+              window.PetAI_confirm({
+                title: title,
+                text: text,
+                type: "warning",
+                onConfirm: function () {
+                  const successMsg = t("toastRestoreSuccess", "Đã khôi phục tài khoản thành công!");
+                  executePostAction("/users/delete-requests/restore/" + uid, successMsg);
+                }
+              });
+            } else {
+              if (confirm(text)) {
+                executePostAction("/users/delete-requests/restore/" + uid, t("toastRestoreSuccess", "Khôi phục thành công"));
+              }
+            }
+          });
+        });
+
+        document.querySelectorAll(".action-force").forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            const uid = this.getAttribute("data-user-id");
+            const username = this.getAttribute("data-username");
+            const title = t("confirmForceDeleteUserTitle", "Xóa vĩnh viễn tài khoản");
+            const text = t("confirmForceDeleteUserText", "CẢNH BÁO: Bạn đang thực hiện xóa vĩnh viễn tài khoản {username} ngay lập tức. Toàn bộ dữ liệu sẽ bị hủy bỏ. Nhập 'FORCE' để xác nhận.")
+                            .replace("{username}", username);
+
+            if (window.PetAI_confirm) {
+              window.PetAI_confirm({
+                title: title,
+                text: text,
+                type: "danger",
+                showInput: true,
+                requiredInput: ["FORCE"],
+                inputPlaceholder: "Nhập 'FORCE' để xác nhận",
+                onConfirm: function (confirmWord) {
+                  if (confirmWord !== "FORCE") return false;
+                  const successMsg = t("toastForceDeleteSuccess", "Đã xóa vĩnh viễn tài khoản thành công!");
+                  executePostAction("/users/delete-requests/force-delete/" + uid, successMsg);
+                }
+              });
+            } else {
+              if (confirm(text)) {
+                executePostAction("/users/delete-requests/force-delete/" + uid, t("toastForceDeleteSuccess", "Xóa thành công"));
+              }
+            }
+          });
+        });
+      }
+
+      async function executePostAction(url, successMsg) {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute("content");
+        try {
+          const res = await fetch(url, {
+            method: "POST",
+            headers: {
+              "X-CSRF-Token": csrfToken,
+              "X-Requested-With": "XMLHttpRequest"
+            }
+          });
+          const data = await res.json();
+          if (res.ok && data.success) {
+            showToastNotification(successMsg, "success");
+            reloadPjaxPage();
+          } else {
+            showToastNotification(data.message || t("toastDefaultError", "Có lỗi xảy ra."), "error");
+          }
+        } catch (err) {
+          console.error(err);
+          showToastNotification(t("toastServerError", "Lỗi kết nối máy chủ."), "error");
+        }
+      }
+
+      function showToastNotification(message, type) {
+        if (window.showToast) {
+          window.showToast(type, message);
+        } else {
+          alert(message);
+        }
+      }
+
+      function reloadPjaxPage() {
+        if (window.loadPagePjax) {
+          fetch(window.location.href, {
+            headers: { "X-PJAX": "true" }
+          })
+          .then(function (res) { return res.text(); })
+          .then(function (html) {
+            window.loadPagePjax(window.location.href, false, html);
+          })
+          .catch(function () {
+            window.location.reload();
+          });
+        } else {
+          window.location.reload();
+        }
+      }
+
+      function triggerFilterReset() {
+        currentPage = 1;
+        drawTable();
+      }
+
+      searchInput.addEventListener("input", triggerFilterReset);
+      statusFilter.addEventListener("change", triggerFilterReset);
+
+      clearFiltersBtn.addEventListener("click", function () {
+        searchInput.value = "";
+        statusFilter.value = "";
+        triggerFilterReset();
+      });
+
+      rowsPerPageSelect.addEventListener("change", function () {
+        currentRowsPerPage = parseInt(this.value) || 10;
+        currentPage = 1;
+        drawTable();
+      });
+
+      triggerCleanupBtn.addEventListener("click", function () {
+        const title = t("confirmCleanupTitle", "Dọn dẹp hệ thống");
+        const text = t("confirmCleanupText", "Bạn có chắc chắn muốn chạy quét và dọn dẹp các tài khoản chờ xóa quá hạn 30 ngày?");
+
+        if (window.PetAI_confirm) {
+          window.PetAI_confirm({
+            title: title,
+            text: text,
+            type: "warning",
+            onConfirm: function () {
+              const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute("content");
+              fetch("/users/delete-requests/cleanup", {
+                method: "POST",
+                headers: {
+                  "X-CSRF-Token": csrfToken,
+                  "X-Requested-With": "XMLHttpRequest"
+                }
+              })
+              .then(res => res.json())
+              .then(data => {
+                if (data.success) {
+                  const cleanupMsg = t("toastCleanupSuccess", "Đã dọn dẹp {count} tài khoản hết hạn!").replace("{count}", data.affected_count || 0);
+                  showToastNotification(cleanupMsg, "success");
+                  reloadPjaxPage();
+                } else {
+                  showToastNotification(data.message || t("toastDefaultError", "Có lỗi xảy ra."), "error");
+                }
+              })
+              .catch(err => {
+                console.error(err);
+                showToastNotification(t("toastServerError", "Lỗi kết nối máy chủ."), "error");
+              });
+            }
+          });
+        } else {
+          if (confirm(text)) {
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute("content");
+            fetch("/users/delete-requests/cleanup", {
+              method: "POST",
+              headers: {
+                "X-CSRF-Token": csrfToken,
+                "X-Requested-With": "XMLHttpRequest"
+              }
+            })
+            .then(res => res.json())
+            .then(data => {
+              if (data.success) {
+                const cleanupMsg = t("toastCleanupSuccess", "Đã dọn dẹp {count} tài khoản hết hạn!").replace("{count}", data.affected_count || 0);
+                showToastNotification(cleanupMsg, "success");
+                reloadPjaxPage();
+              } else {
+                showToastNotification(data.message || t("toastDefaultError", "Có lỗi xảy ra."), "error");
+              }
+            })
+            .catch(err => {
+              console.error(err);
+              showToastNotification(t("toastServerError", "Lỗi kết nối máy chủ."), "error");
+            });
+          }
+        }
+      });
+
+      drawTable();
+    });
+  </script>
+  
+  <script src="{{ url_for('static', filename='js/i18n.js') }}?v=23"></script>
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/toasts.js') }}"></script>
+</body>
+</html>

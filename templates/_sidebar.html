@@ -89,6 +89,11 @@
         <span class="material-symbols-outlined">receipt_long</span>
         <span data-i18n="approveOrders">Đơn duyệt</span>
       </a>
+      <a class="sidebar-menu-item {%if active_page=='delete_requests'%}active{%endif%}"
+        href="{{ url_for('users.delete_requests_list') }}">
+        <span class="material-symbols-outlined">person_remove</span>
+        <span data-i18n="deleteRequests">Yêu cầu xóa</span>
+      </a>
       <a class="sidebar-menu-item {%if active_page=='system_config'%}active{%endif%}"
         href="{{ url_for('users.system_config') }}">
         <span class="material-symbols-outlined">settings_applications</span>
