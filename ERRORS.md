@@ -2,6 +2,23 @@
 
 ---
 
+## [2026-06-25 22:10] - Lỗi vỡ cú pháp HTML trang upload-page do công cụ multi_replace thay thế nhầm đoạn cuối file
+
+- **Type**: Agent
+- **Severity**: High
+- **File**: `templates/upload_page.html:659-670`
+- **Agent**: @frontend-specialist
+- **Root Cause**: Trong quá trình chuyển card Góc kiến thức ra ngoài MAIN GRID, công cụ `multi_replace_file_content` đã nhận diện sai TargetContent của khối 4, dẫn đến cắt bỏ nhầm một phần của thẻ img `invalid_watermark.png` và sinh ra cấu trúc thẻ đóng HTML bị vỡ vụn.
+- **Error Message**:
+  ```text
+  [Trang tải ảnh bị vỡ giao diện, lỗi cú pháp thẻ đóng div và img]
+  ```
+- **Fix Applied**: Sử dụng công cụ `replace_file_content` khôi phục lại chuẩn xác cấu trúc thẻ đóng HTML cho phần hình ảnh watermark và các thẻ container.
+- **Prevention**: Luôn đảm bảo TargetContent của từng ReplacementChunk là duy nhất và chứa đầy đủ ngữ cảnh bao quanh để bộ so khớp thay thế của AI hoạt động chính xác 100%.
+- **Status**: Fixed
+
+---
+
 ## [2026-06-25 16:48] - Lỗi cú pháp JavaScript trong hàm loadRecentHistory trên trang upload-page do công cụ replace ghi đè nhầm
 
 - **Type**: Agent
@@ -747,4 +764,17 @@
 - **Prevention**: Luôn dùng khối `finally` để đóng kết nối database sau khi mở; chuẩn hóa đường dẫn trước khi gán thuộc tính `src` và kiểm tra sự tồn tại của các API mới của trình duyệt trước khi sử dụng.
 - **Status**: Fixed
 
+---
+
+## [2026-06-25 21:41] - Lỗi vỡ cú pháp HTML/Jinja2 khi di chuyển card Mix Analysis ở kết quả nhận diện
+
+- **Type**: Agent
+- **Severity**: High
+- **File**: `templates/predict.html:1066-1076`
+- **Agent**: PetAI
+- **Root Cause**: Quá trình di chuyển card Mix Analysis sang cột bên trái trước đó đã vô tình ghi đè và cắt cụt nút bấm "Chi tiết mô hình" (Model Info button), để lại các thẻ HTML đóng thừa, thẻ Jinja2 đóng thừa (`{% endif %}`) và thẻ mở cột phải bị lỗi cú pháp làm vỡ layout giao diện.
+- **Error Message**: Giao diện vỡ layout, mất nút "Chi tiết mô hình" và thẻ đóng grid không khớp.
+- **Fix Applied**: Khôi phục cấu trúc chuẩn của Model Info button, đóng cột trái và grid tương ứng, loại bỏ toàn bộ các thẻ đóng dư thừa của card cũ, và mở thẻ cột phải (`lg:col-span-4`) chính xác.
+- **Prevention**: Khi di chuyển các khối HTML lớn giữa các cột Grid, cần rà soát kỹ thẻ đóng mở (`div`, `section`, `{% if %}`) và cấu trúc lồng nhau của Grid để tránh đè lộn xộn các phần tử xung quanh.
+- **Status**: Fixed
 

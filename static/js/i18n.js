@@ -10,6 +10,8 @@
 
   var TRANSLATIONS = {
   "vi": {
+    "hybridTipTitle": "Đặc tính chó lai",
+    "hybridTipDesc": "Chó lai sở hữu nguồn gen đa dạng, kết hợp độc đáo các đặc điểm ngoại hình và tính cách từ cả bố và mẹ.",
     "homePageTitle": "PetAI | Nhận diện giống chó thông minh",
     "homeHeroTag": "ĐỀ TÀI: NHẬN DIỆN GIỐNG CHÓ",
     "homeHeroTitle": "NHẬN DIỆN GIỐNG CHÓ",
@@ -2094,6 +2096,8 @@
     "supportTimeLabel": "Thời gian hỗ trợ"
   },
   "en": {
+    "hybridTipTitle": "Hybrid Characteristics",
+    "hybridTipDesc": "Hybrid dogs possess a diverse gene pool, combining unique physical and behavioral traits from both parents.",
     "homePageTitle": "PetAI | Intelligent Dog Breed Identification",
     "homeHeroTag": "PROJECT: DOG BREED IDENTIFICATION",
     "homeHeroTitle": "DOG BREED IDENTIFICATION",

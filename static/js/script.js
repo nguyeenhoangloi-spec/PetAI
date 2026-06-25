@@ -959,6 +959,8 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       updateDOM();
+      // Scroll to the top of the page immediately upon page change
+      window.scrollTo({ top: 0, behavior: "instant" });
       loadMissingHeadResources(doc, postUpdate);
     };
 
