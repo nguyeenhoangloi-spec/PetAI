@@ -990,86 +990,106 @@
           <!-- JavaScript Cấu hình điều khiển Trang Cài đặt -->
           <script>
             (function () {
-              const userId = "{{ session.get('user_id') or 'guest' }}";
-              const activeTabKey = "settings-active-tab:" + userId;
+              console.log("[Settings] Initializing settings script IIFE...");
+              try {
+                const userId = "{{ session.get('user_id') or 'guest' }}";
+                const activeTabKey = "settings-active-tab:" + userId;
 
-              // Helper function to translate dynamically
-              const getTranslation = (key, fallback) => {
-                if (window.PetAI_i18n && typeof window.PetAI_i18n.t === 'function') {
-                  return window.PetAI_i18n.t(key) || fallback;
-                }
-                return fallback;
-              };
-
-              // 1. Logic chuyển đổi Tab
-              const tabButtons = {
-                profile: document.getElementById('tab-btn-profile'),
-                security: document.getElementById('tab-btn-security'),
-                notifications: document.getElementById('tab-btn-notifications'),
-                appearance: document.getElementById('tab-btn-appearance'),
-                privacy: document.getElementById('tab-btn-privacy')
-              };
-
-              const tabPanels = {
-                profile: document.getElementById('tab-panel-profile'),
-                security: document.getElementById('tab-panel-security'),
-                notifications: document.getElementById('tab-panel-notifications'),
-                appearance: document.getElementById('tab-panel-appearance'),
-                privacy: document.getElementById('tab-panel-privacy')
-              };
-
-              function switchTab(tabId) {
-                if (!tabButtons[tabId]) return;
-
-                // Move notifications card to the active tab placeholder to prevent duplicate DOM forms
-                const nCard = document.getElementById('notifications-card');
-                if (nCard) {
-                  if (tabId === 'profile') {
-                    const dest = document.getElementById('profile-tab-right');
-                    if (dest) dest.appendChild(nCard);
-                  } else if (tabId === 'notifications') {
-                    const dest = document.getElementById('notifications-tab-left');
-                    if (dest) dest.appendChild(nCard);
-                  } else {
-                    const dest = document.getElementById('notifications-card-source');
-                    if (dest) dest.appendChild(nCard);
+                // Helper function to translate dynamically
+                const getTranslation = (key, fallback) => {
+                  if (window.PetAI_i18n && typeof window.PetAI_i18n.t === 'function') {
+                    return window.PetAI_i18n.t(key) || fallback;
                   }
+                  return fallback;
+                };
+
+                // 1. Logic chuyển đổi Tab
+                const tabButtons = {
+                  profile: document.getElementById('tab-btn-profile'),
+                  security: document.getElementById('tab-btn-security'),
+                  notifications: document.getElementById('tab-btn-notifications'),
+                  appearance: document.getElementById('tab-btn-appearance'),
+                  privacy: document.getElementById('tab-btn-privacy')
+                };
+
+                const tabPanels = {
+                  profile: document.getElementById('tab-panel-profile'),
+                  security: document.getElementById('tab-panel-security'),
+                  notifications: document.getElementById('tab-panel-notifications'),
+                  appearance: document.getElementById('tab-panel-appearance'),
+                  privacy: document.getElementById('tab-panel-privacy')
+                };
+
+                function switchTab(tabId) {
+                  console.log("[Settings] switchTab requested for:", tabId);
+                  if (!tabButtons[tabId]) {
+                    console.warn("[Settings] Tab button not found for tab:", tabId);
+                    return;
+                  }
+
+                  // Move notifications card to the active tab placeholder to prevent duplicate DOM forms
+                  const nCard = document.getElementById('notifications-card');
+                  if (nCard) {
+                    if (tabId === 'profile') {
+                      const dest = document.getElementById('profile-tab-right');
+                      console.log("[Settings] Appending notifications card to profile-tab-right:", dest);
+                      if (dest) dest.appendChild(nCard);
+                    } else if (tabId === 'notifications') {
+                      const dest = document.getElementById('notifications-tab-left');
+                      console.log("[Settings] Appending notifications card to notifications-tab-left:", dest);
+                      if (dest) dest.appendChild(nCard);
+                    } else {
+                      const dest = document.getElementById('notifications-card-source');
+                      console.log("[Settings] Appending notifications card to notifications-card-source:", dest);
+                      if (dest) dest.appendChild(nCard);
+                    }
+                  } else {
+                    console.warn("[Settings] notifications-card element not found!");
+                  }
+
+                  Object.keys(tabButtons).forEach(t => {
+                    const btn = tabButtons[t];
+                    const panel = tabPanels[t];
+                    if (!btn || !panel) {
+                      console.warn("[Settings] btn or panel is null for key:", t);
+                      return;
+                    }
+                    if (t === tabId) {
+                      btn.classList.add('border-primary', 'text-primary');
+                      btn.classList.remove('border-transparent', 'text-slate-500', 'dark:text-slate-400');
+                      btn.setAttribute('aria-selected', 'true');
+                      panel.classList.remove('hidden');
+                      panel.style.opacity = '0';
+                      requestAnimationFrame(() => {
+                        panel.style.transition = 'opacity 180ms ease';
+                        panel.style.opacity = '1';
+                      });
+                    } else {
+                      btn.classList.remove('border-primary', 'text-primary');
+                      btn.classList.add('border-transparent', 'text-slate-500', 'dark:text-slate-400');
+                      btn.setAttribute('aria-selected', 'false');
+                      panel.classList.add('hidden');
+                    }
+                  });
+                  localStorage.setItem(activeTabKey, tabId);
                 }
 
-                Object.keys(tabButtons).forEach(t => {
-                  const btn = tabButtons[t];
-                  const panel = tabPanels[t];
-                  if (t === tabId) {
-                    btn.classList.add('border-primary', 'text-primary');
-                    btn.classList.remove('border-transparent', 'text-slate-500', 'dark:text-slate-400');
-                    btn.setAttribute('aria-selected', 'true');
-                    panel.classList.remove('hidden');
-                    panel.style.opacity = '0';
-                    requestAnimationFrame(() => {
-                      panel.style.transition = 'opacity 180ms ease';
-                      panel.style.opacity = '1';
+                Object.keys(tabButtons).forEach(tabId => {
+                  const btn = tabButtons[tabId];
+                  if (btn) {
+                    btn.addEventListener('click', () => {
+                      switchTab(tabId);
+                      // Update URL hash without causing page jump
+                      if (history.pushState) {
+                        history.pushState(null, null, '#' + tabId);
+                      } else {
+                        window.location.hash = tabId;
+                      }
                     });
                   } else {
-                    btn.classList.remove('border-primary', 'text-primary');
-                    btn.classList.add('border-transparent', 'text-slate-500', 'dark:text-slate-400');
-                    btn.setAttribute('aria-selected', 'false');
-                    panel.classList.add('hidden');
+                    console.warn("[Settings] Tab button not found for registration:", tabId);
                   }
                 });
-                localStorage.setItem(activeTabKey, tabId);
-              }
-
-              Object.keys(tabButtons).forEach(tabId => {
-                tabButtons[tabId].addEventListener('click', () => {
-                  switchTab(tabId);
-                  // Update URL hash without causing page jump
-                  if (history.pushState) {
-                    history.pushState(null, null, '#' + tabId);
-                  } else {
-                    window.location.hash = tabId;
-                  }
-                });
-              });
 
               // Initial tab check prioritizing URL hash
               function checkHashAndSwitch() {
@@ -1077,7 +1097,10 @@
                 if (hash && tabButtons[hash]) {
                   switchTab(hash);
                 } else {
-                  const initialTab = localStorage.getItem(activeTabKey) || 'profile';
+                  let initialTab = localStorage.getItem(activeTabKey);
+                  if (!initialTab || !tabButtons[initialTab]) {
+                    initialTab = 'profile';
+                  }
                   switchTab(initialTab);
                 }
               }
@@ -1260,7 +1283,11 @@
                     if (res.ok) {
                       const html = await res.text();
                       if (window.loadPagePjax) {
-                        window.loadPagePjax(res.url, true, html);
+                        // Preserve URL hash when reloading page to ensure PJAX script recognizes active tab
+                        const currentTab = localStorage.getItem(activeTabKey) || 'profile';
+                        const redirectUrl = res.url.split('#')[0] + '#' + currentTab;
+                        console.log("[Settings] PJAX reloading settings page with active tab hash:", redirectUrl);
+                        window.loadPagePjax(redirectUrl, false, html);
                       } else {
                         window.location.href = res.url;
                       }
@@ -1344,7 +1371,10 @@
                   }
                 });
               }
-            })();
+            } catch (e) {
+              console.error("[Settings] Error inside IIFE:", e);
+            }
+          })();
 
             // Xóa tài khoản OTP Modal Code (để trên window scope để khớp onclick inline)
             var _CSRF = document.querySelector('meta[name="csrf-token"]')?.content || '';

@@ -535,6 +535,8 @@ document.addEventListener("DOMContentLoaded", function () {
         return !type || type === "text/javascript" || type === "module";
       }) : [];
 
+
+
       if (!isPopState) {
         history.pushState(null, "", url);
       }
@@ -839,13 +841,12 @@ document.addEventListener("DOMContentLoaded", function () {
           if (oldScript.textContent.includes("i18n-loading")) {
             return;
           }
-          const newScript = document.createElement("script");
-          Array.from(oldScript.attributes).forEach(attr => {
-            newScript.setAttribute(attr.name, attr.value);
-          });
-          newScript.textContent = oldScript.textContent;
-          document.body.appendChild(newScript);
-          newScript.remove(); // Clean up dynamic script elements immediately after execution to prevent DOM cluttering
+          try {
+            // Execute inline script in global scope using indirect eval
+            (0, eval)(oldScript.textContent);
+          } catch (err) {
+            console.error("[PJAX] Error executing inline script via eval:", err);
+          }
         });
 
         // Restore global event listeners
