@@ -87,22 +87,24 @@
 
       /* Collapsed state */
       html.sidebar-collapsed .sidebar {
-        transform: translateX(-100%) !important;
-        opacity: 0 !important;
-        visibility: hidden !important;
+        transform: none !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        width: 72px !important;
       }
 
       html.sidebar-collapsed main,
       html.sidebar-collapsed footer {
-        margin-left: 0 !important;
-        width: 100% !important;
+        margin-left: 72px !important;
+        width: calc(100% - 72px) !important;
       }
 
       /* Expanded state (default) */
       html:not(.sidebar-collapsed) .sidebar {
-        transform: translateX(0) !important;
+        transform: none !important;
         opacity: 1 !important;
         visibility: visible !important;
+        width: 224px !important;
       }
 
       html:not(.sidebar-collapsed) main,
@@ -1739,17 +1741,18 @@
       const emptyState = document.getElementById('recent-history-empty');
       if (!slider) return;
 
-      // Set a timeout of 4 seconds to prevent indefinite skeleton hangs
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 4000);
+      const hasAbort = typeof AbortController !== 'undefined';
+      const controller = hasAbort ? new AbortController() : null;
+      const timeoutId = hasAbort ? setTimeout(() => controller.abort(), 4000) : null;
 
-      fetch('/history/api/recent?limit=8', { signal: controller.signal })
+      const fetchOpts = hasAbort ? { signal: controller.signal } : {};
+      fetch('/history/api/recent?limit=8', fetchOpts)
         .then(r => {
           if (!r.ok) throw new Error("Server error " + r.status);
           return r.json();
         })
         .then(data => {
-          clearTimeout(timeoutId);
+          if (timeoutId) clearTimeout(timeoutId);
           if (skeleton) skeleton.remove();
 
           // Safe filter for any falsy values
@@ -1777,8 +1780,11 @@
             }
             const conf = item.confidence !== undefined ? Math.round(item.confidence * 100) + '%' : '';
             let imgSrc = item.image_url || item.image_path || item.thumbnail || '';
-            if (imgSrc && !imgSrc.startsWith('http') && !imgSrc.startsWith('/')) {
-              imgSrc = '/' + imgSrc;
+            if (imgSrc) {
+              imgSrc = imgSrc.replace(/\\/g, '/');
+              if (!imgSrc.startsWith('http') && !imgSrc.startsWith('/')) {
+                imgSrc = '/' + imgSrc;
+              }
             }
             card.innerHTML = `
                 <div class="w-24 h-24 rounded-xl overflow-hidden border border-outline-variant/30 dark:border-slate-800 bg-surface-container dark:bg-slate-800 mb-1.5 relative group-hover:ring-2 group-hover:ring-primary/50 transition-all duration-200 shadow-sm flex items-center justify-center">
@@ -1808,7 +1814,7 @@
           }
         })
         .catch(err => {
-          clearTimeout(timeoutId);
+          if (timeoutId) clearTimeout(timeoutId);
           console.error("Recent history loader failed:", err);
           if (skeleton) skeleton.remove();
           if (emptyState) { emptyState.classList.remove('hidden'); emptyState.classList.add('flex'); }

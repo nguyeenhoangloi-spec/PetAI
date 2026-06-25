@@ -1157,6 +1157,7 @@ def upload():
 
 		# Lưu vào database (ưu tiên khi đã pass gate chó)
 
+		conn = None
 		try:
 			if user_id is not None and should_save_prediction:
 				conn = get_connection()
@@ -1166,7 +1167,6 @@ def upload():
 					if str(quota_now.get("plan") or "free").lower() != "free":
 						if not UserQuota.consume_paid_use(conn, user_id):
 							flash("Bạn đã hết lượt sử dụng. Vui lòng gia hạn để tiếp tục.", "warning")
-							conn.close()
 							return redirect(url_for("predict.upgrade"))
 				except Exception:
 					# If quota consume fails, don't block prediction
@@ -1181,9 +1181,14 @@ def upload():
 					float(conf_to_save) if conf_to_save else 0.0,
 					det_label
 				)
-				conn.close()
 		except Exception as e:
 			print(f"Warning: Could not save to history: {e}")
+		finally:
+			if conn:
+				try:
+					conn.close()
+				except Exception:
+					pass
 		
 		# Đọc cài đặt thông báo hệ thống (chỉ UI toast, không gửi email mỗi lần nhận diện)
 		show_notification = False

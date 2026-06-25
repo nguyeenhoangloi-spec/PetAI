@@ -391,6 +391,7 @@ body>nav img[alt="PetAI New Logo"] {
 
 :root {
   --sb-width: 224px;
+  --sb-collapsed-width: 72px;
   --sb-bg-light: #ffffff;
   --sb-bg-dark: #0f172a;
   /* Slate 900 for dark mode */
@@ -425,8 +426,7 @@ body>nav img[alt="PetAI New Logo"] {
   flex-direction: column !important;
   padding: 0 !important;
   margin: 0 !important;
-  transform: translateX(0);
-  transition: transform 300ms cubic-bezier(0.25, 1, 0.5, 1), opacity 300ms cubic-bezier(0.25, 1, 0.5, 1), visibility 300ms cubic-bezier(0.25, 1, 0.5, 1) !important;
+  transition: width 300ms cubic-bezier(0.25, 1, 0.5, 1), transform 300ms cubic-bezier(0.25, 1, 0.5, 1), opacity 300ms cubic-bezier(0.25, 1, 0.5, 1), visibility 300ms cubic-bezier(0.25, 1, 0.5, 1) !important;
 }
 
 html.dark .sidebar {
@@ -573,10 +573,11 @@ html.dark .sidebar-divider {
   }
 
   html:has(#sidebar):not(.sidebar-collapsed) .sidebar {
-    transform: translateX(0) !important;
+    transform: none !important;
     opacity: 1 !important;
     visibility: visible !important;
     pointer-events: auto !important;
+    width: var(--sb-width) !important;
   }
 
   html:has(#sidebar):not(.sidebar-collapsed) main {
@@ -592,22 +593,57 @@ html.dark .sidebar-divider {
   }
 
   html:has(#sidebar).sidebar-collapsed .sidebar {
-    transform: translateX(-100%) !important;
-    opacity: 0 !important;
-    visibility: hidden !important;
-    pointer-events: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    width: var(--sb-collapsed-width) !important;
   }
 
   html:has(#sidebar).sidebar-collapsed main {
-    margin-left: 0 !important;
-    width: 100% !important;
+    margin-left: var(--sb-collapsed-width) !important;
+    width: calc(100% - var(--sb-collapsed-width)) !important;
     grid-template-columns: 1fr !important;
     gap: 0 !important;
   }
 
   html:has(#sidebar).sidebar-collapsed footer {
-    margin-left: 0 !important;
-    width: 100% !important;
+    margin-left: var(--sb-collapsed-width) !important;
+    width: calc(100% - var(--sb-collapsed-width)) !important;
+  }
+  
+  /* Collapsed state item layout styles */
+  html.sidebar-collapsed .sidebar-menu-item span:not(.material-symbols-outlined) {
+    display: none !important;
+  }
+  
+  html.sidebar-collapsed .sidebar-group-title {
+    display: none !important;
+  }
+  
+  html.sidebar-collapsed .sidebar-divider {
+    margin: 8px 10px !important;
+  }
+  
+  html.sidebar-collapsed .sidebar-menu-item {
+    justify-content: center !important;
+    padding: 0 !important;
+    gap: 0 !important;
+  }
+  
+  html.sidebar-collapsed #sidebarLangDropdown,
+  html.sidebar-collapsed #sidebarThemeToggle {
+    display: none !important;
+  }
+  
+  html.sidebar-collapsed .sidebar-user-card .user-info,
+  html.sidebar-collapsed .sidebar-user-card .logout-btn-link {
+    display: none !important;
+  }
+  
+  html.sidebar-collapsed .sidebar-user-card {
+    justify-content: center !important;
+    padding: 8px 0 !important;
   }
 }
 

@@ -84,21 +84,23 @@
       
       /* Collapsed state */
       html.sidebar-collapsed .sidebar {
-        transform: translateX(-100%) !important;
-        opacity: 0 !important;
-        visibility: hidden !important;
+        transform: none !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        width: 72px !important;
       }
       html.sidebar-collapsed main,
       html.sidebar-collapsed footer {
-        margin-left: 0 !important;
-        width: 100% !important;
+        margin-left: 72px !important;
+        width: calc(100% - 72px) !important;
       }
       
       /* Expanded state (default) */
       html:not(.sidebar-collapsed) .sidebar {
-        transform: translateX(0) !important;
+        transform: none !important;
         opacity: 1 !important;
         visibility: visible !important;
+        width: 224px !important;
       }
       html:not(.sidebar-collapsed) main,
       html:not(.sidebar-collapsed) footer {

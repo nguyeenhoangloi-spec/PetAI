@@ -724,4 +724,27 @@
 - **Prevention**: Luôn dựng các phần tử ẩn hoặc iframe render ngầm ở vị trí hoàn toàn off-screen (ví dụ: `left: -9999px`) để tránh ảnh hưởng đến thanh cuộn viewport của cửa sổ chính.
 - **Status**: Fixed
 
+---
+
+## [2026-06-25 17:11] - Lỗi rò rỉ kết nối database và lỗi đường dẫn ảnh làm treo khung lịch sử nhận diện gần đây
+
+- **Type**: Logic
+- **Severity**: High
+- **File**: `upload.py:1160-1187`, `templates/predict.html:1735-1816`
+- **Agent**: PetAI
+- **Root Cause**:
+  1. Khi lưu lịch sử nhận diện (`PredictionHistory.save`), nếu xảy ra ngoại lệ, kết nối DB không được đóng (`conn.close()` bị bỏ qua), làm rò rỉ kết nối MySQL. Khi hết kết nối, API nạp lịch sử gần đây `/history/api/recent` bị treo.
+  2. Đường dẫn lưu trữ chứa ký tự gạch chéo ngược `\` của Windows không được chuẩn hóa ở frontend làm lỗi tải ảnh.
+  3. WebView/trình duyệt cũ không hỗ trợ `AbortController` gây crash script.
+- **Error Message**:
+  ```text
+  [Khung lịch sử nhận diện gần đây hiển thị các ô skeleton trống trơn và treo vô hạn]
+  ```
+- **Fix Applied**:
+  1. Cấu trúc lại khối lưu lịch sử trong `upload.py` sử dụng `try...finally` để luôn đóng kết nối DB.
+  2. Chuẩn hóa đường dẫn hình ảnh bằng cách thay thế `\` thành `/` trong `predict.html`.
+  3. Thêm kiểm tra an toàn `typeof AbortController` trước khi gọi fetch.
+- **Prevention**: Luôn dùng khối `finally` để đóng kết nối database sau khi mở; chuẩn hóa đường dẫn trước khi gán thuộc tính `src` và kiểm tra sự tồn tại của các API mới của trình duyệt trước khi sử dụng.
+- **Status**: Fixed
+
 
