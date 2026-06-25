@@ -1569,6 +1569,7 @@
             if (data.order_id) {
               startStatusChecking(data.order_id);
             }
+          } else {
             if (typeof window.showToast === "function") {
               window.showToast("error", (lang === "en" ? data.message_en : data.message_vi) || (lang === "en" ? "An error occurred" : "Đã xảy ra lỗi"));
             }
