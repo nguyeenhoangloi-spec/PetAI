@@ -1333,7 +1333,8 @@
             class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-xl shadow-sm overflow-hidden"
           >
             {% if recent_predictions %}
-              <div class="overflow-x-auto w-full">
+              <!-- Desktop Table View -->
+              <div class="hidden md:block overflow-x-auto w-full">
                 <table class="w-full text-left border-collapse">
                   <thead>
                     <tr class="border-b border-outline-variant/10 bg-slate-50/50 dark:bg-slate-900/50 text-[11px] font-bold text-on-surface-variant uppercase tracking-wider select-none">
@@ -1347,50 +1348,61 @@
                   <tbody class="divide-y divide-outline-variant/10">
                     {% for p in recent_predictions[:5] %}
                       {% set conf_pct = (p.confidence * 100)|round|int %}
-                      {% if conf_pct >= 70 %}
-                        {% set pill_cls = 'confidence-high' %}
-                      {% elif conf_pct >= 30 %}
-                        {% set pill_cls = 'confidence-mid' %}
-                      {% else %}
-                        {% set pill_cls = 'confidence-low' %}
-                      {% endif %}
                       {% set formatted_date = p.created_at.strftime('%d/%m/%Y %H:%M') if p.created_at else '' %}
                       
-                      <tr class="activity-item hover:bg-slate-50/30 dark:hover:bg-slate-800/20 transition-colors">
+                      <tr class="group hover:bg-primary/[0.015] dark:hover:bg-blue-500/[0.015] transition-colors">
                         <td class="px-6 py-4.5 whitespace-nowrap">
                           {% if p.image_path %}
                             <img
                               alt="{{ p.breed }}"
-                              class="activity-thumb cursor-zoom-in"
+                              class="w-11 h-11 rounded-xl object-cover ring-2 ring-slate-100 dark:ring-slate-800/80 shadow-sm transition-transform duration-300 group-hover:scale-105 cursor-zoom-in"
                               src="{{ p.image_path if p.image_path.startswith('http') else '/' ~ p.image_path }}"
                               onerror="this.src='{{ default_logo }}'"
                               onclick="openDetailModal('{{ p.image_path }}', '{{ p.breed|escape }}', '{{ (p.confidence*100)|round(1) }}', '{{ p.species|escape }}', '{{ formatted_date }}')"
                             >
                           {% else %}
                             <div
-                              class="activity-thumb bg-surface-container flex items-center justify-center"
+                              class="w-11 h-11 rounded-xl bg-surface-container flex items-center justify-center ring-2 ring-slate-100 dark:ring-slate-800 shadow-sm"
                             >
                               <span
-                                class="material-symbols-outlined text-outline text-[22px]"
+                                class="material-symbols-outlined text-outline text-[20px]"
                                 >pets</span
                               >
                             </div>
                           {% endif %}
                         </td>
                         <td class="px-6 py-4.5 whitespace-nowrap">
-                          <h4 class="font-bold text-on-surface body-md truncate max-w-xs" data-i18n-breed="{{ p.breed or '' }}">
+                          <h4 class="font-bold text-on-surface text-[14px] truncate max-w-[240px]" data-i18n-breed="{{ p.breed or '' }}">
                             {{ p.breed or 'Chưa xác định' }}
                           </h4>
-                          <span class="text-[11px] text-on-surface-variant/80 font-semibold uppercase tracking-wider block mt-0.5" data-i18n-auto>{{ p.species or 'Chó' }}</span>
-                        </td>
-                        <td class="px-6 py-4.5 whitespace-nowrap">
-                          <span class="confidence-pill {{ pill_cls }} inline-block">
-                            {{ conf_pct }}%
+                          <span 
+                            class="inline-flex items-center px-1.5 py-0.5 mt-1 rounded text-[9px] font-bold tracking-wider uppercase bg-slate-100 text-slate-600 dark:bg-slate-850 dark:text-slate-400 border border-slate-200/50 dark:border-slate-800/50" 
+                            data-i18n-auto
+                          >
+                            {{ p.species or 'Chó' }}
                           </span>
                         </td>
+                        <td class="px-6 py-4.5 whitespace-nowrap">
+                          {% if conf_pct >= 70 %}
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400 border border-emerald-200/40 dark:border-emerald-800/30">
+                              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                              {{ conf_pct }}%
+                            </span>
+                          {% elif conf_pct >= 30 %}
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400 border border-amber-200/40 dark:border-amber-800/30">
+                              <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                              {{ conf_pct }}%
+                            </span>
+                          {% else %}
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-50 text-rose-700 dark:bg-rose-950/30 dark:text-rose-400 border border-rose-200/40 dark:border-rose-800/30">
+                              <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+                              {{ conf_pct }}%
+                            </span>
+                          {% endif %}
+                        </td>
                         <td class="px-6 py-4.5 whitespace-nowrap text-xs text-on-surface-variant font-medium">
-                          <div class="flex items-center gap-1.5">
-                            <span class="material-symbols-outlined text-[15px] text-on-surface-variant/70">schedule</span>
+                          <div class="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
+                            <span class="material-symbols-outlined text-[15px] text-slate-400">schedule</span>
                             <span>{{ formatted_date }}</span>
                           </div>
                         </td>
@@ -1398,17 +1410,93 @@
                           <button
                             type="button"
                             onclick="openDetailModal('{{ p.image_path }}', '{{ p.breed|escape }}', '{{ (p.confidence*100)|round(1) }}', '{{ p.species|escape }}', '{{ formatted_date }}')"
-                            class="p-2 rounded-full bg-slate-100 hover:bg-primary/10 text-on-surface-variant hover:text-primary dark:bg-slate-800 dark:hover:bg-slate-700/60 dark:hover:text-blue-400 transition-all cursor-pointer inline-flex items-center justify-center shadow-sm"
+                            class="w-8 h-8 rounded-full border border-slate-200 dark:border-slate-800 bg-slate-50 hover:bg-primary dark:bg-slate-900 dark:hover:bg-blue-600 text-slate-600 hover:text-white dark:text-slate-350 dark:hover:text-white shadow-sm transition-all duration-200 hover:scale-105 cursor-pointer inline-flex items-center justify-center"
                             title="Xem chi tiết"
                             data-i18n-title="viewDetail"
                           >
-                            <span class="material-symbols-outlined text-[18px]">visibility</span>
+                            <span class="material-symbols-outlined text-[16px]">visibility</span>
                           </button>
                         </td>
                       </tr>
                     {% endfor %}
                   </tbody>
                 </table>
+              </div>
+
+              <!-- Mobile Card List View -->
+              <div class="block md:hidden divide-y divide-outline-variant/10">
+                {% for p in recent_predictions[:5] %}
+                  {% set conf_pct = (p.confidence * 100)|round|int %}
+                  {% set formatted_date = p.created_at.strftime('%d/%m/%Y %H:%M') if p.created_at else '' %}
+                  
+                  <div class="flex items-center justify-between p-4 hover:bg-primary/[0.01] dark:hover:bg-blue-500/[0.01] transition-colors">
+                    <!-- Left: Image & Info -->
+                    <div class="flex items-center gap-3">
+                      {% if p.image_path %}
+                        <img
+                          alt="{{ p.breed }}"
+                          class="w-12 h-12 rounded-xl object-cover ring-2 ring-slate-100 dark:ring-slate-800/80 shadow-sm cursor-zoom-in"
+                          src="{{ p.image_path if p.image_path.startswith('http') else '/' ~ p.image_path }}"
+                          onerror="this.src='{{ default_logo }}'"
+                          onclick="openDetailModal('{{ p.image_path }}', '{{ p.breed|escape }}', '{{ (p.confidence*100)|round(1) }}', '{{ p.species|escape }}', '{{ formatted_date }}')"
+                        >
+                      {% else %}
+                        <div
+                          class="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center ring-2 ring-slate-100 dark:ring-slate-800 shadow-sm"
+                        >
+                          <span
+                            class="material-symbols-outlined text-outline text-[20px]"
+                            >pets</span
+                          >
+                        </div>
+                      {% endif %}
+                      <div class="flex flex-col">
+                        <h4 class="font-bold text-on-surface text-xs truncate max-w-[150px] sm:max-w-[200px]" data-i18n-breed="{{ p.breed or '' }}">
+                          {{ p.breed or 'Chưa xác định' }}
+                        </h4>
+                        <div class="flex items-center gap-2 mt-1">
+                          <span 
+                            class="inline-flex items-center px-1.5 py-0.5 rounded text-[8px] font-bold uppercase bg-slate-100 text-slate-600 dark:bg-slate-850 dark:text-slate-400 border border-slate-200/50 dark:border-slate-800/50" 
+                            data-i18n-auto
+                          >
+                            {{ p.species or 'Chó' }}
+                          </span>
+                          <span class="text-[9px] text-slate-400 flex items-center gap-0.5">
+                            <span class="material-symbols-outlined text-[10px]">schedule</span>
+                            {{ formatted_date }}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Right: Confidence & Action -->
+                    <div class="flex items-center gap-2.5">
+                      {% if conf_pct >= 70 %}
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400 border border-emerald-200/40 dark:border-emerald-800/30">
+                          {{ conf_pct }}%
+                        </span>
+                      {% elif conf_pct >= 30 %}
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400 border border-amber-200/40 dark:border-amber-800/30">
+                          {{ conf_pct }}%
+                        </span>
+                      {% else %}
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 dark:bg-rose-950/30 dark:text-rose-400 border border-rose-200/40 dark:border-rose-800/30">
+                          {{ conf_pct }}%
+                        </span>
+                      {% endif %}
+                      
+                      <button
+                        type="button"
+                        onclick="openDetailModal('{{ p.image_path }}', '{{ p.breed|escape }}', '{{ (p.confidence*100)|round(1) }}', '{{ p.species|escape }}', '{{ formatted_date }}')"
+                        class="w-7 h-7 rounded-full border border-slate-200 dark:border-slate-800 bg-slate-50 hover:bg-primary dark:bg-slate-900 dark:hover:bg-blue-600 text-slate-600 hover:text-white dark:text-slate-350 dark:hover:text-white shadow-sm transition-all duration-200 hover:scale-105 cursor-pointer inline-flex items-center justify-center"
+                        title="Xem chi tiết"
+                        data-i18n-title="viewDetail"
+                      >
+                        <span class="material-symbols-outlined text-[14px]">visibility</span>
+                      </button>
+                    </div>
+                  </div>
+                {% endfor %}
               </div>
             {% else %}
               <!-- Empty State -->

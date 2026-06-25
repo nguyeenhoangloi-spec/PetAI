@@ -2,6 +2,23 @@
 
 ---
 
+## [2026-06-25 16:38] - Lỗi trùng lặp thẻ Jinja2 else trên trang statistics.html gây lỗi render thống kê
+
+- **Type**: Agent
+- **Severity**: Medium
+- **File**: `templates/statistics.html:1501-1502`
+- **Agent**: @frontend-specialist
+- **Root Cause**: Trong quá trình thiết kế lại giao diện Kết quả gần đây, khi thực hiện công cụ replace đã bị trùng lặp 2 thẻ `{% else %}` liên tiếp, dẫn đến lỗi cú pháp template `TemplateSyntaxError` của Flask Jinja2.
+- **Error Message**:
+  ```text
+  [Không thể tải thống kê. Vui lòng thử lại.]
+  ```
+- **Fix Applied**: Loại bỏ một thẻ `{% else %}` trùng lặp tại dòng 1501 để chuẩn hóa lại cú pháp Jinja2.
+- **Prevention**: Kiểm tra kỹ phạm vi của ReplacementContent và code Jinja2 xung quanh các khối block trước khi tiến hành replace.
+- **Status**: Fixed
+
+---
+
 ## [2026-06-24 15:50] - Lỗi nhãn giờ hỗ trợ chưa dịch và lỗi font icon hiển thị chữ "chedule" trên trang Support/Contact
 
 - **Type**: Agent
