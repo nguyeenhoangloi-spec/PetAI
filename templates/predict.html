@@ -1739,28 +1739,65 @@
       const skeleton = slider ? slider.querySelector('.recent-history-skeleton') : null;
       const itemsContainer = document.getElementById('recent-history-items');
       const emptyState = document.getElementById('recent-history-empty');
-      if (!slider) return;
+      console.log('[History] loadRecentHistory called. slider=', !!slider, 'itemsContainer=', !!itemsContainer);
+      if (!slider) { console.warn('[History] slider not found, aborting.'); return; }
+
+      // Abort any previous in-flight request to free browser sockets
+      if (window.recentHistoryAbortController) {
+        console.log('[History] aborting previous controller');
+        try { window.recentHistoryAbortController.abort(); } catch (e) { /* ignore */ }
+      }
 
       const hasAbort = typeof AbortController !== 'undefined';
       const controller = hasAbort ? new AbortController() : null;
-      const timeoutId = hasAbort ? setTimeout(() => controller.abort(), 4000) : null;
+      // Register globally so PJAX navigation and the next call can cancel us
+      window.recentHistoryAbortController = controller;
 
+      const timeoutId = hasAbort ? setTimeout(() => { console.warn('[History] fetch TIMED OUT after 6s'); controller.abort(); }, 6000) : null;
+
+      // Clear stale items from a previous render before fetching new ones
+      if (itemsContainer) {
+        itemsContainer.innerHTML = '';
+        itemsContainer.classList.add('hidden');
+        itemsContainer.classList.remove('flex');
+      }
+      if (emptyState) {
+        emptyState.classList.add('hidden');
+        emptyState.classList.remove('flex');
+      }
+
+      console.log('[History] starting fetch /history/api/recent?limit=8 ...');
       const fetchOpts = hasAbort ? { signal: controller.signal } : {};
       fetch('/history/api/recent?limit=8', fetchOpts)
         .then(r => {
+          console.log('[History] fetch response status:', r.status, 'ok:', r.ok);
           if (!r.ok) throw new Error("Server error " + r.status);
           return r.json();
         })
         .then(data => {
           if (timeoutId) clearTimeout(timeoutId);
-          if (skeleton) skeleton.remove();
+
+          // Re-lookup elements from the active live DOM to prevent rendering into detached/stale elements
+          const freshSlider = document.getElementById('recent-history-slider');
+          const freshContainer = document.getElementById('recent-history-items');
+          const freshEmptyState = document.getElementById('recent-history-empty');
+
+          if (!freshSlider || !freshContainer) {
+            console.warn('[History] active slider or container not found in DOM, aborting render.');
+            return;
+          }
+
+          const freshSkeleton = freshSlider.querySelector('.recent-history-skeleton');
+          if (freshSkeleton) freshSkeleton.remove();
 
           // Safe filter for any falsy values
           const rawItems = Array.isArray(data) ? data : (data.predictions || data.items || data.data || []);
           const items = (Array.isArray(rawItems) ? rawItems : []).filter(Boolean);
+          console.log('[History] items.length=', items.length, '| freshContainer classes:', freshContainer.className);
 
           if (items.length === 0) {
-            if (emptyState) { emptyState.classList.remove('hidden'); emptyState.classList.add('flex'); }
+            console.log('[History] no items → showing freshEmptyState');
+            if (freshEmptyState) { freshEmptyState.classList.remove('hidden'); freshEmptyState.classList.add('flex'); }
             return;
           }
           const lang = _getLang();
@@ -1804,20 +1841,32 @@
               `;
             fragment.appendChild(card);
           });
-          if (itemsContainer) {
-            itemsContainer.appendChild(fragment);
-            itemsContainer.classList.remove('hidden');
-            itemsContainer.classList.add('flex');
-            if (window.PetAI_i18n && typeof window.PetAI_i18n.applyToElement === "function") {
-              window.PetAI_i18n.applyToElement(itemsContainer, lang);
-            }
+
+          freshContainer.appendChild(fragment);
+          freshContainer.classList.remove('hidden');
+          freshContainer.classList.add('flex');
+          console.log('[History] RENDERED! freshContainer.childCount=', freshContainer.childElementCount, 'classes=', freshContainer.className, 'inDOM?', !!freshContainer.parentNode);
+          if (window.PetAI_i18n && typeof window.PetAI_i18n.applyToElement === "function") {
+            window.PetAI_i18n.applyToElement(freshContainer, lang);
           }
         })
         .catch(err => {
           if (timeoutId) clearTimeout(timeoutId);
-          console.error("Recent history loader failed:", err);
-          if (skeleton) skeleton.remove();
-          if (emptyState) { emptyState.classList.remove('hidden'); emptyState.classList.add('flex'); }
+          // AbortError means we intentionally cancelled the request — do not show error UI
+          if (err && err.name === 'AbortError') {
+            console.log('[History] fetch was ABORTED (intentional)');
+            return;
+          }
+          console.error('[History] fetch FAILED with error:', err);
+
+          const freshSlider = document.getElementById('recent-history-slider');
+          const freshEmptyState = document.getElementById('recent-history-empty');
+
+          if (freshSlider) {
+            const freshSkeleton = freshSlider.querySelector('.recent-history-skeleton');
+            if (freshSkeleton) freshSkeleton.remove();
+          }
+          if (freshEmptyState) { freshEmptyState.classList.remove('hidden'); freshEmptyState.classList.add('flex'); }
         });
     })();
 

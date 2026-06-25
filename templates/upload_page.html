@@ -894,10 +894,17 @@
             </div>`;
           }
 
+          // Abort any previous in-flight request to free browser sockets
+          if (window.recentHistoryAbortController) {
+            try { window.recentHistoryAbortController.abort(); } catch (e) { /* ignore */ }
+          }
+          const controller = new AbortController();
+          // Register globally so PJAX navigation and the next call can cancel us
+          window.recentHistoryAbortController = controller;
+
           try {
-            // Set a timeout of 4 seconds to prevent indefinite spinner hangs
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 4000);
+            // Set a timeout of 6 seconds to prevent indefinite spinner hangs
+            const timeoutId = setTimeout(() => controller.abort(), 6000);
 
             const res = await fetch("/history/api/recent?limit=5", { signal: controller.signal });
             clearTimeout(timeoutId);
@@ -907,8 +914,15 @@
             const rawItems = data.predictions || [];
             const items = (Array.isArray(rawItems) ? rawItems : []).filter(Boolean);
 
+            // Re-lookup element from the active live DOM to prevent rendering into detached/stale elements
+            const freshContainer = document.getElementById("recentHistoryList");
+            if (!freshContainer) {
+              console.warn("[History] active container recentHistoryList not found in DOM, aborting render.");
+              return;
+            }
+
             if (items.length === 0) {
-              container.innerHTML = emptyState(t("noRecentData") || "Chưa có dữ liệu nhận diện.");
+              freshContainer.innerHTML = emptyState(t("noRecentData") || "Chưa có dữ liệu nhận diện.");
               return;
             }
 
@@ -974,13 +988,18 @@
               </div>`;
             });
 
-            container.innerHTML = `<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5">${cards.join("")}</div>`;
+            freshContainer.innerHTML = `<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5">${cards.join("")}</div>`;
             if (window.PetAI_i18n && typeof window.PetAI_i18n.applyToElement === "function") {
-              window.PetAI_i18n.applyToElement(container, window.PetAI_i18n.getCurrentLang() || "vi");
+              window.PetAI_i18n.applyToElement(freshContainer, window.PetAI_i18n.getCurrentLang() || "vi");
             }
           } catch (err) {
+            // AbortError means we intentionally cancelled the request — do not show error UI
+            if (err && err.name === 'AbortError') return;
             console.error("Recent history error:", err);
-            container.innerHTML = emptyState(t("noRecentData") || "Chưa có dữ liệu nhận diện.");
+            const freshContainer = document.getElementById("recentHistoryList");
+            if (freshContainer) {
+              freshContainer.innerHTML = emptyState(t("noRecentData") || "Chưa có dữ liệu nhận diện.");
+            }
           }
         }
 

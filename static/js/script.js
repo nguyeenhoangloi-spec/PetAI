@@ -487,6 +487,12 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function loadPagePjax(url, isPopState = false, htmlContent = null) {
+    // Abort any in-flight recent-history fetch from the previous page to free browser sockets
+    if (window.recentHistoryAbortController) {
+      try { window.recentHistoryAbortController.abort(); } catch (e) { /* ignore */ }
+      window.recentHistoryAbortController = null;
+    }
+
     const handleHtml = (html) => {
       const parser = new DOMParser();
       const doc = parser.parseFromString(html, "text/html");
