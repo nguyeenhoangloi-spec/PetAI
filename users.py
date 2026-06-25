@@ -527,6 +527,193 @@ def confirmations_list():
     )
 
 
+@users_bp.route("/confirmations/export")
+def export_confirmations():
+    if not require_admin():
+        return redirect(url_for("login.login"))
+
+    scope = request.args.get("scope", "all")
+    export_format = request.args.get("format", "csv")
+
+    # Filters (only relevant if scope == "filtered")
+    status_filter = request.args.get("status", "")
+    search_query = request.args.get("q", "").strip()
+    plan_filter = request.args.get("plan", "")
+    method_filter = request.args.get("method", "")
+    time_filter = request.args.get("time", "all")
+    sort_by = request.args.get("sort", "newest")
+
+    conn = None
+    try:
+        conn = get_connection()
+        query_conds = []
+        query_params = []
+
+        if scope == "filtered":
+            if status_filter and status_filter != "all":
+                query_conds.append("po.status = %s")
+                query_params.append(status_filter)
+            
+            if search_query:
+                query_conds.append("(u.username LIKE %s OR u.fullname LIKE %s OR u.email LIKE %s OR po.order_id LIKE %s)")
+                param = f"%{search_query}%"
+                query_params.extend([param, param, param, param])
+
+            if plan_filter:
+                query_conds.append("po.plan = %s")
+                query_params.append(plan_filter)
+
+            if method_filter:
+                query_conds.append("po.payment_method = %s")
+                query_params.append(method_filter)
+
+            if time_filter == "today":
+                query_conds.append("po.created_at >= DATE_SUB(NOW(), INTERVAL 1 DAY)")
+            elif time_filter == "7days":
+                query_conds.append("po.created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)")
+            elif time_filter == "30days":
+                query_conds.append("po.created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)")
+
+        where_clause = ""
+        if query_conds:
+            where_clause = "WHERE " + " AND ".join(query_conds)
+
+        order_clause = "ORDER BY po.created_at DESC"
+        if scope == "filtered":
+            if sort_by == "oldest":
+                order_clause = "ORDER BY po.created_at ASC"
+            elif sort_by == "amount_desc":
+                order_clause = "ORDER BY po.amount_vnd DESC"
+            elif sort_by == "amount_asc":
+                order_clause = "ORDER BY po.amount_vnd ASC"
+
+        query = f"""
+            SELECT po.order_id, po.plan, po.payment_method, po.amount_vnd, po.status, po.created_at, po.confirmed_at,
+                   u.username, u.fullname, u.email
+            FROM payment_orders po
+            JOIN users u ON u.id = po.user_id
+            {where_clause}
+            {order_clause}
+            LIMIT 500
+        """
+
+        with conn.cursor(DictCursor) as cur:
+            cur.execute(query, tuple(query_params))
+            rows = cur.fetchall() or []
+
+        ui_language = request.cookies.get("siteLanguage", "vi")
+        if ui_language not in ("vi", "en"):
+            ui_language = "vi"
+
+        pricing = get_plan_price_vnd(conn)
+
+        orders_list = []
+        for r in rows:
+            po_amount = _order_amount_vnd(r, pricing)
+            created = r.get("created_at")
+            confirmed = r.get("confirmed_at")
+            
+            raw_status = (r.get("status") or "pending").lower()
+            if ui_language == "en":
+                status_mapped = {
+                    "pending": "Pending",
+                    "user_confirmed": "Pending Approval",
+                    "paid": "Approved/Paid",
+                    "rejected": "Rejected",
+                    "cancelled": "Cancelled"
+                }.get(raw_status, raw_status.capitalize())
+                method_mapped = {
+                    "qr": "VietQR",
+                    "bank": "Bank Transfer"
+                }.get((r.get("payment_method") or "").lower(), r.get("payment_method"))
+            else:
+                status_mapped = {
+                    "pending": "Đang chờ",
+                    "user_confirmed": "Chờ duyệt",
+                    "paid": "Đã duyệt/Đã thanh toán",
+                    "rejected": "Đã từ chối",
+                    "cancelled": "Đã hủy"
+                }.get(raw_status, raw_status)
+                method_mapped = {
+                    "qr": "VietQR QR Code",
+                    "bank": "Chuyển khoản"
+                }.get((r.get("payment_method") or "").lower(), r.get("payment_method"))
+
+            orders_list.append({
+                "order_id": r.get("order_id"),
+                "username": r.get("username"),
+                "fullname": r.get("fullname") or "",
+                "email": r.get("email") or "",
+                "plan": (r.get("plan") or "").upper(),
+                "payment_method": method_mapped,
+                "amount": po_amount,
+                "status": status_mapped,
+                "created_at": created.strftime("%Y-%m-%d %H:%M:%S") if created else "",
+                "confirmed_at": confirmed.strftime("%Y-%m-%d %H:%M:%S") if confirmed else ""
+            })
+
+        filename = f"PetAI_Transactions_{datetime.now().strftime('%Y%m%d')}"
+
+        if ui_language == "en":
+            headers = ["Order ID", "Username", "Full Name", "Email", "Plan", "Payment Method", "Amount (VND)", "Status", "Created At", "Confirmed At"]
+        else:
+            headers = ["Mã đơn hàng", "Tên đăng nhập", "Họ và tên", "Email", "Gói dịch vụ", "Phương thức", "Số tiền (VND)", "Trạng thái", "Ngày tạo", "Ngày duyệt"]
+
+        import io
+        from flask import Response, send_file
+
+        if export_format == "xlsx":
+            try:
+                import pandas as pd
+                df = pd.DataFrame(orders_list)
+                if not df.empty:
+                    df = df[["order_id", "username", "fullname", "email", "plan", "payment_method", "amount", "status", "created_at", "confirmed_at"]]
+                else:
+                    df = pd.DataFrame(columns=["order_id", "username", "fullname", "email", "plan", "payment_method", "amount", "status", "created_at", "confirmed_at"])
+                df.columns = headers
+                
+                output = io.BytesIO()
+                with pd.ExcelWriter(output, engine='openpyxl') as writer:
+                    df.to_excel(writer, index=False, sheet_name="Transactions")
+                output.seek(0)
+                
+                return send_file(
+                    output,
+                    mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    as_attachment=True,
+                    download_name=f"{filename}.xlsx"
+                )
+            except Exception as ex_excel:
+                logger.exception("[EXPORT] Excel export failed, falling back to CSV")
+                export_format = "csv"
+
+        if export_format == "csv":
+            import csv
+            output = io.StringIO()
+            writer = csv.writer(output, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+            writer.writerow(headers)
+            for o in orders_list:
+                writer.writerow([
+                    o["order_id"], o["username"], o["fullname"], o["email"], o["plan"],
+                    o["payment_method"], o["amount"], o["status"], o["created_at"], o["confirmed_at"]
+                ])
+            
+            csv_data = "\uFEFF" + output.getvalue()
+            return Response(
+                csv_data,
+                mimetype="text/csv",
+                headers={"Content-disposition": f"attachment; filename={filename}.csv"}
+            )
+
+    except Exception as e:
+        logger.exception("[EXPORT] Export confirmations failed")
+        flash("Không thể xuất lịch sử giao dịch. Vui lòng thử lại sau.", "error")
+        return redirect(url_for("users.confirmations_list"))
+    finally:
+        if conn:
+            conn.close()
+
+
 @users_bp.route("/payments/reject", methods=["POST"])
 def reject_payment():
     if not require_admin():

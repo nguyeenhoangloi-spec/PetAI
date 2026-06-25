@@ -612,5 +612,45 @@ class FlaskSystemTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'"success":true', response.data.replace(b' ', b''))
 
+    def test_export_confirmations_admin_csv(self):
+        self.mock_user_role = "admin"
+        with self.client.session_transaction() as sess:
+            sess['user_id'] = 1
+            sess['role'] = 'admin'
+
+        response = self.client.get('/users/confirmations/export?scope=all&format=csv')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.mimetype, 'text/csv')
+        self.assertIn("Mã đơn hàng", response.data.decode('utf-8'))
+
+    def test_export_confirmations_admin_excel(self):
+        self.mock_user_role = "admin"
+        with self.client.session_transaction() as sess:
+            sess['user_id'] = 1
+            sess['role'] = 'admin'
+
+        response = self.client.get('/users/confirmations/export?scope=all&format=xlsx')
+        self.assertEqual(response.status_code, 200)
+        # If pandas is installed, expect xlsx; otherwise expect csv fallback
+        try:
+            import pandas  # noqa: F401
+            expected_mime = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        except ImportError:
+            expected_mime = 'text/csv'
+        self.assertEqual(response.mimetype, expected_mime)
+
+    def test_export_confirmations_non_admin_forbidden(self):
+        with self.client.session_transaction() as sess:
+            sess['user_id'] = 2
+            sess['role'] = 'user'
+
+        response = self.client.get('/users/confirmations/export?scope=all&format=csv')
+        self.assertEqual(response.status_code, 403)
+
+    def test_export_confirmations_anonymous_redirect(self):
+        response = self.client.get('/users/confirmations/export?scope=all&format=csv')
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(response.location.endswith('/login') or response.location.endswith('/'))
+
 if __name__ == '__main__':
     unittest.main()
