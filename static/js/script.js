@@ -277,6 +277,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // 2b. Sidebar Collapsed Icon Clicks (Language and Theme)
     const langClick = e.target.closest("#sidebarLangClickArea");
     if (langClick) {
+      if (e.target.closest("#sidebarLangDropdown")) return;
       e.preventDefault();
       e.stopPropagation();
       const isCollapsed = root.classList.contains("sidebar-collapsed");
@@ -297,6 +298,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const themeClick = e.target.closest("#sidebarThemeClickArea");
     if (themeClick) {
+      if (e.target.closest("#sidebarThemeToggle")) return;
       e.preventDefault();
       e.stopPropagation();
       const switchBtn = document.querySelector("#sidebarThemeToggle .theme-switch-btn");
