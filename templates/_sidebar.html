@@ -115,12 +115,10 @@
       {% endif %}
 
       <!-- Language Option -->
-      <div class="sidebar-menu-item flex items-center justify-between" style="pointer-events: none;">
-        <div class="flex items-center gap-3 cursor-pointer" style="pointer-events: auto;" id="sidebarLangClickArea">
-          <span class="material-symbols-outlined">language</span>
-          <span data-i18n="sidebarLanguageLabel">Ngôn ngữ</span>
-        </div>
-        <div class="sidebar-lang-dropdown relative" id="sidebarLangDropdown" style="pointer-events: auto;">
+      <div class="sidebar-menu-item sidebar-lang-item cursor-pointer" id="sidebarLangClickArea">
+        <span class="material-symbols-outlined">language</span>
+        <span data-i18n="sidebarLanguageLabel">Ngôn ngữ</span>
+        <div class="sidebar-lang-dropdown" id="sidebarLangDropdown">
           <button type="button" class="sidebar-lang-trigger" id="sidebarLangTrigger" aria-haspopup="listbox" aria-expanded="false">
             <span class="current-lang-text">{{ 'VI' if ui_language == 'vi' else 'EN' }}</span>
             <span class="material-symbols-outlined dropdown-arrow-icon">keyboard_arrow_down</span>
@@ -139,12 +137,10 @@
       </div>
 
       <!-- Night Mode Option -->
-      <div class="sidebar-menu-item flex items-center justify-between" style="pointer-events: none; margin-bottom: 8px;">
-        <div class="flex items-center gap-3 cursor-pointer" style="pointer-events: auto;" id="sidebarThemeClickArea">
-          <span class="material-symbols-outlined">dark_mode</span>
-          <span data-i18n="sidebarNightModeLabel">Chế độ tối</span>
-        </div>
-        <div class="theme-switch-wrapper" style="pointer-events: auto;" id="sidebarThemeToggle">
+      <div class="sidebar-menu-item sidebar-theme-item cursor-pointer" id="sidebarThemeClickArea" style="margin-bottom: 8px;">
+        <span class="material-symbols-outlined">dark_mode</span>
+        <span data-i18n="sidebarNightModeLabel">Chế độ tối</span>
+        <div class="theme-switch-wrapper" id="sidebarThemeToggle">
           <button type="button" class="theme-switch-btn {{ 'is-dark' if ui_theme == 'dark' else 'is-light' }}" aria-label="Toggle theme">
             <span class="theme-switch-knob">
               <span class="material-symbols-outlined sun-icon">light_mode</span>

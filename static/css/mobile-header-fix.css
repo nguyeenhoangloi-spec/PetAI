@@ -680,8 +680,29 @@ html.dark .sidebar-divider {
     justify-content: center !important;
   }
   
+  /* Position relative & visible overflow for dropdown/theme items when expanded */
+  .sidebar-lang-item,
+  .sidebar-theme-item {
+    position: relative !important;
+    overflow: visible !important;
+  }
+  
+  body .sidebar-menu-item.sidebar-lang-item,
+  body .sidebar-menu-item.sidebar-theme-item {
+    overflow: visible !important;
+  }
+  
+  html.sidebar-collapsed .sidebar-menu-item.sidebar-lang-item,
+  html.sidebar-collapsed .sidebar-menu-item.sidebar-theme-item {
+    overflow: hidden !important;
+  }
+  
   #sidebarLangDropdown {
     display: inline-flex !important;
+    position: absolute !important;
+    right: 16px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
     max-width: 120px !important;
     opacity: 1 !important;
     overflow: visible !important;
@@ -697,6 +718,10 @@ html.dark .sidebar-divider {
   
   #sidebarThemeToggle {
     display: flex !important;
+    position: absolute !important;
+    right: 16px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
     max-width: 120px !important;
     opacity: 1 !important;
     overflow: visible !important;
