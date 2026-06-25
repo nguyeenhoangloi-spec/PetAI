@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html class="{{'dark' if ui_theme=='dark' else 'light'}}{{' i18n-loading' if ui_language=='en' else ''}}" lang="{{ui_language or 'vi'}}" data-theme="{{ui_theme or 'light'}}">
   <head>
     <script>
@@ -59,11 +59,13 @@
       .sidebar-menu-item {
         display: flex !important;
         align-items: center !important;
-        gap: 10px !important;
+        gap: 10px;
         height: 40px !important;
-        padding: 0 10px !important;
+        width: 100% !important;
+        padding: 0 10px;
         border-radius: 12px !important;
         box-sizing: border-box !important;
+        overflow: hidden !important;
       }
       
       @media (min-width: 768px) {
