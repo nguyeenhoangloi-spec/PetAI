@@ -707,9 +707,9 @@
         </section>
 
         <!-- ========== MAIN LAYOUT GRID (Left: 8/12, Right: 4/12) ========== -->
-        <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
           <!-- LEFT COLUMN (Image Analysis, Bounding Box, Grad-CAM, Model logic) -->
-          <div class="lg:col-span-8 space-y-6">
+          <div class="lg:col-span-8 flex flex-col gap-6 self-stretch h-full">
             <!-- Card: Bounding Box view and Info -->
             <div
               class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-5 md:p-6 border border-outline-variant/30 dark:border-slate-800 shadow-sm">
@@ -973,7 +973,7 @@
           </div>
 
           <!-- RIGHT COLUMN (Mix Analysis, Similarity list, Actions, History) -->
-          <div class="lg:col-span-4 flex flex-col gap-6">
+          <div class="lg:col-span-4 flex flex-col gap-6 self-stretch h-full">
 
             <!-- Card: Mix Analysis (Shown conditionally if dog hybrid candidate) -->
             {% if result.parts_info and result.parts_info.decision and result.parts_info.decision.is_hybrid_candidate
@@ -1160,10 +1160,10 @@
             </div>
             {% endif %}
 
-            <!-- Card: Actions and Recent History -->
+            <!-- Card: Actions -->
             <div
-              class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-5 border border-outline-variant/30 dark:border-slate-800 shadow-sm relative group/slider flex flex-col flex-grow"
-              data-purpose="actions-and-recent-history">
+              class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-5 border border-outline-variant/30 dark:border-slate-800 shadow-sm flex flex-col flex-grow justify-between"
+              data-purpose="actions-card">
               
               <!-- Section: Actions -->
               <div class="flex items-center gap-2 mb-4 pb-1 border-b border-outline-variant/10 dark:border-slate-850">
@@ -1171,7 +1171,7 @@
                 <h4 class="font-bold text-on-surface dark:text-slate-100 text-sm md:text-base" data-i18n="actionTitle">
                   Hành động</h4>
               </div>
-              <div class="flex flex-col gap-3">
+              <div class="flex flex-col gap-3 flex-grow justify-center">
                 <!-- View History / Save -->
                 <a href="{{ url_for('history.history') }}"
                   class="flex items-center justify-between p-3.5 bg-slate-50 hover:bg-slate-100/80 border border-slate-200/80 dark:bg-[#0d1527]/60 dark:hover:bg-[#131f38] dark:border-blue-500/10 dark:hover:border-blue-500/30 rounded-xl transition-all hover:scale-[1.01] active:scale-[0.99] group">
@@ -1232,10 +1232,13 @@
                   <span class="material-symbols-outlined text-[18px] text-slate-400 dark:text-slate-500 group-hover:translate-x-0.5 transition-transform shrink-0">chevron_right</span>
                 </a>
               </div>
+            </div>
 
-              <!-- Divider line -->
-              <div class="mt-auto pt-6 mb-4 border-t border-outline-variant/10 dark:border-slate-850"></div>
-
+            <!-- Card: Recent History -->
+            <div
+              class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-5 border border-outline-variant/30 dark:border-slate-800 shadow-sm relative group/slider flex flex-col"
+              data-purpose="recent-history-card">
+              
               <!-- Header of slider with small neat navigation buttons -->
               <div class="flex items-center justify-between mb-3.5">
                 <span class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider" data-i18n="recentHistory">Lịch sử gần đây</span>
