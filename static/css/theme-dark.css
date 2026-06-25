@@ -469,3 +469,28 @@ html.dark .text-on-surface-variant\/75, html[data-theme="dark"] .text-on-surface
 html.dark .text-on-surface-variant\/80, html[data-theme="dark"] .text-on-surface-variant\/80 { color: rgba(176, 189, 213, 0.8) !important; }
 html.dark .text-on-surface-variant\/85, html[data-theme="dark"] .text-on-surface-variant\/85 { color: rgba(176, 189, 213, 0.85) !important; }
 html.dark .text-on-surface-variant\/90, html[data-theme="dark"] .text-on-surface-variant\/90 { color: rgba(176, 189, 213, 0.9) !important; }
+
+/* Browser autofill styling to fix inputs shining / off-theme color overlay issue */
+/* Light Mode Autofill */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px #f8fafc inset !important;
+  -webkit-text-fill-color: #0f172a !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Dark Mode Autofill */
+html.dark input:-webkit-autofill,
+html.dark input:-webkit-autofill:hover, 
+html.dark input:-webkit-autofill:focus, 
+html.dark input:-webkit-autofill:active,
+html[data-theme="dark"] input:-webkit-autofill,
+html[data-theme="dark"] input:-webkit-autofill:hover, 
+html[data-theme="dark"] input:-webkit-autofill:focus, 
+html[data-theme="dark"] input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px #020617 inset !important;
+  -webkit-text-fill-color: #f1f5f9 !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
