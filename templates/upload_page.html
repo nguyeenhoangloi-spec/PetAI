@@ -921,10 +921,10 @@
               } catch { return "--"; }
             }
 
-            function confColor(c) {
-              if (c >= 0.9) return "text-emerald-600 dark:text-emerald-400";
-              if (c >= 0.7) return "text-primary dark:text-blue-400";
-              return "text-amber-600 dark:text-amber-400";
+            function confBadgeClass(c) {
+              if (c >= 0.7) return "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400 border border-emerald-500/10 dark:border-emerald-800/20";
+              if (c >= 0.3) return "bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400 border border-amber-500/10 dark:border-amber-800/20";
+              return "bg-rose-50 text-rose-700 dark:bg-rose-950/30 dark:text-rose-400 border border-rose-500/10 dark:border-rose-800/20";
             }
 
             const lang = window.PetAI_i18n ? window.PetAI_i18n.getCurrentLang() : 'vi';
@@ -943,27 +943,38 @@
                 }
               }
               const time   = fmtTime(item.created_at);
-              const cc     = confColor(conf);
+              
+              const badgeClass = confBadgeClass(conf);
+              const statusDotClass = conf >= 0.7 ? 'bg-emerald-500 animate-pulse' : (conf >= 0.3 ? 'bg-amber-500' : 'bg-rose-500');
+              const dateOnly = time.split(' ')[0] || '--';
 
-              return `<div class="flex flex-col gap-2 p-3 rounded-xl bg-surface-container-low/60 dark:bg-slate-800/40 border border-outline-variant/20 dark:border-slate-700/50 hover:bg-surface-container dark:hover:bg-slate-800/70 transition-colors group cursor-default">
-                <div class="aspect-square rounded-lg overflow-hidden bg-slate-200 dark:bg-slate-700 relative">
+              return `<div class="flex flex-col gap-2.5 p-3 rounded-2xl bg-surface-container-lowest dark:bg-slate-900 border border-slate-150/40 dark:border-slate-800/70 hover:bg-slate-50/50 dark:hover:bg-slate-850/30 hover:border-slate-250 dark:hover:border-slate-750/80 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 group cursor-default">
+                <div class="aspect-square rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-850 relative ring-2 ring-slate-50 dark:ring-slate-850 shadow-inner">
                   ${imgUrl
-                    ? `<img src="${imgUrl}" alt="${breed}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+                    ? `<img src="${imgUrl}" alt="${breed}" class="w-full h-full object-cover group-hover:scale-110 group-hover:rotate-1 transition-transform duration-500" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
                     : ""
                   }
                   <div style="display:${imgUrl ? 'none' : 'flex'}" class="absolute inset-0 items-center justify-center">
-                    <span class="material-symbols-outlined text-slate-400 dark:text-slate-600 text-[28px]">pets</span>
+                    <span class="material-symbols-outlined text-slate-400 dark:text-slate-650 text-[26px]">pets</span>
                   </div>
                 </div>
-                <div class="flex flex-col gap-0.5 min-w-0">
-                  <p class="text-[12px] font-semibold text-on-surface dark:text-slate-200 truncate leading-snug" title="${breed}" data-i18n-breed="${item.breed || ''}">${breed}</p>
-                  <p class="text-[13px] font-bold ${cc} leading-tight">${pct}</p>
-                  <p class="text-[11px] text-on-surface-variant/60 dark:text-slate-500 truncate leading-tight">${time}</p>
+                <div class="flex flex-col gap-1 min-w-0">
+                  <p class="text-[12.5px] font-bold text-slate-800 dark:text-slate-200 truncate leading-snug" title="${breed}" data-i18n-breed="${item.breed || ''}">${breed}</p>
+                  <div class="flex items-center justify-between gap-1.5 flex-wrap mt-0.5">
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold ${badgeClass}">
+                      <span class="w-1.5 h-1.5 rounded-full ${statusDotClass}"></span>
+                      ${pct}
+                    </span>
+                    <span class="text-[9px] text-slate-400 dark:text-slate-500 font-semibold flex items-center gap-0.5 select-none" title="${time}">
+                      <span class="material-symbols-outlined text-[11px]">schedule</span>
+                      ${dateOnly}
+                    </span>
+                  </div>
                 </div>
               </div>`;
             });
 
-            container.innerHTML = `<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">${cards.join("")}</div>`;
+            container.innerHTML = `<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5">${cards.join("")}</div>`;
             if (window.PetAI_i18n && typeof window.PetAI_i18n.applyToElement === "function") {
               window.PetAI_i18n.applyToElement(container, window.PetAI_i18n.getCurrentLang() || "vi");
             }

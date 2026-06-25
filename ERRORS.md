@@ -2,6 +2,23 @@
 
 ---
 
+## [2026-06-25 16:48] - Lỗi cú pháp JavaScript trong hàm loadRecentHistory trên trang upload-page do công cụ replace ghi đè nhầm
+
+- **Type**: Agent
+- **Severity**: High
+- **File**: `templates/upload_page.html:900-988`
+- **Agent**: @frontend-specialist
+- **Root Cause**: Trong quá trình thiết kế lại card lịch sử nhận diện gần đây, công cụ replace tự động đã bị so khớp nhầm với một đoạn mã submit form tương tự ở phía trên. Điều này làm ghi đè mất một phần sự kiện submit form và làm mất logic nạp lịch sử, gây ra lỗi vỡ cú pháp JavaScript nghiêm trọng trên trang predict.
+- **Error Message**:
+  ```text
+  [Trang tải ảnh bị tê liệt tính năng tải lịch sử và không thể gửi ảnh phân tích]
+  ```
+- **Fix Applied**: Khôi phục lại trạng thái tệp tin bằng `git checkout` và áp dụng thay thế với phạm vi dòng cực kỳ hẹp và TargetContent độc nhất của riêng khối logic `try-catch` trong hàm `loadRecentHistory()`.
+- **Prevention**: Tránh sử dụng ReplacementContent có chứa những cụm từ khóa quá phổ biến và lặp lại nhiều lần trong file (như `const t = typeof window.PetAI_i18n` hay `try {`). Chọn TargetContent thật độc nhất và xác định chính xác dòng bắt đầu/kết thúc hẹp nhất có thể.
+- **Status**: Fixed
+
+---
+
 ## [2026-06-25 16:38] - Lỗi trùng lặp thẻ Jinja2 else trên trang statistics.html gây lỗi render thống kê
 
 - **Type**: Agent
