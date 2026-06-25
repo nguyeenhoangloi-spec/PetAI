@@ -431,14 +431,14 @@
 
         <!-- Table Container -->
         <div class="overflow-x-auto w-full min-w-0">
-          <table class="w-full text-left border-collapse table-fixed min-w-[800px]">
+          <table class="w-full text-left border-collapse table-fixed">
             <thead>
               <tr class="bg-surface-container-low dark:bg-slate-850 border-b border-outline-variant/20 dark:border-slate-800 label-sm text-on-surface-variant dark:text-slate-400 uppercase tracking-wider font-semibold">
-                <th class="px-6 py-3.5 w-[30%]" data-i18n="userColHeader">Người dùng</th>
+                <th class="px-6 py-3.5 w-[25%]" data-i18n="userColHeader">Người dùng</th>
                 <th class="px-6 py-3.5 w-[15%]" data-i18n="statusColHeader">Trạng thái</th>
-                <th class="px-6 py-3.5 w-[25%]" data-i18n="deleteReason">Lý do xóa</th>
+                <th class="px-6 py-3.5 w-[20%]" data-i18n="deleteReason">Lý do xóa</th>
                 <th class="px-6 py-3.5 w-[20%]" data-i18n="deleteRequestedAt">Ngày yêu cầu</th>
-                <th class="px-6 py-3.5 w-[10%]" data-i18n="actionColHeader">Hành động</th>
+                <th class="px-6 py-3.5 w-[20%] text-center" data-i18n="actionColHeader">Hành động</th>
               </tr>
             </thead>
             <tbody id="tableBody">
@@ -493,7 +493,7 @@
 
   <!-- Script block containing data and filtering logic -->
   <script>
-    const DELETIONS_DATA = {{ delete_users|tojson|safe }};
+    var DELETIONS_DATA = {{ delete_users|tojson|safe }};
 
     document.addEventListener("DOMContentLoaded", function () {
       const searchInput = document.getElementById("searchInput");
@@ -588,27 +588,27 @@
           let dateStr = "";
           if (u.account_status === "pending_delete") {
             dateStr = '<div class="flex flex-col gap-0.5">';
-            dateStr += '  <div class="label-sm text-on-surface-variant dark:text-slate-400"><span class="font-medium text-slate-400 dark:text-slate-500">Yêu cầu:</span> ' + (u.requested_str || "-") + '</div>';
-            dateStr += '  <div class="label-sm text-amber-600 dark:text-amber-400 font-semibold"><span class="font-medium text-slate-400 dark:text-slate-500">Dự kiến:</span> ' + (u.scheduled_str || "-") + '</div>';
+            dateStr += '  <div class="label-sm text-on-surface-variant dark:text-slate-400"><span class="font-medium text-slate-400 dark:text-slate-500">' + t("labelRequested", "Yêu cầu:") + '</span> ' + (u.requested_str || "-") + '</div>';
+            dateStr += '  <div class="label-sm text-amber-600 dark:text-amber-400 font-semibold"><span class="font-medium text-slate-400 dark:text-slate-500">' + t("labelScheduled", "Dự kiến:") + '</span> ' + (u.scheduled_str || "-") + '</div>';
             dateStr += '</div>';
           } else {
             dateStr = '<div class="flex flex-col gap-0.5">';
-            dateStr += '  <div class="label-sm text-on-surface-variant dark:text-slate-400"><span class="font-medium text-slate-400 dark:text-slate-500">Xác nhận xóa:</span> ' + (u.deleted_str || "-") + '</div>';
+            dateStr += '  <div class="label-sm text-on-surface-variant dark:text-slate-400"><span class="font-medium text-slate-400 dark:text-slate-500">' + t("labelDeleted", "Xác nhận xóa:") + '</span> ' + (u.deleted_str || "-") + '</div>';
             dateStr += '</div>';
           }
 
           let actionsHtml = "";
           if (u.account_status === "pending_delete") {
-            actionsHtml += '<div class="flex items-center gap-2">';
-            actionsHtml += '  <button class="action-restore bg-emerald-500 hover:bg-emerald-600 text-white px-2.5 py-1 rounded-md text-[12px] font-semibold flex items-center gap-1 cursor-pointer transition-colors" data-user-id="' + u.id + '" data-username="' + u.username + '" title="' + t("actionRestore", "Khôi phục") + '">';
+            actionsHtml += '<div class="flex items-center justify-center gap-2">';
+            actionsHtml += '  <button class="action-restore bg-white dark:bg-slate-900/40 hover:bg-slate-50 dark:hover:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 text-slate-700 dark:text-slate-300 px-2.5 py-1.5 rounded-lg text-[12px] font-semibold flex items-center gap-1.5 cursor-pointer transition-all duration-200" data-user-id="' + u.id + '" data-username="' + u.username + '" title="' + t("actionRestore", "Khôi phục") + '">';
             actionsHtml += '    <span class="material-symbols-outlined text-[14px]">undo</span>' + t("actionRestore", "Khôi phục") + '';
             actionsHtml += '  </button>';
-            actionsHtml += '  <button class="action-force bg-rose-505 hover:bg-rose-600 text-white px-2.5 py-1 rounded-md text-[12px] font-semibold flex items-center gap-1 cursor-pointer transition-colors" data-user-id="' + u.id + '" data-username="' + u.username + '" title="' + t("actionDeleteNow", "Xóa ngay") + '">';
+            actionsHtml += '  <button class="action-force bg-rose-500 hover:bg-rose-600 text-white px-2.5 py-1.5 rounded-lg text-[12px] font-semibold flex items-center gap-1.5 cursor-pointer transition-all duration-200" data-user-id="' + u.id + '" data-username="' + u.username + '" title="' + t("actionDeleteNow", "Xóa ngay") + '">';
             actionsHtml += '    <span class="material-symbols-outlined text-[14px]">delete</span>' + t("actionDeleteNow", "Xóa ngay") + '';
             actionsHtml += '  </button>';
             actionsHtml += '</div>';
           } else {
-            actionsHtml += '<span class="text-xs text-slate-450 dark:text-slate-600 font-semibold uppercase tracking-wider">Completed</span>';
+            actionsHtml += '<span class="text-xs text-slate-450 dark:text-slate-600 font-semibold uppercase tracking-wider">' + t("statusCompleted", "Hoàn thành") + '</span>';
           }
 
           html += '<tr class="hover:bg-primary/5 dark:hover:bg-slate-800/40 border-b border-outline-variant/10 dark:border-slate-800/60 transition-colors">';
@@ -731,7 +731,7 @@
                 type: "danger",
                 showInput: true,
                 requiredInput: ["FORCE"],
-                inputPlaceholder: "Nhập 'FORCE' để xác nhận",
+                inputPlaceholder: t("placeholderConfirmForce", "Nhập 'FORCE' để xác nhận"),
                 onConfirm: function (confirmWord) {
                   if (confirmWord !== "FORCE") return false;
                   const successMsg = t("toastForceDeleteSuccess", "Đã xóa vĩnh viễn tài khoản thành công!");
@@ -878,6 +878,14 @@
       });
 
       drawTable();
+
+      // Redraw table when i18n is initialized or when the language changes
+      document.addEventListener("i18nReady", function () {
+        drawTable();
+      });
+      document.addEventListener("i18nChanged", function () {
+        drawTable();
+      });
     });
   </script>
   

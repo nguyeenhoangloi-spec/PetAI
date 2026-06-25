@@ -282,6 +282,15 @@ class FlaskSystemTestCase(unittest.TestCase):
         data['csrf_token'] = 'test_csrf_token'
         return self.client.post(url, data=data, follow_redirects=follow_redirects, headers=headers)
 
+    def _post_json_with_csrf(self, url, json_data=None, headers=None):
+        """Helper to post JSON data with a valid CSRF token in the headers."""
+        with self.client.session_transaction() as sess:
+            sess['_csrf_token'] = 'test_csrf_token'
+        
+        headers = headers or {}
+        headers['X-CSRF-Token'] = 'test_csrf_token'
+        return self.client.post(url, json=json_data, headers=headers)
+
     # ==================== 1. Basic Page Tests ====================
 
     def test_health_endpoint(self):
@@ -373,6 +382,18 @@ class FlaskSystemTestCase(unittest.TestCase):
             'confirm_new_password': 'newpassword123'
         })
         self.assertEqual(response.status_code, 200)
+
+    def test_change_language_success(self):
+        with self.client.session_transaction() as sess:
+            sess['user_id'] = 1
+            sess['username'] = 'testuser'
+
+        response = self._post_json_with_csrf('/settings/change-language', json_data={
+            'language': 'en'
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.json['success'])
+        self.assertEqual(response.json['language'], 'en')
 
     # ==================== 4. Quota & Upgrades ====================
 

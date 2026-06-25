@@ -5409,9 +5409,32 @@
                     document.getElementById("admin-float-editor-bar") !== null ||
                     document.getElementById("inplace-preview-bar") !== null;
       } catch (err) { }
-      if (!isEditing) {
-        window.location.reload();
-      }
+      
+      var csrfToken = "";
+      try {
+        var csrfMeta = document.querySelector('meta[name="csrf-token"]');
+        if (csrfMeta) csrfToken = csrfMeta.getAttribute("content") || "";
+      } catch (err) { }
+
+      fetch("/settings/change-language", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRF-Token": csrfToken
+        },
+        body: JSON.stringify({ language: lang })
+      })
+      .then(function () {
+        if (!isEditing) {
+          window.location.reload();
+        }
+      })
+      .catch(function (err) {
+        console.warn("Failed to save language to DB:", err);
+        if (!isEditing) {
+          window.location.reload();
+        }
+      });
     }
   }
 
@@ -5577,7 +5600,13 @@
       // Ensure cookie is synced on initialization (e.g. if cookie was cleared/expired but localStorage exists)
       // to prevent FOUC / translation flash on subsequent page reloads (F5) or PJAX request triggers.
       saveLang(saved);
-      loadRemoteTranslations(saved);
+      loadRemoteTranslations(saved, function () {
+        try {
+          document.dispatchEvent(
+            new CustomEvent("i18nReady", { detail: { lang: saved } }),
+          );
+        } catch (e) { }
+      });
 
       // Sync custom sidebar dropdown values
       var triggerText = document.querySelector("#sidebarLangTrigger .current-lang-text");

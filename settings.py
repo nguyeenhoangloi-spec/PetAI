@@ -39,11 +39,13 @@ def settings():
             if theme not in ('light', 'dark', 'auto'):
                 theme = 'light'
             
+            existing_settings = UserSettings.get_or_create(conn, user_id)
+            
             settings_data = {
                 'theme': theme,
                 'notifications': request.form.get('notifications') == 'on',
                 'email_notifications': request.form.get('email_notifications') == 'on',
-                'language': request.form.get('language', 'vi').strip() or 'vi',
+                'language': request.form.get('language', existing_settings.get('language', 'vi')).strip() or 'vi',
             }
 
             # Optional Password Change logic
@@ -192,6 +194,34 @@ def update_theme():
         return {"success": True, "theme": theme}
     except Exception as e:
         logger.exception("Error updating theme via AJAX")
+        return {"success": False, "message": str(e)}, 500
+
+
+@settings_bp.route("/change-language", methods=["POST"])
+def change_language():
+    """Cập nhật ngôn ngữ nhanh qua AJAX"""
+    if not session.get("user_id"):
+        return {"success": False, "message": "Chưa đăng nhập"}, 401
+    
+    try:
+        user_id = int(session["user_id"])
+        data = request.get_json() or {}
+        lang = data.get("language", "vi").strip().lower()
+        if lang not in ("vi", "en"):
+            lang = "vi"
+            
+        conn = get_connection()
+        try:
+            user_settings = UserSettings.get_or_create(conn, user_id)
+            user_settings["language"] = lang
+            UserSettings.update(conn, user_id, user_settings)
+            conn.commit()
+        finally:
+            conn.close()
+            
+        return {"success": True, "language": lang}
+    except Exception as e:
+        logger.exception("Error updating language via AJAX")
         return {"success": False, "message": str(e)}, 500
 
 
