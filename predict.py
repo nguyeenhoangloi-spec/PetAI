@@ -650,6 +650,8 @@ class ImagePredictor:
 						main_label = "Top-1 (kết luận)" if is_breed_confident else "Top-1 (tham khảo)"
 						main_label_en = "Top-1 (Conclude)" if is_breed_confident else "Top-1 (Reference)"
 						_add_grad(main_label, main_label_en, self.classes[int(top_idx[0])])
+						if len(top_idx) > 1:
+							_add_grad("Top-2 (tham khảo)", "Top-2 (Reference)", self.classes[int(top_idx[1])])
 
 			parts_info["gradcam"]["items"] = grad_items
 
@@ -664,6 +666,8 @@ class ImagePredictor:
 					main_label = "Top-1 (kết luận)" if is_breed_confident else "Top-1 (tham khảo)"
 					main_label_en = "Top-1 (Conclude)" if is_breed_confident else "Top-1 (Reference)"
 					dynamic_candidates.append((main_label, main_label_en, int(top_idx[0])))
+					if len(top_idx) > 1:
+						dynamic_candidates.append(("Top-2 (tham khảo)", "Top-2 (Reference)", int(top_idx[1])))
 
 			seen_dynamic: set[int] = set()
 			for label, label_en, class_idx in dynamic_candidates:
