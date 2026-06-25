@@ -1,4 +1,4 @@
-﻿<!-- html-validate-disable no-dup-class, void-style, title-length, attribute-allowed-values -->
+<!-- html-validate-disable no-dup-class, void-style, title-length, attribute-allowed-values -->
 <!-- htmlhint spec-char-escape:false -->
 <!DOCTYPE html>
 
@@ -420,6 +420,33 @@
                 <div class="flex items-center justify-center py-8 gap-2 text-on-surface-variant dark:text-slate-500">
                   <span class="material-symbols-outlined text-[22px] opacity-40 animate-spin" style="animation-duration:2s">refresh</span>
                   <span class="text-[13px] opacity-60" data-i18n="loadingQuota">Đang tải...</span>
+                </div>
+              </div>
+            </section>
+
+            <!-- ── DAILY PET TIPS CARD ── -->
+            <section class="bg-surface-container-lowest dark:bg-slate-900 rounded-2xl border border-outline-variant/30 dark:border-slate-800 p-6 shadow-sm flex flex-col gap-4">
+              <div class="flex items-center justify-between pb-3 border-b border-outline-variant/15 dark:border-slate-800">
+                <h3 class="text-[16px] font-semibold text-on-surface dark:text-slate-200 flex items-center gap-2">
+                  <span class="material-symbols-outlined text-amber-500 dark:text-amber-400 text-[20px]">lightbulb</span>
+                  <span data-i18n="dailyPetTipTitle">Góc kiến thức &amp; Mẹo nhỏ</span>
+                </h3>
+                <button
+                  type="button"
+                  id="btnNextTip"
+                  class="text-primary dark:text-blue-400 hover:opacity-80 transition-opacity flex items-center justify-center focus:outline-none"
+                  title="Xem mẹo khác"
+                >
+                  <span class="material-symbols-outlined text-[18px]">autorenew</span>
+                </button>
+              </div>
+              <div class="flex items-start gap-4 p-4 rounded-xl border border-slate-100 dark:border-slate-800/60 bg-slate-50/50 dark:bg-slate-950/30 hover:bg-slate-50 dark:hover:bg-slate-950/50 transition-all duration-300">
+                <div class="mt-0.5 w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
+                  <span class="material-symbols-outlined text-[22px]" id="tipIcon">pets</span>
+                </div>
+                <div class="space-y-1.5 flex-1 min-w-0">
+                  <h4 class="text-sm font-semibold text-slate-800 dark:text-slate-200" id="tipCategory">Đang tải...</h4>
+                  <p class="text-xs text-slate-550 dark:text-slate-400 leading-relaxed transition-opacity duration-300" id="tipText">Đang chuẩn bị mẹo nhỏ cho bạn...</p>
                 </div>
               </div>
             </section>
@@ -1121,6 +1148,88 @@
               if (typeof window.showToast === "function") window.showToast("error", t("toastErrorOccurred") || "Đã xảy ra lỗi");
             }
           });
+        }
+
+        // ─── Daily Pet Tips Logic ────────────────────────────────────
+        const petTips = [
+          {
+            categoryEn: "Nutrition",
+            categoryVi: "Dinh dưỡng",
+            textEn: "Avoid giving your dog chocolate, onions, garlic, or grapes, as these can be highly toxic.",
+            textVi: "Tránh cho chó ăn sô-cô-la, hành, tỏi, hoặc nho, vì những thực phẩm này cực kỳ độc hại đối với chúng.",
+            icon: "nutrition"
+          },
+          {
+            categoryEn: "Training",
+            categoryVi: "Huấn luyện",
+            textEn: "Use positive reinforcement like treats and praise. Consistency is key to successful training.",
+            textVi: "Sử dụng phương pháp củng cố tích cực như thưởng bánh và khen ngợi. Tính nhất quán là chìa khóa để huấn luyện thành công.",
+            icon: "school"
+          },
+          {
+            categoryEn: "Health",
+            categoryVi: "Sức khỏe",
+            textEn: "Dogs need regular dental care. Brushing their teeth helps prevent gum disease and bad breath.",
+            textVi: "Chó cần được chăm sóc răng miệng thường xuyên. Đánh răng cho chó giúp ngăn ngừa bệnh nướu và hôi miệng.",
+            icon: "medical_services"
+          },
+          {
+            categoryEn: "Behavior",
+            categoryVi: "Hành vi",
+            textEn: "Tail wagging doesn't always mean a dog is happy; it can also indicate anxiety or arousal.",
+            textVi: "Chó vẫy đuôi không phải lúc nào cũng là vui vẻ; đôi khi nó biểu thị sự lo lắng hoặc đang cảnh giác.",
+            icon: "psychology"
+          },
+          {
+            categoryEn: "Exercise",
+            categoryVi: "Vận động",
+            textEn: "A tired dog is a good dog. Regular daily walks keep them mentally stimulated and physically fit.",
+            textVi: "Một chú chó được vận động đủ sẽ ngoan hơn. Đi dạo hàng ngày giúp chúng thư thái tinh thần và khỏe mạnh thể chất.",
+            icon: "directions_run"
+          },
+          {
+            categoryEn: "Grooming",
+            categoryVi: "Chăm sóc lông",
+            textEn: "Regular brushing reduces shedding and keeps their coat shiny by distributing natural skin oils.",
+            textVi: "Chải lông thường xuyên giúp giảm rụng lông và giữ cho lông bóng mượt nhờ phân bổ dầu tự nhiên trên da.",
+            icon: "content_cut"
+          }
+        ];
+
+        let currentTipIndex = -1;
+
+        function displayRandomTip() {
+          const currentLang = document.documentElement.getAttribute("lang") || "vi";
+          
+          let newIndex;
+          do {
+            newIndex = Math.floor(Math.random() * petTips.length);
+          } while (newIndex === currentTipIndex && petTips.length > 1);
+          
+          currentTipIndex = newIndex;
+          const tip = petTips[currentTipIndex];
+          
+          const tipIcon = document.getElementById("tipIcon");
+          const tipCategory = document.getElementById("tipCategory");
+          const tipText = document.getElementById("tipText");
+          
+          if (tipIcon && tipCategory && tipText) {
+            tipText.style.opacity = "0";
+            setTimeout(() => {
+              tipIcon.textContent = tip.icon;
+              tipCategory.textContent = currentLang === "en" ? tip.categoryEn : tip.categoryVi;
+              tipText.textContent = currentLang === "en" ? tip.textEn : tip.textVi;
+              tipText.style.opacity = "1";
+            }, 150);
+          }
+        }
+
+        // Initialize tip on load
+        displayRandomTip();
+
+        const btnNextTip = document.getElementById("btnNextTip");
+        if (btnNextTip) {
+          btnNextTip.addEventListener("click", displayRandomTip);
         }
 
         if (openWatchAd) openWatchAdModal();
