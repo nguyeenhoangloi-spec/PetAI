@@ -1167,7 +1167,7 @@
                   {% set pct_val = ((count_val / stats.total_predictions) * 100)|round(1) if stats.total_predictions > 0 else 0 %}
                   <div class="flex items-center justify-between text-xs py-1 border-b border-slate-100/50 dark:border-slate-800/10">
                     <div class="flex items-center gap-2 min-w-0">
-                      <span class="w-2.5 h-2.5 rounded-full flex-shrink-0" style="background-color: {{ color }};"></span>
+                      <span class="w-2.5 h-2.5 rounded-full flex-shrink-0 legend-color-dot" data-bg-color="{{ color }}"></span>
                       <span class="font-medium text-on-surface-variant truncate" title="{{ label }}" {% if label != 'Khác' %}data-i18n-breed="{{ label }}"{% else %}data-i18n="allOtherLabel"{% endif %}>
                         {% if label == 'Khác' %}Khác{% else %}{{ label }}{% endif %}
                       </span>
@@ -2098,6 +2098,14 @@
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
     <script>
       console.log("[PetAI Debug] statistics.html script loaded!");
+
+      // Apply dynamic colors to legend dots from data-bg-color
+      document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll('.legend-color-dot').forEach(el => {
+          el.style.backgroundColor = el.getAttribute('data-bg-color');
+        });
+      });
+
       // ── Statistics Export Modal ──
       function openStatsExportModal() {
         const modal = document.getElementById("statsExportModal");

@@ -491,9 +491,13 @@
     </div>
   </main>
 
+  <script id="deletions-data" type="application/json">
+    {{ delete_users|tojson|safe }}
+  </script>
+
   <!-- Script block containing data and filtering logic -->
   <script>
-    var DELETIONS_DATA = {{ delete_users|tojson|safe }};
+    var DELETIONS_DATA = JSON.parse(document.getElementById('deletions-data').textContent);
 
     document.addEventListener("DOMContentLoaded", function () {
       const searchInput = document.getElementById("searchInput");
