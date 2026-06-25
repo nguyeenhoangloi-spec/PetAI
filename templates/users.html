@@ -1,4 +1,4 @@
-﻿<!-- htmlhint spec-char-escape:false, tag-pair:false -->
+<!-- htmlhint spec-char-escape:false, tag-pair:false -->
 <!-- html-validate-disable attribute-allowed-values -->
 <!DOCTYPE html>
 {% set html_class = 'dark' if ui_theme == 'dark' else 'light' %}
@@ -612,6 +612,8 @@
           </div>
         </div>
       </section>
+
+
 
   <script type="application/json" id="users-data-store">
     [
@@ -1349,23 +1351,119 @@
         });
       }
 
-      // Under Development Add User Modal/Toast trigger
-      if (addUserBtn) {
-        addUserBtn.addEventListener("click", function () {
-          var title = t("addUserBtn", "Thêm người dùng");
-          var msg = t("manualUserCreationNotIntegrated", "Chức năng thêm người dùng thủ công chưa được tích hợp trên backend hệ thống.");
-          
-          if (window.PetAI_alert) {
-            window.PetAI_alert({
-              title: title,
-              text: msg,
-              type: "info"
-            });
-          } else {
-            alert(msg);
-          }
-        });
+      // Add User Modal functionality (Dynamic Event Delegation)
+      function openAddUserModal() {
+        var modal = document.getElementById("addUserModal");
+        var form = document.getElementById("addUserForm");
+        var premiumFields = document.getElementById("addUserPremiumFields");
+        var container = modal ? modal.querySelector(".max-w-lg") : null;
+
+        if (form) form.reset();
+        if (premiumFields) premiumFields.classList.add("hidden");
+        if (modal) {
+          modal.classList.remove("opacity-0", "pointer-events-none");
+        }
+        if (container) {
+          container.classList.remove("scale-95");
+          container.classList.add("scale-100");
+        }
       }
+
+      function closeAddUserModal() {
+        var modal = document.getElementById("addUserModal");
+        var container = modal ? modal.querySelector(".max-w-lg") : null;
+
+        if (modal) {
+          modal.classList.add("opacity-0", "pointer-events-none");
+        }
+        if (container) {
+          container.classList.remove("scale-100");
+          container.classList.add("scale-95");
+        }
+      }
+
+      // Event Delegation for Opening Modal
+      document.addEventListener("click", function (e) {
+        var btn = e.target.closest("#addUserBtn");
+        if (btn) {
+          openAddUserModal();
+        }
+      });
+
+      // Event Delegation for Closing Modal
+      document.addEventListener("click", function (e) {
+        var btn = e.target.closest('[data-action="close-add-modal"]');
+        if (btn) {
+          closeAddUserModal();
+        }
+      });
+
+      // Event Delegation for Clicking outside Modal container to close
+      document.addEventListener("click", function (e) {
+        var modal = document.getElementById("addUserModal");
+        if (modal && e.target === modal) {
+          closeAddUserModal();
+        }
+      });
+
+      // Event Delegation for Select Plan Change
+      document.addEventListener("change", function (e) {
+        if (e.target && e.target.id === "addUserPlanSelect") {
+          var premiumFields = document.getElementById("addUserPremiumFields");
+          if (premiumFields) {
+            if (e.target.value !== "free") {
+              premiumFields.classList.remove("hidden");
+            } else {
+              premiumFields.classList.add("hidden");
+            }
+          }
+        }
+      });
+
+      // Event Delegation for Form Submit
+      document.addEventListener("submit", async function (e) {
+        if (e.target && e.target.id === "addUserForm") {
+          e.preventDefault();
+          var form = e.target;
+          var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute("content");
+          var formData = new FormData(form);
+          
+          var submitBtn = form.querySelector('button[type="submit"]');
+          var originalBtnHtml = submitBtn ? submitBtn.innerHTML : "";
+          if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="material-symbols-outlined text-[16px] animate-spin">sync</span><span>' + t("submitting", "Đang xử lý...") + '</span>';
+          }
+          
+          try {
+            var res = await fetch("/users/add", {
+              method: "POST",
+              body: formData,
+              headers: {
+                "X-CSRF-Token": csrfToken,
+                "X-Requested-With": "XMLHttpRequest"
+              }
+            });
+            var data = await res.json();
+            
+            if (res.ok && data.success) {
+              showToastNotification(t("toastAddUserSuccess", "Tạo người dùng mới thành công!"), "success");
+              closeAddUserModal();
+              reloadPjaxPage();
+            } else {
+              showToastNotification(data.error || t("toastAddUserError", "Lỗi tạo người dùng."), "error");
+            }
+          } catch (err) {
+            console.error(err);
+            showToastNotification(t("toastServerError", "Lỗi kết nối máy chủ."), "error");
+          } finally {
+            if (submitBtn) {
+              submitBtn.disabled = false;
+              submitBtn.innerHTML = originalBtnHtml;
+            }
+          }
+        }
+      });
 
       // Draw initial table state
       drawTable();
@@ -1400,6 +1498,166 @@
   </script>
     </div>
   </main>
+
+  <!-- Add User Modal -->
+  <div
+    id="addUserModal"
+    class="fixed inset-0 z-[1200] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm transition-opacity duration-300 opacity-0 pointer-events-none"
+    role="dialog"
+    aria-modal="true"
+  >
+    <div
+      class="bg-surface-container-lowest dark:bg-slate-900 rounded-2xl max-w-lg w-full border border-outline-variant/30 dark:border-slate-800 overflow-hidden shadow-2xl transition-transform transform scale-95 duration-300 p-6 flex flex-col gap-5 text-left text-slate-850 dark:text-slate-100"
+      style="max-height: 90vh; display: flex; flex-direction: column;"
+    >
+      <div class="flex items-center justify-between border-b border-slate-200/60 dark:border-slate-800 pb-3">
+        <h3 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary dark:text-blue-400">person_add</span>
+          <span data-i18n="addUserModalTitle">Thêm người dùng mới</span>
+        </h3>
+        <button
+          type="button"
+          data-action="close-add-modal"
+          class="w-7 h-7 rounded-full flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-600 transition-colors"
+        >
+          <span class="material-symbols-outlined text-[20px]">close</span>
+        </button>
+      </div>
+
+      <form id="addUserForm" class="flex flex-col flex-grow overflow-hidden gap-4" style="min-height: 0; display: flex; flex-direction: column;">
+        <!-- Scrollable Inputs Area -->
+        <div class="flex-grow overflow-y-auto pr-1.5 flex flex-col gap-4 pb-2" style="min-height: 0;">
+          <!-- Fullname & Username -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="flex flex-col gap-1.5">
+              <label class="label-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider" data-i18n="addUserFullname">Họ và tên</label>
+              <input
+                type="text"
+                name="fullname"
+                required
+                class="px-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none focus:border-primary dark:focus:border-blue-500"
+                placeholder="Nguyễn Văn A"
+              />
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <label class="label-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider" data-i18n="addUserUsername">Tên đăng nhập</label>
+              <input
+                type="text"
+                name="username"
+                required
+                pattern="^[a-zA-Z0-9_]{3,20}$"
+                class="px-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none focus:border-primary dark:focus:border-blue-500"
+                placeholder="username_123"
+              />
+            </div>
+          </div>
+
+          <!-- Email & Password -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="flex flex-col gap-1.5">
+              <label class="label-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider" data-i18n="addUserEmail">Email</label>
+              <input
+                type="email"
+                name="email"
+                required
+                class="px-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none focus:border-primary dark:focus:border-blue-500"
+                placeholder="example@gmail.com"
+              />
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <label class="label-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider" data-i18n="addUserPassword">Mật khẩu</label>
+              <input
+                type="password"
+                name="password"
+                required
+                minlength="6"
+                class="px-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none focus:border-primary dark:focus:border-blue-500"
+                placeholder="******"
+              />
+            </div>
+          </div>
+
+          <!-- Role & Plan -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="flex flex-col gap-1.5">
+              <label class="label-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider" data-i18n="addUserRole">Vai trò</label>
+              <select
+                name="role"
+                class="px-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none focus:border-primary dark:focus:border-blue-500 cursor-pointer"
+              >
+                <option value="user" data-i18n="roleUser">User (Người dùng)</option>
+                <option value="admin" data-i18n="roleAdmin">Admin (Quản trị viên)</option>
+              </select>
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <label class="label-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider" data-i18n="addUserPlan">Gói dịch vụ</label>
+              <select
+                name="plan"
+                id="addUserPlanSelect"
+                class="px-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none focus:border-primary dark:focus:border-blue-500 cursor-pointer"
+              >
+                <option value="free" data-i18n="planFree">Free</option>
+                <option value="basic" data-i18n="planBasic">Basic</option>
+                <option value="pro" data-i18n="planPro">Pro</option>
+                <option value="enterprise" data-i18n="planEnterprise">Enterprise</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Plan Expiry & Paid uses remaining -->
+          <div id="addUserPremiumFields" class="grid grid-cols-1 sm:grid-cols-2 gap-4 hidden">
+            <div class="flex flex-col gap-1.5">
+              <label class="label-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider" data-i18n="addUserExpiry">Hạn sử dụng gói</label>
+              <input
+                type="date"
+                name="plan_expire"
+                class="px-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none focus:border-primary dark:focus:border-blue-500"
+              />
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <label class="label-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider" data-i18n="addUserPaidUses">Số lượt quét cấp thêm</label>
+              <input
+                type="number"
+                name="paid_uses_remaining"
+                min="0"
+                class="px-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-outline-variant/40 dark:border-slate-800 rounded-xl text-on-surface dark:text-slate-200 text-sm focus:outline-none focus:border-primary dark:focus:border-blue-500"
+                placeholder="0"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer buttons -->
+        <div class="flex items-center justify-end gap-3 border-t border-slate-200/60 dark:border-slate-800 pt-4 mt-2">
+          <button
+            type="button"
+            data-action="close-add-modal"
+            class="px-4 py-2 border border-outline-variant/40 dark:border-slate-700 text-on-surface-variant dark:text-slate-300 rounded-lg text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            data-i18n="close"
+          >
+            Đóng
+          </button>
+          <button
+            type="submit"
+            class="px-5 py-2 bg-primary hover:bg-primary/95 dark:bg-blue-600 dark:hover:bg-blue-500 text-white rounded-lg text-xs font-semibold shadow-sm hover:shadow-md transition-all flex items-center gap-1.5"
+          >
+            <span class="material-symbols-outlined text-[16px]">save</span>
+            <span data-i18n="addUserSubmitBtn">Xác nhận tạo</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Export Modal Transition Fallback Styles -->
+  <style>
+    #addUserModal {
+      transition: opacity 0.25s ease-in-out;
+    }
+    #addUserModal .max-w-lg {
+      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+  </style>
 
   <script src="{{ url_for('static', filename='js/toasts.js') }}"></script>
   <script src="{{ url_for('static', filename='js/i18n.js') }}?v=23"></script>

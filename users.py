@@ -1504,3 +1504,113 @@ def delete_request_cleanup():
         if conn:
             conn.close()
 
+
+@users_bp.route("/add", methods=["POST"])
+def add_user():
+    if not require_admin():
+        return jsonify({"success": False, "error": "Bạn không có quyền thực hiện thao tác này."}), 403
+
+    fullname = request.form.get("fullname", "").strip()
+    username = request.form.get("username", "").strip().lower()
+    email = request.form.get("email", "").strip().lower()
+    password = request.form.get("password", "")
+    role = request.form.get("role", "user").strip()
+    plan = request.form.get("plan", "free").strip().lower()
+    plan_expire = request.form.get("plan_expire", "").strip()
+    paid_uses_remaining = request.form.get("paid_uses_remaining", "").strip()
+
+    # Validation backend
+    if not username or not email or not password:
+        return jsonify({"success": False, "error": "Vui lòng nhập đầy đủ thông tin bắt buộc."}), 400
+
+    import re
+    if not re.match(r'^[a-zA-Z0-9_]{3,20}$', username):
+        return jsonify({"success": False, "error": "Tên đăng nhập phải từ 3-20 ký tự, chỉ chứa chữ cái, số và dấu gạch dưới."}), 400
+
+    email_regex = r'^[^\s@]+@[^\s@]+\.[^\s@]+$'
+    if not email.endswith("@gmail.com") or not re.match(email_regex, email):
+        return jsonify({"success": False, "error": "Chỉ chấp nhận email đăng ký có đuôi @gmail.com."}), 400
+
+    if len(password) < 6:
+        return jsonify({"success": False, "error": "Mật khẩu phải có ít nhất 6 ký tự."}), 400
+
+    if role not in ("admin", "user"):
+        role = "user"
+
+    if plan not in ("free", "basic", "pro", "enterprise"):
+        plan = "free"
+
+    conn = None
+    try:
+        conn = get_connection()
+        from werkzeug.security import generate_password_hash
+        pwd_hash = generate_password_hash(password)
+
+        with conn.cursor() as cur:
+            # Kiểm tra trùng username
+            cur.execute("SELECT 1 FROM users WHERE username = %s", (username,))
+            if cur.fetchone():
+                return jsonify({"success": False, "error": "Tên đăng nhập đã tồn tại. Vui lòng chọn tên khác."}), 400
+
+            # Kiểm tra trùng email
+            cur.execute("SELECT 1 FROM users WHERE email = %s", (email,))
+            if cur.fetchone():
+                return jsonify({"success": False, "error": "Email đã được sử dụng. Vui lòng sử dụng email khác."}), 400
+
+            # Chèn user mới
+            cur.execute(
+                """
+                INSERT INTO users (username, password_hash, email, fullname, role, created_at, email_verified, force_change_password, is_active) 
+                VALUES (%s, %s, %s, %s, %s, NOW(), 1, 0, 1)
+                """,
+                (username, pwd_hash, email, fullname, role),
+            )
+            user_id = cur.lastrowid
+
+            # Thiết lập quota
+            if plan == "free":
+                cur.execute(
+                    """
+                    INSERT INTO user_quota (user_id, plan, plan_expire, paid_uses_remaining)
+                    VALUES (%s, 'free', NULL, NULL)
+                    """,
+                    (user_id,),
+                )
+            else:
+                # Parse paid_uses_remaining
+                uses = None
+                if paid_uses_remaining:
+                    try:
+                        uses = int(paid_uses_remaining)
+                    except ValueError:
+                        pass
+                
+                # Nếu không có paid_uses_remaining tuỳ chỉnh, dùng mặc định theo plan
+                if uses is None:
+                    limit = UserQuota._paid_plan_limit(conn, plan)
+                    uses = int(limit) if limit is not None else None
+
+                # Parse plan_expire
+                expire_date = plan_expire if plan_expire else None
+
+                cur.execute(
+                    """
+                    INSERT INTO user_quota (user_id, plan, plan_expire, paid_uses_remaining)
+                    VALUES (%s, %s, %s, %s)
+                    """,
+                    (user_id, plan, expire_date, uses),
+                )
+
+            conn.commit()
+            logger.info(f"[ADMIN] Created user '{username}' manually with role '{role}' and plan '{plan}'")
+            return jsonify({"success": True, "message": "Tạo người dùng mới thành công!"})
+
+    except Exception as e:
+        if conn:
+            conn.rollback()
+        logger.exception("[ADMIN] Manual create user error")
+        return jsonify({"success": False, "error": f"Lỗi hệ thống: {str(e)}"}), 500
+    finally:
+        if conn:
+            conn.close()
+

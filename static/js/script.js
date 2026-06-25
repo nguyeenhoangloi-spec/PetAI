@@ -569,6 +569,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const newExportModal = doc.querySelector("#exportModal");
       const newStatsExportModal = doc.querySelector("#statsExportModal");
       const newOrderDetailModal = doc.querySelector("#orderDetailModal");
+      const newAddUserModal = doc.querySelector("#addUserModal");
 
       const updateDOM = () => {
 
@@ -774,6 +775,16 @@ document.addEventListener("DOMContentLoaded", function () {
           document.body.appendChild(newOrderDetailModal);
         } else if (currentOrderDetailModal) {
           currentOrderDetailModal.remove();
+        }
+
+        // 4.689 Update addUserModal if present (admin user management page create modal)
+        const currentAddUserModal = document.getElementById("addUserModal");
+        if (currentAddUserModal && newAddUserModal) {
+          currentAddUserModal.parentNode.replaceChild(newAddUserModal, currentAddUserModal);
+        } else if (newAddUserModal) {
+          document.body.appendChild(newAddUserModal);
+        } else if (currentAddUserModal) {
+          currentAddUserModal.remove();
         }
 
         // 4.67 Sync body dataset attributes
