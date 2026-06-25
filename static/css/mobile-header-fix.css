@@ -455,21 +455,14 @@ html.dark .sidebar {
   gap: 6px;
   flex-grow: 1;
   overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0, 0, 0, 0.05) transparent;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
 }
 
 .sidebar-menu::-webkit-scrollbar {
-  width: 4px;
-}
-
-.sidebar-menu::-webkit-scrollbar-thumb {
-  background-color: rgba(0, 0, 0, 0.08);
-  border-radius: 4px;
-}
-
-.dark .sidebar-menu::-webkit-scrollbar-thumb {
-  background-color: rgba(255, 255, 255, 0.08);
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
 }
 
 .sidebar-menu-item {
@@ -613,37 +606,135 @@ html.dark .sidebar-divider {
   }
   
   /* Collapsed state item layout styles */
+  .sidebar-menu-item span:not(.material-symbols-outlined) {
+    display: inline-block !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    max-width: 150px !important;
+    opacity: 1 !important;
+    transition: max-width 300ms cubic-bezier(0.25, 1, 0.5, 1), opacity 300ms cubic-bezier(0.25, 1, 0.5, 1) !important;
+  }
+  
   html.sidebar-collapsed .sidebar-menu-item span:not(.material-symbols-outlined) {
-    display: none !important;
+    width: 0 !important;
+    max-width: 0 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+  
+  /* Flex container gap transition inside collapsed items to prevent icon jumping */
+  .sidebar-menu-item .flex,
+  .sidebar-user-card .flex {
+    transition: gap 300ms cubic-bezier(0.25, 1, 0.5, 1) !important;
+  }
+  
+  html.sidebar-collapsed .sidebar-menu-item .flex,
+  html.sidebar-collapsed .sidebar-user-card .flex {
+    gap: 0 !important;
+  }
+  
+  .sidebar-group-title {
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    max-width: 200px !important;
+    opacity: 1 !important;
+    transition: max-width 300ms cubic-bezier(0.25, 1, 0.5, 1), opacity 300ms cubic-bezier(0.25, 1, 0.5, 1), padding 300ms cubic-bezier(0.25, 1, 0.5, 1) !important;
   }
   
   html.sidebar-collapsed .sidebar-group-title {
-    display: none !important;
+    max-width: 0 !important;
+    opacity: 0 !important;
+    padding: 2px 0 !important;
+    pointer-events: none !important;
+  }
+  
+  .sidebar-divider {
+    transition: margin 300ms cubic-bezier(0.25, 1, 0.5, 1) !important;
   }
   
   html.sidebar-collapsed .sidebar-divider {
     margin: 8px 10px !important;
   }
   
+  .sidebar-menu-item {
+    padding: 0 16px !important;
+    transition: background-color 0.2s ease, color 0.2s ease, gap 300ms cubic-bezier(0.25, 1, 0.5, 1) !important;
+  }
+  
   html.sidebar-collapsed .sidebar-menu-item {
-    justify-content: center !important;
-    padding: 0 !important;
+    padding: 0 16px !important;
     gap: 0 !important;
   }
   
-  html.sidebar-collapsed #sidebarLangDropdown,
-  html.sidebar-collapsed #sidebarThemeToggle {
-    display: none !important;
+  #sidebarLangDropdown {
+    display: inline-flex !important;
+    max-width: 120px !important;
+    opacity: 1 !important;
+    overflow: visible !important;
+    transition: max-width 300ms cubic-bezier(0.25, 1, 0.5, 1), opacity 300ms cubic-bezier(0.25, 1, 0.5, 1) !important;
   }
   
-  html.sidebar-collapsed .sidebar-user-card .user-info,
+  html.sidebar-collapsed #sidebarLangDropdown {
+    max-width: 0 !important;
+    opacity: 0 !important;
+    overflow: hidden !important;
+    pointer-events: none !important;
+  }
+  
+  #sidebarThemeToggle {
+    display: flex !important;
+    max-width: 120px !important;
+    opacity: 1 !important;
+    overflow: visible !important;
+    transition: max-width 300ms cubic-bezier(0.25, 1, 0.5, 1), opacity 300ms cubic-bezier(0.25, 1, 0.5, 1) !important;
+  }
+  
+  html.sidebar-collapsed #sidebarThemeToggle {
+    max-width: 0 !important;
+    opacity: 0 !important;
+    overflow: hidden !important;
+    pointer-events: none !important;
+  }
+  
+  .sidebar-user-card {
+    padding: 8px 6px !important;
+    transition: background-color 0.2s ease !important;
+  }
+  
+  .sidebar-user-card .user-info {
+    display: flex !important;
+    flex-direction: column !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    max-width: 150px !important;
+    opacity: 1 !important;
+    transition: max-width 300ms cubic-bezier(0.25, 1, 0.5, 1), opacity 300ms cubic-bezier(0.25, 1, 0.5, 1) !important;
+  }
+  
+  html.sidebar-collapsed .sidebar-user-card .user-info {
+    max-width: 0 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+  
+  .sidebar-user-card .logout-btn-link {
+    display: flex !important;
+    white-space: nowrap !important;
+    overflow: visible !important;
+    max-width: 50px !important;
+    opacity: 1 !important;
+    transition: max-width 300ms cubic-bezier(0.25, 1, 0.5, 1), opacity 300ms cubic-bezier(0.25, 1, 0.5, 1) !important;
+  }
+  
   html.sidebar-collapsed .sidebar-user-card .logout-btn-link {
-    display: none !important;
+    max-width: 0 !important;
+    opacity: 0 !important;
+    overflow: hidden !important;
+    pointer-events: none !important;
   }
   
   html.sidebar-collapsed .sidebar-user-card {
-    justify-content: center !important;
-    padding: 8px 0 !important;
+    padding: 8px 6px !important;
   }
 }
 
