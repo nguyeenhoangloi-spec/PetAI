@@ -488,6 +488,87 @@
         border: 1px solid rgba(255, 255, 255, 0.08) !important;
         opacity: 0.8 !important;
       }
+
+      /* Premium Comparison Table Styles */
+      .comp-table tr {
+        transition: background-color 0.2s ease;
+      }
+      .comp-table tr:hover {
+        background-color: rgba(241, 245, 249, 0.4) !important;
+      }
+      html.dark .comp-table tr:hover {
+        background-color: rgba(30, 41, 59, 0.3) !important;
+      }
+      
+      /* Column Highlight for PRO */
+      .col-pro-highlight {
+        background-color: rgba(139, 92, 246, 0.025) !important;
+        position: relative;
+      }
+      html.dark .col-pro-highlight {
+        background-color: rgba(139, 92, 246, 0.05) !important;
+      }
+      
+      .col-pro-highlight-border-left {
+        border-left: 2.5px solid rgba(139, 92, 246, 0.25) !important;
+      }
+      .col-pro-highlight-border-right {
+        border-right: 2.5px solid rgba(139, 92, 246, 0.25) !important;
+      }
+      
+      /* Badge headers styling */
+      .plan-badge-pill {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.3rem 0.85rem;
+        border-radius: 9999px;
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      }
+      
+      .badge-pill-free {
+        background-color: #f1f5f9;
+        color: #475569;
+        border: 1px solid #cbd5e1;
+      }
+      html.dark .badge-pill-free {
+        background-color: #1e293b;
+        color: #94a3b8;
+        border: 1px solid #334155;
+      }
+      
+      .badge-pill-basic {
+        background-color: #ecfdf5;
+        color: #047857;
+        border: 1px solid #a7f3d0;
+      }
+      html.dark .badge-pill-basic {
+        background-color: rgba(6, 78, 59, 0.2);
+        color: #34d399;
+        border: 1px solid rgba(52, 211, 153, 0.2);
+      }
+      
+      .badge-pill-pro {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        color: #ffffff;
+        border: 1px solid #818cf8;
+        box-shadow: 0 4px 10px rgba(139, 92, 246, 0.25);
+      }
+      
+      .badge-pill-ent {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        color: #ffffff;
+        border: 1px solid #fbbf24;
+        box-shadow: 0 4px 10px rgba(245, 158, 11, 0.25);
+      }
+      
+      .comp-table td {
+        transition: color 0.15s ease, background-color 0.15s ease;
+      }
     </style>
   </head>
   <body
@@ -947,71 +1028,169 @@
             <h3 class="text-lg font-bold text-slate-900 dark:text-white" data-i18n="comparisonTableTitle">So sánh các gói dịch vụ</h3>
           </div>
           
-          <div class="overflow-x-auto w-full">
-            <table class="w-full border-collapse text-left text-sm">
+          <div class="overflow-x-auto w-full rounded-xl border border-slate-200/60 dark:border-slate-800/80">
+            <table class="w-full border-collapse text-left text-sm comp-table">
               <thead>
-                <tr class="border-b border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-semibold align-bottom">
-                  <th class="pb-3 pr-4 font-semibold text-slate-900 dark:text-slate-100" data-i18n="compFeature">Tính năng</th>
-                  <th class="pb-3 px-4 font-semibold text-center text-slate-500 dark:text-slate-400">Free</th>
-                  <th class="pb-3 px-4 font-semibold text-center text-emerald-600 dark:text-emerald-400">Basic</th>
-                  <th class="pb-3 px-4 font-semibold text-center text-purple-600 dark:text-purple-400">
+                <tr class="border-b border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-semibold align-middle bg-slate-50/50 dark:bg-slate-950/20">
+                  <th class="py-4 px-5 font-semibold text-slate-900 dark:text-slate-100 w-1/5" data-i18n="compFeature">Tính năng</th>
+                  <th class="py-4 px-4 text-center w-1/5">
+                    <span class="plan-badge-pill badge-pill-free">Free</span>
+                  </th>
+                  <th class="py-4 px-4 text-center w-1/5">
+                    <span class="plan-badge-pill badge-pill-basic">Basic</span>
+                  </th>
+                  <th class="py-4 px-4 text-center w-1/5 col-pro-highlight col-pro-highlight-border-left col-pro-highlight-border-right rounded-t-xl pt-2">
                     <div class="flex flex-col items-center gap-1">
-                      <span class="bg-purple-600 text-white text-[8px] px-1.5 py-0.5 rounded-full font-bold uppercase whitespace-nowrap" data-i18n="recommended">Đề xuất</span>
-                      <span>Pro</span>
+                      <span class="bg-indigo-600 text-white text-[8px] px-2 py-0.5 rounded-full font-extrabold uppercase tracking-wider shadow-sm animate-pulse" data-i18n="recommended">Đề xuất</span>
+                      <span class="plan-badge-pill badge-pill-pro">Pro</span>
                     </div>
                   </th>
-                  <th class="pb-3 pl-4 font-semibold text-center text-amber-600 dark:text-amber-400 font-bold">Enterprise</th>
+                  <th class="py-4 px-5 text-center w-1/5">
+                    <span class="plan-badge-pill badge-pill-ent">Enterprise</span>
+                  </th>
                 </tr>
               </thead>
-              <tbody class="divide-y divide-slate-200 dark:divide-slate-800/50 text-slate-700 dark:text-slate-200">
-                <tr>
-                  <td class="py-3.5 pr-4 font-medium text-slate-900 dark:text-slate-100" data-i18n="compAIModel">Lượt nhận diện AI</td>
-                  <td class="py-3.5 px-4 text-center text-slate-600 dark:text-slate-400">{% if ui_language == 'en' %}10 scans{% else %}10 lượt{% endif %}</td>
-                  <td class="py-3.5 px-4 text-center text-emerald-600 dark:text-emerald-400 font-semibold">{% if ui_language == 'en' %}50 scans{% else %}50 lượt{% endif %}</td>
-                  <td class="py-3.5 px-4 text-center font-semibold text-purple-600 dark:text-purple-400 bg-purple-500/5 dark:bg-purple-500/10">{% if ui_language == 'en' %}200 scans{% else %}200 lượt{% endif %}</td>
-                  <td class="py-3.5 pl-4 text-center font-bold text-amber-600 dark:text-amber-400" data-i18n="compUnlimited">Không giới hạn</td>
+              <tbody class="divide-y divide-slate-200/80 dark:divide-slate-800/60 text-slate-700 dark:text-slate-200">
+                <tr class="align-middle">
+                  <td class="py-4 px-5 font-medium text-slate-900 dark:text-slate-100" data-i18n="compAIModel">Lượt nhận diện AI</td>
+                  <td class="py-4 px-4 text-center text-slate-600 dark:text-slate-400">
+                    <span class="inline-flex items-center gap-1.5 justify-center">
+                      <span class="material-symbols-outlined text-[15px] text-slate-400">photo</span>
+                      <span>{% if ui_language == 'en' %}10 scans{% else %}10 lượt{% endif %}</span>
+                    </span>
+                  </td>
+                  <td class="py-4 px-4 text-center text-emerald-600 dark:text-emerald-400 font-semibold">
+                    <span class="inline-flex items-center gap-1.5 justify-center">
+                      <span class="material-symbols-outlined text-[15px] text-emerald-500">photo_library</span>
+                      <span>{% if ui_language == 'en' %}50 scans{% else %}50 lượt{% endif %}</span>
+                    </span>
+                  </td>
+                  <td class="py-4 px-4 text-center font-bold text-indigo-600 dark:text-indigo-400 col-pro-highlight col-pro-highlight-border-left col-pro-highlight-border-right">
+                    <span class="inline-flex items-center gap-1.5 justify-center">
+                      <span class="material-symbols-outlined text-[15px] text-indigo-500 animate-bounce">auto_awesome</span>
+                      <span>{% if ui_language == 'en' %}200 scans{% else %}200 lượt{% endif %}</span>
+                    </span>
+                  </td>
+                  <td class="py-4 px-5 text-center font-bold text-amber-600 dark:text-amber-500">
+                    <span class="inline-flex items-center gap-1.5 justify-center">
+                      <span class="material-symbols-outlined text-[15px] text-amber-500">all_inclusive</span>
+                      <span data-i18n="compUnlimited">Không giới hạn</span>
+                    </span>
+                  </td>
                 </tr>
-                <tr>
-                  <td class="py-3.5 pr-4 font-medium text-slate-900 dark:text-slate-100" data-i18n="compDuration">Thời hạn sử dụng</td>
-                  <td class="py-3.5 px-4 text-center text-slate-600 dark:text-slate-400" data-i18n="compTrial">Miễn phí</td>
-                  <td class="py-3.5 px-4 text-center text-slate-600 dark:text-slate-400">{% if ui_language == 'en' %}7 days{% else %}7 ngày{% endif %}</td>
-                  <td class="py-3.5 px-4 text-center bg-purple-500/5 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400 font-semibold">{% if ui_language == 'en' %}30 days{% else %}30 ngày{% endif %}</td>
-                  <td class="py-3.5 pl-4 text-center text-amber-600 dark:text-amber-400 font-bold">{% if ui_language == 'en' %}90 days{% else %}90 ngày{% endif %}</td>
+                <tr class="align-middle">
+                  <td class="py-4 px-5 font-medium text-slate-900 dark:text-slate-100" data-i18n="compDuration">Thời hạn sử dụng</td>
+                  <td class="py-4 px-4 text-center text-slate-600 dark:text-slate-400" data-i18n="compTrial">Miễn phí</td>
+                  <td class="py-4 px-4 text-center text-slate-600 dark:text-slate-400">
+                    <span class="inline-flex items-center gap-1 justify-center">
+                      <span class="material-symbols-outlined text-[14px] text-slate-400">calendar_today</span>
+                      <span>{% if ui_language == 'en' %}7 days{% else %}7 ngày{% endif %}</span>
+                    </span>
+                  </td>
+                  <td class="py-4 px-4 text-center text-indigo-600 dark:text-indigo-400 font-bold col-pro-highlight col-pro-highlight-border-left col-pro-highlight-border-right">
+                    <span class="inline-flex items-center gap-1 justify-center">
+                      <span class="material-symbols-outlined text-[14px] text-indigo-500">calendar_today</span>
+                      <span>{% if ui_language == 'en' %}30 days{% else %}30 ngày{% endif %}</span>
+                    </span>
+                  </td>
+                  <td class="py-4 px-5 text-center text-amber-600 dark:text-amber-500 font-bold">
+                    <span class="inline-flex items-center gap-1 justify-center">
+                      <span class="material-symbols-outlined text-[14px] text-amber-500">calendar_today</span>
+                      <span>{% if ui_language == 'en' %}90 days{% else %}90 ngày{% endif %}</span>
+                    </span>
+                  </td>
                 </tr>
-                <tr>
-                  <td class="py-3.5 pr-4 font-medium text-slate-900 dark:text-slate-100" data-i18n="compAds">Quảng cáo</td>
-                  <td class="py-3.5 px-4 text-center text-slate-500 dark:text-slate-400" data-i18n="compYes">Có</td>
-                  <td class="py-3.5 px-4 text-center text-emerald-600 dark:text-emerald-400 font-semibold" data-i18n="compNo">Không</td>
-                  <td class="py-3.5 px-4 text-center text-purple-600 dark:text-purple-400 font-semibold bg-purple-500/5 dark:bg-purple-500/10" data-i18n="compNo">Không</td>
-                  <td class="py-3.5 pl-4 text-center text-amber-600 dark:text-amber-400 font-semibold" data-i18n="compNo">Không</td>
+                <tr class="align-middle">
+                  <td class="py-4 px-5 font-medium text-slate-900 dark:text-slate-100" data-i18n="compAds">Quảng cáo</td>
+                  <td class="py-4 px-4 text-center text-slate-500 dark:text-slate-400">
+                    <span class="inline-flex items-center gap-1 justify-center">
+                      <span class="material-symbols-outlined text-[15px] text-amber-500">featured_video</span>
+                      <span data-i18n="compYes">Có</span>
+                    </span>
+                  </td>
+                  <td class="py-4 px-4 text-center text-emerald-600 dark:text-emerald-400 font-semibold">
+                    <span class="inline-flex items-center gap-1 justify-center">
+                      <span class="material-symbols-outlined text-[16px] text-emerald-500">check_circle</span>
+                      <span data-i18n="compNo">Không</span>
+                    </span>
+                  </td>
+                  <td class="py-4 px-4 text-center text-indigo-600 dark:text-indigo-400 font-bold col-pro-highlight col-pro-highlight-border-left col-pro-highlight-border-right">
+                    <span class="inline-flex items-center gap-1 justify-center">
+                      <span class="material-symbols-outlined text-[16px] text-indigo-500">check_circle</span>
+                      <span data-i18n="compNo">Không</span>
+                    </span>
+                  </td>
+                  <td class="py-4 px-5 text-center text-amber-600 dark:text-amber-500 font-bold">
+                    <span class="inline-flex items-center gap-1 justify-center">
+                      <span class="material-symbols-outlined text-[16px] text-amber-500">check_circle</span>
+                      <span data-i18n="compNo">Không</span>
+                    </span>
+                  </td>
                 </tr>
-                <tr>
-                  <td class="py-3.5 pr-4 font-medium text-slate-900 dark:text-slate-100" data-i18n="compSpeed">Tốc độ xử lý</td>
-                  <td class="py-3.5 px-4 text-center text-slate-500 dark:text-slate-400" data-i18n="compBasic">Cơ bản</td>
-                  <td class="py-3.5 px-4 text-center text-slate-500 dark:text-slate-400" data-i18n="compBasic">Cơ bản</td>
-                  <td class="py-3.5 px-4 text-center font-semibold text-purple-600 dark:text-purple-400 bg-purple-500/5 dark:bg-purple-500/10" data-i18n="compPriority">Ưu tiên</td>
-                  <td class="py-3.5 pl-4 text-center font-bold text-amber-600 dark:text-amber-400" data-i18n="compVip">VIP</td>
+                <tr class="align-middle">
+                  <td class="py-4 px-5 font-medium text-slate-900 dark:text-slate-100" data-i18n="compSpeed">Tốc độ xử lý</td>
+                  <td class="py-4 px-4 text-center text-slate-500 dark:text-slate-400" data-i18n="compBasic">Cơ bản</td>
+                  <td class="py-4 px-4 text-center text-slate-500 dark:text-slate-400" data-i18n="compBasic">Cơ bản</td>
+                  <td class="py-4 px-4 text-center font-bold text-indigo-600 dark:text-indigo-400 col-pro-highlight col-pro-highlight-border-left col-pro-highlight-border-right">
+                    <span class="inline-flex items-center gap-1 justify-center">
+                      <span class="material-symbols-outlined text-[15px] text-indigo-500 animate-pulse">bolt</span>
+                      <span data-i18n="compPriority">Ưu tiên</span>
+                    </span>
+                  </td>
+                  <td class="py-4 px-5 text-center font-bold text-amber-600 dark:text-amber-500">
+                    <span class="inline-flex items-center gap-1 justify-center">
+                      <span class="material-symbols-outlined text-[16px] text-amber-500" style="font-variation-settings: 'FILL' 1;">speed</span>
+                      <span data-i18n="compVip">VIP</span>
+                    </span>
+                  </td>
                 </tr>
-                <tr>
-                  <td class="py-3.5 pr-4 font-medium text-slate-900 dark:text-slate-100" data-i18n="compSupport">Hỗ trợ</td>
-                  <td class="py-3.5 px-4 text-center text-slate-500 dark:text-slate-400" data-i18n="compBasic">Cơ bản</td>
-                  <td class="py-3.5 px-4 text-center text-slate-600 dark:text-slate-400">Email</td>
-                  <td class="py-3.5 px-4 text-center font-semibold text-purple-600 dark:text-purple-400 bg-purple-500/5 dark:bg-purple-500/10" data-i18n="compPriority">Ưu tiên</td>
-                  <td class="py-3.5 pl-4 text-center font-bold text-amber-600 dark:text-amber-400" data-i18n="compHighestSupport">Ưu tiên cao nhất</td>
+                <tr class="align-middle">
+                  <td class="py-4 px-5 font-medium text-slate-900 dark:text-slate-100" data-i18n="compSupport">Hỗ trợ</td>
+                  <td class="py-4 px-4 text-center text-slate-500 dark:text-slate-400" data-i18n="compBasic">Cơ bản</td>
+                  <td class="py-4 px-4 text-center text-slate-650 dark:text-slate-350">
+                    <span class="inline-flex items-center gap-1 justify-center">
+                      <span class="material-symbols-outlined text-[14px] text-slate-400">mail</span>
+                      <span>Email</span>
+                    </span>
+                  </td>
+                  <td class="py-4 px-4 text-center font-bold text-indigo-600 dark:text-indigo-400 col-pro-highlight col-pro-highlight-border-left col-pro-highlight-border-right">
+                    <span class="inline-flex items-center gap-1 justify-center">
+                      <span class="material-symbols-outlined text-[15px] text-indigo-500">support_agent</span>
+                      <span data-i18n="compPriority">Ưu tiên</span>
+                    </span>
+                  </td>
+                  <td class="py-4 px-5 text-center font-bold text-amber-600 dark:text-amber-500">
+                    <span class="inline-flex items-center gap-1 justify-center">
+                      <span class="material-symbols-outlined text-[16px] text-amber-500" style="font-variation-settings: 'FILL' 1;">star</span>
+                      <span data-i18n="compHighestSupport">Ưu tiên cao nhất</span>
+                    </span>
+                  </td>
                 </tr>
-                <tr>
-                  <td class="py-3.5 pr-4 font-medium text-slate-900 dark:text-slate-100" data-i18n="compAdvancedFeatures">Tính năng nâng cao</td>
-                  <td class="py-3.5 px-4 text-center text-slate-500 dark:text-slate-400" data-i18n="compLimited">Giới hạn</td>
-                  <td class="py-3.5 px-4 text-center text-slate-600 dark:text-slate-400" data-i18n="compSomeFeatures">Một số tính năng</td>
-                  <td class="py-3.5 px-4 text-center font-semibold text-purple-600 dark:text-purple-400 bg-purple-500/5 dark:bg-purple-500/10" data-i18n="compFullFeatures">Đầy đủ tính năng</td>
-                  <td class="py-3.5 pl-4 text-center font-bold text-amber-600 dark:text-amber-400" data-i18n="compFullAdvancedFeatures">Đầy đủ + nâng cao</td>
+                <tr class="align-middle">
+                  <td class="py-4 px-5 font-medium text-slate-900 dark:text-slate-100" data-i18n="compAdvancedFeatures">Tính năng nâng cao</td>
+                  <td class="py-4 px-4 text-center text-slate-500 dark:text-slate-400" data-i18n="compLimited">Giới hạn</td>
+                  <td class="py-4 px-4 text-center text-slate-600 dark:text-slate-400" data-i18n="compSomeFeatures">Một số tính năng</td>
+                  <td class="py-4 px-4 text-center font-bold text-indigo-600 dark:text-indigo-400 col-pro-highlight col-pro-highlight-border-left col-pro-highlight-border-right">
+                    <span class="inline-flex items-center gap-1 justify-center">
+                      <span class="material-symbols-outlined text-[15px] text-indigo-500">workspace_premium</span>
+                      <span data-i18n="compFullFeatures">Đầy đủ tính năng</span>
+                    </span>
+                  </td>
+                  <td class="py-4 px-5 text-center font-bold text-amber-600 dark:text-amber-500">
+                    <span class="inline-flex items-center gap-1 justify-center">
+                      <span class="material-symbols-outlined text-[16px] text-amber-500">military_tech</span>
+                      <span data-i18n="compFullAdvancedFeatures">Đầy đủ + nâng cao</span>
+                    </span>
+                  </td>
                 </tr>
-                <tr>
-                  <td class="py-3.5 pr-4 font-medium text-slate-900 dark:text-slate-100" data-i18n="compSuitability">Phù hợp với</td>
-                  <td class="py-3.5 px-4 text-center text-slate-500 dark:text-slate-400" data-i18n="compSuitabilityTrial">Trải nghiệm</td>
-                  <td class="py-3.5 px-4 text-center text-slate-500 dark:text-slate-400" data-i18n="compPersonal">Người dùng cá nhân</td>
-                  <td class="py-3.5 px-4 text-center bg-purple-500/5 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400 font-medium" data-i18n="compPowerUser">Người dùng thường xuyên</td>
-                  <td class="py-3.5 pl-4 text-center font-bold text-amber-600 dark:text-amber-400" data-i18n="compEnterprise">Doanh nghiệp / Chuyên sâu</td>
+                <tr class="align-middle">
+                  <td class="py-4 px-5 font-medium text-slate-900 dark:text-slate-100 rounded-bl-xl" data-i18n="compSuitability">Phù hợp với</td>
+                  <td class="py-4 px-4 text-center text-slate-500 dark:text-slate-400" data-i18n="compSuitabilityTrial">Trải nghiệm</td>
+                  <td class="py-4 px-4 text-center text-slate-600 dark:text-slate-400" data-i18n="compPersonal">Người dùng cá nhân</td>
+                  <td class="py-4 px-4 text-center text-indigo-600 dark:text-indigo-400 font-bold col-pro-highlight col-pro-highlight-border-left col-pro-highlight-border-right rounded-b-xl">
+                    <span data-i18n="compPowerUser">Người dùng thường xuyên</span>
+                  </td>
+                  <td class="py-4 px-5 text-center text-amber-600 dark:text-amber-500 font-bold rounded-br-xl" data-i18n="compEnterprise">Doanh nghiệp / Chuyên sâu</td>
                 </tr>
               </tbody>
             </table>
