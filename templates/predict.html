@@ -561,7 +561,7 @@
         </section>
 
         <!-- ========== OVERVIEW CARDS ROW (4 cards) ========== -->
-        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" data-purpose="overview-cards">
+        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6" data-purpose="overview-cards">
 
           <!-- Card 1: Best Prediction Breed -->
           <div
@@ -702,6 +702,38 @@
               <span id="img-format-badge" class="font-bold">JPG</span>
               <span>•</span>
               <span id="card-image-size">2.45 MB</span>
+            </div>
+          </div>
+
+          <!-- Card 5: Memory Usage -->
+          <div
+            class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-5 border border-outline-variant/30 dark:border-slate-800 shadow-sm flex flex-col justify-between min-h-[140px]">
+            <div class="flex items-center gap-3">
+              <div
+                class="w-12 h-12 rounded-xl bg-teal-500/10 dark:bg-teal-500/20 flex items-center justify-center shrink-0 border border-teal-500/20 shadow-[0_0_12px_rgba(20,184,166,0.15)]">
+                <span class="material-symbols-outlined text-teal-500 dark:text-teal-400 text-[24px]">memory</span>
+              </div>
+              <div class="min-w-0 flex-1">
+                <span class="text-[12px] text-outline dark:text-slate-400 font-medium uppercase tracking-wider block"
+                  data-i18n="cardMemoryUsage">Bộ nhớ xử lý</span>
+                <span class="text-[17px] font-bold text-on-surface dark:text-slate-100 block mt-0.5">
+                  {% if result.parts_info and result.parts_info.display and result.parts_info.display.memory_peak_mb %}
+                    {% set mem = result.parts_info.display.memory_peak_mb %}
+                    {% if mem >= 1024 %}
+                      {{ '%.2f'|format(mem / 1024) }} GB
+                    {% else %}
+                      {{ '%.1f'|format(mem) }} MB
+                    {% endif %}
+                  {% else %}
+                    --
+                  {% endif %}
+                </span>
+              </div>
+            </div>
+            <div
+              class="flex items-center gap-1.5 text-[11px] text-outline dark:text-slate-400 mt-4 border-t border-outline-variant/10 dark:border-slate-800/50 pt-2">
+              <span class="material-symbols-outlined text-[14px] text-slate-450">info</span>
+              <span data-i18n="cardMemoryNote">RAM peak khi suy luận AI</span>
             </div>
           </div>
         </section>

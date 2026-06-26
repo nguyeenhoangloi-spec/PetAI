@@ -1,6 +1,8 @@
 import json
 import os
 import io
+import time
+import tracemalloc
 import base64
 import logging
 from typing import Any, Dict, List, Optional, cast
@@ -444,7 +446,13 @@ class ImagePredictor:
 
 		try:
 			img = Image.open(image_path).convert("RGB")
+			tracemalloc.start()
+			_t0 = time.perf_counter()
 			sims, logits = self._predict_similarity_and_logits(img)
+			_inference_ms = (time.perf_counter() - _t0) * 1000
+			_, _mem_peak = tracemalloc.get_traced_memory()
+			tracemalloc.stop()
+			_mem_peak_mb = _mem_peak / (1024 * 1024)
 			probs = _softmax(logits)
 			top_idx = np.argsort(-probs)[:5]
 			sim_top_idx = np.argsort(-sims)[:5]
@@ -609,6 +617,8 @@ class ImagePredictor:
 				"display": {
 					"top3_mode": top3_mode,
 					"top3_note": top3_note,
+					"inference_time_ms": round(_inference_ms, 1),
+					"memory_peak_mb": round(_mem_peak_mb, 2),
 				},
 				"acceptance": {
 					"accepted": is_breed_confident,
