@@ -904,7 +904,7 @@
             </div>
 
             <!-- Nested Grid: Grad-CAM and Model logic side-by-side -->
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 {% if not is_hybrid %}flex-grow{% endif %}">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 flex-grow">
 
               <!-- Card: Grad-CAM heatmap visuals (takes ~67%) -->
               {% if gradcam_items %}
@@ -1026,7 +1026,7 @@
             {% if is_hybrid %}
             <!-- Card: Recent History (Chỉ hiển thị ở cột trái khi nhận diện lai) -->
             <div
-              class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-5 border border-outline-variant/30 dark:border-slate-800 shadow-sm relative group/slider flex flex-col mt-auto"
+              class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-5 border border-outline-variant/30 dark:border-slate-800 shadow-sm relative group/slider flex flex-col mt-0"
               data-purpose="recent-history-card">
               
               <!-- Header of slider with small neat navigation buttons -->
@@ -1338,7 +1338,7 @@
 
               {% if is_hybrid %}
               <!-- Hybrid Breed Tip Box -->
-              <div class="mt-4 p-3 bg-blue-500/5 dark:bg-blue-500/10 border border-blue-500/20 dark:border-blue-500/30 rounded-xl flex items-start gap-2.5 shadow-sm">
+              <div class="md:mt-auto mt-4 p-3 bg-blue-500/5 dark:bg-blue-500/10 border border-blue-500/20 dark:border-blue-500/30 rounded-xl flex items-start gap-2.5 shadow-sm">
                 <span class="material-symbols-outlined text-blue-500 dark:text-blue-400 text-[18px] shrink-0 mt-0.5">info</span>
                 <div class="text-[11px] leading-relaxed">
                   <span class="font-extrabold text-blue-600 dark:text-blue-400 block mb-0.5" data-i18n="hybridTipTitle">Đặc tính chó lai</span>
