@@ -107,11 +107,12 @@
 }
 
 @media (max-width: 400px) {
-  /* Hide the "PetAI" text next to the logo on very small screens to ensure buttons stay on 1 line */
+  /* Do not hide the "PetAI" text next to the logo on very small screens; instead, scale it down to ensure buttons stay on 1 line */
   body>nav a span.text-primary,
   body>nav a span.text-lg,
   body>nav a span.text-2xl {
-    display: none !important;
+    display: inline-block !important;
+    font-size: 16px !important;
   }
 }
 
@@ -1721,4 +1722,39 @@ a[href^="mailto:"], a[href^="http"] {
 }
 #settingsTabs {
   -webkit-overflow-scrolling: touch !important;
+}
+
+/* --- Sửa lỗi Stepper (Quy trình nhận diện) bị đè chồng chữ và bị cắt trên mobile --- */
+@media (max-width: 640px) {
+  #progressSteps {
+    gap: 4px !important;
+    width: 100% !important;
+    justify-content: space-between !important;
+  }
+  #progressSteps .step-desc {
+    display: none !important;
+  }
+  #progressSteps .mt-2\.5 {
+    margin-top: 6px !important;
+  }
+  #progressSteps .step-circle {
+    width: 24px !important;
+    height: 24px !important;
+    font-size: 10px !important;
+    border-width: 1px !important;
+  }
+  #progressSteps p.font-semibold {
+    font-size: 9.5px !important;
+    white-space: normal !important;
+    line-height: 1.2 !important;
+    word-break: break-word !important;
+    max-width: 55px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+  #progressSteps div[data-step] {
+    flex-basis: 0 !important;
+    flex-grow: 1 !important;
+    min-width: 0 !important;
+  }
 }

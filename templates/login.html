@@ -796,7 +796,7 @@
       .login-mobile-logo .logo-text {
         font-size: 18px;
         font-weight: 700;
-        color: #ffffff;
+        color: var(--login-text);
       }
 
       /* ── RESPONSIVE ── */
@@ -815,7 +815,10 @@
         }
 
         .login-left-logo {
-          display: none !important;
+          display: flex !important;
+          top: 50% !important;
+          left: 50% !important;
+          transform: translate(-50%, -50%) !important;
         }
 
         .login-left-content {
@@ -851,7 +854,7 @@
         }
 
         .login-mobile-logo {
-          display: flex;
+          display: none !important;
         }
 
         .login-btn-submit,
@@ -881,12 +884,29 @@
           font-size: 22px;
         }
       }
+
+      .auth-main-container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 48px 16px;
+        min-height: calc(100vh - 56px);
+      }
+
+      @media (max-width: 767px) {
+        .auth-main-container {
+          justify-content: flex-start !important;
+          padding: 24px 16px !important;
+        }
+      }
     </style>
   </head>
   <body class="login-page">
     {% include '_toasts.html' %}
     <!-- Theme Switcher floating at top right -->
-    <div class="fixed top-6 right-6 z-50">
+    <div class="fixed top-10 right-8 z-50 md:top-6 md:right-6">
       <button type="button" id="themeToggleBtn" class="theme-switch-btn" aria-label="Toggle theme">
         <span class="theme-switch-knob">
           <span class="material-symbols-outlined sun-icon">light_mode</span>
@@ -894,7 +914,7 @@
         </span>
       </button>
     </div>
-    <main style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px 16px; min-height: calc(100vh - 56px);">
+    <main class="auth-main-container">
       <div class="login-card">
 
         <!-- ═══════════════════════════════ LEFT PANEL ═══════════════════════════════ -->
@@ -910,7 +930,7 @@
 
           <!-- Logo top-left -->
           <a class="login-left-logo" href="{{ url_for('home.index') }}" aria-label="{{ get_config('site_name', 'PetAI') }}">
-            <span class="material-symbols-outlined logo-icon">pets</span>
+            <img alt="PetAI Logo" class="w-8 h-8 object-contain" src="{{ url_for('static', filename='images/logo.png') }}">
             <span class="logo-text">{{ get_config('site_name', 'PetAI') }}</span>
           </a>
 
@@ -941,7 +961,7 @@
         <section class="login-right">
           <!-- Mobile logo (only visible on small screens) -->
           <div class="login-mobile-logo">
-            <span class="material-symbols-outlined logo-icon">pets</span>
+            <img alt="PetAI Logo" class="w-8 h-8 object-contain" src="{{ url_for('static', filename='images/logo.png') }}">
             <span class="logo-text">{{ get_config('site_name', 'PetAI') }}</span>
           </div>
 

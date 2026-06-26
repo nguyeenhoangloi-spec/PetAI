@@ -56,6 +56,7 @@
       </style>
     </noscript>
     <meta charset="utf-8" />
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title data-i18n="contactPageTitle">{{ 'Contact | ' ~ get_config('site_name', 'PetAI') if ui_language == 'en' else 'Liên hệ | ' ~ get_config('site_name', 'PetAI') }}</title>
     <script src="{{ url_for('static', filename='js/tailwindcss.js') }}"></script>
@@ -526,35 +527,32 @@
           <span class="material-symbols-outlined text-primary text-[26px]">send</span>
           <h2 class="text-lg font-bold text-slate-900 dark:text-white" data-i18n="sendMessageOnline">Gửi tin nhắn trực tuyến</h2>
         </div>
-        <form
-          onsubmit="
-            event.preventDefault();
-            var msgText = typeof window.PetAI_i18n !== 'undefined'
-              ? window.PetAI_i18n.t('msgSendSuccessDemo')
-              : 'Bạn đã bấm Gửi thành công! (Dữ liệu Demo)';
-            if (window.PetAI_alert) {
-              window.PetAI_alert({ text: msgText, type: 'success' });
-            } else {
-              alert(msgText);
-            }
-          "
-          class="space-y-5"
-        >
+        <form id="contactForm" class="space-y-5">
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div>
               <label class="block text-sm font-semibold text-slate-800 dark:text-slate-200 mb-1.5" data-i18n="fullnameLabel">
                 <span data-i18n="fullnameLabel">Họ tên</span>
               </label>
-              <input type="text" required
-                class="w-full bg-neutral-50 dark:bg-slate-800 border border-outline-variant/40 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+              <input type="text" id="contactName" required
+                {% if session.get('user_id') %}
+                  value="{{ session.get('fullname') or session.get('username') or '' }}" readonly
+                  class="w-full bg-neutral-100 dark:bg-slate-800/80 border border-outline-variant/30 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm outline-none cursor-not-allowed opacity-75"
+                {% else %}
+                  class="w-full bg-neutral-50 dark:bg-slate-800 border border-outline-variant/40 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+                {% endif %}
                 placeholder="Tên của bạn..." data-i18n-placeholder="yourNamePlaceholder" />
             </div>
             <div>
               <label class="block text-sm font-semibold text-slate-800 dark:text-slate-200 mb-1.5" data-i18n="emailLabel">
                 <span data-i18n="emailLabel">Email</span>
               </label>
-              <input type="email" required
-                class="w-full bg-neutral-50 dark:bg-slate-800 border border-outline-variant/40 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+              <input type="email" id="contactEmail" required
+                {% if session.get('user_id') %}
+                  value="{{ session.get('email') or '' }}" readonly
+                  class="w-full bg-neutral-100 dark:bg-slate-800/80 border border-outline-variant/30 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm outline-none cursor-not-allowed opacity-75"
+                {% else %}
+                  class="w-full bg-neutral-50 dark:bg-slate-800 border border-outline-variant/40 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+                {% endif %}
                 placeholder="Địa chỉ email..." data-i18n-placeholder="emailAddressPlaceholder" />
             </div>
           </div>
@@ -562,7 +560,7 @@
             <label class="block text-sm font-semibold text-slate-800 dark:text-slate-200 mb-1.5" data-i18n="themeLabel">
               <span data-i18n="themeLabel">Chủ đề</span>
             </label>
-            <input type="text" required
+            <input type="text" id="contactTheme" required
               class="w-full bg-neutral-50 dark:bg-slate-800 border border-outline-variant/40 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
               placeholder="Bạn cần hỗ trợ gì?" data-i18n-placeholder="supportQuestionPlaceholder" />
           </div>
@@ -570,17 +568,93 @@
             <label class="block text-sm font-semibold text-slate-800 dark:text-slate-200 mb-1.5" data-i18n="memoLabel">
               <span data-i18n="memoLabel">Nội dung</span>
             </label>
-            <textarea rows="4" required
+            <textarea rows="4" id="contactMemo" required
               class="w-full bg-neutral-50 dark:bg-slate-800 border border-outline-variant/40 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all resize-none"
               placeholder="Ghi chú chi tiết thêm..." data-i18n-placeholder="additionalNotesPlaceholder"></textarea>
           </div>
-          <button type="submit"
-            class="w-full sm:w-auto bg-primary text-white font-semibold py-2.5 px-8 rounded-xl transition-all hover:bg-primary/90 active:scale-95 shadow-sm flex items-center justify-center gap-2"
-            data-i18n="submitForm">
-            <span class="material-symbols-outlined text-[18px]">send</span>
-            <span data-i18n="submitForm">Gửi biểu mẫu</span>
+          <button type="submit" id="contactSubmitBtn"
+            class="w-full sm:w-auto bg-primary text-white font-semibold py-2.5 px-8 rounded-xl transition-all hover:bg-primary/90 active:scale-95 shadow-sm flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed">
+            <span class="material-symbols-outlined text-[18px]" id="contactBtnIcon">send</span>
+            <span id="contactBtnText" data-i18n="submitForm">Gửi biểu mẫu</span>
           </button>
         </form>
+        <script>
+          (function () {
+            var form = document.getElementById('contactForm');
+            if (!form) return;
+            form.addEventListener('submit', function (e) {
+              e.preventDefault();
+              var btn = document.getElementById('contactSubmitBtn');
+              var btnIcon = document.getElementById('contactBtnIcon');
+              var btnText = document.getElementById('contactBtnText');
+              var fullname = (document.getElementById('contactName').value || '').trim();
+              var email    = (document.getElementById('contactEmail').value || '').trim();
+              var theme    = (document.getElementById('contactTheme').value || '').trim();
+              var memo     = (document.getElementById('contactMemo').value || '').trim();
+
+              // Loading state
+              btn.disabled = true;
+              btnIcon.textContent = 'hourglass_empty';
+              var lang = (document.documentElement.lang || 'vi');
+              btnText.textContent = lang === 'en' ? 'Sending...' : 'Đang gửi...';
+
+              var status = 200;
+              fetch('/contact/send', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'X-CSRF-Token': (document.querySelector('meta[name="csrf-token"]') || {}).content || ''
+                },
+                body: JSON.stringify({ fullname: fullname, email: email, theme: theme, memo: memo })
+              })
+              .then(function (res) {
+                status = res.status;
+                return res.json();
+              })
+              .then(function (data) {
+                if (data.success) {
+                  // Success toast
+                  var successMsg = window.PetAI_i18n
+                    ? window.PetAI_i18n.t('contactSuccess')
+                    : (lang === 'en' ? 'Message sent! We will reply within 24 hours. Please check your email.' : 'Tin nhắn đã được gửi! Chúng tôi sẽ phản hồi trong 24 giờ. Vui lòng kiểm tra email.');
+                  if (window.PetAI_alert) {
+                    window.PetAI_alert({ text: successMsg, type: 'success' });
+                  } else {
+                    alert(successMsg);
+                  }
+                  form.reset();
+                } else {
+                  if (status === 429) {
+                    throw new Error('rate_limited');
+                  }
+                  throw new Error(data.error || 'unknown');
+                }
+              })
+              .catch(function (err) {
+                var errMsg = '';
+                if (err.message === 'rate_limited') {
+                  errMsg = window.PetAI_i18n
+                    ? window.PetAI_i18n.t('contactRateLimited')
+                    : (lang === 'en' ? 'You have sent too many support messages. Please try again in 1 hour.' : 'Bạn đã gửi quá nhiều tin nhắn hỗ trợ. Vui lòng thử lại sau 1 giờ.');
+                } else {
+                  errMsg = window.PetAI_i18n
+                    ? window.PetAI_i18n.t('contactFailed')
+                    : (lang === 'en' ? 'Failed to send message. Please try again or contact us via email.' : 'Gửi tin nhắn thất bại. Vui lòng thử lại hoặc liên hệ qua email.');
+                }
+                if (window.PetAI_alert) {
+                  window.PetAI_alert({ text: errMsg, type: 'error' });
+                } else {
+                  alert(errMsg);
+                }
+              })
+              .finally(function () {
+                btn.disabled = false;
+                btnIcon.textContent = 'send';
+                btnText.textContent = lang === 'en' ? 'Submit Form' : 'Gửi biểu mẫu';
+              });
+            });
+          })();
+        </script>
       </div>
 
     </div>

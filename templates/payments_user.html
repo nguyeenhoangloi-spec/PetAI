@@ -1,4 +1,4 @@
-﻿<!-- html-validate-disable no-dup-class, void-style, title-length, attribute-allowed-values -->
+<!-- html-validate-disable no-dup-class, void-style, title-length, attribute-allowed-values -->
 <!-- htmlhint spec-char-escape:false -->
 <!DOCTYPE html>
 <html
@@ -628,59 +628,118 @@
                 />
               </div>
 
-              <!-- Status Dropdown -->
-              <div class="relative w-full sm:w-auto">
-                <select
-                  id="filter-status"
-                  class="w-full sm:w-auto pl-4 pr-8 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-300 cursor-pointer dark:text-slate-200"
+              <!-- Status Filter Custom Dropdown -->
+              <div class="relative w-full sm:w-auto custom-dropdown" id="dropdown-status-container">
+                <button
+                  type="button"
+                  id="dropdown-status-trigger"
+                  class="w-full sm:w-auto flex items-center justify-between gap-2 pl-4 pr-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-xs transition-all duration-300 cursor-pointer dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                 >
-                  <option value="all" data-i18n="paymentHistoryFilterAllStatus">Tất cả trạng thái</option>
-                  <option value="pending" data-i18n="paymentHistoryStatusPending">Chờ thanh toán</option>
-                  <option value="user_confirmed" data-i18n="paymentHistoryStatusProcessing">Đang xử lý</option>
-                  <option value="paid" data-i18n="paymentHistoryStatusPaid">Đã thanh toán</option>
-                  <option value="cancelled" data-i18n="paymentHistoryStatusCancelled">Đã hủy</option>
-                  <option value="failed" data-i18n="paymentHistoryStatusFailed">Thất bại</option>
+                  <span id="dropdown-status-label" data-i18n="paymentHistoryFilterAllStatus">Tất cả trạng thái</span>
+                  <span class="material-symbols-outlined text-[16px] text-slate-400 transition-transform duration-200 dropdown-arrow">keyboard_arrow_down</span>
+                </button>
+                <div
+                  id="dropdown-status-menu"
+                  class="absolute left-0 mt-1.5 w-full sm:w-48 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-lg py-1.5 hidden z-30 transition-all duration-200"
+                >
+                  <div class="dropdown-item px-4 py-2 text-xs hover:bg-slate-50 dark:hover:bg-slate-850 cursor-pointer font-medium text-slate-700 dark:text-slate-200" data-value="all" data-i18n="paymentHistoryFilterAllStatus">Tất cả trạng thái</div>
+                  <div class="dropdown-item px-4 py-2 text-xs hover:bg-slate-50 dark:hover:bg-slate-850 cursor-pointer font-medium text-slate-700 dark:text-slate-200" data-value="pending" data-i18n="paymentHistoryStatusPending">Chờ thanh toán</div>
+                  <div class="dropdown-item px-4 py-2 text-xs hover:bg-slate-50 dark:hover:bg-slate-850 cursor-pointer font-medium text-slate-700 dark:text-slate-200" data-value="user_confirmed" data-i18n="paymentHistoryStatusProcessing">Đang xử lý</div>
+                  <div class="dropdown-item px-4 py-2 text-xs hover:bg-slate-50 dark:hover:bg-slate-850 cursor-pointer font-medium text-slate-700 dark:text-slate-200" data-value="paid" data-i18n="paymentHistoryStatusPaid">Đã thanh toán</div>
+                  <div class="dropdown-item px-4 py-2 text-xs hover:bg-slate-50 dark:hover:bg-slate-850 cursor-pointer font-medium text-slate-700 dark:text-slate-200" data-value="cancelled" data-i18n="paymentHistoryStatusCancelled">Đã hủy</div>
+                  <div class="dropdown-item px-4 py-2 text-xs hover:bg-slate-50 dark:hover:bg-slate-850 cursor-pointer font-medium text-slate-700 dark:text-slate-200" data-value="failed" data-i18n="paymentHistoryStatusFailed">Thất bại</div>
+                </div>
+                <select id="filter-status" class="hidden">
+                  <option value="all">all</option>
+                  <option value="pending">pending</option>
+                  <option value="user_confirmed">user_confirmed</option>
+                  <option value="paid">paid</option>
+                  <option value="cancelled">cancelled</option>
+                  <option value="failed">failed</option>
+                </select>
+              </div>
+ 
+              <!-- Plan Filter Custom Dropdown -->
+              <div class="relative w-full sm:w-auto custom-dropdown" id="dropdown-plan-container">
+                <button
+                  type="button"
+                  id="dropdown-plan-trigger"
+                  class="w-full sm:w-auto flex items-center justify-between gap-2 pl-4 pr-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-xs transition-all duration-300 cursor-pointer dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                >
+                  <span id="dropdown-plan-label" data-i18n="paymentHistoryFilterAllPlans">Tất cả gói</span>
+                  <span class="material-symbols-outlined text-[16px] text-slate-400 transition-transform duration-200 dropdown-arrow">keyboard_arrow_down</span>
+                </button>
+                <div
+                  id="dropdown-plan-menu"
+                  class="absolute left-0 mt-1.5 w-full sm:w-48 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-lg py-1.5 hidden z-30 transition-all duration-200"
+                >
+                  <div class="dropdown-item px-4 py-2 text-xs hover:bg-slate-50 dark:hover:bg-slate-850 cursor-pointer font-medium text-slate-700 dark:text-slate-200" data-value="all" data-i18n="paymentHistoryFilterAllPlans">Tất cả gói</div>
+                  <div class="dropdown-item px-4 py-2 text-xs hover:bg-slate-50 dark:hover:bg-slate-850 cursor-pointer font-medium text-slate-700 dark:text-slate-200" data-value="basic">Basic</div>
+                  <div class="dropdown-item px-4 py-2 text-xs hover:bg-slate-50 dark:hover:bg-slate-850 cursor-pointer font-medium text-slate-700 dark:text-slate-200" data-value="pro">Pro</div>
+                  <div class="dropdown-item px-4 py-2 text-xs hover:bg-slate-50 dark:hover:bg-slate-850 cursor-pointer font-medium text-slate-700 dark:text-slate-200" data-value="enterprise">Enterprise</div>
+                </div>
+                <select id="filter-plan" class="hidden">
+                  <option value="all">all</option>
+                  <option value="basic">basic</option>
+                  <option value="pro">pro</option>
+                  <option value="enterprise">enterprise</option>
+                </select>
+              </div>
+ 
+              <!-- Time Filter Custom Dropdown -->
+              <div class="relative w-full sm:w-auto custom-dropdown" id="dropdown-time-container">
+                <button
+                  type="button"
+                  id="dropdown-time-trigger"
+                  class="w-full sm:w-auto flex items-center justify-between gap-2 pl-4 pr-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-xs transition-all duration-300 cursor-pointer dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                >
+                  <span id="dropdown-time-label" data-i18n="paymentHistoryFilterAllTime">Tất cả thời gian</span>
+                  <span class="material-symbols-outlined text-[16px] text-slate-400 transition-transform duration-200 dropdown-arrow">keyboard_arrow_down</span>
+                </button>
+                <div
+                  id="dropdown-time-menu"
+                  class="absolute left-0 mt-1.5 w-full sm:w-48 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-lg py-1.5 hidden z-30 transition-all duration-200"
+                >
+                  <div class="dropdown-item px-4 py-2 text-xs hover:bg-slate-50 dark:hover:bg-slate-850 cursor-pointer font-medium text-slate-700 dark:text-slate-200" data-value="all" data-i18n="paymentHistoryFilterAllTime">Tất cả thời gian</div>
+                  <div class="dropdown-item px-4 py-2 text-xs hover:bg-slate-50 dark:hover:bg-slate-850 cursor-pointer font-medium text-slate-700 dark:text-slate-200" data-value="today" data-i18n="paymentHistoryFilterToday">Hôm nay</div>
+                  <div class="dropdown-item px-4 py-2 text-xs hover:bg-slate-50 dark:hover:bg-slate-850 cursor-pointer font-medium text-slate-700 dark:text-slate-200" data-value="7days" data-i18n="paymentHistoryFilter7Days">7 ngày</div>
+                  <div class="dropdown-item px-4 py-2 text-xs hover:bg-slate-50 dark:hover:bg-slate-850 cursor-pointer font-medium text-slate-700 dark:text-slate-200" data-value="30days" data-i18n="paymentHistoryFilter30Days">30 ngày</div>
+                </div>
+                <select id="filter-time" class="hidden">
+                  <option value="all">all</option>
+                  <option value="today">today</option>
+                  <option value="7days">7days</option>
+                  <option value="30days">30days</option>
+                </select>
+              </div>
+ 
+              <!-- Sorting Filter Custom Dropdown -->
+              <div class="relative w-full sm:w-auto custom-dropdown" id="dropdown-sort-container">
+                <button
+                  type="button"
+                  id="dropdown-sort-trigger"
+                  class="w-full sm:w-auto flex items-center justify-between gap-2 pl-4 pr-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-xs transition-all duration-300 cursor-pointer dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                >
+                  <span id="dropdown-sort-label" data-i18n="paymentHistorySortNewest">Mới nhất</span>
+                  <span class="material-symbols-outlined text-[16px] text-slate-400 transition-transform duration-200 dropdown-arrow">keyboard_arrow_down</span>
+                </button>
+                <div
+                  id="dropdown-sort-menu"
+                  class="absolute left-0 mt-1.5 w-full sm:w-48 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-lg py-1.5 hidden z-30 transition-all duration-200"
+                >
+                  <div class="dropdown-item px-4 py-2 text-xs hover:bg-slate-50 dark:hover:bg-slate-850 cursor-pointer font-medium text-slate-700 dark:text-slate-200" data-value="newest" data-i18n="paymentHistorySortNewest">Mới nhất</div>
+                  <div class="dropdown-item px-4 py-2 text-xs hover:bg-slate-50 dark:hover:bg-slate-850 cursor-pointer font-medium text-slate-700 dark:text-slate-200" data-value="oldest" data-i18n="paymentHistorySortOldest">Cũ nhất</div>
+                  <div class="dropdown-item px-4 py-2 text-xs hover:bg-slate-50 dark:hover:bg-slate-850 cursor-pointer font-medium text-slate-700 dark:text-slate-200" data-value="amount-desc" data-i18n="paymentHistorySortAmountHighest">Số tiền cao nhất</div>
+                  <div class="dropdown-item px-4 py-2 text-xs hover:bg-slate-50 dark:hover:bg-slate-850 cursor-pointer font-medium text-slate-700 dark:text-slate-200" data-value="amount-asc" data-i18n="paymentHistorySortAmountLowest">Số tiền thấp nhất</div>
+                </div>
+                <select id="sort-by" class="hidden">
+                  <option value="newest">newest</option>
+                  <option value="oldest">oldest</option>
+                  <option value="amount-desc">amount-desc</option>
+                  <option value="amount-asc">amount-asc</option>
                 </select>
               </div>
 
-              <!-- Plan Dropdown -->
-              <div class="relative w-full sm:w-auto">
-                <select
-                  id="filter-plan"
-                  class="w-full sm:w-auto pl-4 pr-8 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-300 cursor-pointer dark:text-slate-200"
-                >
-                  <option value="all" data-i18n="paymentHistoryFilterAllPlans">Tất cả gói</option>
-                  <option value="basic">Basic</option>
-                  <option value="pro">Pro</option>
-                  <option value="enterprise">Enterprise</option>
-                </select>
-              </div>
-
-              <!-- Time Dropdown -->
-              <div class="relative w-full sm:w-auto">
-                <select
-                  id="filter-time"
-                  class="w-full sm:w-auto pl-4 pr-8 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-300 cursor-pointer dark:text-slate-200"
-                >
-                  <option value="all" data-i18n="paymentHistoryFilterAllTime">Tất cả thời gian</option>
-                  <option value="today" data-i18n="paymentHistoryFilterToday">Hôm nay</option>
-                  <option value="7days" data-i18n="paymentHistoryFilter7Days">7 ngày</option>
-                  <option value="30days" data-i18n="paymentHistoryFilter30Days">30 ngày</option>
-                </select>
-              </div>
-
-              <!-- Sorting Dropdown -->
-              <div class="relative w-full sm:w-auto">
-                <select
-                  id="sort-by"
-                  class="w-full sm:w-auto pl-4 pr-8 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-300 cursor-pointer dark:text-slate-200"
-                >
-                  <option value="newest" data-i18n="paymentHistorySortNewest">Mới nhất</option>
-                  <option value="oldest" data-i18n="paymentHistorySortOldest">Cũ nhất</option>
-                  <option value="amount-desc" data-i18n="paymentHistorySortAmountHighest">Số tiền cao nhất</option>
-                  <option value="amount-asc" data-i18n="paymentHistorySortAmountLowest">Số tiền thấp nhất</option>
-                </select>
-              </div>
             </div>
 
             <!-- Clear Filters Button -->
@@ -699,29 +758,32 @@
 
         <!-- Orders Table/Card Area -->
         <section class="flex flex-col gap-4">
-          <!-- Desktop Table Layout -->
-          <div class="hidden md:block bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm">
-            <table class="w-full text-left border-collapse">
-              <thead>
-                <tr class="bg-slate-50/50 dark:bg-slate-900/50 border-b border-outline-variant/30 dark:border-slate-800">
-                  <th class="text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider text-[11px] py-4 px-5" data-i18n="paymentHistoryColOrderId">Mã đơn</th>
-                  <th class="text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider text-[11px] py-4 px-5" data-i18n="paymentHistoryColPlan">Gói đăng ký</th>
-                  <th class="text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider text-[11px] py-4 px-5" data-i18n="paymentHistoryColStatus">Trạng thái</th>
-                  <th class="text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider text-[11px] py-4 px-5" data-i18n="paymentHistoryColAmount">Số tiền</th>
-                  <th class="text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider text-[11px] py-4 px-5" data-i18n="paymentHistoryColMethod">Phương thức</th>
-                  <th class="text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider text-[11px] py-4 px-5" data-i18n="paymentHistoryColCreated">Thời gian tạo</th>
-                  <th class="text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider text-[11px] py-4 px-5 text-right" data-i18n="paymentHistoryColActions">Thao tác</th>
-                </tr>
-              </thead>
-              <tbody id="orders-table-body" class="divide-y divide-outline-variant/20 dark:divide-slate-800/80">
-                <!-- Javascript populated -->
-              </tbody>
-            </table>
-          </div>
+          <!-- Desktop and Mobile List Wrapper -->
+          <div id="orders-list-wrapper" class="flex flex-col gap-4">
+            <!-- Desktop Table Layout -->
+            <div class="hidden md:block bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm">
+              <table class="w-full text-left border-collapse">
+                <thead>
+                  <tr class="bg-slate-50/50 dark:bg-slate-900/50 border-b border-outline-variant/30 dark:border-slate-800">
+                    <th class="text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider text-[11px] py-4 px-5" data-i18n="paymentHistoryColOrderId">Mã đơn</th>
+                    <th class="text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider text-[11px] py-4 px-5" data-i18n="paymentHistoryColPlan">Gói đăng ký</th>
+                    <th class="text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider text-[11px] py-4 px-5" data-i18n="paymentHistoryColStatus">Trạng thái</th>
+                    <th class="text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider text-[11px] py-4 px-5" data-i18n="paymentHistoryColAmount">Số tiền</th>
+                    <th class="text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider text-[11px] py-4 px-5" data-i18n="paymentHistoryColMethod">Phương thức</th>
+                    <th class="text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider text-[11px] py-4 px-5" data-i18n="paymentHistoryColCreated">Thời gian tạo</th>
+                    <th class="text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider text-[11px] py-4 px-5 text-right" data-i18n="paymentHistoryColActions">Thao tác</th>
+                  </tr>
+                </thead>
+                <tbody id="orders-table-body" class="divide-y divide-outline-variant/20 dark:divide-slate-800/80">
+                  <!-- Javascript populated -->
+                </tbody>
+              </table>
+            </div>
 
-          <!-- Mobile Card Layout -->
-          <div id="orders-mobile-list" class="flex flex-col gap-4 md:hidden">
-            <!-- Javascript populated -->
+            <!-- Mobile Card Layout -->
+            <div id="orders-mobile-list" class="flex flex-col gap-4 md:hidden">
+              <!-- Javascript populated -->
+            </div>
           </div>
 
           <!-- Empty State (Shared) -->
@@ -1068,13 +1130,13 @@
           if (total === 0) {
             tableBody.innerHTML = "";
             mobileList.innerHTML = "";
-            document.querySelector(".md\\:block.bg-surface-container-lowest").classList.add("hidden");
+            document.getElementById("orders-list-wrapper").classList.add("hidden");
             emptyState.classList.remove("hidden");
             paginationContainer.classList.add("hidden");
             return;
           }
 
-          document.querySelector(".md\\:block.bg-surface-container-lowest").classList.remove("hidden");
+          document.getElementById("orders-list-wrapper").classList.remove("hidden");
           emptyState.classList.add("hidden");
           paginationContainer.classList.remove("hidden");
 
@@ -1296,26 +1358,98 @@
           });
         };
 
+        // --- Custom Dropdown Javascript Handler ---
+        function initCustomDropdowns() {
+          document.querySelectorAll(".custom-dropdown").forEach(dropdown => {
+            const trigger = dropdown.querySelector("button");
+            const menu = dropdown.querySelector("div[id$='-menu']");
+            const label = dropdown.querySelector("span[id$='-label']");
+            const nativeSelect = dropdown.querySelector("select");
+            const arrow = trigger.querySelector(".dropdown-arrow");
+
+            trigger.addEventListener("click", function(e) {
+              e.stopPropagation();
+              // Đóng tất cả các menu khác
+              document.querySelectorAll(".custom-dropdown div[id$='-menu']").forEach(m => {
+                if (m !== menu) m.classList.add("hidden");
+              });
+              document.querySelectorAll(".custom-dropdown .dropdown-arrow").forEach(a => {
+                if (a !== arrow) a.style.transform = "rotate(0deg)";
+              });
+
+              const isHidden = menu.classList.contains("hidden");
+              if (isHidden) {
+                menu.classList.remove("hidden");
+                arrow.style.transform = "rotate(180deg)";
+              } else {
+                menu.classList.add("hidden");
+                arrow.style.transform = "rotate(0deg)";
+              }
+            });
+
+            menu.querySelectorAll(".dropdown-item").forEach(item => {
+              item.addEventListener("click", function() {
+                const val = this.getAttribute("data-value");
+                label.innerHTML = this.innerHTML;
+                nativeSelect.value = val;
+
+                menu.classList.add("hidden");
+                arrow.style.transform = "rotate(0deg)";
+                nativeSelect.dispatchEvent(new Event("change"));
+              });
+            });
+          });
+
+          // Click ra ngoài để đóng
+          document.addEventListener("click", function() {
+            document.querySelectorAll(".custom-dropdown div[id$='-menu']").forEach(menu => {
+              menu.classList.add("hidden");
+            });
+            document.querySelectorAll(".custom-dropdown .dropdown-arrow").forEach(arrow => {
+              arrow.style.transform = "rotate(0deg)";
+            });
+          });
+        }
+
+        function updateCustomDropdownLabels() {
+          document.querySelectorAll(".custom-dropdown").forEach(dropdown => {
+            const label = dropdown.querySelector("span[id$='-label']");
+            const nativeSelect = dropdown.querySelector("select");
+            const menu = dropdown.querySelector("div[id$='-menu']");
+            if (label && nativeSelect && menu) {
+              const matchingItem = menu.querySelector(`.dropdown-item[data-value="${nativeSelect.value}"]`);
+              if (matchingItem) {
+                label.innerHTML = matchingItem.innerHTML;
+              }
+            }
+          });
+        }
+
+        // Initialize custom dropdowns
+        initCustomDropdowns();
+
         // Events listeners Setup
         searchInput.addEventListener("input", applyFilters);
         statusFilter.addEventListener("change", applyFilters);
         planFilter.addEventListener("change", applyFilters);
         timeFilter.addEventListener("change", applyFilters);
         sortBy.addEventListener("change", applyFilters);
-
+ 
         clearFiltersBtn.addEventListener("click", () => {
           searchInput.value = "";
           statusFilter.value = "all";
           planFilter.value = "all";
           timeFilter.value = "all";
           sortBy.value = "newest";
+          updateCustomDropdownLabels();
           applyFilters();
         });
-
+ 
         pageSizeSelect.addEventListener("change", (e) => {
           rowsPerPage = parseInt(e.target.value);
           currentPage = 1;
           renderOrders();
+
         });
 
         btnPrevPage.addEventListener("click", () => {
