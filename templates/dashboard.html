@@ -373,6 +373,22 @@
         border-color: rgba(30, 41, 59, 1);
         /* border-slate-800 */
       }
+
+      /* Force date filter tabs to stay on a single line with horizontal scroll on mobile */
+      #revenuePeriodTabs, #activityPeriodTabs {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        -ms-overflow-style: none !important;
+        scrollbar-width: none !important;
+      }
+      #revenuePeriodTabs::-webkit-scrollbar, #activityPeriodTabs::-webkit-scrollbar {
+        display: none !important;
+      }
+      #revenuePeriodTabs button, #activityPeriodTabs button {
+        flex-shrink: 0 !important;
+      }
     </style>
   </head>
 

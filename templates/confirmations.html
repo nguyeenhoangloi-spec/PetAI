@@ -1696,12 +1696,17 @@
             '</button>';
           }
 
-          // Page index loops
+          // Page index loops with sliding window (showing max 5 numbers + ellipses)
+          var range = 2; // page range
           for (var i = 1; i <= totalPages; i++) {
-            if (i === currentPage) {
-              html += '<span class="w-8 h-8 rounded-lg bg-primary text-white flex items-center justify-center label-sm font-bold">' + i + '</span>';
-            } else {
-              html += '<button type="button" class="w-8 h-8 rounded-lg text-on-surface dark:text-slate-350 hover:bg-slate-150 dark:hover:bg-slate-800 transition-colors flex items-center justify-center font-semibold label-sm" data-page="' + i + '">' + i + '</button>';
+            if (i === 1 || i === totalPages || (i >= currentPage - range && i <= currentPage + range)) {
+              if (i === currentPage) {
+                html += '<span class="w-8 h-8 rounded-lg bg-primary text-white flex items-center justify-center label-sm font-bold select-none">' + i + '</span>';
+              } else {
+                html += '<button type="button" class="w-8 h-8 rounded-lg text-on-surface dark:text-slate-350 hover:bg-slate-150 dark:hover:bg-slate-800 transition-colors flex items-center justify-center font-semibold label-sm" data-page="' + i + '">' + i + '</button>';
+              }
+            } else if (i === currentPage - range - 1 || i === currentPage + range + 1) {
+              html += '<span class="w-8 h-8 flex items-center justify-center text-on-surface-variant/50 dark:text-slate-500 font-semibold text-xs select-none">...</span>';
             }
           }
 
