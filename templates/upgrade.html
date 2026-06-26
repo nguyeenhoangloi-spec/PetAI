@@ -1348,13 +1348,31 @@
       });
     }
 
+    // Scroll lock helpers — zero layout shift technique
+    let _scrollLockY = 0;
+    function lockScroll() {
+      _scrollLockY = window.scrollY;
+      document.body.style.position = "fixed";
+      document.body.style.top = "-" + _scrollLockY + "px";
+      document.body.style.left = "0";
+      document.body.style.right = "0";
+      document.body.style.width = "100%";
+    }
+    function unlockScroll() {
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.left = "";
+      document.body.style.right = "";
+      document.body.style.width = "";
+      window.scrollTo(0, _scrollLockY);
+    }
+
     // Open checkout modal
     function showCheckoutModal() {
       if (!checkoutModal) return;
       checkoutModal.classList.remove("hidden");
       checkoutModal.classList.add("flex");
-      document.body.classList.add("overflow-hidden");
-      document.documentElement.classList.add("overflow-hidden");
+      lockScroll();
 
       // Reset collapsed accordion sections to closed by default
       const bankContent = document.getElementById("modalBankContent");
@@ -1393,8 +1411,7 @@
         setTimeout(() => {
           checkoutModal.classList.add("hidden");
           checkoutModal.classList.remove("flex");
-          document.body.classList.remove("overflow-hidden");
-          document.documentElement.classList.remove("overflow-hidden");
+          unlockScroll();
         }, 300);
       }
       resetCardHighlights();

@@ -643,6 +643,8 @@ document.addEventListener("DOMContentLoaded", function () {
       const newStatsExportModal = doc.querySelector("#statsExportModal");
       const newOrderDetailModal = doc.querySelector("#orderDetailModal");
       const newAddUserModal = doc.querySelector("#addUserModal");
+      const newCheckoutModal = doc.querySelector("#checkoutModal");
+      const newQrFullscreenModal = doc.querySelector("#qrFullscreenModal");
 
       const updateDOM = () => {
 
@@ -867,6 +869,26 @@ document.addEventListener("DOMContentLoaded", function () {
           document.body.appendChild(newAddUserModal);
         } else if (currentAddUserModal) {
           currentAddUserModal.remove();
+        }
+
+        // 4.690 Update checkoutModal if present (upgrade page payment modal)
+        const currentCheckoutModal = document.getElementById("checkoutModal");
+        if (currentCheckoutModal && newCheckoutModal) {
+          currentCheckoutModal.parentNode.replaceChild(newCheckoutModal, currentCheckoutModal);
+        } else if (newCheckoutModal) {
+          document.body.appendChild(newCheckoutModal);
+        } else if (currentCheckoutModal) {
+          currentCheckoutModal.remove();
+        }
+
+        // 4.691 Update qrFullscreenModal if present (upgrade page QR fullscreen modal)
+        const currentQrFullscreenModal = document.getElementById("qrFullscreenModal");
+        if (currentQrFullscreenModal && newQrFullscreenModal) {
+          currentQrFullscreenModal.parentNode.replaceChild(newQrFullscreenModal, currentQrFullscreenModal);
+        } else if (newQrFullscreenModal) {
+          document.body.appendChild(newQrFullscreenModal);
+        } else if (currentQrFullscreenModal) {
+          currentQrFullscreenModal.remove();
         }
 
         // 4.67 Sync body dataset attributes
