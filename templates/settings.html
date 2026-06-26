@@ -1264,6 +1264,9 @@
             var _CSRF = document.querySelector('meta[name="csrf-token"]')?.content || '';
             var _delCountdownTimer = null;
             var _delSecondsLeft = 300;
+            var _isSendingDeleteOtp = false;
+            var _isConfirmingDeleteOtp = false;
+            var _isResendingDeleteOtp = false;
 
             window.openDeleteModal = function () {
               document.getElementById('delete-modal-1').classList.remove('hidden');
@@ -1291,6 +1294,8 @@
             };
 
             window.sendDeleteOtp = async function () {
+              if (_isSendingDeleteOtp) return;
+              _isSendingDeleteOtp = true;
               const reason = document.getElementById('delete-reason-input').value.trim();
               const btn = document.getElementById('delete-send-otp-btn');
               btn.disabled = true;
@@ -1336,6 +1341,7 @@
               } finally {
                 btn.disabled = false;
                 btn.textContent = window.PetAI_i18n ? window.PetAI_i18n.t('sendOtpBtn') : 'Gửi mã xác nhận';
+                _isSendingDeleteOtp = false;
               }
             };
 
@@ -1377,6 +1383,7 @@
             });
 
             window.confirmDeleteOtp = async function () {
+              if (_isConfirmingDeleteOtp) return;
               const otp = Array.from(document.querySelectorAll('#delete-otp-boxes .otp-input')).map(i => i.value).join('');
               if (otp.length !== 6) {
                 const errEl = document.getElementById('delete-otp-error');
@@ -1386,6 +1393,7 @@
                 }
                 return;
               }
+              _isConfirmingDeleteOtp = true;
               const btn = document.getElementById('delete-confirm-btn');
               btn.disabled = true;
               btn.textContent = window.PetAI_i18n ? window.PetAI_i18n.t('confirmingStatus') : 'Đang xác nhận...';
@@ -1422,10 +1430,14 @@
                 }
                 btn.disabled = false;
                 btn.textContent = window.PetAI_i18n ? window.PetAI_i18n.t('deleteConfirmBtn') : 'Xác nhận xóa tài khoản';
+              } finally {
+                _isConfirmingDeleteOtp = false;
               }
             };
 
             window.resendDeleteOtp = async function () {
+              if (_isResendingDeleteOtp) return;
+              _isResendingDeleteOtp = true;
               const btn = document.getElementById('delete-resend-btn');
               btn.disabled = true;
               btn.textContent = window.PetAI_i18n ? window.PetAI_i18n.t('sendingStatus') : 'Đang gửi lại...';
@@ -1474,6 +1486,7 @@
               } finally {
                 btn.disabled = false;
                 btn.textContent = window.PetAI_i18n ? window.PetAI_i18n.t('deleteResendBtn') : 'Gửi lại mã OTP';
+                _isResendingDeleteOtp = false;
               }
             };
           </script>
@@ -1541,12 +1554,12 @@
           <div class="mb-5">
             <p class="text-xs text-slate-400 mb-2"><span data-i18n="deleteModalOtpCountdown">Mã có hiệu lực trong</span> <span id="delete-otp-countdown" class="font-semibold text-primary">05:00</span></p>
             <div class="flex justify-center gap-2 w-full" id="delete-otp-boxes">
-              <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="one-time-code">
-              <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
-              <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
-              <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
-              <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
-              <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
+              <input class="otp-input" type="tel" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="one-time-code">
+              <input class="otp-input" type="tel" maxlength="1" inputmode="numeric" pattern="[0-9]">
+              <input class="otp-input" type="tel" maxlength="1" inputmode="numeric" pattern="[0-9]">
+              <input class="otp-input" type="tel" maxlength="1" inputmode="numeric" pattern="[0-9]">
+              <input class="otp-input" type="tel" maxlength="1" inputmode="numeric" pattern="[0-9]">
+              <input class="otp-input" type="tel" maxlength="1" inputmode="numeric" pattern="[0-9]">
             </div>
             <p id="delete-otp-error" class="text-red-500 text-xs mt-2 hidden"></p>
           </div>
@@ -1578,7 +1591,7 @@
             Tài khoản của bạn đã được chuyển sang <b>trạng thái chờ xóa</b>.<br>
             Kiểm tra email để biết thêm chi tiết.
           </p>
-          <button type="button" onclick="window.location.reload()"
+          <button type="button" onclick="window.location.href = '/account/delete/pending'"
             class="w-full py-3 bg-primary hover:bg-blue-700 text-white font-semibold rounded-xl transition-all active:scale-95" data-i18n="close">
             Đóng
           </button>
