@@ -424,6 +424,79 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
+  // --- PJAX Cache & Prefetching for Instant Navigation ---
+  const pjaxCache = new Map();
+  const pjaxFetchPromises = new Map();
+
+  function prefetchPage(url) {
+    if (pjaxCache.has(url) || pjaxFetchPromises.has(url)) return;
+
+    const fetchPromise = fetch(url, {
+      headers: {
+        "X-Requested-With": "XMLHttpRequest"
+      },
+      cache: "no-cache"
+    })
+      .then(response => {
+        if (!response.ok) throw new Error("Network response was not ok");
+        return response.text();
+      })
+      .then(html => {
+        pjaxCache.set(url, html);
+        pjaxFetchPromises.delete(url);
+        return html;
+      })
+      .catch(error => {
+        pjaxFetchPromises.delete(url);
+        console.error("[PJAX Prefetch] Error loading page:", url, error);
+      });
+
+    pjaxFetchPromises.set(url, fetchPromise);
+  }
+
+  function handlePrefetch(e) {
+    const link = e.target.closest("a");
+    if (!link) return;
+
+    const href = link.getAttribute("href");
+    if (!href || href.startsWith("#") || href.startsWith("javascript:") || href.includes("logout") || link.target === "_blank") {
+      return;
+    }
+
+    const absoluteUrl = link.href;
+    const isInternal = absoluteUrl.startsWith(window.location.origin);
+    if (!isInternal) return;
+
+    const relativePath = absoluteUrl.replace(window.location.origin, "");
+
+    // Skip export/download endpoints
+    if (relativePath.startsWith("/statistics/export") ||
+        relativePath.startsWith("/history/export") ||
+        relativePath.startsWith("/history/print")) {
+      return;
+    }
+
+    // Check if path uses the sidebar dashboard template layout
+    const isPjaxRoute = relativePath === "/" ||
+      relativePath.startsWith("/dashboard") ||
+      relativePath.startsWith("/history") ||
+      relativePath.startsWith("/statistics") ||
+      relativePath.startsWith("/settings") ||
+      relativePath.startsWith("/users") ||
+      relativePath.startsWith("/confirmations") ||
+      relativePath.startsWith("/predict") ||
+      relativePath.startsWith("/checkout") ||
+      relativePath.startsWith("/upgrade") ||
+      relativePath.startsWith("/payments");
+
+    if (isPjaxRoute) {
+      prefetchPage(absoluteUrl);
+    }
+  }
+
+  document.addEventListener("mouseover", handlePrefetch);
+  document.addEventListener("touchstart", handlePrefetch, { passive: true });
+
   // --- PJAX (PushState + AJAX) Router for Smooth Page Navigation ---
   document.addEventListener("click", function (e) {
     const link = e.target.closest("a");
@@ -1006,24 +1079,55 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    fetch(url, {
-      headers: {
-        "X-Requested-With": "XMLHttpRequest"
-      },
-      cache: "no-cache"
-    })
-      .then(response => {
-        if (!response.ok) throw new Error("Network response was not ok");
-        return response.text();
+    // Check if the page is already loaded in prefetch cache
+    if (pjaxCache.has(url)) {
+      const html = pjaxCache.get(url);
+      pjaxCache.delete(url); // Clean up immediately to avoid stale data
+      handleHtml(html);
+      return;
+    }
+
+    // Check if there is an in-flight prefetch promise
+    if (pjaxFetchPromises.has(url)) {
+      pjaxFetchPromises.get(url)
+        .then(html => {
+          if (html) {
+            handleHtml(html);
+          } else {
+            fetchNormal();
+          }
+        })
+        .catch(() => {
+          fetchNormal();
+        })
+        .finally(() => {
+          pjaxCache.delete(url);
+        });
+      return;
+    }
+
+    function fetchNormal() {
+      fetch(url, {
+        headers: {
+          "X-Requested-With": "XMLHttpRequest"
+        },
+        cache: "no-cache"
       })
-      .then(html => {
-        handleHtml(html);
-      })
-      .catch(error => {
-        console.error("[PJAX Load Debug] fetch error caught:", error);
-        console.error("PJAX navigation failed, falling back to standard redirect:", error);
-        window.location.href = url;
-      });
+        .then(response => {
+          if (!response.ok) throw new Error("Network response was not ok");
+          return response.text();
+        })
+        .then(html => {
+          handleHtml(html);
+        })
+        .catch(error => {
+          console.error("[PJAX Load Debug] fetch error caught:", error);
+          console.error("PJAX navigation failed, falling back to standard redirect:", error);
+          window.location.href = url;
+        });
+    }
+
+    fetchNormal();
   }
 
   function showAvatarLightbox(src, downloadName = "avatar.png") {
