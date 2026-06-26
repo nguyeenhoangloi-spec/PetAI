@@ -1,11 +1,28 @@
-/* ===== HIDE SCROLLBAR GLOBALLY ===== */
-/* Hide scrollbar for all elements but keep scrolling functional */
+/* ===== MINI SCROLLBAR GLOBALLY ===== */
+/* Show thin/mini scrollbar for all elements */
 * {
-  scrollbar-width: none !important; /* Firefox */
-  -ms-overflow-style: none !important; /* IE/Edge */
+  scrollbar-width: thin; /* Firefox - thin mini scrollbar */
+  scrollbar-color: rgba(148, 163, 184, 0.4) transparent; /* Firefox - thumb / track */
 }
 *::-webkit-scrollbar {
-  display: none !important; /* Chrome, Safari, WebView */
+  width: 5px; /* Chrome, Safari - mini vertical scrollbar */
+  height: 5px; /* Chrome, Safari - mini horizontal scrollbar */
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.4);
+  border-radius: 999px;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.6);
+}
+html.dark *::-webkit-scrollbar-thumb {
+  background: rgba(71, 85, 105, 0.5);
+}
+html.dark *::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.7);
 }
 
 /* ===== DISABLE BACKDROP-BLUR GLOBALLY (Performance fix for mobile WebView) ===== */
