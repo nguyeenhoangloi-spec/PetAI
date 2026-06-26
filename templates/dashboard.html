@@ -1,4 +1,4 @@
-﻿<!-- htmlhint spec-char-escape:false -->
+<!-- htmlhint spec-char-escape:false -->
 <!DOCTYPE html>
 
 <html
@@ -395,9 +395,11 @@
           <!-- Welcome and Quick Actions (2/3 width) -->
           <div class="lg:col-span-2 flex flex-col justify-between bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-2xl p-6 shadow-sm">
             <div>
-              <h1 class="headline-lg font-semibold text-on-surface flex items-center gap-2">
-                <span data-i18n="welcomePrefix">Xin chào</span>
-                <span data-i18n-auto>{{ session.get('fullname') or session.get('username') or 'bạn' }}</span>!
+              <h1 class="headline-lg font-semibold text-on-surface flex items-center gap-2 flex-wrap">
+                <span class="flex items-center gap-2 whitespace-nowrap">
+                  <span data-i18n="welcomePrefix">Xin chào</span>
+                  <span data-i18n-auto class="text-primary">{{ session.get('fullname') or session.get('username') or 'bạn' }}</span>!
+                </span>
                 <span class="inline-block animate-bounce origin-bottom-right">👋</span>
               </h1>
               <p class="body-md text-on-surface-variant mt-2" data-i18n="dashWelcomeDesc">

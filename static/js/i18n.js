@@ -2009,7 +2009,8 @@
       "roleAdmin": "Admin (Quản trị viên)",
       "toastAddUserSuccess": "Tạo người dùng mới thành công!",
       "toastAddUserError": "Lỗi tạo người dùng.",
-      "submitting": "Đang xử lý..."
+      "submitting": "Đang xử lý...",
+      "confirmLogoutText": "Bạn có chắc chắn muốn đăng xuất tài khoản này không?"
     },
     "en": {
       "homePageTitle": "PetAI | Intelligent Dog Breed Identification",
@@ -4011,7 +4012,8 @@
       "roleAdmin": "Admin",
       "toastAddUserSuccess": "New user created successfully!",
       "toastAddUserError": "Failed to create user.",
-      "submitting": "Processing..."
+      "submitting": "Processing...",
+      "confirmLogoutText": "Are you sure you want to log out of this account?"
     }
   };function translateDynamicToast(text, lang) {
     if (lang !== "en") return text;
@@ -5649,7 +5651,7 @@
     var modalId = "petai-global-modal-" + Date.now();
     var modalDiv = document.createElement("div");
     modalDiv.id = modalId;
-    modalDiv.className = "fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/60 backdrop-blur-sm p-4 transition-opacity duration-300 opacity-0 pointer-events-none";
+    modalDiv.className = "fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/60 p-4 transition-opacity duration-150 opacity-0 pointer-events-none";
     modalDiv.setAttribute("role", "dialog");
     modalDiv.setAttribute("aria-modal", "true");
 

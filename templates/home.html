@@ -659,7 +659,7 @@
       </div>
 
       <!-- Middle: Navigation Menu -->
-      <div class="hidden md:flex items-center gap-1 lg:gap-2 ml-8 lg:ml-12">
+      <div class="hidden md:flex items-center gap-1 lg:gap-2 ml-8 lg:ml-12 flex-nowrap">
         <a class="desktop-nav-link text-[15px] font-medium text-on-surface-variant dark:text-slate-300 hover:text-primary dark:hover:text-primary px-3.5 py-2 rounded-[10px] transition-all duration-200" href="#product" data-i18n="product">
           <span data-i18n="product">{{ 'Sản phẩm' if ui_language != 'en' else 'Product' }}</span>
         </a>
@@ -724,26 +724,21 @@
       </div>
 
       <!-- Drawer Navigation Menu -->
-      <nav class="flex flex-col gap-1.5">
-        <a href="#product" class="flex items-center gap-3 px-4 py-2.5 rounded-[12px] text-[15px] font-semibold text-on-surface-variant dark:text-slate-300 hover:text-primary dark:hover:text-primary hover:bg-slate-50 dark:hover:bg-slate-900/60 transition-all" data-i18n="product">
-          <span class="material-symbols-outlined text-[20px]">home</span>
-          <span data-i18n="product">{{ 'Sản phẩm' if ui_language != 'en' else 'Product' }}</span>
+      <nav class="flex flex-col gap-1">
+        <a href="#product" class="block w-full text-center px-4 py-3 rounded-[12px] text-[15px] font-semibold text-on-surface-variant dark:text-slate-300 hover:text-primary dark:hover:text-primary hover:bg-slate-50 dark:hover:bg-slate-900/60 transition-all" data-i18n="product">
+          {{ 'Sản phẩm' if ui_language != 'en' else 'Product' }}
         </a>
-        <a href="#spotlight" class="flex items-center gap-3 px-4 py-2.5 rounded-[12px] text-[15px] font-semibold text-on-surface-variant dark:text-slate-300 hover:text-primary dark:hover:text-primary hover:bg-slate-50 dark:hover:bg-slate-900/60 transition-all" data-i18n="features">
-          <span class="material-symbols-outlined text-[20px]">auto_awesome</span>
-          <span data-i18n="features">{{ 'Tính năng' if ui_language != 'en' else 'Features' }}</span>
+        <a href="#spotlight" class="block w-full text-center px-4 py-3 rounded-[12px] text-[15px] font-semibold text-on-surface-variant dark:text-slate-300 hover:text-primary dark:hover:text-primary hover:bg-slate-50 dark:hover:bg-slate-900/60 transition-all" data-i18n="features">
+          {{ 'Tính năng' if ui_language != 'en' else 'Features' }}
         </a>
-        <a href="#pricing" class="flex items-center gap-3 px-4 py-2.5 rounded-[12px] text-[15px] font-semibold text-on-surface-variant dark:text-slate-300 hover:text-primary dark:hover:text-primary hover:bg-slate-50 dark:hover:bg-slate-900/60 transition-all" data-i18n="pricing">
-          <span class="material-symbols-outlined text-[20px]">sell</span>
-          <span data-i18n="pricing">{{ 'Bảng giá' if ui_language != 'en' else 'Pricing' }}</span>
+        <a href="#pricing" class="block w-full text-center px-4 py-3 rounded-[12px] text-[15px] font-semibold text-on-surface-variant dark:text-slate-300 hover:text-primary dark:hover:text-primary hover:bg-slate-50 dark:hover:bg-slate-900/60 transition-all" data-i18n="pricing">
+          {{ 'Bảng giá' if ui_language != 'en' else 'Pricing' }}
         </a>
-        <a href="#social-proof" class="flex items-center gap-3 px-4 py-2.5 rounded-[12px] text-[15px] font-semibold text-on-surface-variant dark:text-slate-300 hover:text-primary dark:hover:text-primary hover:bg-slate-50 dark:hover:bg-slate-900/60 transition-all" data-i18n="about">
-          <span class="material-symbols-outlined text-[20px]">info</span>
-          <span data-i18n="about">{{ 'Giới thiệu' if ui_language != 'en' else 'About' }}</span>
+        <a href="#social-proof" class="block w-full text-center px-4 py-3 rounded-[12px] text-[15px] font-semibold text-on-surface-variant dark:text-slate-300 hover:text-primary dark:hover:text-primary hover:bg-slate-50 dark:hover:bg-slate-900/60 transition-all" data-i18n="about">
+          {{ 'Giới thiệu' if ui_language != 'en' else 'About' }}
         </a>
-        <a href="{{ url_for('legal.support') }}" class="flex items-center gap-3 px-4 py-2.5 rounded-[12px] text-[15px] font-semibold text-on-surface-variant dark:text-slate-300 hover:text-primary dark:hover:text-primary hover:bg-slate-50 dark:hover:bg-slate-900/60 transition-all" data-i18n="support">
-          <span class="material-symbols-outlined text-[20px]">headset</span>
-          <span data-i18n="support">{{ 'Hỗ trợ' if ui_language != 'en' else 'Support' }}</span>
+        <a href="{{ url_for('legal.support') }}" class="block w-full text-center px-4 py-3 rounded-[12px] text-[15px] font-semibold text-on-surface-variant dark:text-slate-300 hover:text-primary dark:hover:text-primary hover:bg-slate-50 dark:hover:bg-slate-900/60 transition-all" data-i18n="support">
+          {{ 'Hỗ trợ' if ui_language != 'en' else 'Support' }}
         </a>
       </nav>
 

@@ -1,3 +1,20 @@
+/* ===== HIDE SCROLLBAR GLOBALLY ===== */
+/* Hide scrollbar for all elements but keep scrolling functional */
+* {
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE/Edge */
+}
+*::-webkit-scrollbar {
+  display: none !important; /* Chrome, Safari, WebView */
+}
+
+/* ===== DISABLE BACKDROP-BLUR GLOBALLY (Performance fix for mobile WebView) ===== */
+/* backdrop-filter: blur() is GPU-intensive and causes lag on Android WebView */
+* {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
 /* Mobile header fixes to prevent navbar overflow on small screens */
 @media (max-width: 640px) {
   .nav-reduce-height {
@@ -269,7 +286,46 @@ html {
   }
 }
 
-/* --- Language Switcher Styling --- */
+/* ===== GLOBAL MOBILE CONTENT AREA FIX ===== */
+/* Prevent content-area from overflowing horizontally on mobile */
+@media (max-width: 767px) {
+  #content-area {
+    min-width: 0 !important;
+    overflow-x: hidden !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Ensure main container doesn't overflow either */
+  main {
+    overflow-x: hidden !important;
+    max-width: 100vw !important;
+  }
+
+  /* Fix any wide children that might cause overflow */
+  #content-area > * {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Fix tab bars (like system_config, settings) that might overflow */
+  #content-area .flex.gap-1,
+  #content-area [role="tablist"],
+  .tab-bar-scroll {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+  }
+
+  #content-area .flex.gap-1::-webkit-scrollbar,
+  #content-area [role="tablist"]::-webkit-scrollbar,
+  .tab-bar-scroll::-webkit-scrollbar {
+    display: none !important;
+  }
+}
+
+
 .language-switcher {
   position: relative;
   display: inline-block;
