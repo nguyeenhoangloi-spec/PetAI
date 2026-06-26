@@ -1,4 +1,4 @@
-﻿<!-- html-validate-disable no-inline-style, no-dup-class -->
+<!-- html-validate-disable no-inline-style, no-dup-class -->
 <!-- htmlhint spec-char-escape:false -->
 <!DOCTYPE html>
 
@@ -644,58 +644,59 @@
                 data-i18n="all"
                 >Tất cả</a
               >
-              
-              <!-- Custom Date Range Picker Dropdown -->
-              <div class="relative inline-block">
-                <button
-                  id="customDateBtn"
-                  type="button"
-                  class="time-filter-btn {{ 'active' if selected_days == 'custom' else '' }} px-3 py-1.5 rounded-lg label-sm font-semibold transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
-                >
-                  <span class="material-symbols-outlined text-[16px]">calendar_today</span>
-                  {% if selected_days == 'custom' %}
-                    <span>{{ start_date|replace('-','/') }} - {{ end_date|replace('-','/') }}</span>
-                  {% else %}
-                    <span data-i18n="custom">Tùy chọn</span>
-                  {% endif %}
-                </button>
-                
-                <!-- Popover picker panel -->
-                <div
-                  id="customDatePopover"
-                  class="hidden absolute right-0 mt-2 p-4 bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/60 dark:border-slate-800 rounded-xl shadow-xl z-50 w-72"
-                >
-                  <form method="GET" action="" class="flex flex-col gap-3">
-                    <input type="hidden" name="days" value="custom">
-                    <div class="flex flex-col gap-1">
-                      <label class="label-sm text-on-surface-variant font-semibold" data-i18n="fromDate">Từ ngày</label>
-                      <input
-                        type="date"
-                        name="start_date"
-                        value="{{ start_date }}"
-                        class="px-3 py-2 bg-white dark:bg-slate-950 border border-outline-variant/60 dark:border-slate-800 rounded-lg text-xs font-semibold focus:ring-2 focus:ring-primary/20 focus:border-primary text-slate-800 dark:text-slate-100"
-                        required
-                      >
-                    </div>
-                    <div class="flex flex-col gap-1">
-                      <label class="label-sm text-on-surface-variant font-semibold" data-i18n="toDate">Đến ngày</label>
-                      <input
-                        type="date"
-                        name="end_date"
-                        value="{{ end_date }}"
-                        class="px-3 py-2 bg-white dark:bg-slate-950 border border-outline-variant/60 dark:border-slate-800 rounded-lg text-xs font-semibold focus:ring-2 focus:ring-primary/20 focus:border-primary text-slate-800 dark:text-slate-100"
-                        required
-                      >
-                    </div>
-                    <button
-                      type="submit"
-                      class="w-full py-2 bg-primary hover:bg-primary/95 text-on-primary font-semibold rounded-lg text-xs shadow-sm transition-colors cursor-pointer"
-                      data-i18n="apply"
+            </div>
+
+            <!-- Custom Date Range Picker (outside overflow container to allow popover to show) -->
+            <div class="relative inline-block">
+              <button
+                id="customDateBtn"
+                type="button"
+                onclick="toggleCustomDatePicker(event)"
+                class="time-filter-btn {{ 'active' if selected_days == 'custom' else '' }} px-3 py-1.5 rounded-lg label-sm font-semibold transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap bg-slate-100 dark:bg-slate-900/60 border border-outline-variant/20 dark:border-slate-800"
+              >
+                <span class="material-symbols-outlined text-[16px]">calendar_today</span>
+                {% if selected_days == 'custom' %}
+                  <span>{{ start_date|replace('-','/') }} - {{ end_date|replace('-','/') }}</span>
+                {% else %}
+                  <span data-i18n="custom">Tùy chọn</span>
+                {% endif %}
+              </button>
+
+              <!-- Popover picker panel -->
+              <div
+                id="customDatePopover"
+                class="hidden absolute left-0 mt-2 p-4 bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/60 dark:border-slate-800 rounded-xl shadow-xl z-[200] w-72"
+              >
+                <form method="GET" action="" class="flex flex-col gap-3">
+                  <input type="hidden" name="days" value="custom">
+                  <div class="flex flex-col gap-1">
+                    <label class="label-sm text-on-surface-variant font-semibold" data-i18n="fromDate">Từ ngày</label>
+                    <input
+                      type="date"
+                      name="start_date"
+                      value="{{ start_date }}"
+                      class="px-3 py-2 bg-white dark:bg-slate-950 border border-outline-variant/60 dark:border-slate-800 rounded-lg text-xs font-semibold focus:ring-2 focus:ring-primary/20 focus:border-primary text-slate-800 dark:text-slate-100"
+                      required
                     >
-                      Áp dụng
-                    </button>
-                  </form>
-                </div>
+                  </div>
+                  <div class="flex flex-col gap-1">
+                    <label class="label-sm text-on-surface-variant font-semibold" data-i18n="toDate">Đến ngày</label>
+                    <input
+                      type="date"
+                      name="end_date"
+                      value="{{ end_date }}"
+                      class="px-3 py-2 bg-white dark:bg-slate-950 border border-outline-variant/60 dark:border-slate-800 rounded-lg text-xs font-semibold focus:ring-2 focus:ring-primary/20 focus:border-primary text-slate-800 dark:text-slate-100"
+                      required
+                    >
+                  </div>
+                  <button
+                    type="submit"
+                    class="w-full py-2 bg-primary hover:bg-primary/95 text-on-primary font-semibold rounded-lg text-xs shadow-sm transition-colors cursor-pointer"
+                    data-i18n="apply"
+                  >
+                    Áp dụng
+                  </button>
+                </form>
               </div>
             </div>
 
@@ -1707,15 +1708,17 @@
 
     <!-- UI Interaction Scripts -->
     <script>
-      (function () {
-        // Date range picker toggle logic
-        const customDateBtn = document.getElementById("customDateBtn");
-        const customDatePopover = document.getElementById("customDatePopover");
-        if (customDateBtn && customDatePopover) {
-          customDateBtn.addEventListener("click", function (e) {
-            e.stopPropagation();
-            customDatePopover.classList.toggle("hidden");
-          });
+      // ── Custom date picker toggle (global so onclick= can call it) ──
+      function toggleCustomDatePicker(e) {
+        if (e) e.stopPropagation();
+        var popover = document.getElementById("customDatePopover");
+        if (popover) popover.classList.toggle("hidden");
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        // Close popover when clicking outside
+        var customDatePopover = document.getElementById("customDatePopover");
+        if (customDatePopover) {
           customDatePopover.addEventListener("click", function (e) {
             e.stopPropagation();
           });
@@ -1723,7 +1726,11 @@
             customDatePopover.classList.add("hidden");
           });
         }
+      });
+    </script>
 
+    <script>
+      (function () {
         // Animated counter values
         const DURATION = 1200;
         const counterEls = document.querySelectorAll("[data-counter]");
@@ -1792,7 +1799,9 @@
           }
         }
       })();
+    </script>
 
+    <script>
       // Detail modal operations
       function openDetailModal(imagePath, breed, confidence, species, date) {
         const modal = document.getElementById("detailModal");
