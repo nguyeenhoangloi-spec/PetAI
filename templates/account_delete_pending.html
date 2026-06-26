@@ -129,12 +129,22 @@
     .pulse-danger { animation: pulse-ring 2.5s ease-in-out infinite; }
     @keyframes countdown-tick { from { opacity: 1; } to { opacity: 0.7; } }
     .otp-input {
-      width: 48px; height: 56px;
+      width: 100%;
+      max-width: 48px;
+      min-width: 0;
+      height: 56px;
       font-size: 24px; font-weight: 700; text-align: center;
       border: 2px solid #e2e8f0; border-radius: 12px;
       outline: none; transition: border-color 0.2s, box-shadow 0.2s;
     }
     .otp-input:focus { border-color: #004ac6; box-shadow: 0 0 0 3px rgba(0,74,198,0.15); }
+    @media (max-width: 480px) {
+      .otp-input {
+        height: 48px;
+        font-size: 20px;
+        border-radius: 10px;
+      }
+    }
   </style>
 </head>
 
@@ -260,7 +270,7 @@
       <div class="mb-5">
         <p class="text-xs text-slate-400 mb-2"><span data-i18n="otpCountdownLabel">Mã có hiệu lực trong</span> <span id="otp-countdown" class="font-semibold text-primary">05:00</span></p>
         <!-- OTP Input boxes -->
-        <div class="flex justify-center gap-2" id="otp-boxes">
+        <div class="flex justify-center gap-2 w-full" id="otp-boxes">
           <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="one-time-code">
           <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
           <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
