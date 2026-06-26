@@ -1018,258 +1018,6 @@
           </div>
         </section>
 
-        <!-- ── Checkout Area (VietQR Card) & FAQ Section ── -->
-        <div id="checkout-faq-container" class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start mb-10" style="display: none;">
-          
-          <!-- Column Left: Inline Confirm Payment -->
-          <section
-            id="checkout"
-            style="display: none;"
-            class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 md:p-8 shadow-md relative overflow-hidden transition-all duration-300"
-            data-purpose="checkout-section"
-          >
-            <div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-2xl pointer-events-none"></div>
-            
-            <div class="flex items-center gap-3.5 mb-6 text-primary dark:text-blue-400">
-              <div class="w-10 h-10 rounded-xl bg-blue-600/10 flex items-center justify-center text-blue-600 dark:text-blue-400">
-                <span class="material-symbols-outlined text-[24px]">shopping_cart_checkout</span>
-              </div>
-              <div>
-                <h2 class="text-xl font-bold text-slate-900 dark:text-white" data-i18n="confirmPaymentTitle">Xác nhận thanh toán</h2>
-                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5" data-i18n="confirmPaymentSub">Vui lòng chuyển khoản đúng số tiền để kích hoạt gói</p>
-              </div>
-            </div>
-
-            <!-- Gói đã chọn Summary Banner -->
-            <div class="bg-slate-50 dark:bg-slate-950/80 p-4 rounded-xl border border-slate-200 dark:border-slate-800 mb-6 flex items-center justify-between">
-              <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-lg bg-purple-600/10 text-purple-500 flex items-center justify-center">
-                  <span class="material-symbols-outlined text-[20px]" id="checkout-plan-icon">workspace_premium</span>
-                </div>
-                <div>
-                  <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium" data-i18n="selectedPlanLabel">Bạn đã chọn gói</p>
-                  <h4 class="text-sm font-bold text-slate-900 dark:text-white capitalize mt-0.5" id="checkout-plan-name">Pro</h4>
-                </div>
-              </div>
-               <div class="text-right">
-                <span class="text-base font-extrabold text-blue-600 dark:text-blue-400" id="checkout-plan-price">5.000đ</span>
-                <span class="text-[10px] text-slate-500 dark:text-slate-400 block" id="checkout-plan-duration">/ {% if ui_language == 'en' %}30 days{% else %}30 ngày{% endif %}</span>
-              </div>
-            </div>
-
-            <h3 class="text-sm font-bold text-slate-900 dark:text-white mb-2" data-i18n="transferViaVietQR">Thanh toán qua VietQR</h3>
-            
-            <!-- VietQR Instructions and Payment Credentials -->
-            <div class="grid grid-cols-1 md:grid-cols-[1.2fr_1fr] gap-6 items-center">
-              
-              <!-- Left Instructions & info Alert -->
-              <div class="space-y-4 text-sm text-slate-600 dark:text-slate-300">
-                <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed" data-i18n="paymentInstructions">
-                  Quét mã QR hoặc sử dụng ứng dụng ngân hàng để thanh toán.
-                </p>
-                <div class="text-lg">
-                  <span class="text-slate-500 dark:text-slate-400 text-sm" data-i18n="amountToPay">Số tiền cần thanh toán:</span>
-                  <span class="font-extrabold text-blue-600 dark:text-blue-400 text-xl block mt-0.5" id="checkout-amount-val">5,000đ</span>
-                </div>
-
-                <!-- Info Alert container -->
-                <div class="bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/20 text-blue-700 dark:text-blue-400 p-3 rounded-lg text-xs leading-normal flex items-start gap-2">
-                  <span class="material-symbols-outlined text-[16px] mt-0.5">info</span>
-                  <span data-i18n="activationTimelineNote">Sau khi thanh toán thành công, gói của bạn sẽ được kích hoạt tự động trong vòng 1-3 phút.</span>
-                </div>
-              </div>
-
-              <!-- QR Code view column -->
-              <div class="flex flex-col items-center justify-center p-3 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 text-center space-y-3">
-                <div class="relative w-40 h-40 bg-white p-2 rounded-lg border border-slate-200 dark:border-slate-800 flex items-center justify-center shadow-inner">
-                  <img id="checkout-qr-img" class="w-full h-full object-contain" src="" alt="VietQR Code" />
-                  <div id="checkout-qr-loader" class="absolute inset-0 bg-slate-50 dark:bg-slate-950/90 flex items-center justify-center rounded-lg">
-                    <svg class="animate-spin h-8 w-8 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                  </div>
-                </div>
-                <div class="text-[10px] font-bold text-slate-500 dark:text-slate-400 tracking-wider flex items-center gap-1">
-                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
-                  VietQR
-                </div>
-              </div>
-
-            </div>
-
-              <div class="p-4 border-t border-slate-200 dark:border-slate-800 space-y-3">
-                <div class="bg-white dark:bg-slate-900/60 p-2.5 rounded-lg border border-slate-200 dark:border-slate-800 flex justify-between items-center text-xs">
-                  <div>
-                    <span class="text-slate-400 dark:text-slate-500 block text-[10px]" data-i18n="bankLabel">Ngân hàng</span>
-                    <strong class="text-slate-700 dark:text-slate-200" id="checkout-bank-val">MB Bank</strong>
-                  </div>
-                  <button type="button" class="text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 text-xs flex items-center gap-0.5" onclick="copyText('checkout-bank-val')">
-                    <span class="material-symbols-outlined text-[14px]">content_copy</span>
-                  </button>
-                </div>
-
-                <div class="bg-white dark:bg-slate-900/60 p-2.5 rounded-lg border border-slate-200 dark:border-slate-800 flex justify-between items-center text-xs">
-                  <div>
-                    <span class="text-slate-400 dark:text-slate-500 block text-[10px]" data-i18n="accountNumberLabel">Số tài khoản</span>
-                    <strong class="text-slate-700 dark:text-slate-200 tracking-wider" id="checkout-account-val">--</strong>
-                  </div>
-                  <button type="button" class="text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 text-xs flex items-center gap-0.5" onclick="copyText('checkout-account-val')">
-                    <span class="material-symbols-outlined text-[14px]">content_copy</span>
-                  </button>
-                </div>
-
-                <div class="bg-white dark:bg-slate-900/60 p-2.5 rounded-lg border border-slate-200 dark:border-slate-800 flex justify-between items-center text-xs">
-                  <div>
-                    <span class="text-slate-400 dark:text-slate-500 block text-[10px]" data-i18n="accountNameLabel">Chủ tài khoản</span>
-                    <strong class="text-slate-700 dark:text-slate-200" id="checkout-holder-val">--</strong>
-                  </div>
-                  <button type="button" class="text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 text-xs flex items-center gap-0.5" onclick="copyText('checkout-holder-val')">
-                    <span class="material-symbols-outlined text-[14px]">content_copy</span>
-                  </button>
-                </div>
-
-                <div class="bg-blue-50 dark:bg-blue-950/20 p-2.5 rounded-lg border border-blue-200 dark:border-blue-900/50 flex justify-between items-center text-xs">
-                  <div>
-                    <span class="text-blue-700 dark:text-blue-400 block text-[10px]" data-i18n="transferMemoLabel">Nội dung chuyển khoản (Bắt buộc đúng)</span>
-                    <strong class="text-blue-800 dark:text-blue-300 tracking-wide select-all" id="checkout-memo-val">--</strong>
-                  </div>
-                  <button type="button" class="text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 text-xs flex items-center gap-0.5" onclick="copyText('checkout-memo-val')">
-                    <span class="material-symbols-outlined text-[14px]">content_copy</span>
-                  </button>
-                </div>
-                <span class="hidden" id="checkout-amount-raw-val">5000</span>
-              </div>
-            </details>
-
-            <!-- Action buttons form -->
-            <form method="post" action="/predict/payments/confirm-transfer" id="confirmForm" class="mt-6 pt-6 border-t border-slate-200 dark:border-slate-800">
-              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-              <input type="hidden" name="order_id" id="confirm-order-id" value="">
-              
-              <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
-                <button
-                  type="button"
-                  id="checkoutBackBtn"
-                  class="w-full sm:w-auto px-6 py-2.5 border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg label-sm font-semibold text-slate-600 dark:text-slate-300 transition-colors text-center active:scale-95 duration-100"
-                  data-i18n="backBtn"
-                >Quay lại</button>
-
-                <button
-                  type="submit"
-                  class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-8 py-2.5 rounded-lg label-sm font-bold flex items-center justify-center gap-2 transition-all shadow-sm hover:shadow-md active:scale-95 duration-100"
-                >
-                  <span class="material-symbols-outlined text-[18px]">verified</span>
-                  <span data-i18n="confirmPaidBtn">Tôi đã thanh toán</span>
-                </button>
-              </div>
-            </form>
-          </section>
-
-          <!-- Column Right: FAQ Accordions -->
-          <section class="space-y-4">
-            <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2">
-              <span class="material-symbols-outlined text-blue-500 dark:text-blue-400">help</span>
-              <span data-i18n="faqTitle">Câu hỏi thường gặp</span>
-            </h3>
-            
-            <div class="space-y-3">
-              <!-- FAQ Item 1 -->
-              <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm transition-all duration-200">
-                <button type="button" class="w-full py-4 px-5 text-left font-semibold text-sm text-slate-900 dark:text-white flex justify-between items-center gap-4 hover:bg-slate-50 dark:hover:bg-slate-800/40 focus:outline-none" onclick="toggleFaq(this)">
-                  <span class="flex items-center gap-3">
-                    <span class="flex-shrink-0 w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[11px] font-bold">?</span>
-                    <span data-i18n="faq1Q">Thanh toán xong bao lâu được kích hoạt?</span>
-                  </span>
-                  <span class="material-symbols-outlined text-slate-400 transition-transform duration-200 text-[20px]">keyboard_arrow_down</span>
-                </button>
-                <div class="faq-ans max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
-                  <div class="p-5 pt-0 text-sm text-slate-600 dark:text-slate-300 border-t border-slate-100 dark:border-slate-800/40 leading-relaxed" data-i18n="faq1A">
-                    Hệ thống tự động kích hoạt thông qua cổng VietQR trong vòng 1-3 phút ngay khi nhận được giao dịch chuyển khoản chính xác nội dung.
-                  </div>
-                </div>
-              </div>
-
-              <!-- FAQ Item 2 -->
-              <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm transition-all duration-200">
-                <button type="button" class="w-full py-4 px-5 text-left font-semibold text-sm text-slate-900 dark:text-white flex justify-between items-center gap-4 hover:bg-slate-50 dark:hover:bg-slate-800/40 focus:outline-none" onclick="toggleFaq(this)">
-                  <span class="flex items-center gap-3">
-                    <span class="flex-shrink-0 w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[11px] font-bold">?</span>
-                    <span data-i18n="faq2Q">Có thể nâng cấp khi đang dùng gói cũ không?</span>
-                  </span>
-                  <span class="material-symbols-outlined text-slate-400 transition-transform duration-200 text-[20px]">keyboard_arrow_down</span>
-                </button>
-                <div class="faq-ans max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
-                  <div class="p-5 pt-0 text-sm text-slate-600 dark:text-slate-300 border-t border-slate-100 dark:border-slate-800/40 leading-relaxed" data-i18n="faq2A">
-                    Có, bạn có thể nâng cấp lên gói cao hơn bất kỳ lúc nào. Lượt quét và thời hạn của gói mới sẽ được áp dụng ngay lập tức.
-                  </div>
-                </div>
-              </div>
-
-              <!-- FAQ Item 3 -->
-              <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm transition-all duration-200">
-                <button type="button" class="w-full py-4 px-5 text-left font-semibold text-sm text-slate-900 dark:text-white flex justify-between items-center gap-4 hover:bg-slate-50 dark:hover:bg-slate-800/40 focus:outline-none" onclick="toggleFaq(this)">
-                  <span class="flex items-center gap-3">
-                    <span class="flex-shrink-0 w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[11px] font-bold">?</span>
-                    <span data-i18n="faq3Q">Có thể hủy hoặc hoàn tiền không?</span>
-                  </span>
-                  <span class="material-symbols-outlined text-slate-400 transition-transform duration-200 text-[20px]">keyboard_arrow_down</span>
-                </button>
-                <div class="faq-ans max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
-                  <div class="p-5 pt-0 text-sm text-slate-600 dark:text-slate-300 border-t border-slate-100 dark:border-slate-800/40 leading-relaxed" data-i18n="faq3A">
-                    Các giao dịch thanh toán gói dịch vụ là không hoàn lại. Vui lòng kiểm tra kỹ thông tin trước khi thực hiện giao dịch.
-                  </div>
-                </div>
-              </div>
-
-              <!-- FAQ Item 4 -->
-              <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm transition-all duration-200">
-                <button type="button" class="w-full py-4 px-5 text-left font-semibold text-sm text-slate-900 dark:text-white flex justify-between items-center gap-4 hover:bg-slate-50 dark:hover:bg-slate-800/40 focus:outline-none" onclick="toggleFaq(this)">
-                  <span class="flex items-center gap-3">
-                    <span class="flex-shrink-0 w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[11px] font-bold">?</span>
-                    <span data-i18n="faq4Q">Gói có tự gia hạn không?</span>
-                  </span>
-                  <span class="material-symbols-outlined text-slate-400 transition-transform duration-200 text-[20px]">keyboard_arrow_down</span>
-                </button>
-                <div class="faq-ans max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
-                  <div class="p-5 pt-0 text-sm text-slate-600 dark:text-slate-300 border-t border-slate-100 dark:border-slate-800/40 leading-relaxed" data-i18n="faq4A">
-                    Không, hệ thống không tự động gia hạn hoặc trừ tiền tài khoản của bạn. Bạn chủ động gia hạn thủ công khi có nhu cầu.
-                  </div>
-                </div>
-              </div>
-
-              <!-- FAQ Item 5 -->
-              <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm transition-all duration-200">
-                <button type="button" class="w-full py-4 px-5 text-left font-semibold text-sm text-slate-900 dark:text-white flex justify-between items-center gap-4 hover:bg-slate-50 dark:hover:bg-slate-800/40 focus:outline-none" onclick="toggleFaq(this)">
-                  <span class="flex items-center gap-3">
-                    <span class="flex-shrink-0 w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[11px] font-bold">?</span>
-                    <span data-i18n="faq5Q">Tôi có thể thay đổi gói sau khi nâng cấp không?</span>
-                  </span>
-                  <span class="material-symbols-outlined text-slate-400 transition-transform duration-200 text-[20px]">keyboard_arrow_down</span>
-                </button>
-                <div class="faq-ans max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
-                  <div class="p-5 pt-0 text-sm text-slate-600 dark:text-slate-300 border-t border-slate-100 dark:border-slate-800/40 leading-relaxed" data-i18n="faq5A">
-                    Bạn có thể nâng cấp lên gói cao hơn. Việc hạ cấp xuống gói thấp hơn chỉ được thực hiện sau khi gói hiện tại hết hạn sử dụng.
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Support Card -->
-            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-2xl flex justify-between items-center gap-4 shadow-sm mt-6">
-              <div class="space-y-1">
-                <h4 class="text-sm font-bold text-slate-900 dark:text-white" data-i18n="helpCardTitle">Bạn cần hỗ trợ thêm?</h4>
-                <p class="text-xs text-slate-500 dark:text-slate-400 leading-normal" data-i18n="helpCardDesc">Liên hệ đội ngũ hỗ trợ của chúng tôi qua email hoặc chat trực tuyến.</p>
-              </div>
-              <a href="mailto:{{ get_config('site_email', 'support@pet.ai') }}" class="bg-transparent hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white rounded-lg px-4 py-2 text-xs font-semibold flex items-center gap-1.5 shrink-0 transition-all active:scale-95 duration-100">
-                <span class="material-symbols-outlined text-[16px]">support_agent</span>
-                <span data-i18n="helpCardBtn">Liên hệ hỗ trợ</span>
-              </a>
-            </div>
-          </section>
-
-        </div>
-
         <!-- ── Page Footer Links ── -->
         <footer class="border-t border-slate-800 pt-6 pb-4 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-400">
           <div class="flex items-center gap-1.5 text-[11px]">
@@ -1311,6 +1059,22 @@
       } else {
         answer.style.maxHeight = answer.scrollHeight + "px";
         if (icon) icon.style.transform = "rotate(180deg)";
+      }
+    };
+ 
+    // --- Collapsible Modal FAQ section toggle ---
+    window.toggleModalFaqSection = function () {
+      const content = document.getElementById("modalFaqContent");
+      const chevron = document.getElementById("modalFaqChevron");
+      if (!content || !chevron) return;
+      if (content.classList.contains("max-h-0")) {
+        content.classList.remove("max-h-0");
+        content.classList.add("max-h-[1000px]");
+        chevron.style.transform = "rotate(180deg)";
+      } else {
+        content.classList.remove("max-h-[1000px]");
+        content.classList.add("max-h-0");
+        chevron.style.transform = "rotate(0deg)";
       }
     };
 
@@ -1360,9 +1124,9 @@
       if (entLimit) entLimit.innerText = settings.scanLimitUnlimit;
     }
 
-    // --- Interactive Checkout Block ---
-    const checkoutFaqContainer = document.getElementById("checkout-faq-container");
-    const checkoutSec = document.getElementById("checkout");
+    // --- Interactive Checkout Modal Block ---
+    const checkoutModal = document.getElementById("checkoutModal");
+    const checkoutModalContent = checkoutModal ? checkoutModal.querySelector("div") : null;
     const checkoutPlanIcon = document.getElementById("checkout-plan-icon");
     const checkoutPlanName = document.getElementById("checkout-plan-name");
     const checkoutPlanPrice = document.getElementById("checkout-plan-price");
@@ -1379,8 +1143,6 @@
     const checkoutQrLoader = document.getElementById("checkout-qr-loader");
     const confirmOrderId = document.getElementById("confirm-order-id");
 
-    const checkoutBackBtn = document.getElementById("checkoutBackBtn");
-
     let activeSelectedPlan = null;
     let statusCheckingInterval = null;
 
@@ -1391,13 +1153,37 @@
       });
     }
 
-    // Hide checkout card
+    // Open checkout modal
+    function showCheckoutModal() {
+      if (!checkoutModal) return;
+      checkoutModal.classList.remove("hidden");
+      checkoutModal.classList.add("flex");
+      document.body.classList.add("overflow-hidden");
+      document.documentElement.classList.add("overflow-hidden");
+      // Trigger animations
+      setTimeout(() => {
+        checkoutModal.classList.remove("opacity-0");
+        if (checkoutModalContent) {
+          checkoutModalContent.classList.remove("scale-95");
+          checkoutModalContent.classList.add("scale-100");
+        }
+      }, 10);
+    }
+
+    // Hide checkout card (close modal)
     function hideCheckout() {
-      if (checkoutFaqContainer) {
-        checkoutFaqContainer.style.display = "none";
-      }
-      if (checkoutSec) {
-        checkoutSec.style.display = "none";
+      if (checkoutModal) {
+        checkoutModal.classList.add("opacity-0");
+        if (checkoutModalContent) {
+          checkoutModalContent.classList.remove("scale-100");
+          checkoutModalContent.classList.add("scale-95");
+        }
+        setTimeout(() => {
+          checkoutModal.classList.add("hidden");
+          checkoutModal.classList.remove("flex");
+          document.body.classList.remove("overflow-hidden");
+          document.documentElement.classList.remove("overflow-hidden");
+        }, 300);
       }
       resetCardHighlights();
       activeSelectedPlan = null;
@@ -1406,6 +1192,45 @@
         statusCheckingInterval = null;
       }
     }
+    window.closeCheckoutModal = hideCheckout;
+
+    // --- Fullscreen QR Modal functions ---
+    window.openQrFullscreen = function () {
+      const qrImg = document.getElementById("checkout-qr-img");
+      const fullscreenModal = document.getElementById("qrFullscreenModal");
+      const fullscreenQrImg = document.getElementById("fullscreen-qr-img");
+      if (!qrImg || !fullscreenModal || !fullscreenQrImg) return;
+      
+      fullscreenQrImg.src = qrImg.src;
+      fullscreenModal.classList.remove("hidden");
+      fullscreenModal.classList.add("flex");
+      
+      setTimeout(() => {
+        fullscreenModal.classList.remove("opacity-0");
+        const modalContent = fullscreenModal.querySelector("div");
+        if (modalContent) {
+          modalContent.classList.remove("scale-95");
+          modalContent.classList.add("scale-100");
+        }
+      }, 10);
+    };
+
+    window.closeQrFullscreen = function () {
+      const fullscreenModal = document.getElementById("qrFullscreenModal");
+      if (!fullscreenModal) return;
+      
+      fullscreenModal.classList.add("opacity-0");
+      const modalContent = fullscreenModal.querySelector("div");
+      if (modalContent) {
+        modalContent.classList.remove("scale-100");
+        modalContent.classList.add("scale-95");
+      }
+      
+      setTimeout(() => {
+        fullscreenModal.classList.add("hidden");
+        fullscreenModal.classList.remove("flex");
+      }, 300);
+    };
 
     // Highlight selected card
     function highlightPlanCard(plan) {
@@ -1460,25 +1285,13 @@
 
     // Load checkout payment info
     async function selectPlanAndShowCheckout(plan) {
-      if (!checkoutSec) return;
-      
       activeSelectedPlan = plan;
       highlightPlanCard(plan);
 
       // Reset loading states
       if (checkoutQrLoader) checkoutQrLoader.style.display = "flex";
       
-      if (checkoutFaqContainer) {
-        checkoutFaqContainer.style.display = "grid";
-      }
-      checkoutSec.style.display = "block";
-      
-      // Smooth scroll
-      if (checkoutFaqContainer) {
-        checkoutFaqContainer.scrollIntoView({ behavior: "smooth" });
-      } else {
-        checkoutSec.scrollIntoView({ behavior: "smooth" });
-      }
+      showCheckoutModal();
 
       // Update package summary values instantly
       const lang = document.documentElement.getAttribute("data-user-lang") || "vi";
@@ -1612,6 +1425,35 @@
           hideCheckout();
         });
       }
+
+      // Backdrop click to close modal
+      if (checkoutModal) {
+        checkoutModal.addEventListener("click", (e) => {
+          if (e.target === checkoutModal) {
+            hideCheckout();
+          }
+        });
+      }
+
+      const qrFullscreenModal = document.getElementById("qrFullscreenModal");
+      if (qrFullscreenModal) {
+        qrFullscreenModal.addEventListener("click", (e) => {
+          if (e.target === qrFullscreenModal) {
+            closeQrFullscreen();
+          }
+        });
+      }
+
+      // Escape key to close modal
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          if (qrFullscreenModal && !qrFullscreenModal.classList.contains("hidden")) {
+            closeQrFullscreen();
+          } else if (checkoutModal && !checkoutModal.classList.contains("hidden")) {
+            hideCheckout();
+          }
+        }
+      });
     });
 
     // --- Handle site language transitions ---
@@ -1695,5 +1537,285 @@
 </script>
 <script src="{{ url_for('static', filename='js/i18n.js') }}?v=23"></script>
 <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+        <!-- ── Checkout Modal (Popup) ── -->
+        <div id="checkoutModal" class="fixed inset-0 z-[3000] hidden items-center justify-center p-4 overflow-hidden overscroll-none transition-all duration-300 opacity-0" role="dialog" aria-modal="true">
+          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-2xl w-full shadow-2xl transform scale-95 transition-all duration-300 flex flex-col max-h-[80vh] overflow-hidden relative outline-none">
+            
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
+              <div class="flex items-center gap-3 text-primary dark:text-blue-400">
+                <span class="material-symbols-outlined text-[22px]">shopping_cart_checkout</span>
+                <h2 class="text-base font-bold text-slate-900 dark:text-white" data-i18n="confirmPaymentTitle">Xác nhận thanh toán</h2>
+              </div>
+              <button type="button" onclick="closeCheckoutModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors flex items-center justify-center w-8 h-8 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800" aria-label="Close">
+                <span class="material-symbols-outlined text-[20px]">close</span>
+              </button>
+            </div>
+
+            <!-- Scrollable Modal Body -->
+            <div class="flex-1 overflow-y-auto min-h-0 p-6 space-y-6">
+              
+              <!-- Gói đã chọn Summary Banner -->
+              <div class="bg-slate-50 dark:bg-slate-950/80 p-4 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="w-9 h-9 rounded-lg bg-purple-600/10 text-purple-500 flex items-center justify-center">
+                    <span class="material-symbols-outlined text-[20px]" id="checkout-plan-icon">workspace_premium</span>
+                  </div>
+                  <div>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium" data-i18n="selectedPlanLabel">Bạn đã chọn gói</p>
+                    <h4 class="text-sm font-bold text-slate-900 dark:text-white capitalize mt-0.5" id="checkout-plan-name">Pro</h4>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <span class="text-base font-extrabold text-blue-600 dark:text-blue-400" id="checkout-plan-price">5.000đ</span>
+                  <span class="text-[10px] text-slate-500 dark:text-slate-400 block" id="checkout-plan-duration">/ {% if ui_language == 'en' %}30 days{% else %}30 ngày{% endif %}</span>
+                </div>
+              </div>
+
+              <h3 class="text-xs font-bold text-slate-900 dark:text-white mb-2" data-i18n="transferViaVietQR">Thanh toán qua VietQR</h3>
+              
+              <!-- VietQR Instructions and Payment Credentials -->
+              <div class="grid grid-cols-1 md:grid-cols-[1.2fr_1fr] gap-6 items-center">
+                
+                <!-- Left Instructions & info Alert -->
+                <div class="space-y-4 text-xs text-slate-600 dark:text-slate-300">
+                  <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed" data-i18n="paymentInstructions">
+                    Quét mã QR hoặc sử dụng ứng dụng ngân hàng để thanh toán.
+                  </p>
+                  <div class="text-base">
+                    <span class="text-slate-500 dark:text-slate-400 text-xs" data-i18n="amountToPay">Số tiền cần thanh toán:</span>
+                    <span class="font-extrabold text-blue-600 dark:text-blue-400 text-lg block mt-0.5" id="checkout-amount-val">5,000đ</span>
+                  </div>
+
+                  <!-- Info Alert container -->
+                  <div class="bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/20 text-blue-700 dark:text-blue-400 p-3 rounded-lg text-[11px] leading-normal flex items-start gap-2">
+                    <span class="material-symbols-outlined text-[15px] mt-0.5">info</span>
+                    <span data-i18n="activationTimelineNote">Sau khi thanh toán thành công, gói của bạn sẽ được kích hoạt tự động trong vòng 1-3 phút.</span>
+                  </div>
+                </div>
+
+                <!-- QR Code view column -->
+                <div class="flex flex-col items-center justify-center p-3 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 text-center space-y-3">
+                  <div class="relative w-48 h-48 bg-white p-2 rounded-lg border border-slate-200 dark:border-slate-800 flex items-center justify-center shadow-inner group cursor-pointer" onclick="openQrFullscreen()">
+                    <img id="checkout-qr-img" class="w-full h-full object-contain" src="" alt="VietQR Code" />
+                    <!-- Hover Zoom Overlay -->
+                    <div class="absolute inset-0 bg-slate-950/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-lg">
+                      <div class="bg-slate-900/80 text-white p-1.5 rounded-lg flex items-center gap-1 text-[10px] font-medium shadow-md">
+                        <span class="material-symbols-outlined text-[14px]">zoom_in</span>
+                        <span data-i18n="tapToEnlargeQr">Phóng to</span>
+                      </div>
+                    </div>
+                    <div id="checkout-qr-loader" class="absolute inset-0 bg-slate-50 dark:bg-slate-950/90 flex items-center justify-center rounded-lg">
+                      <svg class="animate-spin h-6 w-6 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                    </div>
+                  </div>
+                  <button type="button" onclick="openQrFullscreen()" class="text-[10px] font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 flex items-center gap-1 justify-center active:scale-95 transition-all">
+                    <span class="material-symbols-outlined text-[14px]">zoom_in</span>
+                    <span data-i18n="tapToEnlargeQr">Phóng to mã QR</span>
+                  </button>
+                </div>
+
+              </div>
+
+              <!-- Bank Transfer Credentials -->
+              <div class="border-t border-slate-200 dark:border-slate-800 pt-4 space-y-2.5">
+                <div class="bg-slate-50 dark:bg-slate-900/60 p-2.5 rounded-lg border border-slate-200 dark:border-slate-800 flex justify-between items-center text-[11px]">
+                  <div>
+                    <span class="text-slate-400 dark:text-slate-500 block text-[9px]" data-i18n="bankLabel">Ngân hàng</span>
+                    <strong class="text-slate-700 dark:text-slate-200" id="checkout-bank-val">MB Bank</strong>
+                  </div>
+                  <button type="button" class="text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 text-xs flex items-center gap-0.5" onclick="copyText('checkout-bank-val')">
+                    <span class="material-symbols-outlined text-[13px]">content_copy</span>
+                  </button>
+                </div>
+
+                <div class="bg-slate-50 dark:bg-slate-900/60 p-2.5 rounded-lg border border-slate-200 dark:border-slate-800 flex justify-between items-center text-[11px]">
+                  <div>
+                    <span class="text-slate-400 dark:text-slate-500 block text-[9px]" data-i18n="accountNumberLabel">Số tài khoản</span>
+                    <strong class="text-slate-700 dark:text-slate-200 tracking-wider" id="checkout-account-val">--</strong>
+                  </div>
+                  <button type="button" class="text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 text-xs flex items-center gap-0.5" onclick="copyText('checkout-account-val')">
+                    <span class="material-symbols-outlined text-[13px]">content_copy</span>
+                  </button>
+                </div>
+
+                <div class="bg-slate-50 dark:bg-slate-900/60 p-2.5 rounded-lg border border-slate-200 dark:border-slate-800 flex justify-between items-center text-[11px]">
+                  <div>
+                    <span class="text-slate-400 dark:text-slate-500 block text-[9px]" data-i18n="accountNameLabel">Chủ tài khoản</span>
+                    <strong class="text-slate-700 dark:text-slate-200" id="checkout-holder-val">--</strong>
+                  </div>
+                  <button type="button" class="text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 text-xs flex items-center gap-0.5" onclick="copyText('checkout-holder-val')">
+                    <span class="material-symbols-outlined text-[13px]">content_copy</span>
+                  </button>
+                </div>
+
+                <div class="bg-blue-50 dark:bg-blue-950/20 p-2.5 rounded-lg border border-blue-200 dark:border-blue-900/50 flex justify-between items-center text-[11px]">
+                  <div>
+                    <span class="text-blue-700 dark:text-blue-400 block text-[9px]" data-i18n="transferMemoLabel">Nội dung chuyển khoản (Bắt buộc đúng)</span>
+                    <strong class="text-blue-800 dark:text-blue-300 tracking-wide select-all" id="checkout-memo-val">--</strong>
+                  </div>
+                  <button type="button" class="text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 text-xs flex items-center gap-0.5" onclick="copyText('checkout-memo-val')">
+                    <span class="material-symbols-outlined text-[13px]">content_copy</span>
+                  </button>
+                </div>
+                <span class="hidden" id="checkout-amount-raw-val">5000</span>
+              </div>
+
+              <!-- Collapsible FAQ Section inside Modal -->
+              <div class="border-t border-slate-200 dark:border-slate-800 pt-4">
+                <button type="button" class="w-full flex justify-between items-center text-xs font-bold text-slate-700 dark:text-slate-200 py-2 focus:outline-none" onclick="toggleModalFaqSection()">
+                  <span class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[18px] text-blue-500 dark:text-blue-400">help</span>
+                    <span data-i18n="faqTitle">Câu hỏi thường gặp</span>
+                  </span>
+                  <span id="modalFaqChevron" class="material-symbols-outlined text-slate-400 transition-transform duration-200 text-[18px]">keyboard_arrow_down</span>
+                </button>
+                <div id="modalFaqContent" class="max-h-0 overflow-hidden transition-all duration-300 ease-in-out mt-2.5 space-y-2.5">
+                  
+                  <!-- FAQ Item 1 -->
+                  <div class="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm transition-all duration-200">
+                    <button type="button" class="w-full py-2.5 px-4 text-left font-semibold text-xs text-slate-900 dark:text-white flex justify-between items-center gap-4 hover:bg-slate-100 dark:hover:bg-slate-800/40 focus:outline-none" onclick="toggleFaq(this)">
+                      <span class="flex items-center gap-2.5">
+                        <span class="flex-shrink-0 w-4.5 h-4.5 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[10px] font-bold">?</span>
+                        <span data-i18n="faq1Q">Thanh toán xong bao lâu được kích hoạt?</span>
+                      </span>
+                      <span class="material-symbols-outlined text-slate-400 transition-transform duration-200 text-[18px]">keyboard_arrow_down</span>
+                    </button>
+                    <div class="faq-ans max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
+                      <div class="p-4 pt-0 text-xs text-slate-650 dark:text-slate-300 border-t border-slate-100 dark:border-slate-800/40 leading-relaxed" data-i18n="faq1A">
+                        Hệ thống tự động kích hoạt thông qua cổng VietQR trong vòng 1-3 phút ngay khi nhận được giao dịch chuyển khoản chính xác nội dung.
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- FAQ Item 2 -->
+                  <div class="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm transition-all duration-200">
+                    <button type="button" class="w-full py-2.5 px-4 text-left font-semibold text-xs text-slate-900 dark:text-white flex justify-between items-center gap-4 hover:bg-slate-50 dark:hover:bg-slate-800/40 focus:outline-none" onclick="toggleFaq(this)">
+                      <span class="flex items-center gap-2.5">
+                        <span class="flex-shrink-0 w-4.5 h-4.5 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[10px] font-bold">?</span>
+                        <span data-i18n="faq2Q">Có thể nâng cấp khi đang dùng gói cũ không?</span>
+                      </span>
+                      <span class="material-symbols-outlined text-slate-400 transition-transform duration-200 text-[18px]">keyboard_arrow_down</span>
+                    </button>
+                    <div class="faq-ans max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
+                      <div class="p-4 pt-0 text-xs text-slate-650 dark:text-slate-300 border-t border-slate-100 dark:border-slate-800/40 leading-relaxed" data-i18n="faq2A">
+                        Có, bạn có thể nâng cấp lên gói cao hơn bất kỳ lúc nào. Lượt quét và thời hạn của gói mới sẽ được áp dụng ngay lập tức.
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- FAQ Item 3 -->
+                  <div class="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm transition-all duration-200">
+                    <button type="button" class="w-full py-2.5 px-4 text-left font-semibold text-xs text-slate-900 dark:text-white flex justify-between items-center gap-4 hover:bg-slate-50 dark:hover:bg-slate-800/40 focus:outline-none" onclick="toggleFaq(this)">
+                      <span class="flex items-center gap-2.5">
+                        <span class="flex-shrink-0 w-4.5 h-4.5 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[10px] font-bold">?</span>
+                        <span data-i18n="faq3Q">Có thể hủy hoặc hoàn tiền không?</span>
+                      </span>
+                      <span class="material-symbols-outlined text-slate-400 transition-transform duration-200 text-[18px]">keyboard_arrow_down</span>
+                    </button>
+                    <div class="faq-ans max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
+                      <div class="p-4 pt-0 text-xs text-slate-650 dark:text-slate-300 border-t border-slate-100 dark:border-slate-800/40 leading-relaxed" data-i18n="faq3A">
+                        Các giao dịch thanh toán gói dịch vụ là không hoàn lại. Vui lòng kiểm tra kỹ thông tin trước khi thực hiện giao dịch.
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- FAQ Item 4 -->
+                  <div class="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm transition-all duration-200">
+                    <button type="button" class="w-full py-2.5 px-4 text-left font-semibold text-xs text-slate-900 dark:text-white flex justify-between items-center gap-4 hover:bg-slate-50 dark:hover:bg-slate-800/40 focus:outline-none" onclick="toggleFaq(this)">
+                      <span class="flex items-center gap-2.5">
+                        <span class="flex-shrink-0 w-4.5 h-4.5 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[10px] font-bold">?</span>
+                        <span data-i18n="faq4Q">Gói có tự gia hạn không?</span>
+                      </span>
+                      <span class="material-symbols-outlined text-slate-400 transition-transform duration-200 text-[18px]">keyboard_arrow_down</span>
+                    </button>
+                    <div class="faq-ans max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
+                      <div class="p-4 pt-0 text-xs text-slate-650 dark:text-slate-300 border-t border-slate-100 dark:border-slate-800/40 leading-relaxed" data-i18n="faq4A">
+                        Không, hệ thống không tự động gia hạn hoặc trừ tiền tài khoản của bạn. Bạn chủ động gia hạn thủ công khi có nhu cầu.
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- FAQ Item 5 -->
+                  <div class="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm transition-all duration-200">
+                    <button type="button" class="w-full py-2.5 px-4 text-left font-semibold text-xs text-slate-900 dark:text-white flex justify-between items-center gap-4 hover:bg-slate-50 dark:hover:bg-slate-800/40 focus:outline-none" onclick="toggleFaq(this)">
+                      <span class="flex items-center gap-2.5">
+                        <span class="flex-shrink-0 w-4.5 h-4.5 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[10px] font-bold">?</span>
+                        <span data-i18n="faq5Q">Tôi có thể thay đổi gói sau khi nâng cấp không?</span>
+                      </span>
+                      <span class="material-symbols-outlined text-slate-400 transition-transform duration-200 text-[18px]">keyboard_arrow_down</span>
+                    </button>
+                    <div class="faq-ans max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
+                      <div class="p-4 pt-0 text-xs text-slate-650 dark:text-slate-300 border-t border-slate-100 dark:border-slate-800/40 leading-relaxed" data-i18n="faq5A">
+                        Bạn có thể nâng cấp lên gói cao hơn. Việc hạ cấp xuống gói thấp hơn chỉ được thực hiện sau khi gói hiện tại hết hạn sử dụng.
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Modal Footer (Action buttons) -->
+            <div class="px-6 py-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
+              <form method="post" action="/predict/payments/confirm-transfer" id="confirmForm" class="w-full">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="order_id" id="confirm-order-id" value="">
+                
+                <div class="flex flex-row justify-end items-center gap-3">
+                  <button
+                    type="button"
+                    onclick="closeCheckoutModal()"
+                    class="px-5 py-2 border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-xs font-semibold text-slate-600 dark:text-slate-300 transition-colors text-center active:scale-95 duration-100"
+                    data-i18n="backBtn"
+                  >Quay lại</button>
+
+                  <button
+                    type="submit"
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-sm hover:shadow-md active:scale-95 duration-100"
+                  >
+                    <span class="material-symbols-outlined text-[16px]">verified</span>
+                    <span data-i18n="confirmPaidBtn">Tôi đã thanh toán</span>
+                  </button>
+                </div>
+              </form>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ── Fullscreen QR Modal ── -->
+        <div id="qrFullscreenModal" class="fixed inset-0 z-[4000] hidden items-center justify-center bg-slate-950/90 backdrop-blur-md p-4 transition-all duration-300 opacity-0" role="dialog" aria-modal="true">
+          <div class="relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-2xl transform scale-95 transition-all duration-300 flex flex-col items-center max-w-sm w-full outline-none">
+            
+            <!-- Close button -->
+            <button type="button" onclick="closeQrFullscreen()" class="absolute top-3 right-3 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors flex items-center justify-center w-8 h-8 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800" aria-label="Close">
+              <span class="material-symbols-outlined text-[20px]">close</span>
+            </button>
+
+            <!-- Title -->
+            <h3 class="text-sm font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-[18px] text-blue-500">qr_code_2</span>
+              <span data-i18n="fullscreenQrTitle">Mã QR Thanh Toán</span>
+            </h3>
+
+            <!-- QR Image -->
+            <div class="w-72 h-72 bg-white p-3 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-center shadow-inner">
+              <img id="fullscreen-qr-img" class="w-full h-full object-contain" src="" alt="VietQR Code Fullscreen" />
+            </div>
+
+            <!-- Footer Note -->
+            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-4 text-center leading-normal" data-i18n="fullscreenQrHelp">
+              Quét mã này bằng ứng dụng ngân hàng của bạn để hoàn tất giao dịch.
+            </p>
+          </div>
+        </div>
+
+        
 </body>
 </html>
