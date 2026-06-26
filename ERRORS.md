@@ -2,6 +2,25 @@
 
 ---
 
+## [2026-06-26 11:39] - Lỗi vòng lặp điều hướng vô hạn (Infinite Loop) trong Flutter WebView
+
+- **Type**: Logic
+- **Severity**: Critical
+- **File**: `app_web_view/lib/main.dart:243-267`
+- **Agent**: @mobile-developer
+- **Root Cause**: Flutter WebView chặn tất cả điều hướng nội bộ và ép chạy PJAX. Khi người dùng chưa đăng nhập, PJAX fetch link yêu cầu đăng nhập và nhận redirect 302 -> `/login/`. JS PJAX không tìm thấy `#contentArea` trong trang `/login/` nên gọi `window.location.href` để fallback. WebView lại chặn tiếp yêu cầu này và ép chạy PJAX, tạo thành vòng lặp vô hạn (Infinite Loop).
+- **Error Message**:
+  ```text
+  GET /predict/upload-page 302
+  GET /login/ 200
+  (Vòng lặp vô hạn xảy ra liên tục ở log server)
+  ```
+- **Fix Applied**: Loại bỏ cơ chế chặn PJAX cưỡng bức trong `_handleNavigation` của Flutter WebView để cho phép điều hướng native bình thường đối với các trang nội bộ. Các lượt chuyển trang thông thường sẽ được PJAX của chính Web (`script.js`) tự xử lý mà không cần can thiệp từ Native App.
+- **Prevention**: Tránh ép PJAX từ phía WebView bằng cách chặn điều hướng native nếu trang web đã tích hợp sẵn cơ chế PJAX tự động. Hãy để WebView thực hiện điều hướng native tự nhiên trong trường hợp JS tự động reload toàn trang (fallback).
+- **Status**: Fixed
+
+---
+
 ## [2026-06-26 11:26] - Lỗi cú pháp Unterminated string literal lồng dấu nháy trong predict.html
 
 - **Type**: Syntax

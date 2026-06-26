@@ -241,28 +241,6 @@ class _WebViewScreenState extends State<WebViewScreen> {
     }
 
     if (url.startsWith(AppConfig.webBaseUrl)) {
-      final path = uri?.path ?? '';
-      // Các route sử dụng PJAX chuyển trang mượt mà không reload
-      if (path == '/' ||
-          path.startsWith('/dashboard') ||
-          path.startsWith('/history') ||
-          path.startsWith('/statistics') ||
-          path.startsWith('/settings') ||
-          path.startsWith('/users') ||
-          path.startsWith('/confirmations') ||
-          path.startsWith('/predict') ||
-          path.startsWith('/checkout') ||
-          path.startsWith('/upgrade') ||
-          path.startsWith('/payments')) {
-        
-        if (!url.contains('token=')) {
-          debugPrint('==> [PJAX Delegate] WebView navigating via JS PJAX: $url');
-          _controller.runJavaScript(
-            "if (window.loadPagePjax) { window.loadPagePjax('$url'); } else { window.location.href = '$url'; }"
-          );
-          return NavigationDecision.prevent;
-        }
-      }
       return NavigationDecision.navigate;
     }
     debugPrint('==> Đã chặn điều hướng ngoài: ${request.url}');

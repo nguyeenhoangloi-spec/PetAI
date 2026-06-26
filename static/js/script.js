@@ -1223,6 +1223,51 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
+  // --- Mobile Drawer Logic for Home Page (home.html) ---
+  (function initHomeMobileDrawer() {
+    const trigger = document.getElementById("mobileMenuTrigger");
+    const closeBtn = document.getElementById("mobileMenuClose");
+    const overlay = document.getElementById("mobileDrawerOverlay");
+    const drawer = document.getElementById("mobileDrawer");
+
+    if (!trigger || !drawer) return; // Not on home page or elements missing
+
+    function openHomeDrawer() {
+      if (overlay) {
+        overlay.classList.remove("hidden");
+        // trigger reflow
+        overlay.offsetHeight;
+        overlay.classList.remove("opacity-0");
+        overlay.classList.add("opacity-100");
+      }
+      drawer.classList.remove("translate-x-full");
+      drawer.classList.add("translate-x-0");
+      document.body.classList.add("overflow-hidden");
+    }
+
+    function closeHomeDrawer() {
+      if (overlay) {
+        overlay.classList.remove("opacity-100");
+        overlay.classList.add("opacity-0");
+        setTimeout(() => {
+          overlay.classList.add("hidden");
+        }, 300);
+      }
+      drawer.classList.remove("translate-x-0");
+      drawer.classList.add("translate-x-full");
+      document.body.classList.remove("overflow-hidden");
+    }
+
+    trigger.addEventListener("click", openHomeDrawer);
+    if (closeBtn) closeBtn.addEventListener("click", closeHomeDrawer);
+    if (overlay) overlay.addEventListener("click", closeHomeDrawer);
+
+    // Auto-close drawer when clicking any link inside the drawer navigation menu
+    drawer.querySelectorAll("nav a").forEach(link => {
+      link.addEventListener("click", closeHomeDrawer);
+    });
+  })();
+
   window.showAvatarLightbox = showAvatarLightbox;
   window.loadPagePjax = loadPagePjax;
 });
