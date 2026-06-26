@@ -1231,6 +1231,18 @@ html.dark .nav-login-btn:hover {
 }
 
 /* Higher specificity override to beat html:has(#sidebar) main transition rule during PJAX navigation */
+
+/* --- PJAX Content Enter Animation (matching system_config tab transition) --- */
+.pjax-enter {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.pjax-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.22s ease, transform 0.22s ease;
+}
 html.no-transitions main,
 html.no-transitions footer,
 html.no-transitions .sidebar {

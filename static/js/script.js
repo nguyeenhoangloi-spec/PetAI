@@ -981,6 +981,23 @@ document.addEventListener("DOMContentLoaded", function () {
       updateDOM();
       // Scroll to the top of the page immediately upon page change
       window.scrollTo({ top: 0, behavior: "instant" });
+
+      // Apply smooth enter animation to new content (matching config tab feel)
+      if (currentPjaxContainer) {
+        currentPjaxContainer.classList.add("pjax-enter");
+        // Force reflow then trigger transition
+        currentPjaxContainer.offsetHeight;
+        currentPjaxContainer.classList.add("pjax-enter-active");
+        // Clean up classes after transition completes
+        const cleanup = () => {
+          currentPjaxContainer.classList.remove("pjax-enter", "pjax-enter-active");
+          currentPjaxContainer.removeEventListener("transitionend", cleanup);
+        };
+        currentPjaxContainer.addEventListener("transitionend", cleanup, { once: true });
+        // Fallback cleanup in case transitionend doesn't fire
+        setTimeout(cleanup, 300);
+      }
+
       loadMissingHeadResources(doc, postUpdate);
     };
 
