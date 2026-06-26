@@ -1,1871 +1,1916 @@
 <!DOCTYPE html>
-<html class="{{'dark' if ui_theme=='dark' else 'light'}}{{' i18n-loading' if ui_language=='en' else ''}}" lang="{{ui_language or 'vi'}}" data-theme="{{ui_theme or 'light'}}">
-  <head>
-    <script>
-      // Apply initial sidebar collapse state immediately on load to prevent transition animation
-      (function() {
-        document.documentElement.classList.add("preload");
-        try {
-          if (window.innerWidth >= 768) {
-            const isCollapsed = localStorage.getItem("sidebar-collapsed") === "true";
-            if (isCollapsed) {
-              document.documentElement.classList.add("sidebar-collapsed");
-            } else {
-              document.documentElement.classList.remove("sidebar-collapsed");
-            }
-          }
-        } catch (e) {}
-      })();
-    </script>
-    <style id="early-sidebar-style">
-      /* Prevent FOUC (Flash of Unstyled Content) during Tailwind compiler startup */
-      html.preload body {
-        opacity: 0 !important;
-      }
-      
-      /* Early CSS to prevent F5 flicker before stylesheet loads */
-      html.preload .sidebar,
-      html.preload main,
-      html.preload footer {
-        transition: none !important;
-      }
-      
-      /* Stable header styles to prevent navigation bar shifting */
-      body>nav .flex.items-center.gap-gutter {
-        gap: 12px !important;
-      }
-      body>nav #menuToggle {
-        margin-left: 4px !important;
-        margin-right: 0 !important;
-        position: relative !important;
-      }
-      
-      /* Stable inner sidebar styles to prevent internal text/layout shifting */
-      .sidebar-wrapper {
-        display: flex !important;
-        flex-direction: column !important;
-        height: 100% !important;
-        justify-content: space-between !important;
-        padding: 16px 10px 12px 10px !important;
-        box-sizing: border-box !important;
-        gap: 12px !important;
-      }
-      .sidebar-menu {
-        display: flex !important;
-        flex-direction: column !important;
-        gap: 6px !important;
-        flex-grow: 1 !important;
-      }
-      .sidebar-menu-item {
-        display: flex !important;
-        align-items: center !important;
-        gap: 10px;
-        height: 40px !important;
-        width: 100% !important;
-        padding: 0 10px;
-        border-radius: 12px !important;
-        box-sizing: border-box !important;
-        overflow: hidden !important;
-      }
-      
-      @media (min-width: 768px) {
-        .sidebar {
-          position: fixed !important;
-          top: 64px !important;
-          left: 0 !important;
-          bottom: 0 !important;
-          width: 224px !important;
-          height: calc(100vh - 64px) !important;
-          z-index: 100 !important;
-        }
-        
-        /* Collapsed state */
-        html.sidebar-collapsed .sidebar {
-          transform: none !important;
-          opacity: 1 !important;
-          visibility: visible !important;
-          width: 72px !important;
-        }
-        html.sidebar-collapsed main,
-        html.sidebar-collapsed footer {
-          margin-left: 72px !important;
-          width: calc(100% - 72px) !important;
-        }
-        
-        /* Expanded state (default) */
-        html:not(.sidebar-collapsed) .sidebar {
-          transform: none !important;
-          opacity: 1 !important;
-          visibility: visible !important;
-          width: 224px !important;
-        }
-        html:not(.sidebar-collapsed) main,
-        html:not(.sidebar-collapsed) footer {
-          margin-left: 224px !important;
-          width: calc(100% - 224px) !important;
-        }
-        
-        /* Force single-column grid immediately for main container on both states */
-        html main {
-          grid-template-columns: 1fr !important;
-          gap: 0 !important;
-        }
-      }
-      
-      @media (max-width: 767px) {
-        .sidebar {
-          position: fixed !important;
-          top: 0 !important;
-          left: 0 !important;
-          height: 100vh !important;
-          width: 224px !important;
-          transform: translateX(-100%) !important;
-          z-index: 1000 !important;
-        }
-        .sidebar.active {
-          transform: translateX(0) !important;
-        }
-      }
-    </style>
-    <script>
-      (function () {
-        var savedLang = "vi";
-        try {
-          var match = document.cookie.match(new RegExp('(^| )siteLanguage=([^;]+)'));
-          if (match) {
-            savedLang = match[2];
+<html class="{{'dark' if ui_theme=='dark' else 'light'}}{{' i18n-loading' if ui_language=='en' else ''}}"
+  lang="{{ui_language or 'vi'}}" data-theme="{{ui_theme or 'light'}}">
+
+<head>
+  <script>
+    // Apply initial sidebar collapse state immediately on load to prevent transition animation
+    (function () {
+      document.documentElement.classList.add("preload");
+      try {
+        if (window.innerWidth >= 768) {
+          const isCollapsed = localStorage.getItem("sidebar-collapsed") === "true";
+          if (isCollapsed) {
+            document.documentElement.classList.add("sidebar-collapsed");
           } else {
-            savedLang = localStorage.getItem("siteLanguage") || "vi";
+            document.documentElement.classList.remove("sidebar-collapsed");
           }
-        } catch (e) {}
-        document.documentElement.setAttribute("data-user-lang", savedLang);
-        if (savedLang === "en") {
-          document.documentElement.classList.add("i18n-loading");
         }
-      })();
-    </script>
+      } catch (e) { }
+    })();
+  </script>
+  <style id="early-sidebar-style">
+    /* Prevent FOUC (Flash of Unstyled Content) during Tailwind compiler startup */
+    html.preload body {
+      opacity: 0 !important;
+    }
+
+    /* Early CSS to prevent F5 flicker before stylesheet loads */
+    html.preload .sidebar,
+    html.preload main,
+    html.preload footer {
+      transition: none !important;
+    }
+
+    /* Stable header styles to prevent navigation bar shifting */
+    body>nav .flex.items-center.gap-gutter {
+      gap: 12px !important;
+    }
+
+    body>nav #menuToggle {
+      margin-left: 4px !important;
+      margin-right: 0 !important;
+      position: relative !important;
+    }
+
+    /* Stable inner sidebar styles to prevent internal text/layout shifting */
+    .sidebar-wrapper {
+      display: flex !important;
+      flex-direction: column !important;
+      height: 100% !important;
+      justify-content: space-between !important;
+      padding: 16px 10px 12px 10px !important;
+      box-sizing: border-box !important;
+      gap: 12px !important;
+    }
+
+    .sidebar-menu {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 6px !important;
+      flex-grow: 1 !important;
+    }
+
+    .sidebar-menu-item {
+      display: flex !important;
+      align-items: center !important;
+      gap: 10px;
+      height: 40px !important;
+      width: 100% !important;
+      padding: 0 10px;
+      border-radius: 12px !important;
+      box-sizing: border-box !important;
+      overflow: hidden !important;
+    }
+
+    @media (min-width: 768px) {
+      .sidebar {
+        position: fixed !important;
+        top: 64px !important;
+        left: 0 !important;
+        bottom: 0 !important;
+        width: 224px !important;
+        height: calc(100vh - 64px) !important;
+        z-index: 100 !important;
+      }
+
+      /* Collapsed state */
+      html.sidebar-collapsed .sidebar {
+        transform: none !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        width: 72px !important;
+      }
+
+      html.sidebar-collapsed main,
+      html.sidebar-collapsed footer {
+        margin-left: 72px !important;
+        width: calc(100% - 72px) !important;
+      }
+
+      /* Expanded state (default) */
+      html:not(.sidebar-collapsed) .sidebar {
+        transform: none !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        width: 224px !important;
+      }
+
+      html:not(.sidebar-collapsed) main,
+      html:not(.sidebar-collapsed) footer {
+        margin-left: 224px !important;
+        width: calc(100% - 224px) !important;
+      }
+
+      /* Force single-column grid immediately for main container on both states */
+      html main {
+        grid-template-columns: 1fr !important;
+        gap: 0 !important;
+      }
+    }
+
+    @media (max-width: 767px) {
+      .sidebar {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        height: 100vh !important;
+        width: 224px !important;
+        transform: translateX(-100%) !important;
+        z-index: 1000 !important;
+      }
+
+      .sidebar.active {
+        transform: translateX(0) !important;
+      }
+    }
+  </style>
+  <script>
+    (function () {
+      var savedLang = "vi";
+      try {
+        var match = document.cookie.match(new RegExp('(^| )siteLanguage=([^;]+)'));
+        if (match) {
+          savedLang = match[2];
+        } else {
+          savedLang = localStorage.getItem("siteLanguage") || "vi";
+        }
+      } catch (e) { }
+      document.documentElement.setAttribute("data-user-lang", savedLang);
+      if (savedLang === "en") {
+        document.documentElement.classList.add("i18n-loading");
+      }
+    })();
+  </script>
+  <style>
+    html.i18n-loading body {
+      visibility: hidden !important;
+    }
+  </style>
+  <noscript>
     <style>
       html.i18n-loading body {
-        visibility: hidden !important;
+        visibility: visible !important;
       }
     </style>
-    <noscript>
-      <style>
-        html.i18n-loading body {
-          visibility: visible !important;
-        }
-      </style>
-    </noscript>
-    <meta charset="utf-8">
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <script>
-      (function () {
-        const root = document.documentElement;
-        const themeStorageKey = "{{ 'theme:' ~ session.get('user_id') if session.get('user_id') else '' }}";
-        const serverTheme = "{{ ui_theme or 'light' }}";
-        if (themeStorageKey) {
-          try {
-            localStorage.setItem(themeStorageKey, serverTheme);
-          } catch (e) {}
-        }
-        const storedTheme = (function () {
-          if (!themeStorageKey) return null;
-          try {
-            return localStorage.getItem(themeStorageKey);
-          } catch (e) {
-            return null;
-          }
-        })();
-
-        const preferredTheme = storedTheme || serverTheme;
-
-        function resolveTheme(theme) {
-          if (theme !== "auto") return theme;
-          try {
-            return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-          } catch (e) {
-            return "light";
-          }
-        }
-
-        function applyTheme(theme) {
-          const resolved = resolveTheme(theme);
-          root.classList.toggle("dark", resolved === "dark");
-          root.classList.toggle("light", resolved !== "dark");
-          root.setAttribute("data-theme", resolved);
-        }
-
-        applyTheme(preferredTheme);
-
-        if (preferredTheme === "auto") {
-          try {
-            const mql = window.matchMedia("(prefers-color-scheme: dark)");
-            const handler = function () {
-              applyTheme("auto");
-            };
-            if (mql.addEventListener) {
-              mql.addEventListener("change", handler);
-            } else if (mql.addListener) {
-              mql.addListener(handler);
-            }
-          } catch (e) {}
-        }
-
+  </noscript>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+  <script>
+    (function () {
+      const root = document.documentElement;
+      const themeStorageKey = "{{ 'theme:' ~ session.get('user_id') if session.get('user_id') else '' }}";
+      const serverTheme = "{{ ui_theme or 'light' }}";
+      if (themeStorageKey) {
         try {
-          const isCollapsed = localStorage.getItem("sidebar-collapsed") === "true";
-          if (isCollapsed && window.innerWidth >= 768) {
-            root.classList.add("sidebar-collapsed");
-          }
-        } catch (e) {}
+          localStorage.setItem(themeStorageKey, serverTheme);
+        } catch (e) { }
+      }
+      const storedTheme = (function () {
+        if (!themeStorageKey) return null;
+        try {
+          return localStorage.getItem(themeStorageKey);
+        } catch (e) {
+          return null;
+        }
       })();
-    </script>
-    <title data-i18n="historyPageTitle">{{ 'History - ' ~ get_config('site_name', 'PetAI') if ui_language == 'en' else 'Lịch sử - ' ~ get_config('site_name', 'PetAI') }}</title>
-    <script src="{{ url_for('static', filename='js/tailwindcss.js') }}"></script>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/typography.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/theme-dark.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/toasts.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile-header-fix.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin-dashboard-content.css') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
-    
-    <script id="tailwind-config">
-      tailwind.config = {
-        darkMode: "class",
-        theme: {
-          extend: {
-            colors: {
-              "on-tertiary-fixed": "#360f00",
-              "secondary-fixed-dim": "#ffb95f",
-              "surface-container": "#e5eeff",
-              "on-primary-fixed": "#00174b",
-              error: "#ba1a1a",
-              "secondary-container": "#fea619",
-              primary: "#004ac6",
-              "tertiary-container": "#bc4800",
-              "surface-tint": "#0053db",
-              "on-secondary": "#ffffff",
-              "surface-variant": "#d3e4fe",
-              "on-secondary-container": "#684000",
-              "tertiary-fixed-dim": "#ffb596",
-              "surface-dim": "#cbdbf5",
-              outline: "#737686",
-              "inverse-on-surface": "#eaf1ff",
-              "on-error": "#ffffff",
-              "secondary-fixed": "#ffddb8",
-              "on-primary": "#ffffff",
-              "on-primary-container": "#eeefff",
-              "surface-container-highest": "#d3e4fe",
-              "on-surface": "#0b1c30",
-              "surface-container-lowest": "#ffffff",
-              "on-primary-fixed-variant": "#003ea8",
-              "outline-variant": "#c3c6d7",
-              "primary-fixed": "#dbe1ff",
-              "inverse-primary": "#b4c5ff",
-              "on-error-container": "#93000a",
-              "on-tertiary": "#ffffff",
-              surface: "#f8f9ff",
-              "primary-fixed-dim": "#b4c5ff",
-              "on-background": "#0b1c30",
-              "surface-bright": "#f8f9ff",
-              "inverse-surface": "#213145",
-              "on-tertiary-fixed-variant": "#7d2d00",
-              "on-surface-variant": "#434655",
-              "tertiary-fixed": "#ffdbcd",
-              "surface-container-high": "#dce9ff",
-              "on-secondary-fixed": "#2a1700",
-              "on-tertiary-container": "#ffede6",
-              secondary: "#855300",
-              tertiary: "#943700",
-              background: "#f8f9ff",
-              "primary-container": "#2563eb",
-              "surface-container-low": "#eff4ff",
-              "on-secondary-fixed-variant": "#653e00",
-              "error-container": "#ffdad6",
-            },
-            borderRadius: {
-              DEFAULT: "0.25rem",
-              lg: "0.5rem",
-              xl: "0.75rem",
-              full: "9999px",
-            },
-            spacing: {
-              md: "24px",
-              base: "8px",
-              sm: "12px",
-              margin: "32px",
-              lg: "48px",
-              xl: "80px",
-              gutter: "24px",
-              xs: "4px",
-            },
-            fontFamily: {
-              "headline-md": ["Inter"],
-              "headline-lg": ["Inter"],
-              "display-xl": ["Inter"],
-              "body-md": ["Inter"],
-              "label-sm": ["Inter"],
-              "body-lg": ["Inter"],
-            },
-            fontSize: {
-              "headline-md": ["24px", { lineHeight: "32px", fontWeight: "600" }],
-              "headline-lg": ["36px", { lineHeight: "44px", letterSpacing: "-0.01em", fontWeight: "600" }],
-              "display-xl": ["60px", { lineHeight: "72px", letterSpacing: "-0.02em", fontWeight: "700" }],
-              "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
-              "label-sm": ["14px", { lineHeight: "20px", fontWeight: "500" }],
-              "body-lg": ["18px", { lineHeight: "28px", fontWeight: "400" }],
-            },
+
+      const preferredTheme = storedTheme || serverTheme;
+
+      function resolveTheme(theme) {
+        if (theme !== "auto") return theme;
+        try {
+          return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        } catch (e) {
+          return "light";
+        }
+      }
+
+      function applyTheme(theme) {
+        const resolved = resolveTheme(theme);
+        root.classList.toggle("dark", resolved === "dark");
+        root.classList.toggle("light", resolved !== "dark");
+        root.setAttribute("data-theme", resolved);
+      }
+
+      applyTheme(preferredTheme);
+
+      if (preferredTheme === "auto") {
+        try {
+          const mql = window.matchMedia("(prefers-color-scheme: dark)");
+          const handler = function () {
+            applyTheme("auto");
+          };
+          if (mql.addEventListener) {
+            mql.addEventListener("change", handler);
+          } else if (mql.addListener) {
+            mql.addListener(handler);
+          }
+        } catch (e) { }
+      }
+
+      try {
+        const isCollapsed = localStorage.getItem("sidebar-collapsed") === "true";
+        if (isCollapsed && window.innerWidth >= 768) {
+          root.classList.add("sidebar-collapsed");
+        }
+      } catch (e) { }
+    })();
+  </script>
+  <title data-i18n="historyPageTitle">{{ 'History - ' ~ get_config('site_name', 'PetAI') if ui_language == 'en' else
+    'Lịch sử - ' ~ get_config('site_name', 'PetAI') }}</title>
+  <script src="{{ url_for('static', filename='js/tailwindcss.js') }}"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/typography.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/theme-dark.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/toasts.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile-header-fix.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin-dashboard-content.css') }}">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet">
+
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "on-tertiary-fixed": "#360f00",
+            "secondary-fixed-dim": "#ffb95f",
+            "surface-container": "#e5eeff",
+            "on-primary-fixed": "#00174b",
+            error: "#ba1a1a",
+            "secondary-container": "#fea619",
+            primary: "#004ac6",
+            "tertiary-container": "#bc4800",
+            "surface-tint": "#0053db",
+            "on-secondary": "#ffffff",
+            "surface-variant": "#d3e4fe",
+            "on-secondary-container": "#684000",
+            "tertiary-fixed-dim": "#ffb596",
+            "surface-dim": "#cbdbf5",
+            outline: "#737686",
+            "inverse-on-surface": "#eaf1ff",
+            "on-error": "#ffffff",
+            "secondary-fixed": "#ffddb8",
+            "on-primary": "#ffffff",
+            "on-primary-container": "#eeefff",
+            "surface-container-highest": "#d3e4fe",
+            "on-surface": "#0b1c30",
+            "surface-container-lowest": "#ffffff",
+            "on-primary-fixed-variant": "#003ea8",
+            "outline-variant": "#c3c6d7",
+            "primary-fixed": "#dbe1ff",
+            "inverse-primary": "#b4c5ff",
+            "on-error-container": "#93000a",
+            "on-tertiary": "#ffffff",
+            surface: "#f8f9ff",
+            "primary-fixed-dim": "#b4c5ff",
+            "on-background": "#0b1c30",
+            "surface-bright": "#f8f9ff",
+            "inverse-surface": "#213145",
+            "on-tertiary-fixed-variant": "#7d2d00",
+            "on-surface-variant": "#434655",
+            "tertiary-fixed": "#ffdbcd",
+            "surface-container-high": "#dce9ff",
+            "on-secondary-fixed": "#2a1700",
+            "on-tertiary-container": "#ffede6",
+            secondary: "#855300",
+            tertiary: "#943700",
+            background: "#f8f9ff",
+            "primary-container": "#2563eb",
+            "surface-container-low": "#eff4ff",
+            "on-secondary-fixed-variant": "#653e00",
+            "error-container": "#ffdad6",
+          },
+          borderRadius: {
+            DEFAULT: "0.25rem",
+            lg: "0.5rem",
+            xl: "0.75rem",
+            full: "9999px",
+          },
+          spacing: {
+            md: "24px",
+            base: "8px",
+            sm: "12px",
+            margin: "32px",
+            lg: "48px",
+            xl: "80px",
+            gutter: "24px",
+            xs: "4px",
+          },
+          fontFamily: {
+            "headline-md": ["Inter"],
+            "headline-lg": ["Inter"],
+            "display-xl": ["Inter"],
+            "body-md": ["Inter"],
+            "label-sm": ["Inter"],
+            "body-lg": ["Inter"],
+          },
+          fontSize: {
+            "headline-md": ["24px", { lineHeight: "32px", fontWeight: "600" }],
+            "headline-lg": ["36px", { lineHeight: "44px", letterSpacing: "-0.01em", fontWeight: "600" }],
+            "display-xl": ["60px", { lineHeight: "72px", letterSpacing: "-0.02em", fontWeight: "700" }],
+            "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+            "label-sm": ["14px", { lineHeight: "20px", fontWeight: "500" }],
+            "body-lg": ["18px", { lineHeight: "28px", fontWeight: "400" }],
           },
         },
-      };
-    </script>
-    <style>
-      .material-symbols-outlined {
-        font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+      },
+    };
+  </script>
+  <style>
+    .material-symbols-outlined {
+      font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+    }
+
+    /* Subtle fade-in for history content after tab switch — no full-page flash */
+    @keyframes history-content-in {
+      from {
+        opacity: 0;
+        transform: translateY(4px);
       }
-      /* Subtle fade-in for history content after tab switch — no full-page flash */
-      @keyframes history-content-in {
-        from { opacity: 0; transform: translateY(4px); }
-        to   { opacity: 1; transform: translateY(0); }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
       }
-      .history-content-enter {
-        animation: history-content-in 0.15s ease-out forwards;
-      }
-    </style>
-  </head>
+    }
 
-  <body class="bg-background text-on-background body-md antialiased min-h-screen flex flex-col">
-    {% include '_toasts.html' %}
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
-    {% set display_role = session.get('role') or 'user' %}
-    {% set display_plan = current_plan or 'free' %}
+    .history-content-enter {
+      animation: history-content-in 0.15s ease-out forwards;
+    }
+  </style>
+</head>
 
-    {% include '_header.html' %}
+<body class="bg-background text-on-background body-md antialiased min-h-screen flex flex-col">
+  {% include '_toasts.html' %}
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  {% set display_role = session.get('role') or 'user' %}
+  {% set display_plan = current_plan or 'free' %}
 
-    <main tabindex="-1" class="flex-grow w-full px-4 md:px-6 py-margin grid grid-cols-1 gap-0">
-      {% set active_page = 'history' %}
-      {% include '_sidebar.html' %}
+  {% include '_header.html' %}
 
-      <div id="content-area" class="col-span-1 flex flex-col min-w-0 gap-8">
-        <div class="space-y-6">
-          
-          <!-- Page Header -->
-          <section class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-200/60 dark:border-slate-800 pb-5" data-purpose="page-header">
-            <div class="flex flex-col gap-1.5">
-              <h1 class="headline-lg font-semibold text-on-surface dark:text-slate-100" data-i18n="historyTitle">
-                Lịch sử nhận diện
-              </h1>
-              <p class="body-md text-on-surface-variant dark:text-slate-400">
-                <span data-i18n="predictionsCountPrefix">Bạn có tổng cộng</span>
-                <span id="total-records-count" class="font-bold text-primary dark:text-blue-400">{{ total_records_all }}</span>
-                <span data-i18n="predictionsCountSuffix">bản ghi dự đoán.</span>
-              </p>
-            </div>
-            
-            <div class="flex items-center gap-3 mt-2 md:mt-0">
-              <!-- Export history button -->
-              <button
-                type="button"
-                onclick="exportHistoryData()"
-                class="border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-350 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-850 px-4 py-2.5 rounded-lg text-xs font-semibold shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer"
-              >
-                <span class="material-symbols-outlined text-[18px]">download</span>
-                <span data-i18n="exportHistory">Xuất lịch sử</span>
-              </button>
-              
-              <!-- New scan button -->
-              <a
-                class="bg-primary hover:bg-primary/95 text-white px-4 py-2.5 rounded-lg text-xs font-semibold shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-2"
-                href="{{ url_for('predict.upload_page') }}"
-              >
-                <span class="material-symbols-outlined text-[18px]">add_a_photo</span>
-                <span data-i18n="newIdentification">Nhận diện mới</span>
-              </a>
-            </div>
-          </section>
+  <main tabindex="-1" class="flex-grow w-full px-4 md:px-6 py-margin grid grid-cols-1 gap-0">
+    {% set active_page = 'history' %}
+    {% include '_sidebar.html' %}
 
-          <!-- Statistics Overview Cards Grid -->
-          <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5" data-purpose="statistics-overview">
-            
-            <!-- Card 1: Tổng nhận diện -->
-            <div class="bg-white dark:bg-slate-900 rounded-xl p-5 border border-slate-200/60 dark:border-slate-800/80 shadow-sm flex flex-col justify-between min-h-[135px]">
-              <div class="flex items-center justify-between">
-                <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider" data-i18n="totalPredictionsLabel">Tổng nhận diện</span>
-                <div class="w-9 h-9 rounded-lg bg-blue-50 dark:bg-blue-950/40 flex items-center justify-center text-primary dark:text-blue-400">
-                  <span class="material-symbols-outlined text-[20px]">history</span>
-                </div>
-              </div>
-              <div class="mt-3">
-                <div class="text-2xl font-bold text-slate-900 dark:text-white tracking-tight" data-counter="{{ total_records_all }}">0</div>
-                <div class="text-[11px] font-semibold text-slate-400 dark:text-slate-500" data-i18n="imageScanCount">Lượt phân tích ảnh</div>
-                {% if t_trend.has_data %}
-                <div class="flex items-center gap-1 mt-2">
-                  <span class="text-[10px] font-bold px-1.5 py-0.5 rounded flex items-center gap-0.5 {{ 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/20 dark:text-emerald-400' if t_trend.up else 'bg-red-50 text-red-700 dark:bg-red-950/20 dark:text-red-400' }}">
-                    <span class="material-symbols-outlined text-[12px] font-bold">{{ 'trending_up' if t_trend.up else 'trending_down' }}</span>
-                    <span>{{ '+' if t_trend.up else '' }}{{ t_trend.val }}%</span>
-                  </span>
-                  <span class="text-[10px] text-slate-450 dark:text-slate-500" data-i18n="vs7DaysAgo">so với 7 ngày trước</span>
-                </div>
-                {% endif %}
+    <div id="content-area" class="col-span-1 flex flex-col min-w-0 gap-8">
+      <div class="space-y-6">
+
+        <!-- Page Header -->
+        <section
+          class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-200/60 dark:border-slate-800 pb-5"
+          data-purpose="page-header">
+          <div class="flex flex-col gap-1.5">
+            <h1 class="headline-lg font-semibold text-on-surface dark:text-slate-100" data-i18n="historyTitle">
+              Lịch sử nhận diện
+            </h1>
+            <p class="body-md text-on-surface-variant dark:text-slate-400">
+              <span data-i18n="predictionsCountPrefix">Bạn có tổng cộng</span>
+              <span id="total-records-count" class="font-bold text-primary dark:text-blue-400">{{ total_records_all
+                }}</span>
+              <span data-i18n="predictionsCountSuffix">bản ghi dự đoán.</span>
+            </p>
+          </div>
+
+          <div class="flex items-center gap-3 mt-2 md:mt-0">
+            <!-- Export history button -->
+            <button type="button" onclick="exportHistoryData()"
+              class="border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-350 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-850 px-4 py-2.5 rounded-lg text-xs font-semibold shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer">
+              <span class="material-symbols-outlined text-[18px]">download</span>
+              <span data-i18n="exportHistory">Xuất lịch sử</span>
+            </button>
+
+            <!-- New scan button -->
+            <a class="bg-primary hover:bg-primary/95 text-white px-4 py-2.5 rounded-lg text-xs font-semibold shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-2"
+              href="{{ url_for('predict.upload_page') }}">
+              <span class="material-symbols-outlined text-[18px]">add_a_photo</span>
+              <span data-i18n="newIdentification">Nhận diện mới</span>
+            </a>
+          </div>
+        </section>
+
+        <!-- Statistics Overview Cards Grid -->
+        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5" data-purpose="statistics-overview">
+
+          <!-- Card 1: Tổng nhận diện -->
+          <div
+            class="bg-white dark:bg-slate-900 rounded-xl p-5 border border-slate-200/60 dark:border-slate-800/80 shadow-sm flex flex-col justify-between min-h-[135px]">
+            <div class="flex items-center justify-between">
+              <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider"
+                data-i18n="totalPredictionsLabel">Tổng nhận diện</span>
+              <div
+                class="w-9 h-9 rounded-lg bg-blue-50 dark:bg-blue-950/40 flex items-center justify-center text-primary dark:text-blue-400">
+                <span class="material-symbols-outlined text-[20px]">history</span>
               </div>
             </div>
-
-            <!-- Card 2: Chó thuần chủng -->
-            <div class="bg-white dark:bg-slate-900 rounded-xl p-5 border border-slate-200/60 dark:border-slate-800/80 shadow-sm flex flex-col justify-between min-h-[135px]">
-              <div class="flex items-center justify-between">
-                <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider" data-i18n="pureDog">Chó thuần chủng</span>
-                <div class="w-9 h-9 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
-                  <span class="material-symbols-outlined text-[20px]">verified</span>
-                </div>
+            <div class="mt-3">
+              <div class="text-2xl font-bold text-slate-900 dark:text-white tracking-tight"
+                data-counter="{{ total_records_all }}">0</div>
+              <div class="text-[11px] font-semibold text-slate-400 dark:text-slate-500" data-i18n="imageScanCount">Lượt
+                phân tích ảnh</div>
+              {% if t_trend.has_data %}
+              <div class="flex items-center gap-1 mt-2">
+                <span
+                  class="text-[10px] font-bold px-1.5 py-0.5 rounded flex items-center gap-0.5 {{ 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/20 dark:text-emerald-400' if t_trend.up else 'bg-red-50 text-red-700 dark:bg-red-950/20 dark:text-red-400' }}">
+                  <span class="material-symbols-outlined text-[12px] font-bold">{{ 'trending_up' if t_trend.up else
+                    'trending_down' }}</span>
+                  <span>{{ '+' if t_trend.up else '' }}{{ t_trend.val }}%</span>
+                </span>
+                <span class="text-[10px] text-slate-450 dark:text-slate-500" data-i18n="vs7DaysAgo">so với 7 ngày
+                  trước</span>
               </div>
-              <div class="mt-3">
-                <div class="text-2xl font-bold text-slate-900 dark:text-white tracking-tight" data-counter="{{ pure_count }}">0</div>
-                <div class="text-[11px] font-semibold text-slate-400 dark:text-slate-500">
-                  <span data-i18n="ratioPercentage">Chiếm</span> {{ (pure_count / total_records_all * 100)|round(1) if total_records_all > 0 else 0.0 }}%
-                </div>
-                {% if p_trend.has_data %}
-                <div class="flex items-center gap-1 mt-2">
-                  <span class="text-[10px] font-bold px-1.5 py-0.5 rounded flex items-center gap-0.5 {{ 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/20 dark:text-emerald-400' if p_trend.up else 'bg-red-50 text-red-700 dark:bg-red-950/20 dark:text-red-400' }}">
-                    <span class="material-symbols-outlined text-[12px] font-bold">{{ 'trending_up' if p_trend.up else 'trending_down' }}</span>
-                    <span>{{ '+' if p_trend.up else '' }}{{ p_trend.val }}%</span>
-                  </span>
-                  <span class="text-[10px] text-slate-450 dark:text-slate-500" data-i18n="vs7DaysAgo">so với 7 ngày trước</span>
-                </div>
-                {% endif %}
-              </div>
-            </div>
-
-            <!-- Card 3: Chó lai -->
-            <div class="bg-white dark:bg-slate-900 rounded-xl p-5 border border-slate-200/60 dark:border-slate-800/80 shadow-sm flex flex-col justify-between min-h-[135px]">
-              <div class="flex items-center justify-between">
-                <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider" data-i18n="hybridDog">Chó lai</span>
-                <div class="w-9 h-9 rounded-lg bg-amber-50 dark:bg-amber-950/40 flex items-center justify-center text-amber-600 dark:text-amber-400">
-                  <span class="material-symbols-outlined text-[20px]">call_split</span>
-                </div>
-              </div>
-              <div class="mt-3">
-                <div class="text-2xl font-bold text-slate-900 dark:text-white tracking-tight" data-counter="{{ hybrid_count }}">0</div>
-                <div class="text-[11px] font-semibold text-slate-400 dark:text-slate-500">
-                  <span data-i18n="ratioPercentage">Chiếm</span> {{ (hybrid_count / total_records_all * 100)|round(1) if total_records_all > 0 else 0.0 }}%
-                </div>
-                {% if h_trend.has_data %}
-                <div class="flex items-center gap-1 mt-2">
-                  <span class="text-[10px] font-bold px-1.5 py-0.5 rounded flex items-center gap-0.5 {{ 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/20 dark:text-emerald-400' if h_trend.up else 'bg-red-50 text-red-700 dark:bg-red-950/20 dark:text-red-400' }}">
-                    <span class="material-symbols-outlined text-[12px] font-bold">{{ 'trending_up' if h_trend.up else 'trending_down' }}</span>
-                    <span>{{ '+' if h_trend.up else '' }}{{ h_trend.val }}%</span>
-                  </span>
-                  <span class="text-[10px] text-slate-450 dark:text-slate-500" data-i18n="vs7DaysAgo">so với 7 ngày trước</span>
-                </div>
-                {% endif %}
-              </div>
-            </div>
-
-            <!-- Card 4: Độ tin cậy trung bình -->
-            <div class="bg-white dark:bg-slate-900 rounded-xl p-5 border border-slate-200/60 dark:border-slate-800/80 shadow-sm flex flex-col justify-between min-h-[135px]">
-              <div class="flex items-center justify-between">
-                <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider" data-i18n="avgConfidence">Độ tin cậy TB</span>
-                <div class="w-9 h-9 rounded-lg bg-indigo-50 dark:bg-indigo-950/40 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
-                  <span class="material-symbols-outlined text-[20px]">speed</span>
-                </div>
-              </div>
-              <div class="mt-3">
-                <div class="text-2xl font-bold text-slate-900 dark:text-white tracking-tight" data-counter="{{ avg_conf|round(1) }}" data-suffix="%">0.0%</div>
-                <div class="text-[11px] font-semibold text-slate-400 dark:text-slate-500" data-i18n="avgAccuracy">Độ chính xác trung bình</div>
-                {% if c_trend.has_data %}
-                <div class="flex items-center gap-1 mt-2">
-                  <span class="text-[10px] font-bold px-1.5 py-0.5 rounded flex items-center gap-0.5 {{ 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/20 dark:text-emerald-400' if c_trend.up else 'bg-red-50 text-red-700 dark:bg-red-950/20 dark:text-red-400' }}">
-                    <span class="material-symbols-outlined text-[12px] font-bold">{{ 'trending_up' if c_trend.up else 'trending_down' }}</span>
-                    <span>{{ '+' if c_trend.up else '' }}{{ c_trend.val }}%</span>
-                  </span>
-                  <span class="text-[10px] text-slate-450 dark:text-slate-500" data-i18n="vs7DaysAgo">so với 7 ngày trước</span>
-                </div>
-                {% endif %}
-              </div>
-            </div>
-          </section>
-
-          <!-- Filters, Search & View Controls -->
-          <div id="history-pjax-container" class="space-y-5 transition-all duration-300">
-            <input type="hidden" id="pjax-total-pages" value="{{ total_pages or 1 }}">
-            <section class="flex flex-col gap-4 border-t border-slate-200/60 dark:border-slate-800/80 pt-5">
-              
-              <!-- Tab bar, View Switch & Search Bar -->
-              <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 min-w-0">
-                <!-- Tab List Selector: pill cố định, tabs cuộn bên trong -->
-                <div class="overflow-x-auto tab-bar-scroll w-full p-1 bg-slate-100/80 dark:bg-slate-950/80 backdrop-blur-md rounded-xl border border-slate-200/60 dark:border-slate-800 shadow-sm">
-                <div class="flex items-center gap-1.5 w-max">
-                  <!-- Tab All -->
-                  <a
-                    class="px-4 py-2 rounded-lg text-xs font-semibold tracking-wide transition-all duration-250 flex items-center gap-1.5 {% if selected_type == 'all' or not selected_type %}bg-primary text-white shadow-sm{% else %}text-slate-650 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/60{% endif %}"
-                    href="{{ url_for('history.history', type='all', q=search_query, date=date_filter, sort=sort_by) }}"
-                    onclick="navigateHistoryWithAjax(event, this.href)"
-                  >
-                    <span data-i18n="all">Tất cả</span>
-                    <span class="px-1.5 py-0.5 text-[9px] rounded-full {% if selected_type == 'all' or not selected_type %}bg-white/20 text-white{% else %}bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-400{% endif %}">{{ total_records_all }}</span>
-                  </a>
-                  
-                  <!-- Tab Purebred -->
-                  <a
-                    class="px-4 py-2 rounded-lg text-xs font-semibold tracking-wide transition-all duration-250 flex items-center gap-1.5 {% if selected_type == 'pure' %}bg-primary text-white shadow-sm{% else %}text-slate-650 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/60{% endif %}"
-                    href="{{ url_for('history.history', type='pure', q=search_query, date=date_filter, sort=sort_by) }}"
-                    onclick="navigateHistoryWithAjax(event, this.href)"
-                  >
-                    <span data-i18n="pureDog">Thuần chủng</span>
-                    <span class="px-1.5 py-0.5 text-[9px] rounded-full {% if selected_type == 'pure' %}bg-white/20 text-white{% else %}bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-400{% endif %}">{{ pure_count }}</span>
-                  </a>
-                  
-                  <!-- Tab Mixed -->
-                  <a
-                    class="px-4 py-2 rounded-lg text-xs font-semibold tracking-wide transition-all duration-250 flex items-center gap-1.5 {% if selected_type == 'hybrid' %}bg-primary text-white shadow-sm{% else %}text-slate-650 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/60{% endif %}"
-                    href="{{ url_for('history.history', type='hybrid', q=search_query, date=date_filter, sort=sort_by) }}"
-                    onclick="navigateHistoryWithAjax(event, this.href)"
-                  >
-                    <span data-i18n="hybridDog">Chó lai</span>
-                    <span class="px-1.5 py-0.5 text-[9px] rounded-full {% if selected_type == 'hybrid' %}bg-white/20 text-white{% else %}bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-400{% endif %}">{{ hybrid_count }}</span>
-                  </a>
-                  
-                  <!-- Tab High Conf -->
-                  <a
-                    class="px-4 py-2 rounded-lg text-xs font-semibold tracking-wide transition-all duration-250 {% if selected_type == 'high_conf' %}bg-primary text-white shadow-sm{% else %}text-slate-650 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/60{% endif %}"
-                    href="{{ url_for('history.history', type='high_conf', q=search_query, date=date_filter, sort=sort_by) }}"
-                    onclick="navigateHistoryWithAjax(event, this.href)"
-                    data-i18n="highConf"
-                  >
-                    Độ tin cậy cao
-                  </a>
-                  
-                  <!-- Tab Low Conf -->
-                  <a
-                    class="px-4 py-2 rounded-lg text-xs font-semibold tracking-wide transition-all duration-250 {% if selected_type == 'low_conf' %}bg-primary text-white shadow-sm{% else %}text-slate-650 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/60{% endif %}"
-                    href="{{ url_for('history.history', type='low_conf', q=search_query, date=date_filter, sort=sort_by) }}"
-                    onclick="navigateHistoryWithAjax(event, this.href)"
-                    data-i18n="lowConf"
-                  >
-                    Độ tin cậy thấp
-                  </a>
-                </div>
-                </div>
-
-                <!-- Right search and togglers container -->
-                <div class="flex items-center gap-3.5 w-full lg:w-auto justify-between lg:justify-end">
-                  
-                  <!-- Grid/Table View Toggles -->
-                  <div class="flex items-center gap-1 p-1 bg-slate-100/80 dark:bg-slate-950/80 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
-                    <button
-                      id="view-grid-btn"
-                      type="button"
-                      onclick="toggleViewMode('grid')"
-                      class="px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer"
-                    >
-                      <span class="material-symbols-outlined text-[16px]">grid_view</span>
-                      <span data-i18n="viewGrid">Lưới</span>
-                    </button>
-                    <button
-                      id="view-table-btn"
-                      type="button"
-                      onclick="toggleViewMode('table')"
-                      class="px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer"
-                    >
-                      <span class="material-symbols-outlined text-[16px]">table_rows</span>
-                      <span data-i18n="viewTable">Bảng</span>
-                    </button>
-                  </div>
-
-                  <!-- Breed search input -->
-                  <div class="relative w-48 sm:w-64">
-                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 pointer-events-none">
-                      <span class="material-symbols-outlined text-[18px]">search</span>
-                    </span>
-                    <input
-                      id="search-breed-input"
-                      value="{{ search_query or '' }}"
-                      onkeydown="if(event.key==='Enter') applyFilters()"
-                      class="w-full pl-9 pr-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-xs font-medium text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all shadow-sm"
-                      placeholder="Tìm giống chó..."
-                      type="text"
-                      data-i18n-placeholder="searchBreed"
-                    >
-                    {% if search_query %}
-                    <a
-                      href="{{ url_for('history.history', type=selected_type, date=date_filter, sort=sort_by) }}"
-                      onclick="navigateHistoryWithAjax(event, this.href)"
-                      class="absolute inset-y-0 right-0 pr-2.5 flex items-center text-slate-400 hover:text-slate-650"
-                      title="Xoá tìm kiếm"
-                    >
-                      <span class="material-symbols-outlined text-[16px]">close</span>
-                    </a>
-                    {% endif %}
-                  </div>
-
-                </div>
-              </div>
-
-              <!-- Dropdown Filters Row & Action buttons -->
-              <div class="flex flex-wrap items-center justify-between gap-4 border-t border-slate-100 dark:border-slate-800/60 pt-4">
-                <div class="flex flex-wrap items-center gap-3">
-                  <!-- Date dropdown -->
-                  <div class="relative">
-                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-450 dark:text-slate-400 pointer-events-none">
-                      <span class="material-symbols-outlined text-[18px]">calendar_today</span>
-                    </span>
-                    <select
-                      id="date-filter-select"
-                      onchange="applyFilters()"
-                      class="pl-9 pr-8 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-xs font-semibold text-slate-700 dark:text-slate-350 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary appearance-none cursor-pointer"
-                    >
-                      <option value="all" {% if date_filter == 'all' %}selected{% endif %} data-i18n="dateAll">Tất cả thời gian</option>
-                      <option value="today" {% if date_filter == 'today' %}selected{% endif %} data-i18n="dateToday">Hôm nay</option>
-                      <option value="7days" {% if date_filter == '7days' %}selected{% endif %} data-i18n="date7Days">7 ngày qua</option>
-                      <option value="30days" {% if date_filter == '30days' %}selected{% endif %} data-i18n="date30Days">30 ngày qua</option>
-                    </select>
-                    <span class="absolute inset-y-0 right-0 pr-2.5 flex items-center text-slate-400 pointer-events-none">
-                      <span class="material-symbols-outlined text-[16px]">expand_more</span>
-                    </span>
-                  </div>
-
-                  <!-- Sorting dropdown -->
-                  <div class="relative">
-                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-450 dark:text-slate-400 pointer-events-none">
-                      <span class="material-symbols-outlined text-[18px]">sort</span>
-                    </span>
-                    <select
-                      id="sort-filter-select"
-                      onchange="applyFilters()"
-                      class="pl-9 pr-8 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-xs font-semibold text-slate-700 dark:text-slate-350 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary appearance-none cursor-pointer"
-                    >
-                      <option value="newest" {% if sort_by == 'newest' %}selected{% endif %} data-i18n="sortNewest">Mới nhất</option>
-                      <option value="oldest" {% if sort_by == 'oldest' %}selected{% endif %} data-i18n="sortOldest">Cũ nhất</option>
-                      <option value="conf_highest" {% if sort_by == 'conf_highest' %}selected{% endif %} data-i18n="sortConfHighest">Độ tin cậy cao nhất</option>
-                      <option value="conf_lowest" {% if sort_by == 'conf_lowest' %}selected{% endif %} data-i18n="sortConfLowest">Độ tin cậy thấp nhất</option>
-                    </select>
-                    <span class="absolute inset-y-0 right-0 pr-2.5 flex items-center text-slate-400 pointer-events-none">
-                      <span class="material-symbols-outlined text-[16px]">expand_more</span>
-                    </span>
-                  </div>
-                </div>
-
-                <!-- Clear filters button -->
-                {% if selected_type != 'all' or search_query or date_filter != 'all' or sort_by != 'newest' %}
-                <a
-                  href="/history"
-                  onclick="navigateHistoryWithAjax(event, this.href)"
-                  class="px-4 py-2 border border-dashed border-red-200 hover:border-red-450 dark:border-red-950/40 dark:hover:border-red-900 text-red-650 hover:text-red-750 dark:text-red-400 dark:hover:text-red-300 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-sm"
-                >
-                  <span class="material-symbols-outlined text-[16px]">filter_alt_off</span>
-                  <span data-i18n="clearFilters">Xóa bộ lọc</span>
-                </a>
-                {% endif %}
-              </div>
-            </section>
-
-            <!-- Grid and Table List Container -->
-            <div class="space-y-6 pt-2">
-              {% if predictions and predictions|length %}
-              
-              <!-- GRID VIEW SECTION -->
-              <div id="grid-view-section" class="transition-opacity duration-300">
-                <div id="history-grid-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-                  {% for pred in predictions %}
-                  {% set conf_pct = ((pred.confidence or 0) * 100) %}
-                  {% set formatted_date = pred.created_at.strftime('%d/%m/%Y %H:%M') if pred.created_at else '' %}
-                  <article class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200/60 dark:border-slate-800/80 shadow-sm hover:shadow-md hover:border-slate-300 dark:hover:border-slate-700 transition-all duration-300 flex flex-col overflow-hidden group">
-                    <div class="aspect-square relative overflow-hidden bg-slate-50 dark:bg-slate-950">
-                      <img alt="{{ pred.breed or 'Dog' }}" class="w-full h-full object-cover group-hover:scale-102 transition-transform duration-300" src="/{{ pred.image_path }}">
-                      
-                      <!-- Floating confidence pill tag -->
-                      <div class="absolute top-2.5 right-2.5 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-2.5 py-1 rounded-full text-xs font-bold text-slate-800 dark:text-slate-200 border border-slate-200/50 dark:border-slate-800 shadow-sm z-10">
-                        {% if pred.confidence is not none %}{{ '%.1f'|format(conf_pct) }}%{% else %}0%{% endif %}
-                      </div>
-                      
-                      <!-- Hover Detail Overlay (Alternative trigger) -->
-                      <div class="absolute inset-0 bg-slate-950/40 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-250 flex items-center justify-center z-20">
-                        <button
-                          type="button"
-                          onclick="openDetailModal('{{ pred.image_path }}', '{{ pred.breed|escape }}', '{{ conf_pct|round(1) }}', '{{ pred.species|escape }}', '{{ formatted_date }}')"
-                          class="px-4 py-2 bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-bold rounded-lg text-xs shadow-md hover:scale-105 active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer"
-                        >
-                          <span class="material-symbols-outlined text-[14px]">visibility</span>
-                          <span data-i18n="viewDetail">Xem chi tiết</span>
-                        </button>
-                      </div>
-                    </div>
-
-                    <div class="p-4 flex flex-col justify-between flex-grow gap-3">
-                      <div class="space-y-1.5">
-                        <!-- Breed title -->
-                        <h3 class="text-xs font-bold text-slate-900 dark:text-white truncate" data-i18n-breed="{{ pred.breed or '' }}" title="{{ pred.breed or 'Chưa xác định' }}">
-                          {{ pred.breed or 'Chưa xác định' }}
-                        </h3>
-                        
-                        <!-- Hybrid/Pure tag -->
-                        <div class="flex">
-                          {% if pred.breed and pred.breed.startswith("Nghi lai:") %}
-                          <span class="px-2 py-0.5 text-[9px] font-bold rounded bg-amber-50 text-amber-700 dark:bg-amber-950/20 dark:text-amber-400 border border-amber-100 dark:border-amber-900/30" data-i18n="hybridDog">
-                            Chó lai
-                          </span>
-                          {% else %}
-                          <span class="px-2 py-0.5 text-[9px] font-bold rounded bg-emerald-50 text-emerald-700 dark:bg-emerald-950/20 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30" data-i18n="pureDog">
-                            Thuần chủng
-                          </span>
-                          {% endif %}
-                        </div>
-                        
-                        <!-- Species (Dog) -->
-                        <div class="flex items-center text-[10px] font-semibold text-slate-500 dark:text-slate-400">
-                          <span class="material-symbols-outlined text-[14px] mr-1">pets</span>
-                          <span data-i18n-auto>{{ pred.species or 'Chó' }}</span>
-                        </div>
-                        
-                        <!-- DateTime -->
-                        <div class="flex items-center text-[10px] text-slate-400 dark:text-slate-500">
-                          <span class="material-symbols-outlined text-[14px] mr-1">schedule</span>
-                          <span>{{ formatted_date }}</span>
-                        </div>
-                      </div>
-                      
-                      <!-- Actions footer inside card -->
-                      <div class="flex items-center gap-2 pt-2 border-t border-slate-100 dark:border-slate-800/60 mt-1">
-                        <button
-                          type="button"
-                          onclick="openDetailModal(this)"
-                          data-image="{{ pred.image_path }}"
-                          data-breed="{{ pred.breed|escape }}"
-                          data-confidence="{{ conf_pct|round(1) }}"
-                          data-species="{{ pred.species|escape }}"
-                          data-date="{{ formatted_date }}"
-                          class="flex-grow py-1.5 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800/60 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-350 font-bold rounded-lg text-[10px] transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
-                        >
-                          <span class="material-symbols-outlined text-[13px]">open_in_new</span>
-                          <span data-i18n="viewDetail">Xem chi tiết</span>
-                        </button>
-                        <button
-                          type="button"
-                          onclick="confirmDeletePrediction(Number('{{ pred.id }}'), this.closest('article'))"
-                          class="p-1.5 border border-red-100 hover:border-red-200 text-red-500 hover:text-red-700 dark:border-red-950/40 dark:hover:border-red-900 dark:text-red-400 dark:hover:text-red-300 bg-red-50/20 hover:bg-red-50 dark:bg-red-950/10 dark:hover:bg-red-950/20 rounded-lg transition-colors flex items-center justify-center cursor-pointer"
-                        >
-                          <span class="material-symbols-outlined text-[15px]">delete</span>
-                        </button>
-                      </div>
-                    </div>
-                  </article>
-                  {% endfor %}
-                </div>
-              </div>
-              
-              <!-- TABLE VIEW SECTION -->
-              <div id="table-view-section" class="transition-opacity duration-300 hidden">
-                <div class="overflow-x-auto bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 rounded-xl shadow-sm">
-                  <table class="w-full text-left border-collapse">
-                    <thead>
-                      <tr class="border-b border-slate-200 dark:border-slate-800 text-[10px] font-bold text-slate-500 dark:text-slate-400 bg-slate-50/50 dark:bg-slate-950/50 uppercase tracking-wider">
-                        <th class="py-3.5 px-4 w-16" data-i18n="imageCol">Ảnh</th>
-                        <th class="py-3.5 px-4" data-i18n="breedCol">Giống chó</th>
-                        <th class="py-3.5 px-4 w-28" data-i18n="typeCol">Phân loại</th>
-                        <th class="py-3.5 px-4 w-40" data-i18n="confidenceCol">Độ tin cậy</th>
-                        <th class="py-3.5 px-4 w-44" data-i18n="timeCol">Thời gian</th>
-                        <th class="py-3.5 px-4 w-24 text-right" data-i18n="actionsCol">Thao tác</th>
-                      </tr>
-                    </thead>
-                    <tbody id="history-table-body">
-                      {% for pred in predictions %}
-                      {% set conf_pct = ((pred.confidence or 0) * 100) %}
-                      {% set formatted_date = pred.created_at.strftime('%d/%m/%Y %H:%M') if pred.created_at else '' %}
-                      <tr class="border-b border-slate-100 dark:border-slate-800/60 text-xs text-slate-750 dark:text-slate-350 hover:bg-slate-50/50 dark:hover:bg-slate-850/30 transition-colors">
-                        <td class="py-3 px-4">
-                          <div class="w-9 h-9 rounded-lg overflow-hidden border border-slate-200/60 dark:border-slate-800/80 bg-slate-50">
-                            <img class="w-full h-full object-cover" src="/{{ pred.image_path }}" alt="dog">
-                          </div>
-                        </td>
-                        <td class="py-3 px-4 font-bold text-slate-900 dark:text-white" data-i18n-breed="{{ pred.breed or '' }}">
-                          {{ pred.breed or 'Chưa xác định' }}
-                        </td>
-                        <td class="py-3 px-4">
-                          {% if pred.breed and pred.breed.startswith("Nghi lai:") %}
-                          <span class="px-2 py-0.5 text-[9px] font-bold rounded bg-amber-50 text-amber-700 dark:bg-amber-950/20 dark:text-amber-400 border border-amber-100 dark:border-amber-900/30" data-i18n="hybridDog">
-                            Chó lai
-                          </span>
-                          {% else %}
-                          <span class="px-2 py-0.5 text-[9px] font-bold rounded bg-emerald-50 text-emerald-700 dark:bg-emerald-950/20 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30" data-i18n="pureDog">
-                            Thuần chủng
-                          </span>
-                          {% endif %}
-                        </td>
-                        <td class="py-3 px-4">
-                          <div class="flex items-center gap-2">
-                            <span class="font-bold text-slate-900 dark:text-white w-9">
-                              {% if pred.confidence is not none %}{{ '%.1f'|format(conf_pct) }}%{% else %}0%{% endif %}
-                            </span>
-                            <div class="h-1.5 rounded-full bg-slate-100 dark:bg-slate-850 overflow-hidden flex-grow max-w-[100px]">
-                              <div class="h-full bg-primary progress-bar-item" data-pct="{% if pred.confidence is not none %}{{ conf_pct|round(1) }}{% else %}0{% endif %}" style="width: 0%;"></div>
-                            </div>
-                          </div>
-                        </td>
-                        <td class="py-3 px-4 text-slate-500 dark:text-slate-400 font-medium">
-                          {{ formatted_date }}
-                        </td>
-                        <td class="py-3 px-4 text-right">
-                          <div class="flex items-center justify-end gap-1.5">
-                            <button
-                              type="button"
-                              onclick="openDetailModal(this)"
-                              data-image="{{ pred.image_path }}"
-                              data-breed="{{ pred.breed|escape }}"
-                              data-confidence="{{ conf_pct|round(1) }}"
-                              data-species="{{ pred.species|escape }}"
-                              data-date="{{ formatted_date }}"
-                              class="p-1.5 text-slate-600 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-lg transition-colors flex items-center justify-center cursor-pointer"
-                              title="Xem chi tiết"
-                              data-i18n-title="viewDetail"
-                            >
-                              <span class="material-symbols-outlined text-[15px]">visibility</span>
-                            </button>
-                            <button
-                              type="button"
-                              onclick="confirmDeletePrediction(Number('{{ pred.id }}'), this.closest('tr'))"
-                              class="p-1.5 text-red-500 hover:text-red-700 bg-red-50/50 hover:bg-red-50 dark:bg-red-950/10 dark:hover:bg-red-950/20 rounded-lg transition-colors flex items-center justify-center border border-red-100/50 dark:border-red-950/40 cursor-pointer"
-                              title="Xóa"
-                              data-i18n-title="deleteBtn"
-                            >
-                              <span class="material-symbols-outlined text-[15px]">delete</span>
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                      {% endfor %}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-              
-              <!-- AJAX Load More & Showing Counter footer block -->
-              <div class="flex flex-col items-center justify-center gap-3 pt-6 pb-4">
-                {% if total_pages and total_pages > 1 %}
-                <button
-                  id="load-more-btn"
-                  type="button"
-                  onclick="loadMoreResults()"
-                  class="px-5 py-2.5 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-350 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-850 rounded-lg text-xs font-semibold shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer"
-                >
-                  <span id="load-more-icon" class="material-symbols-outlined text-[18px]">expand_more</span>
-                  <span id="load-more-text" data-i18n="loadMore">Tải thêm kết quả</span>
-                </button>
-                {% endif %}
-                
-                <div class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 text-center">
-                  <span id="showing-info-text">
-                    <span data-i18n="showingTextPrefix">Đang hiển thị 1 - </span><span id="showing-end-index">{{ predictions|length }}</span> <span data-i18n="showingTextMiddle">trong tổng số</span> <span class="font-bold text-slate-900 dark:text-white">{{ total_records }}</span> <span data-i18n="showingTextSuffix">kết quả.</span>
-                  </span>
-                </div>
-              </div>
-
-              {% else %}
-              
-              <!-- EMPTY STATE CONTAINER -->
-              <section class="bg-white dark:bg-slate-900 rounded-xl p-8 border border-slate-200/60 dark:border-slate-800/80 shadow-sm text-center max-w-lg mx-auto flex flex-col items-center gap-4 my-8">
-                <div class="w-12 h-12 rounded-full bg-slate-50 dark:bg-slate-950 flex items-center justify-center text-slate-400">
-                  <span class="material-symbols-outlined text-[28px]">inbox</span>
-                </div>
-                <div class="space-y-1">
-                  <h3 class="text-sm font-bold text-slate-900 dark:text-white" data-i18n="emptyHistory">Chưa có lịch sử nhận diện</h3>
-                  <p class="text-xs text-slate-500 dark:text-slate-400" data-i18n="emptyHistoryDesc">
-                    Hãy tải ảnh đầu tiên để bắt đầu hành trình dự đoán giống chó.
-                  </p>
-                </div>
-                <a
-                  class="inline-flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg text-xs font-semibold hover:opacity-95 transition-opacity mt-2"
-                  href="{{ url_for('predict.upload_page') }}"
-                >
-                  <span class="material-symbols-outlined text-[16px]">add_a_photo</span>
-                  <span data-i18n="startNow">Bắt đầu ngay</span>
-                </a>
-              </section>
-              
               {% endif %}
             </div>
           </div>
+
+          <!-- Card 2: Chó thuần chủng -->
+          <div
+            class="bg-white dark:bg-slate-900 rounded-xl p-5 border border-slate-200/60 dark:border-slate-800/80 shadow-sm flex flex-col justify-between min-h-[135px]">
+            <div class="flex items-center justify-between">
+              <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider"
+                data-i18n="pureDog">Chó thuần chủng</span>
+              <div
+                class="w-9 h-9 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                <span class="material-symbols-outlined text-[20px]">verified</span>
+              </div>
+            </div>
+            <div class="mt-3">
+              <div class="text-2xl font-bold text-slate-900 dark:text-white tracking-tight"
+                data-counter="{{ pure_count }}">0</div>
+              <div class="text-[11px] font-semibold text-slate-400 dark:text-slate-500">
+                <span data-i18n="ratioPercentage">Chiếm</span> {{ (pure_count / total_records_all * 100)|round(1) if
+                total_records_all > 0 else 0.0 }}%
+              </div>
+              {% if p_trend.has_data %}
+              <div class="flex items-center gap-1 mt-2">
+                <span
+                  class="text-[10px] font-bold px-1.5 py-0.5 rounded flex items-center gap-0.5 {{ 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/20 dark:text-emerald-400' if p_trend.up else 'bg-red-50 text-red-700 dark:bg-red-950/20 dark:text-red-400' }}">
+                  <span class="material-symbols-outlined text-[12px] font-bold">{{ 'trending_up' if p_trend.up else
+                    'trending_down' }}</span>
+                  <span>{{ '+' if p_trend.up else '' }}{{ p_trend.val }}%</span>
+                </span>
+                <span class="text-[10px] text-slate-450 dark:text-slate-500" data-i18n="vs7DaysAgo">so với 7 ngày
+                  trước</span>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+
+          <!-- Card 3: Chó lai -->
+          <div
+            class="bg-white dark:bg-slate-900 rounded-xl p-5 border border-slate-200/60 dark:border-slate-800/80 shadow-sm flex flex-col justify-between min-h-[135px]">
+            <div class="flex items-center justify-between">
+              <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider"
+                data-i18n="hybridDog">Chó lai</span>
+              <div
+                class="w-9 h-9 rounded-lg bg-amber-50 dark:bg-amber-950/40 flex items-center justify-center text-amber-600 dark:text-amber-400">
+                <span class="material-symbols-outlined text-[20px]">call_split</span>
+              </div>
+            </div>
+            <div class="mt-3">
+              <div class="text-2xl font-bold text-slate-900 dark:text-white tracking-tight"
+                data-counter="{{ hybrid_count }}">0</div>
+              <div class="text-[11px] font-semibold text-slate-400 dark:text-slate-500">
+                <span data-i18n="ratioPercentage">Chiếm</span> {{ (hybrid_count / total_records_all * 100)|round(1) if
+                total_records_all > 0 else 0.0 }}%
+              </div>
+              {% if h_trend.has_data %}
+              <div class="flex items-center gap-1 mt-2">
+                <span
+                  class="text-[10px] font-bold px-1.5 py-0.5 rounded flex items-center gap-0.5 {{ 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/20 dark:text-emerald-400' if h_trend.up else 'bg-red-50 text-red-700 dark:bg-red-950/20 dark:text-red-400' }}">
+                  <span class="material-symbols-outlined text-[12px] font-bold">{{ 'trending_up' if h_trend.up else
+                    'trending_down' }}</span>
+                  <span>{{ '+' if h_trend.up else '' }}{{ h_trend.val }}%</span>
+                </span>
+                <span class="text-[10px] text-slate-450 dark:text-slate-500" data-i18n="vs7DaysAgo">so với 7 ngày
+                  trước</span>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+
+          <!-- Card 4: Độ tin cậy trung bình -->
+          <div
+            class="bg-white dark:bg-slate-900 rounded-xl p-5 border border-slate-200/60 dark:border-slate-800/80 shadow-sm flex flex-col justify-between min-h-[135px]">
+            <div class="flex items-center justify-between">
+              <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider"
+                data-i18n="avgConfidence">Độ tin cậy TB</span>
+              <div
+                class="w-9 h-9 rounded-lg bg-indigo-50 dark:bg-indigo-950/40 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+                <span class="material-symbols-outlined text-[20px]">speed</span>
+              </div>
+            </div>
+            <div class="mt-3">
+              <div class="text-2xl font-bold text-slate-900 dark:text-white tracking-tight"
+                data-counter="{{ avg_conf|round(1) }}" data-suffix="%">0.0%</div>
+              <div class="text-[11px] font-semibold text-slate-400 dark:text-slate-500" data-i18n="avgAccuracy">Độ chính
+                xác trung bình</div>
+              {% if c_trend.has_data %}
+              <div class="flex items-center gap-1 mt-2">
+                <span
+                  class="text-[10px] font-bold px-1.5 py-0.5 rounded flex items-center gap-0.5 {{ 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/20 dark:text-emerald-400' if c_trend.up else 'bg-red-50 text-red-700 dark:bg-red-950/20 dark:text-red-400' }}">
+                  <span class="material-symbols-outlined text-[12px] font-bold">{{ 'trending_up' if c_trend.up else
+                    'trending_down' }}</span>
+                  <span>{{ '+' if c_trend.up else '' }}{{ c_trend.val }}%</span>
+                </span>
+                <span class="text-[10px] text-slate-450 dark:text-slate-500" data-i18n="vs7DaysAgo">so với 7 ngày
+                  trước</span>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+        </section>
+
+        <!-- Filters, Search & View Controls -->
+        <div id="history-pjax-container" class="space-y-5 transition-all duration-300">
+          <input type="hidden" id="pjax-total-pages" value="{{ total_pages or 1 }}">
+          <section class="flex flex-col gap-4 border-t border-slate-200/60 dark:border-slate-800/80 pt-5">
+
+            <!-- Tab bar, View Switch & Search Bar -->
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 min-w-0">
+              <!-- Tab List Selector: pill cố định, tabs cuộn bên trong -->
+              <div
+                class="overflow-x-auto tab-bar-scroll w-full lg:w-fit p-1 bg-slate-100/80 dark:bg-slate-950/80 backdrop-blur-md rounded-xl border border-slate-200/60 dark:border-slate-800 shadow-sm">
+                <div class="flex items-center gap-1.5 w-max">
+                  <!-- Tab All -->
+                  <a class="px-4 py-2 rounded-lg text-xs font-semibold tracking-wide transition-all duration-250 flex items-center gap-1.5 {% if selected_type == 'all' or not selected_type %}bg-primary text-white shadow-sm{% else %}text-slate-650 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/60{% endif %}"
+                    href="{{ url_for('history.history', type='all', q=search_query, date=date_filter, sort=sort_by) }}"
+                    onclick="navigateHistoryWithAjax(event, this.href)">
+                    <span data-i18n="all">Tất cả</span>
+                    <span
+                      class="px-1.5 py-0.5 text-[9px] rounded-full {% if selected_type == 'all' or not selected_type %}bg-white/20 text-white{% else %}bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-400{% endif %}">{{
+                      total_records_all }}</span>
+                  </a>
+
+                  <!-- Tab Purebred -->
+                  <a class="px-4 py-2 rounded-lg text-xs font-semibold tracking-wide transition-all duration-250 flex items-center gap-1.5 {% if selected_type == 'pure' %}bg-primary text-white shadow-sm{% else %}text-slate-650 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/60{% endif %}"
+                    href="{{ url_for('history.history', type='pure', q=search_query, date=date_filter, sort=sort_by) }}"
+                    onclick="navigateHistoryWithAjax(event, this.href)">
+                    <span data-i18n="pureDog">Thuần chủng</span>
+                    <span
+                      class="px-1.5 py-0.5 text-[9px] rounded-full {% if selected_type == 'pure' %}bg-white/20 text-white{% else %}bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-400{% endif %}">{{
+                      pure_count }}</span>
+                  </a>
+
+                  <!-- Tab Mixed -->
+                  <a class="px-4 py-2 rounded-lg text-xs font-semibold tracking-wide transition-all duration-250 flex items-center gap-1.5 {% if selected_type == 'hybrid' %}bg-primary text-white shadow-sm{% else %}text-slate-650 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/60{% endif %}"
+                    href="{{ url_for('history.history', type='hybrid', q=search_query, date=date_filter, sort=sort_by) }}"
+                    onclick="navigateHistoryWithAjax(event, this.href)">
+                    <span data-i18n="hybridDog">Chó lai</span>
+                    <span
+                      class="px-1.5 py-0.5 text-[9px] rounded-full {% if selected_type == 'hybrid' %}bg-white/20 text-white{% else %}bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-400{% endif %}">{{
+                      hybrid_count }}</span>
+                  </a>
+
+                  <!-- Tab High Conf -->
+                  <a class="px-4 py-2 rounded-lg text-xs font-semibold tracking-wide transition-all duration-250 {% if selected_type == 'high_conf' %}bg-primary text-white shadow-sm{% else %}text-slate-650 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/60{% endif %}"
+                    href="{{ url_for('history.history', type='high_conf', q=search_query, date=date_filter, sort=sort_by) }}"
+                    onclick="navigateHistoryWithAjax(event, this.href)" data-i18n="highConf">
+                    Độ tin cậy cao
+                  </a>
+
+                  <!-- Tab Low Conf -->
+                  <a class="px-4 py-2 rounded-lg text-xs font-semibold tracking-wide transition-all duration-250 {% if selected_type == 'low_conf' %}bg-primary text-white shadow-sm{% else %}text-slate-650 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/60{% endif %}"
+                    href="{{ url_for('history.history', type='low_conf', q=search_query, date=date_filter, sort=sort_by) }}"
+                    onclick="navigateHistoryWithAjax(event, this.href)" data-i18n="lowConf">
+                    Độ tin cậy thấp
+                  </a>
+                </div>
+              </div>
+
+              <!-- Right search and togglers container -->
+              <div class="flex items-center gap-3.5 w-full lg:w-auto justify-between lg:justify-end">
+
+                <!-- Grid/Table View Toggles -->
+                <div
+                  class="flex items-center gap-1 p-1 bg-slate-100/80 dark:bg-slate-950/80 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                  <button id="view-grid-btn" type="button" onclick="toggleViewMode('grid')"
+                    class="px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer">
+                    <span class="material-symbols-outlined text-[16px]">grid_view</span>
+                    <span data-i18n="viewGrid">Lưới</span>
+                  </button>
+                  <button id="view-table-btn" type="button" onclick="toggleViewMode('table')"
+                    class="px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer">
+                    <span class="material-symbols-outlined text-[16px]">table_rows</span>
+                    <span data-i18n="viewTable">Bảng</span>
+                  </button>
+                </div>
+
+                <!-- Breed search input -->
+                <div class="relative w-48 sm:w-64">
+                  <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 pointer-events-none">
+                    <span class="material-symbols-outlined text-[18px]">search</span>
+                  </span>
+                  <input id="search-breed-input" value="{{ search_query or '' }}"
+                    onkeydown="if(event.key==='Enter') applyFilters()"
+                    class="w-full pl-9 pr-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-xs font-medium text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all shadow-sm"
+                    placeholder="Tìm giống chó..." type="text" data-i18n-placeholder="searchBreed">
+                  {% if search_query %}
+                  <a href="{{ url_for('history.history', type=selected_type, date=date_filter, sort=sort_by) }}"
+                    onclick="navigateHistoryWithAjax(event, this.href)"
+                    class="absolute inset-y-0 right-0 pr-2.5 flex items-center text-slate-400 hover:text-slate-650"
+                    title="Xoá tìm kiếm">
+                    <span class="material-symbols-outlined text-[16px]">close</span>
+                  </a>
+                  {% endif %}
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Dropdown Filters Row & Action buttons -->
+            <div
+              class="flex flex-wrap items-center justify-between gap-4 border-t border-slate-100 dark:border-slate-800/60 pt-4">
+              <div class="flex flex-wrap items-center gap-3">
+                <!-- Date dropdown -->
+                <div class="relative">
+                  <span
+                    class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-450 dark:text-slate-400 pointer-events-none">
+                    <span class="material-symbols-outlined text-[18px]">calendar_today</span>
+                  </span>
+                  <select id="date-filter-select" onchange="applyFilters()"
+                    class="pl-9 pr-8 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-xs font-semibold text-slate-700 dark:text-slate-350 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary appearance-none cursor-pointer">
+                    <option value="all" {% if date_filter=='all' %}selected{% endif %} data-i18n="dateAll">Tất cả thời
+                      gian</option>
+                    <option value="today" {% if date_filter=='today' %}selected{% endif %} data-i18n="dateToday">Hôm nay
+                    </option>
+                    <option value="7days" {% if date_filter=='7days' %}selected{% endif %} data-i18n="date7Days">7 ngày
+                      qua</option>
+                    <option value="30days" {% if date_filter=='30days' %}selected{% endif %} data-i18n="date30Days">30
+                      ngày qua</option>
+                  </select>
+                  <span class="absolute inset-y-0 right-0 pr-2.5 flex items-center text-slate-400 pointer-events-none">
+                    <span class="material-symbols-outlined text-[16px]">expand_more</span>
+                  </span>
+                </div>
+
+                <!-- Sorting dropdown -->
+                <div class="relative">
+                  <span
+                    class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-450 dark:text-slate-400 pointer-events-none">
+                    <span class="material-symbols-outlined text-[18px]">sort</span>
+                  </span>
+                  <select id="sort-filter-select" onchange="applyFilters()"
+                    class="pl-9 pr-8 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-xs font-semibold text-slate-700 dark:text-slate-350 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary appearance-none cursor-pointer">
+                    <option value="newest" {% if sort_by=='newest' %}selected{% endif %} data-i18n="sortNewest">Mới nhất
+                    </option>
+                    <option value="oldest" {% if sort_by=='oldest' %}selected{% endif %} data-i18n="sortOldest">Cũ nhất
+                    </option>
+                    <option value="conf_highest" {% if sort_by=='conf_highest' %}selected{% endif %}
+                      data-i18n="sortConfHighest">Độ tin cậy cao nhất</option>
+                    <option value="conf_lowest" {% if sort_by=='conf_lowest' %}selected{% endif %}
+                      data-i18n="sortConfLowest">Độ tin cậy thấp nhất</option>
+                  </select>
+                  <span class="absolute inset-y-0 right-0 pr-2.5 flex items-center text-slate-400 pointer-events-none">
+                    <span class="material-symbols-outlined text-[16px]">expand_more</span>
+                  </span>
+                </div>
+              </div>
+
+              <!-- Clear filters button -->
+              {% if selected_type != 'all' or search_query or date_filter != 'all' or sort_by != 'newest' %}
+              <a href="/history" onclick="navigateHistoryWithAjax(event, this.href)"
+                class="px-4 py-2 border border-dashed border-red-200 hover:border-red-450 dark:border-red-950/40 dark:hover:border-red-900 text-red-650 hover:text-red-750 dark:text-red-400 dark:hover:text-red-300 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-sm">
+                <span class="material-symbols-outlined text-[16px]">filter_alt_off</span>
+                <span data-i18n="clearFilters">Xóa bộ lọc</span>
+              </a>
+              {% endif %}
+            </div>
+          </section>
+
+          <!-- Grid and Table List Container -->
+          <div class="space-y-6 pt-2">
+            {% if predictions and predictions|length %}
+
+            <!-- GRID VIEW SECTION -->
+            <div id="grid-view-section" class="transition-opacity duration-300">
+              <div id="history-grid-container"
+                class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                {% for pred in predictions %}
+                {% set conf_pct = ((pred.confidence or 0) * 100) %}
+                {% set formatted_date = pred.created_at.strftime('%d/%m/%Y %H:%M') if pred.created_at else '' %}
+                <article
+                  class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200/60 dark:border-slate-800/80 shadow-sm hover:shadow-md hover:border-slate-300 dark:hover:border-slate-700 transition-all duration-300 flex flex-col overflow-hidden group">
+                  <div class="aspect-square relative overflow-hidden bg-slate-50 dark:bg-slate-950">
+                    <img alt="{{ pred.breed or 'Dog' }}"
+                      class="w-full h-full object-cover group-hover:scale-102 transition-transform duration-300"
+                      src="/{{ pred.image_path }}">
+
+                    <!-- Floating confidence pill tag -->
+                    <div
+                      class="absolute top-2.5 right-2.5 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-2.5 py-1 rounded-full text-xs font-bold text-slate-800 dark:text-slate-200 border border-slate-200/50 dark:border-slate-800 shadow-sm z-10">
+                      {% if pred.confidence is not none %}{{ '%.1f'|format(conf_pct) }}%{% else %}0%{% endif %}
+                    </div>
+
+                    <!-- Hover Detail Overlay (Alternative trigger) -->
+                    <div
+                      class="absolute inset-0 bg-slate-950/40 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-250 flex items-center justify-center z-20">
+                      <button type="button"
+                        onclick="openDetailModal('{{ pred.image_path }}', '{{ pred.breed|escape }}', '{{ conf_pct|round(1) }}', '{{ pred.species|escape }}', '{{ formatted_date }}')"
+                        class="px-4 py-2 bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-bold rounded-lg text-xs shadow-md hover:scale-105 active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer">
+                        <span class="material-symbols-outlined text-[14px]">visibility</span>
+                        <span data-i18n="viewDetail">Xem chi tiết</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="p-4 flex flex-col justify-between flex-grow gap-3">
+                    <div class="space-y-1.5">
+                      <!-- Breed title -->
+                      <h3 class="text-xs font-bold text-slate-900 dark:text-white truncate"
+                        data-i18n-breed="{{ pred.breed or '' }}" title="{{ pred.breed or 'Chưa xác định' }}">
+                        {{ pred.breed or 'Chưa xác định' }}
+                      </h3>
+
+                      <!-- Hybrid/Pure tag -->
+                      <div class="flex">
+                        {% if pred.breed and pred.breed.startswith("Nghi lai:") %}
+                        <span
+                          class="px-2 py-0.5 text-[9px] font-bold rounded bg-amber-50 text-amber-700 dark:bg-amber-950/20 dark:text-amber-400 border border-amber-100 dark:border-amber-900/30"
+                          data-i18n="hybridDog">
+                          Chó lai
+                        </span>
+                        {% else %}
+                        <span
+                          class="px-2 py-0.5 text-[9px] font-bold rounded bg-emerald-50 text-emerald-700 dark:bg-emerald-950/20 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30"
+                          data-i18n="pureDog">
+                          Thuần chủng
+                        </span>
+                        {% endif %}
+                      </div>
+
+                      <!-- Species (Dog) -->
+                      <div class="flex items-center text-[10px] font-semibold text-slate-500 dark:text-slate-400">
+                        <span class="material-symbols-outlined text-[14px] mr-1">pets</span>
+                        <span data-i18n-auto>{{ pred.species or 'Chó' }}</span>
+                      </div>
+
+                      <!-- DateTime -->
+                      <div class="flex items-center text-[10px] text-slate-400 dark:text-slate-500">
+                        <span class="material-symbols-outlined text-[14px] mr-1">schedule</span>
+                        <span>{{ formatted_date }}</span>
+                      </div>
+                    </div>
+
+                    <!-- Actions footer inside card -->
+                    <div class="flex items-center gap-2 pt-2 border-t border-slate-100 dark:border-slate-800/60 mt-1">
+                      <button type="button" onclick="openDetailModal(this)" data-image="{{ pred.image_path }}"
+                        data-breed="{{ pred.breed|escape }}" data-confidence="{{ conf_pct|round(1) }}"
+                        data-species="{{ pred.species|escape }}" data-date="{{ formatted_date }}"
+                        class="flex-grow py-1.5 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800/60 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-350 font-bold rounded-lg text-[10px] transition-colors flex items-center justify-center gap-1.5 cursor-pointer">
+                        <span class="material-symbols-outlined text-[13px]">open_in_new</span>
+                        <span data-i18n="viewDetail">Xem chi tiết</span>
+                      </button>
+                      <button type="button"
+                        onclick="confirmDeletePrediction(Number('{{ pred.id }}'), this.closest('article'))"
+                        class="p-1.5 border border-red-100 hover:border-red-200 text-red-500 hover:text-red-700 dark:border-red-950/40 dark:hover:border-red-900 dark:text-red-400 dark:hover:text-red-300 bg-red-50/20 hover:bg-red-50 dark:bg-red-950/10 dark:hover:bg-red-950/20 rounded-lg transition-colors flex items-center justify-center cursor-pointer">
+                        <span class="material-symbols-outlined text-[15px]">delete</span>
+                      </button>
+                    </div>
+                  </div>
+                </article>
+                {% endfor %}
+              </div>
+            </div>
+
+            <!-- TABLE VIEW SECTION -->
+            <div id="table-view-section" class="transition-opacity duration-300 hidden">
+              <div
+                class="overflow-x-auto bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 rounded-xl shadow-sm">
+                <table class="w-full text-left border-collapse">
+                  <thead>
+                    <tr
+                      class="border-b border-slate-200 dark:border-slate-800 text-[10px] font-bold text-slate-500 dark:text-slate-400 bg-slate-50/50 dark:bg-slate-950/50 uppercase tracking-wider">
+                      <th class="py-3.5 px-4 w-16" data-i18n="imageCol">Ảnh</th>
+                      <th class="py-3.5 px-4" data-i18n="breedCol">Giống chó</th>
+                      <th class="py-3.5 px-4 w-28" data-i18n="typeCol">Phân loại</th>
+                      <th class="py-3.5 px-4 w-40" data-i18n="confidenceCol">Độ tin cậy</th>
+                      <th class="py-3.5 px-4 w-44" data-i18n="timeCol">Thời gian</th>
+                      <th class="py-3.5 px-4 w-24 text-right" data-i18n="actionsCol">Thao tác</th>
+                    </tr>
+                  </thead>
+                  <tbody id="history-table-body">
+                    {% for pred in predictions %}
+                    {% set conf_pct = ((pred.confidence or 0) * 100) %}
+                    {% set formatted_date = pred.created_at.strftime('%d/%m/%Y %H:%M') if pred.created_at else '' %}
+                    <tr
+                      class="border-b border-slate-100 dark:border-slate-800/60 text-xs text-slate-750 dark:text-slate-350 hover:bg-slate-50/50 dark:hover:bg-slate-850/30 transition-colors">
+                      <td class="py-3 px-4">
+                        <div
+                          class="w-9 h-9 rounded-lg overflow-hidden border border-slate-200/60 dark:border-slate-800/80 bg-slate-50">
+                          <img class="w-full h-full object-cover" src="/{{ pred.image_path }}" alt="dog">
+                        </div>
+                      </td>
+                      <td class="py-3 px-4 font-bold text-slate-900 dark:text-white"
+                        data-i18n-breed="{{ pred.breed or '' }}">
+                        {{ pred.breed or 'Chưa xác định' }}
+                      </td>
+                      <td class="py-3 px-4">
+                        {% if pred.breed and pred.breed.startswith("Nghi lai:") %}
+                        <span
+                          class="px-2 py-0.5 text-[9px] font-bold rounded bg-amber-50 text-amber-700 dark:bg-amber-950/20 dark:text-amber-400 border border-amber-100 dark:border-amber-900/30"
+                          data-i18n="hybridDog">
+                          Chó lai
+                        </span>
+                        {% else %}
+                        <span
+                          class="px-2 py-0.5 text-[9px] font-bold rounded bg-emerald-50 text-emerald-700 dark:bg-emerald-950/20 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30"
+                          data-i18n="pureDog">
+                          Thuần chủng
+                        </span>
+                        {% endif %}
+                      </td>
+                      <td class="py-3 px-4">
+                        <div class="flex items-center gap-2">
+                          <span class="font-bold text-slate-900 dark:text-white w-9">
+                            {% if pred.confidence is not none %}{{ '%.1f'|format(conf_pct) }}%{% else %}0%{% endif %}
+                          </span>
+                          <div
+                            class="h-1.5 rounded-full bg-slate-100 dark:bg-slate-850 overflow-hidden flex-grow max-w-[100px]">
+                            <div class="h-full bg-primary progress-bar-item"
+                              data-pct="{% if pred.confidence is not none %}{{ conf_pct|round(1) }}{% else %}0{% endif %}"
+                              style="width: 0%;"></div>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="py-3 px-4 text-slate-500 dark:text-slate-400 font-medium">
+                        {{ formatted_date }}
+                      </td>
+                      <td class="py-3 px-4 text-right">
+                        <div class="flex items-center justify-end gap-1.5">
+                          <button type="button" onclick="openDetailModal(this)" data-image="{{ pred.image_path }}"
+                            data-breed="{{ pred.breed|escape }}" data-confidence="{{ conf_pct|round(1) }}"
+                            data-species="{{ pred.species|escape }}" data-date="{{ formatted_date }}"
+                            class="p-1.5 text-slate-600 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-lg transition-colors flex items-center justify-center cursor-pointer"
+                            title="Xem chi tiết" data-i18n-title="viewDetail">
+                            <span class="material-symbols-outlined text-[15px]">visibility</span>
+                          </button>
+                          <button type="button"
+                            onclick="confirmDeletePrediction(Number('{{ pred.id }}'), this.closest('tr'))"
+                            class="p-1.5 text-red-500 hover:text-red-700 bg-red-50/50 hover:bg-red-50 dark:bg-red-950/10 dark:hover:bg-red-950/20 rounded-lg transition-colors flex items-center justify-center border border-red-100/50 dark:border-red-950/40 cursor-pointer"
+                            title="Xóa" data-i18n-title="deleteBtn">
+                            <span class="material-symbols-outlined text-[15px]">delete</span>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- AJAX Load More & Showing Counter footer block -->
+            <div class="flex flex-col items-center justify-center gap-3 pt-6 pb-4">
+              {% if total_pages and total_pages > 1 %}
+              <button id="load-more-btn" type="button" onclick="loadMoreResults()"
+                class="px-5 py-2.5 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-350 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-850 rounded-lg text-xs font-semibold shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer">
+                <span id="load-more-icon" class="material-symbols-outlined text-[18px]">expand_more</span>
+                <span id="load-more-text" data-i18n="loadMore">Tải thêm kết quả</span>
+              </button>
+              {% endif %}
+
+              <div class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 text-center">
+                <span id="showing-info-text">
+                  <span data-i18n="showingTextPrefix">Đang hiển thị 1 - </span><span id="showing-end-index">{{
+                    predictions|length }}</span> <span data-i18n="showingTextMiddle">trong tổng số</span> <span
+                    class="font-bold text-slate-900 dark:text-white">{{ total_records }}</span> <span
+                    data-i18n="showingTextSuffix">kết quả.</span>
+                </span>
+              </div>
+            </div>
+
+            {% else %}
+
+            <!-- EMPTY STATE CONTAINER -->
+            <section
+              class="bg-white dark:bg-slate-900 rounded-xl p-8 border border-slate-200/60 dark:border-slate-800/80 shadow-sm text-center max-w-lg mx-auto flex flex-col items-center gap-4 my-8">
+              <div
+                class="w-12 h-12 rounded-full bg-slate-50 dark:bg-slate-950 flex items-center justify-center text-slate-400">
+                <span class="material-symbols-outlined text-[28px]">inbox</span>
+              </div>
+              <div class="space-y-1">
+                <h3 class="text-sm font-bold text-slate-900 dark:text-white" data-i18n="emptyHistory">Chưa có lịch sử
+                  nhận diện</h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400" data-i18n="emptyHistoryDesc">
+                  Hãy tải ảnh đầu tiên để bắt đầu hành trình dự đoán giống chó.
+                </p>
+              </div>
+              <a class="inline-flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg text-xs font-semibold hover:opacity-95 transition-opacity mt-2"
+                href="{{ url_for('predict.upload_page') }}">
+                <span class="material-symbols-outlined text-[16px]">add_a_photo</span>
+                <span data-i18n="startNow">Bắt đầu ngay</span>
+              </a>
+            </section>
+
+            {% endif %}
+          </div>
         </div>
       </div>
-    </main>
+    </div>
+  </main>
 
-    <!-- Modal Detail Popup -->
+  <!-- Modal Detail Popup -->
+  <div id="detailModal"
+    class="fixed inset-0 z-[1050] hidden items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm transition-all duration-300">
     <div
-      id="detailModal"
-      class="fixed inset-0 z-[1050] hidden items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm transition-all duration-300"
-    >
-      <div
-        class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl max-w-2xl w-full border border-outline-variant/30 dark:border-slate-800 overflow-hidden shadow-2xl transition-transform transform scale-95 duration-300 flex flex-col md:flex-row md:h-[420px]"
-      >
-        <!-- Image Panel -->
-        <div class="w-full md:w-1/2 bg-slate-950 flex items-center justify-center relative min-h-[250px] md:min-h-0">
-          <img
-            id="modalImage"
-            class="w-full h-full object-cover absolute inset-0"
-            src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'%3E%3C/svg%3E"
-            alt="Detection image"
-          >
-          <!-- Species Badge -->
-          <div class="absolute bottom-4 left-4 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full text-white text-xs font-semibold flex items-center gap-1.5 z-10 border border-white/10">
-            <span class="material-symbols-outlined text-[14px]">pets</span>
-            <span id="modalSpecies" data-i18n="speciesDog">Chó</span>
-          </div>
+      class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl max-w-2xl w-full border border-outline-variant/30 dark:border-slate-800 overflow-hidden shadow-2xl transition-transform transform scale-95 duration-300 flex flex-col md:flex-row md:h-[420px]">
+      <!-- Image Panel -->
+      <div class="w-full md:w-1/2 bg-slate-950 flex items-center justify-center relative min-h-[250px] md:min-h-0">
+        <img id="modalImage" class="w-full h-full object-cover absolute inset-0"
+          src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'%3E%3C/svg%3E"
+          alt="Detection image">
+        <!-- Species Badge -->
+        <div
+          class="absolute bottom-4 left-4 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full text-white text-xs font-semibold flex items-center gap-1.5 z-10 border border-white/10">
+          <span class="material-symbols-outlined text-[14px]">pets</span>
+          <span id="modalSpecies" data-i18n="speciesDog">Chó</span>
         </div>
+      </div>
 
-        <!-- Info Panel -->
-        <div class="w-full md:w-1/2 p-6 flex flex-col justify-between text-slate-800 dark:text-slate-100">
-          <div>
-            <div class="flex items-center justify-between mb-4">
-              <!-- Type Badge -->
-              <span id="modalTypeBadge" class="px-2.5 py-1 rounded-full text-xs font-bold"></span>
-              <!-- Close Button -->
-              <button
-                type="button"
-                onclick="closeModal()"
-                class="w-8 h-8 rounded-full bg-surface-container-low dark:bg-slate-800 hover:bg-surface-container-high dark:hover:bg-slate-700 flex items-center justify-center text-on-surface-variant transition-colors cursor-pointer"
-              >
-                <span class="material-symbols-outlined text-[20px]">close</span>
-              </button>
-            </div>
-
-            <h3 id="modalBreed" class="text-lg font-bold text-slate-900 dark:text-white leading-snug mb-3">&nbsp;</h3>
-
-            <!-- Parent mix info (Only shown for hybrid) -->
-            <div
-              id="modalHybridInfo"
-              class="mb-4 hidden p-3 rounded-xl bg-surface-container-low dark:bg-slate-850/50 border border-outline-variant/20 dark:border-slate-800"
-            >
-              <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 block mb-1.5 uppercase tracking-wider" data-i18n="hybridRatioExpected">Tỷ lệ lai dự kiến</span>
-              <div class="flex items-center justify-between text-xs font-semibold">
-                <span id="modalParent1" class="text-slate-800 dark:text-slate-200"></span>
-                <span id="modalParent2" class="text-slate-800 dark:text-slate-200"></span>
-              </div>
-            </div>
-
-            <!-- Confidence Score -->
-            <div class="mb-5">
-              <div class="flex items-center justify-between text-xs mb-1.5">
-                <span class="text-slate-500 dark:text-slate-400 font-semibold" data-i18n="confidence">Độ tin cậy</span>
-                <span id="modalConfText" class="font-bold text-primary dark:text-blue-400"></span>
-              </div>
-              <div class="h-2 rounded-full bg-surface-container-low dark:bg-slate-800 overflow-hidden">
-                <div
-                  id="modalConfBar"
-                  class="h-full bg-gradient-to-r from-primary/80 to-primary dark:from-blue-500/80 dark:to-blue-450 rounded-full transition-all duration-300 w-0"
-                ></div>
-              </div>
-            </div>
-
-            <!-- Date and Time -->
-            <div class="flex items-center gap-2 text-slate-550 dark:text-slate-400 text-xs">
-              <span class="material-symbols-outlined text-[16px]">schedule</span>
-              <span data-i18n="identificationTimeLabel">Thời gian nhận diện:</span>
-              <span id="modalDate" class="font-bold text-slate-700 dark:text-slate-300"></span>
-            </div>
-          </div>
-
-          <!-- Footer Button -->
-          <div class="mt-6">
-            <button
-              type="button"
-              onclick="closeModal()"
-              class="w-full py-2.5 bg-primary hover:bg-primary/95 text-white font-semibold rounded-xl text-xs transition-colors cursor-pointer shadow-sm flex items-center justify-center gap-2"
-              data-i18n="closeWindowBtn"
-            >
-              <span data-i18n="closeWindowBtn">Đóng cửa sổ</span>
+      <!-- Info Panel -->
+      <div class="w-full md:w-1/2 p-6 flex flex-col justify-between text-slate-800 dark:text-slate-100">
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <!-- Type Badge -->
+            <span id="modalTypeBadge" class="px-2.5 py-1 rounded-full text-xs font-bold"></span>
+            <!-- Close Button -->
+            <button type="button" onclick="closeModal()"
+              class="w-8 h-8 rounded-full bg-surface-container-low dark:bg-slate-800 hover:bg-surface-container-high dark:hover:bg-slate-700 flex items-center justify-center text-on-surface-variant transition-colors cursor-pointer">
+              <span class="material-symbols-outlined text-[20px]">close</span>
             </button>
           </div>
-        </div>
-      </div>
-    </div>
 
-    <!-- Deletion Confirmation Modal -->
-    <div
-      id="deleteConfirmModal"
-      class="fixed inset-0 z-[1100] hidden items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm transition-all duration-300"
-    >
-      <div
-        class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl max-w-md w-full border border-outline-variant/30 dark:border-slate-800 overflow-hidden shadow-2xl transition-transform transform scale-95 duration-300 p-6 flex flex-col gap-4 text-center"
-      >
-        <div class="mx-auto w-12 h-12 rounded-full bg-red-50 dark:bg-red-950/30 flex items-center justify-center text-red-650 dark:text-red-400">
-          <span class="material-symbols-outlined text-[28px]">warning</span>
-        </div>
-        
-        <div class="space-y-1.5">
-          <h3 class="text-base font-bold text-slate-900 dark:text-white" data-i18n="confirmDeleteTitle">Xác nhận xóa</h3>
-          <p class="text-xs text-slate-500 dark:text-slate-400" data-i18n="deleteConfirm">
-            Bạn có chắc muốn xóa kết quả nhận diện này không?
-          </p>
-        </div>
-        
-        <div class="flex items-center gap-3 mt-2">
-          <button
-            type="button"
-            onclick="closeDeleteModal()"
-            class="flex-1 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-850 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-350 font-semibold rounded-lg text-xs transition-colors cursor-pointer"
-            data-i18n="cancel"
-          >
-            Hủy
-          </button>
-          <button
-            id="confirm-delete-btn"
-            type="button"
-            class="flex-1 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg text-xs transition-colors cursor-pointer shadow-sm"
-            data-i18n="deleteBtn"
-          >
-            Xóa
-          </button>
-        </div>
-      </div>
-    </div>
+          <h3 id="modalBreed" class="text-lg font-bold text-slate-900 dark:text-white leading-snug mb-3">&nbsp;</h3>
 
-    <!-- Export Configuration Modal -->
-    <div
-      id="exportModal"
-      class="fixed inset-0 z-[1100] hidden items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm transition-all duration-300"
-    >
-      <div
-        class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl max-w-md w-full border border-outline-variant/30 dark:border-slate-800 overflow-hidden shadow-2xl transition-transform transform scale-95 duration-300 p-6 flex flex-col gap-5 text-left text-slate-850 dark:text-slate-100"
-      >
-        <div class="flex items-center justify-between border-b border-slate-200/60 dark:border-slate-800 pb-3">
-          <h3 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <span class="material-symbols-outlined text-primary dark:text-blue-400">download</span>
-            <span data-i18n="exportModalTitle">Xuất lịch sử nhận diện</span>
-          </h3>
-          <button
-            type="button"
-            onclick="closeExportModal()"
-            class="w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center text-slate-500 dark:text-slate-400 transition-colors cursor-pointer"
-          >
-            <span class="material-symbols-outlined text-[18px]">close</span>
-          </button>
-        </div>
-        
-        <!-- Options content -->
-        <div class="space-y-4">
-          <!-- 1. Data Scope -->
-          <div class="space-y-2">
-            <label class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block" data-i18n="exportScopeLabel">
-              Phạm vi dữ liệu
-            </label>
-            <div class="grid grid-cols-1 gap-2">
-              <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/60 cursor-pointer transition-all">
-                <input type="radio" name="exportScope" value="all" checked class="w-4 h-4 text-primary dark:text-blue-500 focus:ring-0">
-                <div class="text-xs">
-                  <span class="font-semibold block text-slate-900 dark:text-white" data-i18n="exportScopeAll">Toàn bộ lịch sử</span>
-                </div>
-              </label>
-              <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/60 cursor-pointer transition-all">
-                <input type="radio" name="exportScope" value="filtered" class="w-4 h-4 text-primary dark:text-blue-500 focus:ring-0">
-                <div class="text-xs">
-                  <span class="font-semibold block text-slate-900 dark:text-white" data-i18n="exportScopeFiltered">Theo bộ lọc hiện tại</span>
-                </div>
-              </label>
+          <!-- Parent mix info (Only shown for hybrid) -->
+          <div id="modalHybridInfo"
+            class="mb-4 hidden p-3 rounded-xl bg-surface-container-low dark:bg-slate-850/50 border border-outline-variant/20 dark:border-slate-800">
+            <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 block mb-1.5 uppercase tracking-wider"
+              data-i18n="hybridRatioExpected">Tỷ lệ lai dự kiến</span>
+            <div class="flex items-center justify-between text-xs font-semibold">
+              <span id="modalParent1" class="text-slate-800 dark:text-slate-200"></span>
+              <span id="modalParent2" class="text-slate-800 dark:text-slate-200"></span>
             </div>
           </div>
-          
-          <!-- 2. Export Format -->
-          <div class="space-y-2">
-            <label class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block" data-i18n="exportFormatLabel">
-              Định dạng xuất tệp
-            </label>
-            <div class="grid grid-cols-3 gap-2.5">
-              <label class="flex flex-col items-center justify-center p-3 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/60 cursor-pointer transition-all text-center gap-1.5">
-                <input type="radio" name="exportFormat" value="xlsx" checked class="w-3.5 h-3.5 text-primary dark:text-blue-500 focus:ring-0">
-                <div class="text-[11px]">
-                  <span class="font-bold text-slate-900 dark:text-white block">Excel</span>
-                  <span class="text-[9px] text-slate-450 dark:text-slate-500">.xlsx</span>
-                </div>
-              </label>
-              <label class="flex flex-col items-center justify-center p-3 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/60 cursor-pointer transition-all text-center gap-1.5">
-                <input type="radio" name="exportFormat" value="csv" class="w-3.5 h-3.5 text-primary dark:text-blue-500 focus:ring-0">
-                <div class="text-[11px]">
-                  <span class="font-bold text-slate-900 dark:text-white block">CSV</span>
-                  <span class="text-[9px] text-slate-450 dark:text-slate-500">.csv</span>
-                </div>
-              </label>
-              <label class="flex flex-col items-center justify-center p-3 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/60 cursor-pointer transition-all text-center gap-1.5">
-                <input type="radio" name="exportFormat" value="pdf" class="w-3.5 h-3.5 text-primary dark:text-blue-500 focus:ring-0">
-                <div class="text-[11px]">
-                  <span class="font-bold text-slate-900 dark:text-white block" data-i18n="exportFormatPDF">Báo cáo PDF</span>
-                  <span class="text-[9px] text-slate-450 dark:text-slate-500">.pdf</span>
-                </div>
-              </label>
+
+          <!-- Confidence Score -->
+          <div class="mb-5">
+            <div class="flex items-center justify-between text-xs mb-1.5">
+              <span class="text-slate-500 dark:text-slate-400 font-semibold" data-i18n="confidence">Độ tin cậy</span>
+              <span id="modalConfText" class="font-bold text-primary dark:text-blue-400"></span>
+            </div>
+            <div class="h-2 rounded-full bg-surface-container-low dark:bg-slate-800 overflow-hidden">
+              <div id="modalConfBar"
+                class="h-full bg-gradient-to-r from-primary/80 to-primary dark:from-blue-500/80 dark:to-blue-450 rounded-full transition-all duration-300 w-0">
+              </div>
             </div>
           </div>
+
+          <!-- Date and Time -->
+          <div class="flex items-center gap-2 text-slate-550 dark:text-slate-400 text-xs">
+            <span class="material-symbols-outlined text-[16px]">schedule</span>
+            <span data-i18n="identificationTimeLabel">Thời gian nhận diện:</span>
+            <span id="modalDate" class="font-bold text-slate-700 dark:text-slate-300"></span>
+          </div>
         </div>
-        
-        <!-- Actions -->
-        <div class="flex items-center gap-3 border-t border-slate-200/60 dark:border-slate-800 pt-4 mt-2">
-          <button
-            type="button"
-            onclick="closeExportModal()"
-            class="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-350 font-semibold rounded-lg text-xs transition-colors cursor-pointer text-center"
-            data-i18n="cancel"
-          >
-            Hủy
-          </button>
-          <button
-            type="button"
-            onclick="triggerExportDownload()"
-            class="flex-1 py-2.5 bg-primary hover:bg-primary/95 text-white font-semibold rounded-lg text-xs transition-colors cursor-pointer shadow-sm text-center flex items-center justify-center gap-2"
-          >
-            <span class="material-symbols-outlined text-[16px]">download</span>
-            <span data-i18n="exportBtn">Tải file về</span>
+
+        <!-- Footer Button -->
+        <div class="mt-6">
+          <button type="button" onclick="closeModal()"
+            class="w-full py-2.5 bg-primary hover:bg-primary/95 text-white font-semibold rounded-xl text-xs transition-colors cursor-pointer shadow-sm flex items-center justify-center gap-2"
+            data-i18n="closeWindowBtn">
+            <span data-i18n="closeWindowBtn">Đóng cửa sổ</span>
           </button>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- Scripts Block -->
-    <script>
-      // ── Animate width fills ──
-      function initAnimations() {
-        document.querySelectorAll(".history-fill[data-width]").forEach((el) => {
-          const raw = Number(el.getAttribute("data-width") || 0);
-          const pct = Math.max(0, Math.min(100, raw));
-          el.style.width = `${pct}%`;
-        });
+  <!-- Deletion Confirmation Modal -->
+  <div id="deleteConfirmModal"
+    class="fixed inset-0 z-[1100] hidden items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm transition-all duration-300">
+    <div
+      class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl max-w-md w-full border border-outline-variant/30 dark:border-slate-800 overflow-hidden shadow-2xl transition-transform transform scale-95 duration-300 p-6 flex flex-col gap-4 text-center">
+      <div
+        class="mx-auto w-12 h-12 rounded-full bg-red-50 dark:bg-red-950/30 flex items-center justify-center text-red-650 dark:text-red-400">
+        <span class="material-symbols-outlined text-[28px]">warning</span>
+      </div>
+
+      <div class="space-y-1.5">
+        <h3 class="text-base font-bold text-slate-900 dark:text-white" data-i18n="confirmDeleteTitle">Xác nhận xóa</h3>
+        <p class="text-xs text-slate-500 dark:text-slate-400" data-i18n="deleteConfirm">
+          Bạn có chắc muốn xóa kết quả nhận diện này không?
+        </p>
+      </div>
+
+      <div class="flex items-center gap-3 mt-2">
+        <button type="button" onclick="closeDeleteModal()"
+          class="flex-1 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-850 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-350 font-semibold rounded-lg text-xs transition-colors cursor-pointer"
+          data-i18n="cancel">
+          Hủy
+        </button>
+        <button id="confirm-delete-btn" type="button"
+          class="flex-1 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg text-xs transition-colors cursor-pointer shadow-sm"
+          data-i18n="deleteBtn">
+          Xóa
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Export Configuration Modal -->
+  <div id="exportModal"
+    class="fixed inset-0 z-[1100] hidden items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm transition-all duration-300">
+    <div
+      class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl max-w-md w-full border border-outline-variant/30 dark:border-slate-800 overflow-hidden shadow-2xl transition-transform transform scale-95 duration-300 p-6 flex flex-col gap-5 text-left text-slate-850 dark:text-slate-100">
+      <div class="flex items-center justify-between border-b border-slate-200/60 dark:border-slate-800 pb-3">
+        <h3 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary dark:text-blue-400">download</span>
+          <span data-i18n="exportModalTitle">Xuất lịch sử nhận diện</span>
+        </h3>
+        <button type="button" onclick="closeExportModal()"
+          class="w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center text-slate-500 dark:text-slate-400 transition-colors cursor-pointer">
+          <span class="material-symbols-outlined text-[18px]">close</span>
+        </button>
+      </div>
+
+      <!-- Options content -->
+      <div class="space-y-4">
+        <!-- 1. Data Scope -->
+        <div class="space-y-2">
+          <label class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block"
+            data-i18n="exportScopeLabel">
+            Phạm vi dữ liệu
+          </label>
+          <div class="grid grid-cols-1 gap-2">
+            <label
+              class="flex items-center gap-3 p-3 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/60 cursor-pointer transition-all">
+              <input type="radio" name="exportScope" value="all" checked
+                class="w-4 h-4 text-primary dark:text-blue-500 focus:ring-0">
+              <div class="text-xs">
+                <span class="font-semibold block text-slate-900 dark:text-white" data-i18n="exportScopeAll">Toàn bộ lịch
+                  sử</span>
+              </div>
+            </label>
+            <label
+              class="flex items-center gap-3 p-3 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/60 cursor-pointer transition-all">
+              <input type="radio" name="exportScope" value="filtered"
+                class="w-4 h-4 text-primary dark:text-blue-500 focus:ring-0">
+              <div class="text-xs">
+                <span class="font-semibold block text-slate-900 dark:text-white" data-i18n="exportScopeFiltered">Theo bộ
+                  lọc hiện tại</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- 2. Export Format -->
+        <div class="space-y-2">
+          <label class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block"
+            data-i18n="exportFormatLabel">
+            Định dạng xuất tệp
+          </label>
+          <div class="grid grid-cols-3 gap-2.5">
+            <label
+              class="flex flex-col items-center justify-center p-3 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/60 cursor-pointer transition-all text-center gap-1.5">
+              <input type="radio" name="exportFormat" value="xlsx" checked
+                class="w-3.5 h-3.5 text-primary dark:text-blue-500 focus:ring-0">
+              <div class="text-[11px]">
+                <span class="font-bold text-slate-900 dark:text-white block">Excel</span>
+                <span class="text-[9px] text-slate-450 dark:text-slate-500">.xlsx</span>
+              </div>
+            </label>
+            <label
+              class="flex flex-col items-center justify-center p-3 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/60 cursor-pointer transition-all text-center gap-1.5">
+              <input type="radio" name="exportFormat" value="csv"
+                class="w-3.5 h-3.5 text-primary dark:text-blue-500 focus:ring-0">
+              <div class="text-[11px]">
+                <span class="font-bold text-slate-900 dark:text-white block">CSV</span>
+                <span class="text-[9px] text-slate-450 dark:text-slate-500">.csv</span>
+              </div>
+            </label>
+            <label
+              class="flex flex-col items-center justify-center p-3 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/60 cursor-pointer transition-all text-center gap-1.5">
+              <input type="radio" name="exportFormat" value="pdf"
+                class="w-3.5 h-3.5 text-primary dark:text-blue-500 focus:ring-0">
+              <div class="text-[11px]">
+                <span class="font-bold text-slate-900 dark:text-white block" data-i18n="exportFormatPDF">Báo cáo
+                  PDF</span>
+                <span class="text-[9px] text-slate-450 dark:text-slate-500">.pdf</span>
+              </div>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex items-center gap-3 border-t border-slate-200/60 dark:border-slate-800 pt-4 mt-2">
+        <button type="button" onclick="closeExportModal()"
+          class="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-350 font-semibold rounded-lg text-xs transition-colors cursor-pointer text-center"
+          data-i18n="cancel">
+          Hủy
+        </button>
+        <button type="button" onclick="triggerExportDownload()"
+          class="flex-1 py-2.5 bg-primary hover:bg-primary/95 text-white font-semibold rounded-lg text-xs transition-colors cursor-pointer shadow-sm text-center flex items-center justify-center gap-2">
+          <span class="material-symbols-outlined text-[16px]">download</span>
+          <span data-i18n="exportBtn">Tải file về</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts Block -->
+  <script>
+    // ── Animate width fills ──
+    function initAnimations() {
+      document.querySelectorAll(".history-fill[data-width]").forEach((el) => {
+        const raw = Number(el.getAttribute("data-width") || 0);
+        const pct = Math.max(0, Math.min(100, raw));
+        el.style.width = `${pct}%`;
+      });
+    }
+    initAnimations();
+
+    // ── Animated counters for stat cards ──
+    (function () {
+      const DURATION = 1000;
+
+      function easeOutExpo(t) {
+        return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
       }
-      initAnimations();
 
-      // ── Animated counters for stat cards ──
-      (function () {
-        const DURATION = 1000;
-        
-        function easeOutExpo(t) {
-          return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+      function formatNumber(num, isFloat, decimals, useCommas) {
+        let formatted = isFloat ? num.toFixed(decimals) : Math.round(num).toString();
+        if (useCommas) {
+          const parts = formatted.split(".");
+          parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+          formatted = parts.join(".");
         }
+        return formatted;
+      }
 
-        function formatNumber(num, isFloat, decimals, useCommas) {
-          let formatted = isFloat ? num.toFixed(decimals) : Math.round(num).toString();
-          if (useCommas) {
-            const parts = formatted.split(".");
-            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-            formatted = parts.join(".");
-          }
-          return formatted;
+      function animateValue(el) {
+        if (el.dataset.animated === "true") return;
+        el.dataset.animated = "true";
+        const target = parseFloat(el.getAttribute("data-counter"));
+        const suffix = el.getAttribute("data-suffix") || "";
+        const useCommas = el.getAttribute("data-use-commas") === "true";
+        const isFloat = String(target).includes(".") && !useCommas;
+        const decimals = isFloat ? String(target).split(".")[1].length : 0;
+        let start = null;
+
+        function step(ts) {
+          if (!start) start = ts;
+          const progress = Math.min((ts - start) / DURATION, 1);
+          const value = easeOutExpo(progress) * target;
+          el.textContent = formatNumber(value, isFloat, decimals, useCommas) + suffix;
+          if (progress < 1) requestAnimationFrame(step);
         }
+        requestAnimationFrame(step);
+      }
 
-        function animateValue(el) {
-          if (el.dataset.animated === "true") return;
-          el.dataset.animated = "true";
-          const target = parseFloat(el.getAttribute("data-counter"));
-          const suffix = el.getAttribute("data-suffix") || "";
-          const useCommas = el.getAttribute("data-use-commas") === "true";
-          const isFloat = String(target).includes(".") && !useCommas;
-          const decimals = isFloat ? String(target).split(".")[1].length : 0;
-          let start = null;
+      function initCounters() {
+        const els = document.querySelectorAll("[data-counter]");
+        if (!els.length) return;
 
-          function step(ts) {
-            if (!start) start = ts;
-            const progress = Math.min((ts - start) / DURATION, 1);
-            const value = easeOutExpo(progress) * target;
-            el.textContent = formatNumber(value, isFloat, decimals, useCommas) + suffix;
-            if (progress < 1) requestAnimationFrame(step);
-          }
-          requestAnimationFrame(step);
-        }
-
-        function initCounters() {
-          const els = document.querySelectorAll("[data-counter]");
-          if (!els.length) return;
-
-          if ("IntersectionObserver" in window) {
-            const observer = new IntersectionObserver((entries) => {
-              entries.forEach((e) => {
-                if (e.isIntersecting) {
-                  animateValue(e.target);
-                  observer.unobserve(e.target);
-                }
-              });
-            }, { threshold: 0.05 });
-            els.forEach((el) => observer.observe(el));
-          } else {
-            els.forEach(animateValue);
-          }
-        }
-
-        setTimeout(initCounters, 50);
-      })();
-
-      // ── View detail modal controls ──
-      function openDetailModal(imagePathOrElement, breed, confidence, species, date) {
-        let imagePath = imagePathOrElement;
-        if (imagePathOrElement instanceof HTMLElement || (imagePathOrElement && imagePathOrElement.getAttribute)) {
-          const el = imagePathOrElement;
-          imagePath = el.getAttribute("data-image");
-          breed = el.getAttribute("data-breed");
-          confidence = el.getAttribute("data-confidence");
-          species = el.getAttribute("data-species");
-          date = el.getAttribute("data-date");
-        }
-        const modal = document.getElementById("detailModal");
-        const modalImage = document.getElementById("modalImage");
-        const modalBreed = document.getElementById("modalBreed");
-        const modalSpecies = document.getElementById("modalSpecies");
-        const modalTypeBadge = document.getElementById("modalTypeBadge");
-        const modalConfText = document.getElementById("modalConfText");
-        const modalConfBar = document.getElementById("modalConfBar");
-        const modalDate = document.getElementById("modalDate");
-        const modalHybridInfo = document.getElementById("modalHybridInfo");
-        const modalParent1 = document.getElementById("modalParent1");
-        const modalParent2 = document.getElementById("modalParent2");
-
-        // Set basic data
-        modalImage.src = "/" + imagePath;
-        modalBreed.setAttribute("data-i18n-breed", breed);
-        
-        if (typeof window.PetAI_i18n !== "undefined") {
-          modalBreed.innerText = breed;
-          modalSpecies.innerText = species || "Chó";
+        if ("IntersectionObserver" in window) {
+          const observer = new IntersectionObserver((entries) => {
+            entries.forEach((e) => {
+              if (e.isIntersecting) {
+                animateValue(e.target);
+                observer.unobserve(e.target);
+              }
+            });
+          }, { threshold: 0.05 });
+          els.forEach((el) => observer.observe(el));
         } else {
-          modalBreed.innerText = breed;
-          modalSpecies.innerText = species || "Chó";
+          els.forEach(animateValue);
         }
-        modalConfText.innerText = confidence + "%";
-        modalConfBar.style.width = confidence + "%";
-        modalDate.innerText = date;
+      }
 
-        // Set type badge & check for hybrid
-        if (breed.startsWith("Nghi lai:")) {
-          modalTypeBadge.setAttribute("data-i18n", "hybridDog");
-          modalTypeBadge.innerText = typeof window.PetAI_i18n !== "undefined" ? window.PetAI_i18n.t("hybridDog") : "Chó lai";
-          modalTypeBadge.className = "px-2.5 py-1 rounded-full text-xs font-bold bg-amber-55 bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400 border border-amber-100 dark:border-amber-900/30";
+      setTimeout(initCounters, 50);
+    })();
 
-          // Parse parents
-          const parentPart = breed.replace("Nghi lai:", "").trim();
-          const parents = parentPart.split("x");
-          if (parents.length >= 2) {
-            const p1 = parents[0].trim();
-            const p2 = parents[1].trim();
-            modalParent1.setAttribute("data-i18n-breed", p1);
-            modalParent2.setAttribute("data-i18n-breed", p2);
-            modalParent1.innerText = p1;
-            modalParent2.innerText = p2;
-            modalHybridInfo.classList.remove("hidden");
-          } else {
-            modalHybridInfo.classList.add("hidden");
-          }
+    // ── View detail modal controls ──
+    function openDetailModal(imagePathOrElement, breed, confidence, species, date) {
+      let imagePath = imagePathOrElement;
+      if (imagePathOrElement instanceof HTMLElement || (imagePathOrElement && imagePathOrElement.getAttribute)) {
+        const el = imagePathOrElement;
+        imagePath = el.getAttribute("data-image");
+        breed = el.getAttribute("data-breed");
+        confidence = el.getAttribute("data-confidence");
+        species = el.getAttribute("data-species");
+        date = el.getAttribute("data-date");
+      }
+      const modal = document.getElementById("detailModal");
+      const modalImage = document.getElementById("modalImage");
+      const modalBreed = document.getElementById("modalBreed");
+      const modalSpecies = document.getElementById("modalSpecies");
+      const modalTypeBadge = document.getElementById("modalTypeBadge");
+      const modalConfText = document.getElementById("modalConfText");
+      const modalConfBar = document.getElementById("modalConfBar");
+      const modalDate = document.getElementById("modalDate");
+      const modalHybridInfo = document.getElementById("modalHybridInfo");
+      const modalParent1 = document.getElementById("modalParent1");
+      const modalParent2 = document.getElementById("modalParent2");
+
+      // Set basic data
+      modalImage.src = "/" + imagePath;
+      modalBreed.setAttribute("data-i18n-breed", breed);
+
+      if (typeof window.PetAI_i18n !== "undefined") {
+        modalBreed.innerText = breed;
+        modalSpecies.innerText = species || "Chó";
+      } else {
+        modalBreed.innerText = breed;
+        modalSpecies.innerText = species || "Chó";
+      }
+      modalConfText.innerText = confidence + "%";
+      modalConfBar.style.width = confidence + "%";
+      modalDate.innerText = date;
+
+      // Set type badge & check for hybrid
+      if (breed.startsWith("Nghi lai:")) {
+        modalTypeBadge.setAttribute("data-i18n", "hybridDog");
+        modalTypeBadge.innerText = typeof window.PetAI_i18n !== "undefined" ? window.PetAI_i18n.t("hybridDog") : "Chó lai";
+        modalTypeBadge.className = "px-2.5 py-1 rounded-full text-xs font-bold bg-amber-55 bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400 border border-amber-100 dark:border-amber-900/30";
+
+        // Parse parents
+        const parentPart = breed.replace("Nghi lai:", "").trim();
+        const parents = parentPart.split("x");
+        if (parents.length >= 2) {
+          const p1 = parents[0].trim();
+          const p2 = parents[1].trim();
+          modalParent1.setAttribute("data-i18n-breed", p1);
+          modalParent2.setAttribute("data-i18n-breed", p2);
+          modalParent1.innerText = p1;
+          modalParent2.innerText = p2;
+          modalHybridInfo.classList.remove("hidden");
         } else {
-          modalTypeBadge.setAttribute("data-i18n", "pureDog");
-          modalTypeBadge.innerText = typeof window.PetAI_i18n !== "undefined" ? window.PetAI_i18n.t("pureDog") : "Chó thuần";
-          modalTypeBadge.className = "px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30";
           modalHybridInfo.classList.add("hidden");
         }
+      } else {
+        modalTypeBadge.setAttribute("data-i18n", "pureDog");
+        modalTypeBadge.innerText = typeof window.PetAI_i18n !== "undefined" ? window.PetAI_i18n.t("pureDog") : "Chó thuần";
+        modalTypeBadge.className = "px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30";
+        modalHybridInfo.classList.add("hidden");
+      }
 
-        // Apply translations
-        if (typeof window.PetAI_i18n !== "undefined") {
-          window.PetAI_i18n.applyToElement(modal, window.PetAI_i18n.getCurrentLang());
+      // Apply translations
+      if (typeof window.PetAI_i18n !== "undefined") {
+        window.PetAI_i18n.applyToElement(modal, window.PetAI_i18n.getCurrentLang());
+      }
+
+      // Show modal
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+      setTimeout(() => {
+        modal.querySelector(".max-w-2xl").classList.remove("scale-95");
+        modal.querySelector(".max-w-2xl").classList.add("scale-100");
+      }, 10);
+    }
+
+    function closeModal() {
+      const modal = document.getElementById("detailModal");
+      modal.querySelector(".max-w-2xl").classList.remove("scale-100");
+      modal.querySelector(".max-w-2xl").classList.add("scale-95");
+      setTimeout(() => {
+        modal.classList.remove("flex");
+        modal.classList.add("hidden");
+      }, 150);
+    }
+
+    // Close modal on click outside
+    window.addEventListener("click", function (e) {
+      const modal = document.getElementById("detailModal");
+      if (e.target === modal) {
+        closeModal();
+      }
+    });
+
+    // ── Custom Deletion Confirmation Controls ──
+    var activeDeleteId = null;
+    var activeDeleteElement = null;
+
+    function confirmDeletePrediction(predId, element) {
+      activeDeleteId = predId;
+      activeDeleteElement = element;
+
+      const modal = document.getElementById("deleteConfirmModal");
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+      setTimeout(() => {
+        modal.querySelector(".max-w-md").classList.remove("scale-95");
+        modal.querySelector(".max-w-md").classList.add("scale-100");
+      }, 10);
+
+      document.getElementById("confirm-delete-btn").onclick = executeDeletePrediction;
+    }
+
+    function closeDeleteModal() {
+      const modal = document.getElementById("deleteConfirmModal");
+      modal.querySelector(".max-w-md").classList.remove("scale-100");
+      modal.querySelector(".max-w-md").classList.add("scale-95");
+      setTimeout(() => {
+        modal.classList.remove("flex");
+        modal.classList.add("hidden");
+      }, 150);
+      activeDeleteId = null;
+      activeDeleteElement = null;
+    }
+
+    function executeDeletePrediction() {
+      if (!activeDeleteId) return;
+      const id = activeDeleteId;
+      const element = activeDeleteElement;
+      closeDeleteModal();
+
+      const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute("content");
+
+      fetch(`/history/delete/${id}`, {
+        method: "POST",
+        headers: {
+          "X-CSRF-Token": csrfToken,
+          "Content-Type": "application/json"
         }
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            if (typeof showToast !== "undefined") {
+              showToast(typeof window.PetAI_i18n !== "undefined" ? window.PetAI_i18n.t("toastDeleteSuccess") : "Xóa thành công.", "success");
+            }
 
-        // Show modal
-        modal.classList.remove("hidden");
-        modal.classList.add("flex");
-        setTimeout(() => {
-          modal.querySelector(".max-w-2xl").classList.remove("scale-95");
-          modal.querySelector(".max-w-2xl").classList.add("scale-100");
-        }, 10);
-      }
+            if (element) {
+              element.style.transition = "all 0.3s ease";
+              element.style.opacity = "0";
+              element.style.transform = "scale(0.95)";
+              setTimeout(() => {
+                element.remove();
+                const totalEl = document.getElementById("total-records-count");
+                const curCount = parseInt(totalEl.innerText) - 1;
+                totalEl.innerText = curCount;
 
-      function closeModal() {
-        const modal = document.getElementById("detailModal");
-        modal.querySelector(".max-w-2xl").classList.remove("scale-100");
-        modal.querySelector(".max-w-2xl").classList.add("scale-95");
-        setTimeout(() => {
-          modal.classList.remove("flex");
-          modal.classList.add("hidden");
-        }, 150);
-      }
-
-      // Close modal on click outside
-      window.addEventListener("click", function (e) {
-        const modal = document.getElementById("detailModal");
-        if (e.target === modal) {
-          closeModal();
-        }
-      });
-
-      // ── Custom Deletion Confirmation Controls ──
-      var activeDeleteId = null;
-      var activeDeleteElement = null;
-
-      function confirmDeletePrediction(predId, element) {
-        activeDeleteId = predId;
-        activeDeleteElement = element;
-        
-        const modal = document.getElementById("deleteConfirmModal");
-        modal.classList.remove("hidden");
-        modal.classList.add("flex");
-        setTimeout(() => {
-          modal.querySelector(".max-w-md").classList.remove("scale-95");
-          modal.querySelector(".max-w-md").classList.add("scale-100");
-        }, 10);
-        
-        document.getElementById("confirm-delete-btn").onclick = executeDeletePrediction;
-      }
-
-      function closeDeleteModal() {
-        const modal = document.getElementById("deleteConfirmModal");
-        modal.querySelector(".max-w-md").classList.remove("scale-100");
-        modal.querySelector(".max-w-md").classList.add("scale-95");
-        setTimeout(() => {
-          modal.classList.remove("flex");
-          modal.classList.add("hidden");
-        }, 150);
-        activeDeleteId = null;
-        activeDeleteElement = null;
-      }
-
-      function executeDeletePrediction() {
-        if (!activeDeleteId) return;
-        const id = activeDeleteId;
-        const element = activeDeleteElement;
-        closeDeleteModal();
-        
-        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute("content");
-        
-        fetch(`/history/delete/${id}`, {
-          method: "POST",
-          headers: {
-            "X-CSRF-Token": csrfToken,
-            "Content-Type": "application/json"
+                if (curCount <= 0) {
+                  window.location.reload();
+                }
+              }, 300);
+            }
+          } else {
+            if (typeof showToast !== "undefined") {
+              showToast(data.message || (typeof window.PetAI_i18n !== "undefined" ? window.PetAI_i18n.t("toastDeleteError") : "Lỗi khi xóa."), "error");
+            }
           }
         })
-          .then(res => res.json())
-          .then(data => {
-            if (data.success) {
-              if (typeof showToast !== "undefined") {
-                showToast(typeof window.PetAI_i18n !== "undefined" ? window.PetAI_i18n.t("toastDeleteSuccess") : "Xóa thành công.", "success");
-              }
-              
-              if (element) {
-                element.style.transition = "all 0.3s ease";
-                element.style.opacity = "0";
-                element.style.transform = "scale(0.95)";
-                setTimeout(() => {
-                  element.remove();
-                  const totalEl = document.getElementById("total-records-count");
-                  const curCount = parseInt(totalEl.innerText) - 1;
-                  totalEl.innerText = curCount;
-                  
-                  if (curCount <= 0) {
-                    window.location.reload();
-                  }
-                }, 300);
-              }
-            } else {
-              if (typeof showToast !== "undefined") {
-                showToast(data.message || (typeof window.PetAI_i18n !== "undefined" ? window.PetAI_i18n.t("toastDeleteError") : "Lỗi khi xóa."), "error");
-              }
-            }
-          })
-          .catch(err => {
-            console.error(err);
-            if (typeof showToast !== "undefined") {
-              showToast(typeof window.PetAI_i18n !== "undefined" ? window.PetAI_i18n.t("toastDeleteError") : "Lỗi kết nối.", "error");
-            }
-          });
-      }
-
-      window.addEventListener("click", function (e) {
-        const modal = document.getElementById("deleteConfirmModal");
-        if (e.target === modal) {
-          closeDeleteModal();
-        }
-      });
-
-      // ── Export Modal Controls ──
-      function exportHistoryData() {
-        const modal = document.getElementById("exportModal");
-        
-        // Translate elements in the export modal specifically before showing
-        if (typeof window.PetAI_i18n !== "undefined") {
-          window.PetAI_i18n.applyToElement(modal, window.PetAI_i18n.getCurrentLang());
-        }
-        
-        modal.classList.remove("hidden");
-        modal.classList.add("flex");
-        setTimeout(() => {
-          modal.querySelector(".max-w-md").classList.remove("scale-95");
-          modal.querySelector(".max-w-md").classList.add("scale-100");
-        }, 10);
-      }
-
-      function closeExportModal() {
-        const modal = document.getElementById("exportModal");
-        modal.querySelector(".max-w-md").classList.remove("scale-100");
-        modal.querySelector(".max-w-md").classList.add("scale-95");
-        setTimeout(() => {
-          modal.classList.remove("flex");
-          modal.classList.add("hidden");
-        }, 150);
-      }
-
-      function triggerExportDownload() {
-        const scope = document.querySelector('input[name="exportScope"]:checked').value;
-        const format = document.querySelector('input[name="exportFormat"]:checked').value;
-        
-        closeExportModal();
-        
-        // Get current filters from URL query parameters
-        const urlParams = new URLSearchParams(window.location.search);
-        urlParams.set("scope", scope);
-        
-        if (format === "pdf") {
-          if (typeof html2pdf === "undefined") {
-            if (typeof showToast !== "undefined") {
-              showToast(
-                typeof window.PetAI_i18n !== "undefined"
-                  ? window.PetAI_i18n.t("toastExportStart")
-                  : "Hệ thống đang chuẩn bị tệp tin...",
-                "info"
-              );
-            }
-            // Dynamic load html2pdf.js via CDN
-            const script = document.createElement("script");
-            script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js";
-            script.onload = function() {
-              startPdfExport(urlParams);
-            };
-            script.onerror = function() {
-              if (typeof showToast !== "undefined") {
-                showToast(
-                  typeof window.PetAI_i18n !== "undefined"
-                    ? window.PetAI_i18n.t("toastExportError")
-                    : "Không thể tải thư viện xuất PDF.",
-                  "error"
-                );
-              }
-            };
-            document.body.appendChild(script);
-          } else {
-            startPdfExport(urlParams);
-          }
-        } else {
+        .catch(err => {
+          console.error(err);
           if (typeof showToast !== "undefined") {
-            showToast(typeof window.PetAI_i18n !== "undefined" ? window.PetAI_i18n.t("toastExportStart") : "Đang chuẩn bị file xuất...", "info");
+            showToast(typeof window.PetAI_i18n !== "undefined" ? window.PetAI_i18n.t("toastDeleteError") : "Lỗi kết nối.", "error");
           }
-          
-          urlParams.set("format", format);
-          const exportUrl = "/history/export?" + urlParams.toString();
-          
-          // Trigger download direct
-          const link = document.createElement("a");
-          link.href = exportUrl;
-          link.style.display = "none";
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-        }
+        });
+    }
+
+    window.addEventListener("click", function (e) {
+      const modal = document.getElementById("deleteConfirmModal");
+      if (e.target === modal) {
+        closeDeleteModal();
+      }
+    });
+
+    // ── Export Modal Controls ──
+    function exportHistoryData() {
+      const modal = document.getElementById("exportModal");
+
+      // Translate elements in the export modal specifically before showing
+      if (typeof window.PetAI_i18n !== "undefined") {
+        window.PetAI_i18n.applyToElement(modal, window.PetAI_i18n.getCurrentLang());
       }
 
-      function startPdfExport(urlParams) {
-        if (typeof showToast !== "undefined") {
-          showToast(
-            typeof window.PetAI_i18n !== "undefined"
-              ? window.PetAI_i18n.t("toastExportStart")
-              : "Hệ thống đang chuẩn bị tệp tin...",
-            "info"
-          );
-        }
-        
-        const printUrl = "/history/print?" + urlParams.toString();
-        
-        fetch(printUrl)
-          .then(response => {
-            if (!response.ok) {
-              throw new Error("Network response was not ok");
-            }
-            return response.text();
-          })
-          .then(htmlText => {
-            // Create an isolated iframe to render the A4 report cleanly
-            const iframe = document.createElement("iframe");
-            iframe.style.position = "fixed";
-            iframe.style.left = "-9999px";
-            iframe.style.top = "-9999px";
-            iframe.style.width = "1024px"; // Standard desktop viewport width for grid layout
-            iframe.style.height = "1448px";
-            iframe.style.border = "none";
-            iframe.style.zIndex = "-9999";
-            iframe.style.pointerEvents = "none";
-            
-            document.body.appendChild(iframe);
-            
-            // Comment out the auto-print trigger script
-            const cleanedHtml = htmlText.replace(/window\.print\(\)/g, "// window.print()");
-            
-            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-            iframeDoc.open();
-            iframeDoc.write(cleanedHtml);
-            iframeDoc.close();
-            
-            // Wait for style calculation, Tailwind scripts, and image assets to load fully inside the iframe
-            setTimeout(() => {
-              try {
-                const printContainer = iframeDoc.querySelector(".max-w-5xl:not(.no-print)");
-                if (!printContainer) {
-                  throw new Error("Could not find printable container inside iframe.");
-                }
-                
-                // Hide any leftover .no-print elements inside the printable container
-                printContainer.querySelectorAll(".no-print").forEach(el => el.remove());
-                
-                const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, "");
-                const filename = `PetAI_History_${dateStr}.pdf`;
-                
-                const opt = {
-                  margin:       10,
-                  filename:     filename,
-                  image:        { type: "jpeg", quality: 0.98 },
-                  html2canvas:  { 
-                    scale: 2, 
-                    useCORS: true, 
-                    logging: false,
-                    letterRendering: true,
-                    scrollX: 0,
-                    scrollY: 0
-                  },
-                  jsPDF:        { unit: "mm", format: "a4", orientation: "portrait" }
-                };
-                
-                html2pdf()
-                  .from(printContainer)
-                  .set(opt)
-                  .save()
-                  .then(() => {
-                    document.body.removeChild(iframe);
-                    if (typeof showToast !== "undefined") {
-                      showToast(
-                        typeof window.PetAI_i18n !== "undefined"
-                          ? window.PetAI_i18n.t("toastExportSuccess")
-                          : "Xuất dữ liệu thành công!",
-                        "success"
-                      );
-                    }
-                  })
-                  .catch(err => {
-                    console.error("html2pdf save error:", err);
-                    if (iframe.parentNode) {
-                      document.body.removeChild(iframe);
-                    }
-                    throw err;
-                  });
-              } catch (innerError) {
-                console.error("Iframe rendering error:", innerError);
-                if (iframe.parentNode) {
-                  document.body.removeChild(iframe);
-                }
-                throw innerError;
-              }
-            }, 1200);
-          })
-          .catch(error => {
-            console.error("PDF export error:", error);
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+      setTimeout(() => {
+        modal.querySelector(".max-w-md").classList.remove("scale-95");
+        modal.querySelector(".max-w-md").classList.add("scale-100");
+      }, 10);
+    }
+
+    function closeExportModal() {
+      const modal = document.getElementById("exportModal");
+      modal.querySelector(".max-w-md").classList.remove("scale-100");
+      modal.querySelector(".max-w-md").classList.add("scale-95");
+      setTimeout(() => {
+        modal.classList.remove("flex");
+        modal.classList.add("hidden");
+      }, 150);
+    }
+
+    function triggerExportDownload() {
+      const scope = document.querySelector('input[name="exportScope"]:checked').value;
+      const format = document.querySelector('input[name="exportFormat"]:checked').value;
+
+      closeExportModal();
+
+      // Get current filters from URL query parameters
+      const urlParams = new URLSearchParams(window.location.search);
+      urlParams.set("scope", scope);
+
+      if (format === "pdf") {
+        if (typeof html2pdf === "undefined") {
+          if (typeof showToast !== "undefined") {
+            showToast(
+              typeof window.PetAI_i18n !== "undefined"
+                ? window.PetAI_i18n.t("toastExportStart")
+                : "Hệ thống đang chuẩn bị tệp tin...",
+              "info"
+            );
+          }
+          // Dynamic load html2pdf.js via CDN
+          const script = document.createElement("script");
+          script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js";
+          script.onload = function () {
+            startPdfExport(urlParams);
+          };
+          script.onerror = function () {
             if (typeof showToast !== "undefined") {
               showToast(
                 typeof window.PetAI_i18n !== "undefined"
                   ? window.PetAI_i18n.t("toastExportError")
-                  : "Gặp sự cố khi xuất dữ liệu.",
+                  : "Không thể tải thư viện xuất PDF.",
                 "error"
               );
             }
-          });
-      }
-
-      // Close modal on click outside
-      window.addEventListener("click", function (e) {
-        const exportModal = document.getElementById("exportModal");
-        if (e.target === exportModal) {
-          closeExportModal();
-        }
-      });
-
-      // ── Apply search & select filter parameter values ──
-      function applyFilters() {
-        const breedType = "{{ selected_type or 'all' }}";
-        const searchQuery = document.getElementById("search-breed-input")?.value || "";
-        const dateFilter = document.getElementById("date-filter-select").value;
-        const sortBy = document.getElementById("sort-filter-select").value;
-        
-        const url = new URL(window.location.href);
-        url.searchParams.set("type", breedType);
-        if (searchQuery.trim()) {
-          url.searchParams.set("q", searchQuery.trim());
+          };
+          document.body.appendChild(script);
         } else {
-          url.searchParams.delete("q");
+          startPdfExport(urlParams);
         }
-        url.searchParams.set("date", dateFilter);
-        url.searchParams.set("sort", sortBy);
-        url.searchParams.set("page", "1");
-        
-        navigateHistoryWithAjax(null, url.toString());
+      } else {
+        if (typeof showToast !== "undefined") {
+          showToast(typeof window.PetAI_i18n !== "undefined" ? window.PetAI_i18n.t("toastExportStart") : "Đang chuẩn bị file xuất...", "info");
+        }
+
+        urlParams.set("format", format);
+        const exportUrl = "/history/export?" + urlParams.toString();
+
+        // Trigger download direct
+        const link = document.createElement("a");
+        link.href = exportUrl;
+        link.style.display = "none";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+    }
+
+    function startPdfExport(urlParams) {
+      if (typeof showToast !== "undefined") {
+        showToast(
+          typeof window.PetAI_i18n !== "undefined"
+            ? window.PetAI_i18n.t("toastExportStart")
+            : "Hệ thống đang chuẩn bị tệp tin...",
+          "info"
+        );
       }
 
-      // ── AJAX PJAX Filter Navigation ──
-      function navigateHistoryWithAjax(event, url) {
-        if (event) {
-          event.preventDefault();
-          // Stop script.js global PJAX router from intercepting this click
-          // and triggering a full-page loadPagePjax() call
-          event.stopPropagation();
-        }
-        
-        const container = document.getElementById("history-pjax-container");
-        if (!container) return;
-        
-        // NO opacity dimming — avoid full-area flash when switching tabs
-        // Just fetch and swap content sections directly
-        fetch(url)
-          .then(res => res.text())
-          .then(htmlText => {
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(htmlText, "text/html");
-            const newContainer = doc.getElementById("history-pjax-container");
-            
-            if (newContainer && container) {
-              // Swap full container content (tabs + grid/table)
-              container.innerHTML = newContainer.innerHTML;
-              
-              // Update browser URL
-              history.pushState(null, '', url);
-              
-              // Reset current page and update total pages from dynamic hidden field
-              currentPage = 1;
-              const pjaxTotalEl = document.getElementById("pjax-total-pages");
-              if (pjaxTotalEl) {
-                totalPages = parseInt(pjaxTotalEl.value || "1");
+      const printUrl = "/history/print?" + urlParams.toString();
+
+      fetch(printUrl)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.text();
+        })
+        .then(htmlText => {
+          // Create an isolated iframe to render the A4 report cleanly
+          const iframe = document.createElement("iframe");
+          iframe.style.position = "fixed";
+          iframe.style.left = "-9999px";
+          iframe.style.top = "-9999px";
+          iframe.style.width = "1024px"; // Standard desktop viewport width for grid layout
+          iframe.style.height = "1448px";
+          iframe.style.border = "none";
+          iframe.style.zIndex = "-9999";
+          iframe.style.pointerEvents = "none";
+
+          document.body.appendChild(iframe);
+
+          // Comment out the auto-print trigger script
+          const cleanedHtml = htmlText.replace(/window\.print\(\)/g, "// window.print()");
+
+          const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+          iframeDoc.open();
+          iframeDoc.write(cleanedHtml);
+          iframeDoc.close();
+
+          // Wait for style calculation, Tailwind scripts, and image assets to load fully inside the iframe
+          setTimeout(() => {
+            try {
+              const printContainer = iframeDoc.querySelector(".max-w-5xl:not(.no-print)");
+              if (!printContainer) {
+                throw new Error("Could not find printable container inside iframe.");
               }
-              
-              // Re-run initializations
-              initAnimations();
-              
-              // Trigger counter animations by resetting state
-              document.querySelectorAll("[data-counter]").forEach(el => {
-                el.dataset.animated = "false";
-              });
-              if (typeof initCounters === "function") {
-                initCounters();
-              } else {
-                // Inline implementation fallback for counters
-                const DURATION = 1000;
-                function easeOutExpo(t) {
-                  return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
-                }
-                function formatNumber(num, isFloat, decimals, useCommas) {
-                  let formatted = isFloat ? num.toFixed(decimals) : Math.round(num).toString();
-                  if (useCommas) {
-                    const parts = formatted.split(".");
-                    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-                    formatted = parts.join(".");
+
+              // Hide any leftover .no-print elements inside the printable container
+              printContainer.querySelectorAll(".no-print").forEach(el => el.remove());
+
+              const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+              const filename = `PetAI_History_${dateStr}.pdf`;
+
+              const opt = {
+                margin: 10,
+                filename: filename,
+                image: { type: "jpeg", quality: 0.98 },
+                html2canvas: {
+                  scale: 2,
+                  useCORS: true,
+                  logging: false,
+                  letterRendering: true,
+                  scrollX: 0,
+                  scrollY: 0
+                },
+                jsPDF: { unit: "mm", format: "a4", orientation: "portrait" }
+              };
+
+              html2pdf()
+                .from(printContainer)
+                .set(opt)
+                .save()
+                .then(() => {
+                  document.body.removeChild(iframe);
+                  if (typeof showToast !== "undefined") {
+                    showToast(
+                      typeof window.PetAI_i18n !== "undefined"
+                        ? window.PetAI_i18n.t("toastExportSuccess")
+                        : "Xuất dữ liệu thành công!",
+                      "success"
+                    );
                   }
-                  return formatted;
-                }
-                function animateValue(el) {
-                  if (el.dataset.animated === "true") return;
-                  el.dataset.animated = "true";
-                  const target = parseFloat(el.getAttribute("data-counter"));
-                  const suffix = el.getAttribute("data-suffix") || "";
-                  const useCommas = el.getAttribute("data-use-commas") === "true";
-                  const isFloat = String(target).includes(".") && !useCommas;
-                  const decimals = isFloat ? String(target).split(".")[1].length : 0;
-                  let start = null;
-
-                  function step(ts) {
-                    if (!start) start = ts;
-                    const progress = Math.min((ts - start) / DURATION, 1);
-                    const value = easeOutExpo(progress) * target;
-                    el.textContent = formatNumber(value, isFloat, decimals, useCommas) + suffix;
-                    if (progress < 1) requestAnimationFrame(step);
+                })
+                .catch(err => {
+                  console.error("html2pdf save error:", err);
+                  if (iframe.parentNode) {
+                    document.body.removeChild(iframe);
                   }
-                  requestAnimationFrame(step);
+                  throw err;
+                });
+            } catch (innerError) {
+              console.error("Iframe rendering error:", innerError);
+              if (iframe.parentNode) {
+                document.body.removeChild(iframe);
+              }
+              throw innerError;
+            }
+          }, 1200);
+        })
+        .catch(error => {
+          console.error("PDF export error:", error);
+          if (typeof showToast !== "undefined") {
+            showToast(
+              typeof window.PetAI_i18n !== "undefined"
+                ? window.PetAI_i18n.t("toastExportError")
+                : "Gặp sự cố khi xuất dữ liệu.",
+              "error"
+            );
+          }
+        });
+    }
+
+    // Close modal on click outside
+    window.addEventListener("click", function (e) {
+      const exportModal = document.getElementById("exportModal");
+      if (e.target === exportModal) {
+        closeExportModal();
+      }
+    });
+
+    // ── Apply search & select filter parameter values ──
+    function applyFilters() {
+      const breedType = "{{ selected_type or 'all' }}";
+      const searchQuery = document.getElementById("search-breed-input")?.value || "";
+      const dateFilter = document.getElementById("date-filter-select").value;
+      const sortBy = document.getElementById("sort-filter-select").value;
+
+      const url = new URL(window.location.href);
+      url.searchParams.set("type", breedType);
+      if (searchQuery.trim()) {
+        url.searchParams.set("q", searchQuery.trim());
+      } else {
+        url.searchParams.delete("q");
+      }
+      url.searchParams.set("date", dateFilter);
+      url.searchParams.set("sort", sortBy);
+      url.searchParams.set("page", "1");
+
+      navigateHistoryWithAjax(null, url.toString());
+    }
+
+    // ── AJAX PJAX Filter Navigation ──
+    function navigateHistoryWithAjax(event, url) {
+      if (event) {
+        event.preventDefault();
+        // Stop script.js global PJAX router from intercepting this click
+        // and triggering a full-page loadPagePjax() call
+        event.stopPropagation();
+      }
+
+      const container = document.getElementById("history-pjax-container");
+      if (!container) return;
+
+      // NO opacity dimming — avoid full-area flash when switching tabs
+      // Just fetch and swap content sections directly
+      fetch(url)
+        .then(res => res.text())
+        .then(htmlText => {
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(htmlText, "text/html");
+          const newContainer = doc.getElementById("history-pjax-container");
+
+          if (newContainer && container) {
+            // Swap full container content (tabs + grid/table)
+            container.innerHTML = newContainer.innerHTML;
+
+            // Update browser URL
+            history.pushState(null, '', url);
+
+            // Reset current page and update total pages from dynamic hidden field
+            currentPage = 1;
+            const pjaxTotalEl = document.getElementById("pjax-total-pages");
+            if (pjaxTotalEl) {
+              totalPages = parseInt(pjaxTotalEl.value || "1");
+            }
+
+            // Re-run initializations
+            initAnimations();
+
+            // Trigger counter animations by resetting state
+            document.querySelectorAll("[data-counter]").forEach(el => {
+              el.dataset.animated = "false";
+            });
+            if (typeof initCounters === "function") {
+              initCounters();
+            } else {
+              // Inline implementation fallback for counters
+              const DURATION = 1000;
+              function easeOutExpo(t) {
+                return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+              }
+              function formatNumber(num, isFloat, decimals, useCommas) {
+                let formatted = isFloat ? num.toFixed(decimals) : Math.round(num).toString();
+                if (useCommas) {
+                  const parts = formatted.split(".");
+                  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                  formatted = parts.join(".");
                 }
-                document.querySelectorAll("[data-counter]").forEach(el => animateValue(el));
+                return formatted;
               }
-              
-              // Reapply translation tags
-              if (typeof window.PetAI_i18n !== "undefined") {
-                window.PetAI_i18n.applyToElement(container, window.PetAI_i18n.getCurrentLang());
+              function animateValue(el) {
+                if (el.dataset.animated === "true") return;
+                el.dataset.animated = "true";
+                const target = parseFloat(el.getAttribute("data-counter"));
+                const suffix = el.getAttribute("data-suffix") || "";
+                const useCommas = el.getAttribute("data-use-commas") === "true";
+                const isFloat = String(target).includes(".") && !useCommas;
+                const decimals = isFloat ? String(target).split(".")[1].length : 0;
+                let start = null;
+
+                function step(ts) {
+                  if (!start) start = ts;
+                  const progress = Math.min((ts - start) / DURATION, 1);
+                  const value = easeOutExpo(progress) * target;
+                  el.textContent = formatNumber(value, isFloat, decimals, useCommas) + suffix;
+                  if (progress < 1) requestAnimationFrame(step);
+                }
+                requestAnimationFrame(step);
               }
-              
-              // Apply View Mode (Grid vs Table)
-              const savedMode = localStorage.getItem("history-view-mode") || "grid";
-              toggleViewMode(savedMode);
-              
-              // Update progress bar widths in new results
-              document.querySelectorAll(".progress-bar-item").forEach(function (bar) {
-                const pct = bar.getAttribute("data-pct") || "0";
-                bar.style.width = pct + "%";
-              });
-              
-              // Apply subtle fade-in animation only to the content areas (grid + table)
-              // This gives a smooth transition without any blank/dim flash
-              const contentSections = container.querySelectorAll("#grid-view-section, #table-view-section");
-              contentSections.forEach(function(sec) {
-                sec.classList.remove("history-content-enter");
-                // Force reflow to restart animation
-                void sec.offsetWidth;
-                sec.classList.add("history-content-enter");
-                // Auto-remove class after animation completes
-                sec.addEventListener("animationend", function() {
-                  sec.classList.remove("history-content-enter");
-                }, { once: true });
-              });
+              document.querySelectorAll("[data-counter]").forEach(el => animateValue(el));
             }
-          })
-          .catch(err => {
-            console.error("PJAX load failed:", err);
-            // Fallback to normal navigation if AJAX fails
-            if (url) {
-              window.location.href = url;
-            }
-          });
-      }
 
-      // ── View Mode persistence (Grid vs Table) ──
-      function toggleViewMode(mode) {
-        localStorage.setItem("history-view-mode", mode);
-        
-        const gridSection = document.getElementById("grid-view-section");
-        const tableSection = document.getElementById("table-view-section");
-        const gridBtn = document.getElementById("view-grid-btn");
-        const tableBtn = document.getElementById("view-table-btn");
-        
-        if (!gridSection || !tableSection) return;
-
-        if (mode === "table") {
-          gridSection.classList.add("hidden");
-          tableSection.classList.remove("hidden");
-          
-          tableBtn.className = "px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer bg-white dark:bg-slate-800 text-primary dark:text-blue-400 shadow-sm border border-slate-200/55 dark:border-slate-700/60";
-          gridBtn.className = "px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-350";
-        } else {
-          tableSection.classList.add("hidden");
-          gridSection.classList.remove("hidden");
-          
-          gridBtn.className = "px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer bg-white dark:bg-slate-800 text-primary dark:text-blue-400 shadow-sm border border-slate-200/55 dark:border-slate-700/60";
-          tableBtn.className = "px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-350";
-        }
-      }
-
-      // ── AJAX Infinite Scroll / Load More pagination logic ──
-      var currentPage = 1;
-      var totalPages = parseInt("{{ total_pages or 1 }}");
-
-      function loadMoreResults() {
-        if (currentPage >= totalPages) return;
-        currentPage++;
-        
-        const loadMoreBtn = document.getElementById("load-more-btn");
-        const loadMoreText = document.getElementById("load-more-text");
-        const loadMoreIcon = document.getElementById("load-more-icon");
-        
-        loadMoreIcon.innerText = "sync";
-        loadMoreIcon.classList.add("animate-spin");
-        
-        if (typeof window.PetAI_i18n !== "undefined") {
-          loadMoreText.innerText = window.PetAI_i18n.t("loading");
-        } else {
-          loadMoreText.innerText = "Đang tải...";
-        }
-        
-        const url = new URL(window.location.href);
-        url.searchParams.set("page", currentPage);
-        
-        fetch(url)
-          .then(res => res.text())
-          .then(htmlText => {
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(htmlText, "text/html");
-            
-            // Append Grid Items
-            const newGridItems = doc.querySelectorAll("#history-grid-container > article");
-            const gridContainer = document.getElementById("history-grid-container");
-            if (gridContainer && newGridItems.length) {
-              newGridItems.forEach(item => gridContainer.appendChild(item));
-            }
-            
-            // Append Table Rows
-            const newTableRows = doc.querySelectorAll("#history-table-body > tr");
-            const tableBody = document.getElementById("history-table-body");
-            if (tableBody && newTableRows.length) {
-              newTableRows.forEach(row => tableBody.appendChild(row));
-            }
-            
-            // Update counts index
-            const newShowingEnd = doc.getElementById("showing-end-index");
-            const showingEnd = document.getElementById("showing-end-index");
-            if (showingEnd && newShowingEnd) {
-              showingEnd.innerText = newShowingEnd.innerText;
-            }
-            
             // Reapply translation tags
             if (typeof window.PetAI_i18n !== "undefined") {
-              const currentLang = window.PetAI_i18n.getCurrentLang();
-              if (gridContainer) window.PetAI_i18n.applyToElement(gridContainer, currentLang);
-              if (tableBody) window.PetAI_i18n.applyToElement(tableBody, currentLang);
+              window.PetAI_i18n.applyToElement(container, window.PetAI_i18n.getCurrentLang());
             }
-            
-            // Reset button
-            loadMoreIcon.innerText = "expand_more";
-            loadMoreIcon.classList.remove("animate-spin");
-            
-            if (typeof window.PetAI_i18n !== "undefined") {
-              loadMoreText.innerText = window.PetAI_i18n.t("loadMore");
-            } else {
-              loadMoreText.innerText = "Tải thêm kết quả";
-            }
-            
-            if (currentPage >= totalPages) {
-              loadMoreBtn.classList.add("hidden");
-            }
-          })
-          .catch(err => {
-            console.error(err);
-            loadMoreIcon.innerText = "expand_more";
-            loadMoreIcon.classList.remove("animate-spin");
-            loadMoreText.innerText = "Thử lại";
-          });
+
+            // Apply View Mode (Grid vs Table)
+            const savedMode = localStorage.getItem("history-view-mode") || "grid";
+            toggleViewMode(savedMode);
+
+            // Update progress bar widths in new results
+            document.querySelectorAll(".progress-bar-item").forEach(function (bar) {
+              const pct = bar.getAttribute("data-pct") || "0";
+              bar.style.width = pct + "%";
+            });
+
+            // Apply subtle fade-in animation only to the content areas (grid + table)
+            // This gives a smooth transition without any blank/dim flash
+            const contentSections = container.querySelectorAll("#grid-view-section, #table-view-section");
+            contentSections.forEach(function (sec) {
+              sec.classList.remove("history-content-enter");
+              // Force reflow to restart animation
+              void sec.offsetWidth;
+              sec.classList.add("history-content-enter");
+              // Auto-remove class after animation completes
+              sec.addEventListener("animationend", function () {
+                sec.classList.remove("history-content-enter");
+              }, { once: true });
+            });
+          }
+        })
+        .catch(err => {
+          console.error("PJAX load failed:", err);
+          // Fallback to normal navigation if AJAX fails
+          if (url) {
+            window.location.href = url;
+          }
+        });
+    }
+
+    // ── View Mode persistence (Grid vs Table) ──
+    function toggleViewMode(mode) {
+      localStorage.setItem("history-view-mode", mode);
+
+      const gridSection = document.getElementById("grid-view-section");
+      const tableSection = document.getElementById("table-view-section");
+      const gridBtn = document.getElementById("view-grid-btn");
+      const tableBtn = document.getElementById("view-table-btn");
+
+      if (!gridSection || !tableSection) return;
+
+      if (mode === "table") {
+        gridSection.classList.add("hidden");
+        tableSection.classList.remove("hidden");
+
+        tableBtn.className = "px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer bg-white dark:bg-slate-800 text-primary dark:text-blue-400 shadow-sm border border-slate-200/55 dark:border-slate-700/60";
+        gridBtn.className = "px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-350";
+      } else {
+        tableSection.classList.add("hidden");
+        gridSection.classList.remove("hidden");
+
+        gridBtn.className = "px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer bg-white dark:bg-slate-800 text-primary dark:text-blue-400 shadow-sm border border-slate-200/55 dark:border-slate-700/60";
+        tableBtn.className = "px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-350";
+      }
+    }
+
+    // ── AJAX Infinite Scroll / Load More pagination logic ──
+    var currentPage = 1;
+    var totalPages = parseInt("{{ total_pages or 1 }}");
+
+    function loadMoreResults() {
+      if (currentPage >= totalPages) return;
+      currentPage++;
+
+      const loadMoreBtn = document.getElementById("load-more-btn");
+      const loadMoreText = document.getElementById("load-more-text");
+      const loadMoreIcon = document.getElementById("load-more-icon");
+
+      loadMoreIcon.innerText = "sync";
+      loadMoreIcon.classList.add("animate-spin");
+
+      if (typeof window.PetAI_i18n !== "undefined") {
+        loadMoreText.innerText = window.PetAI_i18n.t("loading");
+      } else {
+        loadMoreText.innerText = "Đang tải...";
       }
 
-      document.addEventListener("DOMContentLoaded", function () {
-        // Move modals to body to prevent stacking context or transform cutoff issues
-        const deleteConfirmModal = document.getElementById("deleteConfirmModal");
-        const exportModal = document.getElementById("exportModal");
-        if (deleteConfirmModal && deleteConfirmModal.parentNode !== document.body) {
-          document.body.appendChild(deleteConfirmModal);
-        }
-        if (exportModal && exportModal.parentNode !== document.body) {
-          document.body.appendChild(exportModal);
-        }
+      const url = new URL(window.location.href);
+      url.searchParams.set("page", currentPage);
 
-        // Initialize View Mode
-        const savedMode = localStorage.getItem("history-view-mode") || "grid";
-        toggleViewMode(savedMode);
+      fetch(url)
+        .then(res => res.text())
+        .then(htmlText => {
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(htmlText, "text/html");
 
-        // Set width for progress bars
-        document.querySelectorAll(".progress-bar-item").forEach(function (bar) {
-          const pct = bar.getAttribute("data-pct") || "0";
-          bar.style.width = pct + "%";
-        });
-
-        // Adjust scroll position after pagination (if reloaded with page query)
-        try {
-          var params = new URLSearchParams(window.location.search || "");
-          if (params.has("page")) {
-            if ("scrollRestoration" in history) history.scrollRestoration = "manual";
-            var mainEl = document.querySelector("main");
-            if (mainEl) {
-              mainEl.scrollIntoView({ behavior: "auto", block: "start" });
-            }
+          // Append Grid Items
+          const newGridItems = doc.querySelectorAll("#history-grid-container > article");
+          const gridContainer = document.getElementById("history-grid-container");
+          if (gridContainer && newGridItems.length) {
+            newGridItems.forEach(item => gridContainer.appendChild(item));
           }
-        } catch (e) {}
-      });
-    </script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script src="{{ url_for('static', filename='js/toasts.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/i18n.js') }}?v=23"></script>
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
-  </body>
+          // Append Table Rows
+          const newTableRows = doc.querySelectorAll("#history-table-body > tr");
+          const tableBody = document.getElementById("history-table-body");
+          if (tableBody && newTableRows.length) {
+            newTableRows.forEach(row => tableBody.appendChild(row));
+          }
+
+          // Update counts index
+          const newShowingEnd = doc.getElementById("showing-end-index");
+          const showingEnd = document.getElementById("showing-end-index");
+          if (showingEnd && newShowingEnd) {
+            showingEnd.innerText = newShowingEnd.innerText;
+          }
+
+          // Reapply translation tags
+          if (typeof window.PetAI_i18n !== "undefined") {
+            const currentLang = window.PetAI_i18n.getCurrentLang();
+            if (gridContainer) window.PetAI_i18n.applyToElement(gridContainer, currentLang);
+            if (tableBody) window.PetAI_i18n.applyToElement(tableBody, currentLang);
+          }
+
+          // Reset button
+          loadMoreIcon.innerText = "expand_more";
+          loadMoreIcon.classList.remove("animate-spin");
+
+          if (typeof window.PetAI_i18n !== "undefined") {
+            loadMoreText.innerText = window.PetAI_i18n.t("loadMore");
+          } else {
+            loadMoreText.innerText = "Tải thêm kết quả";
+          }
+
+          if (currentPage >= totalPages) {
+            loadMoreBtn.classList.add("hidden");
+          }
+        })
+        .catch(err => {
+          console.error(err);
+          loadMoreIcon.innerText = "expand_more";
+          loadMoreIcon.classList.remove("animate-spin");
+          loadMoreText.innerText = "Thử lại";
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      // Move modals to body to prevent stacking context or transform cutoff issues
+      const deleteConfirmModal = document.getElementById("deleteConfirmModal");
+      const exportModal = document.getElementById("exportModal");
+      if (deleteConfirmModal && deleteConfirmModal.parentNode !== document.body) {
+        document.body.appendChild(deleteConfirmModal);
+      }
+      if (exportModal && exportModal.parentNode !== document.body) {
+        document.body.appendChild(exportModal);
+      }
+
+      // Initialize View Mode
+      const savedMode = localStorage.getItem("history-view-mode") || "grid";
+      toggleViewMode(savedMode);
+
+      // Set width for progress bars
+      document.querySelectorAll(".progress-bar-item").forEach(function (bar) {
+        const pct = bar.getAttribute("data-pct") || "0";
+        bar.style.width = pct + "%";
+      });
+
+      // Adjust scroll position after pagination (if reloaded with page query)
+      try {
+        var params = new URLSearchParams(window.location.search || "");
+        if (params.has("page")) {
+          if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+          var mainEl = document.querySelector("main");
+          if (mainEl) {
+            mainEl.scrollIntoView({ behavior: "auto", block: "start" });
+          }
+        }
+      } catch (e) { }
+    });
+  </script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="{{ url_for('static', filename='js/toasts.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/i18n.js') }}?v=23"></script>
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+  <script>
+    // Prefetch on hover: preload tab URLs when user hovers, so click feels instant
+    (function () {
+      var prefetched = new Set();
+      function prefetchUrl(url) {
+        if (!url || prefetched.has(url)) return;
+        prefetched.add(url);
+        var link = document.createElement('link');
+        link.rel = 'prefetch';
+        link.href = url;
+        link.as = 'document';
+        document.head.appendChild(link);
+      }
+      document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.history-tab[href]').forEach(function (tab) {
+          tab.addEventListener('mouseenter', function () {
+            prefetchUrl(tab.getAttribute('href'));
+          });
+          // Also prefetch on touchstart for mobile
+          tab.addEventListener('touchstart', function () {
+            prefetchUrl(tab.getAttribute('href'));
+          }, { passive: true });
+        });
+      });
+    })();
+  </script>
+</body>
+
 </html>
