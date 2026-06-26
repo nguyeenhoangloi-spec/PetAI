@@ -306,6 +306,40 @@
       const dateStr = dateEl ? dateEl.getAttribute("data-scheduled-at") : "";
       const targetDate = dateStr ? new Date(dateStr) : null;
 
+      function formatAndShowDate(lang) {
+        if (!dateEl || !targetDate) return;
+        const day = String(targetDate.getDate()).padStart(2, '0');
+        const month = String(targetDate.getMonth() + 1).padStart(2, '0');
+        const year = targetDate.getFullYear();
+        const hours = String(targetDate.getHours()).padStart(2, '0');
+        const mins = String(targetDate.getMinutes()).padStart(2, '0');
+        const separator = (lang === 'en') ? ' at ' : ' lúc ';
+        dateEl.textContent = `${day}/${month}/${year}${separator}${hours}:${mins}`;
+      }
+
+      // Initial formatting based on cookie or localStorage
+      const getInitialLang = () => {
+        try {
+          const match = document.cookie.match(/(?:^|; )siteLanguage=([^;]*)/);
+          if (match) return match[1];
+          const local = localStorage.getItem("siteLanguage");
+          if (local) return local;
+        } catch (e) {}
+        return 'vi';
+      };
+      formatAndShowDate(getInitialLang());
+
+      // Listen for language changes from i18n.js
+      document.addEventListener("i18nReady", function (e) {
+        if (e.detail && e.detail.lang) {
+          formatAndShowDate(e.detail.lang);
+        }
+      });
+      document.addEventListener("i18nChanged", function (e) {
+        if (e.detail && e.detail.lang) {
+          formatAndShowDate(e.detail.lang);
+        }
+      });
 
       function updateCountdown() {
         if (!targetDate) return;
