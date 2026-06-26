@@ -335,6 +335,15 @@
     let otpCountdownTimer = null;
     let otpSecondsLeft = 300;
 
+    // Helper function to translate backend messages
+    const getMsg = (msg) => {
+      if (!msg) return "";
+      if (window.PetAI_i18n && typeof window.PetAI_i18n.translateDynamicToast === "function") {
+        return window.PetAI_i18n.translateDynamicToast(msg, window.PetAI_i18n.getCurrentLang());
+      }
+      return msg;
+    };
+
     async function startRestore() {
       if (window.PetAI_confirm) {
         const confirmed = await window.PetAI_confirm({
@@ -362,10 +371,10 @@
         if (data.success) {
           openRestoreModal();
         } else {
-          showToastMsg('error', data.message || (window.PetAI_i18n ? window.PetAI_i18n.t('error') : 'Gặp lỗi khi gửi OTP. Vui lòng thử lại.'));
+          showToastMsg('error', getMsg(data.message) || (window.PetAI_i18n ? window.PetAI_i18n.t('errorRequestOtp') : 'Gặp lỗi khi gửi OTP. Vui lòng thử lại.'));
         }
       } catch (e) {
-        showToastMsg('error', window.PetAI_i18n ? window.PetAI_i18n.t('error') : 'Lỗi kết nối. Vui lòng thử lại.');
+        showToastMsg('error', window.PetAI_i18n ? window.PetAI_i18n.t('connectionErrorTryAgain') : 'Lỗi kết nối. Vui lòng thử lại.');
       } finally {
         btn.disabled = false;
         btn.innerHTML = '<span class="material-symbols-outlined">restore</span> ' + (window.PetAI_i18n ? window.PetAI_i18n.t('restoreAccountBtn') : 'Khôi phục tài khoản');
@@ -428,7 +437,7 @@
     async function confirmRestore() {
       const otp = getOtpValue();
       if (otp.length !== 6) {
-        showOtpError('Vui lòng nhập đủ 6 chữ số.');
+        showOtpError(window.PetAI_i18n ? window.PetAI_i18n.t('enterAll6Digits') : 'Vui lòng nhập đủ 6 chữ số.');
         return;
       }
       const btn = document.getElementById('restore-confirm-btn');
@@ -448,15 +457,15 @@
         const data = await res.json();
         if (data.success) {
           closeRestoreModal();
-          showToastMsg('success', data.message || (window.PetAI_i18n ? window.PetAI_i18n.t('success') : 'Tài khoản đã được khôi phục!'));
+          showToastMsg('success', getMsg(data.message) || (window.PetAI_i18n ? window.PetAI_i18n.t('success') : 'Tài khoản đã được khôi phục!'));
           setTimeout(() => { window.location.href = data.redirect || '/dashboard'; }, 1800);
         } else {
-          showOtpError(data.message || 'Mã OTP không đúng.');
+          showOtpError(getMsg(data.message) || (window.PetAI_i18n ? window.PetAI_i18n.t('incorrectOtp') : 'Mã OTP không đúng.'));
           btn.disabled = false;
           btn.textContent = window.PetAI_i18n ? window.PetAI_i18n.t('restoreConfirmBtn') : 'Xác nhận khôi phục';
         }
       } catch (e) {
-        showOtpError('Lỗi kết nối. Vui lòng thử lại.');
+        showOtpError(window.PetAI_i18n ? window.PetAI_i18n.t('connectionErrorTryAgain') : 'Lỗi kết nối. Vui lòng thử lại.');
         btn.disabled = false;
         btn.textContent = window.PetAI_i18n ? window.PetAI_i18n.t('restoreConfirmBtn') : 'Xác nhận khôi phục';
       }
@@ -482,12 +491,12 @@
           document.querySelectorAll('.otp-input')[0]?.focus();
           hideOtpError();
           startOtpCountdown();
-          showToastMsg('success', window.PetAI_i18n ? window.PetAI_i18n.t('otpSentSuccess') : 'Mã OTP mới đã được gửi về email.');
+          showToastMsg('success', getMsg(data.message) || (window.PetAI_i18n ? window.PetAI_i18n.t('otpSentSuccess') : 'Mã OTP mới đã được gửi về email.'));
         } else {
-          showOtpError(data.message || 'Không thể gửi lại OTP.');
+          showOtpError(getMsg(data.message) || (window.PetAI_i18n ? window.PetAI_i18n.t('errorResendOtp') : 'Không thể gửi lại OTP.'));
         }
       } catch (e) {
-        showOtpError('Lỗi kết nối.');
+        showOtpError(window.PetAI_i18n ? window.PetAI_i18n.t('connectionError') : 'Lỗi kết nối.');
       } finally {
         btn.disabled = false;
         btn.textContent = window.PetAI_i18n ? window.PetAI_i18n.t('resendOtpBtn') : 'Gửi lại mã OTP';

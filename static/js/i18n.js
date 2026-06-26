@@ -1437,6 +1437,17 @@
       "restoreConfirmBtn": "Xác nhận khôi phục",
       "resendOtpBtn": "Gửi lại mã OTP",
       "sendingOtp": "Đang gửi OTP...",
+      "close": "Đóng",
+      "cancel": "Hủy bỏ",
+      "errorRequestOtp": "Gặp lỗi khi yêu cầu OTP.",
+      "connectionErrorTryAgain": "Lỗi kết nối. Vui lòng thử lại.",
+      "enterAll6Digits": "Vui lòng nhập đủ 6 chữ số.",
+      "incorrectOtp": "Mã OTP không đúng.",
+      "connectionError": "Lỗi kết nối.",
+      "errorResendOtp": "Không thể gửi lại OTP.",
+      "toastNewOtpSent": "Mã OTP mới đã được gửi.",
+      "otpExpired": "Đã hết hạn",
+      "confirmRestoreAccountText": "Khôi phục tài khoản này sẽ hủy bỏ yêu cầu xóa. Bạn có chắc chắn không?",
       "identifyCompleted": "Nhận diện hoàn tất!",
       "top1Conclusion": "Top-1 (kết luận)",
       "days7Ago": "7 ngày qua",
@@ -3448,6 +3459,17 @@
       "restoreConfirmBtn": "Confirm Restoration",
       "resendOtpBtn": "Resend OTP Code",
       "sendingOtp": "Sending OTP...",
+      "close": "Close",
+      "cancel": "Cancel",
+      "errorRequestOtp": "An error occurred while requesting OTP.",
+      "connectionErrorTryAgain": "Connection error. Please try again.",
+      "enterAll6Digits": "Please enter all 6 digits.",
+      "incorrectOtp": "Incorrect OTP code.",
+      "connectionError": "Connection error.",
+      "errorResendOtp": "Unable to resend OTP.",
+      "toastNewOtpSent": "New OTP code has been sent.",
+      "otpExpired": "Expired",
+      "confirmRestoreAccountText": "Restoring this account will cancel the deletion request. Are you sure?",
       "identifyCompleted": "Identification completed!",
       "top1Conclusion": "Top-1 (conclusion)",
       "days7Ago": "Last 7 days",
@@ -4092,6 +4114,69 @@
     if (text.startsWith("Đã mở khóa tài khoản ") && text.endsWith(" thành công.")) {
       const username = text.substring("Đã mở khóa tài khoản ".length, text.length - " thành công.".length);
       return "Successfully unlocked account " + username + ".";
+    }
+
+    // OTP & Delete Account Messages Mapping
+    if (text === "Chưa đăng nhập.") {
+      return "Not logged in.";
+    }
+    if (text === "Không tìm thấy tài khoản.") {
+      return "Account not found.";
+    }
+    if (text === "Tài khoản đã trong trạng thái chờ xóa.") {
+      return "Account is already pending deletion.";
+    }
+    if (text === "Tài khoản đã bị xóa.") {
+      return "Account has been deleted.";
+    }
+    if (text === "Mã OTP đã được gửi về email của bạn.") {
+      return "OTP code has been sent to your email.";
+    }
+    if (text === "Lỗi hệ thống. Vui lòng thử lại.") {
+      return "System error. Please try again.";
+    }
+    if (text === "Mã OTP không hợp lệ.") {
+      return "Invalid OTP code.";
+    }
+    if (text === "Tài khoản không ở trạng thái hợp lệ để xóa.") {
+      return "Account not in valid state for deletion.";
+    }
+    if (text === "Mã OTP đã hết hạn. Vui lòng yêu cầu lại.") {
+      return "OTP code has expired. Please request a new one.";
+    }
+    if (text === "Mã OTP đã hết hạn. Vui lòng gửi lại.") {
+      return "OTP code has expired. Please click resend.";
+    }
+    if (text === "Bạn đã nhập sai quá nhiều lần. Vui lòng thử lại sau 10 phút.") {
+      return "You have entered the incorrect OTP too many times. Please try again after 10 minutes.";
+    }
+    if (text === "Bạn đã nhập sai quá nhiều lần. Vui lòng đợi 10 phút.") {
+      return "You have entered the incorrect OTP too many times. Please wait 10 minutes.";
+    }
+    if (text === "Mã OTP không hợp lệ hoặc đã hết hạn.") {
+      return "Invalid or expired OTP code.";
+    }
+    if (text === "Yêu cầu xóa tài khoản đã được ghi nhận.") {
+      return "Account deletion request has been recorded.";
+    }
+    if (text === "Tài khoản của bạn đã bị xóa vĩnh viễn.") {
+      return "Your account has been permanently deleted.";
+    }
+    if (text === "Tài khoản không ở trạng thái chờ xóa.") {
+      return "Account is not pending deletion.";
+    }
+    if (text === "Bạn đã thử quá nhiều lần. Vui lòng đợi 10 phút.") {
+      return "You have tried too many times. Please wait 10 minutes.";
+    }
+    if (text === "Mã OTP khôi phục đã được gửi về email của bạn.") {
+      return "Restoration OTP code has been sent to your email.";
+    }
+    if (text === "Tài khoản của bạn đã được khôi phục thành công!") {
+      return "Your account has been successfully restored!";
+    }
+    const matchOtpAttempts = text.match(/Mã OTP không chính xác\.\s*Bạn còn (\d+) lần thử\./);
+    if (matchOtpAttempts) {
+      return "Incorrect OTP code. You have " + matchOtpAttempts[1] + " attempts left.";
     }
 
     // Lock/Unlock/Delete backend errors
