@@ -211,7 +211,37 @@
           display: flex;
           flex-direction: column;
           justify-content: flex-start;
+          gap: 16px !important;
         }
+      }
+      /* Prevent column stretching during analysis */
+      @media (min-width: 1024px) {
+        .upload-grid.is-processing {
+          align-items: start !important;
+        }
+        .upload-grid.is-processing .upload-col-last {
+          flex: none !important;
+        }
+        .upload-grid.is-processing .upload-col-last > .upload-col-last-inner {
+          flex: none !important;
+          justify-content: flex-start !important;
+        }
+      }
+      /* Compact progress container style rules */
+      #progressCard {
+        min-height: 80px;
+        max-height: 120px;
+      }
+      .scrollbar-none::-webkit-scrollbar {
+        display: none;
+      }
+      .scrollbar-none {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+      /* Show Quick Photo Checklist when container has-preview class */
+      .upload-grid.has-preview #quickPhotoChecklist {
+        display: block !important;
       }
       /* Drop zone dragover state */
       .is-dragover {
@@ -382,85 +412,81 @@
                 <span data-i18n="analyzeNowBtn">Nhận diện ngay</span>
               </button>
 
+              <!-- ── PROGRESS STEPS INLINE (hidden, shows when submitting) ── -->
+              <div
+                id="progressCard"
+                class="hidden mt-3 p-3 rounded-xl border border-outline-variant/20 dark:border-slate-800/80 bg-surface-container-low/50 dark:bg-slate-950/30 transition-all duration-300"
+              >
+                <div class="flex items-start overflow-x-auto scrollbar-none select-none py-1" id="progressSteps">
+
+                  <!-- Step 1 -->
+                  <div class="flex flex-col items-center flex-1 min-w-[70px]" data-step="1">
+                    <div class="flex items-center w-full">
+                      <div class="step-circle w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold shrink-0 z-10 transition-all duration-400 bg-primary text-on-primary shadow-sm">1</div>
+                      <div class="step-line flex-1 h-0.5 bg-outline-variant/30 dark:bg-slate-700 transition-colors duration-500"></div>
+                    </div>
+                    <div class="mt-1.5 text-center px-0.5">
+                      <p class="text-[10px] font-semibold text-on-surface dark:text-slate-200 leading-tight" data-i18n="step1Upload">Tải ảnh</p>
+                      <p class="step-desc text-[9px] text-on-surface-variant dark:text-slate-400 mt-0.5 leading-tight" data-i18n="step1UploadDesc">Ảnh sẵn sàng</p>
+                    </div>
+                  </div>
+
+                  <!-- Step 2 -->
+                  <div class="flex flex-col items-center flex-1 min-w-[70px]" data-step="2">
+                    <div class="flex items-center w-full">
+                      <div class="step-circle w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold shrink-0 z-10 transition-all duration-400 border-2 border-dashed border-outline-variant/40 dark:border-slate-600 text-on-surface-variant dark:text-slate-500">2</div>
+                      <div class="step-line flex-1 h-0.5 bg-outline-variant/30 dark:bg-slate-700 transition-colors duration-500"></div>
+                    </div>
+                    <div class="mt-1.5 text-center px-0.5">
+                      <p class="text-[10px] font-semibold text-on-surface-variant dark:text-slate-400 leading-tight" data-i18n="step2Check">Kiểm tra</p>
+                      <p class="step-desc text-[9px] text-on-surface-variant/60 dark:text-slate-500 mt-0.5 leading-tight" data-i18n="step2CheckDesc">Kiểm tra...</p>
+                    </div>
+                  </div>
+
+                  <!-- Step 3 -->
+                  <div class="flex flex-col items-center flex-1 min-w-[70px]" data-step="3">
+                    <div class="flex items-center w-full">
+                      <div class="step-circle w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold shrink-0 z-10 transition-all duration-400 border-2 border-dashed border-outline-variant/40 dark:border-slate-600 text-on-surface-variant dark:text-slate-500">3</div>
+                      <div class="step-line flex-1 h-0.5 bg-outline-variant/30 dark:bg-slate-700 transition-colors duration-500"></div>
+                    </div>
+                    <div class="mt-1.5 text-center px-0.5">
+                      <p class="text-[10px] font-semibold text-on-surface-variant dark:text-slate-400 leading-tight" data-i18n="step3Analyze">Phân tích AI</p>
+                      <p class="step-desc text-[9px] text-on-surface-variant/60 dark:text-slate-500 mt-0.5 leading-tight" data-i18n="step3AnalyzeDesc">Phân tích...</p>
+                    </div>
+                  </div>
+
+                  <!-- Step 4 -->
+                  <div class="flex flex-col items-center flex-1 min-w-[70px]" data-step="4">
+                    <div class="flex items-center w-full">
+                      <div class="step-circle w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold shrink-0 z-10 transition-all duration-400 border-2 border-dashed border-outline-variant/40 dark:border-slate-600 text-on-surface-variant dark:text-slate-500">4</div>
+                      <div class="step-line flex-1 h-0.5 bg-outline-variant/30 dark:bg-slate-700 transition-colors duration-500"></div>
+                    </div>
+                    <div class="mt-1.5 text-center px-0.5">
+                      <p class="text-[10px] font-semibold text-on-surface-variant dark:text-slate-400 leading-tight" data-i18n="step4Predict">Dự đoán</p>
+                      <p class="step-desc text-[9px] text-on-surface-variant/60 dark:text-slate-500 mt-0.5 leading-tight" data-i18n="step4PredictDesc">Dự đoán...</p>
+                    </div>
+                  </div>
+
+                  <!-- Step 5 (last, no line) -->
+                  <div class="flex flex-col items-center min-w-[70px]" data-step="5">
+                    <div class="flex items-center">
+                      <div class="step-circle w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold shrink-0 z-10 transition-all duration-400 border-2 border-dashed border-outline-variant/40 dark:border-slate-600 text-on-surface-variant dark:text-slate-500">5</div>
+                    </div>
+                    <div class="mt-1.5 text-center px-0.5">
+                      <p class="text-[10px] font-semibold text-on-surface-variant dark:text-slate-400 leading-tight" data-i18n="step5Done">Hoàn tất</p>
+                      <p class="step-desc text-[9px] text-on-surface-variant/60 dark:text-slate-500 mt-0.5 leading-tight" data-i18n="step5DoneDesc">Hoàn tất...</p>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
               <!-- Security note -->
               <p class="mt-3 text-center text-[12px] text-on-surface-variant/50 dark:text-slate-600 flex items-center justify-center gap-1">
                 <span class="material-symbols-outlined text-[13px]">lock</span>
                 <span data-i18n="securityNote">Dữ liệu của bạn được bảo mật tuyệt đối</span>
               </p>
             </form>
-
-            <!-- ── PROGRESS STEPS CARD (hidden, shows when submitting) ── -->
-            <div
-              id="progressCard"
-              class="stat-card hidden bg-surface-container-lowest dark:bg-slate-900 rounded-2xl border border-outline-variant/30 dark:border-slate-800 p-6 shadow-sm"
-            >
-              <h3 class="text-[15px] font-semibold text-on-surface dark:text-slate-200 mb-6 flex items-center gap-2">
-                <span class="material-symbols-outlined text-primary dark:text-blue-400 text-[20px]">timeline</span>
-                <span data-i18n="processingTitle">Quy trình nhận diện</span>
-              </h3>
-              <div class="flex items-start" id="progressSteps">
-
-                <!-- Step 1 -->
-                <div class="flex flex-col items-center flex-1" data-step="1">
-                  <div class="flex items-center w-full">
-                    <div class="step-circle w-9 h-9 rounded-full flex items-center justify-center text-[14px] font-bold shrink-0 z-10 transition-all duration-400 bg-primary text-on-primary shadow-md">1</div>
-                    <div class="step-line flex-1 h-0.5 bg-outline-variant/30 dark:bg-slate-700 transition-colors duration-500"></div>
-                  </div>
-                  <div class="mt-2.5 text-center px-1">
-                    <p class="text-[12px] font-semibold text-on-surface dark:text-slate-200 leading-tight" data-i18n="step1Upload">Tải ảnh</p>
-                    <p class="step-desc text-[11px] text-on-surface-variant dark:text-slate-400 mt-0.5 leading-tight" data-i18n="step1UploadDesc">Ảnh đã sẵn sàng</p>
-                  </div>
-                </div>
-
-                <!-- Step 2 -->
-                <div class="flex flex-col items-center flex-1" data-step="2">
-                  <div class="flex items-center w-full">
-                    <div class="step-circle w-9 h-9 rounded-full flex items-center justify-center text-[14px] font-bold shrink-0 z-10 transition-all duration-400 border-2 border-dashed border-outline-variant/40 dark:border-slate-600 text-on-surface-variant dark:text-slate-500">2</div>
-                    <div class="step-line flex-1 h-0.5 bg-outline-variant/30 dark:bg-slate-700 transition-colors duration-500"></div>
-                  </div>
-                  <div class="mt-2.5 text-center px-1">
-                    <p class="text-[12px] font-semibold text-on-surface-variant dark:text-slate-400 leading-tight" data-i18n="step2Check">Kiểm tra ảnh</p>
-                    <p class="step-desc text-[11px] text-on-surface-variant/60 dark:text-slate-500 mt-0.5 leading-tight" data-i18n="step2CheckDesc">Đang kiểm tra...</p>
-                  </div>
-                </div>
-
-                <!-- Step 3 -->
-                <div class="flex flex-col items-center flex-1" data-step="3">
-                  <div class="flex items-center w-full">
-                    <div class="step-circle w-9 h-9 rounded-full flex items-center justify-center text-[14px] font-bold shrink-0 z-10 transition-all duration-400 border-2 border-dashed border-outline-variant/40 dark:border-slate-600 text-on-surface-variant dark:text-slate-500">3</div>
-                    <div class="step-line flex-1 h-0.5 bg-outline-variant/30 dark:bg-slate-700 transition-colors duration-500"></div>
-                  </div>
-                  <div class="mt-2.5 text-center px-1">
-                    <p class="text-[12px] font-semibold text-on-surface-variant dark:text-slate-400 leading-tight" data-i18n="step3Analyze">Phân tích AI</p>
-                    <p class="step-desc text-[11px] text-on-surface-variant/60 dark:text-slate-500 mt-0.5 leading-tight" data-i18n="step3AnalyzeDesc">Đang phân tích...</p>
-                  </div>
-                </div>
-
-                <!-- Step 4 -->
-                <div class="flex flex-col items-center flex-1" data-step="4">
-                  <div class="flex items-center w-full">
-                    <div class="step-circle w-9 h-9 rounded-full flex items-center justify-center text-[14px] font-bold shrink-0 z-10 transition-all duration-400 border-2 border-dashed border-outline-variant/40 dark:border-slate-600 text-on-surface-variant dark:text-slate-500">4</div>
-                    <div class="step-line flex-1 h-0.5 bg-outline-variant/30 dark:bg-slate-700 transition-colors duration-500"></div>
-                  </div>
-                  <div class="mt-2.5 text-center px-1">
-                    <p class="text-[12px] font-semibold text-on-surface-variant dark:text-slate-400 leading-tight" data-i18n="step4Predict">Dự đoán</p>
-                    <p class="step-desc text-[11px] text-on-surface-variant/60 dark:text-slate-500 mt-0.5 leading-tight" data-i18n="step4PredictDesc">Đang dự đoán...</p>
-                  </div>
-                </div>
-
-                <!-- Step 5 (last, no line) -->
-                <div class="flex flex-col items-center" data-step="5">
-                  <div class="flex items-center">
-                    <div class="step-circle w-9 h-9 rounded-full flex items-center justify-center text-[14px] font-bold shrink-0 z-10 transition-all duration-400 border-2 border-dashed border-outline-variant/40 dark:border-slate-600 text-on-surface-variant dark:text-slate-500">5</div>
-                  </div>
-                  <div class="mt-2.5 text-center">
-                    <p class="text-[12px] font-semibold text-on-surface-variant dark:text-slate-400 leading-tight" data-i18n="step5Done">Hoàn tất</p>
-                    <p class="step-desc text-[11px] text-on-surface-variant/60 dark:text-slate-500 mt-0.5 leading-tight" data-i18n="step5DoneDesc">Sắp xong...</p>
-                  </div>
-                </div>
-
-              </div>
-            </div>
 
             <!-- ── RECENT IDENTIFICATIONS ── -->
             <section class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-2xl border border-outline-variant/30 dark:border-slate-800 p-5 shadow-sm">
@@ -532,6 +558,19 @@
                       <span class="text-[12px] text-on-surface-variant dark:text-slate-400 leading-relaxed" data-i18n="photoTip3">Tránh ảnh quá mờ, quá tối hoặc bị che khuất vùng đầu.</span>
                     </li>
                   </ul>
+                </div>
+                <!-- Quick Photo Checklist (hidden by default, shown when .has-preview is active on parent) -->
+                <div id="quickPhotoChecklist" class="hidden pt-2 border-t border-outline-variant/10 dark:border-slate-800/60">
+                  <div class="flex flex-wrap items-center gap-2">
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-500/10 text-emerald-700 dark:bg-emerald-950/20 dark:text-emerald-400 border border-emerald-500/10 dark:border-emerald-800/20 select-none">
+                      <span class="material-symbols-outlined text-[13px]">verified</span>
+                      <span id="quickCheckFormat" data-i18n="checkFormatValid">Định dạng hợp lệ</span>
+                    </span>
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-500/10 text-emerald-700 dark:bg-emerald-950/20 dark:text-emerald-400 border border-emerald-500/10 dark:border-emerald-800/20 select-none">
+                      <span class="material-symbols-outlined text-[13px]">verified</span>
+                      <span id="quickCheckSize" data-i18n="checkSizeOk">Dung lượng hợp lệ</span>
+                    </span>
+                  </div>
                 </div>
               </div>
             </section>
@@ -829,6 +868,18 @@
           previewArea.classList.add("hidden");
           if (previewValidBadge) previewValidBadge.classList.add("hidden");
           analyzeBtn.disabled = true;
+
+          // Clear processing and preview layout states
+          const grid = document.querySelector(".upload-grid");
+          if (grid) {
+            grid.classList.remove("is-processing");
+            grid.classList.remove("has-preview");
+          }
+          if (progressCard) progressCard.classList.add("hidden");
+          if (progressTimer) {
+            clearTimeout(progressTimer);
+            progressTimer = null;
+          }
         }
 
         // ─── Show preview ────────────────────────────────────────────
@@ -855,6 +906,10 @@
             // Hide drop zone, show preview
             dropZone.classList.add("hidden");
             previewArea.classList.remove("hidden");
+
+            // Apply has-preview state class to layout container
+            const grid = document.querySelector(".upload-grid");
+            if (grid) grid.classList.add("has-preview");
 
             // File name
             if (previewFileName) previewFileName.textContent = file.name;
@@ -899,6 +954,60 @@
               }
             }
 
+            // Update Quick Photo Checklist metadata check status
+            const formatCheck = document.getElementById("quickCheckFormat");
+            const sizeCheck = document.getElementById("quickCheckSize");
+            if (formatCheck) {
+              const iconEl = formatCheck.previousElementSibling;
+              const parentEl = formatCheck.parentElement;
+              if (mimeOk && hasValidExt) {
+                formatCheck.setAttribute("data-i18n", "checkFormatValid");
+                formatCheck.textContent = typeof window.PetAI_i18n !== "undefined" ? (window.PetAI_i18n.t("checkFormatValid") || "Định dạng hợp lệ") : "Định dạng hợp lệ";
+                if (iconEl) {
+                  iconEl.textContent = "verified";
+                  iconEl.className = "material-symbols-outlined text-[13px]";
+                }
+                if (parentEl) {
+                  parentEl.className = "inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/10 text-emerald-700 dark:bg-emerald-950/20 dark:text-emerald-400 border border-emerald-500/10 dark:border-emerald-800/20 select-none";
+                }
+              } else {
+                formatCheck.removeAttribute("data-i18n");
+                formatCheck.textContent = typeof window.PetAI_i18n !== "undefined" ? (window.PetAI_i18n.t("onlySupportJpgPng") || "Định dạng không hỗ trợ") : "Định dạng không hỗ trợ";
+                if (iconEl) {
+                  iconEl.textContent = "cancel";
+                  iconEl.className = "material-symbols-outlined text-[13px]";
+                }
+                if (parentEl) {
+                  parentEl.className = "inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-red-500/10 text-red-700 dark:bg-red-950/20 dark:text-red-400 border border-red-500/10 dark:border-red-800/20 select-none";
+                }
+              }
+            }
+            if (sizeCheck) {
+              const iconEl = sizeCheck.previousElementSibling;
+              const parentEl = sizeCheck.parentElement;
+              if (sizeOk) {
+                sizeCheck.setAttribute("data-i18n", "checkSizeOk");
+                sizeCheck.textContent = typeof window.PetAI_i18n !== "undefined" ? (window.PetAI_i18n.t("checkSizeOk") || "Dung lượng hợp lệ") : "Dung lượng hợp lệ";
+                if (iconEl) {
+                  iconEl.textContent = "verified";
+                  iconEl.className = "material-symbols-outlined text-[13px]";
+                }
+                if (parentEl) {
+                  parentEl.className = "inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/10 text-emerald-700 dark:bg-emerald-950/20 dark:text-emerald-400 border border-emerald-500/10 dark:border-emerald-800/20 select-none";
+                }
+              } else {
+                sizeCheck.removeAttribute("data-i18n");
+                sizeCheck.textContent = typeof window.PetAI_i18n !== "undefined" ? (window.PetAI_i18n.t("maxFileSize") || "Dung lượng quá lớn (>10MB)") : "Dung lượng quá lớn (>10MB)";
+                if (iconEl) {
+                  iconEl.textContent = "cancel";
+                  iconEl.className = "material-symbols-outlined text-[13px]";
+                }
+                if (parentEl) {
+                  parentEl.className = "inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-red-500/10 text-red-700 dark:bg-red-950/20 dark:text-red-400 border border-red-500/10 dark:border-red-800/20 select-none";
+                }
+              }
+            }
+
             // Enable analyze button only if image valid
             analyzeBtn.disabled = !(mimeOk && hasValidExt && sizeOk);
           };
@@ -926,19 +1035,19 @@
 
             if (s < step) {
               // Completed
-              circle.className = "step-circle w-9 h-9 rounded-full flex items-center justify-center text-[14px] font-bold shrink-0 z-10 transition-all duration-400 bg-emerald-500 text-white shadow-md";
-              circle.innerHTML = '<span class="material-symbols-outlined text-[18px]" style="font-variation-settings:\'FILL\' 1">check</span>';
+              circle.className = "step-circle w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold shrink-0 z-10 transition-all duration-400 bg-emerald-500 text-white shadow-sm";
+              circle.innerHTML = '<span class="material-symbols-outlined text-[14px]" style="font-variation-settings:\'FILL\' 1">check</span>';
               circle.classList.remove("step-active-pulse");
               if (lineEl) lineEl.classList.add("bg-emerald-500/40", "dark:bg-emerald-800");
               if (descEl) descEl.style.opacity = "0.5";
             } else if (s === step) {
               // Active
-              circle.className = "step-circle w-9 h-9 rounded-full flex items-center justify-center text-[14px] font-bold shrink-0 z-10 transition-all duration-400 bg-primary text-on-primary shadow-md step-active-pulse";
+              circle.className = "step-circle w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold shrink-0 z-10 transition-all duration-400 bg-primary text-on-primary shadow-sm step-active-pulse";
               circle.textContent = String(s);
               if (descEl) descEl.style.opacity = "1";
             } else {
               // Pending
-              circle.className = "step-circle w-9 h-9 rounded-full flex items-center justify-center text-[14px] font-bold shrink-0 z-10 transition-all duration-400 border-2 border-dashed border-outline-variant/40 dark:border-slate-600 text-on-surface-variant dark:text-slate-500";
+              circle.className = "step-circle w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold shrink-0 z-10 transition-all duration-400 border-2 border-dashed border-outline-variant/40 dark:border-slate-600 text-on-surface-variant dark:text-slate-500";
               circle.textContent = String(s);
               circle.classList.remove("step-active-pulse");
               if (descEl) descEl.style.opacity = "0.5";
@@ -966,6 +1075,10 @@
                 '<span>' + (t("analyzing") || "Đang phân tích...") + '</span>';
             }
 
+            // Apply processing state class to layout
+            const grid = document.querySelector(".upload-grid");
+            if (grid) grid.classList.add("is-processing");
+
             showProgressCard();
 
             try {
@@ -983,6 +1096,7 @@
                 if (window.loadPagePjax) { window.loadPagePjax(res.url, true, html); }
                 else { window.location.href = res.url; }
               } else {
+                if (grid) grid.classList.remove("is-processing");
                 if (progressCard) progressCard.classList.add("hidden");
                 if (analyzeBtn) { analyzeBtn.disabled = false; analyzeBtn.innerHTML = origHtml; }
                 if (typeof window.showToast === "function") {
@@ -992,6 +1106,8 @@
             } catch (err) {
               console.error(err);
               if (progressTimer) clearTimeout(progressTimer);
+              const grid = document.querySelector(".upload-grid");
+              if (grid) grid.classList.remove("is-processing");
               if (progressCard) progressCard.classList.add("hidden");
               if (analyzeBtn) { analyzeBtn.disabled = false; analyzeBtn.innerHTML = origHtml; }
               if (typeof window.showToast === "function") {
@@ -1329,6 +1445,18 @@
         }
 
         if (openWatchAd) openWatchAdModal();
+
+        // Ensure clean layout states when the page initially loads or gets restored from back-forward cache
+        const initialGrid = document.querySelector(".upload-grid");
+        if (initialGrid) {
+          initialGrid.classList.remove("is-processing");
+          initialGrid.classList.remove("has-preview");
+        }
+        if (progressCard) progressCard.classList.add("hidden");
+        if (progressTimer) {
+          clearTimeout(progressTimer);
+          progressTimer = null;
+        }
 
       })();
     </script>
