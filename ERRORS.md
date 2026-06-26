@@ -2,6 +2,25 @@
 
 ---
 
+## [2026-06-26 11:26] - Lỗi cú pháp Unterminated string literal lồng dấu nháy trong predict.html
+
+- **Type**: Syntax
+- **Severity**: Medium
+- **File**: `templates/predict.html:794`
+- **Agent**: @frontend-specialist
+- **Root Cause**: Thuộc tính `onclick` sử dụng dấu nháy kép bọc ngoài và có chứa biểu thức Jinja2 sử dụng nháy kép bên trong, gây kết thúc sớm thuộc tính và tạo ra lỗi cú pháp Javascript tĩnh "Unterminated string literal", đồng thời lan truyền lỗi cú pháp tới các dòng bên dưới (dòng 965).
+- **Error Message**:
+  ```text
+  Unterminated string literal. (dòng 794)
+  ',' expected. (dòng 965)
+  ')' expected. (dòng 965)
+  ```
+- **Fix Applied**: Tách biểu thức Jinja2 sang thuộc tính `data-filename` riêng biệt (dùng dấu nháy đơn trong Jinja2) và cập nhật `onclick` sử dụng `this.getAttribute('data-filename')` để tránh hoàn toàn xung đột dấu nháy.
+- **Prevention**: Tránh viết các biểu thức Jinja2 phức tạp chứa dấu nháy kép lồng trực tiếp bên trong các thuộc tính HTML có giá trị Javascript (như `onclick`, `onload`). Nên lưu vào thuộc tính `data-*` rồi truy cập qua JS API.
+- **Status**: Fixed
+
+---
+
 ## [2026-06-25 22:10] - Lỗi vỡ cú pháp HTML trang upload-page do công cụ multi_replace thay thế nhầm đoạn cuối file
 
 - **Type**: Agent
