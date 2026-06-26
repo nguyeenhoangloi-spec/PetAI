@@ -1230,6 +1230,16 @@ html.dark .nav-login-btn:hover {
   transition: none !important;
 }
 
+/* Higher specificity override to beat html:has(#sidebar) main transition rule during PJAX navigation */
+html.no-transitions main,
+html.no-transitions footer,
+html.no-transitions .sidebar {
+  -webkit-transition: none !important;
+  -moz-transition: none !important;
+  -o-transition: none !important;
+  transition: none !important;
+}
+
 /* --- Sidebar Preferences & Header Switchers Hiding --- */
 
 /* Hide header theme switcher and language switcher on pages with sidebar */

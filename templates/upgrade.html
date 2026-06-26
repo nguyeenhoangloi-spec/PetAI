@@ -408,6 +408,11 @@
         animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         opacity: 0;
       }
+      /* Disable fade-in animation during PJAX navigation to prevent layout shift */
+      html.ready .animate-fade-in {
+        animation: none !important;
+        opacity: 1 !important;
+      }
 
       .pricing-card {
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);

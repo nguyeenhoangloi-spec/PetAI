@@ -599,9 +599,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // 2. Update Main Content Container
         if (currentMainDiv && newMainDiv) {
+          // Suppress CSS transitions during DOM swap to prevent layout shift
+          // (e.g. main margin-left 300ms transition firing when element is replaced)
+          root.classList.add("no-transitions");
           currentMainDiv.parentNode.replaceChild(newMainDiv, currentMainDiv);
           currentMainDiv = newMainDiv;
           currentPjaxContainer = newMainDiv;
+          // Re-enable transitions after layout settles
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              root.classList.remove("no-transitions");
+            });
+          });
         }
 
         // 3. Update Sidebar (active state highlight & selective replacement to prevent flicker)
