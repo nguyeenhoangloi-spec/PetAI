@@ -1,28 +1,45 @@
-/* ===== MINI SCROLLBAR GLOBALLY ===== */
-/* Show thin/mini scrollbar for all elements */
-* {
+/* ===== MINI SCROLLBAR GLOBALLY FOR MAIN PAGE ONLY ===== */
+/* Show thin/mini scrollbar only for outside (html, body) */
+html, body {
   scrollbar-width: thin; /* Firefox - thin mini scrollbar */
   scrollbar-color: rgba(148, 163, 184, 0.4) transparent; /* Firefox - thumb / track */
 }
-*::-webkit-scrollbar {
-  width: 5px; /* Chrome, Safari - mini vertical scrollbar */
-  height: 5px; /* Chrome, Safari - mini horizontal scrollbar */
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  width: 6px; /* Chrome, Safari - mini vertical scrollbar */
+  height: 6px; /* Chrome, Safari - mini horizontal scrollbar */
 }
-*::-webkit-scrollbar-track {
+html::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track {
   background: transparent;
 }
-*::-webkit-scrollbar-thumb {
+html::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb {
   background: rgba(148, 163, 184, 0.4);
   border-radius: 999px;
 }
-*::-webkit-scrollbar-thumb:hover {
+html::-webkit-scrollbar-thumb:hover,
+body::-webkit-scrollbar-thumb:hover {
   background: rgba(100, 116, 139, 0.6);
 }
-html.dark *::-webkit-scrollbar-thumb {
+html.dark::-webkit-scrollbar-thumb,
+html.dark body::-webkit-scrollbar-thumb {
   background: rgba(71, 85, 105, 0.5);
 }
-html.dark *::-webkit-scrollbar-thumb:hover {
+html.dark::-webkit-scrollbar-thumb:hover,
+html.dark body::-webkit-scrollbar-thumb:hover {
   background: rgba(100, 116, 139, 0.7);
+}
+
+/* Hide scrollbars for all inner elements to keep interface clean */
+*:not(html):not(body) {
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE/Edge */
+}
+*:not(html):not(body)::-webkit-scrollbar {
+  display: none !important; /* Chrome, Safari */
+  width: 0 !important;
+  height: 0 !important;
 }
 
 /* ===== DISABLE BACKDROP-BLUR GLOBALLY (Performance fix for mobile WebView) ===== */
