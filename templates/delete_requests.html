@@ -1,4 +1,4 @@
-﻿<!-- htmlhint spec-char-escape:false, tag-pair:false -->
+<!-- htmlhint spec-char-escape:false, tag-pair:false -->
 <!-- html-validate-disable attribute-allowed-values -->
 <!DOCTYPE html>
 {% set html_class = 'dark' if ui_theme == 'dark' else 'light' %}
@@ -434,15 +434,15 @@
         </div>
 
         <!-- Table Container -->
-        <div class="overflow-x-auto w-full min-w-0">
-          <table class="w-full text-left border-collapse table-fixed">
+        <div class="overflow-x-auto w-full">
+          <table class="w-full text-left border-collapse min-w-[600px]">
             <thead>
               <tr class="bg-surface-container-low dark:bg-slate-850 border-b border-outline-variant/20 dark:border-slate-800 label-sm text-on-surface-variant dark:text-slate-400 uppercase tracking-wider font-semibold">
-                <th class="px-6 py-3.5 w-[25%]" data-i18n="userColHeader">Người dùng</th>
-                <th class="px-6 py-3.5 w-[15%]" data-i18n="statusColHeader">Trạng thái</th>
-                <th class="px-6 py-3.5 w-[20%]" data-i18n="deleteReason">Lý do xóa</th>
-                <th class="px-6 py-3.5 w-[20%]" data-i18n="deleteRequestedAt">Ngày yêu cầu</th>
-                <th class="px-6 py-3.5 w-[20%] text-center" data-i18n="actionColHeader">Hành động</th>
+                <th class="px-4 py-3.5 whitespace-nowrap" data-i18n="userColHeader">Người dùng</th>
+                <th class="px-4 py-3.5 whitespace-nowrap" data-i18n="statusColHeader">Trạng thái</th>
+                <th class="px-4 py-3.5 whitespace-nowrap" data-i18n="deleteReason">Lý do xóa</th>
+                <th class="px-4 py-3.5 whitespace-nowrap" data-i18n="deleteRequestedAt">Ngày yêu cầu</th>
+                <th class="px-4 py-3.5 whitespace-nowrap text-center" data-i18n="actionColHeader">Hành động</th>
               </tr>
             </thead>
             <tbody id="tableBody">
@@ -620,19 +620,19 @@
           }
 
           html += '<tr class="hover:bg-primary/5 dark:hover:bg-slate-800/40 border-b border-outline-variant/10 dark:border-slate-800/60 transition-colors">';
-          html += '<td class="px-6 py-4">';
+          html += '<td class="px-4 py-3.5">';
           html += '  <div class="flex items-center gap-3">';
-          html += '    <div class="w-9 h-9 rounded-full ' + avatarCol + ' flex items-center justify-center label-sm font-semibold shadow-sm">' + firstLetter + '</div>';
+          html += '    <div class="w-8 h-8 rounded-full ' + avatarCol + ' flex items-center justify-center label-sm font-semibold shadow-sm flex-shrink-0">' + firstLetter + '</div>';
           html += '    <div class="flex flex-col min-w-0">';
-          html += '      <div class="body-md font-semibold text-on-surface dark:text-slate-200 truncate max-w-[220px]">' + u.username + '</div>';
-          html += '      <div class="label-sm text-on-surface-variant/85 dark:text-slate-400/80 truncate max-w-[220px]">' + (u.email || "-") + '</div>';
+          html += '      <div class="body-md font-semibold text-on-surface dark:text-slate-200 truncate max-w-[200px]">' + u.username + '</div>';
+          html += '      <div class="label-sm text-on-surface-variant/85 dark:text-slate-400/80 truncate max-w-[200px]">' + (u.email || "-") + '</div>';
           html += '    </div>';
           html += '  </div>';
           html += '</td>';
-          html += '<td class="px-6 py-4 whitespace-nowrap">' + statusBadge + '</td>';
-          html += '<td class="px-6 py-4 text-sm text-on-surface dark:text-slate-350 break-words max-w-[250px]">' + reasonText + '</td>';
-          html += '<td class="px-6 py-4 whitespace-nowrap">' + dateStr + '</td>';
-          html += '<td class="px-6 py-4 text-center whitespace-nowrap">' + actionsHtml + '</td>';
+          html += '<td class="px-4 py-3.5 whitespace-nowrap">' + statusBadge + '</td>';
+          html += '<td class="px-4 py-3.5 text-sm text-on-surface dark:text-slate-350 max-w-[200px] truncate" title="' + reasonText + '">' + reasonText + '</td>';
+          html += '<td class="px-4 py-3.5 whitespace-nowrap">' + dateStr + '</td>';
+          html += '<td class="px-4 py-3.5 text-center whitespace-nowrap">' + actionsHtml + '</td>';
           html += '</tr>';
         });
 

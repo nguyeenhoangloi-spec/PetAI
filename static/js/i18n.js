@@ -5665,7 +5665,7 @@
     var modalId = "petai-global-modal-" + Date.now();
     var modalDiv = document.createElement("div");
     modalDiv.id = modalId;
-    modalDiv.className = "fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/60 p-4 transition-opacity duration-150 opacity-0 pointer-events-none";
+    modalDiv.className = "fixed inset-0 z-[99999] flex items-center justify-center bg-slate-950/60 p-4 transition-opacity duration-150 opacity-0 pointer-events-none";
     modalDiv.setAttribute("role", "dialog");
     modalDiv.setAttribute("aria-modal", "true");
 
