@@ -2285,6 +2285,27 @@
           }
         });
       });
+
+      // Auto scroll to the next unregistered package on mobile load
+      {% set target_idx = 0 %}
+      {% if active_plan == 'free' %}
+        {% set target_idx = 1 %}
+      {% elif active_plan == 'basic' %}
+        {% set target_idx = 2 %}
+      {% elif active_plan == 'pro' or active_plan == 'enterprise' %}
+        {% set target_idx = 3 %}
+      {% endif %}
+      const targetIndex = {{ target_idx }};
+      
+      setTimeout(() => {
+        const cards = grid.querySelectorAll('.pricing-card');
+        if (cards[targetIndex]) {
+          cards[targetIndex].scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'center' });
+          dots.forEach((dot, idx) => {
+            dot.classList.toggle('active', idx === targetIndex);
+          });
+        }
+      }, 150);
     });
 
     // --- Comparison Table Tab Switcher (Mobile & Event Delegation) ---

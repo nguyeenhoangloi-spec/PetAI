@@ -389,6 +389,61 @@
       #revenuePeriodTabs button, #activityPeriodTabs button {
         flex-shrink: 0 !important;
       }
+
+      /* Quick Actions responsive layouts */
+      .quick-actions-container {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        width: 100%;
+      }
+      
+      .quick-actions-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        width: 100%;
+      }
+      
+      .quick-actions-container a,
+      .quick-actions-grid a {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        width: 100%;
+        box-sizing: border-box;
+      }
+      
+      .quick-actions-grid a:only-child {
+        grid-column: span 2;
+      }
+      
+      @media (min-width: 640px) {
+        .quick-actions-container {
+          flex-direction: row;
+          flex-wrap: wrap;
+          align-items: center;
+          gap: 12px;
+        }
+        
+        .quick-actions-grid {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 12px;
+          width: auto;
+        }
+        
+        .quick-actions-container a,
+        .quick-actions-grid a {
+          width: auto;
+          justify-content: flex-start;
+        }
+        
+        .quick-actions-grid a:only-child {
+          grid-column: auto;
+        }
+      }
     </style>
   </head>
 
@@ -423,32 +478,34 @@
               </p>
             </div>
             
-            <div class="mt-6 flex flex-wrap gap-3">
+            <div class="mt-6 quick-actions-container">
               <a class="bg-primary text-on-primary px-4 py-2.5 rounded-xl label-sm shadow-sm hover:shadow-md transition-all flex items-center gap-2 font-semibold" href="{{ url_for('predict.upload_page') }}">
                 <span class="material-symbols-outlined text-[18px]">add_a_photo</span>
                 <span data-i18n="uploadNew">Tải ảnh mới</span>
               </a>
-              <a class="bg-surface-container-lowest text-on-surface px-4 py-2.5 rounded-xl label-sm border border-outline-variant hover:border-primary hover:text-primary transition-colors flex items-center gap-2 font-semibold" href="{{ url_for('history.history') }}">
-                <span class="material-symbols-outlined text-[18px]">manage_search</span>
-                <span data-i18n="viewHistory">Xem lịch sử</span>
-              </a>
-              {% if is_admin %}
-                <a class="bg-surface-container-lowest text-on-surface px-4 py-2.5 rounded-xl label-sm border border-outline-variant hover:border-yellow-500 hover:text-yellow-600 transition-colors flex items-center gap-2 font-semibold" href="{{ url_for('users.confirmations_list') }}">
-                  <span class="material-symbols-outlined text-[18px]">pending_actions</span>
-                  <span data-i18n="pendingOrders">Đơn chờ duyệt</span>
-                  {% if pending_confirmations_count > 0 %}
-                    <span class="bg-red-500 text-white rounded-full text-[10px] w-5 h-5 flex items-center justify-center font-bold">{{ pending_confirmations_count }}</span>
-                  {% endif %}
+              <div class="quick-actions-grid">
+                <a class="bg-surface-container-lowest text-on-surface px-4 py-2.5 rounded-xl label-sm border border-outline-variant hover:border-primary hover:text-primary transition-colors flex items-center gap-2 font-semibold" href="{{ url_for('history.history') }}">
+                  <span class="material-symbols-outlined text-[18px]">manage_search</span>
+                  <span data-i18n="viewHistory">Xem lịch sử</span>
                 </a>
-                <a class="bg-surface-container-lowest text-on-surface px-4 py-2.5 rounded-xl label-sm border border-outline-variant hover:border-primary hover:text-primary transition-colors flex items-center gap-2 font-semibold" href="{{ url_for('users.list_users') }}">
-                  <span class="material-symbols-outlined text-[18px]">groups</span>
-                  <span data-i18n="manageUsers">Người dùng</span>
-                </a>
-                <a class="bg-surface-container-lowest text-on-surface px-4 py-2.5 rounded-xl label-sm border border-outline-variant hover:border-primary hover:text-primary transition-colors flex items-center gap-2 font-semibold" href="{{ url_for('users.system_config') }}">
-                  <span class="material-symbols-outlined text-[18px]">settings_applications</span>
-                  <span data-i18n="systemConfig">Cấu hình</span>
-                </a>
-              {% endif %}
+                {% if is_admin %}
+                  <a class="bg-surface-container-lowest text-on-surface px-4 py-2.5 rounded-xl label-sm border border-outline-variant hover:border-yellow-500 hover:text-yellow-600 transition-colors flex items-center gap-2 font-semibold" href="{{ url_for('users.confirmations_list') }}">
+                    <span class="material-symbols-outlined text-[18px]">pending_actions</span>
+                    <span class="truncate" data-i18n="pendingOrders">Đơn chờ duyệt</span>
+                    {% if pending_confirmations_count > 0 %}
+                      <span class="bg-red-500 text-white rounded-full text-[10px] w-5 h-5 flex items-center justify-center font-bold shrink-0 ml-auto sm:ml-0">{{ pending_confirmations_count }}</span>
+                    {% endif %}
+                  </a>
+                  <a class="bg-surface-container-lowest text-on-surface px-4 py-2.5 rounded-xl label-sm border border-outline-variant hover:border-primary hover:text-primary transition-colors flex items-center gap-2 font-semibold" href="{{ url_for('users.list_users') }}">
+                    <span class="material-symbols-outlined text-[18px]">groups</span>
+                    <span data-i18n="manageUsers">Người dùng</span>
+                  </a>
+                  <a class="bg-surface-container-lowest text-on-surface px-4 py-2.5 rounded-xl label-sm border border-outline-variant hover:border-primary hover:text-primary transition-colors flex items-center gap-2 font-semibold" href="{{ url_for('users.system_config') }}">
+                    <span class="material-symbols-outlined text-[18px]">settings_applications</span>
+                    <span data-i18n="systemConfig">Cấu hình</span>
+                  </a>
+                {% endif %}
+              </div>
             </div>
           </div>
 
@@ -920,12 +977,17 @@
                       {% if page <= 1 %}disabled{% endif %}>
                       &lsaquo;
                     </button>
+                    {% set range_val = 2 %}
                     {% for p in range(1, total_pages + 1) %}
-                      <button type="button"
-                        onclick="loadDashboardPage({{ p }})"
-                        class="px-1.5 py-0.5 text-[10px] rounded cursor-pointer {% if p == page %}bg-primary text-white font-semibold{% else %}text-on-surface-variant hover:text-primary hover:bg-surface-container-high{% endif %}">
-                        {{ p }}
-                      </button>
+                      {% if p == 1 or p == total_pages or (p >= page - range_val and p <= page + range_val) %}
+                        <button type="button"
+                          onclick="loadDashboardPage({{ p }})"
+                          class="px-1.5 py-0.5 text-[10px] rounded cursor-pointer {% if p == page %}bg-primary text-white font-semibold{% else %}text-on-surface-variant hover:text-primary hover:bg-surface-container-high{% endif %}">
+                          {{ p }}
+                        </button>
+                      {% elif p == page - range_val - 1 or p == page + range_val + 1 %}
+                        <span class="px-1 text-[10px] text-slate-400 dark:text-slate-650 select-none">...</span>
+                      {% endif %}
                     {% endfor %}
                     <button type="button"
                       aria-label="Trang sau" data-i18n-aria="nextPage"
