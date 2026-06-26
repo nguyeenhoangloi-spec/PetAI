@@ -354,6 +354,21 @@
     };
   </script>
   <style>
+    .stat-card {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px -10px rgba(0, 74, 198, 0.15);
+      border-color: rgba(0, 74, 198, 0.3) !important;
+    }
+    html.dark .stat-card:hover {
+      box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.5);
+      border-color: rgba(30, 41, 59, 0.8) !important;
+    }
+
     .material-symbols-outlined {
       font-variation-settings:
         "FILL" 0,
@@ -565,22 +580,30 @@
 
           <!-- Card 1: Best Prediction Breed -->
           <div
-            class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-5 border border-outline-variant/30 dark:border-slate-800 shadow-sm flex flex-col justify-between min-h-[140px]">
+            class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-5 border border-outline-variant/30 dark:border-slate-800 shadow-sm flex flex-col justify-between min-h-[140px]">
             <div class="flex items-center gap-3">
               <div
                 class="w-12 h-12 rounded-xl bg-blue-600/10 dark:bg-blue-500/20 flex items-center justify-center shrink-0 border border-blue-500/20 shadow-[0_0_12px_rgba(37,99,235,0.15)]">
                 <span class="material-symbols-outlined text-blue-600 dark:text-blue-400 text-[24px]">emoji_events</span>
               </div>
               <div class="min-w-0 flex-1">
-                <span class="text-[12px] text-outline dark:text-slate-400 font-medium uppercase tracking-wider block"
-                  data-i18n="bestPrediction">Giống dự đoán tốt nhất</span>
+                <div class="flex items-center justify-between gap-2 w-full">
+                  <span class="text-[12px] text-outline dark:text-slate-400 font-medium uppercase tracking-wider block"
+                    data-i18n="bestPrediction">Giống dự đoán tốt nhất</span>
+                  {% if conf_percent_clamped >= 70 %}
+                  <span
+                    class="px-1.5 py-0.5 bg-blue-500/10 text-primary dark:text-blue-400 rounded-full text-[8.5px] font-extrabold whitespace-nowrap shrink-0"
+                    data-i18n="highConfidenceBadge">Độ tin cậy cao</span>
+                  {% endif %}
+                </div>
                 <div class="flex flex-wrap items-center gap-1.5 mt-0.5">
                   {% if result.parts_info and result.parts_info.decision and
                   result.parts_info.decision.is_hybrid_candidate and result.parts_info.similarity_top3|length >= 2 %}
                   <span class="text-[16px] font-bold text-on-surface dark:text-slate-100 truncate max-w-[200px]"
                     data-i18n-breed
                     data-i18n-breed-vi="Chó lai: {{ result.parts_info.similarity_top3[0].breed }} × {{ result.parts_info.similarity_top3[1].breed }}"
-                    data-i18n-breed-en="Hybrid: {{ result.parts_info.similarity_top3[0].breed_en }} × {{ result.parts_info.similarity_top3[1].breed_en }}">
+                    data-i18n-breed-en="Hybrid: {{ result.parts_info.similarity_top3[0].breed_en }} × {{ result.parts_info.similarity_top3[1].breed_en }}"
+                    title="{{ 'Hybrid: ' if ui_language == 'en' else 'Chó lai: ' }}{{ result.parts_info.similarity_top3[0].breed_en if ui_language == 'en' else result.parts_info.similarity_top3[0].breed }} × {{ result.parts_info.similarity_top3[1].breed_en if ui_language == 'en' else result.parts_info.similarity_top3[1].breed }}">
                     {{ 'Hybrid: ' if ui_language == 'en' else 'Chó lai: ' }}{{
                     result.parts_info.similarity_top3[0].breed_en if ui_language == 'en' else
                     result.parts_info.similarity_top3[0].breed }} × {{ result.parts_info.similarity_top3[1].breed_en if
@@ -588,19 +611,15 @@
                   </span>
                   {% else %}
                   <span class="text-[16px] font-bold text-on-surface dark:text-slate-100 truncate max-w-[200px]"
-                    data-i18n-breed data-i18n-breed-vi="{{ breed_name_vi }}" data-i18n-breed-en="{{ breed_name_en }}">
+                    data-i18n-breed data-i18n-breed-vi="{{ breed_name_vi }}" data-i18n-breed-en="{{ breed_name_en }}"
+                    title="{{ breed_name_en if ui_language == 'en' else breed_name_vi }}">
                     {{ breed_name_en if ui_language == 'en' else breed_name_vi }}
                   </span>
-                  {% endif %}
-                  {% if conf_percent_clamped >= 70 %}
-                  <span
-                    class="px-2 py-0.5 bg-blue-500/10 text-primary dark:text-blue-400 rounded-full text-[9px] font-extrabold whitespace-nowrap"
-                    data-i18n="highConfidenceBadge">Độ tin cậy cao</span>
                   {% endif %}
                 </div>
               </div>
             </div>
-            <div class="mt-4 space-y-2">
+            <div class="mt-3 space-y-2">
               <div class="w-full bg-surface-container-high dark:bg-slate-800 h-2 rounded-full overflow-hidden">
                 <div class="bg-green-500 h-full rounded-full confidence-fill transition-all duration-700"
                   data-width="{{ conf_percent_clamped|int }}"></div>
@@ -618,7 +637,7 @@
           {% set is_hybrid = result.parts_info and result.parts_info.decision and
           result.parts_info.decision.is_hybrid_candidate %}
           <div
-            class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-5 border border-outline-variant/30 dark:border-slate-800 shadow-sm flex flex-col justify-between min-h-[140px]">
+            class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-5 border border-outline-variant/30 dark:border-slate-800 shadow-sm flex flex-col justify-between min-h-[140px]">
             <div class="flex items-center gap-3">
               <div
                 class="w-12 h-12 rounded-xl bg-emerald-500/10 dark:bg-emerald-500/20 flex items-center justify-center shrink-0 border border-emerald-500/20 shadow-[0_0_12px_rgba(16,185,129,0.15)]">
@@ -648,7 +667,7 @@
 
           <!-- Card 3: Analysis Time -->
           <div
-            class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-5 border border-outline-variant/30 dark:border-slate-800 shadow-sm flex flex-col justify-between min-h-[140px]">
+            class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-5 border border-outline-variant/30 dark:border-slate-800 shadow-sm flex flex-col justify-between min-h-[140px]">
             <div class="flex items-center gap-3">
               <div
                 class="w-12 h-12 rounded-xl bg-violet-500/10 dark:bg-violet-500/20 flex items-center justify-center shrink-0 border border-violet-500/20 shadow-[0_0_12px_rgba(139,92,246,0.15)]">
@@ -681,7 +700,7 @@
 
           <!-- Card 4: Image Info -->
           <div
-            class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-5 border border-outline-variant/30 dark:border-slate-800 shadow-sm flex flex-col justify-between min-h-[140px]">
+            class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-5 border border-outline-variant/30 dark:border-slate-800 shadow-sm flex flex-col justify-between min-h-[140px]">
             <div class="flex items-center gap-3">
               <div
                 class="w-12 h-12 rounded-xl bg-orange-500/10 dark:bg-orange-500/20 flex items-center justify-center shrink-0 border border-orange-500/20 shadow-[0_0_12px_rgba(249,115,22,0.15)]">
@@ -707,7 +726,7 @@
 
           <!-- Card 5: Memory Usage -->
           <div
-            class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-5 border border-outline-variant/30 dark:border-slate-800 shadow-sm flex flex-col justify-between min-h-[140px]">
+            class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-5 border border-outline-variant/30 dark:border-slate-800 shadow-sm flex flex-col justify-between min-h-[140px]">
             <div class="flex items-center gap-3">
               <div
                 class="w-12 h-12 rounded-xl bg-teal-500/10 dark:bg-teal-500/20 flex items-center justify-center shrink-0 border border-teal-500/20 shadow-[0_0_12px_rgba(20,184,166,0.15)]">

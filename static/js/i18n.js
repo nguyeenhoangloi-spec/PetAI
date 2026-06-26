@@ -5273,11 +5273,14 @@
     document.querySelectorAll("[data-i18n-breed]").forEach(function (el) {
       var vi = el.getAttribute("data-i18n-breed") || el.getAttribute("data-i18n-breed-vi");
       var en = el.getAttribute("data-i18n-breed-en");
+      var text = "";
       if (lang === "en") {
-        el.textContent = en || translateBreedViToEn(vi);
+        text = en || translateBreedViToEn(vi);
       } else {
-        el.textContent = vi || "Chưa xác định";
+        text = vi || "Chưa xác định";
       }
+      el.textContent = text;
+      el.setAttribute("title", text); // Sync tooltip dynamically
     });
 
     // Auto-translate warning notes containing dynamic percentage numbers or breed names
