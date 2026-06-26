@@ -151,6 +151,68 @@
       .material-symbols-outlined {
         font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
       }
+      /* Custom stats cards styling */
+      .stat-card {
+        transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+                    box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+                    border-color 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+      }
+      .stat-card::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle at 100% 0%, rgba(37, 99, 235, 0.04) 0%, transparent 70%);
+        z-index: 0;
+        pointer-events: none;
+      }
+      .stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px -8px rgba(0, 74, 198, 0.12);
+        border-color: rgba(0, 74, 198, 0.25) !important;
+      }
+      .dark .stat-card:hover {
+        box-shadow: 0 8px 20px -8px rgba(0, 0, 0, 0.4);
+        border-color: rgba(51, 65, 85, 0.9) !important;
+      }
+      /* Upload page 2-column grid */
+      .upload-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+      @media (min-width: 1024px) {
+        .upload-grid {
+          grid-template-columns: minmax(0, 2fr) minmax(300px, 1fr);
+          align-items: start;
+        }
+      }
+      .upload-col {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+      }
+      @media (min-width: 1024px) {
+        .upload-col {
+          align-self: stretch;
+        }
+        /* Card cuoi cot tu dong gian de khit day, noi dung can tren */
+        .upload-col > .upload-col-last {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+        }
+        .upload-col > .upload-col-last > .upload-col-last-inner {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-start;
+        }
+      }
       /* Drop zone dragover state */
       .is-dragover {
         border-color: #004ac6 !important;
@@ -209,10 +271,10 @@
         </section>
 
         <!-- ═══ MAIN GRID ═══ -->
-        <div class="flex flex-col lg:flex-row gap-gutter items-stretch">
+        <div class="upload-grid">
 
           <!-- ══════════ LEFT COLUMN ══════════ -->
-          <div class="w-full lg:w-[66.666667%] flex flex-col gap-gutter">
+          <div class="upload-col">
 
             <!-- ── UPLOAD FORM CARD ── -->
             <form
@@ -220,7 +282,7 @@
               method="post"
               enctype="multipart/form-data"
               id="uploadForm"
-              class="bg-surface-container-lowest dark:bg-slate-900 rounded-2xl border border-outline-variant/30 dark:border-slate-800 p-6 shadow-sm"
+              class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-2xl border border-outline-variant/30 dark:border-slate-800 p-6 shadow-sm"
             >
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
 
@@ -330,7 +392,7 @@
             <!-- ── PROGRESS STEPS CARD (hidden, shows when submitting) ── -->
             <div
               id="progressCard"
-              class="hidden bg-surface-container-lowest dark:bg-slate-900 rounded-2xl border border-outline-variant/30 dark:border-slate-800 p-6 shadow-sm"
+              class="stat-card hidden bg-surface-container-lowest dark:bg-slate-900 rounded-2xl border border-outline-variant/30 dark:border-slate-800 p-6 shadow-sm"
             >
               <h3 class="text-[15px] font-semibold text-on-surface dark:text-slate-200 mb-6 flex items-center gap-2">
                 <span class="material-symbols-outlined text-primary dark:text-blue-400 text-[20px]">timeline</span>
@@ -401,7 +463,7 @@
             </div>
 
             <!-- ── RECENT IDENTIFICATIONS ── -->
-            <section class="bg-surface-container-lowest dark:bg-slate-900 rounded-2xl border border-outline-variant/30 dark:border-slate-800 p-5 shadow-sm">
+            <section class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-2xl border border-outline-variant/30 dark:border-slate-800 p-5 shadow-sm">
               <div class="flex items-center justify-between mb-4">
                 <h3 class="text-[16px] font-semibold text-on-surface dark:text-slate-200 flex items-center gap-2">
                   <span class="material-symbols-outlined text-primary dark:text-blue-400 text-[20px]">history</span>
@@ -425,8 +487,9 @@
             </section>
 
             <!-- ── DAILY PET TIPS CARD ── -->
-            <section class="bg-surface-container-lowest dark:bg-slate-900 rounded-2xl border border-outline-variant/30 dark:border-slate-800 p-5 shadow-sm flex flex-col gap-3.5">
-              <div class="flex items-center justify-between pb-2.5 border-b border-outline-variant/15 dark:border-slate-800">
+            <section class="stat-card upload-col-last bg-surface-container-lowest dark:bg-slate-900 rounded-2xl border border-outline-variant/30 dark:border-slate-800 p-5 shadow-sm">
+              <!-- Card header -->
+              <div class="flex items-center justify-between pb-2.5 border-b border-outline-variant/15 dark:border-slate-800 mb-2.5">
                 <h3 class="text-[15.5px] font-semibold text-on-surface dark:text-slate-200 flex items-center gap-2">
                   <span class="material-symbols-outlined text-amber-500 dark:text-amber-400 text-[20px]">lightbulb</span>
                   <span data-i18n="dailyPetTipTitle">Góc kiến thức &amp; Mẹo nhỏ</span>
@@ -440,13 +503,35 @@
                   <span class="material-symbols-outlined text-[18px]">autorenew</span>
                 </button>
               </div>
-              <div class="flex items-start gap-3.5 p-3.5 rounded-xl border border-slate-100 dark:border-slate-800/60 bg-slate-50/50 dark:bg-slate-950/30 hover:bg-slate-50 dark:hover:bg-slate-950/50 transition-all duration-300">
-                <div class="mt-0.5 w-8 h-8 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
-                  <span class="material-symbols-outlined text-[18px]" id="tipIcon">pets</span>
+              <!-- Inner content -->
+              <div class="upload-col-last-inner gap-2">
+                <!-- Dynamic tip (JS-rendered) -->
+                <div class="flex items-start gap-3 p-3 rounded-xl border border-slate-100 dark:border-slate-800/60 bg-slate-50/50 dark:bg-slate-950/30 hover:bg-slate-50 dark:hover:bg-slate-950/50 transition-all duration-300">
+                  <div class="mt-0.5 w-7 h-7 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined text-[17px]" id="tipIcon">pets</span>
+                  </div>
+                  <div class="space-y-1 flex-1 min-w-0">
+                    <h4 class="text-sm font-semibold text-slate-800 dark:text-slate-200" id="tipCategory">Đang tải...</h4>
+                    <p class="text-xs text-slate-550 dark:text-slate-400 leading-relaxed transition-opacity duration-300" id="tipText">Đang chuẩn bị mẹo nhỏ cho bạn...</p>
+                  </div>
                 </div>
-                <div class="space-y-1.5 flex-1 min-w-0">
-                  <h4 class="text-sm font-semibold text-slate-800 dark:text-slate-200" id="tipCategory">Đang tải...</h4>
-                  <p class="text-xs text-slate-550 dark:text-slate-400 leading-relaxed transition-opacity duration-300" id="tipText">Đang chuẩn bị mẹo nhỏ cho bạn...</p>
+                <!-- Static mini tips for photo-taking -->
+                <div class="pt-2 border-t border-outline-variant/10 dark:border-slate-800/60">
+                  <p class="text-[11px] font-semibold text-on-surface-variant/60 dark:text-slate-500 uppercase tracking-wider mb-1.5" data-i18n="photoTipsLabel">Mẹo chụp ảnh</p>
+                  <ul class="flex flex-col gap-1.5">
+                    <li class="flex items-start gap-2">
+                      <span class="material-symbols-outlined text-primary dark:text-blue-400 text-[14px] mt-0.5 shrink-0">photo_camera</span>
+                      <span class="text-[12px] text-on-surface-variant dark:text-slate-400 leading-relaxed" data-i18n="photoTip1">Chụp chính diện hoặc toàn thân để AI nhận diện ổn định hơn.</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                      <span class="material-symbols-outlined text-primary dark:text-blue-400 text-[14px] mt-0.5 shrink-0">wb_sunny</span>
+                      <span class="text-[12px] text-on-surface-variant dark:text-slate-400 leading-relaxed" data-i18n="photoTip2">Ảnh rõ nét, đủ sáng cho kết quả tin cậy cao hơn.</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                      <span class="material-symbols-outlined text-primary dark:text-blue-400 text-[14px] mt-0.5 shrink-0">visibility_off</span>
+                      <span class="text-[12px] text-on-surface-variant dark:text-slate-400 leading-relaxed" data-i18n="photoTip3">Tránh ảnh quá mờ, quá tối hoặc bị che khuất vùng đầu.</span>
+                    </li>
+                  </ul>
                 </div>
               </div>
             </section>
@@ -454,10 +539,10 @@
           </div><!-- END LEFT COLUMN -->
 
           <!-- ══════════ RIGHT COLUMN ══════════ -->
-          <div class="w-full lg:w-[33.333333%] flex flex-col gap-gutter">
+          <div class="upload-col">
 
             <!-- ── CURRENT PLAN CARD ── -->
-            <section class="bg-surface-container-lowest dark:bg-slate-900 rounded-2xl border border-outline-variant/30 dark:border-slate-800 p-5 shadow-sm">
+            <section class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-2xl border border-outline-variant/30 dark:border-slate-800 p-5 shadow-sm">
 
               <!-- Card header -->
               <div class="flex items-center justify-between mb-4">
@@ -569,7 +654,7 @@
             </section>
 
             <!-- ── PREDICTION EXPERIENCE CARD ── -->
-            <aside class="bg-surface-container-lowest dark:bg-slate-900 rounded-2xl border border-outline-variant/30 dark:border-slate-800 p-5 shadow-sm">
+            <aside class="stat-card bg-surface-container-lowest dark:bg-slate-900 rounded-2xl border border-outline-variant/30 dark:border-slate-800 p-5 shadow-sm">
               <h3 class="text-[15px] font-semibold text-on-surface dark:text-slate-200 mb-4 flex items-center gap-2">
                 <span class="material-symbols-outlined text-primary dark:text-blue-400 text-[20px]">auto_awesome</span>
                 <span data-i18n="predictionExperience">Trải nghiệm dự đoán</span>
@@ -605,64 +690,75 @@
             </aside>
 
             <!-- ── VALID IMAGE REQUIREMENTS CARD ── -->
-            <aside class="bg-surface-container-lowest dark:bg-slate-900 rounded-2xl border border-outline-variant/30 dark:border-slate-800 p-5 shadow-sm">
-              <h3 class="text-[15px] font-semibold text-on-surface dark:text-slate-200 mb-4 flex items-center gap-2">
+            <aside class="stat-card upload-col-last bg-surface-container-lowest dark:bg-slate-900 rounded-2xl border border-outline-variant/30 dark:border-slate-800 p-5 shadow-sm">
+              <h3 class="text-[15px] font-semibold text-on-surface dark:text-slate-200 mb-3.5 flex items-center gap-2">
                 <span class="material-symbols-outlined text-emerald-500 dark:text-emerald-400 text-[20px]">fact_check</span>
-                <span data-i18n="validImageTitle">Yêu cầu ảnh hợp lệ</span>
+                <span data-i18n="validImageTitle">Tiêu chí ảnh hợp lệ</span>
               </h3>
-              <ul class="flex flex-col gap-2.5 mb-5">
-                <li class="flex items-start gap-2">
-                  <span class="material-symbols-outlined text-emerald-500 dark:text-emerald-400 text-[15px] mt-0.5 shrink-0">check_circle</span>
-                  <span class="text-[13px] text-on-surface-variant dark:text-slate-400" data-i18n="req1ValidDesc">Chó xuất hiện rõ trong ảnh</span>
-                </li>
-                <li class="flex items-start gap-2">
-                  <span class="material-symbols-outlined text-emerald-500 dark:text-emerald-400 text-[15px] mt-0.5 shrink-0">check_circle</span>
-                  <span class="text-[13px] text-on-surface-variant dark:text-slate-400" data-i18n="req2ValidDesc">Không bị mờ hoặc quá tối</span>
-                </li>
-                <li class="flex items-start gap-2">
-                  <span class="material-symbols-outlined text-emerald-500 dark:text-emerald-400 text-[15px] mt-0.5 shrink-0">check_circle</span>
-                  <span class="text-[13px] text-on-surface-variant dark:text-slate-400" data-i18n="req3ValidDesc">Không bị che mặt/thân quá nhiều</span>
-                </li>
-                <li class="flex items-start gap-2">
-                  <span class="material-symbols-outlined text-emerald-500 dark:text-emerald-400 text-[15px] mt-0.5 shrink-0">check_circle</span>
-                  <span class="text-[13px] text-on-surface-variant dark:text-slate-400" data-i18n="req4ValidDesc">Ưu tiên ảnh một con chó</span>
-                </li>
-                <li class="flex items-start gap-2">
-                  <span class="material-symbols-outlined text-emerald-500 dark:text-emerald-400 text-[15px] mt-0.5 shrink-0">check_circle</span>
-                  <span class="text-[13px] text-on-surface-variant dark:text-slate-400" data-i18n="req5ValidDesc">Định dạng JPG, JPEG, PNG</span>
-                </li>
-                <li class="flex items-start gap-2">
-                  <span class="material-symbols-outlined text-red-500 dark:text-red-400 text-[15px] mt-0.5 shrink-0">cancel</span>
-                  <span class="text-[13px] text-on-surface-variant dark:text-slate-400" data-i18n="req6InvalidDesc">Không chụp màn hình, ảnh có watermark</span>
-                </li>
-              </ul>
-              <!-- Sample images row -->
-              <div class="grid grid-cols-4 gap-2">
-                <div class="aspect-square rounded-lg bg-emerald-500/8 dark:bg-emerald-900/20 border border-emerald-500/20 dark:border-emerald-800/30 relative overflow-hidden group cursor-help" title="{{ 'Dog appears clearly' if ui_language == 'en' else 'Chó xuất hiện rõ trong ảnh' }}" data-i18n-title="req1ValidDesc">
-                  <img src="{{ url_for('static', filename='images/guidelines/clear_dog.png') }}?v=2" alt="Valid example" class="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105">
-                  <span class="absolute bottom-1 right-1 w-4 h-4 bg-emerald-500 rounded-full flex items-center justify-center shadow-sm">
-                    <span class="material-symbols-outlined text-white text-[11px]" style="font-variation-settings:'FILL' 1">check</span>
-                  </span>
+              <!-- All content in one inner wrapper: checklist + images together -->
+              <div class="upload-col-last-inner gap-[15px]">
+                <!-- Checklist -->
+                <ul class="flex flex-col gap-2">
+                  <li class="flex items-start gap-2">
+                    <span class="material-symbols-outlined text-emerald-500 dark:text-emerald-400 text-[15px] mt-0.5 shrink-0">check_circle</span>
+                    <span class="text-[13px] text-on-surface-variant dark:text-slate-400" data-i18n="req1ValidDesc">Có chó xuất hiện rõ trong ảnh</span>
+                  </li>
+                  <li class="flex items-start gap-2">
+                    <span class="material-symbols-outlined text-emerald-500 dark:text-emerald-400 text-[15px] mt-0.5 shrink-0">check_circle</span>
+                    <span class="text-[13px] text-on-surface-variant dark:text-slate-400" data-i18n="req2ValidDesc">Ảnh rõ nét, không quá mờ hoặc quá tối</span>
+                  </li>
+                  <li class="flex items-start gap-2">
+                    <span class="material-symbols-outlined text-emerald-500 dark:text-emerald-400 text-[15px] mt-0.5 shrink-0">check_circle</span>
+                    <span class="text-[13px] text-on-surface-variant dark:text-slate-400" data-i18n="req3ValidDesc">Không bị che mặt hoặc thân quá nhiều</span>
+                  </li>
+                  <li class="flex items-start gap-2">
+                    <span class="material-symbols-outlined text-emerald-500 dark:text-emerald-400 text-[15px] mt-0.5 shrink-0">check_circle</span>
+                    <span class="text-[13px] text-on-surface-variant dark:text-slate-400" data-i18n="req4ValidDesc">Ưu tiên ảnh chụp một con chó</span>
+                  </li>
+                  <li class="flex items-start gap-2">
+                    <span class="material-symbols-outlined text-emerald-500 dark:text-emerald-400 text-[15px] mt-0.5 shrink-0">check_circle</span>
+                    <span class="text-[13px] text-on-surface-variant dark:text-slate-400" data-i18n="req5ValidDesc">Định dạng JPG, JPEG hoặc PNG</span>
+                  </li>
+                  <li class="flex items-start gap-2">
+                    <span class="material-symbols-outlined text-emerald-500 dark:text-emerald-400 text-[15px] mt-0.5 shrink-0">check_circle</span>
+                    <span class="text-[13px] text-on-surface-variant dark:text-slate-400" data-i18n="req7FileSizeDesc">Dung lượng tối đa 10MB</span>
+                  </li>
+                  <li class="flex items-start gap-2">
+                    <span class="material-symbols-outlined text-red-500 dark:text-red-400 text-[15px] mt-0.5 shrink-0">cancel</span>
+                    <span class="text-[13px] text-on-surface-variant dark:text-slate-400" data-i18n="req6InvalidDesc">Không chụp màn hình hoặc ảnh có watermark</span>
+                  </li>
+                </ul>
+                <!-- Sample images section -->
+                <div>
+                  <p class="text-[11px] font-semibold text-on-surface-variant/50 dark:text-slate-500 uppercase tracking-wider mb-2" data-i18n="imageExamplesLabel">Ảnh ví dụ</p>
+                  <div class="grid grid-cols-4 gap-2">
+                    <div class="aspect-square rounded-lg bg-emerald-500/8 dark:bg-emerald-900/20 border border-emerald-500/20 dark:border-emerald-800/30 relative overflow-hidden group cursor-help" title="{{ 'Dog appears clearly' if ui_language == 'en' else 'Chó xuất hiện rõ trong ảnh' }}" data-i18n-title="req1ValidDesc">
+                      <img src="{{ url_for('static', filename='images/guidelines/clear_dog.png') }}?v=2" alt="Valid example" class="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105">
+                      <span class="absolute bottom-1 right-1 w-4 h-4 bg-emerald-500 rounded-full flex items-center justify-center shadow-sm">
+                        <span class="material-symbols-outlined text-white text-[11px]" style="font-variation-settings:'FILL' 1">check</span>
+                      </span>
+                    </div>
+                    <div class="aspect-square rounded-lg bg-emerald-500/8 dark:bg-emerald-900/20 border border-emerald-500/20 dark:border-emerald-800/30 relative overflow-hidden group cursor-help" title="{{ 'Not blurry or too dark' if ui_language == 'en' else 'Không bị mờ hoặc quá tối' }}" data-i18n-title="req2ValidDesc">
+                      <img src="{{ url_for('static', filename='images/guidelines/good_lighting.png') }}?v=2" alt="Valid example" class="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105">
+                      <span class="absolute bottom-1 right-1 w-4 h-4 bg-emerald-500 rounded-full flex items-center justify-center shadow-sm">
+                        <span class="material-symbols-outlined text-white text-[11px]" style="font-variation-settings:'FILL' 1">check</span>
+                      </span>
+                    </div>
+                    <div class="aspect-square rounded-lg bg-emerald-500/8 dark:bg-emerald-900/20 border border-emerald-500/20 dark:border-emerald-800/30 relative overflow-hidden group cursor-help" title="{{ 'Not obscured face/body' if ui_language == 'en' else 'Không bị che mặt/thân quá nhiều' }}" data-i18n-title="req3ValidDesc">
+                      <img src="{{ url_for('static', filename='images/guidelines/unobscured.png') }}?v=2" alt="Valid example" class="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105">
+                      <span class="absolute bottom-1 right-1 w-4 h-4 bg-emerald-500 rounded-full flex items-center justify-center shadow-sm">
+                        <span class="material-symbols-outlined text-white text-[11px]" style="font-variation-settings:'FILL' 1">check</span>
+                      </span>
+                    </div>
+                    <div class="aspect-square rounded-lg bg-red-500/8 dark:bg-red-900/20 border border-red-500/20 dark:border-red-800/30 relative overflow-hidden group cursor-help" title="{{ 'No screenshots or watermarks' if ui_language == 'en' else 'Không chụp màn hình, ảnh có watermark' }}" data-i18n-title="req6InvalidDesc">
+                      <img src="{{ url_for('static', filename='images/guidelines/invalid_watermark.png') }}?v=2" alt="Invalid example" class="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105">
+                      <span class="absolute bottom-1 right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center shadow-sm">
+                        <span class="material-symbols-outlined text-white text-[11px]" style="font-variation-settings:'FILL' 1">close</span>
+                      </span>
+                    </div>
+                  </div>
                 </div>
-                <div class="aspect-square rounded-lg bg-emerald-500/8 dark:bg-emerald-900/20 border border-emerald-500/20 dark:border-emerald-800/30 relative overflow-hidden group cursor-help" title="{{ 'Not blurry or too dark' if ui_language == 'en' else 'Không bị mờ hoặc quá tối' }}" data-i18n-title="req2ValidDesc">
-                  <img src="{{ url_for('static', filename='images/guidelines/good_lighting.png') }}?v=2" alt="Valid example" class="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105">
-                  <span class="absolute bottom-1 right-1 w-4 h-4 bg-emerald-500 rounded-full flex items-center justify-center shadow-sm">
-                    <span class="material-symbols-outlined text-white text-[11px]" style="font-variation-settings:'FILL' 1">check</span>
-                  </span>
-                </div>
-                <div class="aspect-square rounded-lg bg-emerald-500/8 dark:bg-emerald-900/20 border border-emerald-500/20 dark:border-emerald-800/30 relative overflow-hidden group cursor-help" title="{{ 'Not obscured face/body' if ui_language == 'en' else 'Không bị che mặt/thân quá nhiều' }}" data-i18n-title="req3ValidDesc">
-                  <img src="{{ url_for('static', filename='images/guidelines/unobscured.png') }}?v=2" alt="Valid example" class="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105">
-                  <span class="absolute bottom-1 right-1 w-4 h-4 bg-emerald-500 rounded-full flex items-center justify-center shadow-sm">
-                    <span class="material-symbols-outlined text-white text-[11px]" style="font-variation-settings:'FILL' 1">check</span>
-                  </span>
-                </div>
-                <div class="aspect-square rounded-lg bg-red-500/8 dark:bg-red-900/20 border border-red-500/20 dark:border-red-800/30 relative overflow-hidden group cursor-help" title="{{ 'No screenshots or watermarks' if ui_language == 'en' else 'Không chụp màn hình, ảnh có watermark' }}" data-i18n-title="req6InvalidDesc">
-                  <img src="{{ url_for('static', filename='images/guidelines/invalid_watermark.png') }}?v=2" alt="Invalid example" class="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105">
-                  <span class="absolute bottom-1 right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center shadow-sm">
-                    <span class="material-symbols-outlined text-white text-[11px]" style="font-variation-settings:'FILL' 1">close</span>
-                  </span>
-                </div>
-              </div>
+              </div><!-- end upload-col-last-inner -->
             </aside>
 
           </div><!-- END RIGHT COLUMN -->
