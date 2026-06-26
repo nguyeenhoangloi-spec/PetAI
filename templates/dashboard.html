@@ -827,7 +827,7 @@
           </div>
 
           <!-- Card 4: Kết quả gần đây (Compact Table) -->
-          <div class="xl:col-span-2 bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-2xl p-6 shadow-sm flex flex-col">
+          <div id="recent-results-card" class="xl:col-span-2 bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/30 rounded-2xl p-6 shadow-sm flex flex-col">
             <div class="flex items-center justify-between mb-4">
               <div class="flex items-center gap-2">
                 <span class="material-symbols-outlined text-[20px] text-blue-500">history</span>
@@ -893,21 +893,31 @@
                 </table>
               </div>
 
-              <!-- Pagination -->
+              <!-- Pagination (AJAX – no full page reload) -->
               {% if total_pages and total_pages > 1 %}
                 <div class="flex justify-center mt-3">
                   <nav aria-label="Pagination" class="inline-flex items-center gap-0.5 rounded-lg bg-surface-container-low dark:bg-slate-800 p-0.5">
-                    <a aria-label="Trang truoc" data-i18n-aria="prevPage" class="px-1.5 py-0.5 text-[10px] rounded {% if page <= 1 %}text-slate-500/40 pointer-events-none{% else %}text-on-surface-variant hover:text-primary hover:bg-surface-container-high{% endif %}" href="{{ url_for('dashboard.dashboard', range=active_range, page=page-1) }}">
+                    <button type="button"
+                      aria-label="Trang trước" data-i18n-aria="prevPage"
+                      onclick="loadDashboardPage({{ page - 1 }})"
+                      class="px-1.5 py-0.5 text-[10px] rounded cursor-pointer {% if page <= 1 %}text-slate-500/40 pointer-events-none opacity-40{% else %}text-on-surface-variant hover:text-primary hover:bg-surface-container-high{% endif %}"
+                      {% if page <= 1 %}disabled{% endif %}>
                       &lsaquo;
-                    </a>
+                    </button>
                     {% for p in range(1, total_pages + 1) %}
-                      <a class="px-1.5 py-0.5 text-[10px] rounded {% if p == page %}bg-primary text-white font-semibold{% else %}text-on-surface-variant hover:text-primary hover:bg-surface-container-high{% endif %}" href="{{ url_for('dashboard.dashboard', range=active_range, page=p) }}">
+                      <button type="button"
+                        onclick="loadDashboardPage({{ p }})"
+                        class="px-1.5 py-0.5 text-[10px] rounded cursor-pointer {% if p == page %}bg-primary text-white font-semibold{% else %}text-on-surface-variant hover:text-primary hover:bg-surface-container-high{% endif %}">
                         {{ p }}
-                      </a>
+                      </button>
                     {% endfor %}
-                    <a aria-label="Trang sau" data-i18n-aria="nextPage" class="px-1.5 py-0.5 text-[10px] rounded {% if page >= total_pages %}text-slate-500/40 pointer-events-none{% else %}text-on-surface-variant hover:text-primary hover:bg-surface-container-high{% endif %}" href="{{ url_for('dashboard.dashboard', range=active_range, page=page+1) }}">
+                    <button type="button"
+                      aria-label="Trang sau" data-i18n-aria="nextPage"
+                      onclick="loadDashboardPage({{ page + 1 }})"
+                      class="px-1.5 py-0.5 text-[10px] rounded cursor-pointer {% if page >= total_pages %}text-slate-500/40 pointer-events-none opacity-40{% else %}text-on-surface-variant hover:text-primary hover:bg-surface-container-high{% endif %}"
+                      {% if page >= total_pages %}disabled{% endif %}>
                       &rsaquo;
-                    </a>
+                    </button>
                   </nav>
                 </div>
               {% endif %}
@@ -2517,6 +2527,47 @@
           closeModal();
         }
       });
+    </script>
+
+    <script>
+      // ── AJAX pagination for "Kết quả gần đây" card ──
+      // Fetches the new page and swaps only the card content, then scrolls to it.
+      function loadDashboardPage(pageNum) {
+        const card = document.getElementById("recent-results-card");
+        if (!card) return;
+
+        // Build URL with the requested page (keep current range param)
+        const url = new URL(window.location.href);
+        url.searchParams.set("page", pageNum);
+
+        fetch(url.toString())
+          .then(function(res) { return res.text(); })
+          .then(function(html) {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, "text/html");
+            const newCard = doc.getElementById("recent-results-card");
+            if (newCard && card) {
+              card.innerHTML = newCard.innerHTML;
+            }
+
+            // Update browser URL without full reload
+            window.history.pushState(null, "", url.toString());
+
+            // Scroll so the card is visible (smooth, offset by ~80px for sticky header)
+            const cardTop = card.getBoundingClientRect().top + window.scrollY - 80;
+            window.scrollTo({ top: cardTop, behavior: "smooth" });
+
+            // Re-apply i18n translations to the new content
+            if (typeof window.PetAI_i18n !== "undefined") {
+              window.PetAI_i18n.applyToElement(card, window.PetAI_i18n.getCurrentLang());
+            }
+          })
+          .catch(function(err) {
+            console.error("loadDashboardPage error:", err);
+            // Fallback to normal navigation
+            window.location.href = url.toString();
+          });
+      }
     </script>
   </body>
 </html>
