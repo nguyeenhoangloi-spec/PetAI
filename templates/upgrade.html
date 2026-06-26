@@ -2252,6 +2252,7 @@
 </script>
 <script src="{{ url_for('static', filename='js/i18n.js') }}?v=23"></script>
 <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+<div id="upgrade-carousel-data" data-target-index="{{ 1 if active_plan == 'free' else (2 if active_plan == 'basic' else (3 if active_plan in ['pro', 'enterprise'] else 0)) }}" hidden></div>
 <script>
     // --- Mobile Pricing Carousel Sync ---
     document.addEventListener("DOMContentLoaded", () => {
@@ -2287,15 +2288,7 @@
       });
 
       // Auto scroll to the next unregistered package on mobile load
-      {% set target_idx = 0 %}
-      {% if active_plan == 'free' %}
-        {% set target_idx = 1 %}
-      {% elif active_plan == 'basic' %}
-        {% set target_idx = 2 %}
-      {% elif active_plan == 'pro' or active_plan == 'enterprise' %}
-        {% set target_idx = 3 %}
-      {% endif %}
-      const targetIndex = {{ target_idx }};
+      const targetIndex = +(document.getElementById('upgrade-carousel-data')?.dataset.targetIndex ?? 0);
       
       setTimeout(() => {
         const cards = grid.querySelectorAll('.pricing-card');

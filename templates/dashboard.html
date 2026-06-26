@@ -968,11 +968,13 @@
 
               <!-- Pagination (AJAX – no full page reload) -->
               {% if total_pages and total_pages > 1 %}
+                {% set prev_page = page - 1 %}
+                {% set next_page = page + 1 %}
                 <div class="flex justify-center mt-3">
                   <nav aria-label="Pagination" class="inline-flex items-center gap-0.5 rounded-lg bg-surface-container-low dark:bg-slate-800 p-0.5">
                     <button type="button"
                       aria-label="Trang trước" data-i18n-aria="prevPage"
-                      onclick="loadDashboardPage({{ page - 1 }})"
+                      onclick="loadDashboardPage(+this.dataset.goPage)" data-go-page="{{ prev_page }}"
                       class="px-1.5 py-0.5 text-[10px] rounded cursor-pointer {% if page <= 1 %}text-slate-500/40 pointer-events-none opacity-40{% else %}text-on-surface-variant hover:text-primary hover:bg-surface-container-high{% endif %}"
                       {% if page <= 1 %}disabled{% endif %}>
                       &lsaquo;
@@ -981,7 +983,7 @@
                     {% for p in range(1, total_pages + 1) %}
                       {% if p == 1 or p == total_pages or (p >= page - range_val and p <= page + range_val) %}
                         <button type="button"
-                          onclick="loadDashboardPage({{ p }})"
+                          onclick="loadDashboardPage(+this.dataset.goPage)" data-go-page="{{ p }}"
                           class="px-1.5 py-0.5 text-[10px] rounded cursor-pointer {% if p == page %}bg-primary text-white font-semibold{% else %}text-on-surface-variant hover:text-primary hover:bg-surface-container-high{% endif %}">
                           {{ p }}
                         </button>
@@ -991,7 +993,7 @@
                     {% endfor %}
                     <button type="button"
                       aria-label="Trang sau" data-i18n-aria="nextPage"
-                      onclick="loadDashboardPage({{ page + 1 }})"
+                      onclick="loadDashboardPage(+this.dataset.goPage)" data-go-page="{{ next_page }}"
                       class="px-1.5 py-0.5 text-[10px] rounded cursor-pointer {% if page >= total_pages %}text-slate-500/40 pointer-events-none opacity-40{% else %}text-on-surface-variant hover:text-primary hover:bg-surface-container-high{% endif %}"
                       {% if page >= total_pages %}disabled{% endif %}>
                       &rsaquo;
