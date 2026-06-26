@@ -1580,6 +1580,26 @@
             if (window.showToast) {
               window.showToast("success", window.PetAI_i18n ? window.PetAI_i18n.t("toastSaveConfigSuccess") : "Cập nhật cấu hình thành công!");
             }
+            
+            // Sync user preference cookies & localStorage immediately to prevent UI lag after saving config
+            try {
+              const newLang = mainForm.elements["default_lang"].value;
+              if (newLang) {
+                localStorage.setItem("siteLanguage", newLang);
+                document.cookie = "siteLanguage=" + newLang + ";path=/;max-age=31536000;SameSite=Lax";
+              }
+              const newTheme = mainForm.elements["default_theme"].value;
+              if (newTheme) {
+                const userId = "{{ session.get('user_id') or '' }}";
+                if (userId) {
+                  localStorage.setItem("theme:" + userId, newTheme);
+                }
+                localStorage.setItem("theme", newTheme);
+              }
+            } catch (err) {
+              console.warn("Failed to sync system preferences to local cookies/storage:", err);
+            }
+
             // Auto reload the page after 1 second to fetch and render updated data from DB
             setTimeout(() => {
               window.location.reload();
