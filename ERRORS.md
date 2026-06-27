@@ -832,3 +832,22 @@
 - **Fix Applied**: Thay đổi giá trị của `DOG_GATE_YOLO_DOG_THRESHOLD` trong file cấu hình `.env` từ `0.40` thành `0.25` để mở rộng phạm vi chấp nhận mà vẫn đảm bảo khả năng lọc tốt.
 - **Prevention**: Luôn cân nhắc điều chỉnh ngưỡng nhận diện YOLO gate ở mức tối ưu (từ 0.20 đến 0.25) khi tích hợp mô hình phát hiện đối tượng trong thực tế để tăng khả năng chấp nhận ảnh tải lên từ người dùng.
 - **Status**: Fixed
+
+---
+
+## [2026-06-28 00:30] - Lỗi giật màn hình (Layout Shift) khi tải trang nâng cấp do gọi scrollIntoView vô điều kiện
+
+- **Type**: Logic
+- **Severity**: Low
+- **File**: `templates/upgrade.html:2296`
+- **Agent**: PetAI
+- **Root Cause**: Đoạn mã JS tự động định vị gói cước đề xuất khi tải trang gọi hàm `scrollIntoView` vô điều kiện trên mọi kích thước màn hình (chạy cả trên desktop) và không giới hạn hướng cuộn. Điều này làm cho cửa sổ chính của trình duyệt bị giật cuộn dọc xuống dưới ngay khi tải trang xong, phá vỡ trải nghiệm người dùng.
+- **Error Message**:
+  ```text
+  Trang nâng cấp khi load xong bị tự động giật cuộn dọc đột ngột xuống phần bảng giá.
+  ```
+- **Fix Applied**: 
+  1. Thêm điều kiện kiểm tra màn hình di động (`window.innerWidth < 1280`) trước khi thực hiện cuộn. Trên desktop, toàn bộ logic cuộn này sẽ bị bỏ qua để giữ trang web đứng yên mượt mà ở đầu trang.
+  2. Để loại bỏ hoàn toàn độ trễ 150ms gây giật hình ảnh (khi người dùng nhìn thấy đầu trang rồi mới bị giật xuống), logic cuộn đã được chuyển thành một hàm `performMobileScroll` thực hiện đồng bộ ngay khi sự kiện `DOMContentLoaded` kích hoạt (trước First Paint), đồng thời sử dụng `requestAnimationFrame` làm phương án dự phòng để hiệu chỉnh chính xác khi frame tiếp theo sẵn sàng.
+- **Prevention**: Luôn bao bọc các logic cuộn trang (auto-scroll) trong kiểm tra kích thước màn hình `window.innerWidth` tương ứng. Khi cần cuộn ngay lúc tải trang, hãy chạy logic đồng bộ trước First Paint kết hợp `requestAnimationFrame` thay vì sử dụng trì hoãn `setTimeout` để tránh lỗi Layout Shift/Flicker gây khó chịu.
+- **Status**: Fixed

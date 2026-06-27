@@ -2290,15 +2290,29 @@
       // Auto scroll to the next unregistered package on mobile load
       const targetIndex = +(document.getElementById('upgrade-carousel-data')?.dataset.targetIndex ?? 0);
       
-      setTimeout(() => {
-        const cards = grid.querySelectorAll('.pricing-card');
-        if (cards[targetIndex]) {
-          cards[targetIndex].scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'center' });
-          dots.forEach((dot, idx) => {
-            dot.classList.toggle('active', idx === targetIndex);
-          });
+      const performMobileScroll = () => {
+        if (window.innerWidth < 1280) {
+          // 1. Cuộn dọc trang xuống để hiển thị vùng bảng giá
+          grid.scrollIntoView({ behavior: 'auto', block: 'center' });
+          
+          // 2. Cuộn ngang container carousel đến gói cước gợi ý tiếp theo
+          const cards = grid.querySelectorAll('.pricing-card');
+          if (cards[targetIndex]) {
+            const cardWidth = cards[targetIndex].offsetWidth || 300;
+            grid.scrollLeft = targetIndex * cardWidth;
+            
+            dots.forEach((dot, idx) => {
+              dot.classList.toggle('active', idx === targetIndex);
+            });
+          }
         }
-      }, 150);
+      };
+
+      // Thực hiện định vị ngay lập tức trước khi trình duyệt vẽ trang (Paint) để triệt tiêu hiện tượng giật
+      performMobileScroll();
+      
+      // Dự phòng chạy thêm một lần khi frame tiếp theo sẵn sàng để hiệu chỉnh chính xác kích thước card
+      requestAnimationFrame(performMobileScroll);
     });
 
     // --- Comparison Table Tab Switcher (Mobile & Event Delegation) ---
