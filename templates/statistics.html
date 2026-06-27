@@ -1377,7 +1377,7 @@
                     <span class="text-[10px] text-on-surface-variant font-semibold uppercase tracking-wider" data-i18n="statsMostCommonBreed">Giống phổ biến nhất</span>
                     {% if most_common_breed and ':' in most_common_breed %}
                       {% set parts = most_common_breed.split(':') %}
-                      <span class="text-xs font-bold text-amber-600 dark:text-amber-400 block mt-1">Nghi lai:</span>
+                      <span class="text-xs font-bold text-amber-600 dark:text-amber-400 block mt-1" data-i18n="statsDogMixed">Nghi lai:</span>
                       <span class="text-xs font-bold text-on-surface line-clamp-2 leading-tight" title="{{ parts[1]|trim }}" data-i18n-breed="{{ parts[1]|trim }}">{{ parts[1]|trim }}</span>
                     {% else %}
                       <span class="text-xs font-bold text-on-surface line-clamp-2 leading-tight mt-1" title="{{ most_common_breed }}" data-i18n-breed="{{ most_common_breed }}">{{ most_common_breed }}</span>
@@ -1412,7 +1412,7 @@
                         --
                       {% endif %}
                     </span>
-                    <span class="text-[9px] text-on-surface-variant/60 leading-none mt-0.5">Tăng trưởng lượt quét</span>
+                    <span class="text-[9px] text-on-surface-variant/60 leading-none mt-0.5" data-i18n="statsScanGrowth">Tăng trưởng lượt quét</span>
                   </div>
                 </div>
 
@@ -1486,7 +1486,7 @@
                       <th class="px-6 py-4" data-i18n="modalBreedLabel">Giống chó</th>
                       <th class="px-6 py-4" data-i18n="modalConfLabel">Độ tin cậy</th>
                       <th class="px-6 py-4" data-i18n="modalDateLabel">Thời gian</th>
-                      <th class="px-6 py-4 text-right">Thao tác</th>
+                      <th class="px-6 py-4 text-right" data-i18n="tableHeaderActions">Thao tác</th>
                     </tr>
                   </thead>
                   <tbody class="divide-y divide-outline-variant/10">
@@ -1820,8 +1820,14 @@
           statsActiveDays: "Số ngày hoạt động",
           statsLastScan: "Quét gần nhất",
           statsScanDiff: "Chênh lệch lượt quét",
+          statsScanGrowth: "Tăng trưởng lượt quét",
           statsNewBreedsBadge: "+{{ code }} giống mới",
-          comparedToLastPeriodLabel: "so với {{ code }} ngày trước"
+          comparedToLastPeriodLabel: "so với {{ code }} ngày trước",
+          exportStatsModalTitle: "Xuất báo cáo thống kê",
+          exportPdfOption: "Tải xuống PDF",
+          downloadBtnText: "Tải file về",
+          tableHeaderActions: "Thao tác",
+          exportFormatLabel: "Định dạng xuất tệp"
         },
         en: {
           statsHighlights: "Key Highlights",
@@ -1839,8 +1845,14 @@
           statsActiveDays: "Active days",
           statsLastScan: "Latest scan",
           statsScanDiff: "Scan difference",
+          statsScanGrowth: "Scan growth rate",
           statsNewBreedsBadge: "+{{ code }} new breeds",
-          comparedToLastPeriodLabel: "vs last {{ code }} days"
+          comparedToLastPeriodLabel: "vs last {{ code }} days",
+          exportStatsModalTitle: "Export Statistics Report",
+          exportPdfOption: "Download PDF",
+          downloadBtnText: "Download",
+          tableHeaderActions: "Actions",
+          exportFormatLabel: "Export Format"
         }
       };
     </script>
@@ -2356,13 +2368,18 @@
         const startDate = params.get("start_date") || "";
         const endDate = params.get("end_date") || "";
         const labelEl = document.getElementById("statsExportPeriodLabel");
-        if (days === "7") labelEl.textContent = "Khoảng thời gian: 7 ngày qua";
-        else if (days === "30") labelEl.textContent = "Khoảng thời gian: 30 ngày qua";
-        else if (days === "90") labelEl.textContent = "Khoảng thời gian: 90 ngày qua";
-        else if (days === "0") labelEl.textContent = "Khoảng thời gian: Toàn bộ";
-        else if (days === "custom" && startDate && endDate)
-          labelEl.textContent = "Khoảng thời gian: " + startDate.replace(/-/g,"/") + " – " + endDate.replace(/-/g,"/");
-        else labelEl.textContent = "Khoảng thời gian: 30 ngày qua";
+        const lang = document.documentElement.getAttribute("data-user-lang") || document.documentElement.lang || "vi";
+        const isEn = (lang === "en");
+        if (days === "7") labelEl.textContent = isEn ? "Time period: Last 7 days" : "Khoảng thời gian: 7 ngày qua";
+        else if (days === "30") labelEl.textContent = isEn ? "Time period: Last 30 days" : "Khoảng thời gian: 30 ngày qua";
+        else if (days === "90") labelEl.textContent = isEn ? "Time period: Last 90 days" : "Khoảng thời gian: 90 ngày qua";
+        else if (days === "0") labelEl.textContent = isEn ? "Time period: All time" : "Khoảng thời gian: Toàn bộ";
+        else if (days === "custom" && startDate && endDate) {
+          const startFmt = startDate.replace(/-/g, "/");
+          const endFmt = endDate.replace(/-/g, "/");
+          labelEl.textContent = isEn ? `Time period: ${startFmt} - ${endFmt}` : `Khoảng thời gian: ${startFmt} – ${endFmt}`;
+        }
+        else labelEl.textContent = isEn ? "Time period: Last 30 days" : "Khoảng thời gian: 30 ngày qua";
 
         modal.classList.remove("hidden");
         modal.classList.add("flex");
@@ -2399,17 +2416,22 @@
 
         if (fmt === "pdf") {
           const contentEl = document.getElementById("content-area");
+          const lang = document.documentElement.getAttribute("data-user-lang") || document.documentElement.lang || "vi";
           if (!contentEl) {
-            if (typeof showToast !== "undefined") showToast("Không thể tạo PDF.", "error");
+            if (typeof showToast !== "undefined") {
+              showToast(lang === "en" ? "Unable to generate PDF." : "Không thể tạo PDF.", "error");
+            }
             return;
           }
 
-          if (typeof showToast !== "undefined") showToast("Đang tạo file PDF...", "info");
+          if (typeof showToast !== "undefined") {
+            showToast(lang === "en" ? "Generating PDF..." : "Đang tạo file PDF...", "info");
+          }
 
           const runPdfExport = () => {
             const now = new Date();
             const now_formatted = now.toLocaleDateString("vi-VN") + " " + now.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" });
-            const lang = document.documentElement.lang || "vi";
+            const lang = document.documentElement.getAttribute("data-user-lang") || document.documentElement.lang || "vi";
 
             // 1. Tạm thời chuyển trang thật sang Light Mode để html2canvas lấy computed style sáng
             const htmlEl = document.documentElement;
@@ -2524,7 +2546,9 @@
                 .set(opt)
                 .save()
                 .then(() => {
-                  if (typeof showToast !== "undefined") showToast("Xuất PDF thành công!", "success");
+                  if (typeof showToast !== "undefined") {
+                    showToast(lang === "en" ? "PDF exported successfully!" : "Xuất PDF thành công!", "success");
+                  }
                   // Khôi phục lại Dark Mode sau khi in xong
                   if (isCurrentlyDark) {
                     htmlEl.classList.add("dark");
@@ -2533,7 +2557,9 @@
                 })
                 .catch(err => {
                   console.error("Lỗi xuất PDF:", err);
-                  if (typeof showToast !== "undefined") showToast("Gặp sự cố khi tạo PDF.", "error");
+                  if (typeof showToast !== "undefined") {
+                    showToast(lang === "en" ? "An error occurred while creating the PDF." : "Gặp sự cố khi tạo PDF.", "error");
+                  }
                   if (isCurrentlyDark) {
                     htmlEl.classList.add("dark");
                     htmlEl.setAttribute("data-theme", "dark");
@@ -2550,7 +2576,9 @@
               runPdfExport();
             };
             script.onerror = () => {
-              if (typeof showToast !== "undefined") showToast("Không thể tải thư viện xuất PDF.", "error");
+              if (typeof showToast !== "undefined") {
+                showToast(lang === "en" ? "Unable to load PDF export library." : "Không thể tải thư viện xuất PDF.", "error");
+              }
             };
             document.head.appendChild(script);
           } else {
@@ -2567,7 +2595,10 @@
         if (startDate) exportUrl.searchParams.set("start_date", startDate);
         if (endDate) exportUrl.searchParams.set("end_date", endDate);
 
-        if (typeof showToast !== "undefined") showToast("Đang chuẩn bị file...", "info");
+        const lang = document.documentElement.getAttribute("data-user-lang") || document.documentElement.lang || "vi";
+        if (typeof showToast !== "undefined") {
+          showToast(lang === "en" ? "Preparing file..." : "Đang chuẩn bị file...", "info");
+        }
 
         // Dùng fetch() + Blob URL - hoàn toàn không trigger navigation event hay PJAX
         const btn = document.getElementById("statsExportDownloadBtn");
@@ -2592,11 +2623,15 @@
             a.dispatchEvent(new MouseEvent("click", { bubbles: false, cancelable: false }));
             document.body.removeChild(a);
             setTimeout(function() { URL.revokeObjectURL(blobUrl); }, 2000);
-            if (typeof showToast !== "undefined") showToast("Tải file thành công!", "success");
+            if (typeof showToast !== "undefined") {
+              showToast(lang === "en" ? "File downloaded successfully!" : "Tải file thành công!", "success");
+            }
           })
           .catch(function(err) {
             console.error("Export error:", err);
-            if (typeof showToast !== "undefined") showToast("Xuất file thất bại. Vui lòng thử lại.", "error");
+            if (typeof showToast !== "undefined") {
+              showToast(lang === "en" ? "Export failed. Please try again." : "Xuất file thất bại. Vui lòng thử lại.", "error");
+            }
           })
           .finally(function() {
             if (btn) { btn.disabled = false; btn.style.opacity = ""; }
@@ -2615,7 +2650,7 @@
         <div class="flex items-center justify-between border-b border-slate-200/60 dark:border-slate-800 pb-3">
           <h3 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
             <span class="material-symbols-outlined text-primary dark:text-blue-400">bar_chart</span>
-            <span>Xuất báo cáo thống kê</span>
+            <span data-i18n="exportStatsModalTitle">Xuất báo cáo thống kê</span>
           </h3>
           <button
             type="button"
@@ -2634,7 +2669,7 @@
 
         <!-- Format selection -->
         <div class="space-y-2">
-          <label class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">Định dạng xuất tệp</label>
+          <label class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block" data-i18n="exportFormatLabel">Định dạng xuất tệp</label>
           <div class="grid grid-cols-3 gap-2.5">
             <label class="flex flex-col items-center justify-center p-3 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/60 cursor-pointer transition-all text-center gap-1.5">
               <input type="radio" name="statsExportFormat" value="xlsx" checked class="w-3.5 h-3.5 text-primary dark:text-blue-500 focus:ring-0">
@@ -2667,7 +2702,7 @@
             onclick="closeStatsExportModal()"
             class="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-350 font-semibold rounded-lg text-xs transition-colors cursor-pointer text-center"
           >
-            Hủy
+            <span data-i18n="cancelBtn">Hủy</span>
           </button>
           <button
             type="button"
@@ -2676,7 +2711,7 @@
             class="flex-1 py-2.5 bg-primary hover:bg-primary/95 text-white font-semibold rounded-lg text-xs transition-colors cursor-pointer shadow-sm text-center flex items-center justify-center gap-2"
           >
             <span class="material-symbols-outlined text-[16px]">download</span>
-            <span>Tải file về</span>
+            <span data-i18n="downloadBtnText">Tải file về</span>
           </button>
         </div>
       </div>

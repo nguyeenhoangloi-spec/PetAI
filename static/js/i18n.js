@@ -5114,6 +5114,13 @@
       });
       return "Crossbreed: " + translatedParts.join(" x ");
     }
+    if (viName.indexOf(" x ") !== -1 || viName.indexOf(" X ") !== -1) {
+      var parts = viName.split(/ x /i);
+      var translatedParts = parts.map(function (p) {
+        return translateBreedViToEn(p.trim());
+      });
+      return translatedParts.join(" x ");
+    }
     if (VI_TO_EN_BREEDS[viName] !== undefined) {
       return VI_TO_EN_BREEDS[viName];
     }
