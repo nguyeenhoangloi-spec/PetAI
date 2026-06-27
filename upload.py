@@ -1074,8 +1074,7 @@ def upload():
 			det_items = []
 			annotated_path = save_path
 
-		# --- Early YOLO gate: reject ngay nếu không phát hiện chó ---
-		# Không cần chạy breed model nếu YOLO đã xác định không phải chó.
+		# --- Early YOLO gate: reject ngay nếu không phát hiện chó (giá trị DOG_GATE_YOLO_DOG_THRESHOLD được cấu hình trong .env) ---
 		DOG_THRESHOLD = _env_float("DOG_GATE_YOLO_DOG_THRESHOLD", 0.40)
 
 		dog_confs_early = [

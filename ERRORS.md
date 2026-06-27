@@ -816,3 +816,19 @@
 - **Prevention**: Khi di chuyển các khối HTML lớn giữa các cột Grid, cần rà soát kỹ thẻ đóng mở (`div`, `section`, `{% if %}`) và cấu trúc lồng nhau của Grid để tránh đè lộn xộn các phần tử xung quanh.
 - **Status**: Fixed
 
+---
+
+## [2026-06-28 00:25] - Lỗi ngưỡng lọc YOLOv8 Dog Gate quá cao làm từ chối các ảnh chó thực tế
+
+- **Type**: Logic
+- **Severity**: Medium
+- **File**: `upload.py:1079`, `.env:20`
+- **Agent**: PetAI
+- **Root Cause**: Ngưỡng lọc chó `DOG_GATE_YOLO_DOG_THRESHOLD` mặc định là `0.40` quá cao đối với các ảnh chụp chó trong thực tế (góc chụp nghiêng, mờ, bị che khuất...). Điều này khiến YOLOv8 nhận diện vật thể `"dog"` với confidence dưới `0.40` (ví dụ `0.30` - `0.38`), dẫn đến việc hệ thống từ chối ảnh chó hợp lệ một cách sai lầm.
+- **Error Message**:
+  ```text
+  Ảnh này không phải chó. Vui lòng tải lên ảnh chó để nhận diện.
+  ```
+- **Fix Applied**: Thay đổi giá trị của `DOG_GATE_YOLO_DOG_THRESHOLD` trong file cấu hình `.env` từ `0.40` thành `0.25` để mở rộng phạm vi chấp nhận mà vẫn đảm bảo khả năng lọc tốt.
+- **Prevention**: Luôn cân nhắc điều chỉnh ngưỡng nhận diện YOLO gate ở mức tối ưu (từ 0.20 đến 0.25) khi tích hợp mô hình phát hiện đối tượng trong thực tế để tăng khả năng chấp nhận ảnh tải lên từ người dùng.
+- **Status**: Fixed
