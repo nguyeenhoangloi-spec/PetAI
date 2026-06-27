@@ -851,3 +851,20 @@
   2. Để loại bỏ hoàn toàn độ trễ 150ms gây giật hình ảnh (khi người dùng nhìn thấy đầu trang rồi mới bị giật xuống), logic cuộn đã được chuyển thành một hàm `performMobileScroll` thực hiện đồng bộ ngay khi sự kiện `DOMContentLoaded` kích hoạt (trước First Paint), đồng thời sử dụng `requestAnimationFrame` làm phương án dự phòng để hiệu chỉnh chính xác khi frame tiếp theo sẵn sàng.
 - **Prevention**: Luôn bao bọc các logic cuộn trang (auto-scroll) trong kiểm tra kích thước màn hình `window.innerWidth` tương ứng. Khi cần cuộn ngay lúc tải trang, hãy chạy logic đồng bộ trước First Paint kết hợp `requestAnimationFrame` thay vì sử dụng trì hoãn `setTimeout` để tránh lỗi Layout Shift/Flicker gây khó chịu.
 - **Status**: Fixed
+
+---
+
+## [2026-06-28 00:43] - Cải tiến trải nghiệm người dùng (UX) cho trang nhập OTP: Bấm Enter hoặc nhập đủ ký tự tự động xác thực
+
+- **Type**: Logic
+- **Severity**: Low
+- **File**: `templates/register_otp.html:160`, `templates/forgot_otp.html:164`, `templates/account_delete_pending.html:450`
+- **Agent**: PetAI
+- **Root Cause**: Giao diện OTP trước đó yêu cầu người dùng phải click thủ công vào nút xác nhận để gửi form. Việc thiếu cơ chế tự động xác nhận khi nhập đủ số kí tự hoặc hỗ trợ phím Enter gây bất tiện và giảm trải nghiệm hiện đại.
+- **Error Message**:
+  ```text
+  Người dùng phải click thủ công nút xác nhận sau khi hoàn thành nhập 6 số OTP.
+  ```
+- **Fix Applied**: Cập nhật mã JS trong cả ba trang đăng ký, khôi phục mật khẩu, và khôi phục tài khoản chờ xóa. Bổ sung hàm `checkAndAutoSubmit` tự động kiểm tra và thực hiện click nút submit hoặc gọi API xác thực khôi phục tài khoản khi nhập đủ 6 chữ số (áp dụng cả gõ phím và dán mã/paste). Đồng thời, bắt sự kiện phím `Enter` để kích hoạt gửi form ngay lập tức ở bất kỳ ô nhập liệu nào.
+- **Prevention**: Thiết kế các form xác thực mã OTP nhiều ô luôn cần tích hợp sẵn cơ chế auto-submit khi nhập đủ ký tự và hỗ trợ phím Enter để gia tăng độ tiện lợi cho người dùng.
+- **Status**: Fixed

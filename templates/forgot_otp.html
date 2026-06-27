@@ -161,21 +161,47 @@
       }
     }, 1000);
 
-    // OTP input auto-advance
+    // OTP input auto-advance & auto-submit
     const inputs = document.querySelectorAll('#otp-boxes .otp-input');
+    const otpForm = document.getElementById("otpForm");
+    const submitBtn = otpForm.querySelector('button[type="submit"]');
+
+    // Helper to check and submit if full 6 digits
+    const checkAndAutoSubmit = () => {
+      const otpVal = Array.from(inputs).map(i => i.value).join('');
+      if (/^[0-9]{6}$/.test(otpVal)) {
+        submitBtn.click(); // Click nút submit để vừa validate vừa gửi form
+      }
+    };
+
     inputs.forEach((inp, idx) => {
       inp.addEventListener('input', () => {
         inp.value = inp.value.replace(/[^0-9]/g, '').slice(-1);
-        if (inp.value && idx < inputs.length - 1) inputs[idx + 1].focus();
+        if (inp.value && idx < inputs.length - 1) {
+          inputs[idx + 1].focus();
+        }
+        checkAndAutoSubmit();
       });
+
       inp.addEventListener('keydown', (e) => {
-        if (e.key === 'Backspace' && !inp.value && idx > 0) inputs[idx - 1].focus();
+        if (e.key === 'Backspace' && !inp.value && idx > 0) {
+          inputs[idx - 1].focus();
+        } else if (e.key === 'Enter') {
+          e.preventDefault();
+          // Nếu nhấn Enter, ép buộc validate và gửi đi luôn
+          submitBtn.click();
+        }
       });
+
       inp.addEventListener('paste', (e) => {
         e.preventDefault();
         const paste = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '');
         inputs.forEach((box, i) => { box.value = paste[i] || ''; });
-        inputs[Math.min(paste.length, inputs.length - 1)].focus();
+        const targetFocus = Math.min(paste.length, inputs.length - 1);
+        if (inputs[targetFocus]) {
+          inputs[targetFocus].focus();
+        }
+        checkAndAutoSubmit();
       });
     });
 
