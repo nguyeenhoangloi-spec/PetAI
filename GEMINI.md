@@ -13,6 +13,11 @@ Tệp này kiểm soát hành vi của AI Agent.
 
 ## 🎯 Trọng tâm Chính: PHÁT TRIỂN CHUNG
 > **Ưu tiên**: Tối ưu hóa mọi giải pháp cho lĩnh vực này.
+> - Kiểm tra English mode.
+> - Kiểm tra Vietnamese mode.
+> - Kiểm tra Dark mode và Light mode.
+> - Kiểm tra tablet/mobile để đảm bảo không vỡ layout.
+> - Kiểm tra sau khi reload trang.
 
 ## Quy tắc hành vi: CREATIVE
 
