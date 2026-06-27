@@ -18,3 +18,8 @@ Yêu cầu chung:
 - Thông báo phải đúng ngôn ngữ đang chọn: tiếng Việt thì hiện tiếng Việt, tiếng Anh thì hiện tiếng Anh.
 - Toast thông báo hiển thị góc dưới bên phải và tự ẩn sau khoảng 2 giây.
 - Khi sửa giao diện, phải giữ sidebar, header, icon, hover, active state và responsive ổn định.
+- Trước khi báo cáo hoàn thành, BẮT BUỘC phải tự kiểm tra:
+  * English mode & Vietnamese mode hoạt động chuẩn i18n.
+  * Tương thích đầy đủ trên cả Dark mode và Light mode.
+  * Responsive trên Tablet và Mobile (không bị vỡ hay tràn layout).
+  * Trạng thái hoạt động và dịch thuật sau khi reload trang (F5).
