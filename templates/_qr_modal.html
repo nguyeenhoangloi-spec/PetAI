@@ -8,7 +8,7 @@
 </div>
 
 <!-- QR Modal Backdrop & Container -->
-<div id="qrAccessModal" class="fixed inset-0 z-[10000] hidden items-center justify-center bg-black/60 backdrop-blur-sm transition-opacity duration-300">
+<div id="qrAccessModal" class="fixed inset-0 z-[10000] hidden items-center justify-center bg-black/60 backdrop-blur-sm opacity-0 transition-opacity duration-300">
   <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 w-[90%] max-w-md md:max-w-2xl rounded-2xl p-6 shadow-2xl transform scale-95 opacity-0 transition-all duration-300" id="qrAccessModalContent">
     
     <!-- Modal Header -->
@@ -61,12 +61,16 @@
       modal.classList.add('flex');
       // Force repaint to trigger animation
       setTimeout(() => {
+        modal.classList.remove('opacity-0');
+        modal.classList.add('opacity-100');
         content.classList.remove('scale-95', 'opacity-0');
         content.classList.add('scale-100', 'opacity-100');
       }, 10);
     }
 
     function closeModal() {
+      modal.classList.remove('opacity-100');
+      modal.classList.add('opacity-0');
       content.classList.remove('scale-100', 'opacity-100');
       content.classList.add('scale-95', 'opacity-0');
       setTimeout(() => {
