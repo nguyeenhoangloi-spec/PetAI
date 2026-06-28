@@ -139,144 +139,9 @@
       html[lang="en"] .lang-en-only { display: inline !important; }
       html[lang="vi"] .lang-vi-only { display: inline !important; }
       html[lang="vi"] .lang-en-only { display: none !important; }
-    
-      /* ── CSS CHUYÊN DỤNG IN ẤN PDF (Tự động kích hoạt khi xuất báo cáo) ── */
-      /* Ẩn hoàn toàn sidebar, header nav và overlay */
-      .is-printing-pdf-parent body > header,
-      .is-printing-pdf-parent body > nav,
-      .is-printing-pdf-parent .sidebar,
-      .is-printing-pdf-parent .sidebar-overlay,
-      .is-printing-pdf-parent footer {
-        display: none !important;
-      }
-      
-      /* Reset lùi lề của container chính khi in */
-      .is-printing-pdf-parent main {
-        margin: 0 !important;
-        padding: 0 !important;
-        width: 100% !important;
-        min-width: 100% !important;
-        max-width: 100% !important;
-        display: block !important;
-      }
-
-      /* Ép buộc nền sáng chữ tối cho toàn bộ trang in */
-      .is-printing-pdf {
-        background-color: #ffffff !important;
-        color: #0f172a !important;
-        box-shadow: none !important;
-        border-radius: 0 !important;
-        padding: 20px 30px !important;
-        width: 800px !important;
-        min-width: 800px !important;
-        max-width: 800px !important;
-        margin: 0 auto !important;
-      }
-      
-      /* Tắt viền bóng shadow và ép nền sáng cho các card */
-      .is-printing-pdf .bg-surface-container-lowest,
-      .is-printing-pdf .stat-card,
-      .is-printing-pdf section,
-      .is-printing-pdf table {
-        background-color: #ffffff !important;
-        color: #0f172a !important;
-        border-color: #e2e8f0 !important;
-      }
-      
-      /* Tránh chia cắt các thẻ/bảng giữa chừng khi chuyển trang */
-      .is-printing-pdf .stat-card, 
-      .is-printing-pdf .bg-surface-container-lowest,
-      .is-printing-pdf section, 
-      .is-printing-pdf table, 
-      .is-printing-pdf tr, 
-      .is-printing-pdf tbody { 
-        break-inside: avoid !important; 
-        page-break-inside: avoid !important; 
-      }
-      
-      /* 1. Thiết lập 4 thẻ KPI thành lưới 2x2 cân đối ở trang 1 */
-      .is-printing-pdf #kpi-cards-section { 
-        grid-template-columns: repeat(2, minmax(0, 1fr)) !important; 
-        gap: 20px !important; 
-        display: grid !important;
-        margin-bottom: 24px !important;
-      }
-      
-      /* 2. Thiết lập Biểu đồ Xu hướng & Phân bố độ tin cậy xếp dọc */
-      .is-printing-pdf #primary-charts-section { 
-        grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
-        display: grid !important;
-        width: 100% !important;
-      }
-      .is-printing-pdf #primary-charts-section > div { 
-        grid-column: span 1 / span 1 !important;
-        width: 100% !important;
-        margin-bottom: 24px !important;
-        display: block !important;
-        padding: 20px !important;
-        border: 1px solid #e2e8f0 !important;
-        border-radius: 12px !important;
-        box-sizing: border-box !important;
-        break-inside: avoid !important;
-        page-break-inside: avoid !important;
-      }
-
-      /* ÉP NGẮT TRANG: Đẩy biểu đồ Phân bố độ tin cậy sang trang 2 */
-      .is-printing-pdf #primary-charts-section > div:nth-child(2) {
-        page-break-before: always !important;
-        break-before: page !important;
-      }
-      
-      /* 3. Tái cấu trúc Sub-Analysis (Top 5 giống, Donut, Insights) xếp dọc 100% */
-      .is-printing-pdf #sub-analysis-section { 
-        grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
-        display: grid !important;
-        width: 100% !important;
-        margin-top: 24px !important;
-      }
-      .is-printing-pdf #sub-analysis-section > div { 
-        grid-column: span 1 / span 1 !important;
-        width: 100% !important; 
-        display: block !important;
-        margin-bottom: 30px !important;
-        border: 1px solid #e2e8f0 !important;
-        border-radius: 12px !important;
-        padding: 24px !important;
-        box-sizing: border-box !important;
-        break-inside: avoid !important;
-        page-break-inside: avoid !important;
-      }
-
-      /* ÉP NGẮT TRANG: Đẩy Top 5 giống phổ biến nhất sang trang 3 */
-      .is-printing-pdf #sub-analysis-section > div:nth-child(1) {
-        page-break-before: always !important;
-        break-before: page !important;
-      }
-
-      /* ÉP NGẮT TRANG: Đẩy Phân bố giống chó (Donut Chart) sang trang 4 */
-      .is-printing-pdf #sub-analysis-section > div:nth-child(2) {
-        page-break-before: always !important;
-        break-before: page !important;
-      }
-
-      /* ÉP NGẮT TRANG: Đẩy Thông tin nổi bật (Insights) sang trang 5 */
-      .is-printing-pdf #sub-analysis-section > div:nth-child(3) {
-        page-break-before: always !important;
-        break-before: page !important;
-      }
-
-      /* ÉP NGẮT TRANG: Đẩy Kết quả gần đây (Bảng lịch sử) sang trang 6 */
-      .is-printing-pdf section.mb-6 {
-        page-break-before: always !important;
-        break-before: page !important;
-        break-inside: avoid !important;
-        page-break-inside: avoid !important;
-      }
-      
-      /* Tối ưu hóa kích thước chữ chú thích Donut */
-      .is-printing-pdf .custom-scrollbar { 
-        max-height: none !important; 
-        overflow: visible !important; 
+      .is-printing-pdf .custom-scrollbar {
+        max-height: none !important;
+        overflow: visible !important;
       }
 </style>
     <script>
@@ -734,6 +599,201 @@
       {% set active_page = 'statistics' %} {% include '_sidebar.html' %}
 
       <div id="content-area" class="col-span-1 flex flex-col min-w-0">
+        <!-- CSS chuyên dụng in ấn PDF chèn ở đây để PJAX luôn load -->
+        <style>
+          /* Ẩn hoàn toàn sidebar, header nav và overlay khi in */
+          .is-printing-pdf-parent body > header,
+          .is-printing-pdf-parent body > nav,
+          .is-printing-pdf-parent .sidebar,
+          .is-printing-pdf-parent .sidebar-overlay,
+          .is-printing-pdf-parent footer {
+            display: none !important;
+          }
+          
+          /* Reset lùi lề của container chính khi in */
+          .is-printing-pdf-parent main {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+            min-width: 100% !important;
+            max-width: 100% !important;
+            display: block !important;
+          }
+
+          /* Ép buộc nền sáng chữ tối cho toàn bộ trang in */
+          .is-printing-pdf {
+            background-color: #ffffff !important;
+            color: #0f172a !important;
+            box-shadow: none !important;
+            border-radius: 0 !important;
+            padding: 10px 20px !important;
+            width: 820px !important;
+            min-width: 820px !important;
+            max-width: 820px !important;
+            margin: 0 auto !important;
+          }
+          
+          /* Tắt viền bóng shadow và ép nền sáng cho các card */
+          .is-printing-pdf .bg-surface-container-lowest,
+          .is-printing-pdf .stat-card,
+          .is-printing-pdf section,
+          .is-printing-pdf table {
+            background-color: #ffffff !important;
+            color: #0f172a !important;
+            border-color: #e2e8f0 !important;
+            box-shadow: none !important;
+          }
+          
+          /* Tránh chia cắt các thẻ/bảng giữa chừng khi chuyển trang */
+          .is-printing-pdf .stat-card, 
+          .is-printing-pdf .bg-surface-container-lowest,
+          .is-printing-pdf section, 
+          .is-printing-pdf table, 
+          .is-printing-pdf tr, 
+          .is-printing-pdf tbody { 
+            break-inside: avoid !important; 
+            page-break-inside: avoid !important; 
+          }
+          
+          /* 1. Thiết lập 4 thẻ KPI thành lưới 2x2 cân đối ở trang 1 */
+          .is-printing-pdf #kpi-cards-section { 
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important; 
+            gap: 20px !important; 
+            display: grid !important;
+            margin-bottom: 24px !important;
+            width: 100% !important;
+          }
+          
+          /* 2. Thiết lập Biểu đồ Xu hướng & Phân bố độ tin cậy xếp dọc */
+          .is-printing-pdf #primary-charts-section { 
+            grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+            display: grid !important;
+            width: 100% !important;
+          }
+          .is-printing-pdf #primary-charts-section > div { 
+            grid-column: span 1 / span 1 !important;
+            width: 100% !important;
+            margin-bottom: 0px !important;
+            display: block !important;
+            padding: 24px !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 12px !important;
+            box-sizing: border-box !important;
+          }
+
+          /* ÉP NGẮT TRANG: Đẩy biểu đồ Phân bố độ tin cậy sang trang 2 */
+          .is-printing-pdf #primary-charts-section > div:nth-child(2) {
+            page-break-before: always !important;
+            break-before: page !important;
+            margin-top: 20px !important;
+          }
+          
+          /* 3. Tái cấu trúc Sub-Analysis (Top 5 giống, Donut, Insights) xếp dọc 100% */
+          .is-printing-pdf #sub-analysis-section { 
+            grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+            display: grid !important;
+            width: 100% !important;
+            margin-top: 0px !important;
+          }
+          .is-printing-pdf #sub-analysis-section > div { 
+            grid-column: span 1 / span 1 !important;
+            width: 100% !important; 
+            display: block !important;
+            margin-bottom: 0px !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 12px !important;
+            padding: 24px !important;
+            box-sizing: border-box !important;
+          }
+
+          /* ÉP NGẮT TRANG: Đẩy Top 5 giống phổ biến nhất sang trang 3 */
+          .is-printing-pdf #sub-analysis-section > div:nth-child(1) {
+            page-break-before: always !important;
+            break-before: page !important;
+            margin-top: 20px !important;
+          }
+
+          /* ÉP NGẮT TRANG: Đẩy Phân bố giống chó (Donut Chart) sang trang 4 */
+          .is-printing-pdf #sub-analysis-section > div:nth-child(2) {
+            page-break-before: always !important;
+            break-before: page !important;
+            margin-top: 20px !important;
+          }
+          
+          /* Cân chỉnh Donut Chart container */
+          .is-printing-pdf .relative.w-full.h-\[180px\] {
+            height: 240px !important;
+          }
+          .is-printing-pdf .pointer-events-none {
+            z-index: 10 !important;
+          }
+
+          /* ÉP NGẮT TRANG: Đẩy Thông tin nổi bật (Insights) sang trang 5 */
+          .is-printing-pdf #sub-analysis-section > div:nth-child(3) {
+            page-break-before: always !important;
+            break-before: page !important;
+            margin-top: 20px !important;
+          }
+          
+          /* Style nền nhạt cho các ô Insights */
+          .is-printing-pdf .bg-slate-50\/50 {
+            background-color: #f8fafc !important;
+            border-color: #e2e8f0 !important;
+            color: #0f172a !important;
+          }
+
+          /* ÉP NGẮT TRANG: Đẩy Kết quả gần đây (Bảng lịch sử) sang trang 6 */
+          .is-printing-pdf section.mb-6 {
+            page-break-before: always !important;
+            break-before: page !important;
+            margin-top: 20px !important;
+          }
+
+          /* Ép hiển thị bảng và ẩn chế độ card mobile khi in */
+          .is-printing-pdf .hidden.md\:block {
+            display: block !important;
+          }
+          .is-printing-pdf .block.md\:hidden {
+            display: none !important;
+          }
+
+          /* Định dạng bảng in PDF để không bị tràn hay cắt */
+          .is-printing-pdf table {
+            width: 100% !important;
+            table-layout: fixed !important;
+            border-collapse: collapse !important;
+          }
+          .is-printing-pdf th,
+          .is-printing-pdf td {
+            white-space: normal !important;
+            word-break: break-word !important;
+            overflow: visible !important;
+            padding: 12px 16px !important;
+          }
+          /* Định cấu hình độ rộng các cột bảng in */
+          .is-printing-pdf th:nth-child(1),
+          .is-printing-pdf td:nth-child(1) { width: 12% !important; }
+          .is-printing-pdf th:nth-child(2),
+          .is-printing-pdf td:nth-child(2) { width: 43% !important; }
+          .is-printing-pdf th:nth-child(3),
+          .is-printing-pdf td:nth-child(3) { width: 20% !important; }
+          .is-printing-pdf th:nth-child(4),
+          .is-printing-pdf td:nth-child(4) { width: 25% !important; }
+
+          /* Loại bỏ max-width và truncate khi in */
+          .is-printing-pdf td h4 {
+            max-width: none !important;
+            white-space: normal !important;
+            overflow: visible !important;
+            text-overflow: clip !important;
+          }
+          
+          /* Tối ưu hóa kích thước chữ chú thích Donut */
+          .is-printing-pdf .custom-scrollbar { 
+            max-height: none !important; 
+            overflow: visible !important; 
+          }
+        </style>
         <!-- ── Page Header ── -->
         <section
           class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4 border-b border-outline-variant/20 dark:border-slate-800 pb-5 mb-6"
@@ -2406,23 +2466,15 @@
 
       function triggerStatsExport() {
         const fmt = document.querySelector('input[name="statsExportFormat"]:checked').value;
-        console.log("[PetAI Debug] triggerStatsExport() called with format:", fmt);
         const params = new URLSearchParams(window.location.search);
         const days = params.get("days") || "30";
-        const startDate = params.get("start_date") || "";
-        const endDate = params.get("end_date") || "";
-
+        
         closeStatsExportModal();
 
         if (fmt === "pdf") {
-          const contentEl = document.getElementById("content-area");
           const lang = document.documentElement.getAttribute("data-user-lang") || document.documentElement.lang || "vi";
-          if (!contentEl) {
-            if (typeof showToast !== "undefined") {
-              showToast(lang === "en" ? "Unable to generate PDF." : "Không thể tạo PDF.", "error");
-            }
-            return;
-          }
+          const startDate = params.get("start_date") || "";
+          const endDate = params.get("end_date") || "";
 
           if (typeof showToast !== "undefined") {
             showToast(lang === "en" ? "Generating PDF..." : "Đang tạo file PDF...", "info");
@@ -2431,9 +2483,8 @@
           const runPdfExport = () => {
             const now = new Date();
             const now_formatted = now.toLocaleDateString("vi-VN") + " " + now.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" });
-            const lang = document.documentElement.getAttribute("data-user-lang") || document.documentElement.lang || "vi";
 
-            // 1. Tạm thời chuyển trang thật sang Light Mode để html2canvas lấy computed style sáng
+            // Switch to light mode temporarily for clean screenshots
             const htmlEl = document.documentElement;
             const isCurrentlyDark = htmlEl.classList.contains("dark");
             if (isCurrentlyDark) {
@@ -2441,146 +2492,243 @@
               htmlEl.setAttribute("data-theme", "light");
             }
 
-            const opt = {
-              margin: [10, 12, 10, 12],
-              filename: lang === "en" ? `petai_statistics_report_${days}days.pdf` : `baocao_thongke_petai_${days}ngay.pdf`,
-              image: { type: "jpeg", quality: 0.98 },
-              html2canvas: { 
-                scale: 2, 
-                useCORS: true, 
+            const periodLabel = days === "7" ? "7 ngay qua" : (days === "30" ? "30 ngay qua" : (days === "90" ? "90 ngay qua" : (days === "custom" ? `Tuy chinh (${startDate} den ${endDate})` : "Tat ca thoi gian")));
+            const periodLabelEn = days === "7" ? "Last 7 Days" : (days === "30" ? "Last 30 Days" : (days === "90" ? "Last 90 Days" : (days === "custom" ? `Custom (${startDate} to ${endDate})` : "All Time")));
+            const finalPeriodLabel = lang === "en" ? periodLabelEn : periodLabel;
+            const titleText = lang === "en" ? "PETAI STATISTICS REPORT" : "BAO CAO THONG KE PETAI";
+            const filename = lang === "en" ? `petai_statistics_report_${days}days.pdf` : `baocao_thongke_petai_${days}ngay.pdf`;
+
+            // Capture an element as canvas
+            const captureEl = (el, extraSetup) => {
+              // Convert chart canvas to static image first
+              el.querySelectorAll("canvas").forEach(canvas => {
+                try {
+                  const img = document.createElement("img");
+                  img.src = canvas.toDataURL("image/png");
+                  img.style.width = (canvas.offsetWidth || 400) + "px";
+                  img.style.height = (canvas.offsetHeight || 300) + "px";
+                  img.style.display = "block";
+                  img.style.maxWidth = "100%";
+                  canvas.parentNode.replaceChild(img, canvas);
+                } catch(e) {}
+              });
+              // Remove action buttons
+              el.querySelectorAll("button[data-action], #exportReportBtn").forEach(b => b.style.display = "none");
+              // Force light colors
+              el.style.backgroundColor = "#ffffff";
+              el.style.color = "#0f172a";
+              if (extraSetup) extraSetup(el);
+              return html2canvas(el, {
+                scale: 1.5,
+                useCORS: true,
                 logging: false,
                 scrollX: 0,
                 scrollY: 0,
-                onclone: function (clonedDoc) {
-                  // Kích hoạt CSS in ấn tĩnh thông qua việc gán class
-                  clonedDoc.documentElement.classList.remove("dark");
-                  clonedDoc.documentElement.setAttribute("data-theme", "light");
-                  clonedDoc.documentElement.classList.add("is-printing-pdf-parent");
+                backgroundColor: "#ffffff"
+              });
+            };
 
-                  const cloneContent = clonedDoc.getElementById("content-area");
-                  if (cloneContent) {
-                    cloneContent.classList.add("is-printing-pdf");
+            // Build sections list
+            const buildSections = () => {
+              const secs = [];
+              const kpi = document.getElementById("kpi-cards-section");
+              if (kpi) secs.push({ el: kpi, type: "kpi" });
+              const primary = document.getElementById("primary-charts-section");
+              if (primary) Array.from(primary.children).forEach(c => secs.push({ el: c, type: "chart" }));
+              const sub = document.getElementById("sub-analysis-section");
+              if (sub) Array.from(sub.children).forEach(c => secs.push({ el: c, type: "chart" }));
+              const hist = document.querySelector("section.mb-6");
+              if (hist) secs.push({ el: hist, type: "history" });
+              return secs;
+            };
 
-                    // 2. Tạo Header in ấn chuyên nghiệp chèn lên đầu
-                    const headerContainer = clonedDoc.createElement("div");
-                    headerContainer.className = "flex items-center justify-between border-b-2 pb-4 mb-6 w-full";
-                    headerContainer.style.borderColor = "#004ac6";
+            // Generate PDF using jsPDF, one section per page
+            const generatePDF = async () => {
+              const { jsPDF } = window.jspdf;
+              const A4_W = 210, A4_H = 297, MARGIN = 10, CONTENT_W = A4_W - MARGIN * 2;
+              const pdf = new jsPDF({ unit: "mm", format: "a4", orientation: "portrait" });
 
-                    const periodLabel = days === "7" ? "7 ngày qua" : (days === "30" ? "30 ngày qua" : (days === "90" ? "90 ngày qua" : (days === "custom" ? `Tùy chỉnh (${startDate} đến ${endDate})` : "Tất cả thời gian")));
-                    const periodLabelEn = days === "7" ? "Last 7 Days" : (days === "30" ? "Last 30 Days" : (days === "90" ? "Last 90 Days" : (days === "custom" ? `Custom (${startDate} to ${endDate})` : "All Time")));
-                    const finalPeriodLabel = lang === "en" ? periodLabelEn : periodLabel;
+              try {
+                // Page 1: Header banner
+                const headerDiv = document.createElement("div");
+                headerDiv.style.cssText = "display:flex;align-items:center;justify-content:space-between;padding:18px 24px;background:#ffffff;border-bottom:3px solid #2563eb;font-family:sans-serif;width:780px;box-sizing:border-box;";
+                headerDiv.innerHTML = `
+                  <div style="display:flex;align-items:center;gap:12px;">
+                    <div style="width:42px;height:42px;border-radius:10px;background:#2563eb;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:20px;">P</div>
+                    <div>
+                      <div style="font-size:17px;font-weight:700;color:#0f172a;">PetAI</div>
+                      <div style="font-size:9px;color:#64748b;text-transform:uppercase;letter-spacing:2px;font-weight:600;">Smart Assistant</div>
+                    </div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div style="font-size:12px;font-weight:700;color:#2563eb;">${titleText}</div>
+                    <div style="font-size:10px;color:#475569;margin-top:3px;">${lang === "en" ? "Period" : "Ky bao cao"}: ${finalPeriodLabel}</div>
+                    <div style="font-size:9px;color:#94a3b8;margin-top:2px;">${lang === "en" ? "Exported" : "Xuat luc"}: ${now_formatted}</div>
+                  </div>
+                `;
+                document.body.appendChild(headerDiv);
 
-                    const titleText = lang === "en" ? "PETAI IDENTIFICATION STATISTICS REPORT" : "BÁO CÁO THỐNG KÊ NHẬN DIỆN PETAI";
-                    const subtitleText = lang === "en" ? `Report Period: ${finalPeriodLabel}` : `Kỳ báo cáo: ${finalPeriodLabel}`;
-                    const timeText = lang === "en" ? `Exported at: ${now_formatted}` : `Ngày xuất báo cáo: ${now_formatted}`;
+                const headerCanvas = await html2canvas(headerDiv, { scale: 2, useCORS: true, logging: false, backgroundColor: "#ffffff" });
+                document.body.removeChild(headerDiv);
 
-                    headerContainer.innerHTML = `
-                      <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold text-xl shadow-md">P</div>
-                        <div>
-                          <h1 class="text-xl font-bold text-slate-900 leading-none">PetAI</h1>
-                          <p class="text-[10px] text-slate-500 uppercase tracking-widest font-semibold mt-1">Smart Assistant</p>
-                        </div>
-                      </div>
-                      <div class="text-right">
-                        <h2 class="text-sm font-bold text-blue-600">${titleText}</h2>
-                        <p class="text-xs text-slate-600 mt-1">${subtitleText}</p>
-                        <p class="text-[10px] text-slate-400 mt-0.5">${timeText}</p>
-                      </div>
-                    `;
-                    cloneContent.insertBefore(headerContainer, cloneContent.firstChild);
+                const hData = headerCanvas.toDataURL("image/jpeg", 0.95);
+                const hH = (headerCanvas.height / headerCanvas.width) * CONTENT_W;
+                pdf.addImage(hData, "JPEG", MARGIN, MARGIN, CONTENT_W, hH);
 
-                    // 3. Loại bỏ nút Xuất báo cáo và bộ lọc
-                    const exportBtn = cloneContent.querySelector("#exportReportBtn");
-                    if (exportBtn && exportBtn.parentElement) {
-                      exportBtn.parentElement.remove();
+                // Subsequent sections
+                const sections = buildSections();
+                let firstSection = true;
+                let currentY = MARGIN + hH + 4;
+
+                for (let i = 0; i < sections.length; i++) {
+                  const { el, type } = sections[i];
+
+                  // Extra setup per type
+                  const extraSetup = (el) => {
+                    if (type === "history") {
+                      // Remove action column
+                      el.querySelectorAll("table tr").forEach(tr => {
+                        if (tr.cells && tr.cells.length > 4) tr.deleteCell(-1);
+                      });
+                      // Force text wrap on cells
+                      el.querySelectorAll("th, td").forEach(cell => {
+                        cell.style.whiteSpace = "normal";
+                        cell.style.wordBreak = "break-word";
+                        cell.style.overflow = "visible";
+                      });
+                      // Remove truncate from breed names
+                      el.querySelectorAll("h4, span").forEach(e => {
+                        e.classList.remove("truncate");
+                        e.style.maxWidth = "none";
+                        e.style.whiteSpace = "normal";
+                        e.style.overflow = "visible";
+                        e.style.textOverflow = "clip";
+                      });
+                      // Show desktop table, hide mobile cards
+                      const dtable = el.querySelector(".hidden");
+                      if (dtable) { dtable.style.display = "block"; dtable.classList.remove("hidden"); }
+                      const mcards = el.querySelector(".block.md\\:hidden");
+                      if (mcards) mcards.style.display = "none";
                     }
+                    if (type === "chart") {
+                      // Remove legend truncate
+                      el.querySelectorAll(".truncate").forEach(e => {
+                        e.classList.remove("truncate");
+                        e.style.overflow = "visible";
+                        e.style.whiteSpace = "normal";
+                        e.style.textOverflow = "clip";
+                        e.style.maxWidth = "none";
+                      });
+                    }
+                  };
 
-                    // Loại bỏ các liên kết điều hướng
-                    cloneContent.querySelectorAll("a[href*='/history']").forEach(el => el.remove());
+                  const sCanvas = await captureEl(el, extraSetup);
+                  const sData = sCanvas.toDataURL("image/jpeg", 0.92);
+                  const sW = sCanvas.width, sH = sCanvas.height;
 
-                    // 4. Loại bỏ cột "Thao tác" khỏi bảng
-                    cloneContent.querySelectorAll("table tr").forEach(tr => {
-                      if (tr.cells && tr.cells.length > 4) {
-                        tr.deleteCell(-1); // Xóa cell cuối
-                      }
-                    });
+                  // Calculate dimensions: scale UP to fill page height, scale DOWN if too tall
+                  const maxImgH = A4_H - MARGIN * 2;
+                  let imgW = CONTENT_W;
+                  let imgH = (sH / sW) * imgW;
+                  
+                  // Always scale to fill page height for a polished look
+                  if (imgH < maxImgH) {
+                    // Scale up: increase height to fill page, recalc width
+                    imgH = maxImgH;
+                    imgW = (sW / sH) * imgH;
+                    // If width exceeds content area, clamp and recalc height
+                    if (imgW > CONTENT_W) {
+                      imgW = CONTENT_W;
+                      imgH = (sH / sW) * imgW;
+                    }
+                  } else if (imgH > maxImgH) {
+                    imgH = maxImgH;
+                    imgW = (sW / sH) * imgH;
+                  }
+                  const xOff = MARGIN + (CONTENT_W - imgW) / 2;
 
-                    // 5. Thay thế các canvas biểu đồ bằng ảnh tĩnh (Base64)
-                    const chartIds = ["trendChart", "breedDonutChart", "confBarChart"];
-                    chartIds.forEach(id => {
-                      const realCanvas = document.getElementById(id);
-                      const cloneCanvas = cloneContent.querySelector("#" + id);
-                      if (realCanvas && cloneCanvas) {
-                        const img = document.createElement("img");
-                        try {
-                          img.src = realCanvas.toDataURL("image/png");
-                          if (id === "breedDonutChart") {
-                            img.style.width = "220px";
-                            img.style.height = "220px";
-                            img.style.objectFit = "contain";
-                            img.style.margin = "0 auto";
-                          } else {
-                            img.style.width = "100%";
-                            img.style.height = "320px";
-                            img.style.objectFit = "contain";
-                          }
-                          img.style.display = "block";
-                          cloneCanvas.parentNode.replaceChild(img, cloneCanvas);
-                        } catch (e) {
-                          console.error("Lỗi chuyển đổi canvas " + id + " sang ảnh:", e);
-                        }
-                      }
-                    });
+                  if (firstSection) {
+                    // Trang 1: thử fit section đầu tiên bên dưới header
+                    const headerH = (headerCanvas.height / headerCanvas.width) * CONTENT_W;
+                    const sectionY = MARGIN + headerH + 4;
+                    const availH = A4_H - sectionY - MARGIN;
+                    
+                    if (imgH <= availH) {
+                      // Fit được: vẽ section bên dưới header trên cùng trang 1
+                      pdf.addImage(sData, "JPEG", xOff, sectionY, imgW, imgH);
+                    } else {
+                      // Không fit: thêm trang mới
+                      pdf.addPage();
+                      pdf.setFontSize(7);
+                      pdf.setTextColor(160);
+                      pdf.text("PetAI | " + finalPeriodLabel, MARGIN, MARGIN - 2);
+                      pdf.setTextColor(0);
+                      // Scale lại để fit trang mới
+                      let newImgH = maxImgH;
+                      let newImgW = (sW / sH) * newImgH;
+                      if (newImgW > CONTENT_W) { newImgW = CONTENT_W; newImgH = (sH / sW) * newImgW; }
+                      const newXOff = MARGIN + (CONTENT_W - newImgW) / 2;
+                      pdf.addImage(sData, "JPEG", newXOff, MARGIN, newImgW, newImgH);
+                    }
+                    firstSection = false;
+                  } else {
+                    pdf.addPage();
+                    pdf.setFontSize(7);
+                    pdf.setTextColor(160);
+                    pdf.text("PetAI | " + finalPeriodLabel, MARGIN, MARGIN - 2);
+                    pdf.setTextColor(0);
+                    pdf.addImage(sData, "JPEG", xOff, MARGIN, imgW, imgH);
                   }
                 }
-              },
-              jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-              pagebreak: { mode: ["avoid-all", "css"] }
-            };
 
-            // Chờ dựng layout ổn định (khoảng 800ms) trước khi chụp PDF
-            setTimeout(() => {
-              html2pdf()
-                .from(contentEl)
-                .set(opt)
-                .save()
-                .then(() => {
-                  if (typeof showToast !== "undefined") {
-                    showToast(lang === "en" ? "PDF exported successfully!" : "Xuất PDF thành công!", "success");
-                  }
-                  // Khôi phục lại Dark Mode sau khi in xong
-                  if (isCurrentlyDark) {
-                    htmlEl.classList.add("dark");
-                    htmlEl.setAttribute("data-theme", "dark");
-                  }
-                })
-                .catch(err => {
-                  console.error("Lỗi xuất PDF:", err);
-                  if (typeof showToast !== "undefined") {
-                    showToast(lang === "en" ? "An error occurred while creating the PDF." : "Gặp sự cố khi tạo PDF.", "error");
-                  }
-                  if (isCurrentlyDark) {
-                    htmlEl.classList.add("dark");
-                    htmlEl.setAttribute("data-theme", "dark");
-                  }
-                });
-            }, 800);
-          };
+                // Page numbers
+                const total = pdf.internal.getNumberOfPages();
+                for (let p = 1; p <= total; p++) {
+                  pdf.setPage(p);
+                  pdf.setFontSize(8);
+                  pdf.setTextColor(150);
+                  pdf.text(`${p} / ${total}`, A4_W / 2, A4_H - 4, { align: "center" });
+                }
 
-          // Tải động html2pdf.js từ CDN nếu chưa được định nghĩa (do chuyển trang PJAX)
-          if (typeof html2pdf === "undefined") {
-            const script = document.createElement("script");
-            script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js";
-            script.onload = () => {
-              runPdfExport();
-            };
-            script.onerror = () => {
-              if (typeof showToast !== "undefined") {
-                showToast(lang === "en" ? "Unable to load PDF export library." : "Không thể tải thư viện xuất PDF.", "error");
+                pdf.save(filename);
+                if (typeof showToast !== "undefined") {
+                  showToast(lang === "en" ? "PDF exported successfully!" : "Xuat PDF thanh cong!", "success");
+                }
+              } catch(err) {
+                console.error("PDF Error:", err);
+                if (typeof showToast !== "undefined") {
+                  showToast(lang === "en" ? "An error occurred while creating the PDF." : "Gap su co khi tao PDF.", "error");
+                }
+              } finally {
+                if (isCurrentlyDark) {
+                  htmlEl.classList.add("dark");
+                  htmlEl.setAttribute("data-theme", "dark");
+                }
               }
             };
-            document.head.appendChild(script);
+
+            setTimeout(generatePDF, 800);
+          };
+
+          // Load html2canvas + jsPDF then run
+          const loadLibsAndRun = () => {
+            const loadScript = (src) => new Promise((res, rej) => {
+              if (document.querySelector(`script[src="${src}"]`) && (src.includes("jspdf") ? window.jspdf : window.html2canvas)) { res(); return; }
+              const s = document.createElement("script"); s.src = src; s.onload = res; s.onerror = rej;
+              document.head.appendChild(s);
+            });
+            Promise.all([
+              loadScript("https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"),
+              loadScript("https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js")
+            ]).then(() => runPdfExport()).catch(() => {
+              if (typeof showToast !== "undefined") {
+                showToast(lang === "en" ? "Unable to load PDF library." : "Khong the tai thu vien PDF.", "error");
+              }
+            });
+          };
+
+          if (typeof html2canvas === "undefined" || typeof window.jspdf === "undefined") {
+            loadLibsAndRun();
           } else {
             runPdfExport();
           }
