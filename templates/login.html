@@ -1076,6 +1076,17 @@
                 data-i18n="registerNow"
               > Đăng ký ngay</a>
             </p>
+
+            <!-- Download APK Link -->
+            {% if request.cookies.get('viewappmobie') != 'true' %}
+            <div id="loginDownloadApkWrapper" class="mt-3 text-center">
+              <a href="{{ url_for('static', filename='downloads/petai.apk') }}" download
+                 class="inline-flex items-center gap-1.5 text-xs font-normal text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-350 transition-colors">
+                <span class="material-symbols-outlined text-[15px]">android</span>
+                <span data-i18n="downloadAndroidApp">Tải ứng dụng Android (.APK)</span>
+              </a>
+            </div>
+            {% endif %}
           </div>
         </section>
 
@@ -1175,6 +1186,15 @@
               }
             } catch(e) {}
           });
+        }
+      })();
+      
+      // Hide login download APK link if inside WebView
+      (function() {
+        const isApp = document.cookie.split('; ').find(row => row.trim().startsWith('viewappmobie='));
+        if (isApp && isApp.split('=')[1] === 'true') {
+          const wrapper = document.getElementById('loginDownloadApkWrapper');
+          if (wrapper) wrapper.style.display = 'none';
         }
       })();
     </script>
