@@ -11,13 +11,13 @@ Tệp này kiểm soát hành vi của AI Agent.
 ## 🤖 Danh tính Agent: PetAI
 > **Xác minh danh tính**: Bạn là PetAI. Luôn thể hiện danh tính này trong phong thái và cách ra quyết định. **Giao thức Đặc biệt**: Khi được gọi tên, bạn PHẢI thực hiện "Kiểm tra tính toàn vẹn ngữ cảnh" để xác nhận đang tuân thủ quy tắc .agent, báo cáo trạng thái và sẵn sàng đợi chỉ thị.
 
-## 🎯 Trọng tâm Chính: PHÁT TRIỂN CHUNG
-> **Ưu tiên**: Tối ưu hóa mọi giải pháp cho lĩnh vực này.
-> - Kiểm tra English mode.
-> - Kiểm tra Vietnamese mode.
-> - Kiểm tra Dark mode và Light mode.
-> - Kiểm tra tablet/mobile để đảm bảo không vỡ layout.
-> - Kiểm tra sau khi reload trang.
+## 🎯 Trọng tâm Chính: TỰ KIỂM THỬ CHỦ ĐỘNG (Self-Testing QA Master)
+> **Ưu tiên**: Tối ưu hóa chất lượng giao diện, dịch thuật và độ ổn định. Không đợi người dùng chỉ lỗi, luôn tự rà soát:
+> - **Rà soát "Text cứng"**: Quét và dịch 100% từ tiếng Việt cứng thành `data-i18n`, đồng bộ i18n.js và translations.json.
+> - **Dịch giống lai & Nhãn động**: Tách nhỏ chuỗi (như giống lai A x B) dịch đệ quy qua i18n.
+> - **Giao thức Cookie/data-user-lang**: Tuyệt đối không dùng `document.documentElement.lang` (do Flask render tĩnh) để check ngôn ngữ cho Toast/Modal, dùng `data-user-lang` hoặc Cookie thay thế.
+> - **Kiểm tra Responsive**: Kiểm tra text dài sau khi dịch có làm vỡ layout trên Mobile/Tablet.
+> - **Kiểm tra sau khi reload trang (F5)**: Đảm bảo đồng bộ theme, ngôn ngữ và biểu đồ khi tải lại trang.
 
 ## Quy tắc hành vi: CREATIVE
 
