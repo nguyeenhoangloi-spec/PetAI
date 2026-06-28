@@ -2043,9 +2043,15 @@
       "toastAddUserSuccess": "Tạo người dùng mới thành công!",
       "toastAddUserError": "Lỗi tạo người dùng.",
       "submitting": "Đang xử lý...",
-      "confirmLogoutText": "Bạn có chắc chắn muốn đăng xuất tài khoản này không?"
+      "confirmLogoutText": "Bạn có chắc chắn muốn đăng xuất tài khoản này không?",
+      "qrModalButtonTooltip": "Xem QR Code truy cập",
+      "qrModalTitle": "Mã QR Truy Cập",
+      "qrModalHelp": "Quét mã QR bằng thiết bị di động của bạn để truy cập ứng dụng nhanh chóng."
     },
     "en": {
+      "qrModalButtonTooltip": "View Access QR Code",
+      "qrModalTitle": "Access QR Code",
+      "qrModalHelp": "Scan this QR code with your mobile device to experience the app.",
       "homePageTitle": "PetAI | Intelligent Dog Breed Identification",
       "homeHeroTag": "PROJECT: DOG BREED IDENTIFICATION",
       "homeHeroTitle": "DOG BREED IDENTIFICATION",
