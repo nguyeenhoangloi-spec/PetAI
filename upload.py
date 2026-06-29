@@ -5,7 +5,6 @@
 from flask import Blueprint, request, redirect, url_for, flash, render_template, current_app, session, send_file, jsonify
 from predict import ImagePredictor
 from werkzeug.utils import secure_filename
-import cv2
 import numpy as np
 import os
 from io import BytesIO
@@ -1053,6 +1052,7 @@ def upload():
 			# Vẽ bbox lên ảnh (dog hoặc fallback) nếu có bbox
 			annotated_path = save_path
 			try:
+				import cv2
 				if det_items:
 					img = cv2.imread(save_path)
 					if img is not None:
@@ -1138,6 +1138,7 @@ def upload():
 					best_dog["label"] = "dog"
 
 			if best_dog:
+				import cv2
 				img_for_crop = cv2.imread(save_path)
 				if img_for_crop is not None:
 					h, w = img_for_crop.shape[:2]

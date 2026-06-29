@@ -9,11 +9,11 @@ from email.mime.multipart import MIMEMultipart
 import os
 
 import numpy as np
-import cv2
 from skimage.feature import hog
 
 
 def load_image_bgr(path: str) -> np.ndarray | None:
+	import cv2
 	try:
 		img = cv2.imread(path)
 		return img
@@ -22,6 +22,7 @@ def load_image_bgr(path: str) -> np.ndarray | None:
 
 
 def resize_keep_ratio(img: np.ndarray, target_size: Tuple[int, int] = (256, 256)) -> np.ndarray:
+	import cv2
 	h, w = img.shape[:2]
 	th, tw = target_size
 	scale = min(tw / w, th / h)
@@ -35,6 +36,7 @@ def resize_keep_ratio(img: np.ndarray, target_size: Tuple[int, int] = (256, 256)
 
 
 def extract_hog_features(img: np.ndarray) -> np.ndarray:
+	import cv2
 	"""Trích xuất đặc trưng HOG từ ảnh BGR."""
 	img256 = resize_keep_ratio(img, (256, 256))
 	gray = cv2.cvtColor(img256, cv2.COLOR_BGR2GRAY)
