@@ -6,11 +6,11 @@ import pymysql
 
 
 def get_connection():
-    host = os.environ.get("MYSQL_HOST", os.environ.get("DB_HOST", "localhost"))
-    database = os.environ.get("MYSQL_DATABASE", os.environ.get("DB_NAME", "khoaluantn"))
-    user = os.environ.get("MYSQL_USER", os.environ.get("DB_USER", "root"))
-    password = os.environ.get("MYSQL_PASSWORD", os.environ.get("DB_PASSWORD", "$7MvguT0qZtCqvtk"))
-    port = int(os.environ.get("MYSQL_PORT", os.environ.get("DB_PORT", "3306")))
+    host = os.environ.get("AZURE_MYSQL_HOST") or os.environ.get("MYSQL_HOST") or os.environ.get("DB_HOST") or "localhost"
+    database = os.environ.get("AZURE_MYSQL_NAME") or os.environ.get("MYSQL_DATABASE") or os.environ.get("DB_NAME") or "khoaluantn"
+    user = os.environ.get("AZURE_MYSQL_USER") or os.environ.get("MYSQL_USER") or os.environ.get("DB_USER") or "root"
+    password = os.environ.get("AZURE_MYSQL_PASSWORD") or os.environ.get("MYSQL_PASSWORD") or os.environ.get("DB_PASSWORD") or "$7MvguT0qZtCqvtk"
+    port = int(os.environ.get("DB_PORT") or os.environ.get("MYSQL_PORT") or 3306)
 
     # Tự động bật SSL nếu không phải chạy ở localhost (tức là khi lên Azure)
     ssl_config = None
