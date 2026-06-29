@@ -50,7 +50,7 @@ def _get_session_user_id() -> int | None:
 		return None
 
 # Base detection model (COCO dog/cat)
-yolo_model_name = os.getenv("YOLO_MODEL", "yolov8s.pt")
+yolo_model_name = os.getenv("YOLO_MODEL", "yolov8n.pt")
 det_model = YOLO(yolo_model_name)        # Detection/classification
 
 # Dùng hoàn toàn predictor mới (classifier + prototypes), không ghi đè bằng YOLO breed cũ.
@@ -1031,32 +1031,43 @@ def upload():
 						'bbox': bb,
 					}
 					det_items.append(item)
-				# Chỉ xác nhận CHÓ; không xác nhận MÈO.
+				# Đọc danh sách các class fallback từ .env
+				fallback_classes_str = os.getenv("DOG_GATE_FALLBACK_CLASSES", "cat,teddy bear,bear,sheep")
+				FALLBACK_CLASSES = {c.strip().lower() for c in fallback_classes_str.split(",") if c.strip()}
+
+				# Chỉ xác nhận CHÓ; hỗ trợ các class fallback khi bị nhận diện nhầm.
 				best_dog_conf_local = -1.0
+				best_fallback_conf_local = -1.0
 				if hasattr(r.boxes, 'conf') and r.boxes.conf is not None:
 					confs = r.boxes.conf.tolist()
 					for lab, conf in zip(labels, confs):
-						if lab == 'dog' and conf is not None and float(conf) > best_dog_conf_local:
-							best_dog_conf_local = float(conf)
-				if best_dog_conf_local >= 0.0 or 'dog' in labels:
+						if conf is not None:
+							conf_val = float(conf)
+							if lab == 'dog' and conf_val > best_dog_conf_local:
+								best_dog_conf_local = conf_val
+							elif lab in FALLBACK_CLASSES and conf_val > best_fallback_conf_local:
+								best_fallback_conf_local = conf_val
+				if best_dog_conf_local >= 0.0 or 'dog' in labels or best_fallback_conf_local >= 0.0 or any(l in FALLBACK_CLASSES for l in labels):
 					det_label = 'Dog'
 
-			# Vẽ bbox lên ảnh (chỉ cho dog) nếu có bbox
+			# Vẽ bbox lên ảnh (dog hoặc fallback) nếu có bbox
 			annotated_path = save_path
 			try:
 				if det_items:
 					img = cv2.imread(save_path)
 					if img is not None:
+						fallback_classes_str = os.getenv("DOG_GATE_FALLBACK_CLASSES", "cat,teddy bear,bear,sheep")
+						FALLBACK_CLASSES = {c.strip().lower() for c in fallback_classes_str.split(",") if c.strip()}
 						for it in det_items:
 							bb = it.get('bbox')
 							lab = it.get('label')
-							if not bb or lab != 'dog':
+							if not bb or (lab != 'dog' and lab not in FALLBACK_CLASSES):
 								continue
 							x1, y1, x2, y2 = [int(v) for v in bb]
 							color = (255, 128, 0)  # BGR
 							cv2.rectangle(img, (x1, y1), (x2, y2), color, 2)
 							conf_txt = f"{int(round((it.get('conf') or 0)*100))}%"
-							label_txt = f"{lab.upper()} {conf_txt if it.get('conf') is not None else ''}"
+							label_txt = f"DOG {conf_txt if it.get('conf') is not None else ''}"
 							# Draw label background
 							(tw, th), _ = cv2.getTextSize(label_txt, cv2.FONT_HERSHEY_SIMPLEX, 0.6, 2)
 							cv2.rectangle(img, (x1, max(y1- th - 6, 0)), (x1 + tw + 6, y1), color, -1)
@@ -1076,14 +1087,24 @@ def upload():
 
 		# --- Early YOLO gate: reject ngay nếu không phát hiện chó (giá trị DOG_GATE_YOLO_DOG_THRESHOLD được cấu hình trong .env) ---
 		DOG_THRESHOLD = _env_float("DOG_GATE_YOLO_DOG_THRESHOLD", 0.40)
+		fallback_classes_str = os.getenv("DOG_GATE_FALLBACK_CLASSES", "cat,teddy bear,bear,sheep")
+		FALLBACK_CLASSES = {c.strip().lower() for c in fallback_classes_str.split(",") if c.strip()}
 
 		dog_confs_early = [
 			float(item.get("conf"))
 			for item in det_items
 			if item.get("label") == "dog" and item.get("conf") is not None
 		]
+		fallback_confs_early = [
+			float(item.get("conf"))
+			for item in det_items
+			if item.get("label") in FALLBACK_CLASSES and item.get("conf") is not None
+		]
+
 		best_dog_conf_early = max(dog_confs_early) if dog_confs_early else None
-		yolo_dog_passes = (best_dog_conf_early is not None) and (best_dog_conf_early >= DOG_THRESHOLD)
+		best_fallback_conf_early = max(fallback_confs_early) if fallback_confs_early else None
+		gate_conf = best_dog_conf_early if best_dog_conf_early is not None else best_fallback_conf_early
+		yolo_dog_passes = (gate_conf is not None) and (gate_conf >= DOG_THRESHOLD)
 
 		if not yolo_dog_passes:
 			ui_lang = request.cookies.get("siteLanguage", "vi")
@@ -1104,8 +1125,19 @@ def upload():
 				it for it in det_items
 				if it.get("label") == "dog" and it.get("bbox") is not None
 			]
+			fallback_candidates = [
+				it for it in det_items
+				if it.get("label") in FALLBACK_CLASSES and it.get("bbox") is not None
+			]
+			best_dog = None
 			if dog_candidates:
 				best_dog = max(dog_candidates, key=lambda it: float(it.get("conf") or 0.0))
+			elif fallback_candidates:
+				best_dog = max(fallback_candidates, key=lambda it: float(it.get("conf") or 0.0))
+				if best_dog:
+					best_dog["label"] = "dog"
+
+			if best_dog:
 				img_for_crop = cv2.imread(save_path)
 				if img_for_crop is not None:
 					h, w = img_for_crop.shape[:2]
@@ -1150,7 +1182,12 @@ def upload():
 			for item in det_items
 			if item.get("label") == "dog" and item.get("conf") is not None
 		]
-		best_dog_conf = max(dog_confs) if dog_confs else None
+		fallback_confs = [
+			float(item.get("conf"))
+			for item in det_items
+			if item.get("label") in FALLBACK_CLASSES and item.get("conf") is not None
+		]
+		best_dog_conf = max(dog_confs) if dog_confs else (max(fallback_confs) if fallback_confs else None)
 		yolo_conf = best_dog_conf  # Đã qua gate → chắc chắn là chó
 		should_save_prediction = True
 

@@ -652,5 +652,57 @@ class FlaskSystemTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertTrue(response.location.endswith('/login') or response.location.endswith('/'))
 
+    @patch('upload.det_model')
+    @patch('upload.predictor')
+    def test_upload_pet_yolo_fallback_teddy_bear(self, mock_predictor, mock_det_model):
+        with self.client.session_transaction() as sess:
+            sess['user_id'] = 1
+            sess['role'] = 'user'
+            
+        mock_box = MagicMock()
+        mock_box.cls.tolist.return_value = [88]
+        mock_box.conf.tolist.return_value = [0.85]
+        mock_box.xyxy.tolist.return_value = [[10, 10, 100, 100]]
+        
+        mock_result = MagicMock()
+        mock_result.names = {88: 'teddy bear'}
+        mock_result.boxes = mock_box
+        
+        mock_det_model.return_value = [mock_result]
+        
+        mock_predictor.predict.return_value = {
+            "image_path": "dummy_path",
+            "species": "Dog",
+            "breed": "Poodle",
+            "breed_conf": 0.95,
+            "parts_info": {
+                "decision": {
+                    "top1_score": 0.95,
+                    "top2_score": 0.05,
+                    "score_gap": 0.90,
+                    "is_hybrid_candidate": False
+                }
+            },
+            "model_ready": True,
+            "message": "Success"
+        }
+        
+        import io
+        data = {
+            'file': (io.BytesIO(b"dummy image data"), 'fluffy_dog.jpg')
+        }
+        with patch('cv2.imread') as mock_imread, \
+             patch('cv2.imwrite') as mock_imwrite, \
+             patch('werkzeug.datastructures.FileStorage.save') as mock_save, \
+             patch('os.path.exists', return_value=True), \
+             patch('os.remove', return_value=True):
+            import numpy as np
+            mock_imread.return_value = np.zeros((200, 200, 3), dtype=np.uint8)
+            
+            response = self._post_with_csrf('/predict/upload', data=data, follow_redirects=True)
+            self.assertEqual(response.status_code, 200)
+            self.assertIn("Poodle", response.get_data(as_text=True))
+
+
 if __name__ == '__main__':
     unittest.main()
