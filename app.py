@@ -1,7 +1,25 @@
+import os
+import subprocess
+
+# Auto-install Linux system libraries for OpenCV if missing (Azure Web App Linux support)
+if os.name == 'posix':
+    try:
+        import cv2
+    except ImportError:
+        try:
+            # Azure runs as root, so we can install system libraries directly
+            subprocess.run(
+                "apt-get update && apt-get install -y libxcb1 libx11-6 libx11-xcb1 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-render0 libxcb-shm0 libxcb-sync1 libxcb-util1 libxcb-xfixes0 libxcb-xinerama0",
+                shell=True,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL
+            )
+        except Exception:
+            pass
+
 from flask import Flask
 from flask import redirect, url_for, session, request, flash, send_from_directory, abort
 from authlib.integrations.flask_client import OAuth
-import os
 import re
 import secrets
 from urllib.parse import urlparse
