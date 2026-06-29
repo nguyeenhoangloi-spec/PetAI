@@ -1,29 +1,4 @@
 import os
-import subprocess
-import sys
-
-# Auto-uninstall OpenCV GUI and install Headless version to prevent missing libxcb system library error
-if os.name == 'posix':
-    try:
-        import cv2
-    except ImportError:
-        try:
-            # Uninstall any existing OpenCV packages to avoid conflicts
-            subprocess.run(
-                f"{sys.executable} -m pip uninstall -y opencv-python opencv-contrib-python opencv-python-headless opencv-contrib-python-headless",
-                shell=True,
-                stdout=subprocess.DEVNULL,
-                stderr=subprocess.DEVNULL
-            )
-            # Install clean headless version (no X11/XCB graphics libraries needed)
-            subprocess.run(
-                f"{sys.executable} -m pip install opencv-python-headless",
-                shell=True,
-                stdout=subprocess.DEVNULL,
-                stderr=subprocess.DEVNULL
-            )
-        except Exception:
-            pass
 
 from flask import Flask
 from flask import redirect, url_for, session, request, flash, send_from_directory, abort
