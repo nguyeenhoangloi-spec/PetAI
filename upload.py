@@ -12,9 +12,6 @@ import uuid
 from urllib.parse import quote_plus
 import threading
 
-# --- YOLOv8 integration ---
-from ultralytics import YOLO
-
 # --- Database integration ---
 from connect import get_connection
 from models import PredictionHistory, UserQuota, PaymentOrder, UserSettings
@@ -48,9 +45,20 @@ def _get_session_user_id() -> int | None:
 	except (TypeError, ValueError):
 		return None
 
-# Base detection model (COCO dog/cat)
-yolo_model_name = os.getenv("YOLO_MODEL", "yolov8n.pt")
-det_model = YOLO(yolo_model_name)        # Detection/classification
+# Base detection model (COCO dog/cat) - lazy loaded
+det_model = None
+
+
+def _get_det_model():
+	global det_model
+	if det_model is None:
+		from ultralytics import YOLO
+		yolo_model_name = os.getenv("YOLO_MODEL", "yolov8n.pt")
+		_BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+		yolo_model_path = os.path.join(_BASE_DIR, yolo_model_name)
+		det_model = YOLO(yolo_model_path)
+	return det_model
+
 
 # Dùng hoàn toàn predictor mới (classifier + prototypes), không ghi đè bằng YOLO breed cũ.
 breed_model = None
@@ -1004,7 +1012,7 @@ def upload():
 		# Thay vào đó dùng boxes.cls để lấy class id, map sang tên và chỉ xác nhận "dog".
 		try:
 			det_conf = _env_float("YOLO_GATE_MIN_CONF", 0.12)
-			det_results = det_model(save_path, conf=det_conf, verbose=False)
+			det_results = _get_det_model()(save_path, conf=det_conf, verbose=False)
 			r = det_results[0]
 			names = getattr(r, 'names', {}) or {}
 			det_label = 'Unknown'
