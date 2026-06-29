@@ -1112,7 +1112,8 @@ def upload():
 		best_dog_conf_early = max(dog_confs_early) if dog_confs_early else None
 		best_fallback_conf_early = max(fallback_confs_early) if fallback_confs_early else None
 		gate_conf = best_dog_conf_early if best_dog_conf_early is not None else best_fallback_conf_early
-		yolo_dog_passes = (gate_conf is not None) and (gate_conf >= DOG_THRESHOLD)
+		# Bỏ qua cổng lọc YOLO nếu cấu hình DOG_THRESHOLD âm (ví dụ: -1)
+		yolo_dog_passes = (DOG_THRESHOLD < 0) or ((gate_conf is not None) and (gate_conf >= DOG_THRESHOLD))
 
 		if not yolo_dog_passes:
 			ui_lang = request.cookies.get("siteLanguage", "vi")
