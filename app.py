@@ -1,15 +1,23 @@
 import os
 import subprocess
+import sys
 
-# Auto-install Linux system libraries for OpenCV if missing (Azure Web App Linux support)
+# Auto-uninstall OpenCV GUI and install Headless version to prevent missing libxcb system library error
 if os.name == 'posix':
     try:
         import cv2
     except ImportError:
         try:
-            # Azure runs as root, so we can install system libraries directly (asynchronously to avoid boot timeout)
-            subprocess.Popen(
-                "apt-get update && apt-get install -y libxcb1 libx11-6 libx11-xcb1 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-render0 libxcb-shm0 libxcb-sync1 libxcb-util1 libxcb-xfixes0 libxcb-xinerama0",
+            # Uninstall any existing OpenCV packages to avoid conflicts
+            subprocess.run(
+                f"{sys.executable} -m pip uninstall -y opencv-python opencv-contrib-python opencv-python-headless opencv-contrib-python-headless",
+                shell=True,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL
+            )
+            # Install clean headless version (no X11/XCB graphics libraries needed)
+            subprocess.run(
+                f"{sys.executable} -m pip install opencv-python-headless",
                 shell=True,
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL
