@@ -1,19 +1,5 @@
 import os
 
-from flask import Flask
-from flask import redirect, url_for, session, request, flash, send_from_directory, abort
-from authlib.integrations.flask_client import OAuth
-import re
-import secrets
-from urllib.parse import urlparse
-
-from jwt_utils import build_jwt_access_token, build_mobile_deeplink
-
-
-from connect import get_connection
-from pymysql.cursors import DictCursor
-from werkzeug.security import generate_password_hash
-
 def _load_dotenv_if_present(path: str = ".env") -> None:
     """Load simple KEY=VALUE pairs into os.environ if not already set.
 
@@ -42,6 +28,22 @@ def _load_dotenv_if_present(path: str = ".env") -> None:
         # Best-effort; don't block app startup
         return
 
+_load_dotenv_if_present()
+
+from flask import Flask
+from flask import redirect, url_for, session, request, flash, send_from_directory, abort
+from authlib.integrations.flask_client import OAuth
+import re
+import secrets
+from urllib.parse import urlparse
+
+from jwt_utils import build_jwt_access_token, build_mobile_deeplink
+
+
+from connect import get_connection
+from pymysql.cursors import DictCursor
+from werkzeug.security import generate_password_hash
+
 # Import các Blueprint đã định nghĩa trong các module
 from home import home_bp
 from login import login_bp
@@ -63,9 +65,6 @@ from middleware import register_block_inactive_users, register_csrf_protection, 
 from context_processors import register_context_processors
 from error_handlers import register_error_handlers
 from account_delete import account_delete_bp
-
-
-_load_dotenv_if_present()
 
 _BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 _GRADCAM_DIR = os.path.join(_BASE_DIR, "gradcam_mean")
@@ -361,7 +360,10 @@ def login_google_flutter():
     if google is None:
         return redirect("petai://auth?error=google_not_configured")
 
-    redirect_uri = "https://nonsuspensively-monacidic-raylan.ngrok-free.dev/auth/google/callback/flutter"
+    # Xây dựng redirect URI động thích ứng với domain hiện tại
+    redirect_uri = url_for("authorize_google_flutter", _external=True)
+    if "http://" in redirect_uri and not request.host.startswith("localhost") and not request.host.startswith("127.0.0.1"):
+        redirect_uri = redirect_uri.replace("http://", "https://")
     return google.authorize_redirect(redirect_uri)
 
 
@@ -371,7 +373,10 @@ def authorize_google_flutter():
         return redirect("petai://auth?error=google_not_configured")
 
     try:
-        redirect_uri = "https://nonsuspensively-monacidic-raylan.ngrok-free.dev/auth/google/callback/flutter"
+        # Xây dựng redirect URI động thích ứng với domain hiện tại
+        redirect_uri = url_for("authorize_google_flutter", _external=True)
+        if "http://" in redirect_uri and not request.host.startswith("localhost") and not request.host.startswith("127.0.0.1"):
+            redirect_uri = redirect_uri.replace("http://", "https://")
         token = google.authorize_access_token(redirect_uri=redirect_uri)
     except Exception:
         return redirect("petai://auth?error=invalid_google_session")

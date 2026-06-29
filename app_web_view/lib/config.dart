@@ -7,11 +7,11 @@ class AppConfig {
   // ── BASE URLs ──────────────────────────────────────────────
   /// URL backend FastAPI (không có dấu / ở cuối)
   static const String apiBaseUrl =
-      'https://nonsuspensively-monacidic-raylan.ngrok-free.dev/api/v1';
+      'https://dbhn-ana2dsddhacqcrdd.southeastasia-01.azurewebsites.net';
 
   /// URL frontend web (không có dấu / ở cuối)
   static const String webBaseUrl =
-      'https://nonsuspensively-monacidic-raylan.ngrok-free.dev';
+      'https://dbhn-ana2dsddhacqcrdd.southeastasia-01.azurewebsites.net';
 
   // ── OAUTH DEEP LINK ────────────────────────────────────────
   /// Scheme cho Deep Link callback sau Google OAuth
