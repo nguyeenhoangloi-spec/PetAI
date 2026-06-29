@@ -25,7 +25,8 @@ def get_connection():
         port=port,
         charset="utf8mb4",
         autocommit=False,
-        ssl=ssl_config,  # Thêm dòng này vào đây
+        ssl=ssl_config,
+        connect_timeout=3,
     )
 
 
