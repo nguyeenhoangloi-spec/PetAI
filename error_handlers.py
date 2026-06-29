@@ -14,4 +14,7 @@ def register_error_handlers(app):
 
     @app.errorhandler(500)
     def handle_server_error(e):
-        return render_template("error.html", code=500, message="Lỗi hệ thống. Vui lòng thử lại sau."), 500
+        import traceback
+        tb = traceback.format_exc()
+        err_msg = f"Lỗi hệ thống: {e}<pre style='text-align:left; font-size:12px; margin-top:20px; white-space:pre-wrap; background:#fee2e2; padding:15px; border-radius:8px; border:1px solid #fca5a5; overflow-x:auto;'>{tb}</pre>"
+        return render_template("error.html", code=500, message=err_msg), 500
