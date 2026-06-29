@@ -1,5 +1,6 @@
 # connect.py
 # Kết nối tới MySQL (PyMySQL) theo cấu hình biến môi trường.
+# Build: 2026-06-30 - Azure VNet + AZURE_MYSQL_* env vars support
 
 import os
 import pymysql
