@@ -53,7 +53,7 @@ def _get_det_model():
 	global det_model
 	if det_model is None:
 		from ultralytics import YOLO
-		yolo_model_name = os.getenv("YOLO_MODEL", "yolov8n.pt")
+		yolo_model_name = os.getenv("YOLO_MODEL", "yolov8s.pt")
 		_BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 		yolo_model_path = os.path.join(_BASE_DIR, yolo_model_name)
 		det_model = YOLO(yolo_model_path)
@@ -1094,8 +1094,8 @@ def upload():
 			annotated_path = save_path
 
 		# --- Early YOLO gate: reject ngay nếu không phát hiện chó (giá trị DOG_GATE_YOLO_DOG_THRESHOLD được cấu hình trong .env) ---
-		DOG_THRESHOLD = _env_float("DOG_GATE_YOLO_DOG_THRESHOLD", 0.40)
-		fallback_classes_str = os.getenv("DOG_GATE_FALLBACK_CLASSES", "cat,teddy bear,bear,sheep")
+		DOG_THRESHOLD = _env_float("DOG_GATE_YOLO_DOG_THRESHOLD", 0.20)
+		fallback_classes_str = os.getenv("DOG_GATE_FALLBACK_CLASSES", "teddy bear,bear,sheep")
 		FALLBACK_CLASSES = {c.strip().lower() for c in fallback_classes_str.split(",") if c.strip()}
 
 		dog_confs_early = [
