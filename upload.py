@@ -1039,7 +1039,7 @@ def upload():
 					}
 					det_items.append(item)
 				# Đọc danh sách các class fallback từ .env
-				fallback_classes_str = os.getenv("DOG_GATE_FALLBACK_CLASSES", "cat,teddy bear,bear,sheep")
+				fallback_classes_str = os.getenv("DOG_GATE_FALLBACK_CLASSES", "")
 				FALLBACK_CLASSES = {c.strip().lower() for c in fallback_classes_str.split(",") if c.strip()}
 
 				# Chỉ xác nhận CHÓ; hỗ trợ các class fallback khi bị nhận diện nhầm.
@@ -1064,7 +1064,7 @@ def upload():
 				if det_items:
 					img = cv2.imread(save_path)
 					if img is not None:
-						fallback_classes_str = os.getenv("DOG_GATE_FALLBACK_CLASSES", "cat,teddy bear,bear,sheep")
+						fallback_classes_str = os.getenv("DOG_GATE_FALLBACK_CLASSES", "")
 						FALLBACK_CLASSES = {c.strip().lower() for c in fallback_classes_str.split(",") if c.strip()}
 						for it in det_items:
 							bb = it.get('bbox')
@@ -1096,7 +1096,7 @@ def upload():
 
 		# --- Early YOLO gate: reject ngay nếu không phát hiện chó (giá trị DOG_GATE_YOLO_DOG_THRESHOLD được cấu hình trong .env) ---
 		DOG_THRESHOLD = _env_float("DOG_GATE_YOLO_DOG_THRESHOLD", 0.20)
-		fallback_classes_str = os.getenv("DOG_GATE_FALLBACK_CLASSES", "teddy bear,bear,sheep")
+		fallback_classes_str = os.getenv("DOG_GATE_FALLBACK_CLASSES", "")
 		FALLBACK_CLASSES = {c.strip().lower() for c in fallback_classes_str.split(",") if c.strip()}
 
 		dog_confs_early = [
