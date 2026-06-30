@@ -525,6 +525,16 @@
   {% if result.parts_info and result.parts_info.display and result.parts_info.display.top3_mode %}
   {% set top3_mode = result.parts_info.display.top3_mode %}
   {% endif %}
+  <script>
+    window.predictionBreedScores = {
+      {% if result.parts_info and (result.parts_info.all_similarities or result.parts_info.all_softmax) %}
+        {% set all_scores = result.parts_info.all_similarities if top3_mode == 'similarity' else result.parts_info.all_softmax %}
+        {% for item in all_scores %}
+          "{{ item.breed_en }}": {{ item.score }},
+        {% endfor %}
+      {% endif %}
+    };
+  </script>
   {% set gradcam_items = [] %}
   {% set gradcam_mode = '' %}
   {% if result.parts_info and result.parts_info.gradcam_dynamic and result.parts_info.gradcam_dynamic['items'] %}

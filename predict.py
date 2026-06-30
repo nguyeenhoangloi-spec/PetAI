@@ -601,6 +601,20 @@ class ImagePredictor:
 					}
 					for i in sim_top_idx[:3]
 				],
+				"all_similarities": [
+					{
+						"breed_en": normalize_breed_label(self.classes[int(i)]),
+						"score": float(sims[int(i)]),
+					}
+					for i in sim_top_idx
+				],
+				"all_softmax": [
+					{
+						"breed_en": normalize_breed_label(self.classes[int(i)]),
+						"score": float(probs[int(i)]),
+					}
+					for i in np.argsort(probs)[::-1]
+				],
 				"gradcam": {"items": []},
 				"gradcam_dynamic": {"items": []},
 				"thresholds": {

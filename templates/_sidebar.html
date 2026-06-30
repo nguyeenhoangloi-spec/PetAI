@@ -261,12 +261,22 @@
 
     function renderBreeds(filterText) {
       var currentLang = window.PetAI_i18n ? window.PetAI_i18n.getCurrentLang() : "vi";
+      var hasScores = (window.predictionBreedScores && Object.keys(window.predictionBreedScores).length > 0);
       
-      breedsList.sort(function(a, b) {
-        var nameA = currentLang === "en" ? a.en : a.vi;
-        var nameB = currentLang === "en" ? b.en : b.vi;
-        return nameA.localeCompare(nameB, currentLang);
-      });
+      if (hasScores) {
+        breedsList.forEach(function(b) {
+          b.score = window.predictionBreedScores[b.en] || 0.0;
+        });
+        breedsList.sort(function(a, b) {
+          return b.score - a.score;
+        });
+      } else {
+        breedsList.sort(function(a, b) {
+          var nameA = currentLang === "en" ? a.en : a.vi;
+          var nameB = currentLang === "en" ? b.en : b.vi;
+          return nameA.localeCompare(nameB, currentLang);
+        });
+      }
       
       var grid = document.getElementById("allBreedsGrid");
       var emptyState = document.getElementById("allBreedsEmptyState");
@@ -287,10 +297,19 @@
         var primaryName = currentLang === "en" ? b.en : b.vi;
         var secondaryName = currentLang === "en" ? b.vi : b.en;
         
+        var scoreHtml = "";
+        if (hasScores) {
+          var pct = (b.score * 100).toFixed(1) + "%";
+          scoreHtml = '<span class="text-[13px] font-mono font-extrabold text-blue-600 dark:text-blue-400 shrink-0 ml-auto">' + pct + '</span>';
+        }
+        
         html += 
-          '<div class="flex flex-col gap-1 p-3.5 rounded-xl bg-surface-container-low/50 dark:bg-slate-800/30 border border-outline-variant/15 dark:border-slate-800/60 hover:border-primary/30 dark:hover:border-blue-500/40 hover:bg-surface-container dark:hover:bg-slate-800/60 transition-all duration-200 group cursor-default">' +
-            '<span class="text-xs font-semibold text-on-surface dark:text-slate-200 truncate leading-snug group-hover:text-primary dark:group-hover:text-blue-400 transition-colors" title="' + primaryName + '">' + primaryName + '</span>' +
-            '<span class="text-[10px] text-on-surface-variant/60 dark:text-slate-500 italic truncate" title="' + secondaryName + '">' + secondaryName + '</span>' +
+          '<div class="flex items-center gap-2 p-3.5 rounded-xl bg-surface-container-low/50 dark:bg-slate-800/30 border border-outline-variant/15 dark:border-slate-800/60 hover:border-primary/30 dark:hover:border-blue-500/40 hover:bg-surface-container dark:hover:bg-slate-800/60 transition-all duration-200 group cursor-default">' +
+            '<div class="flex flex-col gap-0.5 min-w-0 flex-1">' +
+              '<span class="text-xs font-semibold text-on-surface dark:text-slate-200 truncate leading-snug group-hover:text-primary dark:group-hover:text-blue-400 transition-colors" title="' + primaryName + '">' + primaryName + '</span>' +
+              '<span class="text-[10px] text-on-surface-variant/60 dark:text-slate-500 italic truncate" title="' + secondaryName + '">' + secondaryName + '</span>' +
+            '</div>' +
+            scoreHtml +
           '</div>';
       });
       
@@ -315,6 +334,16 @@
       var lang = window.PetAI_i18n ? window.PetAI_i18n.getCurrentLang() : "vi";
       if (window.PetAI_i18n && typeof window.PetAI_i18n.applyToElement === "function") {
         window.PetAI_i18n.applyToElement(modal, lang);
+      }
+      
+      var hasScores = (window.predictionBreedScores && Object.keys(window.predictionBreedScores).length > 0);
+      var modalTitle = modal.querySelector('[data-i18n="allBreedsModalTitle"]');
+      if (modalTitle) {
+        if (hasScores) {
+          modalTitle.textContent = lang === "en" ? "All Breed Similarity Ranking" : "Xếp hạng tương đồng tất cả các giống";
+        } else {
+          modalTitle.textContent = lang === "en" ? "Supported Breeds" : "Giống chó hỗ trợ";
+        }
       }
       
       var searchInput = document.getElementById("allBreedsSearchInput");
