@@ -587,12 +587,12 @@
                 <span class="material-symbols-outlined text-blue-600 dark:text-blue-400 text-[24px]">emoji_events</span>
               </div>
               <div class="min-w-0 flex-1">
-                <div class="flex items-center justify-between gap-2 w-full">
+                <div class="flex flex-col gap-0.5 w-full">
                   <span class="text-[12px] text-outline dark:text-slate-400 font-medium uppercase tracking-wider block"
                     data-i18n="bestPrediction">Giống dự đoán tốt nhất</span>
                   {% if conf_percent_clamped >= 70 %}
                   <span
-                    class="px-1.5 py-0.5 bg-blue-500/10 text-primary dark:text-blue-400 rounded-full text-[8.5px] font-extrabold whitespace-nowrap shrink-0"
+                    class="px-1.5 py-0.5 bg-blue-500/10 text-primary dark:text-blue-400 rounded-full text-[8.5px] font-extrabold whitespace-nowrap self-start mt-0.5"
                     data-i18n="highConfidenceBadge">Độ tin cậy cao</span>
                   {% endif %}
                 </div>
@@ -1235,7 +1235,7 @@
                   <!-- Details & Progress Bar -->
                   <div class="flex-grow space-y-1.5 min-w-0">
                     <div class="flex justify-between items-center">
-                      <span class="text-sm font-bold text-on-surface dark:text-slate-200 truncate max-w-[130px]"
+                      <span class="text-sm font-bold text-on-surface dark:text-slate-200 block break-words"
                         data-i18n-breed data-i18n-breed-vi="Chó {{ item.breed }}"
                         data-i18n-breed-en="{{ item.breed_en }}">
                         {{ item.breed_en if ui_language == 'en' else ('Chó ' ~ item.breed) }}
