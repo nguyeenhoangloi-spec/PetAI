@@ -1175,10 +1175,8 @@ def upload():
 					color = (255, 128, 0)  # BGR
 					cv2.rectangle(img, (x1, y1), (x2, y2), color, 2)
 					
-					from breed_names import to_common_vietnamese_breed_name
-					breed_disp = to_common_vietnamese_breed_name(result.get('breed', 'Unknown'))
 					conf_txt = f"{int(round(breed_conf * 100))}%"
-					label_txt = f"{breed_disp.upper()} {conf_txt}"
+					label_txt = f"DOG {conf_txt}"
 					
 					# Draw label background
 					(tw, th), _ = cv2.getTextSize(label_txt, cv2.FONT_HERSHEY_SIMPLEX, 0.6, 2)
