@@ -1057,36 +1057,8 @@ def upload():
 				if best_dog_conf_local >= 0.0 or 'dog' in labels or best_fallback_conf_local >= 0.0 or any(l in FALLBACK_CLASSES for l in labels):
 					det_label = 'Dog'
 
-			# Vẽ bbox lên ảnh (dog hoặc fallback) nếu có bbox
+			# Khởi tạo annotated_path mặc định là save_path trước khi vẽ sau bước dự đoán
 			annotated_path = save_path
-			try:
-				import cv2
-				if det_items:
-					img = cv2.imread(save_path)
-					if img is not None:
-						fallback_classes_str = os.getenv("DOG_GATE_FALLBACK_CLASSES", "")
-						FALLBACK_CLASSES = {c.strip().lower() for c in fallback_classes_str.split(",") if c.strip()}
-						for it in det_items:
-							bb = it.get('bbox')
-							lab = it.get('label')
-							if not bb or (lab != 'dog' and lab not in FALLBACK_CLASSES):
-								continue
-							x1, y1, x2, y2 = [int(v) for v in bb]
-							color = (255, 128, 0)  # BGR
-							cv2.rectangle(img, (x1, y1), (x2, y2), color, 2)
-							conf_txt = f"{int(round((it.get('conf') or 0)*100))}%"
-							label_label = str(it.get('label') or 'DOG').upper()
-							label_txt = f"{label_label} {conf_txt if it.get('conf') is not None else ''}"
-							# Draw label background
-							(tw, th), _ = cv2.getTextSize(label_txt, cv2.FONT_HERSHEY_SIMPLEX, 0.6, 2)
-							cv2.rectangle(img, (x1, max(y1- th - 6, 0)), (x1 + tw + 6, y1), color, -1)
-							cv2.putText(img, label_txt, (x1+3, y1-6), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255,255,255), 2, cv2.LINE_AA)
-						# Lưu ảnh annotate cạnh file gốc
-						base, ext = os.path.splitext(save_path)
-						annotated_path = f"{base}_det{ext}"
-						cv2.imwrite(annotated_path, img)
-			except Exception as _:
-				annotated_path = save_path
 
 		except Exception as e:
 			print("YOLO detect error:", e)
@@ -1094,8 +1066,20 @@ def upload():
 			det_items = []
 			annotated_path = save_path
 
+		# --- Active Cat Filter: Reject immediately if a cat is detected by YOLO with confidence >= 0.25 ---
+		cat_confs_early = [
+			float(item.get("conf"))
+			for item in det_items
+			if item.get("label") == "cat" and item.get("conf") is not None
+		]
+		if cat_confs_early and max(cat_confs_early) >= 0.25:
+			ui_lang = request.cookies.get("siteLanguage", "vi")
+			msg = "Ảnh này không phải chó. Vui lòng tải lên ảnh chó để nhận diện." if ui_lang != "en" else "This image does not appear to be a dog. Please upload a photo of a dog."
+			flash(msg, "error")
+			return redirect(url_for("predict.upload_page"))
+
 		# --- Early YOLO gate: reject ngay nếu không phát hiện chó (giá trị DOG_GATE_YOLO_DOG_THRESHOLD được cấu hình trong .env) ---
-		DOG_THRESHOLD = _env_float("DOG_GATE_YOLO_DOG_THRESHOLD", 0.20)
+		DOG_THRESHOLD = _env_float("DOG_GATE_YOLO_DOG_THRESHOLD", -1.0)
 		fallback_classes_str = os.getenv("DOG_GATE_FALLBACK_CLASSES", "")
 		FALLBACK_CLASSES = {c.strip().lower() for c in fallback_classes_str.split(",") if c.strip()}
 
@@ -1170,6 +1154,43 @@ def upload():
 			print("Dog crop fallback error:", e)
 
 		result = predictor.predict(breed_input_path)
+		
+		# Check breed classifier confidence threshold
+		breed_conf_threshold = _env_float("DOG_GATE_MIN_BREED_CONF", 0.25)
+		breed_conf = result.get('breed_conf', 0.0) if isinstance(result, dict) else 0.0
+		if breed_conf < breed_conf_threshold:
+			ui_lang = request.cookies.get("siteLanguage", "vi")
+			msg = "Ảnh này không phải chó. Vui lòng tải lên ảnh chó để nhận diện." if ui_lang != "en" else "This image does not appear to be a dog. Please upload a photo of a dog."
+			flash(msg, "error")
+			return redirect(url_for("predict.upload_page"))
+
+		# Vẽ bbox lên ảnh (sử dụng giống chó nhận diện được)
+		annotated_path = save_path
+		try:
+			import cv2
+			if best_dog and best_dog.get("bbox") is not None:
+				img = cv2.imread(save_path)
+				if img is not None:
+					x1, y1, x2, y2 = [int(v) for v in best_dog["bbox"]]
+					color = (255, 128, 0)  # BGR
+					cv2.rectangle(img, (x1, y1), (x2, y2), color, 2)
+					
+					from breed_names import to_common_vietnamese_breed_name
+					breed_disp = to_common_vietnamese_breed_name(result.get('breed', 'Unknown'))
+					conf_txt = f"{int(round(breed_conf * 100))}%"
+					label_txt = f"{breed_disp.upper()} {conf_txt}"
+					
+					# Draw label background
+					(tw, th), _ = cv2.getTextSize(label_txt, cv2.FONT_HERSHEY_SIMPLEX, 0.6, 2)
+					cv2.rectangle(img, (x1, max(y1- th - 6, 0)), (x1 + tw + 6, y1), color, -1)
+					cv2.putText(img, label_txt, (x1+3, y1-6), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255,255,255), 2, cv2.LINE_AA)
+					
+					base, ext = os.path.splitext(save_path)
+					annotated_path = f"{base}_det{ext}"
+					cv2.imwrite(annotated_path, img)
+		except Exception as draw_err:
+			print("Draw bbox error:", draw_err)
+
 		try:
 			if isinstance(result, dict):
 				parts = result.get("parts_info") or {}
