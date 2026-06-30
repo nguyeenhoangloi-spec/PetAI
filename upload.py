@@ -1075,7 +1075,8 @@ def upload():
 							color = (255, 128, 0)  # BGR
 							cv2.rectangle(img, (x1, y1), (x2, y2), color, 2)
 							conf_txt = f"{int(round((it.get('conf') or 0)*100))}%"
-							label_txt = f"DOG {conf_txt if it.get('conf') is not None else ''}"
+							label_label = str(it.get('label') or 'DOG').upper()
+							label_txt = f"{label_label} {conf_txt if it.get('conf') is not None else ''}"
 							# Draw label background
 							(tw, th), _ = cv2.getTextSize(label_txt, cv2.FONT_HERSHEY_SIMPLEX, 0.6, 2)
 							cv2.rectangle(img, (x1, max(y1- th - 6, 0)), (x1 + tw + 6, y1), color, -1)
