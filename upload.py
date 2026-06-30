@@ -1156,7 +1156,7 @@ def upload():
 		result = predictor.predict(breed_input_path)
 		
 		# Check breed classifier confidence threshold
-		breed_conf_threshold = _env_float("DOG_GATE_MIN_BREED_CONF", 0.25)
+		breed_conf_threshold = _env_float("DOG_GATE_MIN_BREED_CONF", 0.4)
 		breed_conf = result.get('breed_conf', 0.0) if isinstance(result, dict) else 0.0
 		if breed_conf < breed_conf_threshold:
 			ui_lang = request.cookies.get("siteLanguage", "vi")
