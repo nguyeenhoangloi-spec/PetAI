@@ -2047,7 +2047,10 @@
       "qrModalButtonTooltip": "Xem QR Code truy cập",
       "qrModalTitle": "Mã QR Truy Cập",
       "qrModalHelp": "Quét mã QR bằng thiết bị di động của bạn để truy cập ứng dụng nhanh chóng.",
-      "downloadAndroidApp": "Tải ứng dụng Android (.APK)"
+      "downloadAndroidApp": "Tải ứng dụng Android (.APK)",
+      "cardMemoryUsage": "Bộ nhớ xử lý",
+      "cardMemoryNote": "RAM peak khi suy luận AI",
+      "highConfidenceBadge": "Độ tin cậy cao"
     },
     "en": {
       "qrModalButtonTooltip": "View Access QR Code",
@@ -4087,7 +4090,9 @@
       "toastAddUserSuccess": "New user created successfully!",
       "toastAddUserError": "Failed to create user.",
       "submitting": "Processing...",
-      "confirmLogoutText": "Are you sure you want to log out of this account?"
+      "confirmLogoutText": "Are you sure you want to log out of this account?",
+      "cardMemoryUsage": "Process Memory",
+      "cardMemoryNote": "RAM peak during AI inference"
     }
   };function translateDynamicToast(text, lang) {
     if (lang !== "en") return text;
