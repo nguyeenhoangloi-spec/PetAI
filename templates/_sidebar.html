@@ -224,6 +224,7 @@
 <script>
   (function() {
     var breedsList = [];
+    var currentModalHasScores = false;
     
     function initBreedsList() {
       if (!window.PetAI_i18n || !window.PetAI_i18n.viToEnBreeds) return;
@@ -261,7 +262,7 @@
 
     function renderBreeds(filterText) {
       var currentLang = window.PetAI_i18n ? window.PetAI_i18n.getCurrentLang() : "vi";
-      var hasScores = (window.predictionBreedScores && Object.keys(window.predictionBreedScores).length > 0);
+      var hasScores = currentModalHasScores;
       
       if (hasScores) {
         breedsList.forEach(function(b) {
@@ -323,7 +324,7 @@
       }
     }
 
-    function openAllBreedsModal() {
+    function openAllBreedsModal(showScores) {
       var modal = document.getElementById("allBreedsModal");
       if (!modal) return;
       
@@ -336,7 +337,8 @@
         window.PetAI_i18n.applyToElement(modal, lang);
       }
       
-      var hasScores = (window.predictionBreedScores && Object.keys(window.predictionBreedScores).length > 0);
+      currentModalHasScores = !!showScores && (window.predictionBreedScores && Object.keys(window.predictionBreedScores).length > 0);
+      var hasScores = currentModalHasScores;
       var modalTitle = modal.querySelector('[data-i18n="allBreedsModalTitle"]');
       if (modalTitle) {
         if (hasScores) {
