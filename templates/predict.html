@@ -525,15 +525,32 @@
   {% if result.parts_info and result.parts_info.display and result.parts_info.display.top3_mode %}
   {% set top3_mode = result.parts_info.display.top3_mode %}
   {% endif %}
+  <div id="predictionScoresData" 
+       data-scores="{% if result.parts_info and (result.parts_info.all_similarities or result.parts_info.all_softmax) %}{{ (result.parts_info.all_similarities if top3_mode == 'similarity' else result.parts_info.all_softmax)|tojson|forceescape }}{% endif %}" 
+       class="hidden"></div>
   <script>
-    window.predictionBreedScores = {
-      {% if result.parts_info and (result.parts_info.all_similarities or result.parts_info.all_softmax) %}
-        {% set all_scores = result.parts_info.all_similarities if top3_mode == 'similarity' else result.parts_info.all_softmax %}
-        {% for item in all_scores %}
-          "{{ item.breed_en }}": {{ item.score }},
-        {% endfor %}
-      {% endif %}
-    };
+    (function () {
+      var scoresEl = document.getElementById("predictionScoresData");
+      if (scoresEl) {
+        var rawAttr = scoresEl.getAttribute("data-scores");
+        if (rawAttr) {
+          try {
+            var rawScores = JSON.parse(rawAttr);
+            var scoresObj = {};
+            if (Array.isArray(rawScores)) {
+              rawScores.forEach(function (item) {
+                if (item && item.breed_en) {
+                  scoresObj[item.breed_en] = item.score;
+                }
+              });
+            }
+            window.predictionBreedScores = scoresObj;
+          } catch (e) {
+            console.error("Error parsing prediction scores:", e);
+          }
+        }
+      }
+    })();
   </script>
   {% set gradcam_items = [] %}
   {% set gradcam_mode = '' %}
