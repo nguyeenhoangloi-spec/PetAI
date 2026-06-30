@@ -599,7 +599,7 @@
                 <div class="flex flex-wrap items-center gap-1.5 mt-0.5">
                   {% if result.parts_info and result.parts_info.decision and
                   result.parts_info.decision.is_hybrid_candidate and result.parts_info.similarity_top3|length >= 2 %}
-                  <span class="text-[16px] font-bold text-on-surface dark:text-slate-100 truncate max-w-[200px]"
+                  <span class="text-[16px] font-bold text-on-surface dark:text-slate-100 block break-words"
                     data-i18n-breed
                     data-i18n-breed-vi="Chó lai: {{ result.parts_info.similarity_top3[0].breed }} × {{ result.parts_info.similarity_top3[1].breed }}"
                     data-i18n-breed-en="Hybrid: {{ result.parts_info.similarity_top3[0].breed_en }} × {{ result.parts_info.similarity_top3[1].breed_en }}"
@@ -610,7 +610,7 @@
                     ui_language == 'en' else result.parts_info.similarity_top3[1].breed }}
                   </span>
                   {% else %}
-                  <span class="text-[16px] font-bold text-on-surface dark:text-slate-100 truncate max-w-[200px]"
+                  <span class="text-[16px] font-bold text-on-surface dark:text-slate-100 block break-words"
                     data-i18n-breed data-i18n-breed-vi="{{ breed_name_vi }}" data-i18n-breed-en="{{ breed_name_en }}"
                     title="{{ breed_name_en if ui_language == 'en' else breed_name_vi }}">
                     {{ breed_name_en if ui_language == 'en' else breed_name_vi }}
