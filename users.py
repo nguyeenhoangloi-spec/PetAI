@@ -33,20 +33,22 @@ def get_plan_price_vnd(conn) -> dict:
 
 
 def _order_amount_vnd(order: dict, pricing: dict = None) -> int:
-    # Doanh thu & hiển thị số tiền phải bám theo giá gói.
-    # Tránh trường hợp DB có amount_vnd sai (ví dụ 49k/99k) làm doanh thu bị đội.
+    # 1. Ưu tiên 1: Sử dụng số tiền thực tế đã lưu trong đơn hàng ở DB (lịch sử thanh toán thực tế).
+    try:
+        amount = int(order.get("amount_vnd") or 0)
+        if amount > 0:
+            return amount
+    except Exception:
+        pass
+
+    # 2. Fallback: Nếu đơn cũ không có số tiền hoặc bằng 0, mới tính toán dựa trên cấu hình giá gói hiện tại.
     plan = (order.get("plan") or "").strip().lower()
     p_dict = pricing if pricing is not None else PLAN_PRICE_VND
     expected = p_dict.get(plan)
     if expected is not None:
         return int(expected)
 
-    # Fallback: nếu đơn cũ không có plan hợp lệ thì mới dùng amount_vnd.
-    try:
-        amount = int(order.get("amount_vnd") or 0)
-    except Exception:
-        amount = 0
-    return amount if amount > 0 else 0
+    return 0
 
 
 def require_admin():
