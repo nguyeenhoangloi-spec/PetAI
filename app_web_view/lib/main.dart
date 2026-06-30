@@ -10,6 +10,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'config.dart';
 
 void main() async {
@@ -263,8 +264,24 @@ class _WebViewScreenState extends State<WebViewScreen> {
         } else if (data.startsWith('THEME:')) {
           final themeMode = data.split(':')[1];
           _updateSystemTheme(themeMode);
+        } else if (data.startsWith('DOWNLOAD_URL:')) {
+          final url = data.substring('DOWNLOAD_URL:'.length);
+          _launchInExternalBrowser(url);
         }
         break;
+    }
+  }
+
+  Future<void> _launchInExternalBrowser(String urlString) async {
+    try {
+      final uri = Uri.parse(urlString);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      } else {
+        debugPrint('==> Could not launch external URL: $urlString');
+      }
+    } catch (e) {
+      debugPrint('==> Error launching external URL: $e');
     }
   }
 
