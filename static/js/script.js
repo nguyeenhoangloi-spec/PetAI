@@ -3,6 +3,21 @@ document.addEventListener("DOMContentLoaded", function () {
   const root = document.documentElement;
   const isMobile = () => window.innerWidth < 768;
 
+  // Intercept all file downloads on Mobile App (WebView) and delegate to FlutterBridge
+  document.addEventListener("click", function (e) {
+    if (!window.FlutterBridge) return;
+    const link = e.target.closest("a");
+    if (!link) return;
+    const href = link.getAttribute("href");
+    const hasDownload = link.hasAttribute("download");
+    if (href && (hasDownload || href.includes("/downloads/") || href.includes("/export") || href.includes("download=true"))) {
+      const absoluteUrl = new URL(href, window.location.href).href;
+      e.preventDefault();
+      e.stopPropagation();
+      window.FlutterBridge.postMessage("DOWNLOAD_URL:" + absoluteUrl);
+    }
+  }, true);
+
   // Notify Flutter native app about theme changes
   function notifyFlutterTheme() {
     if (window.FlutterBridge) {
