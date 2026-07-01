@@ -1132,24 +1132,22 @@ def upload():
 					best_dog["label"] = "dog"
 
 			if best_dog:
-				import cv2
-				img_for_crop = cv2.imread(save_path)
-				if img_for_crop is not None:
-					h, w = img_for_crop.shape[:2]
-					x1, y1, x2, y2 = [int(v) for v in best_dog["bbox"]]
-					pad_x = int((x2 - x1) * 0.08)
-					pad_y = int((y2 - y1) * 0.08)
-					x1 = max(0, x1 - pad_x)
-					y1 = max(0, y1 - pad_y)
-					x2 = min(w, x2 + pad_x)
-					y2 = min(h, y2 + pad_y)
+				from PIL import Image
+				img_for_crop = Image.open(save_path)
+				w, h = img_for_crop.size
+				x1, y1, x2, y2 = [int(v) for v in best_dog["bbox"]]
+				pad_x = int((x2 - x1) * 0.08)
+				pad_y = int((y2 - y1) * 0.08)
+				x1 = max(0, x1 - pad_x)
+				y1 = max(0, y1 - pad_y)
+				x2 = min(w, x2 + pad_x)
+				y2 = min(h, y2 + pad_y)
 
-					if x2 > x1 and y2 > y1:
-						dog_crop = img_for_crop[y1:y2, x1:x2]
-						if dog_crop is not None and dog_crop.size > 0:
-							base, ext = os.path.splitext(save_path)
-							breed_input_path = f"{base}_dogcrop{ext}"
-							cv2.imwrite(breed_input_path, dog_crop)
+				if x2 > x1 and y2 > y1:
+					dog_crop = img_for_crop.crop((x1, y1, x2, y2))
+					base, ext = os.path.splitext(save_path)
+					breed_input_path = f"{base}_dogcrop{ext}"
+					dog_crop.save(breed_input_path)
 		except Exception as e:
 			print("Dog crop fallback error:", e)
 
@@ -1167,25 +1165,19 @@ def upload():
 		# Vẽ bbox lên ảnh (sử dụng giống chó nhận diện được)
 		annotated_path = save_path
 		try:
-			import cv2
+			from PIL import Image, ImageDraw
 			if best_dog and best_dog.get("bbox") is not None:
-				img = cv2.imread(save_path)
-				if img is not None:
-					x1, y1, x2, y2 = [int(v) for v in best_dog["bbox"]]
-					color = (255, 128, 0)  # BGR
-					cv2.rectangle(img, (x1, y1), (x2, y2), color, 2)
-					
-					conf_txt = f"{int(round(breed_conf * 100))}%"
-					label_txt = f"DOG {conf_txt}"
-					
-					# Draw label background
-					(tw, th), _ = cv2.getTextSize(label_txt, cv2.FONT_HERSHEY_SIMPLEX, 0.6, 2)
-					cv2.rectangle(img, (x1, max(y1- th - 6, 0)), (x1 + tw + 6, y1), color, -1)
-					cv2.putText(img, label_txt, (x1+3, y1-6), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255,255,255), 2, cv2.LINE_AA)
-					
-					base, ext = os.path.splitext(save_path)
-					annotated_path = f"{base}_det{ext}"
-					cv2.imwrite(annotated_path, img)
+				img = Image.open(save_path)
+				draw = ImageDraw.Draw(img)
+				x1, y1, x2, y2 = [int(v) for v in best_dog["bbox"]]
+				
+				# Vẽ hình chữ nhật outline (màu cam/BGR tương ứng RGB là (255, 128, 0))
+				color = (255, 128, 0)
+				draw.rectangle([x1, y1, x2, y2], outline=color, width=2)
+				
+				base, ext = os.path.splitext(save_path)
+				annotated_path = f"{base}_det{ext}"
+				img.save(annotated_path)
 		except Exception as draw_err:
 			print("Draw bbox error:", draw_err)
 
