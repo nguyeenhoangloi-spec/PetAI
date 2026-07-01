@@ -1079,7 +1079,7 @@ def upload():
 			return redirect(url_for("predict.upload_page"))
 
 		# --- Early YOLO gate: reject ngay nếu không phát hiện chó (giá trị DOG_GATE_YOLO_DOG_THRESHOLD được cấu hình trong .env) ---
-		DOG_THRESHOLD = _env_float("DOG_GATE_YOLO_DOG_THRESHOLD", -1.0)
+		DOG_THRESHOLD = _env_float("DOG_GATE_YOLO_DOG_THRESHOLD", 0.3)
 		fallback_classes_str = os.getenv("DOG_GATE_FALLBACK_CLASSES", "")
 		FALLBACK_CLASSES = {c.strip().lower() for c in fallback_classes_str.split(",") if c.strip()}
 
